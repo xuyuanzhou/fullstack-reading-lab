@@ -1,5 +1,6 @@
 # coding: utf-8
 import pathlib
+import io
 import sqlite3
 import tempfile
 import unittest
@@ -72,6 +73,8 @@ class ReaderTests(unittest.TestCase):
         self.assertIsNone(import_archives.safe_member('/absolute.md'))
         self.assertIsNone(import_archives.safe_member('各PDF密码.txt'))
         self.assertEqual(str(import_archives.safe_member('folder/Example.java')),'folder/Example.java')
+        legacy=zipfile.ZipInfo('java╦π╖¿┤≤╚½╘┤┬δ░ⁿ/Example.java')
+        self.assertIn('算法大全源码包',import_archives.zip_name(legacy))
         with tempfile.TemporaryDirectory() as directory:
             path=pathlib.Path(directory)/'sheet.xlsx'
             with zipfile.ZipFile(str(path),'w') as archive:
@@ -80,20 +83,30 @@ class ReaderTests(unittest.TestCase):
     def test_nested_materials_stay_in_private_profile(self):
         with tempfile.TemporaryDirectory() as directory:
             base=pathlib.Path(directory);root=base/'library';root.mkdir();folder=root/'Java-示例';folder.mkdir()
+            nested=io.BytesIO()
+            with zipfile.ZipFile(nested,'w') as archive:archive.writestr('word/media/scan.png',b'nested-image')
             with zipfile.ZipFile(str(folder/'sample.zip'),'w') as archive:
                 archive.writestr('docs/note.md','可读内容')
+                archive.writestr('docs/nested.docx',nested.getvalue())
                 archive.writestr('../escape.md','不得写出')
             with zipfile.ZipFile(str(folder/'sample.docx'),'w') as archive:
                 archive.writestr('word/media/image1.png',b'image-bytes')
             previous=server.PROFILE
             try:
                 server.PROFILE=base/'private-data';server.PROFILE.mkdir()
-                self.assertEqual(import_archives.import_archives(root)['members'],1)
-                self.assertEqual(import_embedded.import_embedded(root)['images'],1)
+                self.assertEqual(import_archives.import_archives(root)['members'],2)
+                self.assertEqual(import_embedded.import_embedded(root)['images'],2)
                 library=server.Library(root)
-                self.assertEqual(library.list()['total'],3)
-                self.assertEqual(library.resolve('Java-示例/sample.zip!/docs/note.md').read_text(),'可读内容')
-                self.assertEqual(library.resolve('Java-示例/sample.docx!/word/media/image1.png').read_bytes(),b'image-bytes')
+                self.assertEqual(library.list()['total'],5)
+                archived=library.resolve('Java-示例/sample.zip!/docs/note.md')
+                embedded=library.resolve('Java-示例/sample.docx!/word/media/image1.png')
+                nested_image=library.resolve('Java-示例/sample.zip!/docs/nested.docx!/word/media/scan.png')
+                self.assertEqual(archived.read_text(),'可读内容')
+                self.assertEqual(embedded.read_bytes(),b'image-bytes')
+                self.assertEqual(nested_image.read_bytes(),b'nested-image')
+                before=(archived.stat().st_mtime_ns,embedded.stat().st_mtime_ns,nested_image.stat().st_mtime_ns)
+                import_archives.import_archives(root);import_embedded.import_embedded(root)
+                self.assertEqual((archived.stat().st_mtime_ns,embedded.stat().st_mtime_ns,nested_image.stat().st_mtime_ns),before)
                 self.assertFalse((base/'escape.md').exists())
             finally:server.PROFILE=previous
     def test_import_resume_uses_stable_batches(self):
@@ -107,5 +120,9 @@ class ReaderTests(unittest.TestCase):
                 self.assertEqual(import_library.import_all(root,batch_size=2)['total'],2)
                 self.assertEqual(import_library.import_all(root,batch_size=2)['total'],1)
                 self.assertEqual(import_library.import_all(root,batch_size=2)['total'],0)
+                (root/'c.md').unlink()
+                self.assertEqual(import_library.import_all(root,batch_size=2)['total'],0)
+                with sqlite3.connect(str(server.DB)) as check:
+                    self.assertEqual(check.execute('SELECT count(*) FROM imports').fetchone()[0],2)
             finally:server.PROFILE,server.DB,server.LIB=previous
 if __name__=='__main__':unittest.main()

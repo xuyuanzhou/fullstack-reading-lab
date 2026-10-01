@@ -212,7 +212,7 @@ async function renderItem() {
     const visual=['PDF','PNG','JPG','JPEG','WEBP'].includes(item.format);
     const imageUrl='/api/media?id='+encodeURIComponent(item.id)+'&page='+item.page;
     const viewer=visual?'<div class="view-tabs"><button id="visualTab" class="selected">原版页面 / 图片</button><button id="textTab">可复制文字</button></div><figure id="visualPanel" class="page-image"><img src="'+esc(imageUrl)+'" alt="'+esc(item.title)+' 第 '+item.page+' 页"><figcaption><span>本机即时呈现原始版面，保留 PDF 中的图表、图片和排版。</span><button id="zoomPage" type="button">1:1 放大查看</button></figcaption></figure>':'';
-    const copyPanel='<section id="copyPanel" class="copy-panel"'+(visual?' hidden':'')+'><div class="copy-actions"><strong>可复制文字</strong>'+(visual?'<button id="ocrPage">识别页面图片中的文字</button>':'')+'<button id="copyText">复制本页文字</button>'+(item.hasFullText?'<button id="copyFullText">复制此文件全文</button>':'')+'</div><p class="muted">普通 PDF 优先显示原有文字层；图片文字由 OCR 识别，可能需要人工校对。</p><textarea id="documentText" rows="23">'+esc(item.text||'这一页没有可提取文字。可以尝试 OCR 识别。')+'</textarea><p id="ocrStatus" class="muted">'+esc(item.ocrError||'')+'</p></section>';
+    const copyPanel='<section id="copyPanel" class="copy-panel"'+(visual?' hidden':'')+'><div class="copy-actions"><strong>可复制文字</strong>'+(visual?'<button id="ocrPage">识别页面图片中的文字</button>':'')+'<button id="copyText">复制本页文字</button>'+(item.hasFullText?'<button id="copyFullText">复制此文件全文</button>':'')+'</div><p class="muted">普通 PDF 优先显示原有文字层；图片文字由 OCR 识别，可能需要人工校对。</p><textarea id="documentText" rows="23" placeholder="这一页没有可提取文字，可以尝试 OCR 识别。">'+esc(item.text||item.candidateText||'')+'</textarea><p id="ocrStatus" class="muted">'+esc(item.ocrError||'')+'</p></section>';
     $('#mainPanel').innerHTML='<div class="breadcrumb"><button id="backLocal">我的资料</button><span>/</span><span>'+esc(item.format)+'</span></div><div class="page-kicker"><span class="eyebrow">ORIGINAL MATERIAL / 待核验</span><span class="version-pill">第 '+item.page+' / '+item.pages+' 页</span></div><h1>'+esc(item.title)+'</h1><p class="muted">'+esc(item.path)+'</p><div class="warning">这是你本机题库的原文，可能过时或存在错误。请核对版本与官方依据。</div>'+(item.pages>1?'<div class="pagination"><button id="prevPage">← 上一页</button><input id="pageInput" type="number" min="1" max="'+item.pages+'" value="'+item.page+'"><button id="jumpPage">跳转</button><button id="nextPage">下一页 →</button></div>':'')+viewer+copyPanel+'<section class="audit-note"><h2>本页核验笔记</h2><textarea id="auditNote" rows="5" placeholder="记录具体说法、你的判断和依据链接。">'+esc(state.audit[key]?.note||'')+'</textarea><button id="saveAudit" class="primary-button">保存本页笔记</button></section>';
     $('#backLocal').onclick=()=>route('local');
     if(item.pages>1){
@@ -231,6 +231,7 @@ async function renderItem() {
       catch(error){$('#ocrStatus').textContent=error.message;}
     };
     $('#copyText').onclick=async()=>{
+      if(!$('#documentText').value.trim()){$('#ocrStatus').textContent='当前没有可复制文字，请先识别或查看原图。';return;}
       try{await navigator.clipboard.writeText($('#documentText').value);$('#copyText').textContent='✓ 已复制';}
       catch(error){$('#documentText').select();$('#ocrStatus').textContent='已选中文字，请使用复制快捷键。';}
     };

@@ -59,6 +59,14 @@ def import_all(root,limit=0,ocr_workers=2,batch_size=0,retry_failed=False):
     con=server.connect()
     con.execute('CREATE TABLE IF NOT EXISTS imports(id TEXT PRIMARY KEY, mtime REAL, size INTEGER, chars INTEGER, pages INTEGER, method TEXT, status TEXT, text_path TEXT, imported_at REAL)')
     con.commit()
+    known=set(server.LIB.files)
+    stale=[ident for (ident,) in con.execute('SELECT id FROM imports') if ident not in known]
+    for start in range(0,len(stale),400):
+        batch=stale[start:start+400];marks=','.join('?' for _ in batch)
+        con.execute('DELETE FROM docs WHERE id IN ('+marks+')',batch)
+        con.execute('DELETE FROM indexed WHERE id IN ('+marks+')',batch)
+        con.execute('DELETE FROM imports WHERE id IN ('+marks+')',batch)
+    if stale:con.commit()
     items=sorted(server.LIB.files.items())
     if limit:items=items[:limit]
     if batch_size:

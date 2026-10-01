@@ -12,6 +12,14 @@ import server
 
 LIMIT=128*1024*1024
 
+def zip_name(info):
+    name=info.filename
+    if info.flag_bits & 0x800:return name
+    try:decoded=name.encode('cp437').decode('gb18030')
+    except (UnicodeError,ValueError):return name
+    if any('\u4e00'<=character<='\u9fff' for character in decoded) and any('\u2500'<=character<='\u259f' for character in name):return decoded
+    return name
+
 def safe_member(name):
     path=PurePosixPath(name.replace('\\','/'))
     if path.is_absolute() or not path.parts or any(part in {'.','..'} for part in path.parts):return None
@@ -25,7 +33,7 @@ def members(path):
             for info in archive.infolist():
                 if info.is_dir() or info.file_size>LIMIT:continue
                 if (info.external_attr>>16)&0o170000==0o120000:continue
-                name=safe_member(info.filename)
+                name=safe_member(zip_name(info))
                 if name:yield str(name),archive.read(info)
     else:
         listing=subprocess.run(['bsdtar','-tf',str(path)],stdout=subprocess.PIPE,stderr=subprocess.PIPE,check=True,timeout=120)
@@ -51,7 +59,7 @@ def import_archives(root):
             for name,data in members(archive):
                 stored=Path('archive-extracted')/digest/Path(name)
                 target=server.PROFILE/stored;target.parent.mkdir(parents=True,exist_ok=True)
-                target.write_bytes(data)
+                if not target.exists() or target.read_bytes()!=data:target.write_bytes(data)
                 manifest[rel+'!/'+name]=stored.as_posix()
                 stats['members']+=1;stats['bytes']+=len(data)
         except Exception as error:stats['errors'].append({'archive':rel,'error':str(error)[:200]})

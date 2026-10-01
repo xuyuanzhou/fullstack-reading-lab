@@ -2,6 +2,7 @@
 """Local-only reader for a separately owned document library. Standard library server."""
 import argparse
 from functools import lru_cache
+import hashlib
 import html
 import json
 import mimetypes
@@ -266,9 +267,9 @@ class Library:
         p=self.files.get(ident)
         if p is None:raise FileNotFoundError('未找到资料')
         # Reject symlinks pointing out of the configured library.
-        allowed=(PROFILE/('embedded-extracted' if ident.split('!/',1)[0].lower().endswith('.docx') else 'archive-extracted')).resolve() if '!/' in ident else self.root
-        try:p.resolve().relative_to(allowed)
-        except ValueError:raise PermissionError('资料位于题库之外')
+        location=p.resolve()
+        allowed=[self.root,(PROFILE/'archive-extracted').resolve(),(PROFILE/'embedded-extracted').resolve()]
+        if not any(location==base or base in location.parents for base in allowed):raise PermissionError('资料位于题库之外')
         return p
 
 LIB=None
@@ -360,6 +361,7 @@ class Handler(BaseHTTPRequestHandler):
             if url.path=='/api/catalog':return self.send_json(LIB.list(get('category'),get('q'),min(200,max(1,int(get('limit','80')))),max(0,int(get('offset','0')))))
             if url.path=='/api/item':
                 ident=get('id');p=LIB.resolve(ident);n=max(1,min(page_count(p),int(get('page','1'))))
+                candidate=''
                 if p.suffix.lower() in IMAGES:
                     # Show original artwork immediately; OCR is an explicit action.
                     con=connect()
@@ -369,13 +371,22 @@ class Handler(BaseHTTPRequestHandler):
                     con.close()
                     text=(PROFILE/cached[0]).read_text(encoding='utf-8') if cached else row[0] if row else ''
                     ocr_error='' if text else '点击“识别页面图片中的文字”后可复制识别结果。'
+                    if not text:
+                        con=connect()
+                        try:review=con.execute('SELECT result FROM ocr_review WHERE id=?',(ident,)).fetchone()
+                        except sqlite3.OperationalError:review=None
+                        finally:con.close()
+                        if review and review[0]=='待人工校对':
+                            draft=PROFILE/'ocr-enhanced-candidates'/(hashlib.sha256(ident.encode()).hexdigest()+'.txt')
+                            if draft.exists():candidate=draft.read_text(encoding='utf-8')
+                            if candidate:ocr_error='以下为增强 OCR 候选稿，未经人工校对。请对照原图，勿直接用于公开课程。'
                 else:
                     text=extract(p,n);ocr_error=''
                 con=connect()
-                try:has_full=bool(con.execute('SELECT 1 FROM imports WHERE id=? AND status=?',(ident,'ok')).fetchone())
+                try:has_full=bool(con.execute('SELECT 1 FROM imports WHERE id=? AND status=? AND chars>0',(ident,'ok')).fetchone())
                 except sqlite3.OperationalError:has_full=False
                 finally:con.close()
-                return self.send_json({'id':ident,'title':p.stem,'text':safe_text(text),'page':n,'pages':page_count(p),'format':p.suffix.lower()[1:].upper(),'path':ident,'empty':not bool(text.strip()),'ocrError':ocr_error,'hasFullText':has_full})
+                return self.send_json({'id':ident,'title':p.stem,'text':safe_text(text),'candidateText':safe_text(candidate),'page':n,'pages':page_count(p),'format':p.suffix.lower()[1:].upper(),'path':ident,'empty':not bool(text.strip()),'ocrError':ocr_error,'hasFullText':has_full})
             if url.path=='/api/stats':
                 progress=PROFILE/'import-progress.json'
                 con=connect()

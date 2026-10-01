@@ -18,7 +18,8 @@ def candidates(root,con):
     pending=[]
     for ident, in con.execute("SELECT id FROM imports WHERE status='ok' AND chars=0 ORDER BY id"):
         if ident not in server.LIB.files or server.LIB.files[ident].suffix.lower() not in server.IMAGES:continue
-        if con.execute('SELECT 1 FROM ocr_review WHERE id=?',(ident,)).fetchone():continue
+        previous=con.execute('SELECT result FROM ocr_review WHERE id=?',(ident,)).fetchone()
+        if previous and previous[0]!='需要重新识别':continue
         path=server.LIB.files[ident]
         try:
             with Image.open(path) as image:width,height=image.size
@@ -36,7 +37,10 @@ def enhanced_candidate(path):
         image=ImageEnhance.Contrast(image).enhance(2.1)
         image=image.filter(ImageFilter.UnsharpMask(radius=2,percent=220,threshold=2))
         image.save(image_path)
-    command=['tesseract',str(image_path),'stdout','-l','chi_sim+eng','--psm','6']
+    tessdata=server.PROFILE/'tessdata'
+    if not (tessdata/'chi_sim.traineddata').exists():tessdata=server.PROFILE
+    if not (tessdata/'chi_sim.traineddata').exists():raise RuntimeError('缺少 chi_sim 中文 OCR 语言包')
+    command=['tesseract',str(image_path),'stdout','--tessdata-dir',str(tessdata),'-l','chi_sim','--psm','6']
     result=subprocess.run(command,stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=120)
     if result.returncode:raise RuntimeError(result.stderr.decode('utf-8','replace')[:200])
     return server.safe_text(result.stdout.decode('utf-8','replace'))
