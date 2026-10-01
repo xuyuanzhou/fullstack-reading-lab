@@ -3,7 +3,7 @@ const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({'&':'
 const LESSONS = window.LESSONS;
 const KNOWLEDGE_POINTS = window.KNOWLEDGE_POINTS;
 const GROUP_ORDER = {
-  frontend:['语言基础','浏览器','React','工程实践'],
+  frontend:['语言基础','CSS 与布局','浏览器','网络与安全','React','Node.js','工程实践'],
   java:['Java 基础','算法','JVM','并发','框架','数据库','缓存','分布式与高并发','系统设计','工程实践']
 };
 LESSONS.sort((a,b)=>{

@@ -4,7 +4,7 @@ from pathlib import Path
 import shutil
 
 ROOT = Path(__file__).resolve().parent
-PUBLIC_FILES = ('index.html', 'styles.css', 'app.js', 'lessons.js', 'extra-lessons.js', 'distributed-lessons.js', 'knowledge-points.js')
+PUBLIC_FILES = ('index.html', 'styles.css', 'app.js', 'lessons.js', 'extra-lessons.js', 'distributed-lessons.js', 'knowledge-points.js', 'coverage-lessons.js')
 PUBLIC_DIAGRAMS = ('cap-partition.svg', 'kafka-order.svg', 'bloom-filter.svg', 'seckill-flow.svg')
 DIST = ROOT / 'dist'
 
