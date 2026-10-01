@@ -38,6 +38,13 @@ a{color:var(--accent);text-decoration:none}
 .group-lessons{border-left:1px solid var(--line);margin:1px 0 8px 20px;padding:2px 0 2px 10px}
 .group-lessons button{display:block;width:100%;text-align:left;padding:8px 10px;border:0;border-radius:6px;background:transparent;color:var(--muted);font-size:12px;line-height:1.35}
 .group-lessons button:hover,.group-lessons button.active{color:var(--accent);background:var(--accent-soft)}
+.sidebar-lesson{padding:3px 0 7px;border-bottom:1px solid var(--line)}
+.sidebar-lesson:last-child{border-bottom:0}
+.group-lessons .sidebar-lesson-title{font-weight:750;color:var(--ink);font-size:12px}
+.sidebar-lesson ul{margin:1px 0 0 9px;padding:0 0 0 13px;color:var(--teal)}
+.sidebar-lesson li{padding:0;margin:0}
+.group-lessons .sidebar-lesson li button{padding:3px 5px;font-size:11px;line-height:1.4;color:var(--muted)}
+.group-lessons .sidebar-lesson li button:hover{color:var(--accent)}
 .sidebar-foot{border:1px solid var(--line);background:var(--surface-soft);border-radius:12px;padding:16px;margin:25px 2px 0}
 .sidebar-foot strong,.privacy-note strong{display:block;font-size:13px;margin-top:7px}
 .sidebar-foot p:not(.eyebrow),.privacy-note p{font-size:11px;color:var(--muted);line-height:1.6}
@@ -150,6 +157,12 @@ textarea{width:100%;resize:vertical;border:1px solid var(--line);border-radius:9
 .knowledge-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow)}
 .knowledge-card h3{margin:10px 0 7px}
 .knowledge-card p{font-size:12px;color:var(--muted);line-height:1.6}
+.knowledge-section{margin:28px 0 38px}
+.knowledge-section .section-heading{margin-bottom:14px}
+.card-points{margin:6px 0 14px;padding-left:19px;color:var(--muted);font-size:12px;line-height:1.75}
+.card-points li{margin:3px 0}
+.point-outline{margin:20px 0;padding:18px 21px;border:1px solid var(--line);border-radius:11px;background:var(--surface-soft)}
+.point-outline ol{margin:9px 0 0;padding-left:22px;display:grid;gap:4px;color:var(--ink);font-size:13px}
 .card-link{color:var(--accent);font-size:11px;font-weight:700}
 .method-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:25px 0 35px}
 .method-grid>div{border:1px solid var(--line);border-radius:11px;background:var(--surface);padding:17px}

@@ -1,6 +1,6 @@
 # 全栈学习实验室
 
-面向前端和 Java 开发者的公开学习网站。以本机题库的主题分布作为选题线索，重新编写中文解释、具体例子、主动回忆练习与参考答案；每节课附官方文档、标准或固定版本源码依据。当前有 **54 节原创课程**（前端 21、Java 33），包含学习路线、知识库、学习进度、复习清单、笔记与知识核验。
+面向前端和 Java 开发者的公开学习网站。以本机题库的主题分布作为选题线索，重新编写中文解释、具体例子、主动回忆练习与参考答案；每节课附官方文档、标准或固定版本源码依据。当前有 **54 节原创课程、162 个具体知识点**（前端 21 课、Java 33 课），包含可展开的知识点目录、搜索、学习进度、复习清单、笔记与知识核验。知识点数量只统计已编写课程，不等于本机题库的全部内容已经整理完成。
 
 网站参考 [React Mastery Lab](https://xuyuanzhou.github.io/react-mastery-lab/) 的三栏学习工作台：左侧课程路径、中间连续阅读、右侧进度与最近访问。React 知识卡直接打开现有的 React Mastery Lab 对应章节，不另建一套 React 源码学习器。
 
@@ -26,6 +26,7 @@ node --check app.js
 node --check lessons.js
 node --check extra-lessons.js
 node --check distributed-lessons.js
+node --check knowledge-points.js
 node verify_content.mjs
 python3 -m unittest discover -p tests.py
 python3 build_public.py

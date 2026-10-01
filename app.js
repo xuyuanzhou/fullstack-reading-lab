@@ -1,6 +1,7 @@
 const $ = (selector) => document.querySelector(selector);
 const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const LESSONS = window.LESSONS;
+const KNOWLEDGE_POINTS = window.KNOWLEDGE_POINTS;
 const GROUP_ORDER = {
   frontend:['语言基础','浏览器','React','工程实践'],
   java:['Java 基础','算法','JVM','并发','框架','数据库','缓存','分布式与高并发','系统设计','工程实践']
@@ -31,6 +32,7 @@ try {
   if (!state.notes || typeof state.notes!=='object') state.notes={};
   if (!state.audit || typeof state.audit!=='object') state.audit={};
 } catch (_) {}
+if (!GROUP_ORDER[state.track]?.includes(state.group)) state.group=GROUP_ORDER[state.track]?.[0]||'';
 let localLibrary = false;
 let renderSerial = 0;
 function save() { try { localStorage.setItem(STORAGE_KEY,JSON.stringify(state)); } catch (_) {} }
@@ -48,13 +50,17 @@ function fromHash() {
   const lesson=value.match(/^\/lesson\/(.+)$/);
   if (lesson) {
     const id=decodeURIComponent(lesson[1]);
-    if (LESSONS.some((item)=>item.id===id)) {state.lesson=id;state.view='lesson';}
+    const entry=LESSONS.find((item)=>item.id===id);
+    if (entry) {state.lesson=id;state.track=entry.track;state.group=entry.group;state.view='lesson';}
   } else if (['/home','/library','/audit','/saved','/local','/item'].includes(value)) {
     state.view=value.slice(1);
   }
   render();
 }
 function openLesson(id) {
+  const entry=LESSONS.find((item)=>item.id===id);
+  if (!entry)return;
+  state.track=entry.track;state.group=entry.group;
   state.lesson=id;
   state.recent=[id,...state.recent.filter((item)=>item!==id)].slice(0,12);
   route('lesson');
@@ -64,6 +70,7 @@ function toggle(key,id) {
   save();render();
 }
 function groups() {return [...new Set(LESSONS.filter((item)=>item.track===state.track).map((item)=>item.group))];}
+const pointsFor = (lesson) => KNOWLEDGE_POINTS[lesson.id] || [];
 function lessonButton(item,small) {
   const progress=state.done.includes(item.id) ? '<span class="done-indicator">✓</span>' : '<span class="step-indicator"></span>';
   return '<button class="'+(small?'lesson-row compact':'lesson-row')+'" data-lesson="'+esc(item.id)+'">'+progress+'<span><strong>'+esc(item.title)+'</strong><small>'+esc(item.prompt)+'</small></span><span class="row-arrow">↗</span></button>';
@@ -73,7 +80,8 @@ function renderSidebar() {
   const entries=groups().map((group,index)=>{
     const items=LESSONS.filter((lesson)=>lesson.track===state.track && lesson.group===group);
     const completed=items.filter((lesson)=>state.done.includes(lesson.id)).length;
-    return '<section class="sidebar-group"><button class="group-heading '+(state.group===group?'selected':'')+'" data-group="'+esc(group)+'"><span class="group-number">'+String(index+1).padStart(2,'0')+'</span><span>'+esc(group)+'</span><small>'+completed+'/'+items.length+'</small></button>'+(state.group===group?'<div class="group-lessons">'+items.map((lesson)=>'<button class="'+(state.view==='lesson'&&state.lesson===lesson.id?'active':'')+'" data-lesson="'+esc(lesson.id)+'">'+esc(lesson.title)+'</button>').join('')+'</div>':'')+'</section>';
+    const pointCount=items.reduce((sum,lesson)=>sum+pointsFor(lesson).length,0);
+    return '<section class="sidebar-group"><button class="group-heading '+(state.group===group?'selected':'')+'" data-group="'+esc(group)+'" aria-expanded="'+(state.group===group)+'"><span class="group-number">'+String(index+1).padStart(2,'0')+'</span><span>'+esc(group)+'</span><small>'+completed+'/'+items.length+' 课 · '+pointCount+' 点</small></button>'+(state.group===group?'<div class="group-lessons">'+items.map((lesson)=>'<div class="sidebar-lesson"><button class="sidebar-lesson-title '+(state.view==='lesson'&&state.lesson===lesson.id?'active':'')+'" data-lesson="'+esc(lesson.id)+'">'+esc(lesson.title)+'</button><ul>'+pointsFor(lesson).map((point)=>'<li><button data-lesson="'+esc(lesson.id)+'" aria-label="阅读 '+esc(point)+'">'+esc(point)+'</button></li>').join('')+'</ul></div>').join('')+'</div>':'')+'</section>';
   });
   $('#roadmap').innerHTML=entries.join('');
   $('#roadmap').querySelectorAll('[data-group]').forEach((button)=>button.onclick=()=>{state.group=state.group===button.dataset.group?'':button.dataset.group;save();renderSidebar();});
@@ -123,7 +131,8 @@ function renderLesson() {
   const next=LESSONS.filter((item)=>item.track===lesson.track)[index+1];
   const source=lesson.react?'<a class="source-link" href="'+esc(reactUrl(lesson.react))+'" target="_blank" rel="noopener"><span>↗</span><strong>在 React Mastery Lab 中追踪源码</strong><small>打开对应章节与 React v19.3.0 源码查看器</small></a>':'';
   const deep=Array.isArray(lesson.deep)?'<div class="deep-dive"><span class="eyebrow">DEEP DIVE / 机制拆解</span>'+(lesson.diagram?'<img class="concept-diagram" src="'+esc(lesson.diagram)+'" alt="'+esc(lesson.title)+' 原创机制图">':'')+lesson.deep.map((part)=>'<section><h3>'+esc(part.title)+'</h3><p>'+esc(part.body)+'</p></section>').join('')+(lesson.origin?'<p class="origin-note">选题线索：'+esc(lesson.origin)+'。讲解与示意图均重新编写。</p>':'')+'</div>':'';
-  $('#mainPanel').innerHTML='<div class="breadcrumb"><button id="backCourse">学习路线</button><span>/</span><span>'+esc(lesson.group)+'</span><span>/</span><strong>'+esc(lesson.title)+'</strong></div><article class="lesson-article"><div class="lesson-header"><span class="eyebrow">LESSON '+String(index+1).padStart(2,'0')+' / '+esc(lesson.track.toUpperCase())+'</span><h1>'+esc(lesson.title)+'</h1><p class="lead-question">'+esc(lesson.prompt)+'</p><div class="lesson-meta"><span>✦ 原创课程</span><span>● '+references.length+' 项核对依据</span><span>↗ '+esc(lesson.group)+'</span></div></div><div class="concept-panel"><span class="panel-label">01 / 核心模型</span><p>'+esc(lesson.core)+'</p></div>'+deep+'<section class="article-section"><span class="section-index">02</span><div><h2>为什么需要理解它</h2><p>'+esc(lesson.why)+'</p></div></section><section class="article-section"><span class="section-index">03</span><div><h2>把概念放进具体场景</h2><div class="example-box">'+esc(lesson.example)+'</div></div></section>'+source+'<section class="article-section"><span class="section-index">04</span><div><h2>动手检验理解</h2><p>'+esc(lesson.task)+'</p><details class="answer"><summary>先自己回答，再看参考答案 <span>＋</span></summary><p>'+esc(lesson.answer)+'</p></details></div></section><section class="article-section"><span class="section-index">05</span><div><h2>核对依据</h2><p class="muted">以官方文档、标准或固定版本源码为准。课程中的简化模型不代替实际运行验证。</p><div class="reference-list">'+(references.length?references.map((ref)=>'<a href="'+esc(ref[1])+'" target="_blank" rel="noopener">'+esc(ref[0])+' <span>↗</span></a>').join(''):'<p class="muted">本节是原创练习，请结合实际系统约束验证。</p>')+'</div></div></section><section class="article-section"><span class="section-index">06</span><div><h2>用自己的话重述</h2><textarea id="lessonNote" rows="5" placeholder="写下你理解的因果关系、仍有疑问的地方和验证方式。">'+esc(state.notes[lesson.id]||'')+'</textarea><p class="muted">笔记只保存在当前浏览器。</p></div></section><div class="lesson-actions"><button class="primary-button" id="markDone">'+(state.done.includes(lesson.id)?'✓ 已掌握 · 撤销':'标记已掌握')+'</button><button class="outline-button" id="markReview">'+(state.review.includes(lesson.id)?'移出复习清单':'加入复习清单')+'</button></div>'+ (next?'<button class="next-card" id="nextLesson"><span>下一课</span><strong>'+esc(next.title)+'</strong><span>→</span></button>':'')+'</article>';
+  const pointOutline='<section class="point-outline"><span class="eyebrow">KNOWLEDGE POINTS / 本课知识点</span><ol>'+pointsFor(lesson).map((point)=>'<li>'+esc(point)+'</li>').join('')+'</ol></section>';
+  $('#mainPanel').innerHTML='<div class="breadcrumb"><button id="backCourse">学习路线</button><span>/</span><span>'+esc(lesson.group)+'</span><span>/</span><strong>'+esc(lesson.title)+'</strong></div><article class="lesson-article"><div class="lesson-header"><span class="eyebrow">LESSON '+String(index+1).padStart(2,'0')+' / '+esc(lesson.track.toUpperCase())+'</span><h1>'+esc(lesson.title)+'</h1><p class="lead-question">'+esc(lesson.prompt)+'</p><div class="lesson-meta"><span>✦ 原创课程</span><span>● '+references.length+' 项核对依据</span><span>↗ '+esc(lesson.group)+'</span></div></div>'+pointOutline+'<div class="concept-panel"><span class="panel-label">01 / 核心模型</span><p>'+esc(lesson.core)+'</p></div>'+deep+'<section class="article-section"><span class="section-index">02</span><div><h2>为什么需要理解它</h2><p>'+esc(lesson.why)+'</p></div></section><section class="article-section"><span class="section-index">03</span><div><h2>把概念放进具体场景</h2><div class="example-box">'+esc(lesson.example)+'</div></div></section>'+source+'<section class="article-section"><span class="section-index">04</span><div><h2>动手检验理解</h2><p>'+esc(lesson.task)+'</p><details class="answer"><summary>先自己回答，再看参考答案 <span>＋</span></summary><p>'+esc(lesson.answer)+'</p></details></div></section><section class="article-section"><span class="section-index">05</span><div><h2>核对依据</h2><p class="muted">以官方文档、标准或固定版本源码为准。课程中的简化模型不代替实际运行验证。</p><div class="reference-list">'+(references.length?references.map((ref)=>'<a href="'+esc(ref[1])+'" target="_blank" rel="noopener">'+esc(ref[0])+' <span>↗</span></a>').join(''):'<p class="muted">本节是原创练习，请结合实际系统约束验证。</p>')+'</div></div></section><section class="article-section"><span class="section-index">06</span><div><h2>用自己的话重述</h2><textarea id="lessonNote" rows="5" placeholder="写下你理解的因果关系、仍有疑问的地方和验证方式。">'+esc(state.notes[lesson.id]||'')+'</textarea><p class="muted">笔记只保存在当前浏览器。</p></div></section><div class="lesson-actions"><button class="primary-button" id="markDone">'+(state.done.includes(lesson.id)?'✓ 已掌握 · 撤销':'标记已掌握')+'</button><button class="outline-button" id="markReview">'+(state.review.includes(lesson.id)?'移出复习清单':'加入复习清单')+'</button></div>'+ (next?'<button class="next-card" id="nextLesson"><span>下一课</span><strong>'+esc(next.title)+'</strong><span>→</span></button>':'')+'</article>';
   $('#backCourse').onclick=()=>route('home');
   $('#markDone').onclick=()=>toggle('done',lesson.id);
   $('#markReview').onclick=()=>toggle('review',lesson.id);
@@ -132,8 +141,14 @@ function renderLesson() {
 }
 function renderLibrary() {
   const q=state.query.trim().toLocaleLowerCase();
-  const cards=LESSONS.filter((item)=>item.track===state.track && (!q || (item.title+' '+item.prompt+' '+item.core+' '+item.keywords).toLocaleLowerCase().includes(q)));
-  $('#mainPanel').innerHTML='<div class="page-kicker"><span class="eyebrow">KNOWLEDGE BASE</span><span class="version-pill">持续核对</span></div><h1>知识库</h1><p class="page-intro">按问题找概念，再用参考资料和练习验证自己的解释。公开版只展示原创课程。</p><div class="search-row"><input id="knowledgeSearch" type="search" placeholder="搜索概念、问题或关键词…" value="'+esc(state.query)+'"><span>'+cards.length+' 条结果</span></div><div class="knowledge-grid">'+cards.map((item)=>'<button class="knowledge-card" data-lesson="'+esc(item.id)+'"><span class="eyebrow">'+esc(item.group)+'</span><h3>'+esc(item.title)+'</h3><p>'+esc(item.prompt)+'</p><span class="card-link">阅读并练习 →</span></button>').join('')+'</div>'+(cards.length?'':'<div class="empty-state">没有找到匹配课程，试试更短的关键词。</div>')+(localLibrary?'<div class="local-banner"><div><strong>已连接本机资料</strong><p>你可以额外阅读自己的 PDF/Word，并逐页核验原始内容。</p></div><button id="openLocal">打开本机资料 →</button></div>':'');
+  const cards=LESSONS.filter((item)=>item.track===state.track && (!q || (item.title+' '+item.prompt+' '+item.core+' '+item.keywords+' '+pointsFor(item).join(' ')).toLocaleLowerCase().includes(q)));
+  const pointCount=cards.reduce((sum,item)=>sum+pointsFor(item).length,0);
+  const sections=groups().map((group)=>{
+    const items=cards.filter((item)=>item.group===group);
+    if(!items.length)return '';
+    return '<section class="knowledge-section"><div class="section-heading"><div><span class="eyebrow">'+esc(state.track==='java'?'JAVA BACKEND':'FRONTEND')+'</span><h2>'+esc(group)+'</h2></div><span>'+items.length+' 课 · '+items.reduce((sum,item)=>sum+pointsFor(item).length,0)+' 个知识点</span></div><div class="knowledge-grid">'+items.map((item)=>'<button class="knowledge-card" data-lesson="'+esc(item.id)+'"><span class="eyebrow">'+esc(item.group)+'</span><h3>'+esc(item.title)+'</h3><ul class="card-points">'+pointsFor(item).map((point)=>'<li>'+esc(point)+'</li>').join('')+'</ul><span class="card-link">阅读讲解、练习与依据 →</span></button>').join('')+'</div></section>';
+  }).join('');
+  $('#mainPanel').innerHTML='<div class="page-kicker"><span class="eyebrow">KNOWLEDGE BASE</span><span class="version-pill">已核验的原创课程</span></div><h1>知识点目录</h1><p class="page-intro">按知识点找到对应课程，再阅读解释、动手练习和核对依据。当前目录覆盖已编写的原创课程，不代表本机题库已全部核验。</p><div class="search-row"><input id="knowledgeSearch" type="search" placeholder="搜索知识点、概念或问题…" value="'+esc(state.query)+'"><span>'+cards.length+' 课 · '+pointCount+' 个知识点</span></div>'+sections+(cards.length?'':'<div class="empty-state">没有找到匹配知识点，试试更短的关键词。</div>')+(localLibrary?'<div class="local-banner"><div><strong>已连接本机资料</strong><p>你可以额外阅读自己的 PDF/Word，并逐页核验原始内容。</p></div><button id="openLocal">打开本机资料 →</button></div>':'');
   $('#knowledgeSearch').oninput=(event)=>{const pos=event.target.selectionStart;state.query=event.target.value;save();renderLibrary();$('#knowledgeSearch').focus();$('#knowledgeSearch').setSelectionRange(pos,pos);};
   $('#mainPanel').querySelectorAll('[data-lesson]').forEach((button)=>button.onclick=()=>openLesson(button.dataset.lesson));
   if ($('#openLocal')) $('#openLocal').onclick=()=>route('local');
@@ -251,7 +266,7 @@ $('#savedTab').onclick=()=>route('saved');
 $('#themeToggle').onclick=()=>{state.theme=state.theme==='dark'?'light':'dark';save();applyTheme();};
 $('#menuToggle').onclick=()=>$('#sidebar').classList.add('open');
 $('#closeMenu').onclick=()=>$('#sidebar').classList.remove('open');
-document.querySelectorAll('[data-track]').forEach((button)=>button.onclick=()=>{state.track=button.dataset.track;state.group='';route('home');});
+document.querySelectorAll('[data-track]').forEach((button)=>button.onclick=()=>{state.track=button.dataset.track;state.group=GROUP_ORDER[state.track][0];route('home');});
 window.addEventListener('hashchange',fromHash);
 applyTheme();fromHash();
 if (location.hostname==='localhost' || location.hostname==='127.0.0.1') {

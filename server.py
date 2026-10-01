@@ -408,7 +408,7 @@ class Handler(BaseHTTPRequestHandler):
                 limit=min(100,max(1,int(get('limit','80'))));offset=max(0,int(get('offset','0')))
                 rows=con.execute('SELECT id,title,substr(body,max(1,instr(lower(body),lower(?))-60),140) FROM docs WHERE (title LIKE ? ESCAPE "\\" OR body LIKE ? ESCAPE "\\") AND (?=? OR id LIKE ?) LIMIT ? OFFSET ?',(q,needle,needle,category_filter,'',('Java-%' if category_filter=='java' else 'Web前端-%' if category_filter=='frontend' else '%'),limit+1,offset)).fetchall();con.close()
                 return self.send_json({'items':[{'id':a,'title':b,'snippet':c} for a,b,c in rows[:limit]],'hasMore':len(rows)>limit})
-            if url.path in {'/','/index.html','/app.js','/styles.css','/lessons.js','/extra-lessons.js','/distributed-lessons.js'} or url.path in {'/diagrams/cap-partition.svg','/diagrams/kafka-order.svg','/diagrams/bloom-filter.svg','/diagrams/seckill-flow.svg'}:
+            if url.path in {'/','/index.html','/app.js','/styles.css','/lessons.js','/extra-lessons.js','/distributed-lessons.js','/knowledge-points.js'} or url.path in {'/diagrams/cap-partition.svg','/diagrams/kafka-order.svg','/diagrams/bloom-filter.svg','/diagrams/seckill-flow.svg'}:
                 name='index.html' if url.path=='/' else url.path[1:]
                 p=HERE/name;data=p.read_bytes();mime='text/html' if name.endswith('.html') else 'text/javascript' if name.endswith('.js') else 'image/svg+xml' if name.endswith('.svg') else 'text/css'
                 self.send_response(200);self.send_header('Content-Type',mime+'; charset=utf-8');self.send_header('Content-Length',str(len(data)));self.send_header('X-Content-Type-Options','nosniff');self.end_headers();self.wfile.write(data);return
