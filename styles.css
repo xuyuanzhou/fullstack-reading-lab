@@ -33,18 +33,17 @@ a{color:var(--accent);text-decoration:none}
 .sidebar-group{margin:4px 0}
 .group-heading{width:100%;display:flex;align-items:center;gap:9px;text-align:left;background:transparent;border:0;border-radius:8px;padding:10px;color:var(--muted);font-weight:650}
 .group-heading:hover,.group-heading.selected{background:var(--accent-soft);color:var(--accent)}
-.group-heading small{margin-left:auto;color:var(--muted);font-size:11px;font-weight:500}
+.group-heading .group-name{min-width:0;flex:1;line-height:1.35}
+.group-heading small{flex:none;color:var(--muted);font-size:10px;font-weight:500;white-space:nowrap}
+.group-chevron{flex:none;font-size:15px;line-height:1;transition:transform .2s}
+.group-heading[aria-expanded="true"] .group-chevron{transform:rotate(180deg)}
 .group-number{font:700 10px ui-monospace,monospace;color:var(--teal)}
 .group-lessons{border-left:1px solid var(--line);margin:1px 0 8px 20px;padding:2px 0 2px 10px}
-.group-lessons button{display:block;width:100%;text-align:left;padding:8px 10px;border:0;border-radius:6px;background:transparent;color:var(--muted);font-size:12px;line-height:1.35}
+.group-lessons button{display:flex;align-items:center;gap:7px;width:100%;text-align:left;padding:7px 8px;border:0;border-radius:6px;background:transparent;color:var(--muted);font-size:12px;line-height:1.35}
 .group-lessons button:hover,.group-lessons button.active{color:var(--accent);background:var(--accent-soft)}
-.sidebar-lesson{padding:3px 0 7px;border-bottom:1px solid var(--line)}
-.sidebar-lesson:last-child{border-bottom:0}
-.group-lessons .sidebar-lesson-title{font-weight:750;color:var(--ink);font-size:12px}
-.sidebar-lesson ul{margin:1px 0 0 9px;padding:0 0 0 13px;color:var(--teal)}
-.sidebar-lesson li{padding:0;margin:0}
-.group-lessons .sidebar-lesson li button{padding:3px 5px;font-size:11px;line-height:1.4;color:var(--muted)}
-.group-lessons .sidebar-lesson li button:hover{color:var(--accent)}
+.group-lessons .sidebar-lesson-title{font-weight:650;color:var(--ink);font-size:12px}
+.sidebar-lesson-status{flex:none;width:12px;color:var(--teal);font-size:15px;text-align:center}
+.sidebar-lesson-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sidebar-foot{border:1px solid var(--line);background:var(--surface-soft);border-radius:12px;padding:16px;margin:25px 2px 0}
 .sidebar-foot strong,.privacy-note strong{display:block;font-size:13px;margin-top:7px}
 .sidebar-foot p:not(.eyebrow),.privacy-note p{font-size:11px;color:var(--muted);line-height:1.6}

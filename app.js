@@ -3,8 +3,8 @@ const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({'&':'
 const LESSONS = window.LESSONS;
 const KNOWLEDGE_POINTS = window.KNOWLEDGE_POINTS;
 const GROUP_ORDER = {
-  frontend:['语言基础','CSS 与布局','浏览器','网络与安全','React','Node.js','工程实践'],
-  java:['Java 基础','算法','JVM','并发','框架','数据库','缓存','分布式与高并发','系统设计','工程实践']
+  frontend:['语言基础','TypeScript','CSS 与布局','浏览器','网络与安全','React','Vue','Node.js','工程实践'],
+  java:['Java 基础','算法','JVM','并发','框架','数据库','缓存','消息队列','搜索','分布式与高并发','系统设计','工程实践']
 };
 LESSONS.sort((a,b)=>{
   if(a.track!==b.track)return a.track==='frontend'?-1:1;
@@ -81,10 +81,10 @@ function renderSidebar() {
     const items=LESSONS.filter((lesson)=>lesson.track===state.track && lesson.group===group);
     const completed=items.filter((lesson)=>state.done.includes(lesson.id)).length;
     const pointCount=items.reduce((sum,lesson)=>sum+pointsFor(lesson).length,0);
-    return '<section class="sidebar-group"><button class="group-heading '+(state.group===group?'selected':'')+'" data-group="'+esc(group)+'" aria-expanded="'+(state.group===group)+'"><span class="group-number">'+String(index+1).padStart(2,'0')+'</span><span>'+esc(group)+'</span><small>'+completed+'/'+items.length+' 课 · '+pointCount+' 点</small></button>'+(state.group===group?'<div class="group-lessons">'+items.map((lesson)=>'<div class="sidebar-lesson"><button class="sidebar-lesson-title '+(state.view==='lesson'&&state.lesson===lesson.id?'active':'')+'" data-lesson="'+esc(lesson.id)+'">'+esc(lesson.title)+'</button><ul>'+pointsFor(lesson).map((point)=>'<li><button data-lesson="'+esc(lesson.id)+'" aria-label="阅读 '+esc(point)+'">'+esc(point)+'</button></li>').join('')+'</ul></div>').join('')+'</div>':'')+'</section>';
+    return '<section class="sidebar-group"><button class="group-heading '+(state.group===group?'selected':'')+'" data-group="'+esc(group)+'" aria-expanded="'+(state.group===group)+'"><span class="group-number">'+String(index+1).padStart(2,'0')+'</span><span class="group-name">'+esc(group)+'</span><small>'+completed+'/'+items.length+' 课 · '+pointCount+' 点</small><span class="group-chevron" aria-hidden="true">⌄</span></button>'+(state.group===group?'<div class="group-lessons">'+items.map((lesson)=>'<button class="sidebar-lesson-title '+(state.view==='lesson'&&state.lesson===lesson.id?'active':'')+'" data-lesson="'+esc(lesson.id)+'" title="'+esc(lesson.title)+'"><span class="sidebar-lesson-status">'+(state.done.includes(lesson.id)?'✓':'·')+'</span><span class="sidebar-lesson-name">'+esc(lesson.title)+'</span></button>').join('')+'</div>':'')+'</section>';
   });
   $('#roadmap').innerHTML=entries.join('');
-  $('#roadmap').querySelectorAll('[data-group]').forEach((button)=>button.onclick=()=>{state.group=state.group===button.dataset.group?'':button.dataset.group;save();renderSidebar();});
+  $('#roadmap').querySelectorAll('[data-group]').forEach((button)=>button.onclick=()=>{state.group=state.group===button.dataset.group?'':button.dataset.group;save();render();});
   $('#roadmap').querySelectorAll('[data-lesson]').forEach((button)=>button.onclick=()=>openLesson(button.dataset.lesson));
 }
 function renderRight() {
