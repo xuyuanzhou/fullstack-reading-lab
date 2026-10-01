@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 320" role="img" aria-labelledby="title desc">
+ <title id="title">Kafka 多分区内按业务键有序</title><desc id="desc">同一订单的三个事件依次进入分区零；其他订单事件进入其他分区，并行但没有跨分区全局顺序。</desc>
+ <rect width="900" height="320" rx="18" fill="#f1f5f9"/><text x="38" y="47" font-family="sans-serif" font-size="21" font-weight="700" fill="#102a43">同一业务键 → 同一分区 → 分区内顺序</text>
+ <g font-family="sans-serif" font-size="15"><text x="47" y="112" fill="#334155">订单 A</text><text x="47" y="194" fill="#334155">订单 B</text><text x="47" y="276" fill="#334155">订单 C</text></g>
+ <g stroke="#94a3b8" stroke-width="2"><path d="M119 105 H163"/><path d="M119 187 H163"/><path d="M119 269 H163"/></g>
+ <g font-family="sans-serif" font-size="14" text-anchor="middle"><rect x="166" y="70" width="678" height="66" rx="11" fill="#dbeafe"/><text x="203" y="110" fill="#1e3a8a">P0</text><rect x="252" y="82" width="155" height="42" rx="8" fill="#fff"/><text x="329" y="109" fill="#1e3a8a">A 创建</text><rect x="421" y="82" width="155" height="42" rx="8" fill="#fff"/><text x="498" y="109" fill="#1e3a8a">A 支付</text><rect x="590" y="82" width="155" height="42" rx="8" fill="#fff"/><text x="667" y="109" fill="#1e3a8a">A 完成</text>
+ <rect x="166" y="152" width="678" height="66" rx="11" fill="#dcfce7"/><text x="203" y="192" fill="#166534">P1</text><rect x="252" y="164" width="155" height="42" rx="8" fill="#fff"/><text x="329" y="191" fill="#166534">B 创建</text>
+ <rect x="166" y="234" width="678" height="66" rx="11" fill="#ffedd5"/><text x="203" y="274" fill="#9a3412">P2</text><rect x="252" y="246" width="155" height="42" rx="8" fill="#fff"/><text x="329" y="273" fill="#9a3412">C 创建</text></g>
+</svg>

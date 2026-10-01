@@ -1,0 +1,42 @@
+name: Verify and deploy public course
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check original lessons and code
+        run: |
+          node --check app.js
+          node --check lessons.js
+          node --check extra-lessons.js
+          node --check distributed-lessons.js
+          node verify_content.mjs
+          python -m unittest discover -p tests.py
+      - name: Build allowlisted public assets
+        run: python build_public.py
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+      - id: deployment
+        uses: actions/deploy-pages@v4
