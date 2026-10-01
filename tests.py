@@ -6,6 +6,10 @@ import unittest
 import zipfile
 import server
 import audit_rules
+import import_archives
+import import_embedded
+import import_library
+import parsers
 
 class ReaderTests(unittest.TestCase):
     def test_catalog_is_local_and_classified(self):
@@ -63,4 +67,45 @@ class ReaderTests(unittest.TestCase):
                 self.assertEqual(server.password_candidates(pdf)[0],'example-password')
             finally:
                 server.LIB=previous
+    def test_archive_member_paths_and_private_formats(self):
+        self.assertIsNone(import_archives.safe_member('../escape.md'))
+        self.assertIsNone(import_archives.safe_member('/absolute.md'))
+        self.assertIsNone(import_archives.safe_member('各PDF密码.txt'))
+        self.assertEqual(str(import_archives.safe_member('folder/Example.java')),'folder/Example.java')
+        with tempfile.TemporaryDirectory() as directory:
+            path=pathlib.Path(directory)/'sheet.xlsx'
+            with zipfile.ZipFile(str(path),'w') as archive:
+                archive.writestr('xl/worksheets/sheet1.xml','<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData><row><c r="A1" t="inlineStr"><is><t>Java 面试</t></is></c></row></sheetData></worksheet>')
+            self.assertIn('Java 面试',parsers.xlsx_text(path))
+    def test_nested_materials_stay_in_private_profile(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base=pathlib.Path(directory);root=base/'library';root.mkdir();folder=root/'Java-示例';folder.mkdir()
+            with zipfile.ZipFile(str(folder/'sample.zip'),'w') as archive:
+                archive.writestr('docs/note.md','可读内容')
+                archive.writestr('../escape.md','不得写出')
+            with zipfile.ZipFile(str(folder/'sample.docx'),'w') as archive:
+                archive.writestr('word/media/image1.png',b'image-bytes')
+            previous=server.PROFILE
+            try:
+                server.PROFILE=base/'private-data';server.PROFILE.mkdir()
+                self.assertEqual(import_archives.import_archives(root)['members'],1)
+                self.assertEqual(import_embedded.import_embedded(root)['images'],1)
+                library=server.Library(root)
+                self.assertEqual(library.list()['total'],3)
+                self.assertEqual(library.resolve('Java-示例/sample.zip!/docs/note.md').read_text(),'可读内容')
+                self.assertEqual(library.resolve('Java-示例/sample.docx!/word/media/image1.png').read_bytes(),b'image-bytes')
+                self.assertFalse((base/'escape.md').exists())
+            finally:server.PROFILE=previous
+    def test_import_resume_uses_stable_batches(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base=pathlib.Path(directory);root=base/'library';root.mkdir()
+            for name in ('a.md','b.md','c.md'):(root/name).write_text('正文 '+name)
+            previous=(server.PROFILE,server.DB,server.LIB)
+            try:
+                server.PROFILE=base/'private-data';server.PROFILE.mkdir()
+                server.DB=server.PROFILE/'index.sqlite3'
+                self.assertEqual(import_library.import_all(root,batch_size=2)['total'],2)
+                self.assertEqual(import_library.import_all(root,batch_size=2)['total'],1)
+                self.assertEqual(import_library.import_all(root,batch_size=2)['total'],0)
+            finally:server.PROFILE,server.DB,server.LIB=previous
 if __name__=='__main__':unittest.main()

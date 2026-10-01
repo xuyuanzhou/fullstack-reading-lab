@@ -45,7 +45,21 @@ PDF 的“原版页面”按页渲染，原有图片、图表和版面布局保�
 
 超长思维导图若安装了 Pillow，OCR 会按原分辨率分块识别，避免单张大图超时；图片仍按原始文件显示。macOS 可用 `python3 -m pip install Pillow` 安装这一可选依赖。PDF 页面渲染不依赖 Pillow。
 
-本机索引及人工核验线索保存在被 Git 忽略的 private-data/。本次个人题库中 1,382 份文档已建立文字索引，原先受密码保护的 18 份 PDF 已可读取；新加入的独立图片需要重新扫描并安装 OCR 才能进入文字搜索。这个数量只是当前用户的资料快照，不是公开站点的内容数量。
+本机索引、完整提取文本、压缩包展开文件和人工核验线索保存在被 Git 忽略的 `private-data/`。项目位于 `~/Desktop/个人/fullstack-reading-lab`，与原题库并列。原题库不移动、不改写。格式覆盖与公开范围见 [资料导入与公开范围](资料导入与公开范围.md)，分批推进情况见 [批次进度](批次进度.md)。
+
+要将自己的资料完整导入本机阅读器，依次运行：
+
+~~~bash
+python3 import_archives.py --library /path/to/全栈面试题库
+python3 import_embedded.py --library /path/to/全栈面试题库
+python3 import_library.py --library /path/to/全栈面试题库 --batch-size 200
+~~~
+
+按相同命令逐批运行，直到本批显示 `total: 0`；失败项核查后加 `--retry-failed` 重试。已完成且未改动的文件会跳过。PDF 提取全部页面，扫描版 PDF、独立图片和 Word 内嵌图片会在本机 OCR；Word、文本、XMind、draw.io、WPS、Excel 与压缩包中的可读文件也会加入本机搜索。Word 内嵌图片以原文件名作为单独条目，保留原图供核对。全文可在资料页复制；OCR 内容仍应对照原件校对。进度和失败原因记录在 `private-data/import-progress.json`、`private-data/index.sqlite3` 中。
+
+加密 PDF 会尝试同目录及上级目录的 `*密码*.txt`。加密 Excel 还需运行 `python3 -m pip install --target private-data/deps msoffcrypto-tool`，同样只从附近密码说明读取密码，解密结果只保存在 Git 忽略的私有资料区。上述解析数量只代表用户自己的资料快照，不是公开课程数量。公开站点依旧只有独立编写并核验的课程。
+
+无文字图片可以继续按批次尝试增强识别：`python3 review_empty_images.py --library /path/to/全栈面试题库 --batch-size 10`。生成的私有候选稿可能含大量错字，必须人工对照原图，程序不会自动把候选稿当作准确结论。
 
 ## 内容原则
 

@@ -161,16 +161,44 @@ async function api(path,options) {
 async function renderLocal() {
   if (!localLibrary) return route('library');
   const serial=++renderSerial;
-  $('#mainPanel').innerHTML='<div class="page-kicker"><span class="eyebrow">MY LOCAL LIBRARY</span><span class="version-pill">仅本机可见</span></div><h1>我的资料</h1><p class="page-intro">购买资料仅在本机打开，原文默认待核验；密码说明只在本机读取。</p><div class="search-row"><input id="localQuery" type="search" placeholder="搜索文件名…" value="'+esc(state.localQuery||'')+'"><button id="searchLocal">查找</button><button id="indexLocal">建立全文搜索</button></div><div id="localResults" class="loading">正在读取目录…</div>';
+  $('#mainPanel').innerHTML='<div class="page-kicker"><span class="eyebrow">MY LOCAL LIBRARY</span><span class="version-pill">仅本机可见</span></div><h1>我的资料</h1><p class="page-intro">购买资料仅在本机打开，原文默认待核验；密码说明只在本机读取。每次批量处理最多 200 份资料。</p><p class="muted" id="localImportStatus">正在读取导入状态…</p><div class="search-row"><input id="localQuery" type="search" placeholder="搜索文件名或正文…" value="'+esc(state.localQuery||'')+'"><button id="searchLocal">文件名</button><button id="searchFull">搜索正文</button><button id="indexLocal">处理下一批</button></div><div id="localResults" class="loading">正在读取目录…</div>';
+  api('/api/stats').then((data)=>{if(serial===renderSerial&&$('#localImportStatus'))$('#localImportStatus').textContent='已导入 '+data.imported+' / '+data.count+' 份；'+data.emptyText+' 份未识别出文字，可查看原图继续核验。';}).catch(()=>{});
+  const fileRow=(item,full)=>'<button class="file-row" data-file="'+esc(item.id)+'"><span class="file-format">'+esc(full?item.id.split('.').pop().toUpperCase():item.format)+'</span><span><strong>'+esc(item.title)+'</strong><small>'+esc(full?item.snippet:item.path)+'</small></span><span>→</span></button>';
+  const wireFiles=()=>$('#localResults').querySelectorAll('[data-file]').forEach((button)=>button.onclick=()=>{state.opened=button.dataset.file;state.page=1;route('item');});
+  const moreButton=(load)=>{const button=$('#loadMoreFiles');if(button)button.onclick=load;};
   $('#searchLocal').onclick=()=>{state.localQuery=$('#localQuery').value;save();renderLocal();};
+  $('#searchFull').onclick=async()=>{
+    state.localQuery=$('#localQuery').value;save();$('#localResults').textContent='正在搜索已导入的全文…';
+    let offset=0;
+    const load=async()=>{
+      try{const data=await api('/api/search?q='+encodeURIComponent(state.localQuery)+'&category='+encodeURIComponent(state.track)+'&offset='+offset);
+        if(serial!==renderSerial)return;
+        if(!offset)$('#localResults').innerHTML='<p class="muted">正文搜索结果，点击打开原文件。</p><div id="localRows"></div>';
+        $('#localRows').insertAdjacentHTML('beforeend',data.items.map((item)=>fileRow(item,true)).join(''));
+        offset+=data.items.length;
+        $('#loadMoreFiles')?.remove();
+        if(data.hasMore)$('#localResults').insertAdjacentHTML('beforeend','<button class="quiet-button" id="loadMoreFiles">加载更多结果</button>');
+        wireFiles();moreButton(load);
+      }catch(error){$('#localResults').textContent=error.message;}
+    };
+    await load();
+  };
   $('#localQuery').onkeydown=(event)=>{if(event.key==='Enter') $('#searchLocal').click();};
-  $('#indexLocal').onclick=async()=>{await api('/api/reindex',{method:'POST'});$('#indexLocal').textContent='正在后台索引…';};
-  try {
-    const data=await api('/api/catalog?limit=100&q='+encodeURIComponent(state.localQuery||'')+'&category='+encodeURIComponent(state.track));
-    if (serial!==renderSerial) return;
-    $('#localResults').innerHTML='<p class="muted">找到 '+data.total+' 份资料，显示前 '+data.items.length+' 份。文件原件不会离开本机。</p>'+data.items.map((item)=>'<button class="file-row" data-file="'+esc(item.id)+'"><span class="file-format">'+esc(item.format)+'</span><span><strong>'+esc(item.title)+'</strong><small>'+esc(item.path)+'</small></span><span>→</span></button>').join('');
-    $('#localResults').querySelectorAll('[data-file]').forEach((button)=>button.onclick=()=>{state.opened=button.dataset.file;state.page=1;route('item');});
-  } catch (error) {if(serial===renderSerial) $('#localResults').textContent=error.message;}
+  $('#indexLocal').onclick=async()=>{await api('/api/reindex',{method:'POST'});$('#indexLocal').textContent='正在处理本批…';};
+  let offset=0;
+  const loadCatalog=async()=>{
+    try {
+      const data=await api('/api/catalog?limit=100&offset='+offset+'&q='+encodeURIComponent(state.localQuery||'')+'&category='+encodeURIComponent(state.track));
+      if(serial!==renderSerial)return;
+      if(!offset)$('#localResults').innerHTML='<p class="muted">共 '+data.total+' 份本机资料，原件不会离开本机。</p><div id="localRows"></div>';
+      $('#localRows').insertAdjacentHTML('beforeend',data.items.map((item)=>fileRow(item,false)).join(''));
+      offset+=data.items.length;
+      $('#loadMoreFiles')?.remove();
+      if(offset<data.total)$('#localResults').insertAdjacentHTML('beforeend','<button class="quiet-button" id="loadMoreFiles">加载更多资料（'+offset+' / '+data.total+'）</button>');
+      wireFiles();moreButton(loadCatalog);
+    } catch(error){if(serial===renderSerial)$('#localResults').textContent=error.message;}
+  };
+  await loadCatalog();
 }
 async function renderItem() {
   if (!localLibrary || !state.opened) return route('library');
@@ -184,7 +212,7 @@ async function renderItem() {
     const visual=['PDF','PNG','JPG','JPEG','WEBP'].includes(item.format);
     const imageUrl='/api/media?id='+encodeURIComponent(item.id)+'&page='+item.page;
     const viewer=visual?'<div class="view-tabs"><button id="visualTab" class="selected">原版页面 / 图片</button><button id="textTab">可复制文字</button></div><figure id="visualPanel" class="page-image"><img src="'+esc(imageUrl)+'" alt="'+esc(item.title)+' 第 '+item.page+' 页"><figcaption><span>本机即时呈现原始版面，保留 PDF 中的图表、图片和排版。</span><button id="zoomPage" type="button">1:1 放大查看</button></figcaption></figure>':'';
-    const copyPanel='<section id="copyPanel" class="copy-panel"'+(visual?' hidden':'')+'><div class="copy-actions"><strong>可复制文字</strong>'+(visual?'<button id="ocrPage">识别页面图片中的文字</button>':'')+'<button id="copyText">复制全部文字</button></div><p class="muted">普通 PDF 优先显示原有文字层；图片文字由 OCR 识别，可能需要人工校对。</p><textarea id="documentText" rows="23">'+esc(item.text||'这一页没有可提取文字。可以尝试 OCR 识别。')+'</textarea><p id="ocrStatus" class="muted">'+esc(item.ocrError||'')+'</p></section>';
+    const copyPanel='<section id="copyPanel" class="copy-panel"'+(visual?' hidden':'')+'><div class="copy-actions"><strong>可复制文字</strong>'+(visual?'<button id="ocrPage">识别页面图片中的文字</button>':'')+'<button id="copyText">复制本页文字</button>'+(item.hasFullText?'<button id="copyFullText">复制此文件全文</button>':'')+'</div><p class="muted">普通 PDF 优先显示原有文字层；图片文字由 OCR 识别，可能需要人工校对。</p><textarea id="documentText" rows="23">'+esc(item.text||'这一页没有可提取文字。可以尝试 OCR 识别。')+'</textarea><p id="ocrStatus" class="muted">'+esc(item.ocrError||'')+'</p></section>';
     $('#mainPanel').innerHTML='<div class="breadcrumb"><button id="backLocal">我的资料</button><span>/</span><span>'+esc(item.format)+'</span></div><div class="page-kicker"><span class="eyebrow">ORIGINAL MATERIAL / 待核验</span><span class="version-pill">第 '+item.page+' / '+item.pages+' 页</span></div><h1>'+esc(item.title)+'</h1><p class="muted">'+esc(item.path)+'</p><div class="warning">这是你本机题库的原文，可能过时或存在错误。请核对版本与官方依据。</div>'+(item.pages>1?'<div class="pagination"><button id="prevPage">← 上一页</button><input id="pageInput" type="number" min="1" max="'+item.pages+'" value="'+item.page+'"><button id="jumpPage">跳转</button><button id="nextPage">下一页 →</button></div>':'')+viewer+copyPanel+'<section class="audit-note"><h2>本页核验笔记</h2><textarea id="auditNote" rows="5" placeholder="记录具体说法、你的判断和依据链接。">'+esc(state.audit[key]?.note||'')+'</textarea><button id="saveAudit" class="primary-button">保存本页笔记</button></section>';
     $('#backLocal').onclick=()=>route('local');
     if(item.pages>1){
@@ -205,6 +233,11 @@ async function renderItem() {
     $('#copyText').onclick=async()=>{
       try{await navigator.clipboard.writeText($('#documentText').value);$('#copyText').textContent='✓ 已复制';}
       catch(error){$('#documentText').select();$('#ocrStatus').textContent='已选中文字，请使用复制快捷键。';}
+    };
+    if(item.hasFullText)$('#copyFullText').onclick=async()=>{
+      $('#copyFullText').textContent='正在读取全文…';
+      try{const result=await api('/api/parsed?id='+encodeURIComponent(item.id));await navigator.clipboard.writeText(result.text);$('#copyFullText').textContent='✓ 全文已复制';}
+      catch(error){$('#copyFullText').textContent='复制此文件全文';$('#ocrStatus').textContent=error.message;}
     };
     $('#saveAudit').onclick=()=>{state.audit[key]={note:$('#auditNote').value,status:'待核验'};save();$('#saveAudit').textContent='✓ 已保存在本浏览器';};
   } catch(error) {if(serial===renderSerial) $('#mainPanel').innerHTML='<div class="warning">'+esc(error.message)+'</div><button id="backLocal">返回资料库</button>';if($('#backLocal'))$('#backLocal').onclick=()=>route('local');}

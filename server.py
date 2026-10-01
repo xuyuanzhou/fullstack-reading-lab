@@ -21,10 +21,11 @@ import zipfile
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from xml.etree import ElementTree as ET
 from audit_rules import scan as scan_audit
+from parsers import EXTRA_FORMATS, parse_special
 
 HERE = pathlib.Path(__file__).resolve().parent
 IMAGES = {'.png','.jpg','.jpeg','.webp'}
-SUPPORTED = {'.pdf','.docx','.doc','.md','.txt'} | IMAGES
+SUPPORTED = {'.pdf','.docx','.doc','.md','.txt'} | IMAGES | EXTRA_FORMATS
 PROFILE = HERE / 'private-data'
 PROFILE.mkdir(exist_ok=True)
 DB = PROFILE / 'index.sqlite3'
@@ -173,6 +174,7 @@ def ocr_file(path):
 
 def extract(path,page=1):
     ext=path.suffix.lower()
+    if ext in EXTRA_FORMATS:return parse_special(path,password_candidates(path))
     if ext=='.pdf':
         # Single-page extraction keeps reading responsive even for large books.
         password,_=pdf_access(path)
@@ -242,20 +244,30 @@ class Library:
                 ident=source_url(rel)
                 self.files[ident]=p
             except ValueError:pass
+        for filename,folder in [('archive-manifest.json','archive-extracted'),('embedded-manifest.json','embedded-extracted')]:
+            manifest=PROFILE/filename
+            if not manifest.exists():continue
+            catalog=json.loads(manifest.read_text(encoding='utf-8'))
+            for ident,stored in (catalog.get('files',{}) if catalog.get('source_root')==str(self.root) else {}).items():
+                path=(PROFILE/stored).resolve()
+                try:path.relative_to((PROFILE/folder).resolve())
+                except ValueError:continue
+                if path.is_file() and path.suffix.lower() in SUPPORTED:self.files[ident]=path
     def list(self,kind='',query='',limit=120,offset=0):
         items=[];q=query.casefold().strip()
         for ident,path in self.files.items():
-            rel=path.relative_to(self.root)
+            rel=path.relative_to(self.root) if '!/' not in ident else pathlib.Path(ident.split('!/',1)[0])
             if kind and category(rel)!=kind:continue
             if q and q not in ident.casefold():continue
-            items.append({'id':ident,'title':path.stem,'category':category(rel),'stage':stage(rel),'format':path.suffix.lower()[1:].upper(),'path':str(rel),'size':path.stat().st_size})
+            items.append({'id':ident,'title':path.stem,'category':category(rel),'stage':stage(rel),'format':path.suffix.lower()[1:].upper(),'path':ident,'size':path.stat().st_size})
         items.sort(key=lambda x:(x['category'],x['stage'],x['title'].casefold()))
         return {'total':len(items),'items':items[offset:offset+limit]}
     def resolve(self,ident):
         p=self.files.get(ident)
         if p is None:raise FileNotFoundError('未找到资料')
         # Reject symlinks pointing out of the configured library.
-        try:p.resolve().relative_to(self.root)
+        allowed=(PROFILE/('embedded-extracted' if ident.split('!/',1)[0].lower().endswith('.docx') else 'archive-extracted')).resolve() if '!/' in ident else self.root
+        try:p.resolve().relative_to(allowed)
         except ValueError:raise PermissionError('资料位于题库之外')
         return p
 
@@ -294,16 +306,13 @@ def build_index():
         if index_state['running']:return
         index_state={'running':True,'done':0,'total':len(LIB.files),'error':None}
     try:
-        con=connect()
-        for (stale,) in con.execute('SELECT id FROM indexed').fetchall():
-            if stale not in LIB.files:
-                con.execute('DELETE FROM docs WHERE id=?',(stale,))
-                con.execute('DELETE FROM indexed WHERE id=?',(stale,))
-        for ident,path in LIB.files.items():
-            index_one(con,ident,path)
-            index_state['done']+=1
-            if index_state['done']%10==0:con.commit()
-        con.commit();con.close()
+        import import_archives, import_embedded, import_library
+        import_archives.import_archives(LIB.root)
+        import_embedded.import_embedded(LIB.root)
+        LIB.scan()
+        result=import_library.import_all(LIB.root,batch_size=200)
+        index_state['done']=result['done'];index_state['total']=result['total']
+        if result['failed']:index_state['error']=str(result['failed'])+' 份资料导入失败，查看 private-data/index.sqlite3 的 imports 表'
         scan_audit(DB,PROFILE/'audit-candidates.json')
     except Exception as e:index_state['error']=str(e)
     finally:index_state['running']=False
@@ -337,16 +346,43 @@ class Handler(BaseHTTPRequestHandler):
             if url.path=='/api/ocr':
                 p=LIB.resolve(get('id'));n=int(get('page','1'))
                 return self.send_json({'text':safe_text(ocr_page(p,n,p.stat().st_mtime))})
+            if url.path=='/api/parsed':
+                ident=get('id');LIB.resolve(ident)
+                con=connect()
+                try:row=con.execute('SELECT text_path FROM imports WHERE id=? AND status=?',(ident,'ok')).fetchone()
+                except sqlite3.OperationalError:row=None
+                finally:con.close()
+                if not row:raise FileNotFoundError('尚未完成全文导入')
+                path=(PROFILE/row[0]).resolve()
+                try:path.relative_to(PROFILE.resolve())
+                except ValueError:raise PermissionError('全文路径不在本机资料区')
+                return self.send_json({'text':path.read_text(encoding='utf-8')})
             if url.path=='/api/catalog':return self.send_json(LIB.list(get('category'),get('q'),min(200,max(1,int(get('limit','80')))),max(0,int(get('offset','0')))))
             if url.path=='/api/item':
                 ident=get('id');p=LIB.resolve(ident);n=max(1,min(page_count(p),int(get('page','1'))))
                 if p.suffix.lower() in IMAGES:
                     # Show original artwork immediately; OCR is an explicit action.
-                    text='';ocr_error='点击“识别页面图片中的文字”后可复制识别结果。'
+                    con=connect()
+                    try:cached=con.execute('SELECT text_path FROM imports WHERE id=? AND status=?',(ident,'ok')).fetchone()
+                    except sqlite3.OperationalError:cached=None
+                    row=None if cached else con.execute('SELECT body FROM docs WHERE id=?',(ident,)).fetchone()
+                    con.close()
+                    text=(PROFILE/cached[0]).read_text(encoding='utf-8') if cached else row[0] if row else ''
+                    ocr_error='' if text else '点击“识别页面图片中的文字”后可复制识别结果。'
                 else:
                     text=extract(p,n);ocr_error=''
-                return self.send_json({'id':ident,'title':p.stem,'text':safe_text(text),'page':n,'pages':page_count(p),'format':p.suffix.lower()[1:].upper(),'path':ident,'empty':not bool(text.strip()),'ocrError':ocr_error})
-            if url.path=='/api/stats':return self.send_json({'count':len(LIB.files),'index':index_state})
+                con=connect()
+                try:has_full=bool(con.execute('SELECT 1 FROM imports WHERE id=? AND status=?',(ident,'ok')).fetchone())
+                except sqlite3.OperationalError:has_full=False
+                finally:con.close()
+                return self.send_json({'id':ident,'title':p.stem,'text':safe_text(text),'page':n,'pages':page_count(p),'format':p.suffix.lower()[1:].upper(),'path':ident,'empty':not bool(text.strip()),'ocrError':ocr_error,'hasFullText':has_full})
+            if url.path=='/api/stats':
+                progress=PROFILE/'import-progress.json'
+                con=connect()
+                try:imported,empty,failed=con.execute("SELECT sum(status='ok'),sum(status='ok' AND chars=0),sum(status!='ok') FROM imports").fetchone()
+                except sqlite3.OperationalError:imported=empty=failed=0
+                finally:con.close()
+                return self.send_json({'count':len(LIB.files),'index':index_state,'import':json.loads(progress.read_text()) if progress.exists() else None,'imported':imported or 0,'emptyText':empty or 0,'failed':failed or 0})
             if url.path=='/api/audit':
                 f=PROFILE/'audit-candidates.json'
                 return self.send_json(json.loads(f.read_text()) if f.exists() else {'rules':[],'items':[],'truncated':False})
@@ -357,8 +393,10 @@ class Handler(BaseHTTPRequestHandler):
                 # LIKE supports short Chinese substrings; unicode61 FTS would
                 # otherwise treat a whole Chinese phrase as one token.
                 needle='%'+q.replace('\\','\\\\').replace('%','\\%').replace('_','\\_')+'%'
-                rows=con.execute('SELECT id,title,substr(body,max(1,instr(lower(body),lower(?))-60),140) FROM docs WHERE title LIKE ? ESCAPE "\\" OR body LIKE ? ESCAPE "\\" LIMIT 80',(q,needle,needle)).fetchall();con.close()
-                return self.send_json({'items':[{'id':a,'title':b,'snippet':c} for a,b,c in rows]})
+                category_filter=get('category')
+                limit=min(100,max(1,int(get('limit','80'))));offset=max(0,int(get('offset','0')))
+                rows=con.execute('SELECT id,title,substr(body,max(1,instr(lower(body),lower(?))-60),140) FROM docs WHERE (title LIKE ? ESCAPE "\\" OR body LIKE ? ESCAPE "\\") AND (?=? OR id LIKE ?) LIMIT ? OFFSET ?',(q,needle,needle,category_filter,'',('Java-%' if category_filter=='java' else 'Web前端-%' if category_filter=='frontend' else '%'),limit+1,offset)).fetchall();con.close()
+                return self.send_json({'items':[{'id':a,'title':b,'snippet':c} for a,b,c in rows[:limit]],'hasMore':len(rows)>limit})
             if url.path in {'/','/index.html','/app.js','/styles.css','/lessons.js','/extra-lessons.js','/distributed-lessons.js'} or url.path in {'/diagrams/cap-partition.svg','/diagrams/kafka-order.svg','/diagrams/bloom-filter.svg','/diagrams/seckill-flow.svg'}:
                 name='index.html' if url.path=='/' else url.path[1:]
                 p=HERE/name;data=p.read_bytes();mime='text/html' if name.endswith('.html') else 'text/javascript' if name.endswith('.js') else 'image/svg+xml' if name.endswith('.svg') else 'text/css'

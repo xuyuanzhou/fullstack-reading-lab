@@ -142,6 +142,8 @@ textarea{width:100%;resize:vertical;border:1px solid var(--line);border-radius:9
 .next-card>span:last-child{color:var(--accent);font-size:20px}
 .search-row{display:flex;align-items:center;gap:10px;margin:20px 0 25px}
 .search-row input{flex:1;min-width:0;border:1px solid var(--line);border-radius:9px;padding:11px 14px;background:var(--surface);color:var(--ink)}
+.search-row button{border:1px solid var(--line);border-radius:9px;padding:10px 12px;background:var(--surface);color:var(--accent);font-size:12px;font-weight:700;white-space:nowrap}
+.search-row button:hover{border-color:var(--accent)}
 .search-row span{color:var(--muted);font-size:12px;white-space:nowrap}
 .knowledge-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
 .knowledge-card{min-height:170px;text-align:left;border:1px solid var(--line);border-radius:11px;padding:20px;background:var(--surface);color:var(--ink)}
