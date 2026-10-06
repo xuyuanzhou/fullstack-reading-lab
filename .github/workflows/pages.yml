@@ -30,13 +30,9 @@ jobs:
         working-directory: web
         run: |
           npm ci
-          npm run build
-      - name: Verify legacy curriculum scripts still load
-        run: |
-          node scripts/export-curriculum.mjs
-          node verify_content.mjs
+          npm run check
       - name: Run local-reader unit tests
-        run: python -m unittest discover -p tests.py
+        run: python -m unittest discover -s reader -p tests.py
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:

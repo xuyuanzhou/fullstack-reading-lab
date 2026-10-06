@@ -8,14 +8,17 @@ import {
   ReadOutlined,
   SunOutlined,
 } from '@ant-design/icons'
-import { Badge, Button, Drawer, Layout, Menu, Space, Typography, theme } from 'antd'
-import { useEffect, useMemo, useState } from 'react'
-import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { findLesson, groupsFor, lessonsFor, lessonsInGroup } from '@/data/curriculum'
+import { Alert, Badge, Button, Drawer, Layout, Menu, Typography, theme } from 'antd'
+import { Suspense, useEffect, useMemo, useState } from 'react'
+import { Link, matchPath, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { AI_SECTIONS, aiNote, notesInSection } from '@/data/aiCatalog'
+import { findLesson, lessonsFor, lessonsInGroup, outlineFor } from '@/data/curriculum'
 import { TRACK_LABEL } from '@/data/meta'
+import { courseGroups, groupLabel, groupPath, isTrack, lessonPath, resumePath } from '@/data/routes'
 import { probeLocalLibrary } from '@/api/localLibrary'
 import { useProgress } from '@/state/progress'
 import { ProgressAside } from '@/components/ProgressAside'
+import { ReadingBoundary } from '@/components/ReadingBoundary'
 
 const { Sider, Content } = Layout
 
@@ -25,66 +28,149 @@ export function AppLayout() {
   const progress = useProgress()
   const { token } = theme.useToken()
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [localReady, setLocalReady] = useState(false)
+  const [localReady, setLocalReady] = useState<boolean | null>(null)
 
   useEffect(() => {
-    void probeLocalLibrary().then(setLocalReady)
+    let active = true
+    void probeLocalLibrary().then(ready => { if (active) setLocalReady(ready) })
+    return () => { active = false }
   }, [])
 
-  const groups = groupsFor(progress.track)
-  const trackLessons = lessonsFor(progress.track)
+  const courseLesson = matchPath('/:track/:groupKey/:lessonId', location.pathname)
+  const courseGroup = matchPath('/:track/:groupKey', location.pathname)
+  const routeTrack = courseLesson?.params.track || courseGroup?.params.track
+  const routeGroupKey = courseLesson?.params.groupKey || courseGroup?.params.groupKey
+  const activeTrack = isTrack(routeTrack) ? routeTrack : progress.track
+  const activeGroupKey = isTrack(routeTrack) && routeGroupKey && groupLabel(activeTrack, routeGroupKey)
+    ? routeGroupKey
+    : progress.group
+  const [menuCollapsed, setMenuCollapsed] = useState(false)
+  const [openSections, setOpenSections] = useState<string[]>([])
+
+  const groups = courseGroups(activeTrack)
+  const trackLessons = lessonsFor(activeTrack)
   const doneCount = trackLessons.filter((lesson) => progress.done.includes(lesson.id)).length
+  const homeTo = resumePath(activeTrack, activeGroupKey)
 
   const currentLesson = useMemo(() => {
-    if (!location.pathname.startsWith('/lesson/')) return undefined
-    const id = decodeURIComponent(location.pathname.replace('/lesson/', ''))
-    return findLesson(id)
+    const id = courseLesson?.params.lessonId
+    if (!id || !isTrack(routeTrack)) return undefined
+    const lesson = findLesson(id)
+    if (!lesson || lesson.track !== routeTrack) return undefined
+    return lesson
+  }, [courseLesson?.params.lessonId, routeTrack])
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' })
+    document.getElementById('main-content')?.focus({ preventScroll: true })
+    setMobileOpen(false)
   }, [location.pathname])
 
   useEffect(() => {
-    if (!currentLesson) return
-    if (progress.track !== currentLesson.track) {
-      progress.setTrack(currentLesson.track)
-      progress.setGroup(currentLesson.group)
-      return
-    }
-    if (progress.group !== currentLesson.group) progress.setGroup(currentLesson.group)
-  }, [
-    currentLesson,
-    progress.track,
-    progress.group,
-    progress.setTrack,
-    progress.setGroup,
-  ])
+    setMenuCollapsed(false)
+    setOpenSections([])
+  }, [activeGroupKey])
 
-  const selectedKeys = currentLesson ? [currentLesson.id] : []
-  const openKeys = progress.group ? [`group:${progress.group}`] : []
+  useEffect(() => {
+    setMenuCollapsed(false)
+  }, [location.pathname])
+
+  const onAi = location.pathname === '/ai' || location.pathname.startsWith('/ai/')
+  const aiSectionKey = location.pathname.split('/')[2] || 'intro'
+  const aiNoteTitle = onAi ? aiNote(aiSectionKey, location.pathname.split('/')[3])?.title : ''
+
+  useEffect(() => {
+    if (currentLesson) progress.remember(currentLesson.id)
+    const aiLabel = onAi ? AI_SECTIONS.find((section) => section.key === aiSectionKey)?.label : ''
+    document.title = currentLesson
+      ? `${currentLesson.title} · 全栈学习实验室`
+      : aiNoteTitle
+        ? `${aiNoteTitle} · AI · 全栈学习实验室`
+        : aiLabel
+          ? `${aiLabel} · AI · 全栈学习实验室`
+          : '全栈学习实验室'
+  }, [currentLesson, progress.remember, onAi, aiSectionKey, aiNoteTitle])
+
+  useEffect(() => {
+    if (!isTrack(routeTrack) || !routeGroupKey || !groupLabel(routeTrack, routeGroupKey)) return
+    progress.selectLesson(routeTrack, routeGroupKey)
+  }, [routeTrack, routeGroupKey, progress.selectLesson])
+
+  const pathChoice = onAi ? 'ai' : location.pathname.startsWith('/local') ? progress.localCategory : activeTrack
+  const selectedKeys = onAi ? [`ai:${aiSectionKey}`] : currentLesson ? [currentLesson.id] : []
+  const currentSectionKey = (() => {
+    if (!currentLesson) return ''
+    const index = outlineFor(currentLesson.track, currentLesson.group).findIndex((section) => section.ids.includes(currentLesson.id))
+    return index < 0 ? '' : `section:${activeGroupKey}:${index}`
+  })()
+  const openKeys = menuCollapsed || !activeGroupKey
+    ? []
+    : [`group:${activeGroupKey}`, ...new Set([currentSectionKey, ...openSections].filter(Boolean))]
+
+  const lessonNode = (lesson: NonNullable<ReturnType<typeof findLesson>>) => ({
+    key: lesson.id,
+    label: (
+      <Link to={lessonPath(lesson)} className="lesson-label" onClick={() => progress.remember(lesson.id)}>
+        <span
+          className={`lesson-status${progress.done.includes(lesson.id) ? ' is-done' : ''}`}
+          aria-hidden
+        />
+        <span>{lesson.title}</span>
+      </Link>
+    ),
+  })
 
   const menuItems = groups.map((group, index) => {
-    const items = lessonsInGroup(progress.track, group)
+    const items = lessonsInGroup(activeTrack, group.label)
     const completed = items.filter((lesson) => progress.done.includes(lesson.id)).length
+    const sections = outlineFor(activeTrack, group.label)
+    const listed = new Set(sections.flatMap((section) => section.ids))
+    const children = sections.length >= 2
+      ? [
+          ...sections.map((section, sectionIndex) => {
+            const sectionLessons = section.ids
+              .map((id) => findLesson(id))
+              .filter((item): item is NonNullable<ReturnType<typeof findLesson>> => !!item && item.group === group.label)
+            const sectionDone = sectionLessons.filter((lesson) => progress.done.includes(lesson.id)).length
+            return {
+              key: `section:${group.key}:${sectionIndex}`,
+              label: (
+                <span className="section-label">
+                  <span>{section.title}</span>
+                  <span className="group-count">{sectionDone}/{sectionLessons.length}</span>
+                </span>
+              ),
+              children: sectionLessons.map(lessonNode),
+            }
+          }),
+          ...items.filter((lesson) => !listed.has(lesson.id)).map(lessonNode),
+        ]
+      : items.map(lessonNode)
     return {
-      key: `group:${group}`,
+      key: `group:${group.key}`,
       label: (
-        <span className="group-label">
+        <Link to={groupPath(activeTrack, group.key)} className="group-label">
           <span className="group-index">{String(index + 1).padStart(2, '0')}</span>
-          <span className="group-name">{group}</span>
+          <span className="group-name">{group.label}</span>
           <span className="group-count">
             {completed}/{items.length}
           </span>
-        </span>
+        </Link>
       ),
-      children: items.map((lesson) => ({
-        key: lesson.id,
-        label: (
-          <span className="lesson-label">
-            <span aria-hidden>{progress.done.includes(lesson.id) ? '✓' : '·'}</span>
-            <span>{lesson.title}</span>
-          </span>
-        ),
-      })),
+      children,
     }
   })
+
+  const aiMenuItems = AI_SECTIONS.map((section, index) => ({
+    key: `ai:${section.key}`,
+    label: (
+      <Link to={`/ai/${section.key}`} className="group-label" onClick={() => setMobileOpen(false)}>
+        <span className="group-index">{String(index + 1).padStart(2, '0')}</span>
+        <span className="group-name">{section.label}</span>
+        <span className="group-count">{notesInSection(section.key).length}</span>
+      </Link>
+    ),
+  }))
 
   const navItems = [
     { key: 'home', icon: <ReadOutlined />, label: '学习路线' },
@@ -103,9 +189,11 @@ export function AppLayout() {
 
   const navSelected = (() => {
     if (
-      location.pathname.startsWith('/lesson') ||
+      onAi ||
+      isTrack(routeTrack) ||
       location.pathname === '/' ||
-      location.pathname === '/home'
+      location.pathname === '/home' ||
+      location.pathname.startsWith('/lesson/')
     )
       return 'home'
     if (location.pathname.startsWith('/knowledge')) return 'knowledge'
@@ -119,41 +207,53 @@ export function AppLayout() {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <div className="sider-head">
         <span className="sider-label">Learning Path</span>
-        <div className="track-switch">
+        <div className="track-switch is-triple">
           {(['frontend', 'java'] as const).map((track) => (
             <Button
               key={track}
-              type={progress.track === track ? 'primary' : 'default'}
+              type={pathChoice === track ? 'primary' : 'default'}
               onClick={() => {
-                progress.setTrack(track)
-                navigate('/home')
+                progress.setLocalCategory(track)
+                navigate(resumePath(track, ''))
                 setMobileOpen(false)
               }}
             >
               {TRACK_LABEL[track]}
             </Button>
           ))}
+          <Button
+            type={pathChoice === 'ai' ? 'primary' : 'default'}
+            onClick={() => {
+              progress.setLocalCategory('ai')
+              navigate('/ai/intro')
+              setMobileOpen(false)
+            }}
+          >
+            AI
+          </Button>
         </div>
       </div>
-      <Menu
+        <Menu
         className="path-menu"
         mode="inline"
+        inlineIndent={18}
         selectedKeys={selectedKeys}
-        openKeys={openKeys}
+        openKeys={onAi ? [] : openKeys}
         onOpenChange={(keys) => {
-          const groupKeys = keys.filter((key) => String(key).startsWith('group:'))
-          const newest = groupKeys.find((key) => !openKeys.includes(String(key))) || groupKeys[groupKeys.length - 1]
-          if (typeof newest === 'string') progress.setGroup(newest.slice(6))
-          else progress.setGroup('')
-        }}
-        onClick={({ key }) => {
-          if (!String(key).startsWith('group:')) {
-            progress.remember(String(key))
-            navigate(`/lesson/${encodeURIComponent(String(key))}`)
-            setMobileOpen(false)
+          if (onAi) return
+          const names = keys.map(String)
+          const opened = names.filter((key) => key.startsWith('group:'))
+          const current = `group:${activeGroupKey}`
+          const added = opened.find((key) => key !== current)
+          if (added) {
+            navigate(groupPath(activeTrack, added.slice('group:'.length)))
+            setMenuCollapsed(false)
+            return
           }
+          setOpenSections(names.filter((key) => key.startsWith(`section:${activeGroupKey}:`)))
+          setMenuCollapsed(!opened.includes(current))
         }}
-        items={menuItems}
+        items={onAi ? aiMenuItems : menuItems}
       />
       <div className="sider-foot">
         <Typography.Text type="secondary" style={{ fontSize: 11, letterSpacing: '0.08em' }}>
@@ -171,7 +271,11 @@ export function AppLayout() {
 
   return (
     <Layout className="app-shell">
-      <Sider className="app-sider" width={292} trigger={null} collapsible={false}>
+      <a className="skip-link" href="#main-content" onClick={event => {
+        event.preventDefault()
+        document.getElementById('main-content')?.focus()
+      }}>跳到正文</a>
+      <Sider className="app-sider" width={300} trigger={null} collapsible={false}>
         {siderBody}
       </Sider>
 
@@ -184,7 +288,7 @@ export function AppLayout() {
             onClick={() => setMobileOpen(true)}
             aria-label="打开课程目录"
           />
-          <Link to="/home" className="brand-lockup">
+          <Link to={homeTo} className="brand-lockup">
             <span className="brand-mark">FS</span>
             <span className="brand-text">
               <strong>全栈学习实验室</strong>
@@ -195,50 +299,55 @@ export function AppLayout() {
           <nav className="top-nav" aria-label="主导航">
             {navItems.map((item) => {
               const active = navSelected === item.key
-              const label = (
-                <Space size={6}>
-                  {item.icon}
-                  <span className="nav-label-wide">{item.label}</span>
-                </Space>
-              )
-              return (
+              const button = (
                 <Button
-                  key={item.key}
                   type="text"
+                  icon={item.icon}
                   className={`top-nav-btn${active ? ' is-active' : ''}`}
-                  onClick={() => navigate(`/${item.key === 'home' ? 'home' : item.key}`)}
+                  aria-label={item.label}
+                  aria-current={active ? 'page' : undefined}
+                  title={item.label}
+                  onClick={() => navigate(item.key === 'home' ? homeTo : `/${item.key}`)}
                 >
-                  {'badge' in item && item.badge ? (
-                    <Badge count={item.badge} size="small" offset={[6, -2]}>
-                      {label}
-                    </Badge>
-                  ) : (
-                    label
-                  )}
+                  <span className="nav-label-wide">{item.label}</span>
                 </Button>
+              )
+              return 'badge' in item && item.badge ? (
+                <Badge key={item.key} count={item.badge} size="small" offset={[-2, 6]}>
+                  {button}
+                </Badge>
+              ) : (
+                <span key={item.key} className="top-nav-item">
+                  {button}
+                </span>
               )
             })}
           </nav>
 
-          <Space size={8}>
-            <Typography.Text type="secondary" style={{ fontVariantNumeric: 'tabular-nums' }}>
+          <div className="header-tools">
+            <span className="header-count">
               {doneCount}/{trackLessons.length}
-            </Typography.Text>
+            </span>
             <Button
               type="text"
               icon={progress.theme === 'dark' ? <SunOutlined /> : <MoonOutlined />}
               onClick={() => progress.setTheme(progress.theme === 'dark' ? 'light' : 'dark')}
               aria-label="切换深浅色"
             />
-          </Space>
+          </div>
         </header>
 
         <div className="workspace">
-          <Content className="app-main">
-            <Outlet context={{ localReady }} />
+          <Content className="app-main" id="main-content" role="main" tabIndex={-1}>
+            {progress.storageIssue && <Alert type="warning" showIcon title={progress.storageIssue} />}
+            <ReadingBoundary key={location.pathname}>
+              <Suspense fallback={<div className="route-loading" role="status">正在打开课程…</div>}>
+                <Outlet context={{ localReady }} />
+              </Suspense>
+            </ReadingBoundary>
           </Content>
           <aside className="app-aside">
-            <ProgressAside localReady={localReady} />
+            <ProgressAside localReady={localReady === true} />
           </aside>
         </div>
       </div>
@@ -247,44 +356,12 @@ export function AppLayout() {
         open={mobileOpen}
         onClose={() => setMobileOpen(false)}
         placement="left"
-        width={300}
+        size={300}
         title="课程目录"
         styles={{ body: { padding: 0 }, header: { borderBottom: `1px solid ${token.colorBorderSecondary}` } }}
       >
         {siderBody}
       </Drawer>
-
-      <style>{`
-        .group-label {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          width: 100%;
-        }
-        .group-index {
-          color: var(--lab-muted);
-          font-variant-numeric: tabular-nums;
-          font-size: 12px;
-        }
-        .group-name {
-          flex: 1;
-          min-width: 0;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-        .group-count {
-          color: var(--lab-muted);
-          font-size: 12px;
-        }
-        .lesson-label {
-          display: flex;
-          gap: 8px;
-          align-items: flex-start;
-          white-space: normal;
-          line-height: 1.35;
-          padding-block: 2px;
-        }
-      `}</style>
     </Layout>
   )
 }

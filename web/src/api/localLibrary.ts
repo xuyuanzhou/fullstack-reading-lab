@@ -34,16 +34,20 @@ export type ItemPayload = {
 }
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(path, options)
+  const response = await fetch(path, { signal: AbortSignal.timeout(90000), ...options })
+  if (!response.headers.get('content-type')?.includes('application/json')) throw new Error('未连接到本机资料服务，请检查阅读器是否已启动。')
   const data = (await response.json()) as T & { error?: string }
   if (!response.ok) throw new Error(data.error || '读取失败')
   return data
 }
 
 export async function probeLocalLibrary(): Promise<boolean> {
+  if (!['localhost', '127.0.0.1', '[::1]'].includes(window.location.hostname)) return false
   try {
-    const response = await fetch('/api/stats')
-    return response.ok
+    const response = await fetch('/api/stats', { signal: AbortSignal.timeout(2500) })
+    if (!response.ok || !response.headers.get('content-type')?.includes('application/json')) return false
+    const data = await response.json()
+    return typeof data.count === 'number' && typeof data.imported === 'number'
   } catch {
     return false
   }
@@ -69,15 +73,16 @@ export const localApi = {
       offset: String(params.offset || 0),
       limit: String(params.limit || 100),
     })
-    return request<{ items: CatalogItem[]; total: number; hasMore?: boolean }>(
+    return request<{ items: CatalogItem[]; total: number; hasMore: boolean }>(
       `/api/catalog?${query}`,
     )
   },
-  search: (params: { category: string; q: string; offset?: number }) => {
+  search: (params: { category: string; q: string; offset?: number; limit?: number }) => {
     const query = new URLSearchParams({
       category: params.category,
       q: params.q,
       offset: String(params.offset || 0),
+      limit: String(params.limit || 100),
     })
     return request<{ items: CatalogItem[]; hasMore?: boolean }>(`/api/search?${query}`)
   },

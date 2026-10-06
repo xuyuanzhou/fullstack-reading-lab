@@ -1,4 +1,5 @@
 export type Track = 'frontend' | 'java'
+export type LocalCategory = Track | 'ai'
 
 export type DeepPart = {
   title: string
@@ -26,10 +27,16 @@ export type Lesson = {
   vue?: string
 }
 
+export type OutlineSection = {
+  title: string
+  ids: string[]
+}
+
 export type Curriculum = {
-  generatedAt: string
+  schemaVersion: number
   groupOrder: Record<Track, string[]>
   pathLead: Record<Track, Record<string, string[]>>
+  outline?: Record<Track, Record<string, OutlineSection[]>>
   lessons: Lesson[]
 }
 
@@ -45,4 +52,5 @@ export type ProgressState = {
   audit: Record<string, { note: string; status: string }>
   localQuery: string
   localTopic: string
+  localCategory: LocalCategory
 }

@@ -5,7 +5,7 @@ export function AuditPage() {
   return (
     <div className="article-shell">
       <div>
-        <h1 className="hero-title" style={{ fontSize: '2rem' }}>
+        <h1 className="hero-title">
           知识核验
         </h1>
         <p className="hero-lead">
@@ -32,7 +32,7 @@ export function AuditPage() {
         {AUDIT_CASES.map((item, index) => (
           <article className="audit-case" key={item.title}>
             <Typography.Text type="secondary">{String(index + 1).padStart(2, '0')}</Typography.Text>
-            <h3 style={{ margin: '6px 0 0', fontFamily: 'var(--font-serif)', fontSize: '1.15rem' }}>
+            <h3 style={{ margin: '6px 0 0' }}>
               {item.title}
             </h3>
             <p className="wrong">{item.wrong}</p>

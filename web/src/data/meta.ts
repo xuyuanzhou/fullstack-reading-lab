@@ -7,11 +7,17 @@ export const TRACK_LABEL: Record<Track, string> = {
   java: 'Java 后端',
 }
 
+export const LOCAL_CATEGORY_LABEL = {
+  frontend: '前端',
+  java: 'Java',
+  ai: 'AI',
+} as const
+
 export const TRACK_INTRO: Record<Track, string> = {
   frontend:
-    '语言和类型之后是页面、浏览器、网络契约和会话，然后是 React 与它的数据层、Vue 与它的生态、Node 上的 Cookie 会话、测试。构建默认用 Vite。版本边界标出已经退出主线的工具。',
+    '语言基础从相等、作用域、this、原型，到闭包、Promise、async 和事件循环。接着是类型、盒模型与定位、页面与浏览器帧，然后才是框架、测试和工程。',
   java:
-    '语言和运行时之后是数据、JPA 会话、迁移和 Spring 过滤链，然后是消息的死信与积压、网关、以及把一次请求串成一条追踪。版本边界标出已退出主线的组件，最后才是交付。',
+    'Java 基础从类型、equals、字符串和集合，再进入算法、内存和线程。之后按 Spring、JPA、MyBatis、缓存、Nginx、Netty、网关、搜索分章；Spring Cloud Alibaba 按 Nacos、调用、Sentinel、Seata 排障，再是消息与分布式。',
 }
 
 export const REACT_BASE =

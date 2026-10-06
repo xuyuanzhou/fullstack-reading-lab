@@ -1,6 +1,7 @@
 import { Button, Progress, Typography } from 'antd'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { findLesson, lessonsFor } from '@/data/curriculum'
+import { lessonPath } from '@/data/routes'
 import { useProgress } from '@/state/progress'
 
 export function ProgressAside({ localReady }: { localReady: boolean }) {
@@ -27,7 +28,7 @@ export function ProgressAside({ localReady }: { localReady: boolean }) {
           percent={percent}
           showInfo={false}
           strokeColor="var(--lab-accent)"
-          trailColor="var(--lab-line)"
+          railColor="var(--lab-line)"
           size="small"
           style={{ marginTop: 12 }}
         />
@@ -36,16 +37,13 @@ export function ProgressAside({ localReady }: { localReady: boolean }) {
       <div className="aside-block">
         <h5>下一步</h5>
         {next ? (
-          <Button
-            type="link"
-            style={{ paddingInline: 0, whiteSpace: 'normal', textAlign: 'left', height: 'auto' }}
-            onClick={() => {
-              progress.remember(next.id)
-              navigate(`/lesson/${encodeURIComponent(next.id)}`)
-            }}
+          <Link
+            className="text-link"
+            to={lessonPath(next)}
+            onClick={() => progress.remember(next.id)}
           >
             {next.title} →
-          </Button>
+          </Link>
         ) : (
           <Typography.Text type="secondary">当前路线全部完成，可以进入复习清单。</Typography.Text>
         )}
@@ -57,22 +55,14 @@ export function ProgressAside({ localReady }: { localReady: boolean }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
             {recent.map((item) =>
               item ? (
-                <Button
+                <Link
                   key={item.id}
-                  type="link"
-                  style={{
-                    paddingInline: 0,
-                    height: 'auto',
-                    whiteSpace: 'normal',
-                    textAlign: 'left',
-                  }}
-                  onClick={() => {
-                    progress.remember(item.id)
-                    navigate(`/lesson/${encodeURIComponent(item.id)}`)
-                  }}
+                  className="text-link"
+                  to={lessonPath(item)}
+                  onClick={() => progress.remember(item.id)}
                 >
                   {item.title}
-                </Button>
+                </Link>
               ) : null,
             )}
           </div>

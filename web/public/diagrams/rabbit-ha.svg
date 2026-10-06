@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 300" role="img" aria-labelledby="title desc">
+  <title id="title">RabbitMQ Ïx\ÏòÁ</title>
+  <desc id="desc">(‚¹ô6¢7ïŞ0;o,™e\ÏòÁXĞ›Eœlû</desc>
+  <rect width="900" height="300" rx="18" fill="#f1f5f9"/>
+  <text x="36" y="42" font-family="sans-serif" font-size="21" font-weight="700" fill="#102a43">RabbitMQØï(/Å†Æ¤1</text>
+
+  <g font-family="sans-serif">
+    <rect x="48" y="90" width="240" height="160" rx="14" fill="#dcfce7" stroke="#86efac"/>
+    <text x="110" y="128" font-size="16" font-weight="700" fill="#166534">;o, / Leader</text>
+    <text x="78" y="164" font-size="13" fill="#166534">¢7ïû™=(ÙÌ</text>
+    <text x="78" y="192" font-size="13" fill="#334155">n¤íIÍ¡BI</text>
+    <text x="78" y="220" font-size="13" fill="#334155">‚¹•:æÑ	>b</text>
+
+    <path d="M308 160 H360" stroke="#64748b" stroke-width="3" stroke-dasharray="7 6"/>
+    <text x="318" y="148" font-size="12" fill="#64748b">6</text>
+
+    <rect x="380" y="80" width="200" height="80" rx="12" fill="#dbeafe"/>
+    <text x="420" y="128" font-size="15" fill="#1e3a8a">\Ï / X‚¹</text>
+    <rect x="380" y="180" width="200" height="80" rx="12" fill="#dbeafe"/>
+    <text x="420" y="228" font-size="15" fill="#1e3a8a">\Ï / X‚¹</text>
+
+    <rect x="620" y="100" width="240" height="140" rx="12" fill="#fff" stroke="#94a3b8"/>
+    <text x="648" y="136" font-size="14" font-weight="700" fill="#0f172a">è</text>
+    <text x="648" y="168" font-size="13" fill="#334155">Æ¤ ` Ï*ê¨—Y</text>
+    <text x="648" y="198" font-size="13" fill="#334155">Ve³š6ô</text>
+    <text x="648" y="228" font-size="13" fill="#334155">ÂQÜ:„H</text>
+  </g>
+</svg>

@@ -2,9 +2,14 @@ import raw from './curriculum.json'
 import type { Curriculum, Lesson, Track } from '@/types/curriculum'
 
 export const curriculum = raw as unknown as Curriculum
+const byId = new Map(curriculum.lessons.map(lesson => [lesson.id, lesson]))
+const byTrack: Record<Track, Lesson[]> = {
+  frontend: curriculum.lessons.filter(lesson => lesson.track === 'frontend'),
+  java: curriculum.lessons.filter(lesson => lesson.track === 'java'),
+}
 
 export function lessonsFor(track: Track): Lesson[] {
-  return curriculum.lessons.filter((lesson) => lesson.track === track)
+  return byTrack[track]
 }
 
 export function groupsFor(track: Track): string[] {
@@ -16,8 +21,12 @@ export function lessonsInGroup(track: Track, group: string): Lesson[] {
   return lessonsFor(track).filter((lesson) => lesson.group === group)
 }
 
+export function outlineFor(track: Track, group: string) {
+  return curriculum.outline?.[track]?.[group] || []
+}
+
 export function findLesson(id: string): Lesson | undefined {
-  return curriculum.lessons.find((lesson) => lesson.id === id)
+  return byId.get(id)
 }
 
 export function nextLesson(track: Track, id: string): Lesson | undefined {

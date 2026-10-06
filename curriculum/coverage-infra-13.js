@@ -1,0 +1,298 @@
+/* Deepen JPA, MyBatis, Redis, Netty, Nginx, gateway, and search. */
+const COVERAGE_INFRA_13 = [
+  {
+    track:'java', group:'JPA', id:'jpa-dirty-check',
+    title:'托管实体改了字段，flush 时自己变成 UPDATE',
+    prompt:'改了订单备注却没调用 save，提交后为什么数据库还是变了？',
+    core:'实体被加载进持久化上下文之后是托管状态。你改它的字段，上下文会记住它脏了。顺序是：事务里先加载，再改字段，提交前自动 flush，用加载时的快照比较当前值，有差别才发出 UPDATE，然后提交。save 对已经托管的实例常常什么也不做，它不是唯一的写入口。边界在事务：事务外的实体是游离的，改它不会写库，要 merge 或在新事务里再加载。不要靠“我没调用 save”来保证没写入。另一个边界是没改到的字段不会出现在这条 UPDATE 里；新 new 出来、还没进入上下文的对象，也不走脏检查。同一事务里连续改两次，仍是提交前比较最终值和快照。只读查询没有脏字段，flush 时也不会凭空写出 UPDATE。',
+    why:'把 save 当成唯一写库入口，托管实体上的修改会在提交时悄悄变成 UPDATE，仓库调用栈里却找不到这次写入。区分信号是同一事务里改了字段就有 SQL，把修改挪到事务外就没有。仓库栈里没有 save，表却变了。',
+    example:'在一个事务方法里查出订单，只改备注，不调用 save。方法结束提交后，表里的备注已经变了。把同样的 set 挪到事务提交之后再改，表不再更新，因为这时实体已经游离。SQL 日志里应出现一条 UPDATE。',
+    task:'在同一事务里改字段但不 save，看有没有 UPDATE。再把改字段挪到事务外，对比。',
+    answer:'同一事务里改字段、不调用 save，提交时仍会有 UPDATE，因为托管实体在 flush 时按快照写出差异。把修改挪到事务外，预测没有 UPDATE。save 不是唯一写入口；游离实体要重新并入上下文才会再写。预测以日志里的 UPDATE 为准，不以有没有调用 save 为准。',
+    keywords:'JPA dirty checking flush persist merge',
+    points:['托管实体改字段后，flush 会发出 UPDATE','对托管实例再 save 通常不会多一次写入','游离实体的修改要重新进入上下文才会写库'],
+    deep:[
+      {title:'快照比的是最终值',body:'加载之后改了又改回去，和快照相同，flush 不会为这个字段发更新。只有提交前仍和加载时不同的字段才会出现在 UPDATE 里。中途值不会逐次落库。改回去就和快照相同，不会写库。'},
+      {title:'怎样自己验证',body:'在同一事务里改字段但不 save，打开 SQL 日志看有没有 UPDATE。再把改字段挪到事务结束后，确认没有写出。两次对照就能分开托管和游离。两次都要看 SQL，而不是只看方法有没有 save。'},
+    ],
+    refs:[['Hibernate：Flushing','https://docs.jboss.org/hibernate/orm/6.4/userguide/html_single/Hibernate_User_Guide.html#flushing'],['Jakarta Persistence：Managed entities','https://jakarta.ee/specifications/persistence/3.1/jakarta-persistence-spec-3.1#a12327']]
+  },
+  {
+    track:'java', group:'JPA', id:'jpa-optimistic-lock',
+    title:'@Version 用版本号发现两人同时改了一行',
+    prompt:'两个请求都读到库存 5，都改成 4，后提交的为什么不该静默覆盖？',
+    core:'乐观锁在行上放一个版本字段。读的时候带上版本，写的时候 WHERE version = 读到的值，并给版本加一。影响行数是 0，说明别人已经改过，这次提交应失败并让调用方重读。它不挡住别人读，只挡住用过期版本去写。没有版本字段时，后提交的人会覆盖先提交的人，丢失更新。悲观锁 FOR UPDATE 会在读时占住行，适合争用极高、不能靠重试的短事务。',
+    why:'库存和余额只靠先读再改，后提交的请求会静默盖掉先提交的结果，两次扣减变成一次。区分信号是版本对不上时更新失败，而不是影响行数仍为 1。后写覆盖时库存会少扣一次，库存会少扣，必须看版本。',
+    example:'订单备注带版本。A、B 都读到版本 3。A 先提交，版本变成 4，备注已是 A 的。B 仍用 3 去更新，影响 0 行或抛出乐观锁冲突，B 的备注不会盖掉 A。B 的更新条件里仍带着版本 3，所以对不上。',
+    task:'两个事务读同一行再更新。有版本字段时第二次应失败。记下失败是异常还是 0 行。',
+    answer:'两个事务都读到同一版本。第一个按这个版本更新，成功后版本加一。第二个再用旧版本更新，预测失败：要么抛出乐观锁异常，要么影响 0 行，不能静默覆盖。失败后应重读再改。没有版本字段时，后写会盖掉先写。记下失败是异常还是 0 行，然后重读版本再改。',
+    keywords:'JPA @Version 乐观锁 丢失更新',
+    points:['更新必须带上读到的版本号','版本不匹配表示有人先写过，这次应失败','乐观锁不代替极热点上的短悲观锁'],
+    deep:[
+      {title:'失败后不要盲重试',body:'版本冲突只说明这一行已经被别人写过。立刻用旧数据再写一次，会再失败，或者盖掉别人刚提交的值。应重新加载，按新版本合并之后再更新。重试前必须重新加载这一行，否则会盖掉新值。'},
+      {title:'怎样自己验证',body:'两个事务读同一行再更新。有版本字段时，后提交的应失败。记下失败是异常还是 0 行。去掉版本后再做一次，后写会成功并盖掉前一次。没有版本的那一次，后写会成功并覆盖先写。'},
+    ],
+    refs:[['Jakarta Persistence：Optimistic lock','https://jakarta.ee/specifications/persistence/3.1/jakarta-persistence-spec-3.1#a5308'],['Hibernate：Optimistic locking','https://docs.jboss.org/hibernate/orm/6.4/userguide/html_single/Hibernate_User_Guide.html#locking-optimistic']]
+  },
+  {
+    track:'java', group:'JPA', id:'jpa-cascade-orphan',
+    title:'级联和孤儿删除要按生命周期写，不能图省事全开',
+    prompt:'删订单时明细没了，为什么有时库存行也一起没了？',
+    core:'cascade 决定对父实体 persist、merge、remove 时，要不要对关联做同一动作。orphanRemoval 表示集合里拿掉的子实体应被删除。两者都是生命周期操作，不是外键约束本身。cascade=ALL 传到不该属于这个聚合的实体，就会误删。明细属于订单，可以级联持久化和孤儿删除；商品、用户不属于订单，只保留外键，不要级联删除。',
+    why:'给所有关联都开级联删除，删一张订单会把共享的商品行一起带走，别的订单再查就空了。区分信号是这条关联的生命周期是否完全属于父实体。共享商品被删后，别的订单一起丢，商品表会空，别的订单一起坏。',
+    example:'Order.items 设 orphanRemoval。从集合拿掉一行明细，flush 后这行从明细表删除。Order.product 只存 product_id，删除订单不删商品。',
+    task:'画出订单、明细、商品三张表。标明哪条关联可以 cascade persist/remove，哪条绝对不能。',
+    answer:'订单到明细是组合，可以级联保存和删除，孤儿删除会删掉从集合里拿掉的明细行。订单到商品是共享引用，只留外键，不能级联删除，否则一次删订单会删掉商品。明细不能再级联到商品。预测：只开属于聚合内部的级联，共享行还在。商品行应还在，被拿出集合的明细应被删掉。',
+    keywords:'JPA cascade orphanRemoval 聚合 外键',
+    points:['cascade 跟随父实体的 persist、merge、remove','orphanRemoval 删除被移出集合的子实体','不要对共享实体使用 cascade remove'],
+    deep:[
+      {title:'孤儿删除看集合',body:'orphanRemoval 不是“删父才删子”的别名。把子实体从集合里移除并提交，子行也会被删。共享对象若被放进这种集合，拿掉引用就等于删数据。从集合移除和删父不是同一条级联。'},
+      {title:'怎样自己验证',body:'画出订单、明细、商品。标明明细可以级联保存和删除，商品绝对不能。删一张订单后查商品表，商品应仍在；从订单集合拿掉一条明细并提交，该明细应消失。删订单之后再查一次商品表。'},
+    ],
+    refs:[['Jakarta Persistence：Cascade','https://jakarta.ee/specifications/persistence/3.1/jakarta-persistence-spec-3.1#a12010'],['Hibernate：Cascade','https://docs.jboss.org/hibernate/orm/6.4/userguide/html_single/Hibernate_User_Guide.html#pc-cascade']]
+  },
+  {
+    track:'java', group:'MyBatis', id:'mybatis-local-cache',
+    title:'一级缓存只活在同一次会话里，二级缓存要额外打开',
+    prompt:'同一个 Mapper 方法调两次，为什么有时打两条 SQL，有时只打一条？',
+    core:'MyBatis 默认有一级缓存，范围是 SqlSession。同一次会话、相同语句和参数，第二次可以直接用内存结果。Spring 里通常一个事务一个会话，事务结束缓存就没了。下一次 HTTP 请求是新会话，会再查库。二级缓存跨会话，要显式给 namespace 打开，并且以 namespace 为界。缓存的是查询结果，不是实体生命周期。写操作默认会清掉相关缓存。不要把一级缓存当成全局缓存，也不要在只读报告上误开会脏读的二级缓存。',
+    why:'以为 MyBatis 自动有跨请求缓存，会把上一次请求的结果当成数据库现在的行，别人已经更新也看不见。区分信号是同一事务里第二次不发 SQL，事务一结束就又发。下一个请求仍可能打到旧对象。',
+    example:'同一个事务里按 id 查两次订单，日志只有一条 SELECT，第二次命中一级缓存。事务提交后再查同一 id，会再发一条 SELECT。不在事务里连续两次调用，每次通常各打一条。不包事务时，两次调用应各有一条 SELECT。',
+    task:'在同一 @Transactional 里连续查两次，看 SQL 次数。去掉事务再查两次，对比。',
+    answer:'同一事务里连续查两次，预测只打一条 SQL，一级缓存跟着这次 SqlSession。去掉事务再查两次，预测打两条，因为会话已经结束，缓存不作数。二级缓存要另外打开，并按 namespace 隔离，新请求默认仍会再查库。二级缓存未打开时，新会话一定再查库。',
+    keywords:'MyBatis 一级缓存 二级缓存 SqlSession',
+    points:['一级缓存默认存在，范围是当前 SqlSession','Spring 里会话常随事务结束而关闭','二级缓存要显式开启，不要默认当成全局缓存'],
+    deep:[
+      {title:'一级缓存跟着会话',body:'一级缓存不是按应用全局记的。会话关闭、事务提交，里面的对象就不再代表数据库。把一次查到的实体留到下一个请求继续改，写回去会盖掉别人的更新。不要把会话里的对象留到下一个请求。'},
+      {title:'怎样自己验证',body:'在同一个事务里连续查两次，数 SQL 条数，应是一条。去掉事务再查两次，应是两条。若打开了二级缓存，再换一个会话查，看命中的是哪一级。数日志里的 SELECT，不要只看返回值相同。'},
+    ],
+    refs:[['MyBatis：settings cacheEnabled','https://mybatis.org/mybatis-3/configuration.html#settings'],['MyBatis：cache','https://mybatis.org/mybatis-3/sqlmap-xml.html#cache']]
+  },
+  {
+    track:'java', group:'MyBatis', id:'mybatis-batch-executor',
+    title:'批量执行器把多条写语句收在一起发',
+    prompt:'循环 insert 一万行，为什么比一条批量 SQL 还慢很多？',
+    core:'默认 SIMPLE 执行器每条语句单独走一遍 JDBC。REUSE 会复用 Statement。BATCH 把多条更新攒进批处理，到 flush 或会话关闭时一起发给数据库。Spring 里要用批量，需要配置专用的 SqlSessionTemplate 或 ExecutorType.BATCH，并且在循环里不要穿插查询把批打断。批处理成功不等于每一行都通过了唯一约束；错误可能在 flush 时才抛出。超大批量应自己按几百行切开，避免单次包过大。',
+    why:'循环里逐条 insert，往返次数和行数一样，慢会被误判成数据库本身慢，而不是每行都等一次网络。区分信号是 BATCH 把多条写收在一起，错误可能迟到 flush 才出现。异常若迟到，循环里的行号会对不上。',
+    example:'导入时用 BATCH，每 500 行 flush 一次。日志里的往返明显少于 1000 次单条插入。中途若 select 刚插入的 id，批处理会被打断。故意插入重复键，异常常常出现在 flush，而不是在那次 insert 调用返回时。',
+    task:'用 SIMPLE 和 BATCH 各插 1000 行，比较往返次数和耗时。故意插入重复键，看异常出现在循环中还是 flush 时。',
+    answer:'SIMPLE 插 1000 行，预测大约 1000 次往返。BATCH 把写语句攒到 flush 再发，往返少、耗时短。重复键的异常预测出现在 flush，而不是循环里那一行调用立刻抛出。循环中穿插查询会把批打断。大批次要切开提交。中途查询会让这一批提前发出。',
+    keywords:'MyBatis ExecutorType BATCH flush',
+    points:['SIMPLE 每条语句一次往返，BATCH 把更新攒起来','循环中查询会打断当前批处理','批处理的约束错误可能在 flush 时才出现'],
+    deep:[
+      {title:'批处理不是一条大 SQL',body:'BATCH 仍是多条插入，只是驱动把它们打包发送。它不自动变成一条多值 INSERT。约束失败时，要能知道是这一批里的哪一段，所以不能无限攒到最后。失败时要能定位是哪一段，所以要分段 flush。'},
+      {title:'怎样自己验证',body:'用 SIMPLE 和 BATCH 各插 1000 行，比较往返次数和耗时。再故意插入重复键，看异常出现在循环中还是 flush。最后在循环里插一条查询，看批是否被打断。'},
+    ],
+    refs:[['MyBatis：executors','https://mybatis.org/mybatis-3/configuration.html'],['MyBatis Spring：SqlSessionTemplate','https://mybatis.org/spring/sqlsession.html']]
+  },
+  {
+    track:'java', group:'MyBatis', id:'mybatis-plugin-interceptor',
+    title:'插件拦的是执行器，不是业务方法',
+    prompt:'想给所有 SQL 打上耗时日志，为什么切 Mapper 接口不够？',
+    core:'MyBatis 插件实现 Interceptor，可以拦 Executor、StatementHandler、ParameterHandler 或 ResultSetHandler。真正发 SQL 的是这些对象，不是 Spring 的 Mapper 代理本身。分页、租户条件、SQL 改写常做在 StatementHandler。插件要声明拦截的方法和签名，签名写错就插不进去。插件会包一层代理，太多层会让排障变难。先确认官方分页或日志能力够不够，再写插件。',
+    why:'只在 Service 上打日志，看不到真正发出的 SQL、参数和耗时，命中缓存时甚至没有语句。区分信号是拦截器拦的是执行器，签名写错时一条日志都没有。缓存命中时 Service 日志仍会骗你已经查库。',
+    example:'拦截执行更新，只打印 UPDATE 的语句和耗时。SELECT 不进入这个拦截，所以没有日志。签名里的类型或参数写错时，插件根本不会被调用。不要在插件里再开一个会话去查库，否则会再次进入拦截，形成递归。',
+    task:'写一个只打印 UPDATE 语句的拦截器，确认 SELECT 不被打印，并且签名写错时完全没有日志。',
+    answer:'制造一条 UPDATE，预测只打印这条更新语句。再跑一条 SELECT，预测没有这条日志。把拦截签名写错，预测完全没有日志。插件拦的是执行器和语句处理器，不是业务方法。拦截里不要再查库。签名正确时只有 UPDATE 有日志，SELECT 没有。',
+    keywords:'MyBatis plugin Interceptor StatementHandler',
+    points:['插件拦截 Executor 或 StatementHandler 这一层','拦截签名写错就不会生效','插件里不要再打开新的 SqlSession 查同一条链'],
+    deep:[
+      {title:'签名决定进不进',body:'拦截器要声明拦哪一个对象、哪一个方法、哪一种参数。差一个类型就不会被织进去，业务照常跑，只是没有日志。这和切在 Service 上看到方法名不是一回事。类型差一个，插件就不会被调用。'},
+      {title:'怎样自己验证',body:'写一个只打印 UPDATE 的拦截器，执行更新和查询，确认只有更新被打印。再故意改错签名，确认日志消失。插件里不要打开新的 SqlSession。改错签名后业务仍成功，只是日志没了。'},
+    ],
+    refs:[['MyBatis：plugins','https://mybatis.org/mybatis-3/configuration.html#plugins']]
+  },
+  {
+    track:'java', group:'缓存', id:'redis-single-thread',
+    title:'Redis 命令执行是单线程，慢命令会卡住别人',
+    prompt:'KEYS * 只是只读，为什么整个 Redis 都停了？',
+    core:'常见模式下，命令排队后由一个线程执行。读写都很快时，单线程反而避免了锁。KEYS、大 key 的 HGETALL、跨很多键的 SUNION，会占住这个线程，后面的 GET 也要等。所以生产禁用 KEYS，用 SCAN 分批。监控看命令耗时和 blocked clients，不要只看 CPU 核数。多线程 I/O 在新版本里加快的是读网络，不是让 KEYS 变安全。',
+    why:'把 Redis 当成会并行执行命令的多核服务，一条大命令会让所有客户端的下一个命令一起等。区分信号是另一个连接上的小 GET 也要等到慢命令结束。只读的大命令一样占住执行线程，小 GET 也要等。',
+    example:'对账在生产执行 KEYS order:*，同时下单接口 GET 一个小键。第二个命令要等 KEYS 扫完才返回，延迟接近那次扫描。改成 SCAN，并放到从库上跑，主库的 GET 就不再被整次遍历堵住。',
+    task:'在测试实例对一个大 hash 做 HGETALL，同时用另一个客户端 GET 一个小键，记录第二个命令等待了多久。',
+    answer:'对大 hash 做 HGETALL 的同时，另一个客户端 GET 小键，预测第二个命令要等待，等待时间接近大命令本身。命令执行是单线程的，慢命令挡住后面的命令。生产用 SCAN 分批，不要用 KEYS。等待时间应接近 HGETALL 本身，而不是接近一次小 GET。',
+    keywords:'Redis 单线程 KEYS SCAN 慢查询',
+    points:['命令在单线程里排队执行','遍历全部键或巨大的值会堵住其他命令','生产用 SCAN 分批，禁用 KEYS'],
+    deep:[
+      {title:'只读也会占住执行',body:'KEYS 和一次性 HGETALL 不写数据，但仍在那条执行线程上跑完才轮到别人。只读不是可以随便在主库跑大扫描的理由。大结果还会把输出缓冲区撑大。大结果还会撑大输出缓冲。'},
+      {title:'怎样自己验证',body:'在测试实例对大 hash 做 HGETALL，同时用另一个客户端 GET 小键，记录第二命令等多久。再把大命令换成 SCAN 的一小批，看小 GET 是否还能及时返回。'},
+    ],
+    refs:[['Redis：延迟诊断','https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/latency/'],['Redis：SCAN','https://redis.io/docs/latest/commands/scan/']]
+  },
+  {
+    track:'java', group:'缓存', id:'redis-sentinel-cluster',
+    title:'哨兵管主从故障切换，集群才把键拆到多台',
+    prompt:'已经上了哨兵，为什么一个热 key 还是把一台机器打满？',
+    core:'主从复制让从库分担读，哨兵在主库挂了以后选出新主。数据仍是一整份，写和热 key 还在那一台。集群把键按槽分到多台，容量和写入可以水平加机器。代价是跨槽的事务和部分多键命令受限，迁槽时客户端要能跟随重定向。选哨兵还是集群，看的是“一份数据要不要拆开”，不是“要不要高可用”。热 key 在集群里仍落在一个槽，还是要拆键或本地缓存。',
+    why:'把哨兵当成自动分片，扩容时只会加从库，热键仍然打在同一台主库上。区分信号是写流量落在几台机器，以及那个最热的键有没有被拆开。从库加得再多，写仍进原来那台主库，热键位置不变，加从库没用。',
+    example:'会话数据用主从加哨兵，写入仍进一台主库，从库只分担读。用户时间线若按用户 id 分到不同槽，才需要集群。秒杀库存那一个键，两种部署都会落在同一台，要单独限流或拆键。秒杀那个键在哨兵和集群里都落在一台。',
+    task:'写下当前 Redis 是单机、哨兵还是集群。标出写流量落在几台机器上，以及那个最热的键在不在同一台。',
+    answer:'先写下当前是单机、哨兵还是集群。哨兵只做主从切换，写流量仍在一台主库，热键不会被拆开。集群按槽把键分到多台，写会落在多台，但同一个热键仍在一个槽、一台机器上。预测：换部署模式不会自动拆开那个最热的键。最热的键仍要单独治理，不能靠改部署名解决。',
+    keywords:'Redis Sentinel Cluster 槽 热 key',
+    points:['哨兵提供主从故障切换，不拆分数据','集群按槽把键放到不同节点','热 key 在集群里仍可能打满单个槽'],
+    deep:[
+      {title:'从库不接写',body:'哨兵后面的从库可以分担读，写仍进主库。主库磁盘或 CPU 被热键打满时，加从库不增加写容量。集群才把不同的键放到不同主节点。读可以分流，写不能靠从库扩容，主库仍是瓶颈。'},
+      {title:'怎样自己验证',body:'写下当前部署，标出写落在几台。对最热的键看它的槽或所在实例。若所有写都在一台，加哨兵从库不会改变这一点。看键所在实例，不要只看节点个数，写落在几台才是答案，不要数节点。'},
+    ],
+    refs:[['Redis：Sentinel','https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/'],['Redis：Cluster','https://redis.io/docs/latest/operate/oss_and_stack/management/scaling/']]
+  },
+  {
+    track:'java', group:'缓存', id:'redis-pipeline',
+    title:'Pipeline 少的是往返，不是事务',
+    prompt:'一次要 GET 二十个键，为什么开 MULTI 并不比 Pipeline 更合适？',
+    core:'Pipeline 把多条命令一次性写给服务器，再一次性读回结果，减少网络往返。命令仍是一条一条执行，中间可以夹进别人的命令。MULTI/EXEC 保证这一批中间不被插队，但仍不是数据库那种可回滚事务：EXEC 里某条失败，前面成功的不会自动撤销。只想少跑几次网络，用 Pipeline。需要“读到的值在写回前没被别人改”，用 WATCH 或 Lua。',
+    why:'把 Pipeline 叫成事务，中途失败时会以为前面的递增已经撤回，库存或计数却已经变了。区分信号是 Pipeline 期间别的客户端的命令仍能插进来。插进来的命令会让先读后写的判断失效。',
+    example:'组装主页时把二十个 GET 放进一次 Pipeline，往返接近一次，耗时远小于二十次单独 GET。扣库存不能用 Pipeline 里先 GET 再 SET：中间别人可以插队。要原子判断时用脚本或 WATCH。',
+    task:'分别用二十次 GET、一次 pipeline、一次 MULTI 包二十个 GET，比较耗时，并说明哪一种能在中途被别人插入。',
+    answer:'二十次单独 GET 最慢。一次 Pipeline 包二十个 GET，预测耗时接近一次往返，但别的客户端的命令可以插在中间。一次 MULTI 包同样的 GET，预测这批不会被插队，失败也不会自动把已经执行的命令撤回。要先读再决定写，仍用脚本或 WATCH。',
+    keywords:'Redis pipeline MULTI 往返 Lua',
+    points:['Pipeline 把多条命令打包以减少网络往返','MULTI 批次中间不被插队，但失败不会回滚已成功命令','原子读写要用 Lua 或 WATCH，不是 Pipeline'],
+    deep:[
+      {title:'少往返不等于原子',body:'Pipeline 把多条命令的等待叠在一起，服务器仍按到达顺序一条条执行，中间可以夹着别人的命令。MULTI 保证这批不被插队，但语法错误之外，已经执行的写入不会整批回滚。'},
+      {title:'怎样自己验证',body:'分别测二十次 GET、一次 Pipeline、一次 MULTI。比较耗时。Pipeline 执行期间用另一个客户端插入一条写入，看它能否出现在这二十条中间。MULTI 期间不应被插进这批。'},
+    ],
+    refs:[['Redis：Pipelining','https://redis.io/docs/latest/develop/using-commands/pipelining/'],['Redis：Transactions','https://redis.io/docs/latest/develop/using-commands/transactions/']]
+  },
+  {
+    track:'java', group:'Netty', id:'netty-idle-heartbeat',
+    title:'空闲检测用来发现死连接，不要靠业务线程去 ping',
+    prompt:'对端已经断电，为什么这条连接在服务端还一直占着？',
+    core:'TCP 不会立刻告诉你对端没了。IdleStateHandler 在读空闲、写空闲或双向空闲超时后发出事件。读空闲通常表示对端不再说话，可以关掉连接。写空闲可以发心跳，维持 NAT 和中间设备。心跳应在 EventLoop 里写一个很小的包，不要为了心跳去调数据库。空闲超时要大于正常业务间隔，又小于你愿意占用文件描述符的时间。',
+    why:'没有空闲检测时，对端断电后的连接在服务端一直占着，连接数只涨不降，新连接最后被耗尽。区分信号是读空闲事件到达后通道被关掉，而不是靠业务线程去查数据库。业务线程里循环 ping，故障时探测比请求还重。',
+    example:'读空闲 60 秒就关闭通道。写空闲 20 秒只发一个很小的 ping，不查业务。拔掉客户端网线后，服务端在大约一分钟内收到读空闲并关闭。手机休眠时，靠这个 ping 维持或及时释放，而不是在业务线程里循环探测。',
+    task:'加 IdleStateHandler 后拔掉客户端网线，记录服务端何时收到空闲事件并关闭通道。',
+    answer:'加上空闲检测后拔掉网线，预测在读空闲时间到达时收到空闲事件并关闭通道，死连接不再占着。写空闲用来发心跳，不在里面做业务查询。心跳失败或读超时就关闭，不要等操作系统很久以后才回收。关闭时间应接近读空闲配置，而不是等操作系统回收，不要做业务查询。',
+    keywords:'Netty IdleStateHandler 心跳 死连接',
+    points:['TCP 不会马上报告对端断电','读空闲可关闭连接，写空闲可发心跳','心跳必须轻量，不能在心跳里访问数据库'],
+    deep:[
+      {title:'心跳不要夹带查询',body:'空闲时若去查库或调下游，探测本身会把池子占满，故障时心跳比业务还重。ping 应是协议上的小帧，只回答这条连接还在不在。探测帧里不要夹查询和下游调用，只要回答连接还在。'},
+      {title:'怎样自己验证',body:'加上 IdleStateHandler 后拔掉客户端网线，记录服务端何时收到空闲事件并关闭。确认关闭时间接近读空闲配置，且这段处理里没有业务查询。拔线后看关闭时刻是否落在读空闲附近。'},
+    ],
+    refs:[['Netty：IdleStateHandler','https://netty.io/4.1/api/io/netty/handler/timeout/IdleStateHandler.html'],['Netty：User guide','https://netty.io/wiki/user-guide-for-4.x.html']]
+  },
+  {
+    track:'java', group:'Netty', id:'netty-codec-shareable',
+    title:'编解码器能不能共享，看它有没有连接级状态',
+    prompt:'把一个解码器做成单例给所有连接用，为什么会解出别人的半包？',
+    core:'有的 handler 带共享标记，没有连接级缓冲区，可以在所有 Pipeline 里共用。帧解码器要为每条连接攒半包，内部有累积缓冲，不能共享。顺序是：字节先进入这条连接自己的解码器，凑成一帧，再交给后面的业务 handler。共享了就会把 A 连接的半包接到 B 上，解出来的是别人的消息。边界是“它记不记得这条连接上还没解完的字节”：记得就必须每条连接 new 一个，不记得才可以标成共享。入站解码和出站编码仍按 Pipeline 的顺序走，共享与否不改变方向。日志这种无状态 handler 可以共用；长度字段解码器不行。标错共享标记时，问题会表现为随机串包，而不是稳定地解错同一条连接。',
+    why:'为了省对象把带缓冲的解码器做成单例，A 的半包会接到 B 的字节上，表现为随机串包。区分信号是这个 handler 内部有没有还没解完的字节。两条连接交错发送时，帧会跨连接拼出来。',
+    example:'长度字段解码器每个通道一个实例，半包只留在这条连接上。日志打印没有内部缓冲，可以标成共享，所有 Pipeline 共用一个。把解码器误标成共享后，两条连接交错发送，会解出跨连接的帧。半包必须留在这条 Channel 自己的解码器里。',
+    task:'列出你的 Pipeline 里每个 handler：有没有内部缓冲、能不能标 Sharable。标错的改掉。',
+    answer:'列出每个 handler：有内部半包缓冲的，预测不能共享，每条连接一份；没有连接状态的，预测可以共享。长度解码器标错就会串包。无状态的日志 handler 可以标共享。先问它记不记得这条连接的字节，再决定 new 还是共用。标错的那个改成每条连接一份，串包应消失。',
+    keywords:'Netty @Sharable 解码器 半包',
+    points:['带累积缓冲的帧解码器不能在连接间共享','无状态 handler 才可以 @Sharable','共享解码器会把不同连接的半包拼在一起'],
+    deep:[
+      {title:'共享的是无状态',body:'可以共享的 handler 不保存某一条连接还没读完的数据。帧解码器把半包留在自己的字段里，第二条连接再写进来，两段字节就会拼成一帧。省下的对象换来的是串包。半包存在字段里，第二条连接会把它接上。'},
+      {title:'怎样自己验证',body:'列出 Pipeline 里每个 handler 有没有内部缓冲、能不能标共享。对带缓冲的解码器若标成共享，用两条连接各发半包，看是否解出混在一起的帧。无状态日志应可以共用。'},
+    ],
+    refs:[['Netty：ChannelHandler.Sharable','https://netty.io/4.1/api/io/netty/channel/ChannelHandler.Sharable.html'],['Netty：ChannelPipeline','https://netty.io/4.1/api/io/netty/channel/ChannelPipeline.html']]
+  },
+  {
+    track:'java', group:'Nginx', id:'nginx-limit-req',
+    title:'limit_req 按键限速，漏了键就变成全站一把锁',
+    prompt:'给登录接口加了限速，为什么所有用户互相堵住？',
+    core:'limit_req_zone 用 key 决定计数器。按二进制地址 $binary_remote_addr，每个客户端一份配额。写成固定字符串，所有人共用一个桶，一个人刷就会挡住别人。rate 是平均速率，burst 允许短时排队或拒绝。nodelay 时超出的请求马上 503，而不是排队。限速在 Nginx，应用里的 Sentinel 仍要保护自己的资源，两层数字不要当成同一个。',
+    why:'限速的键写成固定字符串时，所有用户进同一个桶，一个人刷登录，其他人跟着 503。区分信号是换成按地址分桶后，第二个用户不再被第一个拖死。一个人刷接口，全站登录一起 503，第二个用户被拖死。',
+    example:'zone 的 key 是 $binary_remote_addr，登录 location 引用它，rate=1r/s burst=5。同一 IP 超出返回 503，其他 IP 不受影响。',
+    task:'分别用固定 key 和按 IP 的 key 压登录接口，对比第二个用户会不会被第一个用户拖进 503。',
+    answer:'固定 key 压登录时，第二个用户会被第一个占满的桶拖进 503，因为全站共用一把锁。按客户端地址做 key 时，预测第二个地址有自己的桶，不会被第一个拖死。burst 决定可以多突多少，nodelay 决定超出时排队还是立刻拒绝。键必须能分开调用方。',
+    keywords:'Nginx limit_req rate burst 限速',
+    points:['limit_req 的 key 决定谁和谁共用配额','固定 key 会让所有客户端抢同一个桶','超出时可排队或立刻拒绝，与应用内限流是两层'],
+    deep:[
+      {title:'键决定桶有几个',body:'限速不是一条全局数字。每个键一个桶。键若永远相同，就只有一个桶。键若是地址或用户，互不影响。漏写变量时，配置看起来已经限速，误伤的是所有人。键不变就永远只有一个桶。'},
+      {title:'怎样自己验证',body:'用固定 key 和按地址的 key 各压一次登录。两个来源同时请求时，固定 key 下第二个来源会被拖进 503；按地址分桶时，第二个来源仍能通过。两个来源要同时压，才能看出是不是一把锁。'},
+    ],
+    refs:[['Nginx：limit_req','https://nginx.org/en/docs/http/ngx_http_limit_req_module.html']]
+  },
+  {
+    track:'java', group:'Nginx', id:'nginx-buffer-body',
+    title:'请求体和响应体缓冲决定内存在哪一段涨',
+    prompt:'上传大文件时，是 Nginx 先吃进内存，还是直接转给 Java？',
+    core:'proxy_request_buffering 打开时，Nginx 先收完请求体再转上游，上游慢也不会让客户端卡在中间状态；大文件会占 Nginx 磁盘缓冲。关掉则边收边转，上游必须马上能读。proxy_buffering 控制响应：打开时 Nginx 可以从上游尽快读完，再慢慢给客户端，上游连接更快释放。缓冲不是越大越好，要和 client_max_body_size 一起看。上传接口应单独 location，避免和普通 JSON 共用同一套缓冲。',
+    why:'大文件把 Nginx 或 Java 堆打满，常常是请求体缓冲和大小上限只改了一处，慢客户端仍占着另一端的内存或线程。区分信号是 413 出现在 Nginx 还是出现在 Java。413 出在哪一层，就说明缓冲停在哪一层。',
+    example:'头像上传的 location 把请求体放到临时文件或直接转发，并单独设大小上限。普通 JSON 接口保持缓冲，先收完再交给 Java，避免慢客户端占住业务线程。超过上限的文件应在 Nginx 得到 413，而不是把半截文件交给应用再失败。',
+    task:'对上传 location 和 JSON API 分别查出 buffering、body size。用一个超过上限的文件确认 413 发生在 Nginx 还是 Java。',
+    answer:'上传 location 查到的是自己的缓冲和体积上限，预测超限时 413 出在 Nginx，Java 还没开始读。JSON 接口保持缓冲，预测慢请求先在 Nginx 收完，不占 Java 线程。响应缓冲则让上游尽快写完脱身。大文件必须单独 location，不能和 API 共用同一档上限。',
+    keywords:'Nginx proxy_buffering client_max_body_size 上传',
+    points:['请求体缓冲决定大文件先落在 Nginx 还是边转边给上游','响应缓冲让上游连接更快释放','上传和普通 API 不要共用同一套 body 上限'],
+    deep:[
+      {title:'两段内存不是一处',body:'请求体可以先堆在 Nginx，也可以边收边转给 Java。响应也可以先堆在 Nginx，好让上游线程返回。只加大 Java 的限制，Nginx 仍可能先拒绝或先占满磁盘临时文件。'},
+      {title:'怎样自己验证',body:'对上传和 JSON 两个 location 分别看缓冲和 body 上限。传一个超过上传上限的文件，确认 413 来自 Nginx。再传一个慢的小 JSON，看 Java 线程是等收完还是一直被占着。'},
+    ],
+    refs:[['Nginx：proxy_buffering','https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_buffering'],['Nginx：client_max_body_size','https://nginx.org/en/docs/http/ngx_http_core_module.html#client_max_body_size']]
+  },
+  {
+    track:'java', group:'网关', id:'gateway-retry-idempotent',
+    title:'网关重试只留给安全的读，写接口默认不要重试',
+    prompt:'网关超时后自动再打一次，为什么库存会被扣两次？',
+    core:'Spring Cloud Gateway 可以给路由配 Retry。超时、连接失败时再发一次请求。GET 查询常常可以重试。POST 下单若第一次已经到达库存并提交，第二次就是另一笔。网关看不到业务幂等键是否同一把。写接口应关掉自动重试，把重试权交给带幂等键的调用方。读接口重试要限制次数和状态码，避免对 4xx 再打。',
+    why:'入口对所有路由打开重试，第一次其实已经成功、只是响应丢了，库存会被再扣一次。区分信号是 GET 可以再试，POST 不带幂等键就绝不能由网关自动再打。响应丢了不代表上游没提交，再打就是第二笔。',
+    example:'查询库存的 GET 在 502 或 504 时重试一次，没有副作用。POST /orders 不配置重试。若第一次已经扣库存但响应丢失，网关再打一次会再扣。应把超时交给前端，用同一个幂等键再提交，由订单服务认出原订单。',
+    task:'给一条 GET 和一条 POST 各写重试策略。用第一次已成功、响应丢失的场景，预测库存行数。',
+    answer:'GET 允许对 502/504 重试一次，预测没有第二笔业务。POST 不重试；第一次已成功但响应丢失时，库存行数应仍是扣过一次，而不是两行。写操作只有调用方带着幂等键、服务端能认出时才可以再提交。网关重试看不见这个业务键。库存应只有一次扣减，第二笔只能由幂等键挡下。',
+    keywords:'Spring Cloud Gateway Retry 幂等 POST',
+    points:['网关重试会把同一请求再打到后端','GET 可以对有限的失败码重试','POST 默认不要自动重试，除非服务端幂等'],
+    deep:[
+      {title:'响应丢失仍可能已提交',body:'超时只说明调用方没看到结果，不说明上游没写完。自动再发一次同样的 POST，就是第二次业务。读请求没有这个第二笔，所以才可以有限重试。读请求没有这第二笔，所以才可以重试。'},
+      {title:'怎样自己验证',body:'给 GET 和 POST 各写重试策略。模拟第一次已成功、响应丢失：GET 重试后结果不变；POST 若被网关再打一次，库存会多扣。确认写路由没有 Retry。'},
+    ],
+    refs:[['Spring Cloud Gateway：Retry','https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway/gatewayfilter-factories/retry-factory.html']]
+  },
+  {
+    track:'java', group:'网关', id:'gateway-timeout-chain',
+    title:'网关超时要短于上游处理，长于一次正常成功',
+    prompt:'网关 1 秒超时，Java 要 3 秒才能提交，用户会看到什么？',
+    core:'网关响应超时到了，连接会断开并给调用方失败，上游事务可能还在提交。用户看到失败，数据库里可能已经有订单。顺序必须从外到内越来越短：调用方愿意等得最久，网关短一些，Feign 更短，SQL 最短，正常成功要落在最内层之内。反过来就会出现入口已经失败、里面还在写。边界是只加长其中一口钟没有用：网关先断时，写接口必须能用原来的幂等键重试，服务端认出后返回已有结果，而不是再写一行。抖动时从最内层先失败，让外层看到明确错误，而不是把线程堆在入口。三口钟对不齐时，先标出哪一个比外面更长，再改数字，不要三处一起加。库存语句若比调用方更长，库里的事务仍要靠超时或幂等收场。',
+    why:'只加长网关，线程和连接堆在入口；只加长 Java 不管网关，用户拿到失败时库里可能已经提交。区分信号是三口钟从外到内越来越短，反了的那一口会先假失败或后写完。用户看到失败时，订单行可能已经在库里。',
+    example:'正常下单 200 毫秒。网关 2 秒，Feign 1 秒，SQL 500 毫秒。库存抖到 3 秒时，Feign 先失败，网关把错误返回，库存侧靠语句超时回滚或靠幂等认出重试。若 SQL 比 Feign 更长，调用方已经失败，语句还在跑。',
+    task:'写下当前网关、Feign、SQL 三个超时。按从外到内应越来越短的规则，标出哪一个反了。',
+    answer:'写下网关、Feign、SQL 三个数。预测从外到内应越来越短。哪一个比外面更大，哪一个就反了：里面还在写，外面已经对用户失败。写接口这时必须能用原幂等键重试。不要只改其中一个数字。反了的那一口标出来，写路径用原幂等键收场，不要三处一起加，先标出反了的那一口。',
+    keywords:'Spring Cloud Gateway 超时 幂等 链路',
+    points:['网关超时断开后，上游事务可能仍在提交','超时应从外到内递减','写接口用幂等消化假失败后的重试'],
+    deep:[
+      {title:'假失败仍可能有订单',body:'网关先断开，只说明这一端不再等。上游事务可能随后提交。用户看到的失败和表里的行会短暂不一致。重试必须认出已有订单，而不是再插入一行。重试若再插入，就会多出一张订单。'},
+      {title:'怎样自己验证',body:'写下网关、Feign、SQL 三个超时，标出比外层更长的那一个。把库存故意拖过内层超时，看是 Feign 先失败，还是网关先断开而库里仍出现订单。故意拖慢库存，看先响的是哪一口钟。'},
+    ],
+    refs:[['Spring Cloud Gateway：HttpTimeout','https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway/request-predicates-filters.html'],['Spring Cloud Gateway：配置','https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway-server-webflux/configuration.html']]
+  },
+  {
+    track:'java', group:'搜索', id:'es-search-after',
+    title:'深分页不要用 from 跳过前面的命中',
+    prompt:'翻到第 1000 页为什么比第 1 页慢很多，还可能报错？',
+    core:'from + size 会在每个分片上找出 from+size 条，再在协调节点合并丢掉前面的 from。页码越深，丢弃的工作越多。index.max_result_window 还会直接拒绝过大的 from。按时间或 id 稳定排序时，用上一页最后一条的排序值 search_after，直接从那个位置继续。滚动查询适合导出，不适合用户来回翻页。深度分页首先问“用户真的会翻到第几千页吗”，搜索应引导筛选，而不是无限页码。',
+    why:'列表把页码原样交给 from，翻到很深时每次都要跳过前面的命中，导出还会顶到窗口上限。区分信号是同样的查询用 search_after 按上一页的排序值继续，耗时不随页码线性变差。',
+    example:'商品搜索按分数加 id 排序。下一页带上上一页最后的 score 和 id，用 search_after。后台导出用 point in time 加 search_after，不用 from=100000。',
+    task:'对同一查询分别用 from=10000 和 search_after。比较耗时，并确认没有跳过或重复的 id。',
+    answer:'from=10000 预测更慢，还可能因为结果窗口上限报错，并且要付出前面那些命中的代价。search_after 用上一页最后一条的排序值接着查，预测耗时接近第一页，且按同一排序不会跳过或重复 id。用户翻页用它。大批导出用滚动或 PIT，不要靠巨大的 from。',
+    keywords:'Elasticsearch search_after from size 深分页',
+    points:['from+size 必须先取出再丢掉前面的命中','过深的 from 会被 max_result_window 拒绝','后续页用上一页的排序值 search_after'],
+    deep:[
+      {title:'深页不是只多读一页',body:'from 要先找到并丢掉前面的命中，页码越大越贵。search_after 从上次的位置继续，不重复付出前面的代价。排序值必须稳定，否则会漏行或重复。排序不稳定时，续页会漏掉或重复 id。'},
+      {title:'怎样自己验证',body:'对同一查询分别用很大的 from 和 search_after。比较耗时，并核对返回 id 没有跳过或重复。再把 from 加到超过窗口，确认会报错而不是慢慢返回。'},
+    ],
+    refs:[['Elasticsearch：分页','https://www.elastic.co/docs/reference/elasticsearch/rest-apis/paginate-search-results'],['Elasticsearch：search_after','https://www.elastic.co/docs/reference/elasticsearch/rest-apis/paginate-search-results#search-after']]
+  },
+  {
+    track:'java', group:'搜索', id:'es-mapping-reindex',
+    title:'映射改了类型，旧索引不会跟着变，要重建',
+    prompt:'把价格从 text 改成 integer，为什么已经在的文档还是按词搜？',
+    core:'映射在索引创建时定下字段怎么存。已经写进去的文档按当时的映射分析，多数类型不能原地改成另一种。顺序是三步：建一个新索引，把旧数据 reindex 过去，再把别名切到新索引。查询和写入都走别名，调用方不用改名字。只改模板只影响以后新建的索引，旧索引里的历史文档不会重新分词。边界是动态映射可能已经把数字存成 text，等搜索对不上再改就晚了。上线前用模板锁住关键字段的类型。模板保护的是下一次创建，不是已经存在的那一份。切别名要在新索引可搜之后做，切早了查询会打到还没灌完的索引。价格从 text 改成整数就属于不能原地改的类型。旧文档不会因为你改了控制台上的类型就重新分析。',
+    why:'在控制台改了映射就以为历史文档会重新分词，新品和旧数据的搜法会对不上。区分信号是改类型直接报错，旧索引里的价格仍按原来的 text 存着。新品按新类型存，旧文档仍按旧类型搜，搜索会对不上。',
+    example:'价格应是整数，动态映射却存成了 text。直接改类型会失败。新建 products_v2，把数据 reindex 过去，别名 products 再指到 v2。查询和写入都走别名。只改模板的话，已经存在的索引不会变。',
+    task:'对一个字段尝试改类型，记录报错。写出用别名切换的三步：新索引、reindex、切别名。',
+    answer:'对已有字段改类型，预测报错，旧文档不会因此重新分析。三步是：建新索引、reindex、把别名切过去。切完之后查询走新映射。模板只保护以后新建的索引，不改已经存在的那一份。三步做完再查询，价格应按新类型命中；只改模板则旧索引不变，历史文档不会重分析。',
+    keywords:'Elasticsearch mapping reindex 别名 动态映射',
+    points:['字段类型在写入时按当时映射固定','改类型通常要新索引并 reindex','用别名切换，避免应用改索引名'],
+    deep:[
+      {title:'别名是切换点',body:'应用不要写死物理索引名。别名从旧指到新的那一下，读写一起过去。切之前要确认新索引已经灌完并且可搜，否则会短暂查到半份数据。应用只认别名，不写死物理索引名，切早了会查到半份。'},
+      {title:'怎样自己验证',body:'对一个字段尝试改类型，记下报错。按新索引、reindex、切别名做完，再搜同一价格：旧的按词、新的按数值。只改模板后，旧索引的映射应仍然不变。改类型的报错要先记下来，再开始建新索引。'},
+    ],
+    refs:[['Elasticsearch：mapping','https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html'],['Elasticsearch：Reindex API','https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-reindex.html']]
+  }
+];
+
+for (const {points, refs, ...lesson} of COVERAGE_INFRA_13) {
+  window.LESSONS.push(lesson);
+  window.KNOWLEDGE_POINTS[lesson.id] = points;
+  window.LESSON_REFERENCES[lesson.id] = refs;
+}

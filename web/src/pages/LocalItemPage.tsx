@@ -12,13 +12,14 @@ import {
 import { useEffect, useState } from 'react'
 import { Link, Navigate, useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import { localApi, type ItemPayload } from '@/api/localLibrary'
+import { LocalReading } from '@/components/LocalReading'
 import { useProgress } from '@/state/progress'
 
-type OutletCtx = { localReady: boolean }
+type OutletCtx = { localReady: boolean | null }
 
 export function LocalItemPage() {
   const { itemId = '' } = useParams()
-  const id = decodeURIComponent(itemId)
+  const id = itemId
   const { localReady } = useOutletContext<OutletCtx>()
   const progress = useProgress()
   const navigate = useNavigate()
@@ -49,6 +50,7 @@ export function LocalItemPage() {
     }
   }, [id, page, localReady])
 
+  if (localReady === null) return <div role="status">正在连接本机资料…</div>
   if (!localReady) return <Navigate to="/knowledge" replace />
   if (error) {
     return (
@@ -64,7 +66,7 @@ export function LocalItemPage() {
   const auditKey = `${item.id}#p${item.page}`
 
   return (
-    <Space direction="vertical" size={16} style={{ width: '100%' }}>
+    <div className="article-shell">
       <Breadcrumb
         items={[
           { title: <Link to="/local">我的资料</Link> },
@@ -75,9 +77,9 @@ export function LocalItemPage() {
         <Typography.Text type="secondary">
           ORIGINAL MATERIAL / 待核验 · 第 {item.page} / {item.pages} 页
         </Typography.Text>
-        <Typography.Title level={2} style={{ marginTop: 8, marginBottom: 4 }}>
+        <h1 className="hero-title" style={{ marginTop: 8 }}>
           {item.title}
-        </Typography.Title>
+        </h1>
         <Typography.Paragraph type="secondary">{item.path}</Typography.Paragraph>
         {item.websites?.length ? (
           <Typography.Paragraph type="secondary">
@@ -98,7 +100,7 @@ export function LocalItemPage() {
       />
 
       {item.pages > 1 ? (
-        <Space>
+        <div className="pager">
           <Button disabled={item.page === 1} onClick={() => setPage((value) => value - 1)}>
             ← 上一页
           </Button>
@@ -115,26 +117,28 @@ export function LocalItemPage() {
           >
             下一页 →
           </Button>
-        </Space>
+        </div>
       ) : null}
 
       <Tabs
         items={[
+          ...(item.format === 'MD'
+            ? [{
+                key: 'reading',
+                label: '阅读',
+                children: <LocalReading docId={item.id} text={text} />,
+              }]
+            : []),
           ...(visual
             ? [
                 {
                   key: 'visual',
                   label: '原版页面 / 图片',
                   children: (
-                    <div>
+                    <div className={`source-frame${zoomed ? ' is-zoomed' : ''}`}>
                       <img
                         src={localApi.mediaUrl(item.id, item.page)}
                         alt={`${item.title} 第 ${item.page} 页`}
-                        style={{
-                          maxWidth: zoomed ? 'none' : '100%',
-                          width: zoomed ? 'auto' : '100%',
-                          border: '1px solid var(--lab-line)',
-                        }}
                       />
                       <div style={{ marginTop: 8 }}>
                         <Button size="small" onClick={() => setZoomed((value) => !value)}>
@@ -232,6 +236,6 @@ export function LocalItemPage() {
           保存本页笔记
         </Button>
       </div>
-    </Space>
+    </div>
   )
 }

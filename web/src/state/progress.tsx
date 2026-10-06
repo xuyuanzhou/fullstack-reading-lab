@@ -4,46 +4,18 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react'
-import { groupsFor } from '@/data/curriculum'
+import { courseGroups, groupKeyForLabel } from '@/data/routes'
 import { STORAGE_KEY } from '@/data/meta'
 import type { ProgressState, Track } from '@/types/curriculum'
-
-const defaults: ProgressState = {
-  track: 'frontend',
-  group: '语言基础',
-  done: [],
-  review: [],
-  recent: [],
-  notes: {},
-  theme: 'light',
-  query: '',
-  audit: {},
-  localQuery: '',
-  localTopic: '',
-}
-
-function load(): ProgressState {
-  try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}') as Partial<ProgressState>
-    const next = { ...defaults, ...saved }
-    for (const key of ['done', 'review', 'recent'] as const) {
-      if (!Array.isArray(next[key])) next[key] = []
-    }
-    if (!next.notes || typeof next.notes !== 'object') next.notes = {}
-    if (!next.audit || typeof next.audit !== 'object') next.audit = {}
-    if (!groupsFor(next.track).includes(next.group)) {
-      next.group = groupsFor(next.track)[0] || ''
-    }
-    return next
-  } catch {
-    return { ...defaults }
-  }
-}
+import { readProgress, writeProgress, type ProgressGroups } from './progressStorage'
 
 type ProgressApi = ProgressState & {
+  storageIssue: string
+  selectLesson: (track: Track, group: string) => void
   setTrack: (track: Track) => void
   setGroup: (group: string) => void
   toggleDone: (id: string) => void
@@ -54,17 +26,46 @@ type ProgressApi = ProgressState & {
   setTheme: (theme: 'light' | 'dark') => void
   setLocalQuery: (query: string) => void
   setLocalTopic: (topic: string) => void
+  setLocalCategory: (category: ProgressState['localCategory']) => void
   saveAudit: (key: string, note: string) => void
 }
 
 const ProgressContext = createContext<ProgressApi | null>(null)
 
+const storageGroups: ProgressGroups = (track) =>
+  courseGroups(track).flatMap((group) => [group.key, group.label])
+
+function routeGroup(track: Track, group: string) {
+  if (!group) return ''
+  const course = courseGroups(track)
+  if (course.some((item) => item.key === group)) return group
+  return groupKeyForLabel(track, group) || course[0]?.key || ''
+}
+
 export function ProgressProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<ProgressState>(load)
+  const [initial] = useState(() => {
+    const loaded = readProgress(STORAGE_KEY, storageGroups)
+    return { ...loaded, state: { ...loaded.state, group: routeGroup(loaded.state.track, loaded.state.group) } }
+  })
+  const [state, setState] = useState<ProgressState>(initial.state)
+  const [storageIssue, setStorageIssue] = useState(initial.issue)
+  const latest = useRef(state)
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+    latest.current = state
+    const save = () => setStorageIssue(writeProgress(STORAGE_KEY, state))
+    const timer = window.setTimeout(save, 350)
+    return () => window.clearTimeout(timer)
   }, [state])
+
+  useEffect(() => {
+    const flush = () => { writeProgress(STORAGE_KEY, latest.current) }
+    window.addEventListener('pagehide', flush)
+    return () => {
+      window.removeEventListener('pagehide', flush)
+      flush()
+    }
+  }, [])
 
   useEffect(() => {
     document.documentElement.dataset.theme = state.theme
@@ -74,13 +75,17 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     setState((prev) => ({
       ...prev,
       track,
-      group: groupsFor(track)[0] || '',
+      group: courseGroups(track)[0]?.key || '',
       localTopic: '',
     }))
   }, [])
 
   const setGroup = useCallback((group: string) => {
     setState((prev) => ({ ...prev, group }))
+  }, [])
+
+  const selectLesson = useCallback((track: Track, group: string) => {
+    setState(prev => prev.track === track && prev.group === group ? prev : { ...prev, track, group })
   }, [])
 
   const toggleList = useCallback((key: 'done' | 'review', id: string) => {
@@ -103,6 +108,8 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   const value = useMemo<ProgressApi>(
     () => ({
       ...state,
+      storageIssue,
+      selectLesson,
       setTrack,
       setGroup,
       toggleDone: (id) => toggleList('done', id),
@@ -114,13 +121,18 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       setTheme: (theme) => setState((prev) => ({ ...prev, theme })),
       setLocalQuery: (localQuery) => setState((prev) => ({ ...prev, localQuery })),
       setLocalTopic: (localTopic) => setState((prev) => ({ ...prev, localTopic })),
+      setLocalCategory: (localCategory) => setState((prev) => ({
+        ...prev,
+        localCategory,
+        localTopic: prev.localCategory === localCategory ? prev.localTopic : '',
+      })),
       saveAudit: (key, note) =>
         setState((prev) => ({
           ...prev,
           audit: { ...prev.audit, [key]: { note, status: '待核验' } },
         })),
     }),
-    [state, setTrack, setGroup, toggleList, remember],
+    [state, storageIssue, selectLesson, setTrack, setGroup, toggleList, remember],
   )
 
   return <ProgressContext.Provider value={value}>{children}</ProgressContext.Provider>

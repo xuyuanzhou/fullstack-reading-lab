@@ -1,4 +1,5 @@
 private-data/
+config/library.path
 dist/
 web/dist/
 web/node_modules/

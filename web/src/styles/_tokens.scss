@@ -1,0 +1,67 @@
+// Design tokens. Components read CSS variables so light and dark stay in one place.
+
+:root {
+  color-scheme: light;
+  --lab-bg: #f3f4f2;
+  --lab-bg-accent: #f3f4f2;
+  --lab-panel: #fafaf8;
+  --lab-sider: #e9ebe8;
+  --lab-ink: #2e3330;
+  --lab-muted: #5e6661;
+  --lab-line: #d9ddd8;
+  --lab-line-soft: #e6e9e5;
+  --lab-accent: #3f6a58;
+  --lab-accent-soft: #e6efe9;
+  --lab-accent-strong: #2d4f41;
+  --lab-warn-bg: #eef0ea;
+  --lab-danger: #a05048;
+  --lab-shadow: 0 1px 0 rgba(40, 48, 42, 0.03), 0 10px 28px rgba(40, 48, 42, 0.04);
+  --lab-radius: 10px;
+  --lab-sider-w: 300px;
+  --lab-aside-w: 248px;
+  --lab-header: 52px;
+  --lab-measure: 42rem;
+  --lab-text-caption: 12px;
+  --lab-text-small: 13px;
+  --lab-text-ui: 14px;
+  --lab-text-body: 15px;
+  --lab-text-h2: 16px;
+  --lab-text-page: 22px;
+  --lab-text-h1: 24px;
+  --font-sans: 'IBM Plex Sans', 'Noto Sans SC', 'PingFang SC', sans-serif;
+  --font-serif: 'Source Serif 4', 'Songti SC', 'Noto Serif SC', Georgia, serif;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+  --lab-bg: #1c1f1d;
+  --lab-bg-accent: #1c1f1d;
+  --lab-panel: #252925;
+  --lab-sider: #212421;
+  --lab-ink: #d0d5d1;
+  --lab-muted: #919a94;
+  --lab-line: #343a36;
+  --lab-line-soft: #2b2f2c;
+  --lab-accent: #8fb5a0;
+  --lab-accent-soft: #2a3530;
+  --lab-accent-strong: #c5ddd0;
+  --lab-warn-bg: #2a2c26;
+  --lab-danger: #d4a39a;
+  --lab-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+}
+
+@mixin label {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--lab-muted);
+  font-weight: 600;
+}

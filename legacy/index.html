@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f8fb">
+  <title>全栈学习实验室 · 学习、验证、复盘</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <button id="menuToggle" class="icon-button mobile-only" aria-label="打开课程目录">☰</button>
+    <div class="brand"><span class="brand-mark">{ }</span><span>全栈学习实验室<small>FULLSTACK LEARNING LAB</small></span></div>
+    <nav class="topnav" aria-label="主导航">
+      <button id="homeTab">学习路线</button>
+      <button id="libraryTab">知识库</button>
+      <button id="auditTab">知识核验</button>
+      <button id="savedTab">复习清单</button>
+    </nav>
+    <div class="top-actions"><span id="count" class="top-count"></span><button id="themeToggle" class="icon-button" aria-label="切换深浅色">◐</button></div>
+  </header>
+  <div class="workspace">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head"><span class="eyebrow">LEARNING PATH / 学习路径</span><button class="icon-button mobile-only" id="closeMenu" aria-label="关闭目录">×</button></div>
+      <div class="track-switch" role="group" aria-label="学习方向"><button data-track="frontend" class="selected">前端工程</button><button data-track="java">Java 后端</button></div>
+      <div id="roadmap"></div>
+      <div class="sidebar-foot"><p class="eyebrow">REACT SOURCE</p><strong>深入 React 运行时</strong><p>相关课程直达 React Mastery Lab 的 v19.3.0 源码。</p><a href="https://xuyuanzhou.github.io/react-mastery-lab/" target="_blank" rel="noopener">打开 React 源码实验室 ↗</a></div>
+      <div class="sidebar-foot"><p class="eyebrow">VUE SOURCE</p><strong>深入 Vue 3 源码</strong><p>相关课程直达 Vue 3 Mastery Lab 的 v3.5.43 源码。</p><a href="https://xuyuanzhou.github.io/vue3-mastery-lab/#/" target="_blank" rel="noopener">打开 Vue 3 源码实验室 ↗</a></div>
+    </aside>
+    <main id="mainPanel" class="main-panel" tabindex="-1"></main>
+    <aside class="inspector"><div id="rightPanel"></div><div class="privacy-note"><span class="eyebrow">OPEN LEARNING</span><strong>公开课程，独立核验</strong><p>知识卡与练习为原创内容。购买资料和 PDF 密码不会进入网站。学习记录只存在当前浏览器。</p></div></aside>
+  </div>
+  <script src="../curriculum/lessons.js"></script>
+  <script src="../curriculum/extra-lessons.js"></script>
+  <script src="../curriculum/distributed-lessons.js"></script>
+  <script src="../curriculum/knowledge-points.js"></script>
+  <script src="../curriculum/coverage-lessons.js"></script>
+  <script src="../curriculum/coverage-batch-03.js"></script>
+  <script src="../curriculum/coverage-batch-04.js"></script>
+  <script src="../curriculum/coverage-frontend-05.js"></script>
+  <script src="../curriculum/coverage-java-05.js"></script>
+  <script src="../curriculum/coverage-batch-06.js"></script>
+  <script src="../curriculum/coverage-frontend-07.js"></script>
+  <script src="../curriculum/coverage-java-07.js"></script>
+  <script src="../curriculum/coverage-java-08.js"></script>
+  <script src="../curriculum/coverage-frontend-08.js"></script>
+  <script src="../curriculum/coverage-java-09.js"></script>
+  <script src="../curriculum/coverage-frontend-09.js"></script>
+  <script src="../curriculum/coverage-frontend-10.js"></script>
+  <script src="../curriculum/coverage-frontend-11.js"></script>
+  <script src="../curriculum/coverage-frontend-12.js"></script>
+  <script src="../curriculum/coverage-frontend-13.js"></script>
+  <script src="../curriculum/coverage-frontend-14.js"></script>
+  <script src="../curriculum/coverage-java-10.js"></script>
+  <script src="../curriculum/coverage-java-11.js"></script>
+  <script src="../curriculum/coverage-java-12.js"></script>
+  <script src="../curriculum/coverage-java-13.js"></script>
+  <script src="../curriculum/coverage-java-14.js"></script>
+  <script src="../curriculum/coverage-java-15.js"></script>
+  <script src="../curriculum/coverage-java-16.js"></script>
+  <script src="../curriculum/coverage-java-17.js"></script>
+  <script src="../curriculum/coverage-java-18.js"></script>
+  <script src="../curriculum/coverage-java-19.js"></script>
+  <script src="../curriculum/coverage-java-20.js"></script>
+  <script src="../curriculum/coverage-java-21.js"></script>
+  <script src="../curriculum/coverage-java-22.js"></script>
+  <script src="../curriculum/coverage-java-23.js"></script>
+  <script src="../curriculum/coverage-java-24.js"></script>
+  <script src="../curriculum/coverage-java-25.js"></script>
+  <script src="../curriculum/coverage-java-26.js"></script>
+  <script src="../curriculum/coverage-java-27.js"></script>
+  <script src="../curriculum/coverage-java-28.js"></script>
+  <script src="../curriculum/coverage-java-29.js"></script>
+  <script src="../curriculum/coverage-path.js"></script>
+  <script src="../curriculum/coverage-path-02.js"></script>
+  <script src="../curriculum/coverage-path-03.js"></script>
+  <script src="../curriculum/coverage-path-04.js"></script>
+  <script src="../curriculum/coverage-path-05.js"></script>
+  <script src="../curriculum/coverage-path-06.js"></script>
+  <script src="../curriculum/coverage-path-07.js"></script>
+  <script src="../curriculum/coverage-path-08.js"></script>
+  <script src="../curriculum/coverage-path-09.js"></script>
+  <script src="../curriculum/foundation-points.js"></script>
+  <script src="../curriculum/coverage-chapters-10.js"></script>
+  <script src="../curriculum/coverage-sca-12.js"></script>
+  <script src="../curriculum/coverage-infra-13.js"></script>
+  <script src="../curriculum/coverage-depth-14.js"></script>
+  <script src="../curriculum/coverage-ship-15.js"></script>
+  <script src="../curriculum/coverage-core-16.js"></script>
+  <script src="../curriculum/coverage-ops-17.js"></script>
+  <script src="../curriculum/answer-walkthrough.js"></script>
+  <script src="publication-order.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

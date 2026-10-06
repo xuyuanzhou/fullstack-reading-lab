@@ -2,12 +2,14 @@ import { Alert, Breadcrumb, Button, Empty, Input, Space, Typography, message } f
 import { useEffect, useState } from 'react'
 import { Navigate, useNavigate, useOutletContext } from 'react-router-dom'
 import { localApi, type CatalogItem, type SubjectRow } from '@/api/localLibrary'
+import { LOCAL_CATEGORY_LABEL } from '@/data/meta'
 import { useProgress } from '@/state/progress'
+import type { LocalCategory } from '@/types/curriculum'
 
-type OutletCtx = { localReady: boolean }
+const PAGE_SIZE = 100
 
 export function LocalPage() {
-  const { localReady } = useOutletContext<OutletCtx>()
+  const { localReady } = useOutletContext<{ localReady: boolean | null }>()
   const progress = useProgress()
   const navigate = useNavigate()
   const [status, setStatus] = useState('正在读取导入状态…')
@@ -15,191 +17,78 @@ export function LocalPage() {
   const [items, setItems] = useState<CatalogItem[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [offset, setOffset] = useState(0)
+  const [hasMore, setHasMore] = useState(false)
+  const [mode, setMode] = useState<'catalog' | 'fulltext'>('catalog')
+  const [retry, setRetry] = useState(0)
 
+  useEffect(() => { setOffset(0) }, [progress.localCategory, progress.localQuery, progress.localTopic, mode])
   useEffect(() => {
     if (!localReady) return
-    void localApi
-      .stats()
-      .then((data) =>
-        setStatus(
-          `已导入 ${data.imported} / ${data.count} 份；${data.emptyText} 份未识别出文字，可查看原图继续核验。`,
-        ),
-      )
-      .catch((error: Error) => setStatus(error.message))
+    let active = true
+    void localApi.stats().then(data => {
+      if (active) setStatus(`已导入 ${data.imported} / ${data.count} 份；${data.emptyText} 份尚无可靠文字。`)
+    }).catch((err: Error) => { if (active) setStatus(err.message) })
+    return () => { active = false }
   }, [localReady])
 
   useEffect(() => {
     if (!localReady) return
     let cancelled = false
-    const load = async () => {
+    const timer = window.setTimeout(async () => {
       setLoading(true)
+      setError('')
       try {
-        if (progress.localQuery || progress.localTopic) {
-          const data = await localApi.catalog({
-            category: progress.track,
-            q: progress.localQuery,
-            topic: progress.localTopic,
-            offset: 0,
-            limit: 100,
-          })
-          if (!cancelled) {
-            setItems(data.items)
-            setTotal(data.total)
-            setSubjects([])
-          }
+        if (mode === 'fulltext') {
+          const data = await localApi.search({ category: progress.localCategory, q: progress.localQuery, offset, limit: PAGE_SIZE })
+          if (!cancelled) { setItems(data.items); setSubjects([]); setTotal(0); setHasMore(!!data.hasMore) }
+        } else if (progress.localQuery || progress.localTopic) {
+          const data = await localApi.catalog({ category: progress.localCategory, q: progress.localQuery, topic: progress.localTopic, offset, limit: PAGE_SIZE })
+          if (!cancelled) { setItems(data.items); setSubjects([]); setTotal(data.total); setHasMore(data.hasMore ?? offset + data.items.length < data.total) }
         } else {
-          const data = await localApi.subjects(progress.track)
-          if (!cancelled) {
-            setSubjects(data.subjects)
-            setTotal(data.total)
-            setItems([])
-          }
+          const data = await localApi.subjects(progress.localCategory)
+          if (!cancelled) { setSubjects(data.subjects); setTotal(data.total); setItems([]); setHasMore(false) }
         }
-      } catch (error) {
-        if (!cancelled) message.error((error as Error).message)
-      } finally {
-        if (!cancelled) setLoading(false)
-      }
-    }
-    void load()
-    return () => {
-      cancelled = true
-    }
-  }, [localReady, progress.track, progress.localQuery, progress.localTopic])
+      } catch (err) {
+        if (!cancelled) setError((err as Error).message)
+      } finally { if (!cancelled) setLoading(false) }
+    }, 200)
+    return () => { cancelled = true; window.clearTimeout(timer) }
+  }, [localReady, progress.localCategory, progress.localQuery, progress.localTopic, offset, mode, retry])
 
+  if (localReady === null) return <div role="status">正在连接本机资料…</div>
   if (!localReady) return <Navigate to="/knowledge" replace />
 
-  return (
-    <div className="article-shell">
-      <div>
-        <h1 className="hero-title" style={{ fontSize: '2rem' }}>
-          我的资料
-        </h1>
-        <p className="hero-lead">
-          购买资料仅在本机打开，原文默认待核验；密码说明只在本机读取。每次批量处理最多 200 份资料。
-        </p>
-        <Typography.Text type="secondary">{status}</Typography.Text>
+  return <div className="article-shell">
+    <header>
+      <h1 className="hero-title">我的资料</h1>
+      <p className="hero-lead">按一级目录和科目阅读原件。AI 目录里的手册带有配图，原始说法仍需逐项核验。</p>
+      <div className="track-switch is-triple local-category" style={{ maxWidth: 360, marginBottom: 16 }}>
+        {(Object.keys(LOCAL_CATEGORY_LABEL) as LocalCategory[]).map((category) => (
+          <Button key={category} type={progress.localCategory === category ? 'primary' : 'default'} onClick={() => progress.setLocalCategory(category)}>
+            {LOCAL_CATEGORY_LABEL[category]}
+          </Button>
+        ))}
       </div>
-
-      <Space wrap>
-        <Input.Search
-          allowClear
-          placeholder="搜索文件名或正文…"
-          value={progress.localQuery}
-          onChange={(event) => progress.setLocalQuery(event.target.value)}
-          onSearch={(value) => progress.setLocalQuery(value)}
-          style={{ width: 320 }}
-        />
-        <Button
-          onClick={async () => {
-            setLoading(true)
-            try {
-              const data = await localApi.search({
-                category: progress.track,
-                q: progress.localQuery,
-              })
-              setItems(data.items)
-              setSubjects([])
-              setTotal(data.items.length)
-            } catch (error) {
-              message.error((error as Error).message)
-            } finally {
-              setLoading(false)
-            }
-          }}
-        >
-          搜索正文
-        </Button>
-        <Button
-          onClick={async () => {
-            try {
-              await localApi.reindex()
-              message.success('已开始处理下一批')
-            } catch (error) {
-              message.error((error as Error).message)
-            }
-          }}
-        >
-          处理下一批
-        </Button>
-      </Space>
-
-      {progress.localTopic ? (
-        <Breadcrumb
-          items={[
-            {
-              title: (
-                <a
-                  onClick={() => {
-                    progress.setLocalTopic('')
-                  }}
-                >
-                  全部科目
-                </a>
-              ),
-            },
-            { title: progress.localTopic },
-          ]}
-        />
-      ) : null}
-
-      {subjects.length ? (
-        <>
-          <Typography.Text type="secondary">
-            按科目浏览 {total} 份本机资料。原件目录不变，这里只是阅读分类。
-          </Typography.Text>
-          <div className="subject-grid">
-            {subjects.map((item) => (
-              <button
-                key={item.subject}
-                type="button"
-                className="subject-tile"
-                onClick={() => progress.setLocalTopic(item.subject)}
-              >
-                <strong>{item.subject}</strong>
-                <span>{item.count} 份</span>
-              </button>
-            ))}
-          </div>
-        </>
-      ) : null}
-
-      {items.length ? (
-        <div>
-          <Typography.Text type="secondary">
-            {progress.localTopic || '搜索结果'} · {total} 份。原件不会离开本机。
-          </Typography.Text>
-          <div className="lesson-list" style={{ marginTop: 8 }}>
-            {items.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                className="file-row"
-                disabled={loading}
-                onClick={() => navigate(`/local/item/${encodeURIComponent(item.id)}`)}
-              >
-                <span className="file-format">
-                  {item.format || item.id.split('.').pop()?.toUpperCase()}
-                </span>
-                <span>
-                  <strong>{item.title}</strong>
-                  <p className="muted" style={{ margin: '4px 0 0', fontSize: 13 }}>
-                    {item.snippet || `${item.subject || ''} · ${item.path}`}
-                  </p>
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-      ) : null}
-
-      {!loading && !subjects.length && !items.length ? <Empty description="没有匹配资料" /> : null}
-
-      <Alert
-        type="info"
-        showIcon
-        message="公开课由 React 应用承载。本机资料仍由 Python 阅读器提供 API；开发时运行 npm run dev，并保持 server.py 在 4180 端口。"
-      />
+      <Typography.Text type="secondary">{status}</Typography.Text>
+    </header>
+    <div className="toolbar">
+      <Input.Search className="toolbar-search" allowClear aria-label="搜索本机资料" placeholder="搜索文件名，或输入至少两个字搜索正文…" value={progress.localQuery} onChange={event => { setOffset(0); setMode('catalog'); progress.setLocalQuery(event.target.value) }} />
+      <Button disabled={progress.localQuery.trim().length < 2} onClick={() => { setOffset(0); setMode('fulltext'); setRetry(value => value + 1) }}>搜索正文</Button>
+      <Button onClick={async () => { try { await localApi.reindex(); message.success('已开始处理下一批') } catch (err) { message.error((err as Error).message) } }}>处理下一批</Button>
     </div>
-  )
+    {(progress.localTopic || mode === 'fulltext') && <Breadcrumb items={[
+      { title: <Button type="link" onClick={() => { setMode('catalog'); setOffset(0); progress.setLocalTopic(''); progress.setLocalQuery('') }}>全部科目</Button> },
+      { title: mode === 'fulltext' ? '正文搜索' : progress.localTopic },
+    ]} />}
+    {error && <Alert type="error" showIcon title={error} action={<Button onClick={() => setRetry(value => value + 1)}>重试</Button>} />}
+    <div aria-busy={loading}>
+      {loading && <p role="status">正在读取资料…</p>}
+      {!!subjects.length && <><p className="muted">按科目浏览 {total} 份资料</p><div className="subject-grid">{subjects.map(item => <button key={item.subject} type="button" className="subject-tile" onClick={() => { setOffset(0); progress.setLocalTopic(item.subject) }}><strong>{item.subject}</strong><span>{item.count} 份</span></button>)}</div></>}
+      {!!items.length && <><p className="muted">第 {offset + 1}–{offset + items.length} 份{mode === 'catalog' ? ` · 共 ${total} 份` : ' · 正文匹配结果'}</p><div className="lesson-list">{items.map(item => <button key={item.id} type="button" className="file-row" disabled={loading} onClick={() => navigate(`/local/item/${encodeURIComponent(item.id)}`)}><span className="file-format">{item.format || item.id.split('.').pop()?.toUpperCase()}</span><span><strong>{item.title}</strong><p className="muted" style={{ margin: '4px 0 0', fontSize: 13 }}>{item.snippet || `${item.subject || ''} · ${item.path}`}</p></span></button>)}</div></>}
+      {!loading && !error && !subjects.length && !items.length && <Empty description="没有匹配资料" />}
+      {(offset > 0 || hasMore) && <Space className="source-pagination"><Button disabled={loading || offset === 0} onClick={() => setOffset(value => Math.max(0, value - PAGE_SIZE))}>上一页</Button><span>第 {Math.floor(offset / PAGE_SIZE) + 1} 页</span><Button disabled={loading || !hasMore} onClick={() => setOffset(value => value + PAGE_SIZE)}>下一页</Button></Space>}
+    </div>
+  </div>
 }

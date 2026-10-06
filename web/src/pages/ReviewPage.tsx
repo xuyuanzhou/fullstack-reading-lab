@@ -1,17 +1,17 @@
 import { Empty, Typography } from 'antd'
-import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { findLesson } from '@/data/curriculum'
+import { lessonPath } from '@/data/routes'
 import { useProgress } from '@/state/progress'
 
 export function ReviewPage() {
   const progress = useProgress()
-  const navigate = useNavigate()
   const saved = progress.review.map((id) => findLesson(id)).filter(Boolean)
 
   return (
     <div className="article-shell">
       <div>
-        <h1 className="hero-title" style={{ fontSize: '2rem' }}>
+        <h1 className="hero-title">
           复习清单
         </h1>
         <p className="hero-lead">把还讲不清的概念留在这里。下一次先遮住答案，试着从问题推导机制。</p>
@@ -21,21 +21,18 @@ export function ReviewPage() {
         <div className="lesson-list">
           {saved.map((item) =>
             item ? (
-              <button
+              <Link
                 key={item.id}
-                type="button"
                 className="lesson-row"
-                onClick={() => {
-                  progress.remember(item.id)
-                  navigate(`/lesson/${encodeURIComponent(item.id)}`)
-                }}
+                to={lessonPath(item)}
+                onClick={() => progress.remember(item.id)}
               >
                 <span className="lesson-row-mark">·</span>
                 <span>
                   <strong>{item.title}</strong>
                   <p>{item.prompt}</p>
                 </span>
-              </button>
+              </Link>
             ) : null,
           )}
         </div>

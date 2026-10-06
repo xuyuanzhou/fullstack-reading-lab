@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 320" role="img" aria-labelledby="title desc">
+  <title id="title">U˛ÔÑeeO\</title>
+  <desc id="desc">¢U°e(ìX!åe«àoÂe¶Ô1%(e{·</desc>
+  <rect width="940" height="320" rx="18" fill="#f1f5f9"/>
+  <text x="36" y="42" font-family="sans-serif" font-size="21" font-weight="700" fill="#102a43">∆ÑO\eÅ”úeÅãû</text>
+
+  <g font-family="sans-serif" font-size="13">
+    <rect x="40" y="80" width="120" height="56" rx="10" fill="#fff" stroke="#94a3b8"/>
+    <text x="70" y="114" font-size="15" fill="#0f172a">¢7Ô</text>
+
+    <path d="M170 108 H210" stroke="#64748b" stroke-width="2"/>
+    <polygon points="210,102 222,108 210,114" fill="#64748b"/>
+
+    <rect x="230" y="70" width="150" height="76" rx="12" fill="#dcfce7" stroke="#86efac"/>
+    <text x="268" y="104" font-size="15" font-weight="700" fill="#166534">¢U°</text>
+    <text x="258" y="128" fill="#166534">ô¢Uì</text>
+
+    <path d="M390 95 H440" stroke="#1d4ed8" stroke-width="2"/>
+    <text x="400" y="84" font-size="11" fill="#1d4ed8">e RPC</text>
+    <polygon points="440,89 452,95 440,101" fill="#1d4ed8"/>
+
+    <rect x="460" y="58" width="140" height="70" rx="12" fill="#dbeafe" stroke="#93c5fd"/>
+    <text x="492" y="90" font-size="15" font-weight="700" fill="#1e3a8a">ìX°</text>
+    <text x="482" y="114" fill="#1e3a8a">S:cœ”ú</text>
+
+    <path d="M305 146 V190" stroke="#c2410c" stroke-width="2" stroke-dasharray="6 5"/>
+    <text x="314" y="178" font-size="11" fill="#c2410c">eào</text>
+
+    <rect x="230" y="200" width="140" height="64" rx="10" fill="#ffedd5" stroke="#fdba74"/>
+    <text x="262" y="230" font-size="14" font-weight="700" fill="#9a3412">e¶°</text>
+    <text x="252" y="252" fill="#9a3412">à9 ∑ BI</text>
+
+    <rect x="400" y="200" width="140" height="64" rx="10" fill="#ede9fe" stroke="#c4b5fd"/>
+    <text x="432" y="230" font-size="14" font-weight="700" fill="#5b21b6">Ô°</text>
+    <text x="422" y="252" fill="#5b21b6">à9 ∑ BI</text>
+
+    <rect x="620" y="90" width="280" height="160" rx="12" fill="#fff" stroke="#94a3b8"/>
+    <text x="648" y="124" font-size="14" font-weight="700" fill="#0f172a">	Èƒ</text>
+    <text x="648" y="156" fill="#334155">(7ÅÀ;ÂS˝&U í e</text>
+    <text x="648" y="186" fill="#334155">¢UÚÀÑo\( í e</text>
+    <text x="648" y="216" fill="#334155">1%e‘ﬁÔ / e€{·</text>
+  </g>
+</svg>

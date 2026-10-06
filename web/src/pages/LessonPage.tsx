@@ -1,17 +1,20 @@
 import { Breadcrumb, Button, Collapse, Image, Input, Space, Typography } from 'antd'
-import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
+import { Link, Navigate, useParams } from 'react-router-dom'
 import { findLesson, lessonIndex, nextLesson } from '@/data/curriculum'
+import { groupKeyForLabel, groupPath, isTrack, lessonPath } from '@/data/routes'
 import { REACT_CHAPTERS, VUE_CHAPTERS, reactUrl, vueUrl } from '@/data/meta'
 import { useProgress } from '@/state/progress'
+import { LessonOutline } from '@/components/LessonOutline'
 
 export function LessonPage() {
-  const { lessonId = '' } = useParams()
-  const id = decodeURIComponent(lessonId)
-  const lesson = findLesson(id)
+  const { track = '', groupKey = '', lessonId = '' } = useParams()
+  const lesson = findLesson(lessonId)
   const progress = useProgress()
-  const navigate = useNavigate()
 
-  if (!lesson) return <Navigate to="/home" replace />
+  if (!lesson || !isTrack(lesson.track)) return <Navigate to="/" replace />
+  const chapterKey = groupKeyForLabel(lesson.track, lesson.group)
+  if (track !== lesson.track || groupKey !== chapterKey) return <Navigate to={lessonPath(lesson)} replace />
+  const chapterPath = groupPath(lesson.track, chapterKey)
 
   const index = lessonIndex(lesson.track, lesson.id)
   const next = nextLesson(lesson.track, lesson.id)
@@ -34,8 +37,8 @@ export function LessonPage() {
     <article className="article-shell">
       <Breadcrumb
         items={[
-          { title: <Link to="/home">学习路线</Link> },
-          { title: lesson.group },
+          { title: <Link to={chapterPath}>学习路线</Link> },
+          { title: <Link to={chapterPath}>{lesson.group}</Link> },
           { title: lesson.title },
         ]}
       />
@@ -52,7 +55,16 @@ export function LessonPage() {
         </div>
       </header>
 
-      <section className="section-block">
+      <details className="compact-outline">
+        <summary>本课目录 · 快速跳转</summary>
+        <LessonOutline lesson={lesson} />
+      </details>
+
+      <div className="lesson-with-outline">
+      <LessonOutline lesson={lesson} />
+      <div className="lesson-body">
+
+      <section className="section-block" id="lesson-points" tabIndex={-1}>
         <span className="section-index">Knowledge points</span>
         <h2>本课知识点</h2>
         <ul className="point-list">
@@ -62,13 +74,13 @@ export function LessonPage() {
         </ul>
       </section>
 
-      <section className="core-panel">
+      <section className="core-panel" id="lesson-model" tabIndex={-1}>
         <span className="panel-label">01 / 核心模型</span>
         <p className="lesson-core">{lesson.core}</p>
       </section>
 
       {lesson.deep?.length ? (
-        <section className="section-block">
+        <section className="section-block" id="lesson-mechanism" tabIndex={-1}>
           <span className="section-index">Deep dive</span>
           <h2>机制拆解</h2>
           {lesson.diagram ? (
@@ -94,13 +106,13 @@ export function LessonPage() {
         </section>
       ) : null}
 
-      <section className="section-block">
+      <section className="section-block" id="lesson-why" tabIndex={-1}>
         <span className="section-index">02</span>
         <h2>为什么需要理解它</h2>
         <p>{lesson.why}</p>
       </section>
 
-      <section className="section-block">
+      <section className="section-block" id="lesson-example" tabIndex={-1}>
         <span className="section-index">03</span>
         <h2>把概念放进具体场景</h2>
         <div className="example-box">{lesson.example}</div>
@@ -119,7 +131,7 @@ export function LessonPage() {
         </a>
       ) : null}
 
-      <section className="section-block">
+      <section className="section-block" id="lesson-practice" tabIndex={-1}>
         <span className="section-index">04</span>
         <h2>动手检验理解</h2>
         <p style={{ marginBottom: 14 }}>{lesson.task}</p>
@@ -136,7 +148,7 @@ export function LessonPage() {
         />
       </section>
 
-      <section className="section-block">
+      <section className="section-block" id="lesson-references" tabIndex={-1}>
         <span className="section-index">05</span>
         <h2>核对依据</h2>
         <p className="muted" style={{ marginBottom: 8 }}>
@@ -155,11 +167,12 @@ export function LessonPage() {
         </div>
       </section>
 
-      <section className="section-block">
+      <section className="section-block" id="lesson-notes" tabIndex={-1}>
         <span className="section-index">06</span>
         <h2>用自己的话重述</h2>
         <Input.TextArea
           rows={5}
+          aria-label="本课学习笔记"
           value={progress.notes[lesson.id] || ''}
           placeholder="写下你理解的因果关系、仍有疑问的地方和验证方式。"
           onChange={(event) => progress.setNote(lesson.id, event.target.value)}
@@ -171,30 +184,29 @@ export function LessonPage() {
       </section>
 
       <Space wrap size={12}>
-        <Button type="primary" size="large" onClick={() => progress.toggleDone(lesson.id)}>
+        <Button type="primary" onClick={() => progress.toggleDone(lesson.id)}>
           {progress.done.includes(lesson.id) ? '已掌握 · 撤销' : '标记已掌握'}
         </Button>
-        <Button size="large" onClick={() => progress.toggleReview(lesson.id)}>
+        <Button onClick={() => progress.toggleReview(lesson.id)}>
           {progress.review.includes(lesson.id) ? '移出复习清单' : '加入复习清单'}
         </Button>
       </Space>
 
       {next ? (
-        <button
-          type="button"
+        <Link
           className="next-card"
-          onClick={() => {
-            progress.remember(next.id)
-            navigate(`/lesson/${encodeURIComponent(next.id)}`)
-          }}
+          to={lessonPath(next)}
+          onClick={() => progress.remember(next.id)}
         >
           <div>
             <small>下一课</small>
             <strong>{next.title}</strong>
           </div>
           <span>→</span>
-        </button>
+        </Link>
       ) : null}
+      </div>
+      </div>
     </article>
   )
 }
