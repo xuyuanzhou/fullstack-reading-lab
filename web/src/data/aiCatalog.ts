@@ -205,7 +205,7 @@ export const AI_NOTES: AiNote[] = [
       {
         title: '动手学深度学习：大规模预训练',
         href: 'https://d2l.ai/chapter_attention-mechanisms-and-transformers/large-pretraining-transformers.html',
-        terms: 'CC BY-SA 4.0，张爱森、李沐等。此处只链接并署名。',
+        terms: 'CC BY-SA 4.0，阿斯顿·张、李沐等。此处只链接并署名。',
       },
     ],
     practice: '用「我把伞带上，因为快」这句话。假定正确答案是「下雨」。用自己的话写出：分数、损失、权重，这三样里哪一个在训练时被挪动，哪一个只在生成时用来挑选。',

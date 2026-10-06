@@ -9,6 +9,14 @@ const FIGURES: Record<string, () => ReactElement> = {
   'model-proposes': ModelProposes,
   'one-success': OneSuccess,
   'first-task': FirstTask,
+  tokens: Tokens,
+  loss: Loss,
+  'attention-who': AttentionWho,
+  'change-how': ChangeHow,
+  'eval-set': EvalSet,
+  'rag-layers': RagLayers,
+  permissions: Permissions,
+  'you-own': YouOwn,
 }
 
 export function AiDiagram({ name }: { name: string }) {
@@ -190,6 +198,151 @@ function FirstTask() {
           <li>指出依据的原句</li>
           <li className="is-warn">材料里没有，就要明说没有</li>
         </ol>
+      </div>
+    </figure>
+  )
+}
+
+function Tokens() {
+  return (
+    <figure className="ai-figure" aria-label="把牛奶放进冰箱被切成四个词元，每个词元对应一个整数">
+      <p className="ai-sentence">把牛奶放进冰箱</p>
+      <div className="ai-flow">
+        <article className="ai-card is-accent"><strong>把</strong><p>101</p></article>
+        <article className="ai-card is-accent"><strong>牛奶</strong><p>248</p></article>
+        <article className="ai-card is-accent"><strong>放进</strong><p>36</p></article>
+        <article className="ai-card is-accent"><strong>冰箱</strong><p>512</p></article>
+      </div>
+      <figcaption>编号只是示意。换一套词表，同样四个字会得到另一串数。</figcaption>
+    </figure>
+  )
+}
+
+function Loss() {
+  return (
+    <figure className="ai-figure" aria-label="正确词元分数不够高时损失变大，权重被挪一点；温度只影响挑选">
+      <div className="ai-split">
+        <article className="ai-card">
+          <strong>下一个词元的分数</strong>
+          <p>下雨：偏低</p>
+          <p>考试：偏高</p>
+        </article>
+        <article className="ai-card is-warn">
+          <strong>损失</strong>
+          <p>正确答案是下雨，所以损失大。</p>
+        </article>
+        <article className="ai-card is-accent">
+          <strong>被挪动的是权重</strong>
+          <p>温度只决定生成时怎么挑，不参加这一步。</p>
+        </article>
+      </div>
+    </figure>
+  )
+}
+
+function AttentionWho() {
+  return (
+    <figure className="ai-figure" aria-label="表示追的时候，更多向猫和狗取信息">
+      <div className="ai-grid" role="table" aria-label="追对猫、追、狗的注意程度">
+        <span className="is-head" />
+        <span className="is-head">猫</span>
+        <span className="is-head">追</span>
+        <span className="is-head">狗</span>
+        <span className="is-head">追 在看</span>
+        <span className="is-pick">多</span>
+        <span>少</span>
+        <span className="is-pick">多</span>
+      </div>
+      <figcaption>查询来自「追」。没有位置信息时，「猫追狗」和「狗追猫」会变成同一袋词。</figcaption>
+    </figure>
+  )
+}
+
+function ChangeHow() {
+  return (
+    <figure className="ai-figure" aria-label="提示只改这一次，检索放入材料，微调才改权重">
+      <div className="ai-flow">
+        <article className="ai-card">
+          <strong>提示</strong>
+          <p>只改这一次的输入。对话结束就没了。</p>
+        </article>
+        <article className="ai-card is-accent">
+          <strong>检索</strong>
+          <p>不改权重。把相关段落放进这次上下文。</p>
+        </article>
+        <article className="ai-card">
+          <strong>微调</strong>
+          <p>用例子改权重。没有评测就先不做。</p>
+        </article>
+      </div>
+    </figure>
+  )
+}
+
+function EvalSet() {
+  return (
+    <figure className="ai-figure" aria-label="评测至少包括有原句、应说没有、格式符合三类">
+      <ol className="ai-checks">
+        <li>材料里有原句，回答必须指到那句</li>
+        <li className="is-warn">材料里没有，必须说没有</li>
+        <li>日期、金额、名字符合你定的格式</li>
+      </ol>
+      <figcaption>见过的题目得了高分，只说明见过。换一份新材料，用同一套规则再判一次。</figcaption>
+    </figure>
+  )
+}
+
+function RagLayers() {
+  return (
+    <figure className="ai-figure" aria-label="索引、召回、生成三层，错在哪一层就只改那一层">
+      <div className="ai-flow">
+        <article className="ai-card">
+          <strong>1 索引</strong>
+          <p>含答案的那一块在不在库里。</p>
+        </article>
+        <span className="ai-arrow" aria-hidden>→</span>
+        <article className="ai-card">
+          <strong>2 召回</strong>
+          <p>这次的前几名里有没有它。</p>
+        </article>
+        <span className="ai-arrow" aria-hidden>→</span>
+        <article className="ai-card is-accent">
+          <strong>3 生成</strong>
+          <p>回答有没有引用它。</p>
+        </article>
+      </div>
+    </figure>
+  )
+}
+
+function Permissions() {
+  return (
+    <figure className="ai-figure" aria-label="读可以放开，改、执行、联网要单独允许，发送之前等人确认">
+      <div className="ai-flow">
+        <article className="ai-card is-accent"><strong>读</strong><p>默认可看任务需要的文件。</p></article>
+        <article className="ai-card"><strong>改</strong><p>默认关闭。</p></article>
+        <article className="ai-card"><strong>执行</strong><p>默认关闭。</p></article>
+        <article className="ai-card"><strong>联网</strong><p>单独批。</p></article>
+      </div>
+      <p className="ai-warn">发信、扣款、写库放在人确认之后。确认前只准备参数。</p>
+    </figure>
+  )
+}
+
+function YouOwn() {
+  return (
+    <figure className="ai-figure" aria-label="材料、怎样算对、失败样例和停点由你写下，模型只在边界内提议">
+      <div className="ai-split">
+        <ol className="ai-checks">
+          <li>材料从哪来，谁能看见</li>
+          <li>怎样算答完</li>
+          <li>一个失败样例</li>
+          <li className="is-warn">必须停下的那一步</li>
+        </ol>
+        <article className="ai-card is-accent">
+          <strong>模型只做这件事</strong>
+          <p>在边界里提议下一段，或提议一次工具调用。</p>
+        </article>
       </div>
     </figure>
   )
