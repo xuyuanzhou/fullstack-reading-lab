@@ -290,6 +290,7 @@ const COVERAGE_LESSONS = [
     answer:'每个线程有自己的 pc 和 Java 虚拟机栈，栈帧随方法调用创建。堆和方法区由线程共享，对象通常在堆上，类的相关结构属于方法区语义。这些是规范里的逻辑区域。某个虚拟机把方法区放在哪块物理内存、用什么参数调节，都是实现，不能写成规范本身。native 方法执行时 pc 的值未定义。',
     keywords:'JVM pc register stack heap method area 运行时数据区',
     origin:'《JVM内存区域划分.pdf》的运行时数据区章节',
+    diagram:'diagrams/jvm-areas.svg',
     deep:[
       {
         title:'规范层',
@@ -313,6 +314,7 @@ const COVERAGE_LESSONS = [
     task:'用两个自定义加载器加载同一类，打印各自 ClassLoader 并尝试转换。',
     answer:'先比定义类加载器，再比类名。加载器不同，即使字节码一样也是两种类型，强转失败。类名相同不能作为转换成功的依据。父委派只说明常见查找会先问父加载器，自定义加载器仍可以改变这条路径。隔离插件时应预期它们的同名类不能互相赋值。打印加载器引用，不要只打印类名。',
     keywords:'Java ClassLoader delegation type identity 类加载器',
+    diagram:'diagrams/jvm-class-identity.svg',
     deep:[
       {
         title:'名字加加载器',

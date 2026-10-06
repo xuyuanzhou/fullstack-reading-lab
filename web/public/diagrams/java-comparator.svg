@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 380" role="img" aria-labelledby="title desc">
+  <title id="title">同一次列表，两种比较器</title>
+  <desc id="desc">List.sort 的方法名不变。User 不必实现 Comparable。</desc>
+  <defs>
+    <filter id="soft" x="-6%" y="-8%" width="112%" height="124%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1.4" flood-color="#28302a" flood-opacity="0.07"/>
+    </filter>
+  </defs>
+  <rect width="960" height="380" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="28" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">Java</text>
+  <text x="32" y="56" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">同一次列表，两种比较器</text>
+  <rect x="32" y="88" width="896" height="72" rx="14" fill="#2e3330" stroke="#2e3330" filter="url(#soft)"/><text x="480" y="132" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#fafaf8" text-anchor="middle">users.sort(比较器)</text><rect x="32" y="180" width="430" height="100" rx="14" fill="#e6efe9" stroke="#3f6a58" filter="url(#soft)"/><text x="48" y="220" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2d4f41" text-anchor="start">comparing(User::name)</text><text x="48" y="250" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="400" fill="#5e6661" text-anchor="start">按姓名，不改 User</text><rect x="498" y="180" width="430" height="100" rx="14" fill="#fafaf8" stroke="#d9ddd8" filter="url(#soft)"/><text x="514" y="220" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2e3330" text-anchor="start">comparing(User::id)</text><text x="514" y="250" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="400" fill="#5e6661" text-anchor="start">按编号，也不改 User</text><rect x="32" y="304" width="896" height="44" rx="12" fill="#e6efe9"/><text x="48" y="332" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="600" fill="#2d4f41" text-anchor="start">第二种顺序不要写回 compareTo。那会覆盖第一种自然顺序。</text>
+</svg>

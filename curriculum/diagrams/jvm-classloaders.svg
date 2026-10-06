@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 460" role="img" aria-labelledby="title desc">
+  <title id="title">中间层现在叫平台类加载器</title>
+  <desc id="desc">查找仍先问父加载器。JDK 9 起不再有 Extension ClassLoader 和 lib/ext。</desc>
+  <defs>
+    <filter id="soft" x="-6%" y="-8%" width="112%" height="124%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1.4" flood-color="#28302a" flood-opacity="0.07"/>
+    </filter>
+  </defs>
+  <rect width="960" height="460" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="28" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">JVM</text>
+  <text x="32" y="56" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">中间层现在叫平台类加载器</text>
+  <rect x="248" y="84" width="464" height="64" rx="14" fill="#2e3330" stroke="#2e3330" filter="url(#soft)"/><text x="480" y="122" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#fafaf8" text-anchor="middle">引导类加载器 · 核心模块</text><text x="480" y="176" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="12" font-weight="600" fill="#3f6a58" text-anchor="middle">先问父加载器</text><rect x="248" y="188" width="464" height="78" rx="14" fill="#e6efe9" stroke="#3f6a58" filter="url(#soft)"/><text x="480" y="220" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2d4f41" text-anchor="middle">平台类加载器 · 平台模块</text><text x="480" y="246" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" font-weight="400" fill="#3f6a58" text-anchor="middle">不是 Extension，也不是 lib/ext</text><text x="480" y="294" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="12" font-weight="600" fill="#3f6a58" text-anchor="middle">父加载器没有，才自己定义</text><rect x="248" y="306" width="464" height="64" rx="14" fill="#fafaf8" stroke="#d9ddd8" filter="url(#soft)"/><text x="480" y="344" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2e3330" text-anchor="middle">应用类加载器 · 类路径</text><rect x="32" y="388" width="896" height="44" rx="12" fill="#e6efe9"/><text x="48" y="416" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="600" fill="#2d4f41" text-anchor="start">打印 getPlatformClassLoader()。jhat 已从现行 JDK 移除，堆转储用 jcmd 或 jmap。</text>
+</svg>

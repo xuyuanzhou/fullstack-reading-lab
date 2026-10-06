@@ -433,6 +433,7 @@ window.LESSONS.push(
     task:'列出一次接口抖动需同时查看的应用与 JVM 指标。',
     answer:'同时看请求延迟分布、分配速率、堆占用、GC 暂停和 CPU。把暂停时间和延迟尖峰对齐：对得上，才说明抖动来自回收；对不上，就去看锁、下游或自身计算。只减少回收次数而暂停变长，不能当成已经变快。对不上就去看锁、下游或自身计算，不要先换收集器。',
     keywords:'JVM GC pause throughput allocation',
+    diagram:'diagrams/jvm-gc-pause.svg',
     deep:[
       {
         title:'次数不是暂停',

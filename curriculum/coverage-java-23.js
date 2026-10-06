@@ -78,6 +78,7 @@ const COVERAGE_JAVA_23 = [
     task:'对照规范列出哪个区不抛 OOM；划掉“内存模型五个区=JMM”。',
     answer:'对照规范，不抛 OutOfMemoryError、也不抛 StackOverflowError 的是程序计数器：执行 Java 方法时它指向字节码，native 时未定义。划掉“内存模型五个区等于 JMM”，这五个是运行时数据区。栈帧过深才是栈溢出。方法区在 8 之后由元空间实现。',
     keywords:'程序计数器 OOM 方法区 元空间 DirectByteBuffer',
+    diagram:'diagrams/jvm-pc-no-oom.svg',
     points:['程序计数器不抛 OOM 或栈溢出','栈帧过深才是 SOE','方法区现行实现是元空间，字符串池在堆'],
     deep:[
       {title:'计数器没有容量可爆',body:'每个线程有自己的程序计数器，执行 Java 方法时指向当前字节码，执行 native 时规范里是未定义。它不占用你会用 -Xss 或 -Xmx 去调的那块空间，所以既不是栈溢出也不是堆溢出的来源。真正会栈溢出的是虚拟机栈；方法区在 8 之后看元空间。'},

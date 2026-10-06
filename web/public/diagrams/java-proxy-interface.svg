@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-labelledby="title desc">
+  <title id="title">代理实现接口，具体类会被拒绝</title>
+  <desc id="desc">JDK 动态代理把接口方法送进 invoke。它不会生成具体类的子类。</desc>
+  <defs>
+    <filter id="soft" x="-6%" y="-8%" width="112%" height="124%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1.4" flood-color="#28302a" flood-opacity="0.07"/>
+    </filter>
+  </defs>
+  <rect width="960" height="400" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="28" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">Java</text>
+  <text x="32" y="56" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">代理实现接口，具体类会被拒绝</text>
+  <rect x="32" y="88" width="430" height="188" rx="14" fill="#e6efe9" stroke="#3f6a58" filter="url(#soft)"/><text x="48" y="124" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="18" font-weight="600" fill="#2d4f41" text-anchor="start">Greeter 接口</text><text x="48" y="168" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="400" fill="#2e3330" text-anchor="start">hello 进入 invoke</text><text x="48" y="194" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="400" fill="#2e3330" text-anchor="start">对象可以赋给 Greeter</text><text x="48" y="220" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="400" fill="#2e3330" text-anchor="start">运行时类是代理类</text><rect x="498" y="88" width="430" height="188" rx="14" fill="#f6ecea" stroke="#a05048" filter="url(#soft)"/><text x="514" y="124" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="18" font-weight="600" fill="#6e3530" text-anchor="start">ArrayList.class</text><text x="514" y="168" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="400" fill="#2e3330" text-anchor="start">放进接口数组</text><text x="514" y="194" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="400" fill="#2e3330" text-anchor="start">IllegalArgumentException</text><text x="514" y="220" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="400" fill="#2e3330" text-anchor="start">不会得到子类</text><rect x="32" y="300" width="896" height="44" rx="12" fill="#e6efe9"/><text x="48" y="328" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="600" fill="#2d4f41" text-anchor="start">没有接口的类不要用 Proxy.newProxyInstance。</text>
+</svg>

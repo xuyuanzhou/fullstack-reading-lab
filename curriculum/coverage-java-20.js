@@ -10,6 +10,7 @@ const COVERAGE_JAVA_20 = [
     task:'对照 ClassLoader 文档写出三层现行名字；划掉 jhat 作为 21 的标配工具。',
     answer:'对照 ClassLoader 文档，三层现行名字是引导类加载器、平台类加载器、应用类加载器。划掉 jhat 作为 Java 21 的标配工具，诊断改用 jcmd、jmap 或 MAT。查找顺序仍是先问父加载器。不要再把 ExtClassLoader 写成现行中间层的名字。',
     keywords:'ClassLoader PlatformClassLoader 双亲委派 JDK 9 jhat',
+    diagram:'diagrams/jvm-classloaders.svg',
     points:['常见查找仍先委派给父加载器','JDK 9+ 是 Platform ClassLoader 不是 Extension','jhat 已移除，存活判定不是引用计数'],
     deep:[
       {title:'中间层换了名字也换了目录',body:'双亲委派的查找顺序还在。JDK 9 起不再用扩展目录那一套，平台类加载器负责平台模块。把 jhat 写进运维手册会在现行 JDK 上找不到命令。lib/ext 那套目录已经不该出现在步骤里。'},
@@ -27,6 +28,7 @@ const COVERAGE_JAVA_20 = [
     task:'分别列出运行时数据区的名字和 JMM 的主内存/工作内存；标出哪一组能对应 -Xmx。',
     answer:'运行时数据区列出程序计数器、虚拟机栈、堆、方法区。JMM 列出抽象的主内存和每线程工作内存。能对应 -Xmx 的是堆，属于运行时数据区，不是工作内存。不要把这两组画成同一张分区图。加大堆也解决不了另一个线程看不见这次共享写入的问题，可见性仍在。',
     keywords:'JMM happens-before 运行时数据区 主内存',
+    diagram:'diagrams/jvm-jmm-split.svg',
     points:['运行时数据区是 pc、栈、堆、方法区','JMM 是可见性与重排序的抽象','工作内存不是第三块堆'],
     deep:[
       {title:'一张图只画一种东西',body:'运行时数据区回答对象和帧放在哪。JMM 回答写入何时对别的线程可见、哪些重排被禁止。工作内存对应缓存、寄存器和编译器的优化，不能当成第三块用 -Xmx 调整的堆。'},

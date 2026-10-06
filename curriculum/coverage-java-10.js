@@ -61,6 +61,7 @@ const COVERAGE_JAVA_10 = [
     task:'对照 JVMS 方法区定义与当前 HotSpot 文档，列出“规范名 / 旧实现名 / 现行实现名”，并解释一处 OOM 文案该查哪块区域。',
     answer:'规范名是方法区，JVMS 只说线程共享、存放类结构，不规定叫永久代。旧实现名是 HotSpot 的永久代。现行实现名是 Metaspace，类元数据在本地内存。看到 Metaspace 就查元数据上限；看到 Java heap space 才查堆。常量池怎么迁移要按版本分开，不能并成一句。',
     keywords:'JVM 方法区 Metaspace 永久代 JVMS 运行时常量池 HotSpot',
+    diagram:'diagrams/jvm-method-area.svg',
     points:['方法区是 JVMS 共享区域，不是固定商品名','HotSpot JDK 8+ 用 Metaspace 承载类元数据','不要把永久代参数当现行默认图'],
     deep:[
       {title:'三套名字不要叠成一个',body:'方法区是规范里的区域。永久代是旧的 HotSpot 实现。Metaspace 是 JDK 8 起的类元数据实现。调参和 OOM 文案跟的是实现名，不是规范里的“方法区”三个字。'},

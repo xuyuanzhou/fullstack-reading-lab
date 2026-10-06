@@ -27,6 +27,7 @@ const COVERAGE_PATH_04 = [
     task:'创建两个实例，比较它们的方法是否用 === 相等，字段是否相等。再改原型方法，观察两个实例。最后用 Object.getPrototypeOf 画出链，直到 null。',
     answer:'两个实例的方法用严格相等比较为真，因为方法在原型上只有一份；计数字段各自一份，比较不为真。改掉原型上的方法后，两个实例的下一次调用都走新行为。沿着 getPrototypeOf 能画到 null。判断类型看这条链，不比较类名字符串。链的尽头是 null，中间没有类名字符串这一层。',
     keywords:'JavaScript prototype class instanceof 原型链',
+    diagram:'diagrams/js-prototype-links.svg',
     points:['class 方法放在构造函数的 prototype 上','实例字段在对象自身，会挡住同名原型属性','instanceof 沿原型链判断，直到 null'],
     deep:[
       {title:'遮挡',body:'实例自己有同名属性时，查找停在实例，不再使用原型上的方法。删除实例属性后，原型上的方法又可见。这不是复制了一份方法，只是查找顺序。'},

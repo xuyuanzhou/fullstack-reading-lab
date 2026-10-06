@@ -15,7 +15,7 @@ export const LOCAL_CATEGORY_LABEL = {
 
 export const TRACK_INTRO: Record<Track, string> = {
   frontend:
-    '语言基础从相等、作用域、this、原型，到闭包、Promise、async 和事件循环。接着是类型、盒模型与定位、页面与浏览器帧，然后才是框架、测试和工程。',
+    '语言基础从相等、作用域、this、原型，到闭包、Promise、async 和事件循环。接着是类型、盒模型与定位、页面与浏览器帧，然后是各框架。技术选型按交付面只留一套更新模型和它的生态槽位，再进入测试和工程。',
   java:
     'Java 基础从类型、equals、字符串和集合，再进入算法、内存和线程。之后按 Spring、JPA、MyBatis、缓存、Nginx、Netty、网关、搜索分章；Spring Cloud Alibaba 按 Nacos、调用、Sentinel、Seata 排障，再是消息与分布式。',
 }

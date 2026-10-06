@@ -1,43 +1,39 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 320" role="img" aria-labelledby="title desc">
-  <title id="title">U��eeO\</title>
-  <desc id="desc">�U�e(�X!�eǈo�e��1%(e{�</desc>
-  <rect width="940" height="320" rx="18" fill="#f1f5f9"/>
-  <text x="36" y="42" font-family="sans-serif" font-size="21" font-weight="700" fill="#102a43">��O\e�Ӝe���</text>
-
-  <g font-family="sans-serif" font-size="13">
-    <rect x="40" y="80" width="120" height="56" rx="10" fill="#fff" stroke="#94a3b8"/>
-    <text x="70" y="114" font-size="15" fill="#0f172a">�7�</text>
-
-    <path d="M170 108 H210" stroke="#64748b" stroke-width="2"/>
-    <polygon points="210,102 222,108 210,114" fill="#64748b"/>
-
-    <rect x="230" y="70" width="150" height="76" rx="12" fill="#dcfce7" stroke="#86efac"/>
-    <text x="268" y="104" font-size="15" font-weight="700" fill="#166534">�U�</text>
-    <text x="258" y="128" fill="#166534">��U�</text>
-
-    <path d="M390 95 H440" stroke="#1d4ed8" stroke-width="2"/>
-    <text x="400" y="84" font-size="11" fill="#1d4ed8">e RPC</text>
-    <polygon points="440,89 452,95 440,101" fill="#1d4ed8"/>
-
-    <rect x="460" y="58" width="140" height="70" rx="12" fill="#dbeafe" stroke="#93c5fd"/>
-    <text x="492" y="90" font-size="15" font-weight="700" fill="#1e3a8a">�X�</text>
-    <text x="482" y="114" fill="#1e3a8a">S:c�Ӝ</text>
-
-    <path d="M305 146 V190" stroke="#c2410c" stroke-width="2" stroke-dasharray="6 5"/>
-    <text x="314" y="178" font-size="11" fill="#c2410c">e�o</text>
-
-    <rect x="230" y="200" width="140" height="64" rx="10" fill="#ffedd5" stroke="#fdba74"/>
-    <text x="262" y="230" font-size="14" font-weight="700" fill="#9a3412">e��</text>
-    <text x="252" y="252" fill="#9a3412">�9 � BI</text>
-
-    <rect x="400" y="200" width="140" height="64" rx="10" fill="#ede9fe" stroke="#c4b5fd"/>
-    <text x="432" y="230" font-size="14" font-weight="700" fill="#5b21b6">��</text>
-    <text x="422" y="252" fill="#5b21b6">�9 � BI</text>
-
-    <rect x="620" y="90" width="280" height="160" rx="12" fill="#fff" stroke="#94a3b8"/>
-    <text x="648" y="124" font-size="14" font-weight="700" fill="#0f172a">	��</text>
-    <text x="648" y="156" fill="#334155">(7��;�S�&U � e</text>
-    <text x="648" y="186" fill="#334155">�U���o\( � e</text>
-    <text x="648" y="216" fill="#334155">1%e��� / e�{�</text>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" role="img" aria-labelledby="title desc">
+  <title id="title">下单链路拆开之后怎么走</title>
+  <desc id="desc">用户必须立刻知道的结果走同步：创建订单并预留库存。订单成立之后的支付与履约走异步，失败用补偿，不共享对方的表。</desc>
+  <defs>
+    <filter id="soft" x="-6%" y="-8%" width="112%" height="124%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1.4" flood-color="#28302a" flood-opacity="0.07"/>
+    </filter>
+  </defs>
+  <rect width="960" height="440" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">系统设计</text>
+  <text x="32" y="64" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">当场要知道的走同步，成立之后走事件</text>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <rect x="32" y="100" width="140" height="64" rx="12" fill="#fafaf8" stroke="#d9ddd8" filter="url(#soft)"/>
+    <text x="72" y="138" font-size="15" font-weight="600" fill="#2e3330">用户</text>
+    <path d="M180 132 H220" stroke="#3f6a58" stroke-width="2"/>
+    <polygon points="220,126 232,132 220,138" fill="#3f6a58"/>
+    <rect x="244" y="96" width="220" height="120" rx="14" fill="#e6efe9" stroke="#3f6a58" filter="url(#soft)"/>
+    <text x="264" y="132" font-size="16" font-weight="600" fill="#2e3330">订单服务</text>
+    <text x="264" y="160" font-size="14" fill="#5e6661">只写订单库</text>
+    <text x="264" y="186" font-size="14" fill="#3f6a58">成功才返回待支付</text>
+    <path d="M474 140 H520" stroke="#3f6a58" stroke-width="2"/>
+    <text x="478" y="128" font-size="12" fill="#3f6a58">同步</text>
+    <polygon points="520,134 532,140 520,146" fill="#3f6a58"/>
+    <rect x="544" y="96" width="220" height="120" rx="14" fill="#e6efe9" stroke="#3f6a58" filter="url(#soft)"/>
+    <text x="564" y="132" font-size="16" font-weight="600" fill="#2e3330">库存服务</text>
+    <text x="564" y="160" font-size="14" fill="#5e6661">预留，只写库存库</text>
+    <text x="564" y="186" font-size="14" fill="#6e3530">不够就当场返回错误</text>
+    <path d="M354 216 V260" stroke="#c2410c" stroke-width="2" stroke-dasharray="6 5"/>
+    <text x="366" y="246" font-size="12" fill="#c2410c">异步</text>
+    <rect x="244" y="268" width="220" height="88" rx="14" fill="#fff7ed" stroke="#fdba74" filter="url(#soft)"/>
+    <text x="264" y="304" font-size="15" font-weight="600" fill="#9a3412">支付 / 履约</text>
+    <text x="264" y="330" font-size="14" fill="#9a3412">幂等消费，失败进补偿</text>
+    <rect x="544" y="268" width="384" height="88" rx="14" fill="#f6ecea" stroke="#a05048"/>
+    <text x="564" y="304" font-size="15" font-weight="600" fill="#6e3530">不要这样做</text>
+    <text x="564" y="330" font-size="14" fill="#6e3530">订单库直接 update 库存表</text>
   </g>
+  <text x="32" y="400" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#5e6661">支付失败用补偿释放预留。不能假装三个库还在同一个本地事务里。</text>
 </svg>

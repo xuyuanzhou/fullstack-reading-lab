@@ -61,6 +61,7 @@ const COVERAGE_JAVA_21 = [
     task:'对照 SoftReference 文档，划掉“OOM 时必无软引用”；列出一种软引用帮不上的 OOM。',
     answer:'对照 SoftReference 文档，划掉 OOM 时肯定已经没有软引用。一种软引用帮不上的 OOM，是一次分配远远大于剩下的堆，清掉软引用后仍不够，或者失败发生在直接内存而不是这块 Java 堆。直接内存耗尽时，软引用缓存预测帮不上忙。',
     keywords:'SoftReference WeakReference PhantomReference OOM',
+    diagram:'diagrams/jvm-soft-ref.svg',
     points:['强引用可达则不会因 GC 丢掉','软引用适合内存敏感缓存，不保证消掉一切 OOM','弱引用不保活，也不等于立刻释放'],
     deep:[
       {title:'倾向清除不是事先清光',body:'强引用还在的对象不会因为软引用策略被丢掉。软引用适合可丢的缓存。规范允许在内存不够时清除它们，但巨大分配和堆外内存仍会失败。弱引用连这点缓存语义都不提供。巨大数组在清除软引用后仍可能分配失败。'},
@@ -78,6 +79,7 @@ const COVERAGE_JAVA_21 = [
     task:'对照 8 以后的 GC 文档，划掉 Perm 和 MaxPermSize；写出 Survivor 在 HotSpot 里有几块。',
     answer:'对照 JDK 8 以后的 GC 文档，划掉永久代和 MaxPermSize。Survivor 在 HotSpot 里有两块，加上 Eden 构成年轻代。类元数据在元空间，上限用 MaxMetaspaceSize。Full GC 不再有永久代被写满这一条。',
     keywords:'PermGen Metaspace MaxPermSize Survivor Eden',
+    diagram:'diagrams/jvm-no-permgen.svg',
     points:['JDK 8 起没有永久代','类元数据在 Metaspace，用 MaxMetaspaceSize','HotSpot 年轻代是 Eden 和两个 Survivor'],
     deep:[
       {title:'类的元数据不在永久代',body:'永久代去掉之后，类元数据默认可以使用本地内存，所以要单独设 MaxMetaspaceSize。年轻代的布局仍是一块 Eden 和两块 Survivor。旧的增量收集口诀不能拿来描述现在的收集器。'},

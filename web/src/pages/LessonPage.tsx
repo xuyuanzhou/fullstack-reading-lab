@@ -76,6 +76,15 @@ export function LessonPage() {
 
       <section className="core-panel" id="lesson-model" tabIndex={-1}>
         <span className="panel-label">01 / 核心模型</span>
+        {lesson.diagram ? (
+          <figure className="concept-figure">
+            <Image
+              src={`${import.meta.env.BASE_URL}${lesson.diagram}`}
+              alt={`${lesson.title} 机制图`}
+              preview={{ cover: '放大' }}
+            />
+          </figure>
+        ) : null}
         <p className="lesson-core">{lesson.core}</p>
       </section>
 
@@ -83,13 +92,6 @@ export function LessonPage() {
         <section className="section-block" id="lesson-mechanism" tabIndex={-1}>
           <span className="section-index">Deep dive</span>
           <h2>机制拆解</h2>
-          {lesson.diagram ? (
-            <Image
-              src={`${import.meta.env.BASE_URL}${lesson.diagram}`}
-              alt={`${lesson.title} 原创机制图`}
-              style={{ marginBottom: 16, maxWidth: '100%', borderRadius: 10 }}
-            />
-          ) : null}
           <div className="deep-stack">
             {lesson.deep.map((part) => (
               <div className="deep-item" key={part.title}>

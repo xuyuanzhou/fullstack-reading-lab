@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-labelledby="title desc">
+  <title id="title">-Xmx 限制的是堆，不是 L3</title>
+  <desc id="desc">L1、L2、L3 是 CPU 硬件缓存，JVM 参数改不了。Java 堆在主存里，由 -Xmx 限制。伪共享发生在缓存行。</desc>
+  <rect width="960" height="400" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">CPU / JVM</text>
+  <text x="32" y="64" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">两列存储，不是同一个旋钮</text>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <rect x="32" y="100" width="430" height="220" rx="14" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="52" y="136" font-size="16" font-weight="600" fill="#2e3330">硬件缓存</text>
+    <text x="52" y="172" font-size="14" fill="#5e6661">L1 · 几十 KB 量级</text>
+    <text x="52" y="200" font-size="14" fill="#5e6661">L2 · 更大一点</text>
+    <text x="52" y="228" font-size="14" fill="#5e6661">L3 · 几 MB 到几十 MB</text>
+    <text x="52" y="268" font-size="14" fill="#3f6a58">容量由 CPU 决定</text>
+    <text x="52" y="292" font-size="14" fill="#6e3530">没有 JVM 参数可改</text>
+    <rect x="498" y="100" width="430" height="220" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="518" y="136" font-size="16" font-weight="600" fill="#2e3330">主存里的 Java 堆</text>
+    <text x="518" y="172" font-size="14" fill="#5e6661">规范里叫 heap</text>
+    <text x="518" y="200" font-size="14" fill="#3f6a58">-Xmx / -Xms 限制这里</text>
+    <text x="518" y="228" font-size="14" fill="#5e6661">堆 8G 不等于 L3 有 8G</text>
+    <text x="518" y="268" font-size="14" fill="#6e3530">堆满了是 OutOfMemoryError</text>
+    <text x="518" y="292" font-size="14" fill="#5e6661">不是缓存规格错误</text>
+  </g>
+  <text x="32" y="360" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#5e6661">伪共享发生在左边的缓存行。把堆调大，不会让 L3 变大。</text>
+</svg>

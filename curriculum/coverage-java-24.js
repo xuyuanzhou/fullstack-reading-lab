@@ -55,7 +55,7 @@ const COVERAGE_JAVA_24 = [
     track:'frontend', group:'工程实践', id:'angular-ngonchanges-primitives',
     title:'ngOnChanges 不单是引用变了才跑，也不是整棵树每次必脏检查',
     prompt:'为什么把 ngOnChanges 说成“只有对象引用变化才触发”，又把 Angular 2+ 说成每次从根脏检查整棵树？',
-    core:'ngOnChanges 在输入绑定变化时调用，第一次一定在 ngOnInit 之前。输入是基本类型时，值变就会进 SimpleChanges；对象要引用变才会当输入变了，这是绑定的比较方式，不是钩子自己忽略深变化。OnPush 可以让子树在输入引用不变时跳过检查。现行默认仍常靠 Zone 抓异步，但不是 AngularJS 的 `$digest` 队列。`[(ngModel)]` 是属性绑定加事件绑定的语法糖。指令分组件、属性指令、结构指令，这点资料方向对。',
+    core:'ngOnChanges 在输入绑定变化时调用，第一次一定在 ngOnInit 之前。输入是基本类型时，值变就会进 SimpleChanges；对象要引用变才会当输入变了，这是绑定的比较方式，不是钩子自己忽略深变化。OnPush 可以让子树在输入引用不变时跳过检查。新应用从 Angular v21 起默认不再带 zone.js，更新靠信号和模板事件安排检查，见 fe-angular-first-party。已有工程仍可能留着 Zone。两种都不是 AngularJS 的 `$digest` 队列。`[(ngModel)]` 是属性绑定加事件绑定的语法糖。指令分组件、属性指令、结构指令，这点资料方向对。',
     why:'把 ngOnChanges 说成只有对象引用变化才触发，number 从 1 改到 2 会以为钩子坏了；再把检查说成每次从根扫整棵树，OnPush 跳过子树就会被漏掉。区分信号是基本类型按值比较，OnPush 看输入引用。',
     example:'@Input() id: number 从 1 到 2 会触发 ngOnChanges。@Input() user 只改 user.name 不换对象则钩子不来，要 OnPush+不可变或自己 ngDoCheck。',
     task:'对照生命周期文档，写出首次 ngOnChanges 相对 ngOnInit 的顺序；说明 OnPush 何时跳过。',

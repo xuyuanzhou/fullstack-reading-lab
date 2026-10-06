@@ -1,28 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 300" role="img" aria-labelledby="title desc">
-  <title id="title">RabbitMQ �x\���</title>
-  <desc id="desc">(���6�7��0;o,�e\���XЛE�l�</desc>
-  <rect width="900" height="300" rx="18" fill="#f1f5f9"/>
-  <text x="36" y="42" font-family="sans-serif" font-size="21" font-weight="700" fill="#102a43">RabbitMQ��(/ņƤ1</text>
-
-  <g font-family="sans-serif">
-    <rect x="48" y="90" width="240" height="160" rx="14" fill="#dcfce7" stroke="#86efac"/>
-    <text x="110" y="128" font-size="16" font-weight="700" fill="#166534">;o, / Leader</text>
-    <text x="78" y="164" font-size="13" fill="#166534">�7���=(��</text>
-    <text x="78" y="192" font-size="13" fill="#334155">n��Í�BI</text>
-    <text x="78" y="220" font-size="13" fill="#334155">���:��	>b</text>
-
-    <path d="M308 160 H360" stroke="#64748b" stroke-width="3" stroke-dasharray="7 6"/>
-    <text x="318" y="148" font-size="12" fill="#64748b">6</text>
-
-    <rect x="380" y="80" width="200" height="80" rx="12" fill="#dbeafe"/>
-    <text x="420" y="128" font-size="15" fill="#1e3a8a">\� / X��</text>
-    <rect x="380" y="180" width="200" height="80" rx="12" fill="#dbeafe"/>
-    <text x="420" y="228" font-size="15" fill="#1e3a8a">\� / X��</text>
-
-    <rect x="620" y="100" width="240" height="140" rx="12" fill="#fff" stroke="#94a3b8"/>
-    <text x="648" y="136" font-size="14" font-weight="700" fill="#0f172a">�</text>
-    <text x="648" y="168" font-size="13" fill="#334155">Ƥ ` �*ꨗY</text>
-    <text x="648" y="198" font-size="13" fill="#334155">Ve��6�</text>
-    <text x="648" y="228" font-size="13" fill="#334155">�Q�:��H</text>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" role="img" aria-labelledby="title desc">
+  <title id="title">RabbitMQ 集群不等于队列已冗余</title>
+  <desc id="desc">三节点共享用户和虚拟主机等元数据。没有镜像或仲裁策略的队列，仍只落在声明它的那一台节点上。</desc>
+  <defs>
+    <filter id="soft" x="-6%" y="-8%" width="112%" height="124%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1.4" flood-color="#28302a" flood-opacity="0.07"/>
+    </filter>
+  </defs>
+  <rect width="960" height="420" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">消息队列</text>
+  <text x="32" y="64" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">组了三台，不代表每条消息都有副本</text>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <rect x="32" y="96" width="896" height="56" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="52" y="130" font-size="15" font-weight="600" fill="#2e3330">集群共享的是元数据：用户、虚拟主机、部分定义。不是每一条消息。</text>
+    <rect x="32" y="172" width="430" height="160" rx="14" fill="#e6efe9" stroke="#3f6a58" filter="url(#soft)"/>
+    <text x="52" y="208" font-size="16" font-weight="600" fill="#2e3330">订单任务队列</text>
+    <text x="52" y="240" font-size="14" fill="#3f6a58">仲裁队列，三副本</text>
+    <text x="52" y="268" font-size="14" fill="#5e6661">杀掉一个成员节点</text>
+    <text x="52" y="296" font-size="14" fill="#3f6a58">队列仍然可以消费</text>
+    <rect x="498" y="172" width="430" height="160" rx="14" fill="#f6ecea" stroke="#a05048" filter="url(#soft)"/>
+    <text x="518" y="208" font-size="16" font-weight="600" fill="#6e3530">邮件临时队列</text>
+    <text x="518" y="240" font-size="14" fill="#6e3530">没有复制策略，只在节点甲</text>
+    <text x="518" y="268" font-size="14" fill="#5e6661">杀掉节点甲</text>
+    <text x="518" y="296" font-size="14" fill="#6e3530">消息不可见，直到节点恢复</text>
   </g>
+  <text x="32" y="376" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#5e6661">冗余靠的是镜像或仲裁策略。高可用配置也不取消消费确认和业务幂等。</text>
 </svg>

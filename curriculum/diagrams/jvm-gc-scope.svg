@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-labelledby="title desc">
+  <title id="title">Major 有时只扫老年代</title>
+  <desc id="desc">Minor 只收新生代。CMS 的老年代收集常被叫成 Major，那时并不是整堆。G1 Mixed 是新生代加部分老年代。</desc>
+  <defs>
+    <filter id="soft" x="-6%" y="-8%" width="112%" height="124%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1.4" flood-color="#28302a" flood-opacity="0.07"/>
+    </filter>
+  </defs>
+  <rect width="960" height="400" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="28" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">JVM</text>
+  <text x="32" y="56" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">Major 有时只扫老年代</text>
+  <text x="32" y="120" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="600" fill="#2e3330" text-anchor="start">Young / Minor</text><rect x="250" y="92" width="201.6" height="40" rx="10" fill="#fafaf8" stroke="#d9ddd8"/><text x="266" y="118" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="400" fill="#2e3330" text-anchor="start">只收新生代</text><text x="32" y="178" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="600" fill="#2e3330" text-anchor="start">Major · CMS</text><rect x="250" y="150" width="302.4" height="40" rx="10" fill="#e6efe9" stroke="#3f6a58"/><text x="266" y="176" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="400" fill="#2e3330" text-anchor="start">可以只收老年代</text><text x="32" y="236" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="600" fill="#2e3330" text-anchor="start">Mixed</text><rect x="250" y="208" width="446.4" height="40" rx="10" fill="#fafaf8" stroke="#d9ddd8"/><text x="266" y="234" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="400" fill="#2e3330" text-anchor="start">新生代 + 部分老年代</text><text x="32" y="294" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="600" fill="#2e3330" text-anchor="start">Full</text><rect x="250" y="266" width="619.1999999999999" height="40" rx="10" fill="#f6ecea" stroke="#a05048"/><text x="266" y="292" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="400" fill="#2e3330" text-anchor="start">整个 Java 堆</text><rect x="32" y="328" width="896" height="44" rx="12" fill="#e6efe9"/><text x="48" y="356" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="600" fill="#2d4f41" text-anchor="start">看到 CMS Initial Mark 或 G1 Mixed，不要按 Full GC 去解释这次停顿。</text>
+</svg>
