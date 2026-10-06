@@ -62,7 +62,7 @@ export function AppLayout() {
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' })
-    document.getElementById('main-content')?.focus({ preventScroll: true })
+    document.getElementById('main-content')?.focus({ preventScroll: true, focusVisible: false })
     setMobileOpen(false)
   }, [location.pathname])
 
@@ -273,7 +273,7 @@ export function AppLayout() {
     <Layout className="app-shell">
       <a className="skip-link" href="#main-content" onClick={event => {
         event.preventDefault()
-        document.getElementById('main-content')?.focus()
+        document.getElementById('main-content')?.focus({ preventScroll: true, focusVisible: false })
       }}>跳到正文</a>
       <Sider className="app-sider" width={300} trigger={null} collapsible={false}>
         {siderBody}

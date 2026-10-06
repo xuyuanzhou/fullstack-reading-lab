@@ -207,6 +207,11 @@ html[data-theme='dark'] .brand-mark {
   width: auto;
   min-width: 0;
   padding: 36px 0 88px;
+
+  &:focus,
+  &:focus-visible {
+    outline: none;
+  }
 }
 
 .app-aside {
