@@ -63,7 +63,6 @@ export function AppLayout() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' })
     document.getElementById('main-content')?.focus({ preventScroll: true, focusVisible: false })
-    setMobileOpen(false)
   }, [location.pathname])
 
   useEffect(() => {
@@ -77,19 +76,23 @@ export function AppLayout() {
 
   const onAi = location.pathname === '/ai' || location.pathname.startsWith('/ai/')
   const aiSectionKey = location.pathname.split('/')[2] || 'intro'
-  const aiNoteTitle = onAi ? aiNote(aiSectionKey, location.pathname.split('/')[3])?.title : ''
+  const onLab = location.pathname.startsWith('/ai/lab')
+  const aiNoteTitle = onAi && !onLab ? aiNote(aiSectionKey, location.pathname.split('/')[3])?.title : ''
+  const labTitle = location.pathname.startsWith('/ai/lab/agent') ? '开发 agent' : '优化提示词'
 
   useEffect(() => {
     if (currentLesson) progress.remember(currentLesson.id)
-    const aiLabel = onAi ? AI_SECTIONS.find((section) => section.key === aiSectionKey)?.label : ''
+    const aiLabel = onAi && !onLab ? AI_SECTIONS.find((section) => section.key === aiSectionKey)?.label : ''
     document.title = currentLesson
       ? `${currentLesson.title} · 全栈学习实验室`
-      : aiNoteTitle
-        ? `${aiNoteTitle} · AI · 全栈学习实验室`
-        : aiLabel
-          ? `${aiLabel} · AI · 全栈学习实验室`
-          : '全栈学习实验室'
-  }, [currentLesson, progress.remember, onAi, aiSectionKey, aiNoteTitle])
+      : onLab
+        ? `${labTitle} · AI · 全栈学习实验室`
+        : aiNoteTitle
+          ? `${aiNoteTitle} · AI · 全栈学习实验室`
+          : aiLabel
+            ? `${aiLabel} · AI · 全栈学习实验室`
+            : '全栈学习实验室'
+  }, [currentLesson, progress.remember, onAi, onLab, aiSectionKey, aiNoteTitle, labTitle])
 
   useEffect(() => {
     if (!isTrack(routeTrack) || !routeGroupKey || !groupLabel(routeTrack, routeGroupKey)) return
@@ -97,7 +100,7 @@ export function AppLayout() {
   }, [routeTrack, routeGroupKey, progress.selectLesson])
 
   const pathChoice = onAi ? 'ai' : location.pathname.startsWith('/local') ? progress.localCategory : activeTrack
-  const selectedKeys = onAi ? [`ai:${aiSectionKey}`] : currentLesson ? [currentLesson.id] : []
+  const selectedKeys = onLab ? ['ai:lab'] : onAi ? [`ai:${aiSectionKey}`] : currentLesson ? [currentLesson.id] : []
   const currentSectionKey = (() => {
     if (!currentLesson) return ''
     const index = outlineFor(currentLesson.track, currentLesson.group).findIndex((section) => section.ids.includes(currentLesson.id))
@@ -110,7 +113,14 @@ export function AppLayout() {
   const lessonNode = (lesson: NonNullable<ReturnType<typeof findLesson>>) => ({
     key: lesson.id,
     label: (
-      <Link to={lessonPath(lesson)} className="lesson-label" onClick={() => progress.remember(lesson.id)}>
+      <Link
+        to={lessonPath(lesson)}
+        className="lesson-label"
+        onClick={() => {
+          progress.remember(lesson.id)
+          setMobileOpen(false)
+        }}
+      >
         <span
           className={`lesson-status${progress.done.includes(lesson.id) ? ' is-done' : ''}`}
           aria-hidden
@@ -149,7 +159,14 @@ export function AppLayout() {
     return {
       key: `group:${group.key}`,
       label: (
-        <Link to={groupPath(activeTrack, group.key)} className="group-label">
+        <Link
+          to={groupPath(activeTrack, group.key)}
+          className="group-label"
+          onClick={(event) => {
+            if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return
+            event.preventDefault()
+          }}
+        >
           <span className="group-index">{String(index + 1).padStart(2, '0')}</span>
           <span className="group-name">{group.label}</span>
           <span className="group-count">
@@ -161,16 +178,27 @@ export function AppLayout() {
     }
   })
 
-  const aiMenuItems = AI_SECTIONS.map((section, index) => ({
-    key: `ai:${section.key}`,
-    label: (
-      <Link to={`/ai/${section.key}`} className="group-label" onClick={() => setMobileOpen(false)}>
-        <span className="group-index">{String(index + 1).padStart(2, '0')}</span>
-        <span className="group-name">{section.label}</span>
-        <span className="group-count">{notesInSection(section.key).length}</span>
-      </Link>
-    ),
-  }))
+  const aiMenuItems = [
+    ...AI_SECTIONS.map((section, index) => ({
+      key: `ai:${section.key}`,
+      label: (
+        <Link to={`/ai/${section.key}`} className="group-label" onClick={() => setMobileOpen(false)}>
+          <span className="group-index">{String(index + 1).padStart(2, '0')}</span>
+          <span className="group-name">{section.label}</span>
+          <span className="group-count">{notesInSection(section.key).length}</span>
+        </Link>
+      ),
+    })),
+    {
+      key: 'ai:lab',
+      label: (
+        <Link to="/ai/lab/prompt" className="group-label" onClick={() => setMobileOpen(false)}>
+          <span className="group-index">练</span>
+          <span className="group-name">练习台</span>
+        </Link>
+      ),
+    },
+  ]
 
   const navItems = [
     { key: 'home', icon: <ReadOutlined />, label: '学习路线' },
@@ -337,7 +365,7 @@ export function AppLayout() {
           </div>
         </header>
 
-        <div className="workspace">
+        <div className={onLab ? 'workspace is-workbench' : 'workspace'}>
           <Content className="app-main" id="main-content" role="main" tabIndex={-1}>
             {progress.storageIssue && <Alert type="warning" showIcon title={progress.storageIssue} />}
             <ReadingBoundary key={location.pathname}>
@@ -346,9 +374,11 @@ export function AppLayout() {
               </Suspense>
             </ReadingBoundary>
           </Content>
-          <aside className="app-aside">
-            <ProgressAside localReady={localReady === true} />
-          </aside>
+          {!onLab && (
+            <aside className="app-aside">
+              <ProgressAside localReady={localReady === true} />
+            </aside>
+          )}
         </div>
       </div>
 

@@ -198,6 +198,10 @@ html[data-theme='dark'] .brand-mark {
   display: grid;
   grid-template-columns: minmax(0, 1fr) var(--lab-aside-w);
   column-gap: 40px;
+
+  &.is-workbench {
+    grid-template-columns: minmax(0, 1fr);
+  }
   flex: 1;
   min-height: 0;
   align-items: start;

@@ -5,6 +5,7 @@ import { HashRouter, Navigate, Route, Routes, useParams } from 'react-router-dom
 import { AppLayout } from '@/components/AppLayout'
 import { ProgressProvider, useProgress } from '@/state/progress'
 import { AiNotePage, AiPage } from '@/pages/AiPage'
+import { AiLabPage } from '@/pages/AiLabPage'
 import { HomePage } from '@/pages/HomePage'
 import { ReadingBoundary } from '@/components/ReadingBoundary'
 import { findLesson } from '@/data/curriculum'
@@ -96,6 +97,8 @@ function ThemedApp() {
               <Route path="saved" element={<Navigate to="/review" replace />} />
               <Route path="local" element={<LocalPage />} />
               <Route path="local/item/:itemId" element={<LocalItemPage />} />
+              <Route path="ai/lab" element={<Navigate to="/ai/lab/prompt" replace />} />
+              <Route path="ai/lab/:tool" element={<AiLabPage />} />
               <Route path="ai" element={<AiPage />} />
               <Route path="ai/:sectionKey" element={<AiPage />} />
               <Route path="ai/:sectionKey/:noteKey" element={<AiNotePage />} />

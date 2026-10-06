@@ -17,6 +17,9 @@ const FIGURES: Record<string, () => ReactElement> = {
   'rag-layers': RagLayers,
   permissions: Permissions,
   'you-own': YouOwn,
+  'find-skills': FindSkills,
+  'write-skill': WriteSkill,
+  'skill-place': SkillPlace,
 }
 
 export function AiDiagram({ name }: { name: string }) {
@@ -325,6 +328,71 @@ function Permissions() {
         <article className="ai-card"><strong>联网</strong><p>单独批。</p></article>
       </div>
       <p className="ai-warn">发信、扣款、写库放在人确认之后。确认前只准备参数。</p>
+    </figure>
+  )
+}
+
+function FindSkills() {
+  return (
+    <figure className="ai-figure" aria-label="目录里先露出名字和说明，任务对上之后才读取技能全文">
+      <div className="ai-flow">
+        <article className="ai-card">
+          <strong>目录</strong>
+          <p>每个技能只露出名字，和一句何时使用。</p>
+        </article>
+        <span className="ai-arrow" aria-hidden>→</span>
+        <article className="ai-card is-accent">
+          <strong>对上任务</strong>
+          <p>说明里的场景和这次要做的事一致。</p>
+        </article>
+        <span className="ai-arrow" aria-hidden>→</span>
+        <article className="ai-card">
+          <strong>再读全文</strong>
+          <p>这时才把 SKILL.md 的步骤放进上下文。</p>
+        </article>
+      </div>
+    </figure>
+  )
+}
+
+function WriteSkill() {
+  return (
+    <figure className="ai-figure" aria-label="一份技能包含名字、何时使用和短步骤，长资料与脚本放在旁边">
+      <div className="ai-flow">
+        <article className="ai-card">
+          <strong>name</strong>
+          <p>和文件夹名相同。小写，用连字符。</p>
+        </article>
+        <article className="ai-card is-accent">
+          <strong>description</strong>
+          <p>做什么，以及什么任务该用它。</p>
+        </article>
+        <article className="ai-card">
+          <strong>步骤</strong>
+          <p>短。长表放 references，命令放 scripts。</p>
+        </article>
+      </div>
+    </figure>
+  )
+}
+
+function SkillPlace() {
+  return (
+    <figure className="ai-figure" aria-label="提示是这一次的任务，技能是可重复的做法，工具才执行动作">
+      <div className="ai-flow">
+        <article className="ai-card">
+          <strong>提示</strong>
+          <p>这一次的问题、材料和格式。</p>
+        </article>
+        <article className="ai-card is-accent">
+          <strong>技能</strong>
+          <p>下次还要照做的步骤。</p>
+        </article>
+        <article className="ai-card">
+          <strong>工具</strong>
+          <p>读、改、执行、联网。要单独授权。</p>
+        </article>
+      </div>
     </figure>
   )
 }

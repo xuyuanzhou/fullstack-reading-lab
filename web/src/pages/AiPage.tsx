@@ -4,6 +4,16 @@ import { aiNote, aiSection, noteNeighbors, notesInSection, type AiNote } from '@
 
 type OutletCtx = { localReady: boolean | null }
 
+const LAB_LINK: Record<string, { to: string; label: string }> = {
+  'prompt-once': { to: '/ai/lab/prompt', label: '到练习台改这一次的提示词' },
+  'find-then-answer': { to: '/ai/lab/prompt', label: '到练习台把材料写进这一次' },
+  'one-success': { to: '/ai/lab/prompt', label: '到练习台写下没有答案时的出口' },
+  'model-proposes': { to: '/ai/lab/agent', label: '到练习台声明工具并走一遍' },
+  permissions: { to: '/ai/lab/agent', label: '到练习台把确认写进循环' },
+  'you-own': { to: '/ai/lab/agent', label: '到练习台写下停点并导出' },
+  'skill-place': { to: '/ai/lab/agent', label: '到练习台给这条命令标权限' },
+}
+
 export function AiPage() {
   const { sectionKey } = useParams()
   const section = aiSection(sectionKey)
@@ -76,6 +86,11 @@ export function AiNotePage() {
           <h2 className="page-title">自己做一次</h2>
           <div className="reading-copy">
             <p>{note.practice}</p>
+            {LAB_LINK[note.key] && (
+              <p>
+                <Link to={LAB_LINK[note.key].to}>{LAB_LINK[note.key].label}</Link>
+              </p>
+            )}
           </div>
         </section>
       )}
