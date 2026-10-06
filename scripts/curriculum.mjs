@@ -51,6 +51,7 @@ export const publishedSources = [
   'coverage-java-28.js',
   'coverage-java-29.js',
   'coverage-java-30.js',
+  'coverage-java-31.js',
   'coverage-path.js',
   'coverage-path-02.js',
   'coverage-path-03.js',
@@ -186,7 +187,7 @@ export const OUTLINE = {
       { title: '读与交付', ids: ['fs-read-shape', 'fs-ship-bar'] },
     ],
     'Java 基础': [
-      { title: '类型与契约', ids: ['java-interface-contract', 'java-generics', 'java-equals-contract', 'java-string-immutability', 'java-autoboxing-cache', 'java-calendar-not-singleton', 'java-main-launcher', 'java-record-accessor', 'java-dcl-volatile-enum', 'java-pass-by-value', 'java-long-atomic-on-64bit'] },
+      { title: '类型与契约', ids: ['java-interface-contract', 'java-generics', 'java-equals-contract', 'java-string-immutability', 'java-autoboxing-cache', 'java-calendar-not-singleton', 'java-main-launcher', 'java-record-accessor', 'java-dcl-volatile-enum', 'java-pass-by-value', 'java-long-atomic-on-64bit', 'java-protected-other-pkg-subclass', 'java-anonymous-extends-or-implements', 'java-string-new-vs-pool'] },
       { title: '失败与空值', ids: ['java-exceptions', 'java-optional', 'java-finalize-not-guaranteed', 'java-unchecked-not-must-catch'] },
       { title: '集合与内存', ids: ['java-collections', 'java-arraylist-linkedlist', 'java-stream', 'java-memory', 'java-enumeration-not-faster', 'java-arrays-aslist-fixed', 'hashmap-treeify-need-capacity', 'chm-iterator-weakly-consistent'] },
       { title: '时间与字节', ids: ['java-time-instant', 'java-charset-default', 'java-string-strip-not-trim'] },
@@ -197,7 +198,7 @@ export const OUTLINE = {
       { title: '窗口与依赖', ids: ['algo-sliding-window', 'algo-topo-kahn'] },
     ],
     Spring: [
-      { title: '容器', ids: ['spring-ioc-wiring', 'spring-bean-lifecycle', 'spring-scopes', 'spring-scope-catalog', 'spring-external-config', 'spring-legacy-config', 'spring-boot-war-still-ok', 'spring-boot3-autoconfig-imports', 'tomcat-nio-not-bio-default'] },
+      { title: '容器', ids: ['spring-ioc-wiring', 'spring-bean-lifecycle', 'spring-scopes', 'spring-scope-catalog', 'spring-external-config', 'spring-legacy-config', 'spring-boot-war-still-ok', 'spring-boot3-autoconfig-imports', 'tomcat-nio-not-bio-default', 'spring-xmlbeanfactory-removed'] },
       { title: '一次请求', ids: ['spring-mvc-dispatch', 'spring-mvc-exception', 'spring-filter-vs-interceptor', 'spring-validation-binding', 'spring-mvc-restcontroller', 'spring-mvc-controller-singleton'] },
       { title: '切面', ids: ['spring-aop-proxy-type', 'spring-aop-self-invocation', 'spring-boot-aop-cglib-default'] },
       { title: '事务', ids: ['spring-transaction', 'spring-rollback', 'spring-propagation'] },

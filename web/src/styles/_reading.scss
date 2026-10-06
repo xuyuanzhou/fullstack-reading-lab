@@ -408,6 +408,32 @@
   }
 }
 
+.ai-grid {
+  display: grid;
+  grid-template-columns: 88px repeat(3, 1fr);
+  gap: 6px;
+
+  span {
+    padding: 10px 8px;
+    border: 1px solid var(--lab-line);
+    border-radius: 8px;
+    background: var(--lab-bg);
+    text-align: center;
+  }
+
+  .is-head {
+    border-color: transparent;
+    background: transparent;
+    color: var(--lab-muted);
+    font-size: var(--lab-text-small);
+  }
+
+  .is-pick {
+    background: var(--lab-accent-soft);
+    border-color: var(--lab-accent);
+  }
+}
+
 .ai-checks {
   flex: 1;
   margin: 0;
