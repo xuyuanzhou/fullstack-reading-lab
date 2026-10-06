@@ -11,7 +11,7 @@ import {
 import { courseGroups, groupKeyForLabel } from '@/data/routes'
 import { STORAGE_KEY } from '@/data/meta'
 import type { ProgressState, Track } from '@/types/curriculum'
-import { readProgress, writeProgress, type ProgressGroups } from './progressStorage'
+import { mergeForWrite, normalizeProgress, readProgress, sameProgress, writeProgress, type ProgressGroups } from './progressStorage'
 
 type ProgressApi = ProgressState & {
   storageIssue: string
@@ -50,21 +50,73 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<ProgressState>(initial.state)
   const [storageIssue, setStorageIssue] = useState(initial.issue)
   const latest = useRef(state)
+  const synced = useRef(state)
+  const skipPersist = useRef(false)
 
   useEffect(() => {
     latest.current = state
-    const save = () => setStorageIssue(writeProgress(STORAGE_KEY, state))
+    if (skipPersist.current) {
+      skipPersist.current = false
+      return
+    }
+    const save = () => {
+      const local = latest.current
+      const remote = readProgress(STORAGE_KEY, storageGroups).state
+      const next = mergeForWrite(local, remote, synced.current)
+      if (sameProgress(next, remote) && next.revision === remote.revision) {
+        synced.current = remote
+        return
+      }
+      const issue = writeProgress(STORAGE_KEY, next)
+      synced.current = next
+      latest.current = next
+      if (next.revision !== local.revision) {
+        skipPersist.current = true
+        setState(next)
+      }
+      setStorageIssue(issue)
+    }
     const timer = window.setTimeout(save, 350)
     return () => window.clearTimeout(timer)
   }, [state])
 
   useEffect(() => {
-    const flush = () => { writeProgress(STORAGE_KEY, latest.current) }
+    const flush = () => {
+      const remote = readProgress(STORAGE_KEY, storageGroups).state
+      const next = mergeForWrite(latest.current, remote, synced.current)
+      // Idle tabs that are behind storage must not rewrite an unchanged remote snapshot.
+      if (sameProgress(next, remote) && next.revision === remote.revision) {
+        synced.current = remote
+        return
+      }
+      writeProgress(STORAGE_KEY, next)
+      synced.current = next
+      latest.current = next
+    }
     window.addEventListener('pagehide', flush)
     return () => {
       window.removeEventListener('pagehide', flush)
       flush()
     }
+  }, [])
+
+  useEffect(() => {
+    const onStorage = (event: StorageEvent) => {
+      if (event.key !== STORAGE_KEY || event.newValue == null) return
+      try {
+        const remote = normalizeProgress(JSON.parse(event.newValue), storageGroups)
+        if (remote.revision <= latest.current.revision) return
+        const routed = { ...remote, group: routeGroup(remote.track, remote.group) }
+        synced.current = routed
+        latest.current = routed
+        skipPersist.current = true
+        setState(routed)
+      } catch {
+        /* ignore malformed cross-tab payloads */
+      }
+    }
+    window.addEventListener('storage', onStorage)
+    return () => window.removeEventListener('storage', onStorage)
   }, [])
 
   useEffect(() => {

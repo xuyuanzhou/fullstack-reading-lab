@@ -6,8 +6,10 @@ import sqlite3
 import time
 from pathlib import Path
 
+import server
+from library_config import resolve_library
+
 ROOT = Path(__file__).resolve().parent.parent
-DB = ROOT / 'private-data' / 'index.sqlite3'
 REPORT = ROOT / 'private-data' / 'source-progress-summary.json'
 
 CURRICULUM = ('待选题', '已定位主题', '已有草稿', '已发布课程')
@@ -25,7 +27,7 @@ def track_for(identifier):
 
 
 def connect():
-    connection = sqlite3.connect(str(DB))
+    connection = sqlite3.connect(str(server.DB))
     connection.execute('''CREATE TABLE IF NOT EXISTS source_review(
         id TEXT PRIMARY KEY,
         track TEXT NOT NULL,
@@ -85,7 +87,11 @@ def main():
     parser.add_argument('--curriculum', choices=CURRICULUM, default='已有草稿')
     parser.add_argument('--accuracy', choices=ACCURACY, default='待核验')
     parser.add_argument('--note', default='')
+    parser.add_argument('--library', default=None, help='省略时读 READING_LAB_LIBRARY 或 config/library.path')
     args = parser.parse_args()
+    root = resolve_library(args.library)
+    server.LIB = server.Library(root)
+    server.bind_library(root)
     con = connect()
     if args.sync:
         print('synced', sync(con), 'private source items')

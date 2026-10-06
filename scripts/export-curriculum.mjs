@@ -13,7 +13,14 @@ fs.writeFileSync(output, JSON.stringify(payload, null, 2) + '\n');
 const legacyOrder = `window.GROUP_ORDER = ${JSON.stringify(payload.groupOrder)};\nwindow.PATH_LEAD = ${JSON.stringify(payload.pathLead)};\n`;
 fs.writeFileSync(path.join(root, 'legacy', 'publication-order.js'), legacyOrder);
 fs.mkdirSync(path.join(root, 'web', 'public', 'diagrams'), { recursive: true });
-for (const diagram of new Set(payload.lessons.map(x => x.diagram).filter(Boolean))) {
+const diagrams = [...new Set(payload.lessons.map(x => x.diagram).filter(Boolean))];
+for (const diagram of diagrams) {
   fs.copyFileSync(path.join(root, 'curriculum', diagram), path.join(root, 'web', 'public', diagram));
+}
+const publicDiagrams = path.join(root, 'web', 'public', 'diagrams');
+const keep = new Set(diagrams.map((diagram) => path.basename(diagram)));
+for (const name of fs.readdirSync(publicDiagrams)) {
+  if (!name.endsWith('.svg')) continue;
+  if (!keep.has(name)) fs.unlinkSync(path.join(publicDiagrams, name));
 }
 console.log(`Exported ${payload.lessons.length} validated lessons → web/src/data/curriculum.json`);

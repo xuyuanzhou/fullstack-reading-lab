@@ -33,6 +33,49 @@ DB = PROFILE / 'index.sqlite3'
 MAX_READ = 4_000_000
 lock = threading.Lock()
 
+def bind_library(root):
+    """Keep each library's search index in its own SQLite file under private-data/libraries/."""
+    global DB
+    root=pathlib.Path(root).resolve()
+    digest=hashlib.sha256(str(root).encode('utf-8')).hexdigest()[:16]
+    folder=PROFILE/'libraries'/digest
+    folder.mkdir(parents=True,exist_ok=True)
+    DB=folder/'index.sqlite3'
+    marker=folder/'source.path'
+    recorded=marker.read_text(encoding='utf-8').strip() if marker.exists() else ''
+    if recorded and recorded!=str(root):
+        raise RuntimeError('索引目录与当前资料库路径不一致，请删除 '+str(folder)+' 后重新导入')
+    if not recorded:
+        marker.write_text(str(root),encoding='utf-8')
+    return DB
+
+def library_index_ready():
+    marker=DB.parent/'source.path'
+    if not marker.exists():return True
+    return marker.read_text(encoding='utf-8').strip()==str(LIB.root.resolve())
+
+def extracted_roots():
+    return (
+        (PROFILE/'archive-extracted').resolve(),
+        (PROFILE/'embedded-extracted').resolve(),
+        (PROFILE/'chm-extracted').resolve(),
+    )
+
+def inside_root(path, root):
+    try:
+        pathlib.Path(path).resolve().relative_to(pathlib.Path(root).resolve())
+        return True
+    except (ValueError, OSError):
+        return False
+
+def allowed_source(path, library_root=None):
+    location=pathlib.Path(path).resolve()
+    roots=[]
+    if library_root is not None:roots.append(pathlib.Path(library_root).resolve())
+    elif LIB is not None:roots.append(LIB.root.resolve())
+    roots.extend(extracted_roots())
+    return any(location==base or base in location.parents for base in roots)
+
 def safe_text(value):
     return ''.join(c for c in value if c == '\n' or c == '\t' or ord(c) >= 32)
 
@@ -359,6 +402,7 @@ class Library:
         for p in self.root.rglob('*'):
             if not p.is_file() or p.suffix.lower() not in SUPPORTED:continue
             if p.suffix.lower()=='.txt' and '密码' in p.stem:continue
+            if not inside_root(p, self.root):continue
             try:
                 rel=p.relative_to(self.root)
                 if any(x.startswith('.') for x in rel.parts):continue
@@ -417,9 +461,7 @@ class Library:
         if p is None:p=self._companion_image(ident)
         if p is None:raise FileNotFoundError('未找到资料')
         # Reject symlinks pointing out of the configured library.
-        location=p.resolve()
-        allowed=[self.root,(PROFILE/'archive-extracted').resolve(),(PROFILE/'embedded-extracted').resolve(),(PROFILE/'chm-extracted').resolve()]
-        if not any(location==base or base in location.parents for base in allowed):raise PermissionError('资料位于题库之外')
+        if not allowed_source(p, self.root):raise PermissionError('资料位于题库之外')
         return p
     def _companion_image(self,ident):
         rel=pathlib.PurePosixPath(str(ident).replace('\\','/'))
@@ -472,7 +514,7 @@ def build_index():
         LIB.scan()
         result=import_library.import_all(LIB.root,batch_size=200)
         index_state['done']=result['done'];index_state['total']=result['total']
-        if result['failed']:index_state['error']=str(result['failed'])+' 份资料导入失败，查看 private-data/index.sqlite3 的 imports 表'
+        if result['failed']:index_state['error']=str(result['failed'])+' 份资料导入失败，查看 '+str(DB)+' 的 imports 表'
         scan_audit(DB,PROFILE/'audit-candidates.json')
     except Exception as e:index_state['error']=str(e)
     finally:index_state['running']=False
@@ -574,7 +616,7 @@ class Handler(BaseHTTPRequestHandler):
                 title,fmt=presentation(ident,p)
                 return self.send_json({'id':ident,'title':title,'text':safe_text(text),'candidateText':safe_text(candidate),'page':n,'pages':page_count(p),'format':fmt,'path':ident,'subject':subject(ident),'empty':not bool(text.strip()),'ocrError':ocr_error,'hasFullText':has_full,'websites':websites_for(ident)})
             if url.path=='/api/stats':
-                progress=PROFILE/'import-progress.json'
+                progress=DB.parent/'import-progress.json'
                 con=connect()
                 try:imported,empty,failed=con.execute("SELECT sum(status='ok'),sum(status='ok' AND chars=0),sum(status!='ok') FROM imports").fetchone()
                 except sqlite3.OperationalError:imported=empty=failed=0
@@ -586,6 +628,8 @@ class Handler(BaseHTTPRequestHandler):
             if url.path=='/api/search':
                 q=get('q').strip()
                 if len(q)<2:return self.send_json({'items':[]})
+                if not library_index_ready():
+                    return self.send_json({'items':[],'staleIndex':True,'error':'当前索引不属于这份资料库，请重新导入后再搜索。'})
                 con=connect()
                 # LIKE supports short Chinese substrings; unicode61 FTS would
                 # otherwise treat a whole Chinese phrase as one token.
@@ -612,7 +656,7 @@ if __name__=='__main__':
     parser.add_argument('--library',default=None,help='本机资料库目录；省略时读 READING_LAB_LIBRARY 或 config/library.path')
     parser.add_argument('--port',type=int,default=4180)
     parser.add_argument('--no-browser',action='store_true')
-    opts=parser.parse_args();LIB=Library(resolve_library(opts.library))
+    opts=parser.parse_args();LIB=Library(resolve_library(opts.library));bind_library(LIB.root)
     server=ThreadingHTTPServer(('127.0.0.1',opts.port),Handler)
     url='http://127.0.0.1:'+str(opts.port)
     print('全栈学习阅读器 '+url+' · 已发现 '+str(len(LIB.files))+' 个可阅读文件',flush=True)

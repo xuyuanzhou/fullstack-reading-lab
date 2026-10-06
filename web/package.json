@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "test": "node --experimental-strip-types --test ../scripts/architecture.test.mjs ../scripts/ai-lab.test.mjs",
-    "check": "npm run export:curriculum && node ../scripts/verify_content.mjs && npm test && npm run build",
+    "verify:committed": "node ../scripts/verify_content.mjs && npm test && npm run lint && ./node_modules/.bin/tsc --noEmit -p tsconfig.app.json",
+    "check": "npm run export:curriculum && npm run verify:committed && npm run build",
     "predev": "node ../scripts/export-curriculum.mjs",
     "dev": "vite",
     "prebuild": "node ../scripts/export-curriculum.mjs",

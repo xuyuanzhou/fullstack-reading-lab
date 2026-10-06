@@ -1,18 +1,33 @@
 import { Alert, Breadcrumb, Button, Empty, Input, Space, Typography, message } from 'antd'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Navigate, useNavigate, useOutletContext } from 'react-router-dom'
-import { localApi, type CatalogItem, type SubjectRow } from '@/api/localLibrary'
+import { localApi, type CatalogItem, type IndexJob, type SubjectRow } from '@/api/localLibrary'
 import { LOCAL_CATEGORY_LABEL } from '@/data/meta'
 import { useProgress } from '@/state/progress'
 import type { LocalCategory } from '@/types/curriculum'
 
 const PAGE_SIZE = 100
 
+type OutletCtx = {
+  localReady: boolean | null
+  reconnectLocal?: () => Promise<boolean>
+  localHost?: boolean
+}
+
+function statusLine(imported: number, count: number, emptyText: number, job?: IndexJob | null, failed?: number) {
+  const base = `已导入 ${imported} / ${count} 份；${emptyText} 份尚无可靠文字。`
+  if (job?.running) return `${base} 正在导入第 ${job.done}/${job.total || count} 批。`
+  if (job?.error) return `${base} ${job.error}`
+  if (failed) return `${base} ${failed} 份上次导入失败。`
+  return base
+}
+
 export function LocalPage() {
-  const { localReady } = useOutletContext<{ localReady: boolean | null }>()
+  const { localReady, reconnectLocal, localHost } = useOutletContext<OutletCtx>()
   const progress = useProgress()
   const navigate = useNavigate()
   const [status, setStatus] = useState('正在读取导入状态…')
+  const [job, setJob] = useState<IndexJob | null>(null)
   const [subjects, setSubjects] = useState<SubjectRow[]>([])
   const [items, setItems] = useState<CatalogItem[]>([])
   const [total, setTotal] = useState(0)
@@ -22,16 +37,31 @@ export function LocalPage() {
   const [hasMore, setHasMore] = useState(false)
   const [mode, setMode] = useState<'catalog' | 'fulltext'>('catalog')
   const [retry, setRetry] = useState(0)
+  const [catalogEpoch, setCatalogEpoch] = useState(0)
+  const wasRunning = useRef(false)
 
   useEffect(() => { setOffset(0) }, [progress.localCategory, progress.localQuery, progress.localTopic, mode])
+
   useEffect(() => {
     if (!localReady) return
     let active = true
-    void localApi.stats().then(data => {
-      if (active) setStatus(`已导入 ${data.imported} / ${data.count} 份；${data.emptyText} 份尚无可靠文字。`)
-    }).catch((err: Error) => { if (active) setStatus(err.message) })
-    return () => { active = false }
-  }, [localReady])
+    const load = () => {
+      void localApi.stats().then((data) => {
+        if (!active) return
+        setJob(data.index ?? null)
+        setStatus(statusLine(data.imported, data.count, data.emptyText, data.index, data.failed))
+        if (wasRunning.current && !data.index?.running) setCatalogEpoch((value) => value + 1)
+        wasRunning.current = !!data.index?.running
+      }).catch((err: Error) => { if (active) setStatus(err.message) })
+    }
+    load()
+    const running = job?.running
+    const timer = running ? window.setInterval(load, 1500) : undefined
+    return () => {
+      active = false
+      if (timer) window.clearInterval(timer)
+    }
+  }, [localReady, job?.running, catalogEpoch])
 
   useEffect(() => {
     if (!localReady) return
@@ -55,10 +85,24 @@ export function LocalPage() {
       } finally { if (!cancelled) setLoading(false) }
     }, 200)
     return () => { cancelled = true; window.clearTimeout(timer) }
-  }, [localReady, progress.localCategory, progress.localQuery, progress.localTopic, offset, mode, retry])
+  }, [localReady, progress.localCategory, progress.localQuery, progress.localTopic, offset, mode, retry, catalogEpoch])
 
   if (localReady === null) return <div role="status">正在连接本机资料…</div>
-  if (!localReady) return <Navigate to="/knowledge" replace />
+  if (!localReady) {
+    if (localHost) {
+      return (
+        <div className="article-shell">
+          <Alert
+            type="warning"
+            showIcon
+            title="还没有连上本机资料服务。"
+            action={<Button onClick={() => void reconnectLocal?.()}>重新连接</Button>}
+          />
+        </div>
+      )
+    }
+    return <Navigate to="/knowledge" replace />
+  }
 
   return <div className="article-shell">
     <header>
@@ -76,8 +120,29 @@ export function LocalPage() {
     <div className="toolbar">
       <Input.Search className="toolbar-search" allowClear aria-label="搜索本机资料" placeholder="搜索文件名，或输入至少两个字搜索正文…" value={progress.localQuery} onChange={event => { setOffset(0); setMode('catalog'); progress.setLocalQuery(event.target.value) }} />
       <Button disabled={progress.localQuery.trim().length < 2} onClick={() => { setOffset(0); setMode('fulltext'); setRetry(value => value + 1) }}>搜索正文</Button>
-      <Button onClick={async () => { try { await localApi.reindex(); message.success('已开始处理下一批') } catch (err) { message.error((err as Error).message) } }}>处理下一批</Button>
+      <Button
+        loading={!!job?.running}
+        disabled={!!job?.running}
+        onClick={async () => {
+          if (job?.running) {
+            message.info('导入仍在进行，完成后会更新目录。')
+            return
+          }
+          try {
+            setJob((current) => current ? { ...current, running: true, error: null } : { running: true, done: 0, total: 0, error: null })
+            await localApi.reindex()
+            message.info('已开始处理下一批，完成后会更新目录。')
+            setCatalogEpoch((value) => value + 1)
+          } catch (err) {
+            setJob((current) => ({ running: false, done: current?.done || 0, total: current?.total || 0, error: (err as Error).message }))
+            message.error((err as Error).message)
+          }
+        }}
+      >
+        {job?.running ? '正在导入…' : '处理下一批'}
+      </Button>
     </div>
+    {job?.error && <Alert type="error" showIcon title={job.error} action={<Button onClick={() => setCatalogEpoch((value) => value + 1)}>刷新状态</Button>} />}
     {(progress.localTopic || mode === 'fulltext') && <Breadcrumb items={[
       { title: <Button type="link" onClick={() => { setMode('catalog'); setOffset(0); progress.setLocalTopic(''); progress.setLocalQuery('') }}>全部科目</Button> },
       { title: mode === 'fulltext' ? '正文搜索' : progress.localTopic },

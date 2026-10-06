@@ -29,6 +29,14 @@ export function AppLayout() {
   const { token } = theme.useToken()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [localReady, setLocalReady] = useState<boolean | null>(null)
+  const localHost = ['localhost', '127.0.0.1', '[::1]'].includes(window.location.hostname)
+
+  async function reconnectLocal() {
+    setLocalReady(null)
+    const ready = await probeLocalLibrary()
+    setLocalReady(ready)
+    return ready
+  }
 
   useEffect(() => {
     let active = true
@@ -212,7 +220,9 @@ export function AppLayout() {
     },
     ...(localReady
       ? [{ key: 'local', icon: <FolderOpenOutlined />, label: '本机资料', badge: 0 }]
-      : []),
+      : localHost
+        ? [{ key: 'local', icon: <FolderOpenOutlined />, label: '连接本机资料', badge: 0 }]
+        : []),
   ]
 
   const navSelected = (() => {
@@ -335,7 +345,13 @@ export function AppLayout() {
                   aria-label={item.label}
                   aria-current={active ? 'page' : undefined}
                   title={item.label}
-                  onClick={() => navigate(item.key === 'home' ? homeTo : `/${item.key}`)}
+                  onClick={() => {
+                    if (item.key === 'local' && localReady !== true) {
+                      void reconnectLocal().then((ready) => { if (ready) navigate('/local') })
+                      return
+                    }
+                    navigate(item.key === 'home' ? homeTo : `/${item.key}`)
+                  }}
                 >
                   <span className="nav-label-wide">{item.label}</span>
                 </Button>
@@ -368,9 +384,17 @@ export function AppLayout() {
         <div className={onLab ? 'workspace is-workbench' : 'workspace'}>
           <Content className="app-main" id="main-content" role="main" tabIndex={-1}>
             {progress.storageIssue && <Alert type="warning" showIcon title={progress.storageIssue} />}
+            {localHost && localReady === false && (
+              <Alert
+                type="info"
+                showIcon
+                title="本机资料服务还没连上。"
+                action={<Button size="small" onClick={() => void reconnectLocal()}>重新连接</Button>}
+              />
+            )}
             <ReadingBoundary key={location.pathname}>
               <Suspense fallback={<div className="route-loading" role="status">正在打开课程…</div>}>
-                <Outlet context={{ localReady }} />
+                <Outlet context={{ localReady, reconnectLocal, localHost }} />
               </Suspense>
             </ReadingBoundary>
           </Content>

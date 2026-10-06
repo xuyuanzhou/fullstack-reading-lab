@@ -1,7 +1,16 @@
+export type IndexJob = {
+  running: boolean
+  done: number
+  total: number
+  error: string | null
+}
+
 export type LocalStats = {
   imported: number
   count: number
   emptyText: number
+  failed?: number
+  index?: IndexJob
 }
 
 export type SubjectRow = {
@@ -86,7 +95,7 @@ export const localApi = {
     })
     return request<{ items: CatalogItem[]; hasMore?: boolean }>(`/api/search?${query}`)
   },
-  reindex: () => request<{ ok?: boolean }>('/api/reindex', { method: 'POST' }),
+  reindex: () => request<{ ok?: boolean; running?: boolean }>('/api/reindex', { method: 'POST' }),
   item: (id: string, page: number) =>
     request<ItemPayload>(`/api/item?id=${encodeURIComponent(id)}&page=${page}`),
   ocr: (id: string, page: number) =>

@@ -2,7 +2,7 @@
 
 在线阅读：[全栈学习实验室](https://xuyuanzhou.github.io/fullstack-reading-lab/) · [GitHub 仓库](https://github.com/xuyuanzhou/fullstack-reading-lab)
 
-面向前端和 Java 开发者的公开学习网站。以本机题库的主题分布作为选题线索，重新编写中文解释、具体例子、主动回忆练习与参考答案；每节公开课附官方文档、标准或固定版本源码依据。当前有 **691 节原创课程、2080 个具体知识点**（前端 233 课、Java 458 课）。另有一条 AI 公开阅读路线和练习台，不计入上述课数。Java 侧已按 Spring、JPA、MyBatis、缓存、Nginx、Netty、网关、搜索、JVM 分章；Spring Cloud Alibaba 按 Nacos、调用、Sentinel、Seata 展开。学习从「全栈主线」开始：一条功能怎样从页面交到数据库，再进入语言、框架和失败场景。
+面向前端和 Java 开发者的公开学习网站。以本机题库的主题分布作为选题线索，重新编写中文解释、具体例子、主动回忆练习与参考答案。除原创回答框架课 `design-review` 外，每节公开课附官方文档、标准或固定版本源码依据。当前有 **691 节原创课程、2080 个具体知识点**（前端 233 课、Java 458 课）。另有一条 AI 公开阅读路线和练习台，不计入上述课数。Java 侧已按 Spring、JPA、MyBatis、缓存、Nginx、Netty、网关、搜索、JVM 分章；Spring Cloud Alibaba 按 Nacos、调用、Sentinel、Seata 展开。学习从「全栈主线」开始：一条功能怎样从页面交到数据库，再进入语言、框架和失败场景。
 
 公开站使用 **React + TypeScript + Vite + Ant Design**（目录 `web/`）。左侧课程路径、中间阅读、右侧进度。React / Vue 知识卡分别打开 [React Mastery Lab](https://xuyuanzhou.github.io/react-mastery-lab/) 与 [Vue 3 Mastery Lab](https://xuyuanzhou.github.io/vue3-mastery-lab/#/) 的对应章节。
 
@@ -88,4 +88,4 @@ python3 reader/import_library.py --batch-size 200
 
 ## 内容原则
 
-公开课只发布独立编写并核验的解释。`curriculum/` 与 `web/src/data/curriculum.json` 必须同步（通过导出脚本）。私人原件、草稿和未接入的 `curriculum/coverage-*-07.js` 不得进入公开构建。
+公开课只发布独立编写并核验的解释。`curriculum/` 与 `web/src/data/curriculum.json` 必须同步（通过导出脚本）。公开范围以 `scripts/curriculum.mjs` 的 `publishedSources` 为准：其中已包含已审定接入的 `coverage-frontend-07.js` 与 `coverage-java-07.js`。未列入该清单的 coverage 文件、私人原件和草稿不得进入公开构建。每节公开课附官方文档、标准或固定版本源码依据；`design-review` 是原创回答框架练习，不依赖某一份外部规格，因此不附引用。

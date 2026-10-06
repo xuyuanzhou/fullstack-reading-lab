@@ -13,7 +13,10 @@ LIMIT=128*1024*1024
 
 def import_embedded(root):
     root=Path(root).resolve();manifest={};stats={'documents':0,'images':0,'bytes':0,'errors':[]}
-    sources=[(path.relative_to(root).as_posix(),path) for path in root.rglob('*.docx')]
+    sources=[]
+    for path in root.rglob('*.docx'):
+        if not server.inside_root(path, root):continue
+        sources.append((path.relative_to(root).as_posix(),path))
     archive_manifest=server.PROFILE/'archive-manifest.json'
     if archive_manifest.exists():
         archive_catalog=json.loads(archive_manifest.read_text(encoding='utf-8'))

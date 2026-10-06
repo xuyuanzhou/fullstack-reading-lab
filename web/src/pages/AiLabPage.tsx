@@ -10,20 +10,22 @@ import {
   exportAgent,
   initialLoop,
   mustConfirm,
+  toolIssues,
   type AgentDraft,
   type AgentTool,
   type LoopState,
   type Permission,
 } from '@/labs/agentLoop'
-import { readLab, writeLab, type LabSnapshot } from '@/labs/labStorage'
+import { readLab, resetLab, restoreLabBackup, writeLab } from '@/labs/labStorage'
 import { applyPromptFixes, assemblePrompt, promptDiff, reviewPrompt, type PromptDraft } from '@/labs/promptChecks'
 
 export function AiLabPage() {
   const { tool = 'prompt' } = useParams()
   const navigate = useNavigate()
-  const [snapshot, setSnapshot] = useState<LabSnapshot>(() => readLab())
+  const [initial] = useState(() => readLab())
+  const [snapshot, setSnapshot] = useState(() => initial.snapshot)
   const [loop, setLoop] = useState<LoopState>(() => initialLoop())
-  const [notice, setNotice] = useState('')
+  const [notice, setNotice] = useState(initial.issue)
   const [saveNote, setSaveNote] = useState('')
 
   useEffect(() => {
@@ -70,6 +72,19 @@ export function AiLabPage() {
         <Link to="/ai/lab/agent" aria-current={tool === 'agent' ? 'page' : undefined}>开发 agent</Link>
       </div>
       {notice && <p className="lab-note" role="status">{notice}</p>}
+      <p className="lab-note">
+        <Button size="small" onClick={() => {
+          const recovered = restoreLabBackup()
+          setSnapshot(recovered.snapshot)
+          setNotice(recovered.issue)
+          setLoop(initialLoop())
+        }}>恢复副本</Button>{' '}
+        <Button size="small" onClick={() => {
+          setSnapshot(resetLab())
+          setNotice('已恢复示例草稿。')
+          setLoop(initialLoop())
+        }}>重置示例</Button>
+      </p>
       {saveNote && <p className="lab-note is-bad" role="status">{saveNote}</p>}
       {tool === 'prompt' ? (
         <PromptBench
@@ -211,6 +226,7 @@ function AgentBench({
   const missing = reviewPrompt(prompt).filter((item) => !item.ok).length
   const usingCurrent = draft.instruction === assembled
   const waiting = Boolean(loop.waitingId)
+  const issues = toolIssues(draft.tools)
   return (
     <div className="lab-grid">
       <div className="lab-fields">
@@ -260,6 +276,9 @@ function AgentBench({
           导出时会按这些名字初始化状态。execute 返回的对象只用这些键，不会用工具名当字段。
         </p>
         <p className="lab-kicker">工具</p>
+        {issues.map((issue) => (
+          <p key={issue} className="lab-note is-bad">{issue}</p>
+        ))}
         <div className="lab-tools">
           {draft.tools.map((tool) => (
             <article key={tool.id} className="lab-tool">

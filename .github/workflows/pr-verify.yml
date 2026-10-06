@@ -1,0 +1,29 @@
+name: Verify pull requests
+on:
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: pr-verify-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify committed curriculum and frontend
+        working-directory: web
+        run: |
+          npm ci
+          npm run verify:committed
+      - name: Run local-reader unit tests
+        run: python -m unittest discover -s reader -p tests.py

@@ -25163,7 +25163,16 @@
         "数据陈旧的业务容忍度",
         "库存与详情的不同一致性要求"
       ],
-      "references": []
+      "references": [
+        [
+          "Microsoft Learn：Cache-Aside pattern",
+          "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside"
+        ],
+        [
+          "Redis：Cache aside",
+          "https://redis.io/docs/latest/develop/use-cases/cache-aside/"
+        ]
+      ]
     },
     {
       "track": "java",

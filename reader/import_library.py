@@ -13,14 +13,14 @@ from parsers import read_text
 
 def image_text(path):
     digest=hashlib.sha256(path.read_bytes()).hexdigest()
-    cached=server.PROFILE/'ocr-cache'/(digest+'.txt')
+    cached=server.DB.parent/'ocr-cache'/(digest+'.txt')
     if cached.exists():return cached.read_text(encoding='utf-8')
     try:body=server.ocr_file(path)
     except RuntimeError:
         # Keep the purchased original untouched; repair only a private OCR copy.
         from PIL import Image, ImageFile
         ImageFile.LOAD_TRUNCATED_IMAGES=True
-        repaired=server.PROFILE/'ocr-repaired'/(digest+'.png')
+        repaired=server.DB.parent/'ocr-repaired'/(digest+'.png')
         repaired.parent.mkdir(exist_ok=True)
         with Image.open(path) as image:image.convert('RGB').save(repaired)
         body='[原图片文件截断；以下为容错识别，请对照原件核查]\n'+server.ocr_file(repaired)
@@ -46,15 +46,17 @@ def complete_text(path,ident,con,image_futures=None):
         return (image_futures[ident].result() if image_futures and ident in image_futures else image_text(path)),1,'图片 OCR'
     if ext in {'.md','.txt'}:return read_text(path),1,'完整文本'
     if ext in {'.docx','.doc'}:
-        old_status=con.execute('SELECT status FROM indexed WHERE id=?',(ident,)).fetchone()
+        stat=path.stat()
+        old_index=con.execute('SELECT mtime,size,status FROM indexed WHERE id=?',(ident,)).fetchone()
         old=con.execute('SELECT body FROM docs WHERE id=?',(ident,)).fetchone()
-        if old_status and old_status[0]=='全文' and old:
+        if old_index and old_index[:2]==(stat.st_mtime,stat.st_size) and old_index[2]=='全文' and old and old[0].strip():
             return old[0],1,'已有文档文字'
     return server.extract(path),1,'完整文档文字'
 
 def import_all(root,limit=0,ocr_workers=2,batch_size=0,retry_failed=False):
     server.LIB=server.Library(root)
-    output=server.PROFILE/'parsed'
+    server.bind_library(root)
+    output=server.DB.parent/'parsed'
     output.mkdir(parents=True,exist_ok=True)
     con=server.connect()
     con.execute('CREATE TABLE IF NOT EXISTS imports(id TEXT PRIMARY KEY, mtime REAL, size INTEGER, chars INTEGER, pages INTEGER, method TEXT, status TEXT, text_path TEXT, imported_at REAL)')
@@ -67,14 +69,20 @@ def import_all(root,limit=0,ocr_workers=2,batch_size=0,retry_failed=False):
         con.execute('DELETE FROM indexed WHERE id IN ('+marks+')',batch)
         con.execute('DELETE FROM imports WHERE id IN ('+marks+')',batch)
     if stale:con.commit()
-    items=sorted(server.LIB.files.items())
+    items=[]
+    for ident,path in sorted(server.LIB.files.items()):
+        try:server.LIB.resolve(ident)
+        except (FileNotFoundError,PermissionError):continue
+        items.append((ident,path))
     if limit:items=items[:limit]
     if batch_size:
         pending=[]
         for ident,path in items:
             stat=path.stat()
             row=con.execute('SELECT mtime,size,status FROM imports WHERE id=?',(ident,)).fetchone()
-            if row and row[:2]==(stat.st_mtime,stat.st_size) and row[2]=='ok':continue
+            target=output/(hashlib.sha256(ident.encode()).hexdigest()+'.txt')
+            fresh=row and row[:2]==(stat.st_mtime,stat.st_size) and row[2]=='ok' and target.exists()
+            if fresh:continue
             if row and row[:2]==(stat.st_mtime,stat.st_size) and row[2]!='ok' and not retry_failed:continue
             pending.append((ident,path))
         items=pending[:batch_size]
@@ -86,7 +94,7 @@ def import_all(root,limit=0,ocr_workers=2,batch_size=0,retry_failed=False):
         if previous and previous[:2]==(stat.st_mtime,stat.st_size) and previous[2]=='ok':continue
         image_futures[ident]=pool.submit(image_text,path)
     result={'total':len(items),'done':0,'cached':0,'ok':0,'failed':0,'running':True,'updated':time.time(),'mode':'batch' if batch_size else 'all'}
-    progress=server.PROFILE/'import-progress.json'
+    progress=server.DB.parent/'import-progress.json'
     def report():
         result['updated']=time.time()
         temporary=progress.with_suffix('.tmp')

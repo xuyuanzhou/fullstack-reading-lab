@@ -1,7 +1,9 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
+import vm from 'node:vm'
 import { applyPromptFixes, assemblePrompt, promptDiff, reviewPrompt, SAMPLE_PROMPT } from '../web/src/labs/promptChecks.ts'
-import { SAMPLE_AGENT, advance, exportAgent, initialLoop, mustConfirm } from '../web/src/labs/agentLoop.ts'
+import { SAMPLE_AGENT, advance, exportAgent, initialLoop, mustConfirm, toolIssues } from '../web/src/labs/agentLoop.ts'
+import { labNeedsRecovery, normalizeLab, readLab, restoreLabBackup } from '../web/src/labs/labStorage.ts'
 
 test('prompt review asks for a format and an unknown-answer exit', () => {
   const checks = reviewPrompt(SAMPLE_PROMPT)
@@ -71,4 +73,82 @@ test('exported runAgent initializes declared fields and allows the same tool twi
   assert.equal(spec.includes('这个工具已经用过'), false)
   assert.match(spec, /hasOwnProperty.call\(patch, field\)/)
   assert.match(spec, /"材料"/)
+})
+
+test('lab storage coerces null prompt fields and keeps a recovery copy', () => {
+  const broken = { prompt: { task: null, materials: '材料', format: '', ifUnknown: '', limits: '' }, agent: { tools: [] } }
+  assert.equal(labNeedsRecovery(broken), true)
+  const snapshot = normalizeLab(broken)
+  assert.equal(typeof snapshot.prompt.task, 'string')
+  assert.ok(snapshot.prompt.task.length > 0)
+  assert.doesNotThrow(() => snapshot.prompt.task.trim())
+
+  const data = new Map([['reading-lab.ai-lab', JSON.stringify(broken)]])
+  const descriptor = Object.getOwnPropertyDescriptor(globalThis, 'localStorage')
+  try {
+    Object.defineProperty(globalThis, 'localStorage', {
+      configurable: true,
+      value: {
+        getItem: (key) => data.get(key) ?? null,
+        setItem: (key, value) => data.set(key, value),
+      },
+    })
+    const loaded = readLab()
+    assert.match(loaded.issue, /异常|副本/)
+    assert.equal(typeof loaded.snapshot.prompt.task, 'string')
+    assert.ok(data.get('reading-lab.ai-lab.recovery'))
+  } finally {
+    if (descriptor) Object.defineProperty(globalThis, 'localStorage', descriptor)
+    else delete globalThis.localStorage
+  }
+})
+
+test('duplicate and reserved tool names are reported and stop exported runAgent', async () => {
+  const duplicate = [
+    { id: 'a', name: '查找材料', purpose: 'a', permission: 'read', needsConfirm: false },
+    { id: 'b', name: '查找材料', purpose: 'b', permission: 'write', needsConfirm: true },
+    { id: 'c', name: 'stop', purpose: 'c', permission: 'read', needsConfirm: false },
+  ]
+  const issues = toolIssues(duplicate)
+  assert.ok(issues.some((item) => item.includes('重复')))
+  assert.ok(issues.some((item) => item.includes('stop')))
+  const spec = exportAgent({ ...SAMPLE_AGENT, tools: duplicate, maxSteps: 4, failLimit: 2 })
+  const source = spec.replace('export const agent', 'const agent').replace('export async function runAgent', 'async function runAgent')
+  const result = await vm.runInNewContext(`${source}\nrunAgent(async () => ({ name: '查找材料' }), async () => ({}), async () => true)`)
+  assert.equal(result.stop, '工具名重复')
+})
+
+test('exported runAgent counts failures for toString without inheriting Object methods', async () => {
+  const draft = {
+    ...SAMPLE_AGENT,
+    maxSteps: 4,
+    failLimit: 2,
+    tools: [{ id: 't', name: 'toString', purpose: 'fail', permission: 'read', needsConfirm: false }],
+  }
+  const spec = exportAgent(draft)
+  const source = spec.replace('export const agent', 'const agent').replace('export async function runAgent', 'async function runAgent')
+  const result = await vm.runInNewContext(
+    `${source}\nrunAgent(async () => ({ name: 'toString' }), async () => { throw new Error('fail') }, async () => true)`,
+  )
+  assert.equal(result.stop, '同一工具失败次数达到上限')
+})
+
+test('restoreLabBackup reads the recovery copy', () => {
+  const data = new Map([['reading-lab.ai-lab.recovery', JSON.stringify({ prompt: { task: '从副本恢复', materials: '', format: '', ifUnknown: '', limits: '' }, agent: SAMPLE_AGENT })]])
+  const descriptor = Object.getOwnPropertyDescriptor(globalThis, 'localStorage')
+  try {
+    Object.defineProperty(globalThis, 'localStorage', {
+      configurable: true,
+      value: {
+        getItem: (key) => data.get(key) ?? null,
+        setItem: (key, value) => data.set(key, value),
+      },
+    })
+    const recovered = restoreLabBackup()
+    assert.equal(recovered.snapshot.prompt.task, '从副本恢复')
+    assert.match(recovered.issue, /副本/)
+  } finally {
+    if (descriptor) Object.defineProperty(globalThis, 'localStorage', descriptor)
+    else delete globalThis.localStorage
+  }
 })

@@ -187,7 +187,6 @@ class ReaderTests(unittest.TestCase):
             previous=(server.PROFILE,server.DB,server.LIB)
             try:
                 server.PROFILE=base/'private-data';server.PROFILE.mkdir()
-                server.DB=server.PROFILE/'index.sqlite3'
                 self.assertEqual(import_library.import_all(root,batch_size=2)['total'],2)
                 self.assertEqual(import_library.import_all(root,batch_size=2)['total'],1)
                 self.assertEqual(import_library.import_all(root,batch_size=2)['total'],0)
@@ -195,6 +194,91 @@ class ReaderTests(unittest.TestCase):
                 self.assertEqual(import_library.import_all(root,batch_size=2)['total'],0)
                 with sqlite3.connect(str(server.DB)) as check:
                     self.assertEqual(check.execute('SELECT count(*) FROM imports').fetchone()[0],2)
+            finally:server.PROFILE,server.DB,server.LIB=previous
+    def test_library_indexes_stay_isolated(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base=pathlib.Path(directory)
+            first=base/'lib-a';first.mkdir();(first/'note.md').write_text('甲库专有正文')
+            second=base/'lib-b';second.mkdir();(second/'note.md').write_text('乙库专有正文')
+            previous=(server.PROFILE,server.DB,server.LIB)
+            try:
+                server.PROFILE=base/'private-data';server.PROFILE.mkdir()
+                import_library.import_all(first)
+                first_db=server.DB
+                self.assertTrue(first_db.exists())
+                self.assertEqual((first_db.parent/'source.path').read_text(encoding='utf-8').strip(),str(first.resolve()))
+                import_library.import_all(second)
+                second_db=server.DB
+                self.assertNotEqual(first_db,second_db)
+                self.assertTrue(first_db.exists())
+                with sqlite3.connect(str(first_db)) as check:
+                    self.assertIn('甲库',check.execute('SELECT body FROM docs').fetchone()[0])
+                with sqlite3.connect(str(second_db)) as check:
+                    self.assertIn('乙库',check.execute('SELECT body FROM docs').fetchone()[0])
+                server.LIB=server.Library(first)
+                server.bind_library(first)
+                self.assertTrue(server.library_index_ready())
+                server.LIB=server.Library(second)
+                self.assertFalse(server.library_index_ready())
+            finally:server.PROFILE,server.DB,server.LIB=previous
+    def test_outside_symlinks_are_not_imported(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base=pathlib.Path(directory)
+            library=base/'library';library.mkdir()
+            outside=base/'outside';outside.mkdir()
+            secret=outside/'secret.md';secret.write_text('OUTSIDE CONTENT')
+            (library/'link.md').symlink_to(secret)
+            inside=library/'ok.md';inside.write_text('库内正文')
+            (library/'nested').mkdir();(library/'nested'/'also.md').symlink_to(inside)
+            previous=(server.PROFILE,server.DB,server.LIB)
+            try:
+                server.PROFILE=base/'private-data';server.PROFILE.mkdir()
+                lib=server.Library(library)
+                self.assertIn('ok.md',lib.files)
+                self.assertIn('nested/also.md',lib.files)
+                self.assertNotIn('link.md',lib.files)
+                result=import_library.import_all(library)
+                with sqlite3.connect(str(server.DB)) as check:
+                    bodies='\n'.join(row[0] for row in check.execute('SELECT body FROM docs'))
+                self.assertNotIn('OUTSIDE CONTENT',bodies)
+                self.assertIn('库内正文',bodies)
+                self.assertEqual(result['ok']+result['cached'],2)
+            finally:server.PROFILE,server.DB,server.LIB=previous
+    def test_word_reuse_requires_matching_fingerprint(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base=pathlib.Path(directory)
+            root=base/'library';root.mkdir()
+            xml='<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t>NEW BODY</w:t></w:r></w:p></w:body></w:document>'
+            path=root/'note.docx'
+            with zipfile.ZipFile(str(path),'w') as archive:archive.writestr('word/document.xml',xml)
+            previous=(server.PROFILE,server.DB,server.LIB)
+            try:
+                server.PROFILE=base/'private-data';server.PROFILE.mkdir()
+                server.bind_library(root)
+                con=server.connect()
+                con.execute("INSERT INTO docs(id,title,body) VALUES('note.docx','note','OLD BODY')")
+                con.execute("INSERT INTO indexed VALUES('note.docx',1,1,'全文')")
+                con.commit()
+                body,pages,method=import_library.complete_text(path,'note.docx',con)
+                self.assertEqual(body,'NEW BODY')
+                self.assertNotEqual(method,'已有文档文字')
+                con.close()
+            finally:server.PROFILE,server.DB,server.LIB=previous
+    def test_missing_parsed_cache_is_imported_again(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base=pathlib.Path(directory)
+            root=base/'library';root.mkdir();(root/'note.md').write_text('可搜索正文')
+            previous=(server.PROFILE,server.DB,server.LIB)
+            try:
+                server.PROFILE=base/'private-data';server.PROFILE.mkdir()
+                first=import_library.import_all(root,batch_size=200)
+                self.assertEqual(first['ok'],1)
+                parsed=server.DB.parent/'parsed'
+                for item in parsed.glob('*.txt'):item.unlink()
+                second=import_library.import_all(root,batch_size=200)
+                self.assertEqual(second['total'],1)
+                self.assertEqual(second['ok'],1)
+                self.assertTrue(any(parsed.glob('*.txt')))
             finally:server.PROFILE,server.DB,server.LIB=previous
     def test_chm_extracts_join_the_private_catalog(self):
         with tempfile.TemporaryDirectory() as directory:

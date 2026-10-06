@@ -391,5 +391,5 @@ performance:[['React：memo','https://react.dev/reference/react/memo'],['React�
 'java-concurrency':[['Oracle：Atomic Access','https://docs.oracle.com/javase/tutorial/essential/concurrency/atomic.html']],
 'spring-transaction':[['Spring：Using @Transactional','https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/annotations.html']],
 'mysql-index':[['MySQL 8.4：EXPLAIN','https://dev.mysql.com/doc/refman/8.4/en/explain.html'],['MySQL 8.4：Optimizer-related issues','https://dev.mysql.com/doc/refman/8.4/en/optimizer-issues.html']],
-idempotency:[],cache:[],'design-review':[]
+idempotency:[],cache:[['Microsoft Learn：Cache-Aside pattern','https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside'],['Redis：Cache aside','https://redis.io/docs/latest/develop/use-cases/cache-aside/']],'design-review':[]
 };

@@ -54,6 +54,7 @@ def import_archives(root):
     root=Path(root).resolve();output=server.PROFILE/'archive-extracted';output.mkdir(parents=True,exist_ok=True)
     manifest={};stats={'archives':0,'members':0,'bytes':0,'errors':[]}
     for archive in sorted(p for p in root.rglob('*') if p.suffix.lower() in {'.rar','.zip'}):
+        if not server.inside_root(archive, root):continue
         rel=archive.relative_to(root).as_posix();digest=hashlib.sha256(rel.encode()).hexdigest()[:24]
         stats['archives']+=1
         try:

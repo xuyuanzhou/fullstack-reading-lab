@@ -53,4 +53,6 @@ export type ProgressState = {
   localQuery: string
   localTopic: string
   localCategory: LocalCategory
+  /** Monotonic write counter so a stale tab cannot blank a newer tab's notes. */
+  revision: number
 }

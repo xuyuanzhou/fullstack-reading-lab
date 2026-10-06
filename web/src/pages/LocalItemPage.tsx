@@ -9,30 +9,52 @@ import {
   Typography,
   message,
 } from 'antd'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, Navigate, useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import { localApi, type ItemPayload } from '@/api/localLibrary'
 import { LocalReading } from '@/components/LocalReading'
 import { useProgress } from '@/state/progress'
 
-type OutletCtx = { localReady: boolean | null }
+type OutletCtx = {
+  localReady: boolean | null
+  reconnectLocal?: () => Promise<boolean>
+  localHost?: boolean
+}
 
 export function LocalItemPage() {
   const { itemId = '' } = useParams()
   const id = itemId
-  const { localReady } = useOutletContext<OutletCtx>()
+  const { localReady, reconnectLocal, localHost } = useOutletContext<OutletCtx>()
   const progress = useProgress()
   const navigate = useNavigate()
   const [page, setPage] = useState(1)
+  const [pageDraft, setPageDraft] = useState(1)
   const [item, setItem] = useState<ItemPayload | null>(null)
   const [text, setText] = useState('')
   const [ocrStatus, setOcrStatus] = useState('')
   const [error, setError] = useState('')
   const [zoomed, setZoomed] = useState(false)
+  const [ocrBusy, setOcrBusy] = useState(false)
+  const [pageLoading, setPageLoading] = useState(false)
+  const [auditDrafts, setAuditDrafts] = useState<Record<string, string>>({})
+  const [auditHint, setAuditHint] = useState('')
+  const ocrRequest = useRef(0)
+  const viewRef = useRef({ id: '', page: 1 })
+
+  useEffect(() => {
+    setPage(1)
+    setPageDraft(1)
+  }, [id])
+
+  useEffect(() => {
+    viewRef.current = { id, page }
+    ocrRequest.current += 1
+  }, [id, page])
 
   useEffect(() => {
     if (!localReady || !id) return
     let cancelled = false
+    setPageLoading(true)
     void localApi
       .item(id, page)
       .then((data) => {
@@ -41,9 +63,14 @@ export function LocalItemPage() {
         setText(data.text || data.candidateText || '')
         setOcrStatus(data.ocrError || '')
         setError('')
+        if (data.page !== page) setPage(data.page)
+        setPageDraft(data.page)
       })
       .catch((err: Error) => {
         if (!cancelled) setError(err.message)
+      })
+      .finally(() => {
+        if (!cancelled) setPageLoading(false)
       })
     return () => {
       cancelled = true
@@ -51,7 +78,17 @@ export function LocalItemPage() {
   }, [id, page, localReady])
 
   if (localReady === null) return <div role="status">正在连接本机资料…</div>
-  if (!localReady) return <Navigate to="/knowledge" replace />
+  if (!localReady) {
+    if (localHost) {
+      return (
+        <Space direction="vertical">
+          <Alert type="warning" message="还没有连上本机资料服务。" />
+          <Button onClick={() => void reconnectLocal?.()}>重新连接</Button>
+        </Space>
+      )
+    }
+    return <Navigate to="/knowledge" replace />
+  }
   if (error) {
     return (
       <Space direction="vertical">
@@ -64,6 +101,14 @@ export function LocalItemPage() {
 
   const visual = ['PDF', 'PNG', 'JPG', 'JPEG', 'WEBP'].includes(item.format)
   const auditKey = `${item.id}#p${item.page}`
+  const savedNote = progress.audit[auditKey]?.note || ''
+  const auditNote = Object.hasOwn(auditDrafts, auditKey) ? auditDrafts[auditKey] : savedNote
+  const goPage = (next: number) => {
+    const pages = item.pages || 1
+    const clamped = Math.min(pages, Math.max(1, Math.round(next) || 1))
+    setPage(clamped)
+    setPageDraft(clamped)
+  }
 
   return (
     <div className="article-shell">
@@ -101,19 +146,21 @@ export function LocalItemPage() {
 
       {item.pages > 1 ? (
         <div className="pager">
-          <Button disabled={item.page === 1} onClick={() => setPage((value) => value - 1)}>
+          <Button disabled={pageLoading || item.page === 1} onClick={() => goPage(item.page - 1)}>
             ← 上一页
           </Button>
           <InputNumber
             min={1}
             max={item.pages}
-            value={page}
-            onChange={(value) => setPage(Number(value) || 1)}
+            value={pageDraft}
+            disabled={pageLoading}
+            onChange={(value) => setPageDraft(Number(value) || 1)}
+            onPressEnter={() => goPage(pageDraft)}
           />
-          <Button onClick={() => setPage(page)}>跳转</Button>
+          <Button disabled={pageLoading || pageDraft === page} onClick={() => goPage(pageDraft)}>跳转</Button>
           <Button
-            disabled={item.page === item.pages}
-            onClick={() => setPage((value) => value + 1)}
+            disabled={pageLoading || item.page === item.pages}
+            onClick={() => goPage(item.page + 1)}
           >
             下一页 →
           </Button>
@@ -158,14 +205,26 @@ export function LocalItemPage() {
                 <Space wrap>
                   {visual ? (
                     <Button
+                      loading={ocrBusy}
+                      disabled={ocrBusy}
                       onClick={async () => {
+                        const requestId = ++ocrRequest.current
+                        const askedId = item.id
+                        const askedPage = item.page
+                        setOcrBusy(true)
                         setOcrStatus('正在本机识别页面文字…')
                         try {
-                          const result = await localApi.ocr(item.id, item.page)
+                          const result = await localApi.ocr(askedId, askedPage)
+                          if (requestId !== ocrRequest.current) return
+                          if (viewRef.current.id !== askedId || viewRef.current.page !== askedPage) return
                           setText(result.text)
                           setOcrStatus('识别完成。请对照原版页面校对文字。')
                         } catch (err) {
+                          if (requestId !== ocrRequest.current) return
+                          if (viewRef.current.id !== askedId || viewRef.current.page !== askedPage) return
                           setOcrStatus((err as Error).message)
+                        } finally {
+                          if (requestId === ocrRequest.current) setOcrBusy(false)
                         }
                       }}
                     >
@@ -219,22 +278,32 @@ export function LocalItemPage() {
         <Typography.Title level={4}>本页核验笔记</Typography.Title>
         <Input.TextArea
           rows={5}
-          defaultValue={progress.audit[auditKey]?.note || ''}
-          key={auditKey}
+          value={auditNote}
           placeholder="记录具体说法、你的判断和依据链接。"
           id="audit-note"
+          onChange={(event) => {
+            const value = event.target.value
+            setAuditDrafts((current) => ({ ...current, [auditKey]: value }))
+            setAuditHint(value === savedNote ? '' : '草稿已留在本页，翻页不会丢掉。尚未写入浏览器。')
+          }}
         />
         <Button
           type="primary"
           style={{ marginTop: 12 }}
           onClick={() => {
-            const el = document.getElementById('audit-note') as HTMLTextAreaElement | null
-            progress.saveAudit(auditKey, el?.value || '')
-            message.success('已保存在本浏览器')
+            progress.saveAudit(auditKey, auditNote)
+            if (progress.storageIssue) {
+              setAuditHint(progress.storageIssue)
+              message.error('笔记还在本页，但没能写入浏览器。')
+              return
+            }
+            setAuditHint('已更新本页笔记。浏览器写入稍后完成；若上方出现存储警告，则尚未落盘。')
+            message.success('已更新本页笔记')
           }}
         >
           保存本页笔记
         </Button>
+        {auditHint ? <Typography.Text type="secondary" style={{ display: 'block', marginTop: 8 }}>{auditHint}</Typography.Text> : null}
       </div>
     </div>
   )

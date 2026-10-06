@@ -68,7 +68,7 @@ export function mustConfirm(tool: AgentTool) {
 }
 
 export function initialLoop(): LoopState {
-  return { step: 0, failures: {}, doneIds: [], log: [], done: false }
+  return { step: 0, failures: Object.create(null) as Record<string, number>, doneIds: [], log: [], done: false }
 }
 
 function line(state: LoopState, tone: LoopLog['tone'], text: string): LoopLog {
@@ -125,7 +125,7 @@ export function advance(draft: AgentDraft, state: LoopState, action: 'step' | 'a
 }
 
 function failTool(draft: AgentDraft, state: LoopState, tool: AgentTool): LoopState {
-  const count = (state.failures[tool.id] || 0) + 1
+  const count = (Object.hasOwn(state.failures, tool.id) ? state.failures[tool.id] : 0) + 1
   const failures = { ...state.failures, [tool.id]: count }
   if (count >= clampFails(draft.failLimit)) {
     return {
@@ -151,6 +151,19 @@ export function clampSteps(value: number) {
 export function clampFails(value: number) {
   if (!Number.isFinite(value)) return 2
   return Math.min(5, Math.max(1, Math.round(value)))
+}
+
+export function toolIssues(tools: AgentTool[]): string[] {
+  const issues: string[] = []
+  const names = tools.map((tool) => tool.name.trim()).filter(Boolean)
+  const seen = new Set<string>()
+  for (const name of names) {
+    if (name.toLowerCase() === 'stop') issues.push('工具名不能叫 stop，这是停止协议。')
+    if (seen.has(name)) issues.push(`工具名「${name}」重复，运行时只会命中第一个。`)
+    seen.add(name)
+  }
+  if (tools.some((tool) => !tool.name.trim())) issues.push('有工具还没有名字。')
+  return [...new Set(issues)]
 }
 
 export function exportAgent(draft: AgentDraft) {
@@ -179,12 +192,13 @@ export const agent = ${JSON.stringify(spec, null, 2)}
 
 export async function runAgent(propose, execute, confirm) {
   const state = Object.fromEntries(agent.state.map((field) => [field, null]))
-  const failures = {}
+  const failures = Object.create(null)
   for (let step = 0; step < agent.maxSteps; step += 1) {
     const proposal = await propose({ instruction: agent.instruction, state, tools: agent.tools.map((item) => item.name) })
     if (!proposal || proposal.name === 'stop') return { stop: '模型选择停止', state }
     const tool = agent.tools.find((item) => item.name === proposal.name)
     if (!tool) return { stop: '未知工具', state }
+    if (agent.tools.filter((item) => item.name === proposal.name).length > 1) return { stop: '工具名重复', state }
     if (tool.needsConfirm && !(await confirm(tool))) return { stop: '人拒绝了这一步', state }
     try {
       const patch = await execute(tool, proposal, state)
@@ -194,7 +208,7 @@ export async function runAgent(propose, execute, confirm) {
         }
       }
     } catch {
-      const count = (failures[tool.name] || 0) + 1
+      const count = (Object.hasOwn(failures, tool.name) ? failures[tool.name] : 0) + 1
       failures[tool.name] = count
       if (count >= agent.stopAfterRepeatedFailures) return { stop: '同一工具失败次数达到上限', state }
     }

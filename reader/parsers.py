@@ -11,6 +11,7 @@ import urllib.parse
 from xml.etree import ElementTree as ET
 from zipfile import ZipFile
 import zlib
+from library_config import ROOT
 
 EXTRA_FORMATS={'.xmind','.drawio','.xlsx','.wps','.js','.java','.form'}
 
@@ -70,11 +71,11 @@ def xlsx_text(path,passwords=()):
         encrypted=source.read(8)==bytes.fromhex('d0cf11e0a1b11ae1')
     spreadsheet=path
     if encrypted:
-        dependency_dir=Path(__file__).resolve().parent/'private-data'/'deps'
+        dependency_dir=ROOT/'private-data'/'deps'
         if dependency_dir.exists() and str(dependency_dir) not in sys.path:sys.path.insert(0,str(dependency_dir))
         try:import msoffcrypto
         except ImportError as error:
-            raise ValueError('加密 Excel 需要 msoffcrypto-tool；请安装到 private-data/deps') from error
+            raise ValueError('加密 Excel 需要 msoffcrypto-tool；请安装到仓库根目录的 private-data/deps') from error
         spreadsheet=None
         for password in passwords:
             try:
@@ -83,7 +84,8 @@ def xlsx_text(path,passwords=()):
                     office.load_key(password=password,verify_password=True)
                     data=io.BytesIO();office.decrypt(data)
                 data.seek(0);spreadsheet=data;break
-            except (ValueError,RuntimeError,KeyError):pass
+            except Exception:
+                continue
         if spreadsheet is None:raise ValueError('加密 Excel 未在附近密码说明中找到可用密码')
     ns='{http://schemas.openxmlformats.org/spreadsheetml/2006/main}'
     lines=[]

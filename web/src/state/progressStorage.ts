@@ -6,6 +6,10 @@ const text = (value: unknown) => typeof value === 'string' ? value : ''
 const strings = (value: unknown) => Array.isArray(value)
   ? [...new Set(value.filter((item): item is string => typeof item === 'string' && !!item))]
   : []
+const revisionOf = (value: unknown) => {
+  if (typeof value !== 'number' || !Number.isFinite(value) || value < 0) return 0
+  return Math.floor(value)
+}
 
 export type ProgressGroups = (track: Track) => string[]
 
@@ -35,6 +39,7 @@ export function normalizeProgress(value: unknown, groups: ProgressGroups): Progr
     theme: saved.theme === 'dark' ? 'dark' : 'light',
     query: text(saved.query), localQuery: text(saved.localQuery), localTopic: text(saved.localTopic),
     localCategory,
+    revision: revisionOf(saved.revision),
   }
 }
 
@@ -51,6 +56,73 @@ export function readProgress(key: string, groups: ProgressGroups) {
   } catch {
     return { state: normalizeProgress({}, groups), issue: '浏览器暂时无法保存记录；本次仍可继续阅读。' }
   }
+}
+
+function listChanged(local: string[], base: string[]) {
+  if (local.length !== base.length) return true
+  const prior = new Set(base)
+  return local.some((id) => !prior.has(id)) || base.some((id) => !local.includes(id))
+}
+
+export function sameProgress(a: ProgressState, b: ProgressState) {
+  const { revision: _a, ...left } = a
+  const { revision: _b, ...right } = b
+  return JSON.stringify(left) === JSON.stringify(right)
+}
+
+/** Apply only the local edits that differ from the snapshot this tab last synced. */
+export function mergeForWrite(local: ProgressState, remote: ProgressState, base: ProgressState): ProgressState {
+  if (remote.revision <= local.revision) {
+    if (sameProgress(local, remote)) return remote
+    return { ...local, revision: Math.max(local.revision, remote.revision) + 1 }
+  }
+  const notes = { ...remote.notes }
+  let touched = false
+  for (const [id, note] of Object.entries(local.notes)) {
+    if (note !== (base.notes[id] ?? '')) {
+      notes[id] = note
+      touched = true
+    }
+  }
+  for (const id of Object.keys(base.notes)) {
+    if (!(id in local.notes) && (base.notes[id] ?? '') !== '') {
+      delete notes[id]
+      touched = true
+    }
+  }
+  const audit = { ...remote.audit }
+  for (const [id, item] of Object.entries(local.audit)) {
+    const prior = base.audit[id]
+    if (!prior || prior.note !== item.note || prior.status !== item.status) {
+      audit[id] = item
+      touched = true
+    }
+  }
+  const done = listChanged(local.done, base.done)
+    ? [...new Set([...remote.done, ...local.done])]
+    : remote.done
+  const review = listChanged(local.review, base.review)
+    ? [...new Set([...remote.review, ...local.review])]
+    : remote.review
+  if (listChanged(local.done, base.done) || listChanged(local.review, base.review)) touched = true
+  const next: ProgressState = {
+    ...remote,
+    notes,
+    audit,
+    done,
+    review,
+    revision: remote.revision + (touched ? 1 : 0),
+  }
+  // Prefer this tab's UI prefs only when it actually changed them since last sync.
+  if (local.track !== base.track) next.track = local.track
+  if (local.group !== base.group) next.group = local.group
+  if (local.theme !== base.theme) next.theme = local.theme
+  if (local.query !== base.query) next.query = local.query
+  if (local.localQuery !== base.localQuery) next.localQuery = local.localQuery
+  if (local.localTopic !== base.localTopic) next.localTopic = local.localTopic
+  if (local.localCategory !== base.localCategory) next.localCategory = local.localCategory
+  if (JSON.stringify(local.recent) !== JSON.stringify(base.recent)) next.recent = local.recent
+  return next
 }
 
 export function writeProgress(key: string, state: ProgressState): string {
