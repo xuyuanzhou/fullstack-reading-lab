@@ -2,7 +2,7 @@
 
 在线阅读：[全栈学习实验室](https://xuyuanzhou.github.io/fullstack-reading-lab/) · [GitHub 仓库](https://github.com/xuyuanzhou/fullstack-reading-lab)
 
-面向前端和 Java 开发者的公开学习网站。以本机题库的主题分布作为选题线索，重新编写中文解释、具体例子、主动回忆练习与参考答案；每节课附官方文档、标准或固定版本源码依据。当前有 **100 节原创课程、300 个具体知识点**（前端 45 课、Java 55 课），包含精简的分组课程目录、知识点搜索、学习进度、复习清单、笔记与知识核验。左侧目录只列课程，知识点在课程正文与知识库中查看。知识点数量只统计已编写课程，不等于本机题库的全部内容已经整理完成。
+面向前端和 Java 开发者的公开学习网站。以本机题库的主题分布作为选题线索，重新编写中文解释、具体例子、主动回忆练习与参考答案；每节课附官方文档、标准或固定版本源码依据。当前有 **102 节原创课程、306 个具体知识点**（前端 45 课、Java 57 课），包含精简的分组课程目录、知识点搜索、学习进度、复习清单、笔记与知识核验。左侧目录只列课程，知识点在课程正文与知识库中查看。知识点数量只统计已编写课程，不等于本机题库的全部内容已经整理完成。
 
 网站参考 [React Mastery Lab](https://xuyuanzhou.github.io/react-mastery-lab/) 的三栏学习工作台：左侧课程路径、中间连续阅读、右侧进度与最近访问。React 知识卡直接打开现有的 React Mastery Lab 对应章节，不另建一套 React 源码学习器。
 
@@ -11,6 +11,8 @@ Java 路线中的“分布式与高并发”有 10 节针对原资料薄弱内�
 ## 在线发布
 
 公开版是零构建依赖的静态站点。推送到 GitHub 仓库的 main 分支后，仓库中的 [Pages 工作流](.github/workflows/pages.yml) 会检查课程和代码，只把白名单里的网页文件与 4 张原创 SVG 部署到 GitHub Pages。仓库 Settings → Pages → Source 设为 GitHub Actions。网站使用相对资源路径，能放在仓库子路径下。
+
+在线读者直接打开上方网址，不需要运行 `.command`。该启动脚本只供资料购买者在自己的电脑上阅读私人 PDF、图片与索引。它与公开站点是否采用 React 无关；框架选择和后续迁移条件见 [架构决策](架构决策-公开站点与本机资料.md)。
 
 本机预览：
 
@@ -31,6 +33,7 @@ node --check distributed-lessons.js
 node --check knowledge-points.js
 node --check coverage-lessons.js
 node --check coverage-batch-03.js
+node --check coverage-batch-04.js
 node verify_content.mjs
 python3 -m unittest discover -p tests.py
 python3 build_public.py

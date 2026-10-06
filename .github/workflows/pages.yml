@@ -33,6 +33,7 @@ jobs:
           node --check knowledge-points.js
           node --check coverage-lessons.js
           node --check coverage-batch-03.js
+          node --check coverage-batch-04.js
           node verify_content.mjs
           python -m unittest discover -p tests.py
       - name: Build allowlisted public assets
