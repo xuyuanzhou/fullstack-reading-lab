@@ -11,13 +11,13 @@ import {
 import { Badge, Button, Drawer, Layout, Menu, Space, Typography, theme } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { groupsFor, lessonsFor, lessonsInGroup } from '@/data/curriculum'
+import { findLesson, groupsFor, lessonsFor, lessonsInGroup } from '@/data/curriculum'
 import { TRACK_LABEL } from '@/data/meta'
 import { probeLocalLibrary } from '@/api/localLibrary'
 import { useProgress } from '@/state/progress'
 import { ProgressAside } from '@/components/ProgressAside'
 
-const { Header, Sider, Content } = Layout
+const { Sider, Content } = Layout
 
 export function AppLayout() {
   const navigate = useNavigate()
@@ -35,14 +35,29 @@ export function AppLayout() {
   const trackLessons = lessonsFor(progress.track)
   const doneCount = trackLessons.filter((lesson) => progress.done.includes(lesson.id)).length
 
-  const selectedKeys = useMemo(() => {
-    if (location.pathname.startsWith('/lesson/')) {
-      const id = decodeURIComponent(location.pathname.replace('/lesson/', ''))
-      return [id]
-    }
-    return []
+  const currentLesson = useMemo(() => {
+    if (!location.pathname.startsWith('/lesson/')) return undefined
+    const id = decodeURIComponent(location.pathname.replace('/lesson/', ''))
+    return findLesson(id)
   }, [location.pathname])
 
+  useEffect(() => {
+    if (!currentLesson) return
+    if (progress.track !== currentLesson.track) {
+      progress.setTrack(currentLesson.track)
+      progress.setGroup(currentLesson.group)
+      return
+    }
+    if (progress.group !== currentLesson.group) progress.setGroup(currentLesson.group)
+  }, [
+    currentLesson,
+    progress.track,
+    progress.group,
+    progress.setTrack,
+    progress.setGroup,
+  ])
+
+  const selectedKeys = currentLesson ? [currentLesson.id] : []
   const openKeys = progress.group ? [`group:${progress.group}`] : []
 
   const menuItems = groups.map((group, index) => {
@@ -51,45 +66,60 @@ export function AppLayout() {
     return {
       key: `group:${group}`,
       label: (
-        <Space size={8}>
-          <Typography.Text type="secondary" style={{ fontVariantNumeric: 'tabular-nums' }}>
-            {String(index + 1).padStart(2, '0')}
-          </Typography.Text>
-          <span>{group}</span>
-          <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+        <span className="group-label">
+          <span className="group-index">{String(index + 1).padStart(2, '0')}</span>
+          <span className="group-name">{group}</span>
+          <span className="group-count">
             {completed}/{items.length}
-          </Typography.Text>
-        </Space>
+          </span>
+        </span>
       ),
       children: items.map((lesson) => ({
         key: lesson.id,
         label: (
-          <Space size={6}>
-            <span>{progress.done.includes(lesson.id) ? '✓' : '·'}</span>
+          <span className="lesson-label">
+            <span aria-hidden>{progress.done.includes(lesson.id) ? '✓' : '·'}</span>
             <span>{lesson.title}</span>
-          </Space>
+          </span>
         ),
       })),
     }
   })
 
+  const navItems = [
+    { key: 'home', icon: <ReadOutlined />, label: '学习路线' },
+    { key: 'knowledge', icon: <BookOutlined />, label: '知识库' },
+    { key: 'audit', icon: <ExperimentOutlined />, label: '知识核验' },
+    {
+      key: 'review',
+      icon: <CheckSquareOutlined />,
+      label: '复习清单',
+      badge: progress.review.length,
+    },
+    ...(localReady
+      ? [{ key: 'local', icon: <FolderOpenOutlined />, label: '本机资料', badge: 0 }]
+      : []),
+  ]
+
   const navSelected = (() => {
-    if (location.pathname.startsWith('/lesson') || location.pathname === '/' || location.pathname === '/home')
-      return ['home']
-    if (location.pathname.startsWith('/knowledge')) return ['knowledge']
-    if (location.pathname.startsWith('/audit')) return ['audit']
-    if (location.pathname.startsWith('/review')) return ['review']
-    if (location.pathname.startsWith('/local')) return ['local']
-    return []
+    if (
+      location.pathname.startsWith('/lesson') ||
+      location.pathname === '/' ||
+      location.pathname === '/home'
+    )
+      return 'home'
+    if (location.pathname.startsWith('/knowledge')) return 'knowledge'
+    if (location.pathname.startsWith('/audit')) return 'audit'
+    if (location.pathname.startsWith('/review')) return 'review'
+    if (location.pathname.startsWith('/local')) return 'local'
+    return 'home'
   })()
 
-  const sider = (
+  const siderBody = (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <div style={{ padding: '16px 16px 8px' }}>
-        <Typography.Text type="secondary" style={{ fontSize: 12, letterSpacing: 0.6 }}>
-          LEARNING PATH
-        </Typography.Text>
-        <div style={{ marginTop: 10, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+      <div className="sider-head">
+        <span className="sider-label">Learning Path</span>
+        <div className="track-switch">
           {(['frontend', 'java'] as const).map((track) => (
             <Button
               key={track}
@@ -106,14 +136,15 @@ export function AppLayout() {
         </div>
       </div>
       <Menu
+        className="path-menu"
         mode="inline"
         selectedKeys={selectedKeys}
         openKeys={openKeys}
         onOpenChange={(keys) => {
-          const last = keys[keys.length - 1]
-          if (typeof last === 'string' && last.startsWith('group:')) {
-            progress.setGroup(last.slice(6))
-          }
+          const groupKeys = keys.filter((key) => String(key).startsWith('group:'))
+          const newest = groupKeys.find((key) => !openKeys.includes(String(key))) || groupKeys[groupKeys.length - 1]
+          if (typeof newest === 'string') progress.setGroup(newest.slice(6))
+          else progress.setGroup('')
         }}
         onClick={({ key }) => {
           if (!String(key).startsWith('group:')) {
@@ -123,114 +154,83 @@ export function AppLayout() {
           }
         }}
         items={menuItems}
-        style={{ flex: 1, borderInlineEnd: 0, overflow: 'auto' }}
       />
-      <div style={{ padding: 16, borderTop: `1px solid ${token.colorBorderSecondary}` }}>
-        <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-          REACT / VUE SOURCE
+      <div className="sider-foot">
+        <Typography.Text type="secondary" style={{ fontSize: 11, letterSpacing: '0.08em' }}>
+          SOURCE LABS
         </Typography.Text>
-        <div style={{ marginTop: 8 }}>
-          <a href="https://xuyuanzhou.github.io/react-mastery-lab/" target="_blank" rel="noreferrer">
-            React Mastery Lab ↗
-          </a>
-        </div>
-        <div style={{ marginTop: 6 }}>
-          <a href="https://xuyuanzhou.github.io/vue3-mastery-lab/#/" target="_blank" rel="noreferrer">
-            Vue 3 Mastery Lab ↗
-          </a>
-        </div>
+        <a href="https://xuyuanzhou.github.io/react-mastery-lab/" target="_blank" rel="noreferrer">
+          React Mastery Lab ↗
+        </a>
+        <a href="https://xuyuanzhou.github.io/vue3-mastery-lab/#/" target="_blank" rel="noreferrer">
+          Vue 3 Mastery Lab ↗
+        </a>
       </div>
     </div>
   )
 
   return (
     <Layout className="app-shell">
-      <Sider
-        width={280}
-        breakpoint="lg"
-        collapsedWidth={0}
-        trigger={null}
-        style={{
-          overflow: 'auto',
-          height: '100vh',
-          position: 'fixed',
-          left: 0,
-          top: 0,
-          bottom: 0,
-          background: token.colorBgContainer,
-          borderRight: `1px solid ${token.colorBorderSecondary}`,
-        }}
-      >
-        {sider}
+      <Sider className="app-sider" width={292} trigger={null} collapsible={false}>
+        {siderBody}
       </Sider>
 
       <div className="app-content">
-        <Header
-          style={{
-            position: 'sticky',
-            top: 0,
-            zIndex: 20,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingInline: 20,
-            background: token.colorBgContainer,
-            borderBottom: `1px solid ${token.colorBorderSecondary}`,
-          }}
-        >
-          <Space>
-            <Button
-              className="mobile-only"
-              type="text"
-              icon={<MenuOutlined />}
-              onClick={() => setMobileOpen(true)}
-              style={{ display: 'none' }}
-            />
-            <Link to="/home" style={{ color: 'inherit', textDecoration: 'none' }}>
-              <Space size={10}>
-                <Typography.Text strong style={{ fontSize: 16 }}>
-                  全栈学习实验室
-                </Typography.Text>
-                <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-                  FULLSTACK LEARNING LAB
-                </Typography.Text>
-              </Space>
-            </Link>
-          </Space>
-          <Menu
-            mode="horizontal"
-            selectedKeys={navSelected}
-            style={{ flex: 1, minWidth: 0, justifyContent: 'center', borderBottom: 'none' }}
-            items={[
-              { key: 'home', icon: <ReadOutlined />, label: '学习路线' },
-              { key: 'knowledge', icon: <BookOutlined />, label: '知识库' },
-              { key: 'audit', icon: <ExperimentOutlined />, label: '知识核验' },
-              {
-                key: 'review',
-                icon: <CheckSquareOutlined />,
-                label: (
-                  <Badge count={progress.review.length} size="small" offset={[8, 0]}>
-                    复习清单
-                  </Badge>
-                ),
-              },
-              ...(localReady
-                ? [{ key: 'local', icon: <FolderOpenOutlined />, label: '本机资料' }]
-                : []),
-            ]}
-            onClick={({ key }) => navigate(`/${key === 'home' ? 'home' : key}`)}
+        <header className="app-header">
+          <Button
+            className="mobile-only"
+            type="text"
+            icon={<MenuOutlined />}
+            onClick={() => setMobileOpen(true)}
+            aria-label="打开课程目录"
           />
-          <Space>
-            <Typography.Text type="secondary">
-              {doneCount}/{trackLessons.length} 已掌握
+          <Link to="/home" className="brand-lockup">
+            <span className="brand-mark">FS</span>
+            <span className="brand-text">
+              <strong>全栈学习实验室</strong>
+              <small>Fullstack Learning Lab</small>
+            </span>
+          </Link>
+
+          <nav className="top-nav" aria-label="主导航">
+            {navItems.map((item) => {
+              const active = navSelected === item.key
+              const label = (
+                <Space size={6}>
+                  {item.icon}
+                  <span className="nav-label-wide">{item.label}</span>
+                </Space>
+              )
+              return (
+                <Button
+                  key={item.key}
+                  className={`top-nav-btn${active ? ' is-active' : ''}`}
+                  onClick={() => navigate(`/${item.key === 'home' ? 'home' : item.key}`)}
+                >
+                  {'badge' in item && item.badge ? (
+                    <Badge count={item.badge} size="small" offset={[6, -2]}>
+                      {label}
+                    </Badge>
+                  ) : (
+                    label
+                  )}
+                </Button>
+              )
+            })}
+          </nav>
+
+          <Space size={8}>
+            <Typography.Text type="secondary" style={{ fontVariantNumeric: 'tabular-nums' }}>
+              {doneCount}/{trackLessons.length}
             </Typography.Text>
             <Button
               type="text"
               icon={progress.theme === 'dark' ? <SunOutlined /> : <MoonOutlined />}
               onClick={() => progress.setTheme(progress.theme === 'dark' ? 'light' : 'dark')}
+              aria-label="切换深浅色"
             />
           </Space>
-        </Header>
+        </header>
 
         <div className="workspace">
           <Content className="app-main">
@@ -247,14 +247,41 @@ export function AppLayout() {
         onClose={() => setMobileOpen(false)}
         placement="left"
         width={300}
-        styles={{ body: { padding: 0 } }}
+        title="课程目录"
+        styles={{ body: { padding: 0 }, header: { borderBottom: `1px solid ${token.colorBorderSecondary}` } }}
       >
-        {sider}
+        {siderBody}
       </Drawer>
 
       <style>{`
-        @media (max-width: 992px) {
-          .mobile-only { display: inline-flex !important; }
+        .group-label {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          width: 100%;
+        }
+        .group-index {
+          color: var(--lab-muted);
+          font-variant-numeric: tabular-nums;
+          font-size: 12px;
+        }
+        .group-name {
+          flex: 1;
+          min-width: 0;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .group-count {
+          color: var(--lab-muted);
+          font-size: 12px;
+        }
+        .lesson-label {
+          display: flex;
+          gap: 8px;
+          align-items: flex-start;
+          white-space: normal;
+          line-height: 1.35;
+          padding-block: 2px;
         }
       `}</style>
     </Layout>

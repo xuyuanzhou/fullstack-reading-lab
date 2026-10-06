@@ -19,10 +19,32 @@ function ThemedApp() {
       theme={{
         algorithm: progress.theme === 'dark' ? theme.darkAlgorithm : theme.defaultAlgorithm,
         token: {
-          colorPrimary: '#0f6e56',
-          borderRadius: 8,
+          colorPrimary: '#0b6b4f',
+          colorInfo: '#0b6b4f',
+          colorBgLayout: 'transparent',
+          borderRadius: 12,
           fontFamily:
-            "'IBM Plex Sans', 'Noto Sans SC', 'PingFang SC', 'Helvetica Neue', sans-serif",
+            "'IBM Plex Sans', 'Noto Sans SC', 'PingFang SC', sans-serif",
+          fontSize: 14,
+          controlHeight: 36,
+        },
+        components: {
+          Layout: {
+            headerBg: 'transparent',
+            bodyBg: 'transparent',
+            siderBg: 'transparent',
+          },
+          Menu: {
+            itemBorderRadius: 10,
+            itemMarginInline: 4,
+            iconSize: 14,
+          },
+          Card: {
+            paddingLG: 20,
+          },
+          Button: {
+            borderRadius: 10,
+          },
         },
       }}
     >

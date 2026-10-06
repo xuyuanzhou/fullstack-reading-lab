@@ -1,4 +1,4 @@
-import { Button, Card, Col, Row, Space, Tag, Typography } from 'antd'
+import { Button, Space, Tag, Typography } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { groupsFor, lessonsFor, lessonsInGroup, totals } from '@/data/curriculum'
 import { TRACK_INTRO, TRACK_LABEL } from '@/data/meta'
@@ -11,18 +11,24 @@ export function HomePage() {
   const visible = current.filter((item) => !progress.group || item.group === progress.group)
   const groups = groupsFor(progress.track)
   const next = current.find((item) => !progress.done.includes(item.id)) || current[0]
+  const doneCount = current.filter((item) => progress.done.includes(item.id)).length
+  const reviewCount = current.filter((item) => progress.review.includes(item.id)).length
 
   return (
-    <Space direction="vertical" size={24} style={{ width: '100%' }}>
+    <div className="article-shell">
+      <div className="page-kicker">
+        <Tag color="success">公开原创课程</Tag>
+        <Typography.Text type="secondary">
+          {totals.lessons} 节 · {totals.points} 知识点
+        </Typography.Text>
+      </div>
+
       <div>
-        <Tag color="processing">公开原创课程</Tag>
-        <Typography.Title level={2} style={{ marginTop: 12, marginBottom: 8 }}>
+        <h1 className="hero-title">
           {TRACK_LABEL[progress.track]}，从原理走向实践
-        </Typography.Title>
-        <Typography.Paragraph style={{ maxWidth: 720, fontSize: 16 }}>
-          {TRACK_INTRO[progress.track]}
-        </Typography.Paragraph>
-        <Space>
+        </h1>
+        <p className="hero-lead">{TRACK_INTRO[progress.track]}</p>
+        <Space wrap size={12}>
           <Button
             type="primary"
             size="large"
@@ -40,86 +46,71 @@ export function HomePage() {
         </Space>
       </div>
 
-      <Row gutter={[16, 16]}>
-        <Col xs={24} md={8}>
-          <Card>
-            <Typography.Text type="secondary">学习章节</Typography.Text>
-            <Typography.Title level={3} style={{ margin: '8px 0 0' }}>
-              {current.length}
-            </Typography.Title>
-            <Typography.Text type="secondary">全站 {totals.lessons} 节 · {totals.points} 知识点</Typography.Text>
-          </Card>
-        </Col>
-        <Col xs={24} md={8}>
-          <Card>
-            <Typography.Text type="secondary">已掌握</Typography.Text>
-            <Typography.Title level={3} style={{ margin: '8px 0 0' }}>
-              {current.filter((item) => progress.done.includes(item.id)).length}
-            </Typography.Title>
-            <Typography.Text type="secondary">按自己的节奏推进</Typography.Text>
-          </Card>
-        </Col>
-        <Col xs={24} md={8}>
-          <Card>
-            <Typography.Text type="secondary">待复习</Typography.Text>
-            <Typography.Title level={3} style={{ margin: '8px 0 0' }}>
-              {current.filter((item) => progress.review.includes(item.id)).length}
-            </Typography.Title>
-            <Typography.Text type="secondary">把疑问留给下一轮</Typography.Text>
-          </Card>
-        </Col>
-      </Row>
+      <div className="stat-strip">
+        <div className="stat-card">
+          <small>学习章节</small>
+          <strong>{current.length}</strong>
+          <span>分层建立知识体系</span>
+        </div>
+        <div className="stat-card">
+          <small>已掌握</small>
+          <strong>{doneCount}</strong>
+          <span>按自己的节奏推进</span>
+        </div>
+        <div className="stat-card">
+          <small>待复习</small>
+          <strong>{reviewCount}</strong>
+          <span>把疑问留给下一轮</span>
+        </div>
+      </div>
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+      <div className="stage-rail" aria-label="学习阶段">
         {groups.map((group, index) => {
           const count = lessonsInGroup(progress.track, group).length
+          const active = progress.group === group
           return (
             <Button
               key={group}
-              type={progress.group === group ? 'primary' : 'default'}
+              className={`stage-chip${active ? ' is-active' : ''}`}
               onClick={() => progress.setGroup(group)}
             >
               {String(index + 1).padStart(2, '0')} {group}
-              <Typography.Text
-                type={progress.group === group ? undefined : 'secondary'}
-                style={{ marginLeft: 8, color: progress.group === group ? 'inherit' : undefined }}
-              >
-                {count}
-              </Typography.Text>
+              <small>{count}</small>
             </Button>
           )
         })}
       </div>
 
-      <div>
-        <Space style={{ width: '100%', justifyContent: 'space-between', marginBottom: 12 }}>
-          <Typography.Title level={3} style={{ margin: 0 }}>
+      <section>
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, marginBottom: 14 }}>
+          <Typography.Title level={3} style={{ margin: 0, fontFamily: 'var(--font-serif)' }}>
             {progress.group || '课程路线'}
           </Typography.Title>
           <Typography.Text type="secondary">{visible.length} 个知识单元</Typography.Text>
-        </Space>
-        <Space direction="vertical" size={10} style={{ width: '100%' }}>
-          {visible.map((item) => (
-            <Card
-              key={item.id}
-              hoverable
-              size="small"
-              onClick={() => {
-                progress.remember(item.id)
-                navigate(`/lesson/${encodeURIComponent(item.id)}`)
-              }}
-            >
-              <Space align="start">
-                <Typography.Text>{progress.done.includes(item.id) ? '✓' : '·'}</Typography.Text>
-                <div>
-                  <Typography.Text strong>{item.title}</Typography.Text>
-                  <div className="muted">{item.prompt}</div>
-                </div>
-              </Space>
-            </Card>
-          ))}
-        </Space>
-      </div>
-    </Space>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {visible.map((item) => {
+            const done = progress.done.includes(item.id)
+            return (
+              <button
+                key={item.id}
+                type="button"
+                className={`lesson-row${done ? ' is-done' : ''}`}
+                onClick={() => {
+                  progress.remember(item.id)
+                  navigate(`/lesson/${encodeURIComponent(item.id)}`)
+                }}
+              >
+                <span className="lesson-row-mark">{done ? '✓' : ''}</span>
+                <span>
+                  <strong>{item.title}</strong>
+                  <p>{item.prompt}</p>
+                </span>
+              </button>
+            )
+          })}
+        </div>
+      </section>
+    </div>
   )
 }
