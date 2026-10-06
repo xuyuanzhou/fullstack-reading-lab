@@ -12,6 +12,7 @@ export type Lesson = {
   id: string
   title: string
   prompt: string
+  promptAnswer?: string
   core: string
   why: string
   example: string
@@ -21,6 +22,7 @@ export type Lesson = {
   points: string[]
   references: [string, string][]
   deep?: DeepPart[]
+  map?: DeepPart[]
   diagram?: string
   origin?: string
   react?: string
@@ -35,6 +37,7 @@ export type OutlineSection = {
 export type Curriculum = {
   schemaVersion: number
   groupOrder: Record<Track, string[]>
+  groupLabels?: Record<Track, Record<string, string>>
   pathLead: Record<Track, Record<string, string[]>>
   outline?: Record<Track, Record<string, OutlineSection[]>>
   lessons: Lesson[]

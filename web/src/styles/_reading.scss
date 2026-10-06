@@ -692,6 +692,53 @@
   white-space: pre-wrap;
   margin: 0;
   max-width: 46rem;
+
+  p {
+    margin: 0 0 0.85em;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.model-map {
+  width: 100%;
+  max-width: 46rem;
+  margin: 16px 0 0;
+  border-collapse: collapse;
+  font-size: 0.95em;
+  line-height: 1.5;
+
+  caption {
+    caption-side: top;
+    text-align: left;
+    font-size: 0.78em;
+    letter-spacing: 0.04em;
+    color: var(--lab-muted, #66706c);
+    margin-bottom: 8px;
+  }
+
+  th,
+  td {
+    border-bottom: 1px solid var(--lab-line);
+    padding: 8px 10px 8px 0;
+    vertical-align: top;
+    text-align: left;
+  }
+
+  thead th {
+    font-weight: 600;
+    color: var(--lab-muted, #66706c);
+    font-size: 0.78em;
+    letter-spacing: 0.04em;
+  }
+
+  tbody th {
+    width: 32%;
+    font-weight: 600;
+    padding-right: 16px;
+  }
 }
 
 .concept-figure {

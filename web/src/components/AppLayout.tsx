@@ -14,6 +14,7 @@ import { Link, matchPath, Outlet, useLocation, useNavigate } from 'react-router-
 import { AI_NOTES, AI_SECTIONS, aiNote, notesInSection } from '@/data/aiCatalog'
 import { findLesson, lessonsFor, lessonsInGroup, outlineFor } from '@/data/curriculum'
 import { TRACK_LABEL } from '@/data/meta'
+import { shortTitle } from '@/data/reading'
 import { courseGroups, groupLabel, groupPath, isTrack, lessonPath, resumePath } from '@/data/routes'
 import { probeLocalLibrary } from '@/api/localLibrary'
 import { useProgress } from '@/state/progress'
@@ -92,7 +93,7 @@ export function AppLayout() {
     if (currentLesson) progress.remember(currentLesson.id)
     const aiLabel = onAi && !onLab ? AI_SECTIONS.find((section) => section.key === aiSectionKey)?.label : ''
     document.title = currentLesson
-      ? `${currentLesson.title} · 全栈学习实验室`
+      ? `${shortTitle(currentLesson.title)} · 全栈学习实验室`
       : onLab
         ? `${labTitle} · AI · 全栈学习实验室`
         : aiNoteTitle
@@ -133,22 +134,22 @@ export function AppLayout() {
           className={`lesson-status${progress.done.includes(lesson.id) ? ' is-done' : ''}`}
           aria-hidden
         />
-        <span>{lesson.title}</span>
+        <span>{shortTitle(lesson.title)}</span>
       </Link>
     ),
   })
 
   const menuItems = groups.map((group, index) => {
-    const items = lessonsInGroup(activeTrack, group.label)
+    const items = lessonsInGroup(activeTrack, group.name)
     const completed = items.filter((lesson) => progress.done.includes(lesson.id)).length
-    const sections = outlineFor(activeTrack, group.label)
+    const sections = outlineFor(activeTrack, group.name)
     const listed = new Set(sections.flatMap((section) => section.ids))
     const children = sections.length >= 2
       ? [
           ...sections.map((section, sectionIndex) => {
             const sectionLessons = section.ids
               .map((id) => findLesson(id))
-              .filter((item): item is NonNullable<ReturnType<typeof findLesson>> => !!item && item.group === group.label)
+              .filter((item): item is NonNullable<ReturnType<typeof findLesson>> => !!item && item.group === group.name)
             const sectionDone = sectionLessons.filter((lesson) => progress.done.includes(lesson.id)).length
             return {
               key: `section:${group.key}:${sectionIndex}`,
@@ -244,7 +245,7 @@ export function AppLayout() {
   const siderBody = (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <div className="sider-head">
-        <span className="sider-label">Learning Path</span>
+        <span className="sider-label">学习路线</span>
         <div className="track-switch is-triple">
           {(['frontend', 'java'] as const).map((track) => (
             <Button
@@ -295,7 +296,7 @@ export function AppLayout() {
       />
       <div className="sider-foot">
         <Typography.Text type="secondary" style={{ fontSize: 11, letterSpacing: '0.08em' }}>
-          SOURCE LABS
+          源码课
         </Typography.Text>
         <a href="https://xuyuanzhou.github.io/react-mastery-lab/" target="_blank" rel="noreferrer">
           React Mastery Lab ↗

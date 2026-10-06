@@ -2,7 +2,8 @@ import { Button, Input, Typography } from 'antd'
 import { useMemo } from 'react'
 import { Link, useNavigate, useOutletContext } from 'react-router-dom'
 import { groupsFor, lessonsFor } from '@/data/curriculum'
-import { lessonPath } from '@/data/routes'
+import { shortTitle } from '@/data/reading'
+import { groupKeyForLabel, groupTitle, lessonPath } from '@/data/routes'
 import { useProgress } from '@/state/progress'
 
 type OutletCtx = { localReady: boolean | null }
@@ -32,7 +33,7 @@ export function KnowledgePage() {
           知识点目录
         </h1>
         <p className="hero-lead">
-          按知识点找到对应课程，再阅读解释、动手练习和核对依据。当前目录覆盖已编写的原创课程，不代表本机题库已全部核验。
+          按要点找到对应课。当前目录只覆盖已写好的公开课，不代表本机题库已全部核验。
         </p>
         <div className="toolbar">
           <Input.Search
@@ -66,7 +67,7 @@ export function KnowledgePage() {
           <section className="knowledge-group" key={group}>
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, marginBottom: 4 }}>
               <h2 className="page-title" style={{ margin: 0 }}>
-                {group}
+                {groupTitle(progress.track, groupKeyForLabel(progress.track, group))}
               </h2>
               <Typography.Text type="secondary">
                 {items.length} 课 · {items.reduce((sum, item) => sum + item.points.length, 0)} 点
@@ -79,7 +80,7 @@ export function KnowledgePage() {
                 to={lessonPath(item)}
                 onClick={() => progress.remember(item.id)}
               >
-                <strong>{item.title}</strong>
+                <strong>{shortTitle(item.title)}</strong>
                 <ul>
                   {item.points.map((point) => (
                     <li key={point}>{point}</li>

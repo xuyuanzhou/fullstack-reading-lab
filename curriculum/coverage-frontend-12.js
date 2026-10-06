@@ -40,7 +40,7 @@ const COVERAGE_FRONTEND_12 = [
     track:'frontend', group:'React 生态', id:'redux-rtk-today',
     title:'今天写 Redux 默认走 Toolkit，不是手写 createStore',
     prompt:'为什么把 createStore + 手写 switch reducer + 自行 applyMiddleware(thunk) 当作现行标准答案不够？',
-    core:'Redux 的核心模型没变：单一 store、dispatch 纯对象 action、纯 reducer 不可变更新。但维护者明确：新代码应使用 Redux Toolkit（@reduxjs/toolkit），不要把遗留 redux 核心包当默认写法。configureStore 一次配好合并 reducer、默认 thunk、DevTools 与开发态防突变检查；createSlice 生成 action 与 reducer，并用 Immer 写出看起来像赋值的不可变更新。createStore 仍能跑，官方视其为过时入口，Toolkit 也再导出同等能力。资料里的 redux-thunk / redux-saga 对比仍可用于解释副作用中间件，但新项目更常见的是 RTK 自带 thunk，以及按需的 RTK Query，而不是先手搭 composeEnhancers 再抄一份 axios thunk。',
+    core:'Redux 还是那三件事：一个 store、dispatch 一个普通对象、reducer 做不可变更新。\n\n新代码请用 Redux Toolkit。configureStore 一次配好合并 reducer、thunk、DevTools。createSlice 生成 action 和 reducer。\n\ncreateStore 还能跑，但官方已经把它当成过时入口。副作用优先用 Toolkit 自带的 thunk，或按需用 RTK Query，不要先手搭中间件再抄一份 axios thunk。',
     why:'误以为现行标准仍是手写 createStore，再自己接上 thunk。答案会停在旧的样板文件，开发态的防突变检查也接不上。区分信号是新代码用 configureStore 和 createSlice，直接改状态会被检查抓住。',
     example:'export const store = configureStore({ reducer: { todos: todosReducer } }); createSlice 里写 todoToggled(state, action){ const t=state.find(...); t.completed=!t.completed }。不要先 createStore(reducer, compose(applyMiddleware(thunk)))。',
     task:'把资料中的 createStore+thunk 示例改写成 configureStore + createSlice，并对照官方 “Why RTK is Redux today” 划掉“必须手写 action type 常量”。',

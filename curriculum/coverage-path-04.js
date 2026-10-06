@@ -124,7 +124,7 @@ const COVERAGE_PATH_04 = [
     refs:[['Nuxt：数据获取','https://nuxt.com/docs/getting-started/data-fetching'],['Nuxt：useAsyncData','https://nuxt.com/docs/api/composables/use-async-data']]
   },
   {
-    track:'frontend', group:'版本边界', id:'retired-frontend-stack',
+    track:'frontend', group:'工程实践', id:'retired-frontend-stack',
     title:'这些前端默认项已经退出主线',
     prompt:'教程让新建项目用 Create React App 和 Vuex，现在还该照做吗？',
     core:'Create React App 已由 React 官方日落，不再作为新项目的起点。新的 React 应用使用带数据路由和打包的框架，或用 Vite 自己组装。Vuex 仍可维护旧项目，官方已说明新的 Vue 3 应用使用 Pinia。Vue 2 的 new Vue、Vue.use 全局注册和过滤器不属于 Vue 3 的写法。Core Web Vitals 的交互指标已从 FID 换成 INP，旧文章里的 FID 阈值不能再当现行标准。这些工具有的还能运行，但不能再写成当前默认答案。',
@@ -161,11 +161,21 @@ const COVERAGE_PATH_04 = [
     track:'java', group:'Spring Cloud Alibaba', id:'sca-what',
     title:'Spring Cloud Alibaba 把一组中间件接到 Spring Cloud 的编程模型上',
     prompt:'pom 里加一条 Spring Cloud Alibaba，是不是就同时有了注册、网关、限流和分布式事务？',
-    core:'Spring Cloud 规定的是编程模型：服务发现、客户端负载均衡、外部化配置、声明式 HTTP 调用，以及用绑定接入消息系统。Spring Cloud Alibaba 是这套模型下的一组适配，让 Spring Boot 应用用少量注解和配置去接 Nacos、Sentinel、Seata、RocketMQ，以及阿里云的对象存储 OSS、分布式调度 SchedulerX 和短信服务。依赖先在 dependencyManagement 里导入 com.alibaba.cloud:spring-cloud-alibaba-dependencies 这个 BOM，再按需要声明单个 starter。BOM 只对齐版本，不会把七个组件一起装进进程。一次调用仍然分给不同项目。OpenFeign 或 RestClient 负责发出 HTTP。Spring Cloud LoadBalancer 从实例列表里选一个地址。名单来自 Nacos。这个进程是否放行这次进入，由 Sentinel 按资源上的规则决定。跨多个数据库的提交和回滚由 Seata 协调。业务事件进 RocketMQ，文件进 OSS，定时任务进 SchedulerX，短信走短信服务。Spring Cloud Gateway 是独立的入口网关，属于 Spring Cloud 自己的项目，不在这组组件清单里。版本必须和当前 Spring Boot、Spring Cloud 发行列车在官方说明的同一行。以仓库 2023.x 分支的 README 为例，该分支对应 Spring Cloud 2023 与 Spring Boot 3.2.x，最低 JDK 17。更新的发行列车以 README 和版本说明为准，不要把已经停更的 Eureka、Ribbon、Hystrix 坐标和当前的 Nacos、LoadBalancer、Sentinel 混在同一个应用里。全链路灰度、无损上下线和离群实例摘除属于企业版微服务引擎，开源 starter 不附带这些能力。',
+    core:'Spring Cloud 只规定几件事怎么接：找服务、选地址、读配置、发 HTTP、接消息。\n\nSpring Cloud Alibaba 是接这些事的一套适配。要用 Nacos、Sentinel、Seata 时，再单独加对应的 starter。\n\nBOM 只对齐版本，不会一次装进七个组件。网关是 Spring Cloud Gateway，不在这组清单里。\n\n版本必须和当前 Spring Boot、Spring Cloud 落在官方同一行。不要把已停更的 Eureka、Ribbon、Hystrix 和新的 Nacos、LoadBalancer、Sentinel 混在一个应用里。',
+    map:[
+      {title:'保存实例名单',body:'Nacos'},
+      {title:'从名单里选一个地址',body:'Spring Cloud LoadBalancer，不是 Alibaba 组件清单里的项'},
+      {title:'发出 HTTP',body:'OpenFeign 或 RestClient'},
+      {title:'这个进程是否放行',body:'Sentinel，按资源上的规则'},
+      {title:'两个库一起提交或回滚',body:'Seata'},
+      {title:'入口网关',body:'Spring Cloud Gateway。独立进程，不在这组组件清单里'},
+      {title:'版本怎么对',body:'和当前 Spring Boot、Spring Cloud 落在官方发行列车同一行。2023.x 对应 Cloud 2023、Boot 3.2.x，最低 JDK 17'},
+    ],
     why:'学习者会以为加一条依赖就同时有了注册、网关、限流和事务。下单链上没人选择地址、也没人拒绝超额流量，版本还和当前启动框架对不齐。进程图里这几件事分属不同项目，才说明依赖清单只对齐版本，组件仍要按需接入。',
     example:'订单服务只导入 BOM，再加入 Nacos 发现、Nacos 配置和 Sentinel。调用库存使用 OpenFeign，地址由 LoadBalancer 从 Nacos 的名单里选择。入口网关跑在另一个进程里。',
     task:'画出一次下单经过的进程，标出谁保存地址、谁选择地址、谁拒绝超额流量、谁提交两个数据库。再对照 BOM 版本和当前 Spring Boot 版本是否落在官方说明的同一行。',
-    answer:'Spring Cloud Alibaba 用 BOM 对齐版本，再按需接入 Nacos、Sentinel、Seata、RocketMQ、OSS、SchedulerX 和短信。HTTP 客户端、负载均衡和网关仍使用 Spring Cloud 对应项目。版本按官方发行列车对照。',
+    promptAnswer:'不是。BOM 只对齐版本，不会把注册、网关、限流和分布式事务一起装进进程。网关是 Spring Cloud Gateway，不在这组组件清单里。要注册再加 Nacos，要限流再加 Sentinel，要跨库提交再加 Seata。',
+    answer:'进程：浏览器 → 独立的网关进程 → 订单服务 → 库存服务。保存地址的是 Nacos，名单里是库存实例的 IP 和端口。选择地址的是订单进程里的 LoadBalancer，OpenFeign 只按选中的地址发 HTTP。拒绝超额流量的是订单进程里的 Sentinel，请求已经进入这个进程后才按资源规则拦截。提交两个数据库：这一次示例只加了 Nacos 和 Sentinel，没有 Seata，订单库和库存库各自提交，没有人做跨库提交；要两个库一起成功或一起回滚，才接入 Seata。版本：以 2023.x README 为例，Spring Cloud Alibaba BOM 与 Spring Cloud 2023、Spring Boot 3.2.x 同一行，最低 JDK 17；当前项目的 Boot 版本必须落在这一行，对不上就不能混用。',
     keywords:'Spring Cloud Alibaba BOM Nacos Sentinel Seata 版本对齐',
     points:['BOM 只对齐版本，组件要按需单独引入','发现、负载均衡、限流、事务和网关由不同项目负责','版本必须对照官方发行列车，不能混用已停更的 Netflix 组件'],
     deep:[
@@ -178,11 +188,21 @@ const COVERAGE_PATH_04 = [
     track:'java', group:'Spring Cloud Alibaba', id:'sca-component-map',
     title:'七个组件各回答一个问题',
     prompt:'Nacos、Sentinel、Seata 和 RocketMQ 同时出现时，各自解决哪一段？',
-    core:'先用一句话放好每个组件，后面的课再展开。Nacos 保存两类数据：服务名对应的实例列表，以及 dataId 对应的配置文本。控制台可以在一起，数据模型和接口是分开的。Sentinel 保护本进程里的资源，按流控、熔断、系统负载、来源和热点参数决定放行或拒绝；它不转发请求，也不代替入口网关。RocketMQ 用主题传递消息。Spring Cloud Alibaba 通过 Spring Cloud Stream 的绑定把应用接到 RocketMQ，延迟消息和事务消息是 RocketMQ 的能力，消费顺序和重复投递在消息队列那一组课里展开。Seata 协调跨服务的全局事务：发起方拿到全局编号，各分支数据库向协调器汇报，再一起提交或回滚。OSS 是对象存储，按 Bucket 和对象键保存文件，不保存业务表，也不参与数据库回滚。SchedulerX 是分布式任务调度，任务登记在调度平台上，由 worker 执行；同一条定时不会在每个应用副本里各跑一遍。短信服务把模板消息交给短信通道，接口受理不等于手机已经收到。另外，Sentinel 可以为 Dubbo 调用建立资源，但 Dubbo 是独立的 RPC 项目，不在这份组件清单里。',
+    core:'先用一句话放好每个组件。后面的课再展开，每个框只回答一个问题。',
+    map:[
+      {title:'地址在哪',body:'Nacos 发现：服务名对应的实例列表'},
+      {title:'参数是什么',body:'Nacos 配置：dataId 对应的文本。和控制台可以在一起，接口是分开的'},
+      {title:'要不要放行',body:'Sentinel：本进程里的资源。不转发请求，也不代替入口网关'},
+      {title:'消息发给谁',body:'RocketMQ。Stream 只负责绑定'},
+      {title:'两个库是否一起提交',body:'Seata'},
+      {title:'文件在哪',body:'OSS。不参与数据库回滚'},
+      {title:'定时由谁触发',body:'SchedulerX。同一条定时不会在每个副本里各跑一遍'},
+      {title:'短信是否送达',body:'看通道的状态报告。接口受理不算已读'},
+    ],
     why:'学习者会把几个中间件的名字堆在同一张图上，排查时用配置去解释限流，或用注册名单去解释事务为什么没回滚。每个框只能回答一个问题，答不上来的框回到对应的一课，才不会把职责串在同一次调用里。',
     example:'下单请求进入订单服务。Sentinel 先看下单资源是否超配额。订单服务按服务名从 Nacos 拿到库存实例，LoadBalancer 选一个，OpenFeign 发起调用。扣库存和写订单若要一起提交，由 Seata 协调两个数据库分支。提交成功后再发 RocketMQ 消息去通知发货，并用短信服务发模板短信。头像文件放在 OSS。超时关单由 SchedulerX 触发一次，而不是三个副本各自的本地定时器。',
     task:'拿一张现有架构图，给每个框写上它回答的问题：地址在哪、参数是什么、要不要放行、消息发给谁、两个库是否一起提交、文件在哪、定时由谁触发、短信是否真的送达。答不上来的框，回到对应的一课。',
-    answer:'地址在哪是名单和发现，参数是什么是配置，要不要放行是本进程的限流，消息发给谁是事件传递，两个库是否一起提交是全局事务，文件在哪是对象存储，定时由谁触发是调度平台，短信是否送达要看通道的状态报告。答不上来的框不要用相邻组件解释。每个框只回答其中一个问题，答不上来就回到对应的那一课。',
+    answer:'Nacos 发现回答地址在哪，Nacos 配置回答参数是什么。Sentinel 回答要不要放行。RocketMQ 回答消息发给谁。Seata 回答两个库是否一起提交。OSS 回答文件在哪。SchedulerX 回答定时由谁触发。短信是否送达要看通道的状态报告，接口受理不算已读。答不上来的框不要用相邻组件解释，回到对应的那一课。',
     keywords:'Nacos Sentinel RocketMQ Seata OSS SchedulerX 短信',
     points:['Nacos 同时有实例名单和配置文本，但是两套数据','Sentinel 决定本进程的资源是否放行','Seata、RocketMQ、OSS、SchedulerX 和短信各管提交、事件、文件、定时和触达'],
     deep:[
@@ -250,7 +270,7 @@ const COVERAGE_PATH_04 = [
     why:'学习者会以为依赖加进服务后，每个接口就自动有了熔断。没有入口的内部方法照常执行，重启后规则也没了，扩容的新实例没有同一套配额。先有资源名、规则放在外部且重启后还在，才说明统计和配额都要单独定义。',
     example:'下单地址形成资源，流控阈值写在外部规则里，超过配额的请求被拒绝，业务方法没有执行。查询详情的方法用单独的资源名做热点规则。没有入口的内部工具方法不受这两条规则影响。重启进程后，若规则只在内存里，新实例上这两条配额都不存在。',
     task:'列出三个要保护的资源名，分别写它用哪一类规则、规则放在哪里、被拒绝时调用方看到什么。再重启进程，确认规则还在。',
-    answer:'三个资源要分别写清名字、哪一类规则、规则放在哪里、被拒绝时调用方看到什么。没有资源名就没有计数。流控、熔断、系统、来源和热点是不同规则，不能合成一句熔断。规则只留在一台机器内存里时，重启和扩容后的实例没有同一套配额。规则拒绝和业务异常要分开处理。',
+    answer:'POST /orders 用流控，规则推到 Nacos，拒绝时调用方看到 BlockException 或约定失败 type。GET /items/{id} 用热点参数，同样在 Nacos。内部对账作业用系统规则护整机 CPU。重启后三条仍在，因为不在单机内存。没有资源名的内部方法不受这三条影响。',
     keywords:'Sentinel 资源 流控 熔断 热点参数 规则持久化',
     points:['资源是被统计和被规则检查的单位','流控、熔断、系统保护、来源和热点参数是不同规则','内存中的规则重启后消失，需要推到外部规则源'],
     deep:[
@@ -284,7 +304,7 @@ const COVERAGE_PATH_04 = [
     why:'学习者会只记住一个注解的名字，就以为两个库会自动回到同一结果。库存失败时订单已经提交，他分不清该用镜像回滚、手写补偿还是长流程。分支上能看到同一个全局编号，协调器收到失败后订单库才回滚，才说明两边不是各自提交。',
     example:'下单入口开启全局事务，XID 随调用传到库存服务。订单库和库存库各自注册分支。库存失败时协调器通知订单库回滚。若流程还要等用户支付好几分钟，就改成 Saga，而不是让数据库锁跨过整个等待。',
     task:'写下一笔跨两个库的操作：标出发起方、协调器和两个分支。选择 AT、TCC、Saga 或 XA 中的一种，并写明业务要准备的表或接口。',
-    answer:'发起方打开全局事务并把编号传到库存服务，协调器记录两个分支，两个库各自注册。库存失败时由协调器通知订单库回滚，而不是订单库自己已经提交就结束。自动镜像、手写三阶段、长流程补偿和数据库两阶段是不同准备。流程若要等用户支付好几分钟，不能让数据库锁跨过整个等待。',
+    answer:'下单服务是发起方，Seata 服务是协调器，订单库和库存库是两个分支。短写入选 AT：两张业务表各自准备 undo_log，库存失败时协调器通知订单库回滚，而不是订单库自己已经提交就结束。TCC 要准备尝试、确认、取消接口；Saga 适合等支付这种长等待；XA 走数据库两阶段、锁更长。流程若要等用户支付好几分钟，不能让数据库锁跨过整个等待。',
     keywords:'Seata TM TC RM XID AT TCC Saga XA',
     points:['全局事务由发起方、协调器和各数据库分支组成','XID 必须随调用传到下游，分支才能登记到同一笔事务','AT、TCC、Saga 和 XA 用不同方式完成提交与回滚'],
     deep:[
@@ -465,7 +485,7 @@ const COVERAGE_PATH_04 = [
     refs:[['Spring Cloud Gateway：工作方式','https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway-server-webflux/how-it-works.html'],['Spring Cloud Gateway：路由谓词','https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway-server-webflux/request-predicates-factories.html']]
   },
   {
-    track:'java', group:'版本边界', id:'retired-spring-cloud-netflix',
+    track:'java', group:'工程实践', id:'retired-spring-cloud-netflix',
     title:'Hystrix、Ribbon、Zuul 1 和 javax 前缀已退出当前主线',
     prompt:'示例还在用 @HystrixCommand、Ribbon 和 javax.servlet，能当 Spring Boot 3 的写法吗？',
     core:'Spring Cloud 2020.0 起，发行版移除了 Hystrix、Ribbon 和 Zuul 1 这些 Netflix 模块。进程内限流和熔断用 Sentinel 或 Resilience4j。客户端负载均衡的现行实现是 Spring Cloud LoadBalancer。北向入口用 Spring Cloud Gateway。Spring Boot 3 基于 Jakarta EE，依赖的包名是 jakarta.servlet、jakarta.persistence，不是 javax 下的同名包。MySQL 8 也已经移除查询缓存。旧项目可以留在 Boot 2 维持这些类，新的课程和新建服务按现行组件写。',

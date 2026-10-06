@@ -3,8 +3,8 @@ import type { Track } from '@/types/curriculum'
 export const STORAGE_KEY = 'fullstack-learning-lab-v3'
 
 export const TRACK_LABEL: Record<Track, string> = {
-  frontend: '前端工程',
-  java: 'Java 后端',
+  frontend: '前端',
+  java: 'Java',
 }
 
 export const LOCAL_CATEGORY_LABEL = {
@@ -15,9 +15,9 @@ export const LOCAL_CATEGORY_LABEL = {
 
 export const TRACK_INTRO: Record<Track, string> = {
   frontend:
-    '语言基础从相等、作用域、this、原型，到闭包、Promise、async 和事件循环。接着是类型、盒模型与定位、页面与浏览器帧，然后是各框架。技术选型按交付面只留一套更新模型和它的生态槽位，再进入测试和工程。',
+    '从页面怎么把一次请求交到后端开始。先学 JavaScript、类型和 CSS，再学浏览器和网络，然后才是 React、Vue 和跨端。选型只留一套，最后才是测试和工程。',
   java:
-    'Java 基础从类型、equals、字符串和集合，再进入算法、内存和线程。之后按 Spring、JPA、MyBatis、缓存、Nginx、Netty、网关、搜索分章；Spring Cloud Alibaba 按 Nacos、调用、Sentinel、Seata 排障，再是消息与分布式。',
+    '从一次写入怎么进数据库开始。先学 Java、算法和 JVM，再学库和缓存，然后才是 Spring。消息、网关和微服务放在后面，最后是架构、部署和工程。',
 }
 
 export const REACT_BASE =

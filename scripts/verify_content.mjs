@@ -70,6 +70,7 @@ assert.equal(publishedSources.includes('coverage-java-45.js'), true);
 assert.equal(publishedSources.includes('coverage-java-46.js'), true);
 assert.equal(publishedSources.includes('coverage-java-47.js'), true);
 assert.equal(publishedSources.includes('coverage-java-48.js'), true);
+assert.equal(publishedSources.includes('coverage-java-49.js'), true);
 assert.equal(publishedSources.includes('coverage-path-07.js'), true);
 assert.equal(publishedSources.includes('coverage-path-08.js'), true);
 assert.equal(publishedSources.includes('coverage-path-09.js'), true);
@@ -89,6 +90,31 @@ vm.runInContext(fs.readFileSync(new URL('../legacy/publication-order.js', import
 assert.equal(JSON.stringify(orderContext.window.GROUP_ORDER), JSON.stringify(curriculum.groupOrder));
 assert.equal(JSON.stringify(orderContext.window.PATH_LEAD), JSON.stringify(curriculum.pathLead));
 const lessons = curriculum.lessons;
+for (const lesson of lessons) {
+  if (/是不是|会不会|能不能/.test(lesson.prompt)) {
+    assert(lesson.promptAnswer, `${lesson.id}: yes/no prompt needs promptAnswer, not the practice blob`);
+    assert(
+      /不是|不会|不能|并不|并不是|不等于/.test(lesson.promptAnswer),
+      `${lesson.id}: yes/no prompt needs a direct answer`,
+    );
+  }
+  if (!/是不是|会不会|能不能/.test(lesson.task)) {
+    assert(
+      !/^不是[。．]/.test(lesson.answer.trim()),
+      `${lesson.id}: practice answer must follow the task, not the title yes/no`,
+    );
+  }
+  if (/划掉/.test(lesson.task)) {
+    assert(/划掉/.test(lesson.answer), `${lesson.id}: 划掉 task needs 划掉 in the practice answer`);
+  }
+  if (/谁保存地址|谁选择地址|谁拒绝超额流量|谁提交两个数据库/.test(lesson.task)) {
+    assert(
+      /Nacos/.test(lesson.answer) && /LoadBalancer/.test(lesson.answer) && /Sentinel/.test(lesson.answer),
+      `${lesson.id}: practice answer must label who keeps, selects, and rejects`,
+    );
+    assert(/3\.2/.test(lesson.answer), `${lesson.id}: practice answer must check BOM against Spring Boot 3.2.x`);
+  }
+}
 const frontendCount = lessons.filter((lesson) => lesson.track === 'frontend').length;
 const javaCount = lessons.filter((lesson) => lesson.track === 'java').length;
 const pointCount = lessons.reduce((n, x) => n + x.points.length, 0);

@@ -8,7 +8,7 @@ const COVERAGE_FRONTEND_25 = [
     why:'按热度把各生态的明星库装齐。同一次跳转既改 history 又走 Vue Router，列表既在 Pinia 又在 Query 里。线上少画一次时，没有一份文档能同时解释这两套通知。',
     example:'后台表格选定 Vue：create-vue 勾上 Vue Router 和 Pinia。不要再添加 react-router-dom、@angular/router 或 SvelteKit。文章站要源码里有正文：同一模型下换 Nuxt，仍然用 Pinia，不要为了「更像 React」再装一套 Next。',
     task:'写出这次留下的更新模型，再填四格：应用框架、路由、客户端共享状态、服务端列表。每格一个名字。出现另一模型的包名时划掉。',
-    answer:'四个槽位跟选定的那一种更新模型走。React、Vue、Angular、Svelte 各有自己的框架和官方入口，不要混装。机制课仍在各章，这里只决定槽位留谁。',
+    answer:'这次留下 Vue。四格：应用框架 Vite（要首屏 HTML 时换 Nuxt）；路由 Vue Router；客户端共享状态 Pinia；服务端列表用该模型的加载器或查询库。出现 React Router、Redux、@tanstack/react-query、@angular/router 时划掉。',
     keywords:'技术选型 生态槽位 React Vue Angular Svelte',
     diagram:'diagrams/fe-ecosystem-map.svg',
     points:['路由、客户端状态和服务端缓存跟着选定的更新模型','四个模型不要在同一张表上各装一套库','跨端运行时是另一笔，不跟 Web 框架混进一个组件'],

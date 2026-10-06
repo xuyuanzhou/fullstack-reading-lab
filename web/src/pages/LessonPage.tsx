@@ -1,7 +1,8 @@
 import { Breadcrumb, Button, Collapse, Image, Input, Space, Typography } from 'antd'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { findLesson, lessonIndex, nextLesson } from '@/data/curriculum'
-import { groupKeyForLabel, groupPath, isTrack, lessonPath } from '@/data/routes'
+import { groupKeyForLabel, groupPath, groupTitle, isTrack, lessonPath } from '@/data/routes'
+import { shortTitle, splitProse } from '@/data/reading'
 import { REACT_CHAPTERS, VUE_CHAPTERS, reactUrl, vueUrl } from '@/data/meta'
 import { useProgress } from '@/state/progress'
 import { LessonOutline } from '@/components/LessonOutline'
@@ -38,25 +39,38 @@ export function LessonPage() {
       <Breadcrumb
         items={[
           { title: <Link to={chapterPath}>学习路线</Link> },
-          { title: <Link to={chapterPath}>{lesson.group}</Link> },
-          { title: lesson.title },
+          { title: <Link to={chapterPath}>{groupTitle(lesson.track, chapterKey)}</Link> },
+          { title: shortTitle(lesson.title) },
         ]}
       />
 
       <header className="lesson-hero">
         <div className="eyebrow">
-          Lesson {String(index + 1).padStart(2, '0')} · {lesson.group}
+          第 {String(index + 1).padStart(2, '0')} 课 · {groupTitle(lesson.track, chapterKey)}
         </div>
         <h1>{lesson.title}</h1>
         <p className="prompt-box">{lesson.prompt}</p>
+        {lesson.promptAnswer ? (
+          <Collapse
+            bordered={false}
+            style={{ background: 'transparent', marginTop: 8 }}
+            items={[
+              {
+                key: 'prompt-answer',
+                label: '先自己回答，再看参考答案',
+                children: <p className="body">{lesson.promptAnswer}</p>,
+              },
+            ]}
+          />
+        ) : null}
         <div className="meta-line">
           <span>原创课程</span>
-          <span>{lesson.references.length} 项核对依据</span>
+          <span>{lesson.references.length} 项依据</span>
         </div>
       </header>
 
       <details className="compact-outline">
-        <summary>本课目录 · 快速跳转</summary>
+        <summary>本课目录</summary>
         <LessonOutline lesson={lesson} />
       </details>
 
@@ -65,8 +79,8 @@ export function LessonPage() {
       <div className="lesson-body">
 
       <section className="section-block" id="lesson-points" tabIndex={-1}>
-        <span className="section-index">Knowledge points</span>
-        <h2>本课知识点</h2>
+        <span className="section-index">01</span>
+        <h2>要点</h2>
         <ul className="point-list">
           {lesson.points.map((point) => (
             <li key={point}>{point}</li>
@@ -75,7 +89,7 @@ export function LessonPage() {
       </section>
 
       <section className="core-panel" id="lesson-model" tabIndex={-1}>
-        <span className="panel-label">01 / 核心模型</span>
+        <span className="panel-label">02 / 说明</span>
         {lesson.diagram ? (
           <figure className="concept-figure">
             <Image
@@ -85,18 +99,43 @@ export function LessonPage() {
             />
           </figure>
         ) : null}
-        <p className="lesson-core">{lesson.core}</p>
+        <div className="lesson-core">
+          {splitProse(lesson.core).map((part) => (
+            <p key={part.slice(0, 40)}>{part}</p>
+          ))}
+        </div>
+        {lesson.map?.length ? (
+          <table className="model-map">
+            <caption>职责对照</caption>
+            <thead>
+              <tr>
+                <th scope="col">这件事</th>
+                <th scope="col">谁负责</th>
+              </tr>
+            </thead>
+            <tbody>
+              {lesson.map.map((row) => (
+                <tr key={row.title}>
+                  <th scope="row">{row.title}</th>
+                  <td>{row.body}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : null}
       </section>
 
       {lesson.deep?.length ? (
         <section className="section-block" id="lesson-mechanism" tabIndex={-1}>
-          <span className="section-index">Deep dive</span>
-          <h2>机制拆解</h2>
+          <span className="section-index">03</span>
+          <h2>细节</h2>
           <div className="deep-stack">
             {lesson.deep.map((part) => (
               <div className="deep-item" key={part.title}>
                 <h3>{part.title}</h3>
-                <p>{part.body}</p>
+                {splitProse(part.body).map((para) => (
+                  <p key={para.slice(0, 40)}>{para}</p>
+                ))}
               </div>
             ))}
           </div>
@@ -109,21 +148,23 @@ export function LessonPage() {
       ) : null}
 
       <section className="section-block" id="lesson-why" tabIndex={-1}>
-        <span className="section-index">02</span>
-        <h2>为什么需要理解它</h2>
-        <p>{lesson.why}</p>
+        <span className="section-index">04</span>
+        <h2>为什么</h2>
+        {splitProse(lesson.why).map((part) => (
+          <p key={part.slice(0, 40)}>{part}</p>
+        ))}
       </section>
 
       <section className="section-block" id="lesson-example" tabIndex={-1}>
-        <span className="section-index">03</span>
-        <h2>把概念放进具体场景</h2>
+        <span className="section-index">05</span>
+        <h2>例子</h2>
         <div className="example-box">{lesson.example}</div>
       </section>
 
       {source ? (
         <a className="next-card" href={source.href} target="_blank" rel="noreferrer">
           <div>
-            <small>Source lab</small>
+            <small>源码</small>
             <strong>{source.title}</strong>
             <div className="muted" style={{ marginTop: 4 }}>
               {source.detail}
@@ -134,8 +175,8 @@ export function LessonPage() {
       ) : null}
 
       <section className="section-block" id="lesson-practice" tabIndex={-1}>
-        <span className="section-index">04</span>
-        <h2>动手检验理解</h2>
+        <span className="section-index">06</span>
+        <h2>练习</h2>
         <p style={{ marginBottom: 14 }}>{lesson.task}</p>
         <Collapse
           bordered={false}
@@ -151,8 +192,8 @@ export function LessonPage() {
       </section>
 
       <section className="section-block" id="lesson-references" tabIndex={-1}>
-        <span className="section-index">05</span>
-        <h2>核对依据</h2>
+        <span className="section-index">07</span>
+        <h2>依据</h2>
         <p className="muted" style={{ marginBottom: 8 }}>
           以官方文档、标准或固定版本源码为准。课程中的简化模型不代替实际运行验证。
         </p>
@@ -170,8 +211,8 @@ export function LessonPage() {
       </section>
 
       <section className="section-block" id="lesson-notes" tabIndex={-1}>
-        <span className="section-index">06</span>
-        <h2>用自己的话重述</h2>
+        <span className="section-index">08</span>
+        <h2>笔记</h2>
         <Input.TextArea
           rows={5}
           aria-label="本课学习笔记"
@@ -202,7 +243,7 @@ export function LessonPage() {
         >
           <div>
             <small>下一课</small>
-            <strong>{next.title}</strong>
+            <strong>{shortTitle(next.title)}</strong>
           </div>
           <span>→</span>
         </Link>

@@ -1,6 +1,7 @@
 import { Button, Progress, Typography } from 'antd'
 import { Link, useNavigate } from 'react-router-dom'
 import { findLesson, lessonsFor } from '@/data/curriculum'
+import { shortTitle } from '@/data/reading'
 import { lessonPath } from '@/data/routes'
 import { useProgress } from '@/state/progress'
 
@@ -19,10 +20,10 @@ export function ProgressAside({ localReady }: { localReady: boolean }) {
   return (
     <div className="aside-stack">
       <div className="aside-block">
-        <span className="aside-label">Your progress</span>
+        <span className="aside-label">进度</span>
         <div className="progress-figure">{percent}%</div>
         <Typography.Text type="secondary">
-          {completed} / {current.length} 章已掌握
+          {completed} / {current.length} 课已掌握
         </Typography.Text>
         <Progress
           percent={percent}
@@ -42,7 +43,7 @@ export function ProgressAside({ localReady }: { localReady: boolean }) {
             to={lessonPath(next)}
             onClick={() => progress.remember(next.id)}
           >
-            {next.title} →
+            {shortTitle(next.title)} →
           </Link>
         ) : (
           <Typography.Text type="secondary">当前路线全部完成，可以进入复习清单。</Typography.Text>
@@ -61,7 +62,7 @@ export function ProgressAside({ localReady }: { localReady: boolean }) {
                   to={lessonPath(item)}
                   onClick={() => progress.remember(item.id)}
                 >
-                  {item.title}
+                  {shortTitle(item.title)}
                 </Link>
               ) : null,
             )}

@@ -1,6 +1,7 @@
 import { Empty, Typography } from 'antd'
 import { Link } from 'react-router-dom'
 import { findLesson } from '@/data/curriculum'
+import { shortTitle } from '@/data/reading'
 import { lessonPath } from '@/data/routes'
 import { useProgress } from '@/state/progress'
 
@@ -29,7 +30,7 @@ export function ReviewPage() {
               >
                 <span className="lesson-row-mark">·</span>
                 <span>
-                  <strong>{item.title}</strong>
+                  <strong>{shortTitle(item.title)}</strong>
                   <p>{item.prompt}</p>
                 </span>
               </Link>

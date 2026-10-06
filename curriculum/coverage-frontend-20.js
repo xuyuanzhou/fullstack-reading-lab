@@ -9,7 +9,7 @@ const COVERAGE_FRONTEND_20 = [
     why:'先按热度选定框架，再发现正文不在 HTML 里、小程序没有页面登记、手机上还在找 div。交付面写在前面时，框架只是该面的实现，换一句需求才会换框架。',
     example:'后台表格：浏览器应用，首屏可以是壳。帮助中心文章：源码里要有正文。客服入口只上微信：单独的小程序工程。已有 App 里要系统列表：React Native 的 View 和 FlatList，见 rn-flatlist-window。两端按钮必须长得一样、由引擎来画：Flutter。四句需求各留一个工程，不把四个脚手架装进同一个 package.json。',
     task:'给手上的功能写四格：谁打开、首屏 HTML 要不要正文、有没有小程序页面、有没有原生视图。每一格只留一个框架名，空着的格写「这次不交付」。',
-    answer:'操作台留浏览器应用。要被查看源码看见的正文留会做服务端 HTML 的框架，或留 Astro 的岛屿。小程序和原生 App 各自一个运行时。热度不是交付面。同一页面不要同时是四种工程。',
+    answer:'四格示例：谁打开写成浏览器操作台，框架留 Vue 或 React 客户端应用；小程序和原生两格写「这次不交付」。首屏 HTML 要正文时换成 Nuxt、Next 或 Astro。有小程序页面时留 uni-app 或 Taro，浏览器格写这次不交付。有原生视图时留 React Native 或 Flutter。每一格只一个名字。',
     keywords:'前端选型 交付面 SSR 小程序 React Native Astro',
     diagram:'diagrams/fe-pick-surface.svg',
     points:['先写打开方式和首屏里有没有正文','内容页用服务端 HTML 或岛屿，操作台可以是客户端应用','小程序和原生界面各自一个运行时'],

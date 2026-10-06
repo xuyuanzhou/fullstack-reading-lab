@@ -1,16 +1,8 @@
 import { useEffect, useState } from 'react'
 import type { Lesson } from '@/types/curriculum'
+import { lessonNav } from '@/data/reading'
 
-const sectionsFor = (lesson: Lesson) => [
-  ['points', '本课知识点'],
-  ['model', '核心模型'],
-  ...(lesson.deep?.length ? [['mechanism', '机制拆解']] : []),
-  ['why', '为什么需要理解它'],
-  ['example', '把概念放进具体场景'],
-  ['practice', '动手检验理解'],
-  ['references', '核对依据'],
-  ['notes', '用自己的话重述'],
-]
+const sectionsFor = (lesson: Lesson) => lessonNav(Boolean(lesson.deep?.length))
 
 export function LessonOutline({ lesson }: { lesson: Lesson }) {
   const sections = sectionsFor(lesson)

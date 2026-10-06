@@ -2,7 +2,8 @@ import { Button, Space, Typography } from 'antd'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import { findLesson, lessonsFor, lessonsInGroup, outlineFor, totals } from '@/data/curriculum'
 import { TRACK_INTRO, TRACK_LABEL } from '@/data/meta'
-import { groupLabel, isTrack, lessonPath, resumePath } from '@/data/routes'
+import { shortTitle } from '@/data/reading'
+import { groupLabel, groupTitle, isTrack, lessonPath, resumePath } from '@/data/routes'
 import { useProgress } from '@/state/progress'
 import type { Lesson } from '@/types/curriculum'
 
@@ -28,7 +29,7 @@ function LessonRows({
           >
             <span className="lesson-row-mark">{done ? '✓' : ''}</span>
             <span>
-              <strong>{item.title}</strong>
+              <strong>{shortTitle(item.title)}</strong>
               <p>{item.prompt}</p>
             </span>
           </Link>
@@ -67,7 +68,7 @@ export function HomePage() {
       </div>
 
       <div>
-        <h1 className="hero-title">{TRACK_LABEL[track]}，从原理走向实践</h1>
+        <h1 className="hero-title">{TRACK_LABEL[track]}，从入门到能独立交付</h1>
         <p className="hero-lead">{TRACK_INTRO[track]}</p>
         <Space wrap size={12}>
           <Button
@@ -105,7 +106,7 @@ export function HomePage() {
       <section>
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, marginBottom: 8 }}>
           <Typography.Title level={3} className="page-title" style={{ margin: 0 }}>
-            {label}
+            {groupTitle(track, groupKey)}
           </Typography.Title>
           <Typography.Text type="secondary">
             {chapterDone}/{visible.length} 已掌握

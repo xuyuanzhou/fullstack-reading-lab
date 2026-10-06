@@ -2,11 +2,11 @@
 
 在线阅读：[全栈学习实验室](https://xuyuanzhou.github.io/fullstack-reading-lab/) · [GitHub 仓库](https://github.com/xuyuanzhou/fullstack-reading-lab)
 
-面向前端和 Java 开发者的公开学习网站。以本机题库的主题分布作为选题线索，重新编写中文解释、具体例子、主动回忆练习与参考答案。除原创回答框架课 `design-review` 外，每节公开课附官方文档、标准或固定版本源码依据。当前有 **691 节原创课程、2080 个具体知识点**（前端 233 课、Java 458 课）。另有一条 AI 公开阅读路线和练习台，不计入上述课数。Java 侧已按 Spring、JPA、MyBatis、缓存、Nginx、Netty、网关、搜索、JVM 分章；Spring Cloud Alibaba 按 Nacos、调用、Sentinel、Seata 展开。学习从「全栈主线」开始：一条功能怎样从页面交到数据库，再进入语言、框架和失败场景。
+面向前端和 Java 开发者的公开学习网站。以本机题库的主题分布作为选题线索，重新编写中文解释、具体例子、主动回忆练习与参考答案。除原创回答框架课 `design-review` 外，每节公开课附官方文档、标准或固定版本源码依据。当前有 **694 节原创课程、2089 个具体知识点**（前端 233 课、Java 461 课）。另有一条 AI 公开阅读路线和练习台，不计入上述课数。Java 侧已按 Spring、JPA、MyBatis、缓存、Nginx、Netty、网关、搜索、JVM 分章；Spring Cloud Alibaba 按 Nacos、调用、Sentinel、Seata 展开。学习从「全栈主线」开始：一条功能怎样从页面交到数据库，再进入语言、框架和失败场景。
 
 公开站使用 **React + TypeScript + Vite + Ant Design**（目录 `web/`）。左侧课程路径、中间阅读、右侧进度。React / Vue 知识卡分别打开 [React Mastery Lab](https://xuyuanzhou.github.io/react-mastery-lab/) 与 [Vue 3 Mastery Lab](https://xuyuanzhou.github.io/vue3-mastery-lab/#/) 的对应章节。
 
-Java 路线中的“分布式与高并发”先讲一致性怎么选，再讲跨服务怎么提交；机制图是重新绘制的 SVG。原资料页码和官方核对依据见 [校订记录](docs/分布式高并发校订记录.md)。架构边界见 [架构决策](docs/架构决策-公开站点与本机资料.md)。
+Java 路线中的“设计模式”先列出 GoF 二十三种名字和三类分法，再按创建、结构、行为深入；“分布式与高并发”先讲一致性怎么选，再讲跨服务怎么提交。机制图是重新绘制的 SVG。原资料页码和官方核对依据见 [校订记录](docs/分布式高并发校订记录.md)。架构边界见 [架构决策](docs/架构决策-公开站点与本机资料.md)。
 
 ## 工程结构
 

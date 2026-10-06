@@ -369,3 +369,47 @@ for (const lesson of window.LESSONS) {
     lesson[key] = next[key];
   }
 }
+
+/** Title yes/no stays off the practice answer. Practice must follow the task. */
+const PROMPT_ANSWERS = {
+  'css-grid-flex':'不是。不是所有布局都该改成 Grid。一条轴上的控件用 Flex，二维轨道用 Grid。',
+  rendering:'不是。setState 返回只表示更新已排队，用户这时还没看见新像素。',
+  'http2-multiplex':'不是。HTTP/2 多路复用消掉的是应用层队头阻塞，TCP 丢包仍会拖住这条连接上的所有流。',
+  'playwright-user-journey':'不是。不是每个函数都该配一条浏览器测试。浏览器只守一条用户路径，细分支留在单元测试。',
+  'java-arraylist-linkedlist':'不是。中间插入很多元素，也不一定用 LinkedList。先看是不是按下标访问。',
+  'jvm-areas':'不是。规范里的程序计数器是线程私有的逻辑 pc，不是把 CPU 寄存器那句话原样搬过来。',
+  'java-classloading':'不能。两个同名同字节码类仍可能不能互转，因为运行时身份是类名加上定义它的加载器。',
+  'java-thread-start-run':'会执行，但不会新建线程。run() 跑在调用者线程里。只有 start() 才新建线程。',
+  'jvm-oom-signals':'不是。先读报错原文再决定看堆、元空间、直接内存还是调用栈，把堆调大解决不了每一类。',
+  'mysql-varchar-row-max':'不能。(65535-1-2)/3 不是 utf8mb3 或 utf8mb4 单列的标准上限。',
+  'mysql-innodb-index-lock':'不会。没有二级索引时仍是行锁加在聚簇或隐藏主键上，不是改成 LOCK TABLES 那种表锁。',
+  'spring-csrf-spa':'不是。Cookie 会话仍要 CSRF。只有脚本自己加的 Authorization 头才不走同一条 CSRF。',
+  'spring-security-cors':'不是。网关允许 Origin 只约束浏览器跨源读响应，不等于接口已经鉴权。',
+  'mw-proxy-lb-gateway':'不是。三问可以由一个程序兼任，但转到哪、选哪一台、接不接口不能并成一句。',
+  'gateway-auth-where':'不是。网关看令牌，订单服务仍要看这行数据是不是这个用户的。',
+  'sca-what':'不是。BOM 只对齐版本，不会把注册、网关、限流和分布式事务一起装进进程。',
+  'sca-dubbo-or-feign':'不是。有 Nacos 和 Sentinel 也不等于服务之间必须上 Dubbo。',
+  'sca-sentinel-intro':'不是。只加依赖不会让每个接口自动有熔断。要先有资源名和规则。',
+  'sca-sms-intro':'不能。接口返回成功只表示受理，用户是否读到要看通道的状态报告。',
+  'arch-sync-vs-async':'不是。全部改成消息驱动只是把事务换成状态机、幂等、补偿和对账，问题还在。',
+  'arch-slo-budget':'能拿来决定，不是口号。先定 SLI、窗口和 SLO，再看本月错误预算还剩多少。',
+  'arch-design-one-path':'不能。框图有中间件仍不够。先写清用户动作、读写量、时限、权威数据和失败时用户看见什么。',
+};
+
+function sloganToStrike(task) {
+  const match = task.match(/划掉[「“"']([^」”"']+)[」”"']/) || task.match(/划掉([^；。]+)/);
+  if (!match) return '';
+  return match[1].replace(/^[=:\s]+|[=:\s]+$/g, '').trim();
+}
+
+for (const lesson of window.LESSONS) {
+  if (PROMPT_ANSWERS[lesson.id]) lesson.promptAnswer = PROMPT_ANSWERS[lesson.id];
+  if (lesson.promptAnswer && !/是不是|会不会|能不能/.test(lesson.task)) {
+    lesson.answer = lesson.answer.replace(/^不是[。．]\s*/, '');
+  }
+  if (/划掉/.test(lesson.task) && !/划掉/.test(lesson.answer)) {
+    const slogan = sloganToStrike(lesson.task);
+    if (slogan && slogan.length <= 40) lesson.answer = '划掉「' + slogan + '」。' + lesson.answer;
+    else lesson.answer = '划掉题目里点名的那一句。' + lesson.answer;
+  }
+}

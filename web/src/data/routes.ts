@@ -52,7 +52,7 @@ const GROUP_KEYS: Record<Track, Record<string, string>> = {
   },
 }
 
-export type CourseGroup = { key: string; label: string }
+export type CourseGroup = { key: string; name: string; label: string }
 
 const labelByKey: Record<Track, Map<string, string>> = {
   frontend: new Map(),
@@ -60,11 +60,11 @@ const labelByKey: Record<Track, Map<string, string>> = {
 }
 
 for (const track of ['frontend', 'java'] as const) {
-  for (const label of curriculum.groupOrder[track]) {
-    const key = GROUP_KEYS[track][label]
-    if (!key) throw new Error(`missing route key for ${track} / ${label}`)
+  for (const name of curriculum.groupOrder[track]) {
+    const key = GROUP_KEYS[track][name]
+    if (!key) throw new Error(`missing route key for ${track} / ${name}`)
     if (labelByKey[track].has(key)) throw new Error(`duplicate route key ${track} / ${key}`)
-    labelByKey[track].set(key, label)
+    labelByKey[track].set(key, name)
   }
 }
 
@@ -74,8 +74,12 @@ export function isTrack(value: string | undefined): value is Track {
 
 export function courseGroups(track: Track): CourseGroup[] {
   return curriculum.groupOrder[track]
-    .filter((label) => curriculum.lessons.some((lesson) => lesson.track === track && lesson.group === label))
-    .map((label) => ({ key: GROUP_KEYS[track][label], label }))
+    .filter((name) => curriculum.lessons.some((lesson) => lesson.track === track && lesson.group === name))
+    .map((name) => ({
+      key: GROUP_KEYS[track][name],
+      name,
+      label: curriculum.groupLabels?.[track]?.[name] || name,
+    }))
 }
 
 export function groupKeyForLabel(track: Track, label: string): string {
@@ -84,6 +88,11 @@ export function groupKeyForLabel(track: Track, label: string): string {
 
 export function groupLabel(track: Track, key: string): string {
   return labelByKey[track].get(key) || ''
+}
+
+export function groupTitle(track: Track, key: string): string {
+  const name = groupLabel(track, key)
+  return curriculum.groupLabels?.[track]?.[name] || name
 }
 
 export function groupPath(track: Track, key: string): string {

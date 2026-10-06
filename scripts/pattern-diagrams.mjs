@@ -52,6 +52,45 @@ function svg(kicker, title, desc, height, body) {
 }
 
 const diagrams = {
+  'pattern-gof-catalog.svg': svg('名单', '二十三种先按三族列出', '创建五个、结构七个、行为十一个。这一课只列名字，深入在后面的课。', 420, [
+    card(32, 88, 288, 232, 'accent'),
+    tx(48, 120, '创建 5', { size: 16, weight: 600, fill: '#2d4f41' }),
+    lines(48, 156, ['工厂方法  抽象工厂', '建造者  原型', '单例'], { size: 14, fill: '#2e3330', lh: 28 }),
+    card(336, 88, 288, 232),
+    tx(352, 120, '结构 7', { size: 16, weight: 600, fill: '#2e3330' }),
+    lines(352, 156, ['适配器  桥接  组合', '装饰器  外观', '享元  代理'], { size: 14, fill: '#2e3330', lh: 28 }),
+    card(640, 88, 288, 232, 'mute'),
+    tx(656, 120, '行为 11', { size: 16, weight: 600, fill: '#2e3330' }),
+    lines(656, 148, ['责任链  命令  解释器', '迭代器  中介者', '备忘录  观察者', '状态  策略', '模板方法  访问者'], { size: 13, fill: '#2e3330', lh: 26 }),
+    takeaway(340, '写不出这三列时，不要先画某一个模式的类。'),
+  ].join('')),
+
+  'pattern-family-test.svg': svg('分族', '先问变的是哪一类', '造出哪一份是创建。怎么接在一起是结构。已经有对象之后怎么走是行为。', 400, [
+    card(32, 88, 288, 180, 'accent'),
+    tx(176, 140, '创建', { size: 20, weight: 600, fill: '#2d4f41', anchor: 'middle' }),
+    tx(176, 178, '造出哪一份', { size: 14, fill: '#3f6a58', anchor: 'middle' }),
+    tx(176, 208, '工厂 / 建造者 / 单例', { size: 13, anchor: 'middle' }),
+    card(336, 88, 288, 180),
+    tx(480, 140, '结构', { size: 20, weight: 600, fill: '#2e3330', anchor: 'middle' }),
+    tx(480, 178, '对象怎么接', { size: 14, anchor: 'middle' }),
+    tx(480, 208, '适配器 / 装饰器 / 代理', { size: 13, anchor: 'middle' }),
+    card(640, 88, 288, 180, 'mute'),
+    tx(784, 140, '行为', { size: 20, weight: 600, fill: '#2e3330', anchor: 'middle' }),
+    tx(784, 178, '请求怎么走', { size: 14, anchor: 'middle' }),
+    tx(784, 208, '策略 / 观察者 / 状态', { size: 13, anchor: 'middle' }),
+    takeaway(292, '工厂结束在交出产品。策略开始在产品已经在手里。'),
+  ].join('')),
+
+  'pattern-gof-rest.svg': svg('其余', '七个先写变化点', '认得名字不等于现在就加一层类。指不出那一块时不要凑数。', 400, [
+    card(32, 88, 430, 188),
+    tx(48, 120, '标准库已经对上', { size: 16, weight: 600, fill: '#2e3330' }),
+    lines(48, 160, ['命令 → Runnable', '迭代器 → Iterator', '先打开 Java 标准库那一组'], { size: 15, fill: '#2e3330' }),
+    card(498, 88, 430, 188, 'warn'),
+    tx(514, 120, '还没有单独深入课', { size: 16, weight: 600, fill: '#6e3530' }),
+    lines(514, 160, ['原型  中介者  备忘录', '访问者  解释器', '先写变化点，再决定立课'], { size: 15, fill: '#2e3330' }),
+    takeaway(300, '只当场调一个方法、不要排队也不要撤销，不要先做 Command。'),
+  ].join('')),
+
   'pattern-one-variation.svg': svg('模式', '名字不能代替变化点', '类名写成 Factory 之后，若新规则仍要修改同一个 if，变化点还在那个方法里。', 400, [
     card(32, 88, 430, 188, 'warn'),
     tx(48, 120, 'DiscountFactory', { size: 18, weight: 600, fill: '#6e3530' }),
