@@ -3,12 +3,33 @@ const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({'&':'
 const LESSONS = window.LESSONS;
 const KNOWLEDGE_POINTS = window.KNOWLEDGE_POINTS;
 const GROUP_ORDER = {
-  frontend:['语言基础','TypeScript','CSS 与布局','浏览器','网络与安全','React','Vue','Node.js','工程实践'],
-  java:['Java 基础','算法','JVM','并发','框架','数据库','缓存','消息队列','搜索','分布式与高并发','系统设计','工程实践']
+  frontend:['语言基础','TypeScript','CSS 与布局','浏览器','网络与安全','安全','React','Vue','Node.js','测试','工程实践'],
+  java:['Java 基础','算法','JVM','并发','数据库','缓存','框架','消息队列','搜索','系统设计','分布式与高并发','安全','测试','工程实践']
 };
+const PATH_LEAD = {
+  frontend:{
+    'CSS 与布局':['css-box-sizing'],
+    '浏览器':['dom-event-flow'],
+    '网络与安全':['http-methods','http-connection-reuse','http-range','http-compression','http-status-auth','fetch-credentials'],
+    '安全':['cookie-credential','csrf-boundary','xss','client-env-public'],
+    '测试':['frontend-testing','testing-library-role','playwright-user-journey'],
+    'Node.js':['node-emitter','node-unhandled-rejection','node-nexttick','node-stream','node-buffer']
+  },
+  java:{
+    '数据库':['mysql-null-comparison','sql-outer-join-where'],
+    '缓存':['redis-data-types'],
+    '安全':['spring-authn-authz','object-level-authz','password-adaptive-hash','runtime-config'],
+    '测试':['junit-instance-lifecycle','spring-test-slice','test-observable-result']
+  }
+};
+LESSONS.forEach((item,index)=>{item._seq=index;});
 LESSONS.sort((a,b)=>{
   if(a.track!==b.track)return a.track==='frontend'?-1:1;
-  return GROUP_ORDER[a.track].indexOf(a.group)-GROUP_ORDER[b.track].indexOf(b.group);
+  const groupDelta=GROUP_ORDER[a.track].indexOf(a.group)-GROUP_ORDER[b.track].indexOf(b.group);
+  if(groupDelta)return groupDelta;
+  const lead=PATH_LEAD[a.track]?.[a.group]||[];
+  const rank=(item)=>{const at=lead.indexOf(item.id);return at===-1?lead.length+item._seq:at;};
+  return rank(a)-rank(b);
 });
 const STORAGE_KEY = 'fullstack-learning-lab-v2';
 const REACT_BASE = 'https://xuyuanzhou.github.io/react-mastery-lab/#/learn?chapter=';
@@ -117,8 +138,13 @@ function renderHome() {
   const current=LESSONS.filter((item)=>item.track===state.track);
   const visible=current.filter((item)=>!state.group || item.group===state.group);
   const label=state.track==='frontend'?'前端工程':'Java 后端';
-  const introduction=state.track==='frontend'?'从 JavaScript、浏览器到 React 运行时，沿着因果关系理解机制。':'从 Java 语言、并发与 JVM，逐步走向数据库和系统设计。';
-  $('#mainPanel').innerHTML='<div class="page-kicker"><span class="eyebrow">COURSE / '+(state.track==='frontend'?'FRONTEND':'JAVA BACKEND')+'</span><span class="version-pill">公开原创课程</span></div><section class="hero"><div><span class="eyebrow">BUILD A DEEPER MODEL</span><h1>'+label+'，从原理走向实践</h1><p>'+introduction+'</p><div class="hero-actions"><button class="primary-button" id="startNext">继续学习 <span>→</span></button><button class="outline-button" id="openKnowledge">浏览知识库</button></div></div><div class="hero-art" aria-hidden="true"><span>01 / Understand</span><span>02 / Verify</span><span>03 / Apply</span><i></i></div></section><section class="metric-grid"><div class="metric"><small>学习章节</small><strong>'+current.length+'</strong><span>分层建立知识体系</span></div><div class="metric"><small>已掌握</small><strong>'+current.filter((item)=>state.done.includes(item.id)).length+'</strong><span>按自己的节奏推进</span></div><div class="metric"><small>待复习</small><strong>'+current.filter((item)=>state.review.includes(item.id)).length+'</strong><span>把疑问留给下一轮</span></div></section><div class="section-heading"><div><span class="eyebrow">CURRICULUM</span><h2>'+esc(state.group||'课程路线')+'</h2></div><span>'+visible.length+' 个知识单元</span></div><div class="lesson-list">'+visible.map((item)=>lessonButton(item,false)).join('')+'</div>';
+  const introduction=state.track==='frontend'?'语言、类型、页面、浏览器、网络，然后是安全、React、Vue、Node、测试，最后才是构建和上线。':'语言和运行时之后是数据、缓存、框架和消息，然后是系统设计、分布式、安全、测试，最后才是交付。';
+  const stages=groups().map((group,index)=>{
+    const count=current.filter((item)=>item.group===group).length;
+    return '<button type="button" class="path-stage'+(state.group===group?' selected':'')+'" data-group="'+esc(group)+'"><span>'+String(index+1).padStart(2,'0')+'</span>'+esc(group)+'<small>'+count+'</small></button>';
+  }).join('');
+  $('#mainPanel').innerHTML='<div class="page-kicker"><span class="eyebrow">COURSE / '+(state.track==='frontend'?'FRONTEND':'JAVA BACKEND')+'</span><span class="version-pill">公开原创课程</span></div><section class="hero"><div><span class="eyebrow">BUILD A DEEPER MODEL</span><h1>'+label+'，从原理走向实践</h1><p>'+introduction+'</p><div class="hero-actions"><button class="primary-button" id="startNext">继续学习 <span>→</span></button><button class="outline-button" id="openKnowledge">浏览知识库</button></div></div><div class="hero-art" aria-hidden="true"><span>01 / Understand</span><span>02 / Verify</span><span>03 / Apply</span><i></i></div></section><section class="metric-grid"><div class="metric"><small>学习章节</small><strong>'+current.length+'</strong><span>分层建立知识体系</span></div><div class="metric"><small>已掌握</small><strong>'+current.filter((item)=>state.done.includes(item.id)).length+'</strong><span>按自己的节奏推进</span></div><div class="metric"><small>待复习</small><strong>'+current.filter((item)=>state.review.includes(item.id)).length+'</strong><span>把疑问留给下一轮</span></div></section><div class="path-rail" aria-label="学习阶段">'+stages+'</div><div class="section-heading"><div><span class="eyebrow">CURRICULUM</span><h2>'+esc(state.group||'课程路线')+'</h2></div><span>'+visible.length+' 个知识单元</span></div><div class="lesson-list">'+visible.map((item)=>lessonButton(item,false)).join('')+'</div>';
+  $('#mainPanel').querySelectorAll('.path-stage').forEach((button)=>button.onclick=()=>{state.group=button.dataset.group;save();render();});
   $('#startNext').onclick=()=>openLesson(current.find((item)=>!state.done.includes(item.id))?.id||current[0].id);
   $('#openKnowledge').onclick=()=>route('library');
   $('#mainPanel').querySelectorAll('[data-lesson]').forEach((button)=>button.onclick=()=>openLesson(button.dataset.lesson));
@@ -178,7 +204,7 @@ async function renderLocal() {
   const serial=++renderSerial;
   $('#mainPanel').innerHTML='<div class="page-kicker"><span class="eyebrow">MY LOCAL LIBRARY</span><span class="version-pill">仅本机可见</span></div><h1>我的资料</h1><p class="page-intro">购买资料仅在本机打开，原文默认待核验；密码说明只在本机读取。每次批量处理最多 200 份资料。</p><p class="muted" id="localImportStatus">正在读取导入状态…</p><div class="search-row"><input id="localQuery" type="search" placeholder="搜索文件名或正文…" value="'+esc(state.localQuery||'')+'"><button id="searchLocal">文件名</button><button id="searchFull">搜索正文</button><button id="indexLocal">处理下一批</button></div><div id="localResults" class="loading">正在读取目录…</div>';
   api('/api/stats').then((data)=>{if(serial===renderSerial&&$('#localImportStatus'))$('#localImportStatus').textContent='已导入 '+data.imported+' / '+data.count+' 份；'+data.emptyText+' 份未识别出文字，可查看原图继续核验。';}).catch(()=>{});
-  const fileRow=(item,full)=>'<button class="file-row" data-file="'+esc(item.id)+'"><span class="file-format">'+esc(full?item.id.split('.').pop().toUpperCase():item.format)+'</span><span><strong>'+esc(item.title)+'</strong><small>'+esc(full?item.snippet:item.path)+'</small></span><span>→</span></button>';
+  const fileRow=(item,full)=>'<button class="file-row" data-file="'+esc(item.id)+'"><span class="file-format">'+esc(full?item.id.split('.').pop().toUpperCase():item.format)+'</span><span><strong>'+esc(item.title)+'</strong><small>'+esc(full?item.snippet:(item.subject?item.subject+' · ':'')+item.path)+'</small></span><span>→</span></button>';
   const wireFiles=()=>$('#localResults').querySelectorAll('[data-file]').forEach((button)=>button.onclick=()=>{state.opened=button.dataset.file;state.page=1;route('item');});
   const moreButton=(load)=>{const button=$('#loadMoreFiles');if(button)button.onclick=load;};
   $('#searchLocal').onclick=()=>{state.localQuery=$('#localQuery').value;save();renderLocal();};
@@ -200,12 +226,24 @@ async function renderLocal() {
   };
   $('#localQuery').onkeydown=(event)=>{if(event.key==='Enter') $('#searchLocal').click();};
   $('#indexLocal').onclick=async()=>{await api('/api/reindex',{method:'POST'});$('#indexLocal').textContent='正在处理本批…';};
+  const showTopics=async()=>{
+    try {
+      const data=await api('/api/subjects?category='+encodeURIComponent(state.track));
+      if(serial!==renderSerial)return;
+      $('#localResults').innerHTML='<p class="muted">按科目浏览 '+data.total+' 份本机资料。原件目录不变，这里只是阅读分类。</p><div class="subject-grid">'+data.subjects.map((item)=>'<button class="subject-card" data-topic="'+esc(item.subject)+'"><strong>'+esc(item.subject)+'</strong><span>'+item.count+' 份</span></button>').join('')+'</div>';
+      $('#localResults').querySelectorAll('[data-topic]').forEach((button)=>button.onclick=()=>{state.localTopic=button.dataset.topic;save();renderLocal();});
+    } catch(error){if(serial===renderSerial)$('#localResults').textContent=error.message;}
+  };
   let offset=0;
   const loadCatalog=async()=>{
     try {
-      const data=await api('/api/catalog?limit=100&offset='+offset+'&q='+encodeURIComponent(state.localQuery||'')+'&category='+encodeURIComponent(state.track));
+      const data=await api('/api/catalog?limit=100&offset='+offset+'&q='+encodeURIComponent(state.localQuery||'')+'&category='+encodeURIComponent(state.track)+'&topic='+encodeURIComponent(state.localTopic||''));
       if(serial!==renderSerial)return;
-      if(!offset)$('#localResults').innerHTML='<p class="muted">共 '+data.total+' 份本机资料，原件不会离开本机。</p><div id="localRows"></div>';
+      if(!offset){
+        const crumb=state.localTopic?'<div class="breadcrumb"><button id="backTopics">全部科目</button><span>/</span><span>'+esc(state.localTopic)+'</span></div>':'';
+        $('#localResults').innerHTML=crumb+'<p class="muted">'+esc(state.localTopic||'搜索结果')+' · '+data.total+' 份。原件不会离开本机。</p><div id="localRows"></div>';
+        if($('#backTopics'))$('#backTopics').onclick=()=>{state.localTopic='';save();renderLocal();};
+      }
       $('#localRows').insertAdjacentHTML('beforeend',data.items.map((item)=>fileRow(item,false)).join(''));
       offset+=data.items.length;
       $('#loadMoreFiles')?.remove();
@@ -213,7 +251,8 @@ async function renderLocal() {
       wireFiles();moreButton(loadCatalog);
     } catch(error){if(serial===renderSerial)$('#localResults').textContent=error.message;}
   };
-  await loadCatalog();
+  if(state.localQuery || state.localTopic) await loadCatalog();
+  else await showTopics();
 }
 async function renderItem() {
   if (!localLibrary || !state.opened) return route('library');
@@ -228,7 +267,8 @@ async function renderItem() {
     const imageUrl='/api/media?id='+encodeURIComponent(item.id)+'&page='+item.page;
     const viewer=visual?'<div class="view-tabs"><button id="visualTab" class="selected">原版页面 / 图片</button><button id="textTab">可复制文字</button></div><figure id="visualPanel" class="page-image"><img src="'+esc(imageUrl)+'" alt="'+esc(item.title)+' 第 '+item.page+' 页"><figcaption><span>本机即时呈现原始版面，保留 PDF 中的图表、图片和排版。</span><button id="zoomPage" type="button">1:1 放大查看</button></figcaption></figure>':'';
     const copyPanel='<section id="copyPanel" class="copy-panel"'+(visual?' hidden':'')+'><div class="copy-actions"><strong>可复制文字</strong>'+(visual?'<button id="ocrPage">识别页面图片中的文字</button>':'')+'<button id="copyText">复制本页文字</button>'+(item.hasFullText?'<button id="copyFullText">复制此文件全文</button>':'')+'</div><p class="muted">普通 PDF 优先显示原有文字层；图片文字由 OCR 识别，可能需要人工校对。</p><textarea id="documentText" rows="23" placeholder="这一页没有可提取文字，可以尝试 OCR 识别。">'+esc(item.text||item.candidateText||'')+'</textarea><p id="ocrStatus" class="muted">'+esc(item.ocrError||'')+'</p></section>';
-    $('#mainPanel').innerHTML='<div class="breadcrumb"><button id="backLocal">我的资料</button><span>/</span><span>'+esc(item.format)+'</span></div><div class="page-kicker"><span class="eyebrow">ORIGINAL MATERIAL / 待核验</span><span class="version-pill">第 '+item.page+' / '+item.pages+' 页</span></div><h1>'+esc(item.title)+'</h1><p class="muted">'+esc(item.path)+'</p><div class="warning">这是你本机题库的原文，可能过时或存在错误。请核对版本与官方依据。</div>'+(item.pages>1?'<div class="pagination"><button id="prevPage">← 上一页</button><input id="pageInput" type="number" min="1" max="'+item.pages+'" value="'+item.page+'"><button id="jumpPage">跳转</button><button id="nextPage">下一页 →</button></div>':'')+viewer+copyPanel+'<section class="audit-note"><h2>本页核验笔记</h2><textarea id="auditNote" rows="5" placeholder="记录具体说法、你的判断和依据链接。">'+esc(state.audit[key]?.note||'')+'</textarea><button id="saveAudit" class="primary-button">保存本页笔记</button></section>';
+    const sources=(item.websites||[]).length?'<p class="muted">来源网站：'+item.websites.map((site)=>'<a href="'+esc(site)+'" target="_blank" rel="noopener">'+esc(site)+'</a>').join(' · ')+'</p>':'';
+    $('#mainPanel').innerHTML='<div class="breadcrumb"><button id="backLocal">我的资料</button><span>/</span><span>'+esc(item.subject||item.format)+'</span></div><div class="page-kicker"><span class="eyebrow">ORIGINAL MATERIAL / 待核验</span><span class="version-pill">第 '+item.page+' / '+item.pages+' 页</span></div><h1>'+esc(item.title)+'</h1><p class="muted">'+esc(item.path)+'</p>'+sources+'<div class="warning">这是你本机题库的原文，可能过时或存在错误。请核对版本与官方依据。</div>'+(item.pages>1?'<div class="pagination"><button id="prevPage">← 上一页</button><input id="pageInput" type="number" min="1" max="'+item.pages+'" value="'+item.page+'"><button id="jumpPage">跳转</button><button id="nextPage">下一页 →</button></div>':'')+viewer+copyPanel+'<section class="audit-note"><h2>本页核验笔记</h2><textarea id="auditNote" rows="5" placeholder="记录具体说法、你的判断和依据链接。">'+esc(state.audit[key]?.note||'')+'</textarea><button id="saveAudit" class="primary-button">保存本页笔记</button></section>';
     $('#backLocal').onclick=()=>route('local');
     if(item.pages>1){
       $('#prevPage').disabled=item.page===1;$('#nextPage').disabled=item.page===item.pages;
@@ -266,7 +306,7 @@ $('#savedTab').onclick=()=>route('saved');
 $('#themeToggle').onclick=()=>{state.theme=state.theme==='dark'?'light':'dark';save();applyTheme();};
 $('#menuToggle').onclick=()=>$('#sidebar').classList.add('open');
 $('#closeMenu').onclick=()=>$('#sidebar').classList.remove('open');
-document.querySelectorAll('[data-track]').forEach((button)=>button.onclick=()=>{state.track=button.dataset.track;state.group=GROUP_ORDER[state.track][0];route('home');});
+document.querySelectorAll('[data-track]').forEach((button)=>button.onclick=()=>{state.track=button.dataset.track;state.group=GROUP_ORDER[state.track][0];state.localTopic='';route('home');});
 window.addEventListener('hashchange',fromHash);
 applyTheme();fromHash();
 if (location.hostname==='localhost' || location.hostname==='127.0.0.1') {

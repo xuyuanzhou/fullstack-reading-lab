@@ -2,7 +2,7 @@
 
 在线阅读：[全栈学习实验室](https://xuyuanzhou.github.io/fullstack-reading-lab/) · [GitHub 仓库](https://github.com/xuyuanzhou/fullstack-reading-lab)
 
-面向前端和 Java 开发者的公开学习网站。以本机题库的主题分布作为选题线索，重新编写中文解释、具体例子、主动回忆练习与参考答案；每节公开课附官方文档、标准或固定版本源码依据。当前有 **108 节原创课程、324 个具体知识点**（前端 47 课、Java 61 课），包含精简的分组课程目录、知识点搜索、学习进度、复习清单、笔记与知识核验。左侧目录只列课程，知识点在课程正文与知识库中查看。知识点数量只统计已核验发布的课程，不等于本机题库的全部内容已经整理完成。
+面向前端和 Java 开发者的公开学习网站。以本机题库的主题分布作为选题线索，重新编写中文解释、具体例子、主动回忆练习与参考答案；每节公开课附官方文档、标准或固定版本源码依据。当前有 **152 节原创课程、456 个具体知识点**（前端 67 课、Java 85 课），包含精简的分组课程目录、知识点搜索、学习进度、复习清单、笔记与知识核验。左侧目录只列课程，知识点在课程正文与知识库中查看。知识点数量只统计已核验发布的课程，不等于本机题库的全部内容已经整理完成。
 
 网站参考 [React Mastery Lab](https://xuyuanzhou.github.io/react-mastery-lab/) 的三栏学习工作台：左侧课程路径、中间连续阅读、右侧进度与最近访问。React 知识卡直接打开现有的 React Mastery Lab 对应章节，不另建一套 React 源码学习器。
 
@@ -36,6 +36,10 @@ node --check coverage-batch-03.js
 node --check coverage-batch-04.js
 node --check coverage-frontend-05.js
 node --check coverage-java-05.js
+node --check coverage-batch-06.js
+node --check coverage-path.js
+node --check coverage-path-02.js
+node --check coverage-path-03.js
 node verify_content.mjs
 python3 -m unittest discover -p tests.py
 python3 build_public.py
@@ -55,7 +59,7 @@ PDF 的“原版页面”按页渲染，原有图片、图表和版面布局保�
 
 超长思维导图若安装了 Pillow，OCR 会按原分辨率分块识别，避免单张大图超时；图片仍按原始文件显示。macOS 可用 `python3 -m pip install Pillow` 安装这一可选依赖。PDF 页面渲染不依赖 Pillow。
 
-本机索引、完整提取文本、压缩包展开文件和人工核验线索保存在被 Git 忽略的 `private-data/`。项目位于 `~/Desktop/个人/fullstack-reading-lab`，与原题库并列。原题库不移动、不改写。格式覆盖与公开范围见 [资料导入与公开范围](资料导入与公开范围.md)，分批推进情况见 [批次进度](批次进度.md)。
+本机索引、完整提取文本、压缩包展开文件和人工核验线索保存在被 Git 忽略的 `private-data/`。项目位于 `~/Desktop/个人/fullstack-reading-lab`，与原题库并列。原题库不移动、不改写。格式覆盖与公开范围见 [资料导入与公开范围](资料导入与公开范围.md)，分批推进情况见 [批次进度](批次进度.md)，全部条目的完成定义和状态见 [原件处理台账](原件处理台账.md)。
 
 要将自己的资料完整导入本机阅读器，依次运行：
 
@@ -73,7 +77,7 @@ python3 import_library.py --library /path/to/全栈面试题库 --batch-size 200
 
 ## 内容原则
 
-- 课程采用两阶段流水线：先按原件主题批量写出标为“待核验”的系统课程草稿，再集中核对并修订。草稿在 [待核验课程工作区](course-drafts/README.md)，不进入公开网站、知识点数量或学习进度；发布前须有来源、版本和实验记录。
+- 课程先提取并标记原件说法，再写“待核验”草稿，集中核对后才发布。当前暂停在提取标记，入口是 [核对交接](核对交接.md) 和 [核对队列](核对队列.md)。草稿在 [待核验课程工作区](course-drafts/README.md)，不进入公开网站、知识点数量或学习进度；发布前须有来源、版本和实验记录。
 - 课程文字、例子和练习独立编写；不会把购买资料的原文、图片、题目合集或密码重新发布。
 - 原题库中的说法默认待核验。公开知识卡优先引用官方文档、标准和固定版本源码；设计题标明没有唯一答案。
 - 审查结论按具体语句和版本记录。见 [知识准确性审查](知识准确性审查.md) 与 [选题和编辑记录](课程选题与编辑记录.md)；关键词扫描只提供复核线索，不能自动判定整份资料对错。
