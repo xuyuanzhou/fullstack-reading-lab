@@ -1,21 +1,20 @@
 #!/usr/bin/env python3
-"""Build only the reviewed, original static lessons for public hosting."""
+"""Build the public React site into web/dist (and mirror into ./dist for compatibility)."""
 from pathlib import Path
 import shutil
+import subprocess
 
 ROOT = Path(__file__).resolve().parent
-PUBLIC_FILES = ('index.html', 'styles.css', 'app.js', 'lessons.js', 'extra-lessons.js', 'distributed-lessons.js', 'knowledge-points.js', 'coverage-lessons.js', 'coverage-batch-03.js', 'coverage-batch-04.js', 'coverage-frontend-05.js', 'coverage-java-05.js', 'coverage-batch-06.js', 'coverage-path.js', 'coverage-path-02.js', 'coverage-path-03.js', 'coverage-path-04.js', 'coverage-path-05.js')
-PUBLIC_DIAGRAMS = ('cap-partition.svg', 'kafka-order.svg', 'bloom-filter.svg', 'seckill-flow.svg')
+WEB = ROOT / 'web'
 DIST = ROOT / 'dist'
+WEB_DIST = WEB / 'dist'
+NPM = shutil.which('npm')
+if not NPM:
+    raise SystemExit('npm is required to build the public React course')
 
+subprocess.check_call([NPM, 'run', 'build'], cwd=WEB)
 if DIST.exists():
     shutil.rmtree(DIST)
-DIST.mkdir()
-for name in PUBLIC_FILES:
-    shutil.copy2(ROOT / name, DIST / name)
-diagram_dir = DIST / 'diagrams'
-diagram_dir.mkdir()
-for name in PUBLIC_DIAGRAMS:
-    shutil.copy2(ROOT / 'diagrams' / name, diagram_dir / name)
-print('Public site:', DIST)
-print('Files:', ', '.join(PUBLIC_FILES), 'and', len(PUBLIC_DIAGRAMS), 'original diagrams')
+shutil.copytree(WEB_DIST, DIST)
+print('Public site:', WEB_DIST)
+print('Compatibility copy:', DIST)

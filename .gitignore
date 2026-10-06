@@ -1,5 +1,7 @@
 private-data/
 dist/
+web/dist/
+web/node_modules/
 __pycache__/
 *.pyc
 .DS_Store

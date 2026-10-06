@@ -206,10 +206,97 @@ def page_count(path):
         return pdf_access(path)[1]
     except Exception:return 1
 
+JAVA_SUBJECTS=(
+    ('MySQL',('mysql',)),
+    ('Redis',('redis','memcache')),
+    ('JVM',('jvm','垃圾回收')),
+    ('并发',('并发','多线程','juc')),
+    ('Spring Cloud',('springcloud','spring-cloud','微服务')),
+    ('Spring Boot',('springboot','spring-boot')),
+    ('Spring MVC',('springmvc','spring-mvc')),
+    ('MyBatis',('mybatis',)),
+    ('Spring',('spring',)),
+    ('消息队列',('kafka','rabbitmq','rabbit','activemq','消息队列','消息中间件')),
+    ('Dubbo',('dubbo',)),
+    ('ZooKeeper',('zookeeper',)),
+    ('Elasticsearch',('elasticsearch','elastic')),
+    ('MongoDB',('mongodb',)),
+    ('容器与部署',('docker','k8s','kubernetes','nginx','tomcat')),
+    ('网络',('netty','网络')),
+    ('算法',('算法','leetcode','数据结构')),
+    ('设计模式',('设计模式',)),
+    ('综合八股',('面试题集合','五百篇')),
+    ('集合',('集合',)),
+    ('Java 基础',('java基础',)),
+    ('操作系统',('linux','操作系统','git')),
+    ('Hive',('hive',)),
+    ('Spark',('spark','sparksql','sparkstreaming','sparkcore','sparkmllib')),
+    ('Flink',('flink',)),
+    ('Hadoop',('hadoop','hdfs','mapreduce')),
+    ('HBase',('hbase',)),
+    ('Flume',('flume',)),
+    ('Sqoop',('sqoop',)),
+    ('Storm',('storm',)),
+    ('Scala',('scala',)),
+    ('大数据',('大数据',)),
+    ('分布式',('分布式','高并发','乐观锁','悲观锁')),
+    ('源码',('源码解析','源码')),
+    ('计算机基础',('图解','计算机必备')),
+    ('正则',('正则',)),
+    ('性能',('性能优化','性能')),
+    ('面经',('面经','真题')),
+    ('数据库',('数据库',)),
+    ('J2EE',('j2ee',)),
+    ('反射',('反射',)),
+    ('场景题',('场景题',)),
+    ('HR',('hr',)),
+    ('综合八股',('八股文','面试指南','面试突击','面试宝典','面试题集合','五百篇')),
+)
+FRONTEND_SUBJECTS=(
+    ('Vue',('vue',)),
+    ('React',('react',)),
+    ('TypeScript',('typescript',)),
+    ('JavaScript',('javascript','js相关','/js','es6')),
+    ('CSS',('css',)),
+    ('HTML与浏览器',('html','浏览器','dom','bom')),
+    ('工程化',('webpack','vite','工程化','构建','npm')),
+    ('Node.js',('node','nodejs')),
+    ('网络',('http','网络','tcp')),
+    ('性能',('性能',)),
+    ('算法',('算法','leetcode','数据结构')),
+    ('小程序',('小程序',)),
+    ('计算机基础',('图解','计算机必备')),
+    ('Git',('git',)),
+    ('操作系统',('linux','操作系统')),
+    ('设计模式',('设计模式',)),
+    ('面经',('面经','真题')),
+    ('HR',('hr',)),
+    ('综合八股',('八股文','面试宝典','面试题整合')),
+)
+
+def library_track(rel):
+    s=str(rel).replace('\\','/').lower()
+    if s.startswith('java-') or '/java-' in s:return 'java'
+    if s.startswith('web前端-') or '/web前端-' in s:return 'frontend'
+    return 'common'
+
+def _subject_hit(text,key):
+    if any(ord(c)>127 for c in key):return key.lower() in text
+    # Allow Vue3 / CSS3 style suffixes, but do not treat "js" as part of "json".
+    return re.search(r'(^|[^a-z0-9])'+re.escape(key)+r'($|[^a-z])',text) is not None
+
+def subject(rel):
+    """Group a private-library path by topic. More specific topics win over 面经 and 八股文."""
+    text=str(rel).replace('\\','/').lower()
+    rules=JAVA_SUBJECTS if library_track(text)=='java' else FRONTEND_SUBJECTS
+    for name,keys in rules:
+        if any(_subject_hit(text,key) for key in keys):return name
+    return '其他'
+
 def category(rel):
-    s=str(rel)
-    if s.startswith('Java-'):return 'java'
-    if s.startswith('Web前端-'):return 'frontend'
+    s=str(rel).replace('\\','/')
+    if s.startswith('Java-') or '/Java-' in s:return 'java'
+    if s.startswith('Web前端-') or '/Web前端-' in s:return 'frontend'
     return 'common'
 
 def stage(rel):
@@ -224,9 +311,21 @@ def stage(rel):
     if second.startswith('5-'):return '进阶与源码'
     return '专题资料'
 
+def presentation(ident,path):
+    if str(ident).lower().endswith('.chm'):
+        return pathlib.PurePosixPath(str(ident)).stem,'CHM'
+    return path.stem,path.suffix.lower()[1:].upper()
+
 def source_url(rel):
     # Links point only to lessons and locally rendered items, never a raw file endpoint.
     return str(rel).replace('\\','/')
+
+def websites_for(ident):
+    con=connect()
+    try:rows=con.execute('SELECT website FROM source_urls WHERE id=? ORDER BY website',(ident,)).fetchall()
+    except sqlite3.OperationalError:rows=[]
+    finally:con.close()
+    return [row[0] for row in rows]
 
 class Library:
     def __init__(self,root):
@@ -254,21 +353,48 @@ class Library:
                 try:path.relative_to((PROFILE/folder).resolve())
                 except ValueError:continue
                 if path.is_file() and path.suffix.lower() in SUPPORTED:self.files[ident]=path
-    def list(self,kind='',query='',limit=120,offset=0):
+        manifest=PROFILE/'chm-manifest.json'
+        if manifest.exists():
+            catalog=json.loads(manifest.read_text(encoding='utf-8'))
+            if catalog.get('source_root')==str(self.root):
+                for item in catalog.get('files') or []:
+                    if not isinstance(item,dict) or item.get('status')!='ok' or not item.get('path') or not item.get('text'):continue
+                    path=(PROFILE/item['text']).resolve()
+                    try:path.relative_to((PROFILE/'chm-extracted').resolve())
+                    except ValueError:continue
+                    if path.is_file():self.files[item['path']]=path
+    def label(self,ident,path):
+        if '!/' in ident:return pathlib.PurePosixPath(ident.replace('\\','/'))
+        try:return path.relative_to(self.root)
+        except ValueError:return pathlib.PurePosixPath(ident)
+    def list(self,kind='',query='',limit=120,offset=0,topic=''):
         items=[];q=query.casefold().strip()
         for ident,path in self.files.items():
-            rel=path.relative_to(self.root) if '!/' not in ident else pathlib.Path(ident.split('!/',1)[0])
+            rel=self.label(ident,path)
             if kind and category(rel)!=kind:continue
+            topic_name=subject(rel)
+            if topic and topic_name!=topic:continue
             if q and q not in ident.casefold():continue
-            items.append({'id':ident,'title':path.stem,'category':category(rel),'stage':stage(rel),'format':path.suffix.lower()[1:].upper(),'path':ident,'size':path.stat().st_size})
-        items.sort(key=lambda x:(x['category'],x['stage'],x['title'].casefold()))
+            title,fmt=presentation(ident,path)
+            items.append({'id':ident,'title':title,'category':category(rel),'stage':stage(rel),'subject':topic_name,'format':fmt,'path':ident,'size':path.stat().st_size})
+        items.sort(key=lambda x:(x['category'],x['subject'],x['title'].casefold()))
         return {'total':len(items),'items':items[offset:offset+limit]}
+    def subjects(self,kind=''):
+        counts={}
+        for ident,path in self.files.items():
+            rel=self.label(ident,path)
+            if kind and category(rel)!=kind:continue
+            name=subject(rel)
+            counts[name]=counts.get(name,0)+1
+        rows=[{'subject':name,'count':count} for name,count in counts.items()]
+        rows.sort(key=lambda row:(-row['count'],row['subject']))
+        return {'total':sum(counts.values()),'subjects':rows}
     def resolve(self,ident):
         p=self.files.get(ident)
         if p is None:raise FileNotFoundError('未找到资料')
         # Reject symlinks pointing out of the configured library.
         location=p.resolve()
-        allowed=[self.root,(PROFILE/'archive-extracted').resolve(),(PROFILE/'embedded-extracted').resolve()]
+        allowed=[self.root,(PROFILE/'archive-extracted').resolve(),(PROFILE/'embedded-extracted').resolve(),(PROFILE/'chm-extracted').resolve()]
         if not any(location==base or base in location.parents for base in allowed):raise PermissionError('资料位于题库之外')
         return p
 
@@ -294,7 +420,7 @@ def index_one(con,ident,path):
             status='前80页' if total_pages>80 else '全文'
         else:body=extract(path)[:400000];status='全文' if len(body)<400000 else '前40万字符'
         con.execute('DELETE FROM docs WHERE id=?',(ident,))
-        con.execute('INSERT INTO docs(id,title,body) VALUES(?,?,?)',(ident,path.stem,body))
+        con.execute('INSERT INTO docs(id,title,body) VALUES(?,?,?)',(ident,presentation(ident,path)[0],body))
     except Exception as e:
         status='无法索引：'+str(e)[:100]
     con.execute('INSERT OR REPLACE INTO indexed VALUES(?,?,?,?)',(ident,stat.st_mtime,stat.st_size,status))
@@ -331,6 +457,35 @@ class Handler(BaseHTTPRequestHandler):
         payload=json.dumps(data,ensure_ascii=False).encode()
         self.send_response(status);self.send_header('Content-Type','application/json; charset=utf-8');self.send_header('Content-Length',str(len(payload)));self.send_header('Cache-Control','no-store');self.send_header('X-Content-Type-Options','nosniff');self.end_headers();self.wfile.write(payload)
     def error(self,error,status=400):self.send_json({'error':str(error)},status)
+    def serve_web(self,path):
+        """Serve the React build from web/dist; fall back to legacy root assets."""
+        web_root=(HERE/'web'/'dist').resolve()
+        name='index.html' if path in {'/','/index.html'} else path.lstrip('/')
+        candidates=[]
+        if web_root.is_dir():
+            candidates.append((web_root/name).resolve())
+            if not name.endswith(('.js','.css','.svg','.png','.jpg','.jpeg','.webp','.ico','.map','.woff','.woff2','.ttf')):
+                candidates.append((web_root/'index.html').resolve())
+        candidates.append((HERE/name).resolve())
+        for target in candidates:
+            try:
+                if web_root.is_dir() and str(target).startswith(str(web_root)):
+                    allowed=True
+                else:
+                    target.relative_to(HERE.resolve());allowed=True
+            except ValueError:
+                allowed=False
+            if not allowed or not target.is_file():
+                continue
+            data=target.read_bytes()
+            mime=mimetypes.guess_type(target.name)[0] or 'application/octet-stream'
+            if target.suffix=='.js':mime='text/javascript'
+            if target.suffix=='.css':mime='text/css'
+            if target.suffix=='.svg':mime='image/svg+xml'
+            if target.suffix in {'.html','.js','.css','.svg','.json'}:mime=mime+'; charset=utf-8'
+            self.send_response(200);self.send_header('Content-Type',mime);self.send_header('Content-Length',str(len(data)));self.send_header('Cache-Control','no-cache');self.send_header('X-Content-Type-Options','nosniff');self.end_headers();self.wfile.write(data)
+            return True
+        return False
     def do_GET(self):
         if not self.local_request():return self.error('仅允许本机访问',403)
         url=urllib.parse.urlsplit(self.path);args=urllib.parse.parse_qs(url.query)
@@ -358,7 +513,8 @@ class Handler(BaseHTTPRequestHandler):
                 try:path.relative_to(PROFILE.resolve())
                 except ValueError:raise PermissionError('全文路径不在本机资料区')
                 return self.send_json({'text':path.read_text(encoding='utf-8')})
-            if url.path=='/api/catalog':return self.send_json(LIB.list(get('category'),get('q'),min(200,max(1,int(get('limit','80')))),max(0,int(get('offset','0')))))
+            if url.path=='/api/subjects':return self.send_json(LIB.subjects(get('category')))
+            if url.path=='/api/catalog':return self.send_json(LIB.list(get('category'),get('q'),min(200,max(1,int(get('limit','80')))),max(0,int(get('offset','0'))),get('topic')))
             if url.path=='/api/item':
                 ident=get('id');p=LIB.resolve(ident);n=max(1,min(page_count(p),int(get('page','1'))))
                 candidate=''
@@ -386,7 +542,8 @@ class Handler(BaseHTTPRequestHandler):
                 try:has_full=bool(con.execute('SELECT 1 FROM imports WHERE id=? AND status=? AND chars>0',(ident,'ok')).fetchone())
                 except sqlite3.OperationalError:has_full=False
                 finally:con.close()
-                return self.send_json({'id':ident,'title':p.stem,'text':safe_text(text),'candidateText':safe_text(candidate),'page':n,'pages':page_count(p),'format':p.suffix.lower()[1:].upper(),'path':ident,'empty':not bool(text.strip()),'ocrError':ocr_error,'hasFullText':has_full})
+                title,fmt=presentation(ident,p)
+                return self.send_json({'id':ident,'title':title,'text':safe_text(text),'candidateText':safe_text(candidate),'page':n,'pages':page_count(p),'format':fmt,'path':ident,'subject':subject(ident),'empty':not bool(text.strip()),'ocrError':ocr_error,'hasFullText':has_full,'websites':websites_for(ident)})
             if url.path=='/api/stats':
                 progress=PROFILE/'import-progress.json'
                 con=connect()
@@ -408,10 +565,8 @@ class Handler(BaseHTTPRequestHandler):
                 limit=min(100,max(1,int(get('limit','80'))));offset=max(0,int(get('offset','0')))
                 rows=con.execute('SELECT id,title,substr(body,max(1,instr(lower(body),lower(?))-60),140) FROM docs WHERE (title LIKE ? ESCAPE "\\" OR body LIKE ? ESCAPE "\\") AND (?=? OR id LIKE ?) LIMIT ? OFFSET ?',(q,needle,needle,category_filter,'',('Java-%' if category_filter=='java' else 'Web前端-%' if category_filter=='frontend' else '%'),limit+1,offset)).fetchall();con.close()
                 return self.send_json({'items':[{'id':a,'title':b,'snippet':c} for a,b,c in rows[:limit]],'hasMore':len(rows)>limit})
-            if url.path in {'/','/index.html','/app.js','/styles.css','/lessons.js','/extra-lessons.js','/distributed-lessons.js','/knowledge-points.js','/coverage-lessons.js','/coverage-batch-03.js','/coverage-batch-04.js','/coverage-frontend-05.js','/coverage-java-05.js'} or url.path in {'/diagrams/cap-partition.svg','/diagrams/kafka-order.svg','/diagrams/bloom-filter.svg','/diagrams/seckill-flow.svg'}:
-                name='index.html' if url.path=='/' else url.path[1:]
-                p=HERE/name;data=p.read_bytes();mime='text/html' if name.endswith('.html') else 'text/javascript' if name.endswith('.js') else 'image/svg+xml' if name.endswith('.svg') else 'text/css'
-                self.send_response(200);self.send_header('Content-Type',mime+'; charset=utf-8');self.send_header('Content-Length',str(len(data)));self.send_header('X-Content-Type-Options','nosniff');self.end_headers();self.wfile.write(data);return
+            if self.serve_web(url.path):
+                return
             self.error('路径不存在',404)
         except FileNotFoundError as e:self.error(e,404)
         except Exception as e:self.error(e,400)
@@ -424,7 +579,7 @@ class Handler(BaseHTTPRequestHandler):
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description='在浏览器中阅读自己的全栈题库')
-    parser.add_argument('--library',default=str(HERE.parent/'全栈面试题库'))
+    parser.add_argument('--library',default=str(HERE.parent/'全栈面试'/'全栈面试题库'))
     parser.add_argument('--port',type=int,default=4180)
     parser.add_argument('--no-browser',action='store_true')
     opts=parser.parse_args();LIB=Library(pathlib.Path(opts.library))

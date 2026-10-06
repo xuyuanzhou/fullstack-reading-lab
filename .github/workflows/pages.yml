@@ -21,34 +21,25 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Check original lessons and code
+      - name: Export curriculum and build React app
+        working-directory: web
         run: |
-          node --check app.js
-          node --check lessons.js
-          node --check extra-lessons.js
-          node --check distributed-lessons.js
-          node --check knowledge-points.js
-          node --check coverage-lessons.js
-          node --check coverage-batch-03.js
-          node --check coverage-batch-04.js
-          node --check coverage-frontend-05.js
-          node --check coverage-java-05.js
-          node --check coverage-batch-06.js
-          node --check coverage-path.js
-          node --check coverage-path-02.js
-          node --check coverage-path-03.js
-          node --check coverage-path-04.js
-          node --check coverage-path-05.js
+          npm ci
+          npm run build
+      - name: Verify legacy curriculum scripts still load
+        run: |
+          node scripts/export-curriculum.mjs
           node verify_content.mjs
-          python -m unittest discover -p tests.py
-      - name: Build allowlisted public assets
-        run: python build_public.py
+      - name: Run local-reader unit tests
+        run: python -m unittest discover -p tests.py
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:
-          path: dist
+          path: web/dist
       - id: deployment
         uses: actions/deploy-pages@v4

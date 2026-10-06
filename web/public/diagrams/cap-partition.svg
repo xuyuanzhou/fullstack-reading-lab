@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 310" role="img" aria-labelledby="title desc">
+ <title id="title">网络分区下的请求选择</title><desc id="desc">两个数据节点失联，写入时需决定拒绝一侧写入或接受暂时分歧并规划合并。</desc>
+ <rect width="900" height="310" rx="18" fill="#f1f5f9"/><text x="40" y="48" font-family="sans-serif" font-size="21" font-weight="700" fill="#102a43">网络分区发生时，写入如何处理？</text>
+ <rect x="54" y="92" width="244" height="116" rx="14" fill="#ffffff" stroke="#94a3b8"/><text x="82" y="137" font-family="sans-serif" font-size="18" fill="#0f172a">节点 A</text><text x="82" y="171" font-family="sans-serif" font-size="15" fill="#475569">收到写入 X</text>
+ <rect x="602" y="92" width="244" height="116" rx="14" fill="#ffffff" stroke="#94a3b8"/><text x="630" y="137" font-family="sans-serif" font-size="18" fill="#0f172a">节点 B</text><text x="630" y="171" font-family="sans-serif" font-size="15" fill="#475569">无法确认 X</text>
+ <path d="M300 150 H400 M500 150 H600" stroke="#e26d5a" stroke-width="4" stroke-dasharray="9 8"/><path d="M428 122 L472 178 M472 122 L428 178" stroke="#e26d5a" stroke-width="5"/><text x="388" y="99" font-family="sans-serif" font-size="14" fill="#b45346">消息中断</text>
+ <rect x="62" y="237" width="369" height="47" rx="9" fill="#e0e7ff"/><text x="80" y="267" font-family="sans-serif" font-size="14" fill="#26368a">拒绝 / 等待：保护单一最新视图</text>
+ <rect x="469" y="237" width="369" height="47" rx="9" fill="#dcfce7"/><text x="487" y="267" font-family="sans-serif" font-size="14" fill="#17633b">接受：定义分歧与恢复后的合并</text>
+</svg>
