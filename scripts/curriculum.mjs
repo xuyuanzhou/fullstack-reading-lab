@@ -79,6 +79,7 @@ export const publishedSources = [
   'coverage-java-45.js',
   'coverage-java-46.js',
   'coverage-java-47.js',
+  'coverage-java-48.js',
   'coverage-path.js',
   'coverage-path-02.js',
   'coverage-path-03.js',
@@ -347,7 +348,8 @@ export const OUTLINE = {
       { title: '领域', ids: ['ddd-same-word-two-contexts', 'ddd-aggregate-transaction-boundary', 'ddd-entity-or-value', 'ddd-repository-one-entry'] },
     ],
     '分布式与高并发': [
-      { title: '一致性怎么选', ids: ['distributed-cap', 'distributed-xa', 'distributed-outbox', 'distributed-lock', 'zk-linearizable-not-realtime', 'redis-lock-setnx-expire-race'] },
+      { title: '一致性怎么选', ids: ['distributed-cap', 'distributed-consistency-three-words', 'distributed-xa', 'distributed-outbox', 'distributed-lock', 'zk-linearizable-not-realtime', 'redis-lock-setnx-expire-race'] },
+      { title: '跨服务怎么提交', ids: ['distributed-one-db-first', 'distributed-tx-not-cover-rpc', 'distributed-xid-must-travel', 'distributed-at-sees-before-global', 'distributed-saga-is-new-action', 'distributed-saga-who-drives', 'distributed-idempotent-key', 'distributed-read-your-writes', 'distributed-reconcile-last'] },
       { title: '流量与读路径', ids: ['distributed-token-bucket', 'distributed-seckill', 'distributed-consistent-hash', 'distributed-bloom', 'distributed-cache', 'distributed-kafka-order'] },
       { title: '时间与隔离', ids: ['distributed-clock-skew', 'distributed-unique-id', 'distributed-bulkhead', 'mysql-uuid-not-clustered-pk'] },
     ],

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-labelledby="title desc">
+  <title id="title">写成功不等于立刻读到</title>
+  <desc id="desc">下单返回成功后，详情可能还打到旧副本或未追平的投影。</desc>
+  <defs>
+    <filter id="soft" x="-6%" y="-8%" width="112%" height="124%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1.4" flood-color="#28302a" flood-opacity="0.07"/>
+    </filter>
+  </defs>
+  <rect width="960" height="400" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="28" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">读</text>
+  <text x="32" y="56" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">写成功不等于立刻读到</text>
+  <rect x="32" y="88" width="430" height="188" rx="14" fill="#e6efe9" stroke="#3f6a58" filter="url(#soft)"/><text x="48" y="124" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2d4f41" text-anchor="start">写</text><text x="48" y="168" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="400" fill="#2e3330" text-anchor="start">订单库已提交</text><text x="48" y="194" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="400" fill="#2e3330" text-anchor="start">接口返回成功</text><text x="48" y="220" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="400" fill="#2e3330" text-anchor="start">消息可能还在路上</text><rect x="498" y="88" width="430" height="188" rx="14" fill="#f6ecea" stroke="#a05048" filter="url(#soft)"/><text x="514" y="124" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#6e3530" text-anchor="start">立刻刷新</text><text x="514" y="168" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="400" fill="#2e3330" text-anchor="start">读到从库旧值</text><text x="514" y="194" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="400" fill="#2e3330" text-anchor="start">或列表投影未更新</text><text x="514" y="220" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="400" fill="#2e3330" text-anchor="start">用户以为没下成</text><rect x="32" y="300" width="896" height="44" rx="12" fill="#e6efe9"/><text x="48" y="328" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="600" fill="#2d4f41" text-anchor="start">用户立刻要看见的那次读，应对着刚写入的那一份，或明确等待投影。</text>
+</svg>

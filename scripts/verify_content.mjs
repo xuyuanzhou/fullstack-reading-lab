@@ -69,6 +69,7 @@ assert.equal(publishedSources.includes('coverage-java-44.js'), true);
 assert.equal(publishedSources.includes('coverage-java-45.js'), true);
 assert.equal(publishedSources.includes('coverage-java-46.js'), true);
 assert.equal(publishedSources.includes('coverage-java-47.js'), true);
+assert.equal(publishedSources.includes('coverage-java-48.js'), true);
 assert.equal(publishedSources.includes('coverage-path-07.js'), true);
 assert.equal(publishedSources.includes('coverage-path-08.js'), true);
 assert.equal(publishedSources.includes('coverage-path-09.js'), true);
@@ -88,4 +89,18 @@ vm.runInContext(fs.readFileSync(new URL('../legacy/publication-order.js', import
 assert.equal(JSON.stringify(orderContext.window.GROUP_ORDER), JSON.stringify(curriculum.groupOrder));
 assert.equal(JSON.stringify(orderContext.window.PATH_LEAD), JSON.stringify(curriculum.pathLead));
 const lessons = curriculum.lessons;
-console.log(`${lessons.length} lessons / ${lessons.reduce((n,x) => n+x.points.length,0)} knowledge points; export matches the publication manifest.`);
+const frontendCount = lessons.filter((lesson) => lesson.track === 'frontend').length;
+const javaCount = lessons.filter((lesson) => lesson.track === 'java').length;
+const pointCount = lessons.reduce((n, x) => n + x.points.length, 0);
+const readme = fs.readFileSync(new URL('../README.md', import.meta.url), 'utf8');
+assert.equal(
+  readme.includes(`${lessons.length} 节原创课程、${pointCount} 个具体知识点`),
+  true,
+  'README public counts must match the exported curriculum',
+);
+assert.equal(
+  readme.includes(`前端 ${frontendCount} 课、Java ${javaCount} 课`),
+  true,
+  'README track counts must match the exported curriculum',
+);
+console.log(`${lessons.length} lessons / ${pointCount} knowledge points; export matches the publication manifest.`);

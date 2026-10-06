@@ -75,6 +75,24 @@ export const AUDIT_CASES = [
     right: '绘制相对时序受触发路径影响，不能用绝对措辞描述所有情况。',
     href: 'https://react.dev/reference/react/useEffect',
   },
+  {
+    title: '方法区不是永久代',
+    wrong: '“方法区就是永久代，类元数据占 PermGen”',
+    right: 'HotSpot 在 JDK 8 去掉永久代。类元数据在 Metaspace，由本地内存管理，不是堆里的 PermGen。',
+    href: 'https://docs.oracle.com/javase/specs/jvms/se25/html/jvms-2.html#jvms-2.5.4',
+  },
+  {
+    title: 'Query Cache 不是现行调优项',
+    wrong: '“把 query_cache_size 当作 MySQL 8 的常规调优”',
+    right: 'Query Cache 已在 MySQL 8.0 移除。现行版本没有这些参数，不能再当默认建议。',
+    href: 'https://dev.mysql.com/doc/refman/8.4/en/query-cache.html',
+  },
+  {
+    title: 'Ingress 对象自己不开外网',
+    wrong: '“apply 一份 Ingress，主机名就会通”',
+    right: 'Ingress 只声明 HTTP 规则。必须有 Ingress 控制器执行规则；没有控制器时对象在，地址仍空。',
+    href: 'https://kubernetes.io/docs/concepts/services-networking/ingress/',
+  },
 ] as const
 
 export function reactUrl(topic: string) {

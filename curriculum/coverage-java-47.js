@@ -26,10 +26,10 @@ const COVERAGE_JAVA_47 = [
     why:'部署和测试写成两个并列 job，测试红了部署仍往生产推。加上 needs 却用 always() 包住部署时，失败也会继续发。',
     example:'jobs 里 test 没有 needs。deploy 写 `needs: test`。test 失败时 deploy 被跳过。若 deploy 再写 `if: ${{ always() }}` 且 needs 仍指向 test，test 失败后 deploy 仍会跑。',
     task:'写 test 和 deploy 两个 job。先让 test 失败，看 deploy 是否跳过。再给 deploy 加上 always()，确认它会在失败之后仍启动。',
-    answer:'deploy 写 needs: test 且没有 always() 时，test 失败则 deploy 跳过。并列、没有 needs 时两个一起跑。always() 会在依赖失败后仍启动，不能当默认的发布条件。',
+    answer:'deploy 写 needs: test 且没有 always() / failure() 一类条件时，test 失败则 deploy 跳过。并列、没有 needs 时两个一起跑。always() 会在依赖失败后仍启动，不能当默认的发布条件。',
     keywords:'GitHub Actions needs job always',
     diagram:'diagrams/gha-job-needs.svg',
-    points:['needs 指定必须先成功的 job','被需要的 job 失败时，依赖方默认跳过','always() 才会在失败后仍继续'],
+    points:['needs 指定必须先成功的 job','被需要的 job 失败时，依赖方默认跳过','always() 或 failure() 才会在失败后仍继续'],
     deep:[
       {title:'跳过会顺着链条走',body:'一串互相 needs 的 job，从失败那一环往后都会跳过。只想通知、不发布时，把通知 job 写成 always()，发布 job 不要套 always()。'},
       {title:'怎样自己验证',body:'test 里用 exit 1。deploy 只写 needs: test，运行记录里 deploy 应为 skipped。加上 if: always() 后再跑，deploy 应变为 queued 或 in progress。'}

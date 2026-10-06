@@ -11,7 +11,7 @@ import {
 import { Alert, Badge, Button, Drawer, Layout, Menu, Typography, theme } from 'antd'
 import { Suspense, useEffect, useMemo, useState } from 'react'
 import { Link, matchPath, Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { AI_SECTIONS, aiNote, notesInSection } from '@/data/aiCatalog'
+import { AI_NOTES, AI_SECTIONS, aiNote, notesInSection } from '@/data/aiCatalog'
 import { findLesson, lessonsFor, lessonsInGroup, outlineFor } from '@/data/curriculum'
 import { TRACK_LABEL } from '@/data/meta'
 import { courseGroups, groupLabel, groupPath, isTrack, lessonPath, resumePath } from '@/data/routes'
@@ -354,7 +354,7 @@ export function AppLayout() {
 
           <div className="header-tools">
             <span className="header-count">
-              {doneCount}/{trackLessons.length}
+              {onAi ? `${AI_NOTES.length} 篇` : `${doneCount}/${trackLessons.length}`}
             </span>
             <Button
               type="text"

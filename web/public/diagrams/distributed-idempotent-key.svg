@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-labelledby="title desc">
+  <title id="title">同一业务键只留下一次副作用</title>
+  <desc id="desc">重试、补偿、重复投递都会再来。没有键就会扣两次。</desc>
+  <defs>
+    <filter id="soft" x="-6%" y="-8%" width="112%" height="124%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1.4" flood-color="#28302a" flood-opacity="0.07"/>
+    </filter>
+  </defs>
+  <rect width="960" height="400" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="28" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">键</text>
+  <text x="32" y="56" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">同一业务键只留下一次副作用</text>
+  <rect x="32" y="88" width="896" height="72" rx="14" fill="#eef0ec" stroke="#d9ddd8" filter="url(#soft)"/><text x="480" y="132" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2e3330" text-anchor="middle">下单号 1001 的扣减，第一次影响行数 1，第二次 0</text><rect x="32" y="184" width="430" height="100" rx="14" fill="#e6efe9" stroke="#3f6a58" filter="url(#soft)"/><text x="48" y="224" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2d4f41" text-anchor="start">唯一约束或状态机</text><text x="48" y="256" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="15" font-weight="400" fill="#5e6661" text-anchor="start">和这次写入在同一个提交里</text><rect x="498" y="184" width="430" height="100" rx="14" fill="#f6ecea" stroke="#a05048" filter="url(#soft)"/><text x="514" y="224" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#6e3530" text-anchor="start">先改库存再记去重</text><text x="514" y="256" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="15" font-weight="400" fill="#5e6661" text-anchor="start">中间崩溃会做成两次或零次</text><rect x="32" y="312" width="896" height="44" rx="12" fill="#e6efe9"/><text x="48" y="340" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="600" fill="#2d4f41" text-anchor="start">端到端恰好一次不存在。至少一次加上同一键，结果才仍是一次。</text>
+</svg>

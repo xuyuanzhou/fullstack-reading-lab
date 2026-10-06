@@ -63,7 +63,7 @@ export function AiLabPage() {
       <p className="hero-lead">
         {tool === 'prompt'
           ? '这里不调用模型。它检查任务、材料、格式，以及材料里没有答案时的出口。缺的字段可以一键补上，措辞仍由你改。'
-          : '这里不连接模型。循环按你声明的工具顺序演示确认和停止。导出的 runAgent 把「下一步叫哪个工具」交给你自己的模型。'}
+          : '这里不连接模型。左侧「走一步」按声明顺序演示确认和停止，每个工具一次。导出的 runAgent 才把下一步交给模型，同一工具可以再用。'}
       </p>
       <div className="lab-switch">
         <Link to="/ai/lab/prompt" aria-current={tool === 'prompt' ? 'page' : undefined}>优化提示词</Link>
@@ -256,6 +256,9 @@ function AgentBench({
           rows={2}
           onChange={(value) => onChange({ stateFields: value.split(/[,，]/).map((item) => item.trim()) })}
         />
+        <p className="lab-note">
+          导出时会按这些名字初始化状态。execute 返回的对象只用这些键，不会用工具名当字段。
+        </p>
         <p className="lab-kicker">工具</p>
         <div className="lab-tools">
           {draft.tools.map((tool) => (
@@ -302,7 +305,7 @@ function AgentBench({
         </div>
       </div>
       <aside className="lab-side">
-        <h2 className="page-title">循环</h2>
+        <h2 className="page-title">循环（按声明顺序走一遍）</h2>
         <div className="lab-actions">
           <Button type={waiting ? 'default' : 'primary'} onClick={() => onLoop('step')} disabled={loop.done || waiting}>走一步</Button>
           <Button type={waiting ? 'primary' : 'default'} onClick={() => onLoop('allow')} disabled={!waiting}>允许</Button>
@@ -323,6 +326,7 @@ function AgentBench({
           ))}
         </ol>
         <h2 className="page-title">可复制的规格</h2>
+        <p className="lab-note">接模型时用这份。propose 可再次挑选已经用过的工具；失败次数按工具名累计。</p>
         <pre className="lab-code">{spec}</pre>
         <CopyButton text={spec} />
       </aside>

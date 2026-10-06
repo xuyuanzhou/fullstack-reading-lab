@@ -170,25 +170,29 @@ export function exportAgent(draft: AgentDraft) {
     state: draft.stateFields.map((field) => field.trim()).filter(Boolean),
     tools,
   }
-  return `// propose 由你的模型实现，只返回下一步要调用的工具名，或 { name: 'stop' }。
-// execute 才真正调用工具。抛错会计入失败次数。
+  return `// 练习台左侧的「走一步」只按声明顺序演示确认和停止，每个工具走一次。
+// 这份 runAgent 才是可接模型的循环：propose 决定下一步，同一工具可以再用。
+// propose 只返回 { name: 工具名 }，或 { name: 'stop' }。
+// execute(tool, proposal, state) 返回要写入声明字段的对象，例如 { 材料: '...' }。未知键丢掉。
 // confirm 在改、执行、联网之前由人决定。返回 false 就停，不执行。
 export const agent = ${JSON.stringify(spec, null, 2)}
 
 export async function runAgent(propose, execute, confirm) {
-  const state = {}
+  const state = Object.fromEntries(agent.state.map((field) => [field, null]))
   const failures = {}
-  const used = new Set()
   for (let step = 0; step < agent.maxSteps; step += 1) {
     const proposal = await propose({ instruction: agent.instruction, state, tools: agent.tools.map((item) => item.name) })
     if (!proposal || proposal.name === 'stop') return { stop: '模型选择停止', state }
     const tool = agent.tools.find((item) => item.name === proposal.name)
     if (!tool) return { stop: '未知工具', state }
-    if (used.has(tool.name)) return { stop: '这个工具已经用过', state }
     if (tool.needsConfirm && !(await confirm(tool))) return { stop: '人拒绝了这一步', state }
     try {
-      state[tool.name] = await execute(tool, proposal)
-      used.add(tool.name)
+      const patch = await execute(tool, proposal, state)
+      if (patch && typeof patch === 'object' && !Array.isArray(patch)) {
+        for (const field of agent.state) {
+          if (Object.prototype.hasOwnProperty.call(patch, field)) state[field] = patch[field]
+        }
+      }
     } catch {
       const count = (failures[tool.name] || 0) + 1
       failures[tool.name] = count

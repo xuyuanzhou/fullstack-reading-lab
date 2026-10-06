@@ -17,6 +17,11 @@ test('prompt review rejects pretending the prompt can open a desktop', () => {
   assert.equal(checks.find((item) => item.id === 'tool').ok, false)
 })
 
+test('prompt review does not treat 根据常识 as a missing-document task', () => {
+  const checks = reviewPrompt({ ...SAMPLE_PROMPT, task: '根据常识写一首诗', materials: '' })
+  assert.equal(checks.find((item) => item.id === 'materials').ok, true)
+})
+
 test('agent loop runs a read tool and waits before a write', () => {
   const read = advance(SAMPLE_AGENT, initialLoop(), 'step')
   assert.match(read.log.at(-1).text, /直接执行/)
@@ -57,4 +62,13 @@ test('exported agent spec forces confirmation for writes and carries the instruc
   assert.match(spec, /"instruction": "只根据材料回答。"/)
   assert.match(spec, /runAgent/)
   assert.match(spec, /人拒绝了这一步/)
+})
+
+test('exported runAgent initializes declared fields and allows the same tool twice', () => {
+  const spec = exportAgent(SAMPLE_AGENT)
+  assert.match(spec, /Object.fromEntries\(agent.state.map/)
+  assert.match(spec, /execute\(tool, proposal, state\)/)
+  assert.equal(spec.includes('这个工具已经用过'), false)
+  assert.match(spec, /hasOwnProperty.call\(patch, field\)/)
+  assert.match(spec, /"材料"/)
 })

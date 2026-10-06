@@ -45,7 +45,7 @@ export function assemblePrompt(draft: PromptDraft) {
 
 export function reviewPrompt(draft: PromptDraft): PromptCheck[] {
   const blob = `${draft.task}\n${draft.materials}\n${draft.format}\n${draft.ifUnknown}\n${draft.limits}`
-  const asksForPrivate = /材料|文档|制度|根据/.test(draft.task)
+  const asksForPrivate = /材料|文档|制度|原文|条款/.test(draft.task)
   const remembers = /请记住|以后都|永远记住|下次还/.test(blob)
   const pretendsTool = /去网上|打开我的|查看桌面|自己查一下/.test(blob)
   const packed = assemblePrompt(draft).length > 4000
