@@ -3,8 +3,8 @@ const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({'&':'
 const LESSONS = window.LESSONS;
 const KNOWLEDGE_POINTS = window.KNOWLEDGE_POINTS;
 const GROUP_ORDER = {
-  frontend:['语言基础','TypeScript','CSS 与布局','浏览器','网络与安全','安全','React','Vue','Node.js','测试','工程实践'],
-  java:['Java 基础','算法','JVM','并发','数据库','缓存','框架','消息队列','搜索','系统设计','分布式与高并发','安全','测试','工程实践']
+  frontend:['语言基础','TypeScript','CSS 与布局','浏览器','网络与安全','安全','React','React 生态','Vue','Vue 生态','Node.js','测试','版本边界','工程实践'],
+  java:['Java 基础','算法','JVM','并发','数据库','缓存','框架','Spring Cloud Alibaba','消息队列','中间件','搜索','系统设计','分布式与高并发','安全','测试','版本边界','工程实践']
 };
 const PATH_LEAD = {
   frontend:{
@@ -13,9 +13,12 @@ const PATH_LEAD = {
     '网络与安全':['http-methods','http-connection-reuse','http-range','http-compression','http-status-auth','fetch-credentials'],
     '安全':['cookie-credential','csrf-boundary','xss','client-env-public'],
     '测试':['frontend-testing','testing-library-role','playwright-user-journey'],
+    '语言基础':['closure','eventloop','js-this-callsite','js-prototype-chain'],
     'Node.js':['node-emitter','node-unhandled-rejection','node-nexttick','node-stream','node-buffer']
   },
   java:{
+    'Java 基础':['java-memory','java-collections','java-interface-contract'],
+    '消息队列':['mq-pick-workload','kafka-producer-acks','kafka-offset','rabbit-exchange-binding','rabbit-ack','rocketmq-queue-order'],
     '数据库':['mysql-null-comparison','sql-outer-join-where'],
     '缓存':['redis-data-types'],
     '安全':['spring-authn-authz','object-level-authz','password-adaptive-hash','runtime-config'],
@@ -138,7 +141,7 @@ function renderHome() {
   const current=LESSONS.filter((item)=>item.track===state.track);
   const visible=current.filter((item)=>!state.group || item.group===state.group);
   const label=state.track==='frontend'?'前端工程':'Java 后端';
-  const introduction=state.track==='frontend'?'语言、类型、页面、浏览器、网络，然后是安全、React、Vue、Node、测试，最后才是构建和上线。':'语言和运行时之后是数据、缓存、框架和消息，然后是系统设计、分布式、安全、测试，最后才是交付。';
+  const introduction=state.track==='frontend'?'语言和类型之后是页面、浏览器、网络和安全，然后是 React 与它的生态、Vue 与它的生态、Node、测试。版本边界标出已经退出主线的工具，最后才是构建和上线。':'语言和运行时之后是数据、缓存和 Spring，然后是 Spring Cloud Alibaba、消息队列选型、Nginx 与网关、搜索、系统设计、分布式、安全、测试。版本边界标出已退出主线的组件，最后才是交付。';
   const stages=groups().map((group,index)=>{
     const count=current.filter((item)=>item.group===group).length;
     return '<button type="button" class="path-stage'+(state.group===group?' selected':'')+'" data-group="'+esc(group)+'"><span>'+String(index+1).padStart(2,'0')+'</span>'+esc(group)+'<small>'+count+'</small></button>';
