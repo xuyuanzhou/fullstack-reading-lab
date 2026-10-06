@@ -204,6 +204,7 @@ export function AppLayout() {
               return (
                 <Button
                   key={item.key}
+                  type="text"
                   className={`top-nav-btn${active ? ' is-active' : ''}`}
                   onClick={() => navigate(`/${item.key === 'home' ? 'home' : item.key}`)}
                 >

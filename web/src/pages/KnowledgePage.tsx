@@ -1,4 +1,4 @@
-import { Alert, Button, Card, Col, Input, Row, Space, Typography } from 'antd'
+import { Alert, Button, Input, Space, Typography } from 'antd'
 import { useMemo } from 'react'
 import { useNavigate, useOutletContext } from 'react-router-dom'
 import { groupsFor, lessonsFor } from '@/data/curriculum'
@@ -25,14 +25,14 @@ export function KnowledgePage() {
   const pointCount = cards.reduce((sum, item) => sum + item.points.length, 0)
 
   return (
-    <Space direction="vertical" size={20} style={{ width: '100%' }}>
+    <div className="article-shell">
       <div>
-        <Typography.Title level={2} style={{ marginBottom: 8 }}>
+        <h1 className="hero-title" style={{ fontSize: '2rem' }}>
           知识点目录
-        </Typography.Title>
-        <Typography.Paragraph type="secondary">
+        </h1>
+        <p className="hero-lead">
           按知识点找到对应课程，再阅读解释、动手练习和核对依据。当前目录覆盖已编写的原创课程，不代表本机题库已全部核验。
-        </Typography.Paragraph>
+        </p>
         <Space style={{ width: '100%', justifyContent: 'space-between' }} wrap>
           <Input.Search
             allowClear
@@ -65,47 +65,40 @@ export function KnowledgePage() {
         const items = cards.filter((item) => item.group === group)
         if (!items.length) return null
         return (
-          <div key={group}>
-            <Space style={{ width: '100%', justifyContent: 'space-between', marginBottom: 12 }}>
-              <Typography.Title level={3} style={{ margin: 0 }}>
+          <section className="knowledge-group" key={group}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, marginBottom: 4 }}>
+              <h2 className="page-title" style={{ margin: 0 }}>
                 {group}
-              </Typography.Title>
+              </h2>
               <Typography.Text type="secondary">
-                {items.length} 课 · {items.reduce((sum, item) => sum + item.points.length, 0)} 个知识点
+                {items.length} 课 · {items.reduce((sum, item) => sum + item.points.length, 0)} 点
               </Typography.Text>
-            </Space>
-            <Row gutter={[12, 12]}>
-              {items.map((item) => (
-                <Col xs={24} md={12} key={item.id}>
-                  <Card
-                    hoverable
-                    size="small"
-                    title={item.title}
-                    extra={<Typography.Text type="secondary">{item.group}</Typography.Text>}
-                    onClick={() => {
-                      progress.remember(item.id)
-                      navigate(`/lesson/${encodeURIComponent(item.id)}`)
-                    }}
-                  >
-                    <ul style={{ margin: 0, paddingLeft: 18 }}>
-                      {item.points.map((point) => (
-                        <li key={point}>{point}</li>
-                      ))}
-                    </ul>
-                    <Typography.Link style={{ marginTop: 12, display: 'inline-block' }}>
-                      阅读讲解、练习与依据 →
-                    </Typography.Link>
-                  </Card>
-                </Col>
-              ))}
-            </Row>
-          </div>
+            </div>
+            {items.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                className="knowledge-row"
+                onClick={() => {
+                  progress.remember(item.id)
+                  navigate(`/lesson/${encodeURIComponent(item.id)}`)
+                }}
+              >
+                <strong>{item.title}</strong>
+                <ul>
+                  {item.points.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              </button>
+            ))}
+          </section>
         )
       })}
 
       {!cards.length ? (
         <Typography.Text type="secondary">没有找到匹配知识点，试试更短的关键词。</Typography.Text>
       ) : null}
-    </Space>
+    </div>
   )
 }

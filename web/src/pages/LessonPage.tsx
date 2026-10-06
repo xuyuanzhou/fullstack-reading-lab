@@ -1,4 +1,4 @@
-import { Breadcrumb, Button, Collapse, Image, Input, Space, Tag, Typography } from 'antd'
+import { Breadcrumb, Button, Collapse, Image, Input, Space, Typography } from 'antd'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import { findLesson, lessonIndex, nextLesson } from '@/data/curriculum'
 import { REACT_CHAPTERS, VUE_CHAPTERS, reactUrl, vueUrl } from '@/data/meta'
@@ -42,19 +42,18 @@ export function LessonPage() {
 
       <header className="lesson-hero">
         <div className="eyebrow">
-          Lesson {String(index + 1).padStart(2, '0')} / {lesson.track}
+          Lesson {String(index + 1).padStart(2, '0')} · {lesson.group}
         </div>
         <h1>{lesson.title}</h1>
         <p className="prompt-box">{lesson.prompt}</p>
-        <Space wrap size={[8, 8]}>
-          <Tag color="success">原创课程</Tag>
-          <Tag>{lesson.references.length} 项核对依据</Tag>
-          <Tag>{lesson.group}</Tag>
-        </Space>
+        <div className="meta-line">
+          <span>原创课程</span>
+          <span>{lesson.references.length} 项核对依据</span>
+        </div>
       </header>
 
       <section className="section-block">
-        <span className="section-index">KNOWLEDGE POINTS</span>
+        <span className="section-index">Knowledge points</span>
         <h2>本课知识点</h2>
         <ul className="point-list">
           {lesson.points.map((point) => (
@@ -70,13 +69,13 @@ export function LessonPage() {
 
       {lesson.deep?.length ? (
         <section className="section-block">
-          <span className="section-index">DEEP DIVE</span>
+          <span className="section-index">Deep dive</span>
           <h2>机制拆解</h2>
           {lesson.diagram ? (
             <Image
               src={`${import.meta.env.BASE_URL}${lesson.diagram}`}
               alt={`${lesson.title} 原创机制图`}
-              style={{ marginBottom: 16, maxWidth: '100%', borderRadius: 12 }}
+              style={{ marginBottom: 16, maxWidth: '100%', borderRadius: 10 }}
             />
           ) : null}
           <div className="deep-stack">
@@ -88,7 +87,7 @@ export function LessonPage() {
             ))}
           </div>
           {lesson.origin ? (
-            <Typography.Paragraph type="secondary" style={{ marginTop: 14, marginBottom: 0 }}>
+            <Typography.Paragraph type="secondary" style={{ marginTop: 16, marginBottom: 0 }}>
               选题线索：{lesson.origin}。讲解与示意图均重新编写。
             </Typography.Paragraph>
           ) : null}
@@ -110,7 +109,7 @@ export function LessonPage() {
       {source ? (
         <a className="next-card" href={source.href} target="_blank" rel="noreferrer">
           <div>
-            <small>SOURCE LAB</small>
+            <small>Source lab</small>
             <strong>{source.title}</strong>
             <div className="muted" style={{ marginTop: 4 }}>
               {source.detail}
@@ -140,7 +139,7 @@ export function LessonPage() {
       <section className="section-block">
         <span className="section-index">05</span>
         <h2>核对依据</h2>
-        <p className="muted" style={{ marginBottom: 12 }}>
+        <p className="muted" style={{ marginBottom: 8 }}>
           以官方文档、标准或固定版本源码为准。课程中的简化模型不代替实际运行验证。
         </p>
         <div className="ref-list">

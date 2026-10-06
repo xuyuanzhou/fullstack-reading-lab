@@ -1,6 +1,6 @@
-import { Button, Space, Tag, Typography } from 'antd'
+import { Button, Space, Typography } from 'antd'
 import { useNavigate } from 'react-router-dom'
-import { groupsFor, lessonsFor, lessonsInGroup, totals } from '@/data/curriculum'
+import { lessonsFor, lessonsInGroup, totals } from '@/data/curriculum'
 import { TRACK_INTRO, TRACK_LABEL } from '@/data/meta'
 import { useProgress } from '@/state/progress'
 
@@ -8,8 +8,8 @@ export function HomePage() {
   const progress = useProgress()
   const navigate = useNavigate()
   const current = lessonsFor(progress.track)
-  const visible = current.filter((item) => !progress.group || item.group === progress.group)
-  const groups = groupsFor(progress.track)
+  const group = progress.group || current[0]?.group || ''
+  const visible = current.filter((item) => item.group === group)
   const next = current.find((item) => !progress.done.includes(item.id)) || current[0]
   const doneCount = current.filter((item) => progress.done.includes(item.id)).length
   const reviewCount = current.filter((item) => progress.review.includes(item.id)).length
@@ -17,16 +17,15 @@ export function HomePage() {
   return (
     <div className="article-shell">
       <div className="page-kicker">
-        <Tag color="success">公开原创课程</Tag>
-        <Typography.Text type="secondary">
+        <span>公开原创课程</span>
+        <span className="dot" />
+        <span>
           {totals.lessons} 节 · {totals.points} 知识点
-        </Typography.Text>
+        </span>
       </div>
 
       <div>
-        <h1 className="hero-title">
-          {TRACK_LABEL[progress.track]}，从原理走向实践
-        </h1>
+        <h1 className="hero-title">{TRACK_LABEL[progress.track]}，从原理走向实践</h1>
         <p className="hero-lead">{TRACK_INTRO[progress.track]}</p>
         <Space wrap size={12}>
           <Button
@@ -46,49 +45,35 @@ export function HomePage() {
         </Space>
       </div>
 
-      <div className="stat-strip">
-        <div className="stat-card">
-          <small>学习章节</small>
-          <strong>{current.length}</strong>
-          <span>分层建立知识体系</span>
-        </div>
-        <div className="stat-card">
-          <small>已掌握</small>
-          <strong>{doneCount}</strong>
-          <span>按自己的节奏推进</span>
-        </div>
-        <div className="stat-card">
-          <small>待复习</small>
-          <strong>{reviewCount}</strong>
-          <span>把疑问留给下一轮</span>
-        </div>
-      </div>
-
-      <div className="stage-rail" aria-label="学习阶段">
-        {groups.map((group, index) => {
-          const count = lessonsInGroup(progress.track, group).length
-          const active = progress.group === group
-          return (
-            <Button
-              key={group}
-              className={`stage-chip${active ? ' is-active' : ''}`}
-              onClick={() => progress.setGroup(group)}
-            >
-              {String(index + 1).padStart(2, '0')} {group}
-              <small>{count}</small>
-            </Button>
-          )
-        })}
+      <div className="metric-line">
+        <span>
+          本章 <strong>{visible.length}</strong> 课
+        </span>
+        <span>
+          已掌握 <strong>{doneCount}</strong>
+        </span>
+        <span>
+          待复习 <strong>{reviewCount}</strong>
+        </span>
+        <span>
+          全路线 <strong>{current.length}</strong>
+        </span>
       </div>
 
       <section>
-        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, marginBottom: 14 }}>
-          <Typography.Title level={3} style={{ margin: 0, fontFamily: 'var(--font-serif)' }}>
-            {progress.group || '课程路线'}
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, marginBottom: 8 }}>
+          <Typography.Title level={3} className="page-title" style={{ margin: 0 }}>
+            {group || '课程路线'}
           </Typography.Title>
-          <Typography.Text type="secondary">{visible.length} 个知识单元</Typography.Text>
+          <Typography.Text type="secondary">
+            {lessonsInGroup(progress.track, group).filter((item) => progress.done.includes(item.id)).length}/
+            {visible.length} 已掌握
+          </Typography.Text>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <Typography.Paragraph type="secondary" style={{ marginTop: 0, marginBottom: 8 }}>
+          用左侧目录切换阶段。这里只展示当前阶段的知识单元。
+        </Typography.Paragraph>
+        <div className="lesson-list">
           {visible.map((item) => {
             const done = progress.done.includes(item.id)
             return (

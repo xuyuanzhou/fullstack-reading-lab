@@ -16,11 +16,9 @@ export function ProgressAside({ localReady }: { localReady: boolean }) {
     .slice(0, 4)
 
   return (
-    <div>
-      <div className="aside-card">
-        <Typography.Text type="secondary" style={{ fontSize: 11, letterSpacing: '0.1em' }}>
-          YOUR PROGRESS
-        </Typography.Text>
+    <div className="aside-stack">
+      <div className="aside-block">
+        <span className="aside-label">Your progress</span>
         <div className="progress-figure">{percent}%</div>
         <Typography.Text type="secondary">
           {completed} / {current.length} 章已掌握
@@ -30,14 +28,13 @@ export function ProgressAside({ localReady }: { localReady: boolean }) {
           showInfo={false}
           strokeColor="var(--lab-accent)"
           trailColor="var(--lab-line)"
-          style={{ marginTop: 14 }}
+          size="small"
+          style={{ marginTop: 12 }}
         />
       </div>
 
-      <div className="aside-card">
-        <Typography.Title level={5} style={{ marginTop: 0 }}>
-          下一步
-        </Typography.Title>
+      <div className="aside-block">
+        <h5>下一步</h5>
         {next ? (
           <Button
             type="link"
@@ -54,12 +51,10 @@ export function ProgressAside({ localReady }: { localReady: boolean }) {
         )}
       </div>
 
-      <div className="aside-card">
-        <Typography.Title level={5} style={{ marginTop: 0 }}>
-          最近阅读
-        </Typography.Title>
+      <div className="aside-block">
+        <h5>最近阅读</h5>
         {recent.length ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
             {recent.map((item) =>
               item ? (
                 <Button
@@ -87,24 +82,20 @@ export function ProgressAside({ localReady }: { localReady: boolean }) {
       </div>
 
       {localReady ? (
-        <div className="aside-card">
-          <Typography.Title level={5} style={{ marginTop: 0 }}>
-            我的本机资料
-          </Typography.Title>
-          <Typography.Paragraph type="secondary" style={{ marginBottom: 12 }}>
-            已连接本地阅读服务，可逐页查看你的 PDF 与 Word。
+        <div className="aside-block">
+          <h5>我的本机资料</h5>
+          <Typography.Paragraph type="secondary" style={{ marginBottom: 10, fontSize: 13 }}>
+            已连接本地阅读服务。
           </Typography.Paragraph>
-          <Button block onClick={() => navigate('/local')}>
+          <Button size="small" onClick={() => navigate('/local')}>
             浏览本机题库 →
           </Button>
         </div>
       ) : null}
 
-      <div className="aside-card">
-        <Typography.Text type="secondary" style={{ fontSize: 11, letterSpacing: '0.1em' }}>
-          OPEN LEARNING
-        </Typography.Text>
-        <Typography.Paragraph style={{ marginTop: 8, marginBottom: 0, fontSize: 13, lineHeight: 1.6 }}>
+      <div className="aside-block">
+        <span className="aside-label">Open learning</span>
+        <Typography.Paragraph style={{ margin: 0, fontSize: 13, lineHeight: 1.6 }} type="secondary">
           知识卡与练习为原创内容。购买资料和 PDF 密码不会进入网站。学习记录只存在当前浏览器。
         </Typography.Paragraph>
       </div>

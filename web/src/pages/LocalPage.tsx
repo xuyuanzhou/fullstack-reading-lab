@@ -1,4 +1,4 @@
-import { Alert, Breadcrumb, Button, Card, Col, Empty, Input, Row, Space, Typography, message } from 'antd'
+import { Alert, Breadcrumb, Button, Empty, Input, Space, Typography, message } from 'antd'
 import { useEffect, useState } from 'react'
 import { Navigate, useNavigate, useOutletContext } from 'react-router-dom'
 import { localApi, type CatalogItem, type SubjectRow } from '@/api/localLibrary'
@@ -70,14 +70,14 @@ export function LocalPage() {
   if (!localReady) return <Navigate to="/knowledge" replace />
 
   return (
-    <Space direction="vertical" size={20} style={{ width: '100%' }}>
+    <div className="article-shell">
       <div>
-        <Typography.Title level={2} style={{ marginBottom: 8 }}>
+        <h1 className="hero-title" style={{ fontSize: '2rem' }}>
           我的资料
-        </Typography.Title>
-        <Typography.Paragraph type="secondary">
+        </h1>
+        <p className="hero-lead">
           购买资料仅在本机打开，原文默认待核验；密码说明只在本机读取。每次批量处理最多 200 份资料。
-        </Typography.Paragraph>
+        </p>
         <Typography.Text type="secondary">{status}</Typography.Text>
       </div>
 
@@ -148,44 +148,49 @@ export function LocalPage() {
           <Typography.Text type="secondary">
             按科目浏览 {total} 份本机资料。原件目录不变，这里只是阅读分类。
           </Typography.Text>
-          <Row gutter={[12, 12]}>
+          <div className="subject-grid">
             {subjects.map((item) => (
-              <Col xs={12} md={8} lg={6} key={item.subject}>
-                <Card hoverable size="small" onClick={() => progress.setLocalTopic(item.subject)}>
-                  <Typography.Text strong>{item.subject}</Typography.Text>
-                  <div className="muted">{item.count} 份</div>
-                </Card>
-              </Col>
+              <button
+                key={item.subject}
+                type="button"
+                className="subject-tile"
+                onClick={() => progress.setLocalTopic(item.subject)}
+              >
+                <strong>{item.subject}</strong>
+                <span>{item.count} 份</span>
+              </button>
             ))}
-          </Row>
+          </div>
         </>
       ) : null}
 
       {items.length ? (
-        <Space direction="vertical" size={8} style={{ width: '100%' }}>
+        <div>
           <Typography.Text type="secondary">
             {progress.localTopic || '搜索结果'} · {total} 份。原件不会离开本机。
           </Typography.Text>
-          {items.map((item) => (
-            <Card
-              key={item.id}
-              size="small"
-              hoverable
-              loading={loading}
-              onClick={() => navigate(`/local/item/${encodeURIComponent(item.id)}`)}
-            >
-              <Space>
-                <Typography.Text code>
+          <div className="lesson-list" style={{ marginTop: 8 }}>
+            {items.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                className="file-row"
+                disabled={loading}
+                onClick={() => navigate(`/local/item/${encodeURIComponent(item.id)}`)}
+              >
+                <span className="file-format">
                   {item.format || item.id.split('.').pop()?.toUpperCase()}
-                </Typography.Text>
-                <div>
-                  <Typography.Text strong>{item.title}</Typography.Text>
-                  <div className="muted">{item.snippet || `${item.subject || ''} · ${item.path}`}</div>
-                </div>
-              </Space>
-            </Card>
-          ))}
-        </Space>
+                </span>
+                <span>
+                  <strong>{item.title}</strong>
+                  <p className="muted" style={{ margin: '4px 0 0', fontSize: 13 }}>
+                    {item.snippet || `${item.subject || ''} · ${item.path}`}
+                  </p>
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
       ) : null}
 
       {!loading && !subjects.length && !items.length ? <Empty description="没有匹配资料" /> : null}
@@ -195,6 +200,6 @@ export function LocalPage() {
         showIcon
         message="公开课由 React 应用承载。本机资料仍由 Python 阅读器提供 API；开发时运行 npm run dev，并保持 server.py 在 4180 端口。"
       />
-    </Space>
+    </div>
   )
 }

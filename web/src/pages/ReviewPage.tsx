@@ -1,4 +1,4 @@
-import { Card, Empty, Space, Typography } from 'antd'
+import { Empty, Typography } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { findLesson } from '@/data/curriculum'
 import { useProgress } from '@/state/progress'
@@ -9,38 +9,43 @@ export function ReviewPage() {
   const saved = progress.review.map((id) => findLesson(id)).filter(Boolean)
 
   return (
-    <Space direction="vertical" size={20} style={{ width: '100%' }}>
+    <div className="article-shell">
       <div>
-        <Typography.Title level={2} style={{ marginBottom: 8 }}>
+        <h1 className="hero-title" style={{ fontSize: '2rem' }}>
           复习清单
-        </Typography.Title>
-        <Typography.Paragraph type="secondary">
-          把还讲不清的概念留在这里。下一次先遮住答案，试着从问题推导机制。
-        </Typography.Paragraph>
+        </h1>
+        <p className="hero-lead">把还讲不清的概念留在这里。下一次先遮住答案，试着从问题推导机制。</p>
       </div>
 
       {saved.length ? (
-        <Space direction="vertical" size={10} style={{ width: '100%' }}>
+        <div className="lesson-list">
           {saved.map((item) =>
             item ? (
-              <Card
+              <button
                 key={item.id}
-                hoverable
-                size="small"
+                type="button"
+                className="lesson-row"
                 onClick={() => {
                   progress.remember(item.id)
                   navigate(`/lesson/${encodeURIComponent(item.id)}`)
                 }}
               >
-                <Typography.Text strong>{item.title}</Typography.Text>
-                <div className="muted">{item.prompt}</div>
-              </Card>
+                <span className="lesson-row-mark">·</span>
+                <span>
+                  <strong>{item.title}</strong>
+                  <p>{item.prompt}</p>
+                </span>
+              </button>
             ) : null,
           )}
-        </Space>
+        </div>
       ) : (
         <Empty description="暂无待复习课程。学习时可点击“加入复习清单”。" />
       )}
-    </Space>
+
+      {!saved.length ? null : (
+        <Typography.Text type="secondary">{saved.length} 个待复习知识单元</Typography.Text>
+      )}
+    </div>
   )
 }
