@@ -50,6 +50,7 @@ export const publishedSources = [
   'coverage-java-27.js',
   'coverage-java-28.js',
   'coverage-java-29.js',
+  'coverage-java-30.js',
   'coverage-path.js',
   'coverage-path-02.js',
   'coverage-path-03.js',
@@ -216,7 +217,7 @@ export const OUTLINE = {
       { title: '脚本与流', ids: ['redis-lua-atomic', 'redis-stream-vs-pubsub'] },
     ],
     Nginx: [
-      { title: '选路与上游', ids: ['nginx-request-phases', 'nginx-upstream-passive', 'nginx-proxy-timeout', 'nginx-gunzip-not-compress', 'nginx-load-module', 'nginx-proxy-host', 'nginx-ip-hash-session'] },
+      { title: '选路与上游', ids: ['nginx-request-phases', 'nginx-upstream-passive', 'nginx-proxy-timeout', 'nginx-gunzip-not-compress', 'nginx-load-module', 'nginx-proxy-host', 'nginx-ip-hash-session', 'nginx-forward-not-direct'] },
       { title: '限速与缓冲', ids: ['nginx-static-cache-headers', 'nginx-limit-req', 'nginx-buffer-body', 'nginx-limit-req-not-iptables-loop'] },
     ],
     Netty: [
@@ -230,7 +231,7 @@ export const OUTLINE = {
       { title: '身份与协议', ids: ['gateway-auth-where', 'gateway-body-buffer', 'gateway-websocket-upgrade'] },
     ],
     搜索: [
-      { title: '索引与查询', ids: ['es-inverted-index', 'es-lucene-not-btree', 'elastic-analysis', 'es-filter-context', 'es-refresh-visibility'] },
+      { title: '索引与查询', ids: ['es-inverted-index', 'es-lucene-not-btree', 'elastic-analysis', 'es-filter-context', 'es-refresh-visibility', 'es-term-lookup-not-o1'] },
       { title: '翻页与映射', ids: ['es-search-after', 'es-mapping-reindex'] },
       { title: '聚合与路由', ids: ['es-aggregations', 'es-custom-routing'] },
     ],
@@ -284,7 +285,7 @@ export const OUTLINE = {
     ],
     工程实践: [
       { title: '看见一次请求', ids: ['request-trace-one-hop', 'otel-three-signals', 'java-http-timeout', 'hikari-pool-timeout', 'spring-graceful-shutdown', 'log-correlation-id', 'zabbix-active-at-scale'] },
-      { title: '交付', ids: ['design-review', 'docker-multistage', 'k8s-probes', 'k8s-memory-limit', 'secrets-not-in-image', 'spring-boot-devtools-restarts', 'git-restore-over-checkout', 'linux-bkl-gone'] },
+      { title: '交付', ids: ['design-review', 'docker-multistage', 'k8s-probes', 'k8s-memory-limit', 'secrets-not-in-image', 'spring-boot-devtools-restarts', 'git-restore-over-checkout', 'linux-bkl-gone', 'k8s-runtime-not-only-docker', 'linux-root-group-not-root'] },
     ],
   },
 };

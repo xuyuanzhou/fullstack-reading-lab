@@ -40,6 +40,7 @@ assert.equal(publishedSources.includes('coverage-java-26.js'), true);
 assert.equal(publishedSources.includes('coverage-java-27.js'), true);
 assert.equal(publishedSources.includes('coverage-java-28.js'), true);
 assert.equal(publishedSources.includes('coverage-java-29.js'), true);
+assert.equal(publishedSources.includes('coverage-java-30.js'), true);
 assert.equal(publishedSources.includes('coverage-path-07.js'), true);
 assert.equal(publishedSources.includes('coverage-path-08.js'), true);
 assert.equal(publishedSources.includes('coverage-path-09.js'), true);

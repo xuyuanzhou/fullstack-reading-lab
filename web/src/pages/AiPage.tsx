@@ -8,8 +8,6 @@ export function AiPage() {
   const { sectionKey } = useParams()
   const section = aiSection(sectionKey)
   const notes = notesInSection(section.key)
-  const intro = section.key === 'intro'
-
   return (
     <div className="article-shell">
       <div className="page-kicker">
@@ -17,13 +15,12 @@ export function AiPage() {
         <span className="dot" />
         <span>AI</span>
       </div>
-      <h1 className="hero-title">{intro ? '给小白的一堂 AI 课' : 'AI，从结构走到能运行的应用'}</h1>
+      <h1 className="hero-title">{section.pageTitle || 'AI，从结构走到能运行的应用'}</h1>
       <p className="hero-lead">
-        {intro
-          ? '八节，按顺序读。每一节只讲一件事，结尾有一个你自己能做的检查。后面的手册假定你做过这些检查。'
-          : '每篇都可以在公开站读完。文末链接开放许可的材料和官方文档。已购手册的全文和配图只在本机阅读器连上时打开。'}
+        {section.pageLead ||
+          '每篇都可以在公开站读完。文末链接开放许可的材料和官方文档。已购手册的全文和配图只在本机阅读器连上时打开。'}
       </p>
-      <p className="muted">{section.lead}</p>
+      {!section.pageLead && <p className="muted">{section.lead}</p>}
       <div className="lesson-list">
         {notes.map((note, index) => (
           <Link key={note.key} className="lesson-row" to={`/ai/${section.key}/${note.key}`}>

@@ -2,6 +2,8 @@ export type AiSection = {
   key: string
   label: string
   lead: string
+  pageTitle?: string
+  pageLead?: string
 }
 
 export type AiSource = {
@@ -24,9 +26,29 @@ export type AiNote = {
 const root = 'AI-大模型实战宝典'
 
 export const AI_SECTIONS: AiSection[] = [
-  { key: 'intro', label: '入门', lead: '按顺序读。每一节只讲一件事，结尾有一个你自己能做的检查。' },
+  {
+    key: 'intro',
+    label: '入门',
+    lead: '按顺序读。每一节只讲一件事，结尾有一个你自己能做的检查。',
+    pageTitle: '给小白的一堂 AI 课',
+    pageLead: '八节，按顺序读。做完进入基础：词元、训练和注意力。手册、项目和精通假定你做过这些检查。',
+  },
+  {
+    key: 'foundation',
+    label: '基础',
+    lead: '看清文字怎样变成数，训练在改什么，以及提示、检索、微调各动哪一层。',
+    pageTitle: '看懂模型在算什么',
+    pageLead: '入门只要求你能指出提示、模型和程序。这里解释计算本身。对照阅读来自 Apache-2.0 的 Hugging Face 课程和 CC BY-SA 的《动手学深度学习》，页面只放链接。',
+  },
   { key: 'manual', label: '手册', lead: '先建立检索、代理、模型结构和常用框架的地图。' },
   { key: 'project', label: '项目', lead: '把手册里的结构落到一个能讲清楚边界的应用。' },
+  {
+    key: 'mastery',
+    label: '精通',
+    lead: '用评测、分层日志和权限边界判断一个应用能不能交付。',
+    pageTitle: '能判断一个应用靠不靠谱',
+    pageLead: '精通不是多记名词。你要能事先写下降什么叫对，答案错了停在哪一层，以及什么动作必须等人确认。',
+  },
   { key: 'interview', label: '题库', lead: '用问答检查自己能不能把机制讲完，而不是只记得名词。' },
   { key: 'tools', label: '工具', lead: '看编码代理和编辑器怎样进入仓库、检查和可重复的流程。' },
 ]
@@ -143,7 +165,103 @@ export const AI_NOTES: AiNote[] = [
       '做完再去读后面的手册。检索那一节对应“先找到材料”，代理那一节对应“提议和执行”，上下文那一节对应“材料太长会挤掉前面的约束”。术语这时才有你刚做过的那件事可以对照。',
     ],
     sources: [],
-    practice: '把材料、三个问题、三个回答，以及你标出的原句留在笔记里。然后打开手册里的「RAG：从检索到生成」，用你这次的三问去对那一节的查找和生成。',
+    practice: '把材料、三个问题、三个回答，以及你标出的原句留在笔记里。下一节进入基础，先看文字是怎样被切成片段的。',
+  },
+  {
+    key: 'tokens',
+    section: 'foundation',
+    title: '文字先切成词元',
+    scope: '模型看见的不是一整句，而是一串编号。切法必须和训练时那套一致。',
+    reading: [
+      '模型不直接吃汉字或单词。文本先被切成词元，每个词元对应一个整数，整数再变成向量。词元不一定是一个完整的词。「下雨了」可能是两个片段，也可能更碎。空格、标点常常自己占一个位置。',
+      '切法是模型的一部分。训练时用哪套词表，以后就必须用同一套。换成另一套切法，同样的句子会得到不同的整数，后面的注意力看到的就不是原来的意思。所以不能把一个中文模型的词表拿去切英文代码，再指望它还认识那些词。',
+      '词元个数就是上下文窗口在数的单位。同一段话，切得越碎，越快把窗口填满。窗口满了，更早的约束会被挤掉。这和入门里「它会忘」是同一件事，只是现在你知道被挤掉的是词元，不是模糊的「字数」。',
+    ],
+    sources: [
+      {
+        title: 'Hugging Face：Tokenizers',
+        href: 'https://huggingface.co/learn/llm-course/chapter6/1',
+        terms: 'Apache-2.0。讲如何训练和比较分词器。此处只放链接。',
+      },
+    ],
+    practice: '把「把牛奶放进冰箱」写成你猜测的切分，再对照课程里的分词说明，看空格、汉字和标点是不是各走各的规则。记下切出来的片段个数。',
+  },
+  {
+    key: 'loss',
+    section: 'foundation',
+    title: '损失在推动权重',
+    scope: '训练不是把答案写进模型，而是让正确的下一个词元下次分数高一点。',
+    reading: [
+      '给模型前面的词元，它会给词表里每个可能的下一个词元打一个分数。正确答案的分数如果不够高，损失就大。反向传播把这个差距分到参与这次计算的权重上，优化器用很小的步长挪它们。',
+      '一次更新不会让模型背下整句。它只是让正确的那个词元下次稍微更占优。学不会，通常是数据里根本没有这种搭配，或者步长太大，把原来已经会的也冲掉了。',
+      '温度不在这一步。温度是生成时从这些分数里抽样的方式：总挑最高的，还是偶尔挑次高的。它不改权重。把温度调低，只是回答更稳定，不是模型忽然知道了新事实。',
+    ],
+    sources: [
+      {
+        title: 'micrograd',
+        href: 'https://github.com/karpathy/micrograd',
+        terms: 'MIT。用很少的代码看反向传播。此处只放链接。',
+      },
+      {
+        title: '动手学深度学习：大规模预训练',
+        href: 'https://d2l.ai/chapter_attention-mechanisms-and-transformers/large-pretraining-transformers.html',
+        terms: 'CC BY-SA 4.0，张爱森、李沐等。此处只链接并署名。',
+      },
+    ],
+    practice: '用「我把伞带上，因为快」这句话。假定正确答案是「下雨」。用自己的话写出：分数、损失、权重，这三样里哪一个在训练时被挪动，哪一个只在生成时用来挑选。',
+  },
+  {
+    key: 'attention-who',
+    section: 'foundation',
+    title: '这一层在向谁取信息',
+    scope: '注意力不是把整句压成一个意思，而是当前词向句中某些词多取一点。',
+    reading: [
+      '拿「猫追狗」做例子。表示「追」的时候，查询来自「追」，键来自句中每一个词。查询和某个键越接近，就越从那个词的值里多取一点信息。和「猫」「狗」更相关，就少看「追」自己。',
+      '查询和键的点积会随维度变大而变大。不除以键维度的平方根，softmax 会几乎只看一个位置，其余词等于没参加。多头是同一层里的几组查询，各自可以注意不同的搭配，再拼回去。',
+      '词表本身没有顺序。「猫追狗」和「狗追猫」如果只看有哪些词，是同一袋词。位置编码或旋转位置是另加上去的，告诉模型谁在谁前面。现在常见的对话模型只用解码器，并且用掩码挡住还没生成的词，所以它只能向已经出现的词取信息。',
+    ],
+    sources: [
+      {
+        title: 'Hugging Face：Transformers 怎样工作',
+        href: 'https://huggingface.co/learn/llm-course/chapter1/4',
+        terms: 'Apache-2.0。此处只放链接。',
+      },
+      {
+        title: 'The Annotated Transformer',
+        href: 'https://nlp.seas.harvard.edu/annotated-transformer/',
+        terms: '实现仓库为 MIT。此处只链接，不转载正文。',
+      },
+      {
+        title: '动手学深度学习：注意力机制与 Transformer',
+        href: 'https://d2l.ai/chapter_attention-mechanisms-and-transformers/',
+        terms: 'CC BY-SA 4.0。此处只链接并署名。',
+      },
+    ],
+    practice: '自己写三个词的句子，标出中间那个词更该看左边还是右边。再把词序颠倒，写一句：如果没有位置信息，模型为什么分不清这两句。',
+  },
+  {
+    key: 'change-how',
+    section: 'foundation',
+    title: '提示、检索、微调各改一层',
+    scope: '三条路的成本和能改到的东西不同。没有数据和评测，不要先微调。',
+    reading: [
+      '提示只改这一次的输入。对话结束就消失，也不改权重。适合规则短、马上要生效、而且放得进窗口的要求。',
+      '检索不改权重，只是把外部材料里相关的几段放进这次上下文。材料更新了，下次可以找回新段落。适合制度、项目文档、会过期的事实。材料里没有的内容，它仍然可能编。',
+      '微调用成对的例子去改模型。全量微调改很多权重，贵，也容易把原来会的冲掉。LoRA 一类方法冻住原来的权重，只训练新加的一小块，用来适应某种任务的写法。它仍然需要稳定的数据和一份事先写好的评测。三条路里，微调是最后才考虑的。',
+    ],
+    sources: [
+      {
+        title: 'Hugging Face：监督微调',
+        href: 'https://huggingface.co/learn/llm-course/chapter11/1',
+        terms: 'Apache-2.0。此处只放链接。',
+      },
+      {
+        title: 'Hugging Face：LoRA',
+        href: 'https://huggingface.co/learn/llm-course/chapter11/4',
+        terms: 'Apache-2.0。此处只放链接。',
+      },
+    ],
+    practice: '拿「报销要发票」这件事写三行：若只用提示、只用检索、只用微调，分别要准备什么，对话结束之后哪一种还在。',
   },
   {
     key: 'transformer',
@@ -163,7 +281,7 @@ export const AI_NOTES: AiNote[] = [
       },
       {
         title: '动手学深度学习：注意力机制',
-        href: 'https://d2l.ai/chapter_attention-mechanisms-and-transformers/index.html',
+        href: 'https://d2l.ai/chapter_attention-mechanisms-and-transformers/',
         terms: 'CC BY-SA 4.0。此处只链接并署名，不并入原创课文。',
       },
     ],
@@ -384,6 +502,87 @@ export const AI_NOTES: AiNote[] = [
     localId: `${root}/2-项目/项目实战：滴云智能办公丨多Agent协同系统/项目实战：滴云智能办公丨多Agent协同系统.md`,
   },
   {
+    key: 'eval-set',
+    section: 'mastery',
+    title: '先写下降什么叫对',
+    scope: '评测集要包含有答案的题、没有答案的题，以及格式题。见过的题不能当泛化。',
+    reading: [
+      '感觉「这次回答不错」不能当交付标准。事先写下题目、材料、以及什么样算对。至少三类：材料里有原句的题，必须指到那句；材料里没有的题，必须说没有；格式题，日期、金额、名字要符合结构，而不是看起来顺。',
+      '分数要能落到失败的那一条。十条里错了两条，就打开那两条看是查找没找到，还是找到了却没引用。一个总分盖住失败，下次改提示词时不知道改的是哪一层。',
+      '题目如果来自训练数据，高分只说明见过。换一份模型没背过的材料，用同一套判分规则再跑一遍。两次都过，才谈得上这项能力，而不是这一次运气。',
+    ],
+    sources: [
+      {
+        title: 'Hugging Face LLM Course',
+        href: 'https://huggingface.co/learn/llm-course/chapter1/1',
+        terms: 'Apache-2.0。课程后半讲数据和微调。此处只放链接。',
+      },
+    ],
+    practice: '用你在入门里写的三段制度，做一张三行的表：有答案的题、没有答案的题、一个格式要求。每行写下怎样算失败。不要先跑模型。',
+  },
+  {
+    key: 'rag-layers',
+    section: 'mastery',
+    title: '答案错了，停在那一层',
+    scope: '索引、召回、生成分开记日志。对不上就只改那一层。',
+    reading: [
+      '检索应用至少留下三层记录。索引：这份材料切完之后，含答案的那一块在不在库里。召回：这次提问的前几名里有没有这一块。生成：回答有没有引用这一块，而不是另写一句材料里没有的话。',
+      '索引里没有，就查切分和写入，不要改提示词。召回没有，就查查询用词、过滤条件和是不是换了向量模型却没重建索引。召回有了但生成没引用，就收紧「只能根据给定段落回答」，并要求抄出原句。',
+      '三层同时改，失败会叠在一起。下一次对了，你也不知道是哪一层修好的。精通的标志是：拿着一条失败的题目，能指出日志里缺的是哪一个字段。',
+    ],
+    sources: [
+      {
+        title: 'Hugging Face：Agentic RAG',
+        href: 'https://huggingface.co/learn/agents-course/unit3/agentic-rag/agentic-rag',
+        terms: 'Hugging Face 课程。此处只放链接。',
+      },
+    ],
+    practice: '假设「报销需要发票」没有出现在回答里。写三行日志你要看的字段：块在不在索引、排不排在前三、回答里有没有这七个字。每一行对应一种不同的改法。',
+  },
+  {
+    key: 'permissions',
+    section: 'mastery',
+    title: '权限和确认写在程序里',
+    scope: '读、改、执行、联网分开。花钱、发信、写库之前必须能停下来等人。',
+    reading: [
+      '代理能提议的动作要按许可分开：读文件、改文件、执行命令、访问网络。读可以宽一些。改和执行默认关闭，一次任务只打开它需要的那一种。联网单独批，因为工具结果会把外面的内容带回上下文。',
+      '有副作用的动作放在确认之后。发邮件、扣款、写数据库，都是确认节点后面的节点。确认之前，图只准备参数给人看。人拒绝，这些节点不运行。',
+      '循环的上限也在程序里：最多几步，同一步同样参数失败几次就停，而不是把错误原文无限塞回模型。提示词里的「请小心」挡不住一个被允许反复调用的工具。',
+    ],
+    sources: [
+      {
+        title: 'LangGraph：工作流与代理',
+        href: 'https://docs.langchain.com/oss/python/langgraph/workflows-agents',
+        terms: '文档仓库为 MIT。此处只链接。',
+      },
+      {
+        title: 'Claude Code 文档',
+        href: 'https://code.claude.com/docs/en/overview',
+        terms: '官方文档。此处只放链接。',
+      },
+    ],
+    practice: '列一个会发通知的办公流程。标出哪一步只是读材料，哪一步改状态，哪一步真的把通知发出去。发出去的那一步前面，写上谁来确认。',
+  },
+  {
+    key: 'you-own',
+    section: 'mastery',
+    title: '材料、判分和停点归你',
+    scope: '模型负责提议下一段或下一个动作。边界四件事要你写得出来。',
+    reading: [
+      '能交付的应用，你讲得清四件事。材料从哪来，谁有权看见。一个问题怎样算答完，失败长什么样。到哪一步必须停，停下来把什么交给人。模型只在这个边界里提议下一段文字，或提议一次工具调用。',
+      '讲不清材料来源，检索就是把不该看见的文档送进上下文。讲不清判分，微调和下一次改提示词都没有方向。讲不清停点，循环会在没有新信息时继续改写答案，或者在确认前就发出通知。',
+      '这四件事写在纸上之后，再打开手册和项目。那里的框架、图和已购全文，是这四件事的一种实现，不是这四件事的替代品。',
+    ],
+    sources: [
+      {
+        title: 'LangChain：模型与运行壳',
+        href: 'https://docs.langchain.com/oss/python/langchain/overview',
+        terms: '文档仓库为 MIT。此处只链接。',
+      },
+    ],
+    practice: '选一个你想做的小应用，用四行写完：材料、怎样算对、一个失败样例、必须停下的那一步。写不满四行，就先不要加模型。',
+  },
+  {
     key: 'llm-interview',
     section: 'interview',
     title: '大模型面试题',
@@ -500,7 +699,6 @@ export function aiNote(sectionKey: string, noteKey: string | undefined) {
 }
 
 export function noteNeighbors(note: AiNote) {
-  const notes = notesInSection(note.section)
-  const index = notes.findIndex((item) => item.key === note.key)
-  return { prev: notes[index - 1], next: notes[index + 1] }
+  const index = AI_NOTES.findIndex((item) => item.section === note.section && item.key === note.key)
+  return { prev: AI_NOTES[index - 1], next: AI_NOTES[index + 1] }
 }
