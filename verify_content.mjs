@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 
 const context = {window: {}};
 vm.createContext(context);
-for (const name of ['lessons.js', 'extra-lessons.js', 'distributed-lessons.js', 'knowledge-points.js', 'coverage-lessons.js', 'coverage-batch-03.js', 'coverage-batch-04.js', 'coverage-frontend-05.js', 'coverage-java-05.js', 'coverage-batch-06.js', 'coverage-path.js', 'coverage-path-02.js', 'coverage-path-03.js', 'coverage-path-04.js']) {
+for (const name of ['lessons.js', 'extra-lessons.js', 'distributed-lessons.js', 'knowledge-points.js', 'coverage-lessons.js', 'coverage-batch-03.js', 'coverage-batch-04.js', 'coverage-frontend-05.js', 'coverage-java-05.js', 'coverage-batch-06.js', 'coverage-path.js', 'coverage-path-02.js', 'coverage-path-03.js', 'coverage-path-04.js', 'coverage-path-05.js']) {
   vm.runInContext(fs.readFileSync(new URL(name, import.meta.url), 'utf8'), context, {filename:name});
 }
 const lessons = context.window.LESSONS;
@@ -31,6 +31,6 @@ for (const lesson of lessons) {
   }
 }
 const html=fs.readFileSync(new URL('index.html',import.meta.url),'utf8');
-for (const script of ['lessons.js','extra-lessons.js','distributed-lessons.js','knowledge-points.js','coverage-lessons.js','coverage-batch-03.js','coverage-batch-04.js','coverage-frontend-05.js','coverage-java-05.js','coverage-batch-06.js','coverage-path.js','coverage-path-02.js','coverage-path-03.js', 'coverage-path-04.js','app.js']) assert(html.includes('src="'+script+'"'), script+' is not loaded');
+for (const script of ['lessons.js','extra-lessons.js','distributed-lessons.js','knowledge-points.js','coverage-lessons.js','coverage-batch-03.js','coverage-batch-04.js','coverage-frontend-05.js','coverage-java-05.js','coverage-batch-06.js','coverage-path.js','coverage-path-02.js','coverage-path-03.js', 'coverage-path-04.js', 'coverage-path-05.js','app.js']) assert(html.includes('src="'+script+'"'), script+' is not loaded');
 assert.equal(Object.keys(points).length,lessons.length,'knowledge point index has stale or missing lessons');
 console.log(lessons.length+' original lessons and '+Object.values(points).flat().length+' knowledge points verified ('+lessons.filter((x)=>x.track==='frontend').length+' frontend, '+lessons.filter((x)=>x.track==='java').length+' Java).');

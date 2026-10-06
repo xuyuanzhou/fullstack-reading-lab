@@ -10,19 +10,24 @@ const PATH_LEAD = {
   frontend:{
     'CSS 与布局':['css-box-sizing'],
     '浏览器':['dom-event-flow'],
-    '网络与安全':['http-methods','http-connection-reuse','http-range','http-compression','http-status-auth','fetch-credentials'],
-    '安全':['cookie-credential','csrf-boundary','xss','client-env-public'],
-    '测试':['frontend-testing','testing-library-role','playwright-user-journey'],
+    '网络与安全':['api-error-contract','http-methods','http-connection-reuse','http-range','http-compression','http-status-auth','fetch-credentials'],
+    '安全':['cookie-credential','auth-session-vs-jwt','csrf-boundary','xss','client-env-public'],
+    'React':['identity','linked-list'],
+    'React 生态':['react-rsc-vs-client','react-router-loader','query-server-state'],
+    '测试':['frontend-testing','testing-library-role','playwright-user-journey','contract-test-path'],
+    '工程实践':['vite-module-graph'],
     '语言基础':['closure','eventloop','js-this-callsite','js-prototype-chain'],
-    'Node.js':['node-emitter','node-unhandled-rejection','node-nexttick','node-stream','node-buffer']
+    'Node.js':['node-http-cookie','node-emitter','node-unhandled-rejection','node-nexttick','node-stream','node-buffer']
   },
   java:{
     'Java 基础':['java-memory','java-collections','java-interface-contract'],
-    '消息队列':['mq-pick-workload','kafka-producer-acks','kafka-offset','rabbit-exchange-binding','rabbit-ack','rocketmq-queue-order'],
-    '数据库':['mysql-null-comparison','sql-outer-join-where'],
+    '消息队列':['mq-pick-workload','kafka-producer-acks','kafka-offset','rabbit-exchange-binding','rabbit-ack','rocketmq-queue-order','mq-dlq-backlog'],
+    '数据库':['mysql-null-comparison','sql-outer-join-where','schema-migration'],
+    '框架':['jpa-session-nplus1','spring-mvc-exception','spring-mvc-dispatch'],
     '缓存':['redis-data-types'],
-    '安全':['spring-authn-authz','object-level-authz','password-adaptive-hash','runtime-config'],
-    '测试':['junit-instance-lifecycle','spring-test-slice','test-observable-result']
+    '安全':['spring-authn-authz','spring-security-filter-chain','object-level-authz','password-adaptive-hash','runtime-config'],
+    '测试':['junit-instance-lifecycle','spring-test-slice','test-observable-result'],
+    '工程实践':['request-trace-one-hop','otel-three-signals']
   }
 };
 LESSONS.forEach((item,index)=>{item._seq=index;});
@@ -47,6 +52,26 @@ const REACT_CHAPTERS = {
   architecture:'React原理精通/25-Profiler与性能工程.md'
 };
 const reactUrl = (topic) => REACT_BASE + encodeURIComponent(REACT_CHAPTERS[topic]);
+const VUE_BASE = 'https://xuyuanzhou.github.io/vue3-mastery-lab/#/learn/';
+const VUE_CHAPTERS = {
+  javascript:'javascript',
+  reactive:'reactive',
+  computed:'computed',
+  diff:'keyed-diff',
+  scheduler:'scheduler',
+  optimization:'optimization',
+  teleport:'basic-teleport',
+  props:'basic-props',
+  composition:'basic-composables',
+  compiler:'compiler',
+  router:'router',
+  pinia:'pinia',
+  ssr:'ssr'
+};
+const vueUrl = (topic) => VUE_BASE + encodeURIComponent(VUE_CHAPTERS[topic]);
+function sourceLink(href, title, detail) {
+  return '<a class="source-link" href="'+esc(href)+'" target="_blank" rel="noopener"><span>↗</span><strong>'+esc(title)+'</strong><small>'+esc(detail)+'</small></a>';
+}
 const defaults = {track:'frontend',view:'home',group:'',lesson:LESSONS[0].id,done:[],review:[],recent:[],notes:{},theme:'light',query:'',category:'',opened:null,page:1,audit:{}};
 let state = {...defaults};
 try {
@@ -141,7 +166,7 @@ function renderHome() {
   const current=LESSONS.filter((item)=>item.track===state.track);
   const visible=current.filter((item)=>!state.group || item.group===state.group);
   const label=state.track==='frontend'?'前端工程':'Java 后端';
-  const introduction=state.track==='frontend'?'语言和类型之后是页面、浏览器、网络和安全，然后是 React 与它的生态、Vue 与它的生态、Node、测试。版本边界标出已经退出主线的工具，最后才是构建和上线。':'语言和运行时之后是数据、缓存和 Spring，然后是 Spring Cloud Alibaba、消息队列选型、Nginx 与网关、搜索、系统设计、分布式、安全、测试。版本边界标出已退出主线的组件，最后才是交付。';
+  const introduction=state.track==='frontend'?'语言和类型之后是页面、浏览器、网络契约和会话，然后是 React 与它的数据层、Vue 与它的生态、Node 上的 Cookie 会话、测试。构建默认用 Vite。版本边界标出已经退出主线的工具。':'语言和运行时之后是数据、JPA 会话、迁移和 Spring 过滤链，然后是消息的死信与积压、网关、以及把一次请求串成一条追踪。版本边界标出已退出主线的组件，最后才是交付。';
   const stages=groups().map((group,index)=>{
     const count=current.filter((item)=>item.group===group).length;
     return '<button type="button" class="path-stage'+(state.group===group?' selected':'')+'" data-group="'+esc(group)+'"><span>'+String(index+1).padStart(2,'0')+'</span>'+esc(group)+'<small>'+count+'</small></button>';
@@ -158,7 +183,11 @@ function renderLesson() {
   const references=window.LESSON_REFERENCES[lesson.id]||[];
   const index=LESSONS.filter((item)=>item.track===lesson.track).findIndex((item)=>item.id===lesson.id);
   const next=LESSONS.filter((item)=>item.track===lesson.track)[index+1];
-  const source=lesson.react?'<a class="source-link" href="'+esc(reactUrl(lesson.react))+'" target="_blank" rel="noopener"><span>↗</span><strong>在 React Mastery Lab 中追踪源码</strong><small>打开对应章节与 React v19.3.0 源码查看器</small></a>':'';
+  const source=lesson.react&&REACT_CHAPTERS[lesson.react]
+    ?sourceLink(reactUrl(lesson.react),'在 React Mastery Lab 中追踪源码','打开对应章节与 React v19.3.0 源码查看器')
+    :lesson.vue&&VUE_CHAPTERS[lesson.vue]
+    ?sourceLink(vueUrl(lesson.vue),'在 Vue 3 Mastery Lab 中追踪源码','打开对应章节与 Vue v3.5.43 源码查看器')
+    :'';
   const deep=Array.isArray(lesson.deep)?'<div class="deep-dive"><span class="eyebrow">DEEP DIVE / 机制拆解</span>'+(lesson.diagram?'<img class="concept-diagram" src="'+esc(lesson.diagram)+'" alt="'+esc(lesson.title)+' 原创机制图">':'')+lesson.deep.map((part)=>'<section><h3>'+esc(part.title)+'</h3><p>'+esc(part.body)+'</p></section>').join('')+(lesson.origin?'<p class="origin-note">选题线索：'+esc(lesson.origin)+'。讲解与示意图均重新编写。</p>':'')+'</div>':'';
   const pointOutline='<section class="point-outline"><span class="eyebrow">KNOWLEDGE POINTS / 本课知识点</span><ol>'+pointsFor(lesson).map((point)=>'<li>'+esc(point)+'</li>').join('')+'</ol></section>';
   $('#mainPanel').innerHTML='<div class="breadcrumb"><button id="backCourse">学习路线</button><span>/</span><span>'+esc(lesson.group)+'</span><span>/</span><strong>'+esc(lesson.title)+'</strong></div><article class="lesson-article"><div class="lesson-header"><span class="eyebrow">LESSON '+String(index+1).padStart(2,'0')+' / '+esc(lesson.track.toUpperCase())+'</span><h1>'+esc(lesson.title)+'</h1><p class="lead-question">'+esc(lesson.prompt)+'</p><div class="lesson-meta"><span>✦ 原创课程</span><span>● '+references.length+' 项核对依据</span><span>↗ '+esc(lesson.group)+'</span></div></div>'+pointOutline+'<div class="concept-panel"><span class="panel-label">01 / 核心模型</span><p>'+esc(lesson.core)+'</p></div>'+deep+'<section class="article-section"><span class="section-index">02</span><div><h2>为什么需要理解它</h2><p>'+esc(lesson.why)+'</p></div></section><section class="article-section"><span class="section-index">03</span><div><h2>把概念放进具体场景</h2><div class="example-box">'+esc(lesson.example)+'</div></div></section>'+source+'<section class="article-section"><span class="section-index">04</span><div><h2>动手检验理解</h2><p>'+esc(lesson.task)+'</p><details class="answer"><summary>先自己回答，再看参考答案 <span>＋</span></summary><p>'+esc(lesson.answer)+'</p></details></div></section><section class="article-section"><span class="section-index">05</span><div><h2>核对依据</h2><p class="muted">以官方文档、标准或固定版本源码为准。课程中的简化模型不代替实际运行验证。</p><div class="reference-list">'+(references.length?references.map((ref)=>'<a href="'+esc(ref[1])+'" target="_blank" rel="noopener">'+esc(ref[0])+' <span>↗</span></a>').join(''):'<p class="muted">本节是原创练习，请结合实际系统约束验证。</p>')+'</div></div></section><section class="article-section"><span class="section-index">06</span><div><h2>用自己的话重述</h2><textarea id="lessonNote" rows="5" placeholder="写下你理解的因果关系、仍有疑问的地方和验证方式。">'+esc(state.notes[lesson.id]||'')+'</textarea><p class="muted">笔记只保存在当前浏览器。</p></div></section><div class="lesson-actions"><button class="primary-button" id="markDone">'+(state.done.includes(lesson.id)?'✓ 已掌握 · 撤销':'标记已掌握')+'</button><button class="outline-button" id="markReview">'+(state.review.includes(lesson.id)?'移出复习清单':'加入复习清单')+'</button></div>'+ (next?'<button class="next-card" id="nextLesson"><span>下一课</span><strong>'+esc(next.title)+'</strong><span>→</span></button>':'')+'</article>';

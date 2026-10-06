@@ -41,6 +41,7 @@ jobs:
           node --check coverage-path-02.js
           node --check coverage-path-03.js
           node --check coverage-path-04.js
+          node --check coverage-path-05.js
           node verify_content.mjs
           python -m unittest discover -p tests.py
       - name: Build allowlisted public assets

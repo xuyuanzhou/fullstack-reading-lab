@@ -2,9 +2,9 @@
 
 在线阅读：[全栈学习实验室](https://xuyuanzhou.github.io/fullstack-reading-lab/) · [GitHub 仓库](https://github.com/xuyuanzhou/fullstack-reading-lab)
 
-面向前端和 Java 开发者的公开学习网站。以本机题库的主题分布作为选题线索，重新编写中文解释、具体例子、主动回忆练习与参考答案；每节公开课附官方文档、标准或固定版本源码依据。当前有 **171 节原创课程、513 个具体知识点**（前端 75 课、Java 96 课），包含精简的分组课程目录、知识点搜索、学习进度、复习清单、笔记与知识核验。左侧目录只列课程，知识点在课程正文与知识库中查看。知识点数量只统计已核验发布的课程，不等于本机题库的全部内容已经整理完成。
+面向前端和 Java 开发者的公开学习网站。以本机题库的主题分布作为选题线索，重新编写中文解释、具体例子、主动回忆练习与参考答案；每节公开课附官方文档、标准或固定版本源码依据。当前有 **183 节原创课程、549 个具体知识点**（前端 81 课、Java 102 课），包含精简的分组课程目录、知识点搜索、学习进度、复习清单、笔记与知识核验。左侧目录只列课程，知识点在课程正文与知识库中查看。知识点数量只统计已核验发布的课程，不等于本机题库的全部内容已经整理完成。
 
-网站参考 [React Mastery Lab](https://xuyuanzhou.github.io/react-mastery-lab/) 的三栏学习工作台：左侧课程路径、中间连续阅读、右侧进度与最近访问。React 知识卡直接打开现有的 React Mastery Lab 对应章节，不另建一套 React 源码学习器。
+网站参考 [React Mastery Lab](https://xuyuanzhou.github.io/react-mastery-lab/) 的三栏学习工作台：左侧课程路径、中间连续阅读、右侧进度与最近访问。React 知识卡直接打开现有的 React Mastery Lab 对应章节，不另建一套 React 源码学习器。Vue 知识卡同样打开 [Vue 3 Mastery Lab](https://xuyuanzhou.github.io/vue3-mastery-lab/#/) 的对应章节和 v3.5.43 源码查看器。
 
 Java 路线中的“分布式与高并发”有 10 节针对原资料薄弱内容重写的深度课，包括 CAP、Kafka 顺序、布隆过滤器、XA、缓存、限流、一致性哈希、秒杀、Outbox 与分布式锁。课程中的机制图是重新绘制的 SVG；原资料页码和官方核对依据见 [校订记录](分布式高并发校订记录.md)。
 
@@ -41,6 +41,7 @@ node --check coverage-path.js
 node --check coverage-path-02.js
 node --check coverage-path-03.js
 node --check coverage-path-04.js
+node --check coverage-path-05.js
 node verify_content.mjs
 python3 -m unittest discover -p tests.py
 python3 build_public.py
