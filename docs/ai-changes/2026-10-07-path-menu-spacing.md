@@ -14,7 +14,7 @@
 
 ## 决策
 
-- 采用：`inlineIndent={8}`；一级/二级/三级左缩进分别写死为 10 / 14 / 18；一级展开区 `padding-block-start: 12px`；叶子上下内边距收紧；选中恢复 `box-shadow: inset 2px 0 0`
+- 采用：`inlineIndent={8}`；一级/二级/三级左缩进分别写死为 10 / 14 / 18；一级展开区 `padding-block-start: 6px`（16px 时用户反馈偏高）；叶子上下内边距收紧；选中恢复 `box-shadow: inset 2px 0 0`
 - 不采用：继续用 `::before` 独立竖条（用户明确更喜欢上一版选中）
 
 ## 改动清单
