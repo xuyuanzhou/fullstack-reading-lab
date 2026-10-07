@@ -107,7 +107,7 @@ export function LocalPage() {
   return <div className="article-shell">
     <header>
       <h1 className="hero-title">我的资料</h1>
-      <p className="hero-lead">按一级目录和科目阅读原件。AI 目录里的手册带有配图，原始说法仍需逐项核验。</p>
+      <p className="hero-lead">按一级目录和科目阅读原件。AI 路线里的框架笔记带有配图，原始说法仍需逐项核验。</p>
       <div className="track-switch is-triple local-category" style={{ maxWidth: 360, marginBottom: 16 }}>
         {(Object.keys(LOCAL_CATEGORY_LABEL) as LocalCategory[]).map((category) => (
           <Button key={category} type={progress.localCategory === category ? 'primary' : 'default'} onClick={() => progress.setLocalCategory(category)}>

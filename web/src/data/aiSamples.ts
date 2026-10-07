@@ -4,6 +4,7 @@
  */
 import type { AiNote } from './aiCatalog.ts'
 import { AI_B2_EXTRAS } from './aiModulesB2.ts'
+import { AI_B3_EXTRAS } from './aiModulesB3.ts'
 
 type SampleExtra = Partial<
   Pick<
@@ -26,6 +27,7 @@ type SampleExtra = Partial<
 /** B1 样板 + B2 模块扩展；key 与 AiNote.key 对齐 */
 export const AI_SAMPLE_EXTRAS: Record<string, SampleExtra> = {
   ...AI_B2_EXTRAS,
+  ...AI_B3_EXTRAS,
   'first-model-call': {
     title: '第一次真实模型调用（样板）',
     scope: '用假供应商跑通消息、超时与 JSON 校验；有密钥时再换真实调用。分清样例结果与现场运行。',
@@ -269,4 +271,12 @@ export const AI_B2_MODULE_KEYS = [
   'math-ml-min',
   'l0-verify',
   'model-mechanics',
+] as const
+
+/** B3 检索 / RAG / 评测 / L1 */
+export const AI_B3_MODULE_KEYS = [
+  'retrieve-baseline',
+  'rag-pipeline',
+  'eval-runner',
+  'l1-kb',
 ] as const

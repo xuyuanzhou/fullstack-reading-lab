@@ -23,6 +23,11 @@ type ProgressApi = ProgressState & {
   remember: (id: string) => void
   setNote: (id: string, note: string) => void
   setQuery: (query: string) => void
+  toggleAiDone: (id: string) => void
+  toggleAiReview: (id: string) => void
+  rememberAi: (id: string) => void
+  setAiNote: (id: string, note: string) => void
+  setAiQuery: (query: string) => void
   setTheme: (theme: 'light' | 'dark') => void
   setLocalQuery: (query: string) => void
   setLocalTopic: (topic: string) => void
@@ -140,7 +145,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     setState(prev => prev.track === track && prev.group === group ? prev : { ...prev, track, group })
   }, [])
 
-  const toggleList = useCallback((key: 'done' | 'review', id: string) => {
+  const toggleList = useCallback((key: 'done' | 'review' | 'aiDone' | 'aiReview', id: string) => {
     setState((prev) => {
       const list = prev[key]
       return {
@@ -157,6 +162,13 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     }))
   }, [])
 
+  const rememberAi = useCallback((id: string) => {
+    setState((prev) => ({
+      ...prev,
+      aiRecent: [id, ...prev.aiRecent.filter((item) => item !== id)].slice(0, 12),
+    }))
+  }, [])
+
   const value = useMemo<ProgressApi>(
     () => ({
       ...state,
@@ -170,6 +182,12 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       setNote: (id, note) =>
         setState((prev) => ({ ...prev, notes: { ...prev.notes, [id]: note } })),
       setQuery: (query) => setState((prev) => ({ ...prev, query })),
+      toggleAiDone: (id) => toggleList('aiDone', id),
+      toggleAiReview: (id) => toggleList('aiReview', id),
+      rememberAi,
+      setAiNote: (id, note) =>
+        setState((prev) => ({ ...prev, aiNotes: { ...prev.aiNotes, [id]: note } })),
+      setAiQuery: (aiQuery) => setState((prev) => ({ ...prev, aiQuery })),
       setTheme: (theme) => setState((prev) => ({ ...prev, theme })),
       setLocalQuery: (localQuery) => setState((prev) => ({ ...prev, localQuery })),
       setLocalTopic: (localTopic) => setState((prev) => ({ ...prev, localTopic })),
@@ -184,7 +202,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
           audit: { ...prev.audit, [key]: { note, status: '待核验' } },
         })),
     }),
-    [state, storageIssue, selectLesson, setTrack, setGroup, toggleList, remember],
+    [state, storageIssue, selectLesson, setTrack, setGroup, toggleList, remember, rememberAi],
   )
 
   return <ProgressContext.Provider value={value}>{children}</ProgressContext.Provider>

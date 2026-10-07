@@ -95,7 +95,7 @@ export const AI_SECTIONS: AiSection[] = [
   },
   {
     key: 'manual',
-    label: '手册',
+    label: '框架',
     lead: '先建立 Transformer、训练、RAG、Agent 和常用框架的地图。',
     pageTitle: '把结构摊开成一张地图',
     pageLead: '基础讲清单点机制。这里把架构、检索流水线、代理循环和 LangChain / LangGraph 接到一起，方便你对照本机已购手册。',
@@ -103,7 +103,7 @@ export const AI_SECTIONS: AiSection[] = [
   {
     key: 'project',
     label: '项目',
-    lead: '把手册里的结构落到一个能讲清楚边界的应用。',
+    lead: '把框架里的结构落到一个能讲清楚边界的应用。',
     pageTitle: '做一个能讲清边界的应用',
     pageLead: '三个项目都要求你说得出材料从哪来、失败停在哪一步、谁有权看见文档。说完这些，再谈框架名字。',
   },
@@ -116,7 +116,7 @@ export const AI_SECTIONS: AiSection[] = [
   },
   {
     key: 'interview',
-    label: '题库',
+    label: '面试',
     lead: '按面试官会追问的方式口述机制和系统设计，而不是只背名词。',
     pageTitle: '把机制讲到能过面试追问',
     pageLead: '先看面试通常考哪几块，再练大模型基础口述、设计一个 RAG、设计一个 Agent。每题先给结论，再给一个会失败的具体情形。已购题库原件只在本机打开。',
@@ -506,6 +506,15 @@ export const AI_NOTES: AiNote[] = [
     practice: '写一个既含专有编号、又含同义改写的问题。说明只靠向量可能漏什么，只靠关键词可能漏什么，以及你准备先召回多少、再重排出多少给模型。',
   },
   {
+    key: 'retrieve-baseline',
+    section: 'foundation',
+    title: '数据与检索基线（M06）',
+    scope: '同一语料比较关键词、重叠替身与混合召回。',
+    reading: ['占位：见 B3 扩展。'],
+    sources: [],
+    practice: '打开检索对照表并记录 Recall@5。',
+  },
+  {
     key: 'transformer',
     section: 'manual',
     title: 'Transformer 架构',
@@ -590,6 +599,15 @@ export const AI_NOTES: AiNote[] = [
       },
     ],
     localId: `${root}/1-手册/AI应用开发：RAG技术从小白到深入理解-详细版/AI应用开发：RAG技术从小白到深入理解-详细版.md`,
+  },
+  {
+    key: 'rag-pipeline',
+    section: 'manual',
+    title: '完整 RAG 流水线（M07）',
+    scope: '权限过滤、引用、冲突与 mock 契约。',
+    reading: ['占位：见 B3 扩展。'],
+    sources: [],
+    practice: '跑 L1 hybrid 评测并确认无串租户。',
   },
   {
     key: 'agent',
@@ -697,6 +715,15 @@ export const AI_NOTES: AiNote[] = [
     localId: `${root}/1-手册/万字详解！AI Harness 入门与实践！一篇博文给你讲透！/万字详解！AI Harness 入门与实践！一篇博文给你讲透！.md`,
   },
   {
+    key: 'l1-kb',
+    section: 'project',
+    title: 'L1：可评测知识库助手',
+    scope: '合成语料、冻结评测、mock 生成与权限零泄漏。',
+    reading: ['占位：见 B3 扩展。'],
+    sources: [],
+    practice: '跑通 L1 工作台并写答辩提纲。',
+  },
+  {
     key: 'rag-assistant',
     section: 'project',
     title: '知识库助手',
@@ -771,6 +798,15 @@ export const AI_NOTES: AiNote[] = [
       },
     ],
     practice: '用你在入门里写的三段制度，做一张三行的表：有答案的题、没有答案的题、一个格式要求。每行写下怎样算失败。不要先跑模型。',
+  },
+  {
+    key: 'eval-runner',
+    section: 'mastery',
+    title: '评测集与运行器（M09）',
+    scope: '冻结集、分层指标、坏例与回归。',
+    reading: ['占位：见 B3 扩展。'],
+    sources: [],
+    practice: '导出总体指标与至少三条坏例。',
   },
   {
     key: 'rag-layers',
@@ -1140,4 +1176,31 @@ export function sectionKeyForNote(noteKey: string) {
 export function noteNeighbors(note: AiNote) {
   const index = AI_NOTES.findIndex((item) => item.section === note.section && item.key === note.key)
   return { prev: AI_NOTES[index - 1], next: AI_NOTES[index + 1] }
+}
+
+/** 进度里 AI 课的稳定 id，避免与 frontend/java 课号冲突 */
+export function aiProgressId(note: Pick<AiNote, 'key'>) {
+  return `ai:${note.key}`
+}
+
+export function searchAiNotes(query: string) {
+  const q = query.trim().toLocaleLowerCase()
+  const all = AI_NOTES.map((note) => withSampleExtras(note))
+  if (!q) return all
+  return all.filter((note) => {
+    const hay = [
+      note.title,
+      note.scope,
+      note.key,
+      ...note.reading,
+      note.practice || '',
+      ...(note.outcomes || []),
+      ...(note.terms || []).flatMap((term) => [term.zh, term.en, term.meaning]),
+      ...(note.quizzes || []).map((item) => item.question),
+      ...(note.practiceItems || []).map((item) => item.prompt),
+    ]
+      .join(' ')
+      .toLocaleLowerCase()
+    return hay.includes(q)
+  })
 }

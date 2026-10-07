@@ -56,6 +56,12 @@ export type ProgressState = {
   localQuery: string
   localTopic: string
   localCategory: LocalCategory
+  /** AI 路线独立进度，不与 frontend/java 的 done/review/notes 混写 */
+  aiDone: string[]
+  aiReview: string[]
+  aiRecent: string[]
+  aiNotes: Record<string, string>
+  aiQuery: string
   /** Monotonic write counter so a stale tab cannot blank a newer tab's notes. */
   revision: number
 }

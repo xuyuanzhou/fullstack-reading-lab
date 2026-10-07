@@ -217,7 +217,7 @@ export function AppLayout() {
       key: 'review',
       icon: <CheckSquareOutlined />,
       label: '复习清单',
-      badge: progress.review.length,
+      badge: progress.localCategory === 'ai' || onAi ? progress.aiReview.length : progress.review.length,
     },
     ...(localReady
       ? [{ key: 'local', icon: <FolderOpenOutlined />, label: '本机资料', badge: 0 }]

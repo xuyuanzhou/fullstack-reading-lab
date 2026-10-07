@@ -30,6 +30,9 @@ export function normalizeProgress(value: unknown, groups: ProgressGroups): Progr
   const notes = object(saved.notes)
     ? Object.fromEntries(Object.entries(saved.notes).filter(([, note]) => typeof note === 'string')) as Record<string, string>
     : {}
+  const aiNotes = object(saved.aiNotes)
+    ? Object.fromEntries(Object.entries(saved.aiNotes).filter(([, note]) => typeof note === 'string')) as Record<string, string>
+    : {}
   const audit = object(saved.audit)
     ? Object.fromEntries(Object.entries(saved.audit).filter(([, item]) => object(item) && typeof item.note === 'string' && typeof item.status === 'string')) as ProgressState['audit']
     : {}
@@ -39,6 +42,11 @@ export function normalizeProgress(value: unknown, groups: ProgressGroups): Progr
     theme: saved.theme === 'dark' ? 'dark' : 'light',
     query: text(saved.query), localQuery: text(saved.localQuery), localTopic: text(saved.localTopic),
     localCategory,
+    aiDone: strings(saved.aiDone),
+    aiReview: strings(saved.aiReview),
+    aiRecent: strings(saved.aiRecent).slice(0, 12),
+    aiNotes,
+    aiQuery: text(saved.aiQuery),
     revision: revisionOf(saved.revision),
   }
 }
@@ -90,6 +98,19 @@ export function mergeForWrite(local: ProgressState, remote: ProgressState, base:
       touched = true
     }
   }
+  const aiNotes = { ...remote.aiNotes }
+  for (const [id, note] of Object.entries(local.aiNotes)) {
+    if (note !== (base.aiNotes[id] ?? '')) {
+      aiNotes[id] = note
+      touched = true
+    }
+  }
+  for (const id of Object.keys(base.aiNotes)) {
+    if (!(id in local.aiNotes) && (base.aiNotes[id] ?? '') !== '') {
+      delete aiNotes[id]
+      touched = true
+    }
+  }
   const audit = { ...remote.audit }
   for (const [id, item] of Object.entries(local.audit)) {
     const prior = base.audit[id]
@@ -104,13 +125,29 @@ export function mergeForWrite(local: ProgressState, remote: ProgressState, base:
   const review = listChanged(local.review, base.review)
     ? [...new Set([...remote.review, ...local.review])]
     : remote.review
-  if (listChanged(local.done, base.done) || listChanged(local.review, base.review)) touched = true
+  const aiDone = listChanged(local.aiDone, base.aiDone)
+    ? [...new Set([...remote.aiDone, ...local.aiDone])]
+    : remote.aiDone
+  const aiReview = listChanged(local.aiReview, base.aiReview)
+    ? [...new Set([...remote.aiReview, ...local.aiReview])]
+    : remote.aiReview
+  if (
+    listChanged(local.done, base.done) ||
+    listChanged(local.review, base.review) ||
+    listChanged(local.aiDone, base.aiDone) ||
+    listChanged(local.aiReview, base.aiReview)
+  ) {
+    touched = true
+  }
   const next: ProgressState = {
     ...remote,
     notes,
+    aiNotes,
     audit,
     done,
     review,
+    aiDone,
+    aiReview,
     revision: remote.revision + (touched ? 1 : 0),
   }
   // Prefer this tab's UI prefs only when it actually changed them since last sync.
@@ -118,10 +155,12 @@ export function mergeForWrite(local: ProgressState, remote: ProgressState, base:
   if (local.group !== base.group) next.group = local.group
   if (local.theme !== base.theme) next.theme = local.theme
   if (local.query !== base.query) next.query = local.query
+  if (local.aiQuery !== base.aiQuery) next.aiQuery = local.aiQuery
   if (local.localQuery !== base.localQuery) next.localQuery = local.localQuery
   if (local.localTopic !== base.localTopic) next.localTopic = local.localTopic
   if (local.localCategory !== base.localCategory) next.localCategory = local.localCategory
   if (JSON.stringify(local.recent) !== JSON.stringify(base.recent)) next.recent = local.recent
+  if (JSON.stringify(local.aiRecent) !== JSON.stringify(base.aiRecent)) next.aiRecent = local.aiRecent
   return next
 }
 

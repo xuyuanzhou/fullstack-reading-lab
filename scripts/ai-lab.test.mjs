@@ -134,13 +134,12 @@ test('exported runAgent counts failures for toString without inheriting Object m
 })
 
 test('AI sample lessons expose practice answers and two follow-ups', async () => {
-  const { AI_SAMPLE_EXTRAS, AI_B1_SAMPLE_KEYS, AI_B2_MODULE_KEYS, withSampleExtras } = await import(
-    '../web/src/data/aiSamples.ts'
-  )
-  const { AI_NOTES } = await import('../web/src/data/aiCatalog.ts')
+  const { AI_SAMPLE_EXTRAS, AI_B1_SAMPLE_KEYS, AI_B2_MODULE_KEYS, AI_B3_MODULE_KEYS, withSampleExtras } =
+    await import('../web/src/data/aiSamples.ts')
+  const { AI_NOTES, searchAiNotes } = await import('../web/src/data/aiCatalog.ts')
   const noteKeys = new Set(AI_NOTES.map((note) => note.key))
   assert.equal(noteKeys.size, AI_NOTES.length, 'duplicate AI note keys')
-  for (const key of [...AI_B1_SAMPLE_KEYS, ...AI_B2_MODULE_KEYS]) {
+  for (const key of [...AI_B1_SAMPLE_KEYS, ...AI_B2_MODULE_KEYS, ...AI_B3_MODULE_KEYS]) {
     assert.ok(noteKeys.has(key), `missing base note ${key}`)
     const extra = AI_SAMPLE_EXTRAS[key]
     assert.ok(extra?.outcomes?.length, key)
@@ -162,6 +161,26 @@ test('AI sample lessons expose practice answers and two follow-ups', async () =>
     assert.ok(extra.practiceItems?.length >= 2, key)
     assert.ok(extra.quizzes?.[0]?.followUps?.length >= 2, key)
   }
+  const hits = searchAiNotes('KV Cache')
+  assert.ok(hits.some((note) => note.key === 'kv-cache'))
+  for (const note of AI_NOTES) {
+    for (const pre of withSampleExtras(note).prerequisites || []) {
+      assert.ok(noteKeys.has(pre), `${note.key} missing prereq ${pre}`)
+    }
+  }
+})
+
+test('L1 eval has zero ACL failures on hybrid mock path', async () => {
+  const { runL1Eval, compareRetrieveModes } = await import('../web/src/labs/l1EvalRunner.ts')
+  const { L1_EVAL, L1_DOCS } = await import('../web/src/data/l1Corpus.ts')
+  assert.ok(L1_DOCS.length >= 20)
+  assert.equal(L1_EVAL.length, 30)
+  const report = runL1Eval('hybrid')
+  assert.equal(report.aclFailures, 0)
+  assert.equal(report.generator, 'mock-rules')
+  assert.equal(report.unverifiedLiveModel, true)
+  assert.ok(report.answerOkRate > 0.8)
+  assert.equal(compareRetrieveModes().length, 3)
 })
 
 test('L0 pack marks good samples pass and bad samples fail', async () => {

@@ -1,9 +1,11 @@
-import { Button, Collapse, Radio, Space } from 'antd'
-import { useState } from 'react'
+import { Button, Collapse, Input, Radio, Space } from 'antd'
+import { useEffect, useState } from 'react'
 import { Link, Navigate, useOutletContext, useParams } from 'react-router-dom'
 import { AiDiagram } from '@/components/AiDiagrams'
+import { L1Workbench } from '@/components/L1Workbench'
 import {
   aiNote,
+  aiProgressId,
   aiSection,
   noteNeighbors,
   notesInSection,
@@ -14,6 +16,7 @@ import {
 } from '@/data/aiCatalog'
 import { AI_DIAGNOSTIC, AI_PATHS, scoreDiagnostic } from '@/data/aiDiagnostic'
 import { L0_CASES, L0_MATERIALS, gradeL0Pack } from '@/labs/l0Verify'
+import { useProgress } from '@/state/progress'
 
 type OutletCtx = { localReady: boolean | null }
 
@@ -75,7 +78,14 @@ export function AiNotePage() {
   const section = aiSection(sectionKey)
   const note = aiNote(section.key, noteKey)
   const { localReady } = useOutletContext<OutletCtx>()
+  const progress = useProgress()
   if (!note || note.section !== section.key) return <Navigate to={`/ai/${section.key}`} replace />
+  const progressId = aiProgressId(note)
+  const showL1 = ['retrieve-baseline', 'rag-pipeline', 'eval-runner', 'l1-kb'].includes(note.key)
+
+  useEffect(() => {
+    progress.rememberAi(progressId)
+  }, [progressId, progress.rememberAi])
 
   return (
     <div className="article-shell">
@@ -130,6 +140,7 @@ export function AiNotePage() {
       </div>
       {note.key === 'ai-map' ? <DiagnosticPanel /> : null}
       {note.key === 'l0-verify' ? <L0VerifyPanel /> : null}
+      {showL1 ? <L1Workbench compact={note.key === 'retrieve-baseline'} /> : null}
       {note.experiment ? <ExperimentBlock experiment={note.experiment} /> : null}
       {note.sources.length > 0 && (
         <section>
@@ -194,6 +205,24 @@ export function AiNotePage() {
         </section>
       ) : null}
       {note.verifiedAt ? <p className="muted">内容核查日期：{note.verifiedAt}</p> : null}
+      <section>
+        <h2 className="page-title">笔记与进度（仅 AI 路线）</h2>
+        <Space wrap style={{ marginBottom: 12 }}>
+          <Button type="primary" onClick={() => progress.toggleAiDone(progressId)}>
+            {progress.aiDone.includes(progressId) ? '已掌握 · 撤销' : '标记已掌握'}
+          </Button>
+          <Button onClick={() => progress.toggleAiReview(progressId)}>
+            {progress.aiReview.includes(progressId) ? '移出复习清单' : '加入复习清单'}
+          </Button>
+        </Space>
+        <Input.TextArea
+          rows={4}
+          aria-label="AI 课笔记"
+          value={progress.aiNotes[progressId] || ''}
+          placeholder="写下你还讲不清的地方；只保存在本浏览器，不与前端/Java 笔记混用。"
+          onChange={(event) => progress.setAiNote(progressId, event.target.value)}
+        />
+      </section>
       <LocalCopy note={note} localReady={localReady} />
       <NoteNav note={note} />
     </div>
