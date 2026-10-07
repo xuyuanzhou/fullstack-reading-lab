@@ -285,16 +285,19 @@ html[data-theme='dark'] .brand-mark {
     height: 36px !important;
     line-height: 36px !important;
     font-weight: 600;
-    padding-inline: 10px 8px !important;
+    /* 右侧留给展开箭头，避免压住 0/4 计数 */
+    padding-inline-start: 10px !important;
+    padding-inline-end: 28px !important;
   }
 
-  /* 二级分组：中文 12px 偏紧，与叶子同级字号更易扫读 */
+  /* 二级分组：中文用 13px；右侧同样给箭头留位 */
   .ant-menu-sub .ant-menu-submenu > .ant-menu-submenu-title {
     height: auto !important;
     min-height: 34px;
     line-height: 1.4 !important;
     padding-block: 7px !important;
-    padding-inline: 10px 8px !important;
+    padding-inline-start: 10px !important;
+    padding-inline-end: 28px !important;
     font-size: 13px;
     font-weight: 600;
     color: var(--lab-muted);
@@ -302,20 +305,16 @@ html[data-theme='dark'] .brand-mark {
   }
 
   /*
-   * 叶子课：必须有明确内边距。嵌套缩进只负责层级，选中底不该贴字。
-   * 旧值 6/10 在多行中文下会显得“没 padding”。
+   * 叶子课：只调上下/右侧内边距。
+   * 不要写 padding / padding-left 简写，否则会盖掉 ant 的嵌套缩进。
    */
   .ant-menu-item {
     height: auto !important;
     line-height: 1.45 !important;
     margin-block: 2px !important;
-    /* 简写压过 ant 的 padding-left calc，避免叶子贴边 */
-    padding: 8px 10px 8px 12px !important;
+    padding-block: 8px !important;
+    padding-inline-end: 10px !important;
     white-space: normal;
-  }
-
-  .ant-menu-sub .ant-menu-item {
-    padding: 8px 10px 8px 12px !important;
   }
 
   .ant-menu-sub.ant-menu-inline {
@@ -370,9 +369,16 @@ html[data-theme='dark'] .brand-mark {
 }
 
 .group-count {
+  flex: none;
   color: var(--lab-muted);
   font-size: 12px;
   font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  margin-inline-end: 2px;
+}
+
+.section-label .group-count {
+  margin-inline-end: 0;
 }
 
 .lesson-label {
