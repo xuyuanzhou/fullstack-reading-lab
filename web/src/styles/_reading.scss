@@ -443,6 +443,11 @@
     margin-top: 10px;
   }
 
+  .is-pick {
+    color: var(--lab-accent);
+    font-weight: 600;
+  }
+
   .is-warn {
     color: var(--lab-danger);
   }
@@ -488,6 +493,26 @@
   a:hover {
     color: var(--lab-accent);
   }
+}
+
+.ai-outcomes ul,
+.ai-term-list {
+  margin: 0;
+  padding-left: 1.2em;
+  line-height: 1.7;
+}
+
+.ai-experiment,
+.ai-quiz {
+  margin-top: 8px;
+  padding: 14px 16px;
+  border: 1px solid var(--lab-line-soft);
+  border-radius: 10px;
+  background: var(--lab-panel);
+}
+
+.ai-quiz + .ai-quiz {
+  margin-top: 12px;
 }
 
 .source-row {

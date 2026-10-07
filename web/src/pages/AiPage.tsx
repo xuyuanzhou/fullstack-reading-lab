@@ -1,6 +1,19 @@
+import { Button, Collapse, Radio, Space } from 'antd'
+import { useState } from 'react'
 import { Link, Navigate, useOutletContext, useParams } from 'react-router-dom'
 import { AiDiagram } from '@/components/AiDiagrams'
-import { aiNote, aiSection, noteNeighbors, notesInSection, type AiNote } from '@/data/aiCatalog'
+import {
+  aiNote,
+  aiSection,
+  noteNeighbors,
+  notesInSection,
+  sectionKeyForNote,
+  type AiExperiment,
+  type AiNote,
+  type AiQuiz,
+} from '@/data/aiCatalog'
+import { AI_DIAGNOSTIC, AI_PATHS, scoreDiagnostic } from '@/data/aiDiagnostic'
+import { L0_CASES, L0_MATERIALS, gradeL0Pack } from '@/labs/l0Verify'
 
 type OutletCtx = { localReady: boolean | null }
 
@@ -8,10 +21,19 @@ const LAB_LINK: Record<string, { to: string; label: string }> = {
   'prompt-once': { to: '/ai/lab/prompt', label: '到练习台改这一次的提示词' },
   'find-then-answer': { to: '/ai/lab/prompt', label: '到练习台把材料写进这一次' },
   'one-success': { to: '/ai/lab/prompt', label: '到练习台写下没有答案时的出口' },
+  'hallucination-cite': { to: '/ai/lab/prompt', label: '到练习台写下没有依据时的出口' },
   'model-proposes': { to: '/ai/lab/agent', label: '到练习台声明工具并走一遍' },
   permissions: { to: '/ai/lab/agent', label: '到练习台把确认写进循环' },
+  'prompt-injection': { to: '/ai/lab/agent', label: '到练习台给危险动作标确认' },
+  'agent-interview': { to: '/ai/lab/agent', label: '到练习台按节点走查班次与确认' },
   'you-own': { to: '/ai/lab/agent', label: '到练习台写下停点并导出' },
   'skill-place': { to: '/ai/lab/agent', label: '到练习台给这条命令标权限' },
+}
+
+const EXPERIMENT_MODE: Record<AiExperiment['mode'], string> = {
+  explain: '讲解 / 纸面推演（不调用模型）',
+  mock: '可运行 mock（假供应商，非真实模型）',
+  live: '真实模型（需你自配密钥与服务）',
 }
 
 export function AiPage() {
@@ -34,7 +56,9 @@ export function AiPage() {
       <div className="lesson-list">
         {notes.map((note, index) => (
           <Link key={note.key} className="lesson-row" to={`/ai/${section.key}/${note.key}`}>
-            <span className="lesson-row-mark" aria-hidden>{index + 1}</span>
+            <span className="lesson-row-mark" aria-hidden>
+              {index + 1}
+            </span>
             <span>
               <strong>{note.title}</strong>
               <p>{note.scope}</p>
@@ -62,12 +86,51 @@ export function AiNotePage() {
       </div>
       <h1 className="hero-title">{note.title}</h1>
       <p className="hero-lead">{note.scope}</p>
+      {note.outcomes?.length ? (
+        <section className="ai-outcomes">
+          <h2 className="page-title">学完会什么</h2>
+          <ul>
+            {note.outcomes.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+      {note.prerequisites?.length ? (
+        <p className="muted">
+          先修：
+          {note.prerequisites.map((key, index) => (
+            <span key={key}>
+              {index ? '、' : ''}
+              <Link to={`/ai/${sectionKeyForNote(key)}/${key}`}>{key}</Link>
+            </span>
+          ))}
+        </p>
+      ) : null}
+      {note.terms?.length ? (
+        <section>
+          <h2 className="page-title">术语</h2>
+          <ul className="ai-term-list">
+            {note.terms.map((term) => (
+              <li key={term.en}>
+                <strong>
+                  {term.zh}（{term.en}）
+                </strong>
+                ：{term.meaning}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
       <AiDiagram name={note.key} />
       <div className="reading-copy">
         {note.reading.map((paragraph) => (
           <p key={paragraph}>{paragraph}</p>
         ))}
       </div>
+      {note.key === 'ai-map' ? <DiagnosticPanel /> : null}
+      {note.key === 'l0-verify' ? <L0VerifyPanel /> : null}
+      {note.experiment ? <ExperimentBlock experiment={note.experiment} /> : null}
       {note.sources.length > 0 && (
         <section>
           <h2 className="page-title">对照阅读</h2>
@@ -94,8 +157,260 @@ export function AiNotePage() {
           </div>
         </section>
       )}
+      {note.practiceItems?.length ? (
+        <section>
+          <h2 className="page-title">练习与参考答案</h2>
+          <Collapse
+            bordered={false}
+            style={{ background: 'transparent' }}
+            items={note.practiceItems.map((item, index) => ({
+              key: `practice-${index}`,
+              label: `练习 ${index + 1}：先自己做，再展开答案`,
+              children: (
+                <div className="reading-copy">
+                  <p>
+                    <strong>题：</strong>
+                    {item.prompt}
+                  </p>
+                  <p>
+                    <strong>参考答案：</strong>
+                    {item.answer}
+                  </p>
+                  {item.scoring?.length ? (
+                    <p className="muted">评分点：{item.scoring.join('；')}</p>
+                  ) : null}
+                </div>
+              ),
+            }))}
+          />
+        </section>
+      ) : null}
+      {note.quizzes?.length ? (
+        <section>
+          <h2 className="page-title">面试追问</h2>
+          {note.quizzes.map((quiz, index) => (
+            <QuizBlock key={quiz.question} quiz={quiz} index={index} />
+          ))}
+        </section>
+      ) : null}
+      {note.verifiedAt ? <p className="muted">内容核查日期：{note.verifiedAt}</p> : null}
       <LocalCopy note={note} localReady={localReady} />
       <NoteNav note={note} />
+    </div>
+  )
+}
+
+function DiagnosticPanel() {
+  const [answers, setAnswers] = useState<Record<string, string>>({})
+  const [result, setResult] = useState<ReturnType<typeof scoreDiagnostic> | null>(null)
+  const answered = AI_DIAGNOSTIC.every((item) => answers[item.id])
+
+  return (
+    <section className="ai-experiment">
+      <h2 className="page-title">学习诊断（不计排名）</h2>
+      <p className="muted">选最接近现状的一项。结果只推荐路径，不是能力证明或录用预测。</p>
+      <div className="ai-diagnostic-list">
+        {AI_DIAGNOSTIC.map((question, index) => (
+          <div key={question.id} className="ai-quiz">
+            <p>
+              <strong>
+                {index + 1}. {question.prompt}
+              </strong>
+            </p>
+            <Radio.Group
+              value={answers[question.id]}
+              onChange={(event) => {
+                setResult(null)
+                setAnswers((prev) => ({ ...prev, [question.id]: event.target.value }))
+              }}
+            >
+              <Space direction="vertical">
+                {question.choices.map((choice) => (
+                  <Radio key={choice.id} value={choice.id}>
+                    {choice.text}
+                  </Radio>
+                ))}
+              </Space>
+            </Radio.Group>
+          </div>
+        ))}
+      </div>
+      <Button
+        type="primary"
+        disabled={!answered}
+        onClick={() => setResult(scoreDiagnostic(answers))}
+        style={{ marginTop: 12 }}
+      >
+        查看路径建议
+      </Button>
+      {result ? (
+        <div className="reading-copy" style={{ marginTop: 16 }}>
+          <p>
+            <strong>主推荐：</strong>
+            {AI_PATHS[result.primary].label} — {AI_PATHS[result.primary].next}
+          </p>
+          <p>
+            <strong>次推荐：</strong>
+            {AI_PATHS[result.secondary].label} — {AI_PATHS[result.secondary].skipHint}
+          </p>
+          <p className="muted">
+            分项（仅供对照）：使用 {result.totals.use} · 补编程 {result.totals.code} · 应用{' '}
+            {result.totals.app} · 算法 {result.totals.algo}
+          </p>
+        </div>
+      ) : null}
+    </section>
+  )
+}
+
+function L0VerifyPanel() {
+  const report = gradeL0Pack()
+  return (
+    <section className="ai-experiment">
+      <h2 className="page-title">L0 校验包（样例，非现场模型）</h2>
+      <p>
+        <strong>材料：</strong>
+      </p>
+      <ol>
+        {L0_MATERIALS.map((line) => (
+          <li key={line}>{line}</li>
+        ))}
+      </ol>
+      {L0_CASES.map((item) => {
+        const row = report.find((entry) => entry.id === item.id)
+        return (
+          <div key={item.id} className="ai-quiz">
+            <p>
+              <strong>
+                {item.id}：{item.question}
+              </strong>
+            </p>
+            <p className="muted">样例输出（预录）：{JSON.stringify(item.sampleOutput)}</p>
+            <ul>
+              {row?.sample.map((check) => (
+                <li key={check.id}>
+                  {check.ok ? '通过' : '失败'} · {check.detail}
+                </li>
+              ))}
+            </ul>
+            {item.badSample ? (
+              <>
+                <p className="muted">坏例（预录）：{JSON.stringify(item.badSample)}</p>
+                <p>错因：{item.badSample.whyWrong}</p>
+                <ul>
+                  {row?.bad.map((check) => (
+                    <li key={check.id}>
+                      {check.ok ? '仍通过' : '已抓住'} · {check.detail}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : null}
+          </div>
+        )
+      })}
+    </section>
+  )
+}
+
+function ExperimentBlock({ experiment }: { experiment: AiExperiment }) {
+  return (
+    <section className="ai-experiment">
+      <h2 className="page-title">实验</h2>
+      <p>
+        <strong>状态：</strong>
+        {EXPERIMENT_MODE[experiment.mode]}
+        {experiment.unverified ? ' · 本环境未代跑真实 API，结果勿伪装成现场实测' : ''}
+      </p>
+      <div className="reading-copy">
+        <p>
+          <strong>材料：</strong>
+          {experiment.materials}
+        </p>
+        <ol>
+          {experiment.steps.map((step) => (
+            <li key={step}>{step}</li>
+          ))}
+        </ol>
+        <p>
+          <strong>预期：</strong>
+          {experiment.expected}
+        </p>
+        {experiment.commonErrors?.length ? (
+          <p>
+            <strong>常见报错：</strong>
+            {experiment.commonErrors.join('；')}
+          </p>
+        ) : null}
+      </div>
+    </section>
+  )
+}
+
+function QuizBlock({ quiz, index }: { quiz: AiQuiz; index: number }) {
+  return (
+    <div className="ai-quiz">
+      <p>
+        <strong>
+          主问题 {index + 1}：{quiz.question}
+        </strong>
+      </p>
+      <Collapse
+        bordered={false}
+        style={{ background: 'transparent' }}
+        items={[
+          {
+            key: 'short',
+            label: '30 秒结论（先自己答再展开）',
+            children: <p>{quiz.answerShort}</p>,
+          },
+          {
+            key: 'deep',
+            label: '2–3 分钟机制版',
+            children: <p>{quiz.answerDeep}</p>,
+          },
+          {
+            key: 'follow',
+            label: '两层追问',
+            children: (
+              <div className="reading-copy">
+                {quiz.followUps.map((item, followIndex) => (
+                  <div key={item.question}>
+                    <p>
+                      <strong>
+                        追问 {followIndex + 1}：{item.question}
+                      </strong>
+                    </p>
+                    <ul>
+                      {item.points.map((point) => (
+                        <li key={point}>{point}</li>
+                      ))}
+                    </ul>
+                    {item.counterexample ? <p className="muted">反例：{item.counterexample}</p> : null}
+                    {item.boundary ? <p className="muted">边界：{item.boundary}</p> : null}
+                  </div>
+                ))}
+              </div>
+            ),
+          },
+          ...(quiz.commonMistakes?.length
+            ? [
+                {
+                  key: 'mistakes',
+                  label: '常见错答',
+                  children: (
+                    <ul>
+                      {quiz.commonMistakes.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  ),
+                },
+              ]
+            : []),
+        ]}
+      />
+      {quiz.scoring?.length ? <p className="muted">评分点：{quiz.scoring.join('；')}</p> : null}
     </div>
   )
 }

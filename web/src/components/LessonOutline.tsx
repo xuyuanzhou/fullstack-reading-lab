@@ -18,7 +18,7 @@ export function LessonOutline({ lesson }: { lesson: Lesson }) {
         const visible = entries
           .filter((entry) => entry.isIntersecting)
           .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
-        const current = visible[0]?.target.id.replace(/^lesson-/, '')
+        const current = visible[0]?.target.id.replace(/^lesson-/, '') as typeof active | undefined
         if (current) setActive(current)
       },
       { rootMargin: '-15% 0px -55% 0px', threshold: [0, 1] },

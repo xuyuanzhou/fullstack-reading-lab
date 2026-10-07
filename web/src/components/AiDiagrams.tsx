@@ -13,10 +13,20 @@ const FIGURES: Record<string, () => ReactElement> = {
   loss: Loss,
   'attention-who': AttentionWho,
   'change-how': ChangeHow,
+  embeddings: Embeddings,
+  'decode-params': DecodeParams,
+  'kv-cache': KvCache,
+  'hybrid-retrieve': HybridRetrieve,
   'eval-set': EvalSet,
   'rag-layers': RagLayers,
+  'hallucination-cite': HallucinationCite,
+  'prompt-injection': PromptInjection,
   permissions: Permissions,
   'you-own': YouOwn,
+  'interview-map': InterviewMap,
+  'llm-interview': LlmInterview,
+  'rag-interview': RagInterview,
+  'agent-interview': AgentInterview,
   'find-skills': FindSkills,
   'write-skill': WriteSkill,
   'skill-place': SkillPlace,
@@ -282,6 +292,96 @@ function ChangeHow() {
   )
 }
 
+function Embeddings() {
+  return (
+    <figure className="ai-figure" aria-label="意思相近的句子向量靠近，无关句子远离">
+      <div className="ai-split">
+        <div className="ai-docs" aria-label="三句话">
+          <p className="is-pick">报销需要发票</p>
+          <p className="is-pick">请交发票才能报销</p>
+          <p>会议室需要预约</p>
+        </div>
+        <article className="ai-card is-accent">
+          <strong>向量空间里</strong>
+          <p>前两句靠近。</p>
+          <p>会议室那句离得远。</p>
+        </article>
+      </div>
+      <figcaption>换了嵌入模型，旧向量和新问题不在同一把尺子上，索引要重建。</figcaption>
+    </figure>
+  )
+}
+
+function DecodeParams() {
+  return (
+    <figure className="ai-figure" aria-label="温度低时几乎总挑最高分，温度高时次高分也可能被选中">
+      <div className="ai-split">
+        <article className="ai-card is-accent">
+          <strong>温度低</strong>
+          <p>几乎总挑最高分。</p>
+          <p>更稳，也更重复。</p>
+        </article>
+        <article className="ai-card">
+          <strong>温度高</strong>
+          <p>次高分也有机会。</p>
+          <p>更多样，也更容易跑偏。</p>
+        </article>
+      </div>
+      <figcaption>Top-p / Top-k 先缩小候选。它们都不增加事实，也不改权重。</figcaption>
+    </figure>
+  )
+}
+
+function KvCache() {
+  return (
+    <figure className="ai-figure" aria-label="前缀的键值算过一次就缓存，新词只算自己的查询">
+      <div className="ai-flow">
+        <article className="ai-card">
+          <strong>已生成的前缀</strong>
+          <p>键和值算过一次，存进缓存。</p>
+        </article>
+        <span className="ai-arrow" aria-hidden>→</span>
+        <article className="ai-card is-accent">
+          <strong>新词元</strong>
+          <p>只算自己的查询，再和缓存做注意力。</p>
+        </article>
+        <span className="ai-arrow" aria-hidden>→</span>
+        <article className="ai-card">
+          <strong>代价</strong>
+          <p>省时间，显存随长度涨。</p>
+        </article>
+      </div>
+    </figure>
+  )
+}
+
+function HybridRetrieve() {
+  return (
+    <figure className="ai-figure" aria-label="向量抓同义，BM25 抓编号，合并后再重排出前几段">
+      <div className="ai-flow">
+        <article className="ai-card">
+          <strong>向量</strong>
+          <p>同义改写</p>
+        </article>
+        <article className="ai-card">
+          <strong>BM25</strong>
+          <p>编号、专有词</p>
+        </article>
+        <span className="ai-arrow" aria-hidden>→</span>
+        <article className="ai-card is-accent">
+          <strong>重排</strong>
+          <p>宽召回后收成前几段</p>
+        </article>
+        <span className="ai-arrow" aria-hidden>→</span>
+        <article className="ai-card">
+          <strong>生成</strong>
+          <p>带引用</p>
+        </article>
+      </div>
+    </figure>
+  )
+}
+
 function EvalSet() {
   return (
     <figure className="ai-figure" aria-label="评测至少包括有原句、应说没有、格式符合三类">
@@ -313,6 +413,107 @@ function RagLayers() {
           <strong>3 生成</strong>
           <p>回答有没有引用它。</p>
         </article>
+      </div>
+    </figure>
+  )
+}
+
+function HallucinationCite() {
+  return (
+    <figure className="ai-figure" aria-label="有依据就引用块标识；没有依据就拒答，不要编">
+      <div className="ai-split">
+        <article className="ai-card is-accent">
+          <strong>有依据</strong>
+          <p>回答带块标识。</p>
+          <p>前端能点回原文。</p>
+        </article>
+        <article className="ai-card is-warn">
+          <strong>没有依据</strong>
+          <p>说材料里没有。</p>
+          <p>编得再像也不展示。</p>
+        </article>
+      </div>
+    </figure>
+  )
+}
+
+function PromptInjection() {
+  return (
+    <figure className="ai-figure" aria-label="系统指令、用户内容和工具结果分开，危险动作仍要确认">
+      <div className="ai-flow">
+        <article className="ai-card is-accent">
+          <strong>系统指令</strong>
+          <p>你写的边界。</p>
+        </article>
+        <article className="ai-card is-warn">
+          <strong>用户内容</strong>
+          <p>可能含“忽略规则”。</p>
+        </article>
+        <article className="ai-card is-warn">
+          <strong>工具结果</strong>
+          <p>同样不可信。</p>
+        </article>
+      </div>
+      <p className="ai-warn">导出、发信、写库仍走程序里的确认，不靠模型自觉。</p>
+    </figure>
+  )
+}
+
+function InterviewMap() {
+  return (
+    <figure className="ai-figure" aria-label="五块考点：机制、改哪一层、推理优化、系统设计、评测安全">
+      <ol className="ai-checks">
+        <li>注意力与词元</li>
+        <li>提示 / 检索 / 微调</li>
+        <li>KV Cache 与延迟</li>
+        <li className="is-pick">设计 RAG / Agent</li>
+        <li className="is-warn">评测、幻觉、注入</li>
+      </ol>
+      <figcaption>应用岗主攻后三块；算法岗再加深前两块和对齐。</figcaption>
+    </figure>
+  )
+}
+
+function LlmInterview() {
+  return (
+    <figure className="ai-figure" aria-label="口述顺序：结论、机制、失败情形">
+      <div className="ai-flow">
+        <article className="ai-card is-accent"><strong>结论</strong><p>先一句话说清。</p></article>
+        <span className="ai-arrow" aria-hidden>→</span>
+        <article className="ai-card"><strong>机制</strong><p>它改的是哪一层。</p></article>
+        <span className="ai-arrow" aria-hidden>→</span>
+        <article className="ai-card is-warn"><strong>失败</strong><p>一个具体会坏的情形。</p></article>
+      </div>
+    </figure>
+  )
+}
+
+function RagInterview() {
+  return (
+    <figure className="ai-figure" aria-label="RAG 面试流水线从切分到引用">
+      <div className="ai-flow">
+        <article className="ai-card"><strong>切分</strong><p>含重叠</p></article>
+        <article className="ai-card"><strong>嵌入</strong><p>写入索引</p></article>
+        <article className="ai-card is-accent"><strong>混合检索</strong><p>向量 + 关键词</p></article>
+        <article className="ai-card"><strong>重排</strong><p>收窄</p></article>
+        <article className="ai-card"><strong>生成</strong><p>带引用</p></article>
+      </div>
+      <p className="ai-warn">权限过滤插在召回之前。</p>
+    </figure>
+  )
+}
+
+function AgentInterview() {
+  return (
+    <figure className="ai-figure" aria-label="模型提议，程序执行，有副作用前确认，循环有上限">
+      <div className="ai-flow">
+        <article className="ai-card"><strong>提议</strong><p>工具名和参数</p></article>
+        <span className="ai-arrow" aria-hidden>→</span>
+        <article className="ai-card is-accent"><strong>校验执行</strong><p>程序来做</p></article>
+        <span className="ai-arrow" aria-hidden>→</span>
+        <article className="ai-card is-warn"><strong>确认</strong><p>发信、扣款之前</p></article>
+        <span className="ai-arrow" aria-hidden>→</span>
+        <article className="ai-card"><strong>上限</strong><p>步数与失败次数</p></article>
       </div>
     </figure>
   )

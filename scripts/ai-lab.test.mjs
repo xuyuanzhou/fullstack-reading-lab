@@ -133,6 +133,56 @@ test('exported runAgent counts failures for toString without inheriting Object m
   assert.equal(result.stop, '同一工具失败次数达到上限')
 })
 
+test('AI sample lessons expose practice answers and two follow-ups', async () => {
+  const { AI_SAMPLE_EXTRAS, AI_B1_SAMPLE_KEYS, AI_B2_MODULE_KEYS, withSampleExtras } = await import(
+    '../web/src/data/aiSamples.ts'
+  )
+  const { AI_NOTES } = await import('../web/src/data/aiCatalog.ts')
+  const noteKeys = new Set(AI_NOTES.map((note) => note.key))
+  assert.equal(noteKeys.size, AI_NOTES.length, 'duplicate AI note keys')
+  for (const key of [...AI_B1_SAMPLE_KEYS, ...AI_B2_MODULE_KEYS]) {
+    assert.ok(noteKeys.has(key), `missing base note ${key}`)
+    const extra = AI_SAMPLE_EXTRAS[key]
+    assert.ok(extra?.outcomes?.length, key)
+    assert.ok(extra.practiceItems?.length >= 1, key)
+    assert.ok(extra.experiment?.mode, key)
+    assert.equal(extra.experiment.unverified, true, key)
+    const merged = withSampleExtras({
+      key,
+      section: 'intro',
+      title: 't',
+      scope: 's',
+      reading: ['r'],
+      sources: [],
+    })
+    assert.ok(merged.outcomes?.length)
+  }
+  for (const key of AI_B1_SAMPLE_KEYS) {
+    const extra = AI_SAMPLE_EXTRAS[key]
+    assert.ok(extra.practiceItems?.length >= 2, key)
+    assert.ok(extra.quizzes?.[0]?.followUps?.length >= 2, key)
+  }
+})
+
+test('L0 pack marks good samples pass and bad samples fail', async () => {
+  const { gradeL0Pack, L0_CASES } = await import('../web/src/labs/l0Verify.ts')
+  const report = gradeL0Pack()
+  assert.equal(report.length, L0_CASES.length)
+  for (const row of report) {
+    assert.ok(row.sample.every((item) => item.ok), row.id)
+    assert.ok(row.bad.some((item) => !item.ok), row.id)
+  }
+})
+
+test('AI diagnostic scores a complete answer sheet', async () => {
+  const { AI_DIAGNOSTIC, scoreDiagnostic } = await import('../web/src/data/aiDiagnostic.ts')
+  const answers = Object.fromEntries(AI_DIAGNOSTIC.map((item) => [item.id, item.choices[0].id]))
+  const result = scoreDiagnostic(answers)
+  assert.ok(result.primary)
+  assert.ok(result.secondary)
+  assert.equal(AI_DIAGNOSTIC.length, 10)
+})
+
 test('restoreLabBackup reads the recovery copy', () => {
   const data = new Map([['reading-lab.ai-lab.recovery', JSON.stringify({ prompt: { task: '从副本恢复', materials: '', format: '', ifUnknown: '', limits: '' }, agent: SAMPLE_AGENT })]])
   const descriptor = Object.getOwnPropertyDescriptor(globalThis, 'localStorage')
