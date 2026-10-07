@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 360" role="img" aria-labelledby="title desc">
+  <title id="title">同步 → 微任务 → 绘制 → 定时器</title>
+  <desc id="desc">大量微任务会推迟绘制。</desc>
+  <defs>
+    <filter id="soft" x="-6%" y="-8%" width="112%" height="124%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1.4" flood-color="#28302a" flood-opacity="0.07"/>
+    </filter>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#3f6a58"/>
+    </marker>
+  </defs>
+  <rect width="960" height="360" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="28" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">JavaScript</text>
+  <text x="32" y="56" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">同步 → 微任务 → 绘制 → 定时器</text>
+  <rect x="32" y="88" width="200" height="140" rx="14" fill="#e6efe9" stroke="#3f6a58" filter="url(#soft)"/><text x="48" y="124" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2d4f41" text-anchor="start">1 同步代码</text><text x="48" y="168" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="15" font-weight="400" fill="#2e3330" text-anchor="start">先跑完当前栈</text><rect x="256" y="88" width="200" height="140" rx="14" fill="#fafaf8" stroke="#d9ddd8" filter="url(#soft)"/><text x="272" y="124" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2e3330" text-anchor="start">2 微任务</text><text x="272" y="160" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="15" font-weight="400" fill="#2e3330" text-anchor="start">Promise.then</text><text x="272" y="186" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="15" font-weight="400" fill="#2e3330" text-anchor="start">queueMicrotask</text><text x="272" y="212" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="15" font-weight="400" fill="#2e3330" text-anchor="start">await 后续</text><rect x="480" y="88" width="200" height="140" rx="14" fill="#fafaf8" stroke="#d9ddd8" filter="url(#soft)"/><text x="496" y="124" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2e3330" text-anchor="start">3 绘制机会</text><text x="496" y="168" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="15" font-weight="400" fill="#2e3330" text-anchor="start">浏览器才可能画</text><rect x="704" y="88" width="224" height="140" rx="14" fill="#f6ecea" stroke="#a05048" filter="url(#soft)"/><text x="720" y="124" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#6e3530" text-anchor="start">4 定时器</text><text x="720" y="168" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="15" font-weight="400" fill="#2e3330" text-anchor="start">setTimeout 更靠后</text><rect x="32" y="280" width="896" height="44" rx="12" fill="#e6efe9"/><text x="48" y="308" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="600" fill="#2d4f41" text-anchor="start">微任务清空之前，定时器和绘制都还轮不到。</text>
+</svg>

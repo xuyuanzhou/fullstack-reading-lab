@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-labelledby="title desc">
+  <title id="title">三种组合时机</title>
+  <desc id="desc">构建时、运行时、服务端组合的失败点与回滚面不同。</desc>
+  <defs><filter id="soft" x="-6%" y="-8%" width="112%" height="124%"><feDropShadow dx="0" dy="1" stdDeviation="1.4" flood-color="#28302a" flood-opacity="0.07"/></filter></defs>
+  <rect width="960" height="400" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="28" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">微前端</text>
+  <text x="32" y="56" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">组合发生在哪一步，决定回滚怎么做</text>
+  <rect x="32" y="92" width="286" height="220" rx="14" fill="#e6efe9" stroke="#3f6a58" filter="url(#soft)"/>
+  <text x="52" y="128" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2d4f41">构建时</text>
+  <text x="52" y="164" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">发版前钉死版本</text>
+  <text x="52" y="192" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">运行时不再拉远程入口</text>
+  <text x="52" y="220" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">一起验收、一起回滚</text>
+  <text x="52" y="256" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#5a635e">壳不发版则子应用也不能上</text>
+  <rect x="337" y="92" width="286" height="220" rx="14" fill="#fafaf8" stroke="#d9ddd8" filter="url(#soft)"/>
+  <text x="357" y="128" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2e3330">运行时</text>
+  <text x="357" y="164" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">浏览器加载 remote / 子应用</text>
+  <text x="357" y="192" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">可换 CDN 入口指针</text>
+  <text x="357" y="220" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">iframe 属于强隔离一支</text>
+  <text x="357" y="256" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#5a635e">壳不发版仍可上线</text>
+  <rect x="642" y="92" width="286" height="220" rx="14" fill="#fafaf8" stroke="#d9ddd8" filter="url(#soft)"/>
+  <text x="662" y="128" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2e3330">服务端 / 边缘</text>
+  <text x="662" y="164" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">返回前拼 HTML 片段</text>
+  <text x="662" y="192" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">首屏少一次客户端拼装</text>
+  <text x="662" y="220" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">适合要源码里有正文</text>
+  <text x="662" y="256" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#5a635e">失败点在网关或 BFF</text>
+  <rect x="32" y="334" width="896" height="40" rx="12" fill="#e6efe9"/>
+  <text x="52" y="360" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="600" fill="#2d4f41">三种不要画成同一支箭头；混用时在图上分开标注。</text>
+</svg>

@@ -266,7 +266,7 @@
     ]
   },
   "java-main-launcher": {
-    "core": "Java 启动器要调用某个类的 public static void main(String[])（或等价的 String...）。缺少这个方法时，现行启动器直接失败，不会把静态初始化块当官方入口。可以声明其它签名的 main 作为重载，但 JVM 不会把它们当启动点。static 不能被实例方法意义上的覆盖，子类同签名 main 是隐藏。synchronized 可以写在 main 上，但没有实际意义。资料里的“可以终结 main”没有对应的语言机制，不要发挥成 finalize。Java 模块与自定义启动器另有入口约定，仍不是静态块替代。",
+    "core": "Java 启动器要调用某个类的 public static void main(String[])（或等价的 String...）。缺少这个方法时，现行启动器直接失败，不会把静态初始化块当官方入口。可以声明其它签名的 main 作为重载，但 JVM 不会把它们当启动点。static 不能被实例方法意义上的覆盖，子类同签名 main 是隐藏。synchronized 可以写在 main 上，但没有实际意义。有些资料里的“可以终结 main”没有对应的语言机制，不要发挥成 finalize。Java 模块与自定义启动器另有入口约定，仍不是静态块替代。",
     "why": "把静态初始化块当成入口，会在现行启动器上得不到那个 main，表现为找不到方法。区分信号是启动器只认 public static void main(String[])，别的 main 只是重载。",
     "example": "java com.example.App 要求 App 里有 public static void main(String[] args)。另写 public static void main(int n) 不会被启动器调用。",
     "task": "对照 JLS 启动一节，列出启动器要求的修饰符、返回类型和参数类型；划掉静态块入口和“终结 main”。",
@@ -397,7 +397,7 @@
     ]
   },
   "java-protected-other-pkg-subclass": {
-    "core": "public 在任何包都能访问。private 只在声明它的类里能访问。什么修饰符都不写，是包访问，只限同一个包，别的包里的子类也看不见。Java 没有 friendly 这个关键字，旧资料里的 friendly 指的就是这种不写修饰符。protected 比包访问多出一条：其他包里的子类可以访问。多出来的这条有限制。在子类的代码里，可以读写继承来的那个成员，也可以通过子类自己的类型去访问。不能把一个编译类型只是父类的引用当成公共字段，去读父类对象上的 protected 成员。所以表格里“其他 package”如果打成一律不可见，就把跨包继承画没了；如果打成和其他包的任意类一样可见，又把“必须是子类、并且通过子类类型访问”画没了。",
+    "core": "public 在任何包都能访问。private 只在声明它的类里能访问。什么修饰符都不写，是包访问，只限同一个包，别的包里的子类也看不见。Java 没有 friendly 这个关键字，有些旧有些资料里的 friendly 指的就是这种不写修饰符。protected 比包访问多出一条：其他包里的子类可以访问。多出来的这条有限制。在子类的代码里，可以读写继承来的那个成员，也可以通过子类自己的类型去访问。不能把一个编译类型只是父类的引用当成公共字段，去读父类对象上的 protected 成员。所以表格里“其他 package”如果打成一律不可见，就把跨包继承画没了；如果打成和其他包的任意类一样可见，又把“必须是子类、并且通过子类类型访问”画没了。",
     "why": "按“出了包就看不见”去改字段，跨包的子类访问继承来的 protected 成员时编译失败，会以为语言把 protected 改掉了。按“子类里怎么写都能访问”去写，通过父类引用去读又会编译失败，两次都对不上同一条规则。",
     "example": "pkg.a.Parent 有 protected int x。pkg.b.Child 继承它，在 Child 的方法里写 x = 1，或者写另一个 Child 引用的 x，可以通过编译。同在 pkg.b 的无关类 Other，以及 Child 里一个参数类型是 Parent 的引用，都不能读这个 x。",
     "task": "对照 JLS 6.6，写出 protected 跨包时谁能访问；划掉 friendly 当正式关键字。",
@@ -478,7 +478,7 @@
     ]
   },
   "jdk-feature-release-six-months": {
-    "core": "从 JDK 10 起，OpenJDK 功能版本大约 **每六个月** 发一版（3 月和 9 月）。Oracle JDK 与这个节奏对齐，另有长期支持版（11/17/21/25）。不存在“Oracle 三年、OpenJDK 三月”这套对照。构建可以选 Eclipse Temurin、Oracle、Amazon Corretto 等发行，API 以对应 OpenJDK 版本为准。Jakarta EE 已从 Java EE 改名，见资料里 2018 年那句是对的，但版本号不要再写 J2EE。",
+    "core": "从 JDK 10 起，OpenJDK 功能版本大约 **每六个月** 发一版（3 月和 9 月）。Oracle JDK 与这个节奏对齐，另有长期支持版（11/17/21/25）。不存在“Oracle 三年、OpenJDK 三月”这套对照。构建可以选 Eclipse Temurin、Oracle、Amazon Corretto 等发行，API 以对应 OpenJDK 版本为准。Jakarta EE 已从 Java EE 改名，见有些资料里 2018 年那句是对的，但版本号不要再写 J2EE。",
     "why": "按三年发布去规划升级窗口，会错过半年一次的功能版和真正的 LTS。",
     "example": "2024–2026 的功能线是 22、23、24、25。生产锁 21 或 25 LTS，而不是等“下一个三年大版本”。",
     "task": "划掉“Oracle 三年 / OpenJDK 三月”；写出当前 LTS 和功能版节奏。",
@@ -947,7 +947,7 @@
       },
       {
         "title": "怎样自己验证",
-        "body": "对照两份 JavaDoc，划掉两倍速度。在迭代中删除元素，看 fail-fast 抛出的是并发修改，而不是等待锁。再把资料里的 Hashtable、Deque 拼写改正，确认没有“更快”的句子。"
+        "body": "对照两份 JavaDoc，划掉两倍速度。在迭代中删除元素，看 fail-fast 抛出的是并发修改，而不是等待锁。再把有些资料里的 Hashtable、Deque 拼写改正，确认没有“更快”的句子。"
       }
     ],
     "references": [
@@ -1155,7 +1155,7 @@
     ]
   },
   "java-collection-vs-collections": {
-    "core": "`java.util.Collection` 是 List、Set、Queue 的根接口，变量类型通常写它。`java.util.Collections` 是只含静态方法的类：排序、同步包装、不可变视图、空集合。`java.util.Arrays` 同样是工具类，`asList` 不是 `java.util.ArrayList`，见 `java-arrays-aslist-fixed`。Map 不在 Collection 树上。不能 `new Collections()` 当业务容器，也不能把 `Collections.sort` 写成 `collection.sort` 就以为自己实现了 Collection。不可变视图仍可能被原列表改掉，见既有课。",
+    "core": "`java.util.Collection` 是 List、Set、Queue 的根接口，变量类型通常写它。`java.util.Collections` 是只含静态方法的类：排序、同步包装、不可变视图、空集合。`java.util.Arrays` 同样是工具类，`asList` 不是 `java.util.ArrayList`，见 `java-arrays-aslist-fixed`。Map 不在 Collection 树上。不能 `new Collections()` 当业务容器，也不能把 `Collections.sort` 写成 `collection.sort` 就以为自己实现了 Collection。不可变视图仍可能被原列表改掉，见相关课。",
     "why": "面试把 Collections 说成“集合顶层接口”，一写方法签名就找不到 add。把 Arrays 当成 ArrayList 的父类，asList 一 add 就抛错还以为是集合坏了。",
     "example": "List<String> names = new ArrayList<>(); 类型也可以写成 Collection<String>。Collections.sort(names) 是静态调用。Arrays.asList(\"a\") 的返回类型不是 java.util.ArrayList。",
     "task": "划掉“Collections 是集合根接口”。分别写出 Collection、Collections、Arrays 各自能 new 吗、方法是实例还是静态。",
@@ -1585,7 +1585,7 @@
     "core": "设计模式是给反复出现的那一块变化起的名字，不是一份必须背完才许写代码的咒语。Gamma、Helm、Johnson、Vlissides 那本书把对象结构里最常被点名的解法收成二十三种，按三族分开：创建型五个、结构型七个、行为型十一个。创建型管“这一次造出哪一份、怎么组装、范围是不是一份”：工厂方法、抽象工厂、建造者、原型、单例。结构型管“对象怎么接在一起还不把调用方绑死”：适配器、桥接、组合、装饰器、外观、享元、代理。行为型管“一次请求或一次算法怎么走”：责任链、命令、解释器、迭代器、中介者、备忘录、观察者、状态、策略、模板方法、访问者。这一课只列名单。后面按族深入已经有单独课的那些；名单上还有、但还没写成整课的七个，见 `pattern-gof-rest`，那里会先写清允许变的是哪一块。没有名单就先写策略，是在用一个名字代替目录。",
     "why": "面试或改代码时直接说“上个策略”，对方问还有哪些、这一次为什么不是工厂或装饰器，答不上来。名字成了口头禅，目录从未打开。",
     "example": "结算要换计价规则，允许变的是已经造好的对象怎么算，对应行为型里的策略，深入课是 `pattern-strategy-swap`。渠道客户端方法名对不上自己的 Payment，允许变的是接口形状，对应结构型里的适配器，深入课是 `pattern-adapter-shape`。HttpRequest 有一堆可选项，允许变的是组装过程，对应创建型里的建造者，深入课是 `pattern-builder-assemble`。三件事不是同一个模式，但都属于这一份二十三的名单。",
-    "task": "不看后面的课，先按创建、结构、行为三列写出二十三个中文名。再各举一件本周会碰到的需求，标上它落在哪一列、哪一个名字。不要先写类图。",
+    "task": "不看后面章节，先按创建、结构、行为三列写出二十三个中文名。再各举一件本周会碰到的需求，标上它落在哪一列、哪一个名字。不要先写类图。",
     "answer": "创建型五个：工厂方法、抽象工厂、建造者、原型、单例。结构型七个：适配器、桥接、组合、装饰器、外观、享元、代理。行为型十一个：责任链、命令、解释器、迭代器、中介者、备忘录、观察者、状态、策略、模板方法、访问者。计价规则换算法是策略；第三方方法名对不上是适配器；可选项分步放进成品是建造者。写不出三列时，不要开始画某一个模式的类。",
     "deep": [
       {
@@ -2042,7 +2042,7 @@
       },
       {
         "title": "怎样自己验证",
-        "body": "增加一个下游时，业务方法的 diff 应为空，新代码只出现在登记处。再看业务方法的返回类型，它不应变成下游返回值的列表。JavaBeans 的 PropertyChangeSupport 就是维护监听器名单并转发事件；Spring 里的发布方式在后面的课核对，默认同步这一点不要提前当成异步。"
+        "body": "增加一个下游时，业务方法的 diff 应为空，新代码只出现在登记处。再看业务方法的返回类型，它不应变成下游返回值的列表。JavaBeans 的 PropertyChangeSupport 就是维护监听器名单并转发事件；Spring 里的发布方式在后面章节核对，默认同步这一点不要提前当成异步。"
       }
     ],
     "references": [
@@ -2415,7 +2415,7 @@
     "diagram": "diagrams/jvm-class-identity.svg"
   },
   "jvm-method-area-metaspace": {
-    "core": "JVMS 规定方法区由所有线程共享，存放每个类的结构信息等；它不要求必须叫永久代，也不固定某块堆内区域。HotSpot 曾用永久代实现方法区相关存储，但从 JDK 8 起类元数据转到 Metaspace（本地内存），调参与 OOM 文案都变为 Metaspace。资料里“JDK7 之后运行时常量池移出永久代”混进了字符串常量池迁堆等历史步骤，不能代替“现行默认实现是 Metaspace”这一判断。方法区是否回收、何时回收由实现决定；递归导致的溢出更常见于栈，不能写成方法区一调用就 OOME 的通式。",
+    "core": "JVMS 规定方法区由所有线程共享，存放每个类的结构信息等；它不要求必须叫永久代，也不固定某块堆内区域。HotSpot 曾用永久代实现方法区相关存储，但从 JDK 8 起类元数据转到 Metaspace（本地内存），调参与 OOM 文案都变为 Metaspace。有些资料里“JDK7 之后运行时常量池移出永久代”混进了字符串常量池迁堆等历史步骤，不能代替“现行默认实现是 Metaspace”这一判断。方法区是否回收、何时回收由实现决定；递归导致的溢出更常见于栈，不能写成方法区一调用就 OOME 的通式。",
     "why": "继续按永久代背参数，会在 JDK 8 及以后找错区域、改错旗标，类元数据打满时对不上日志。区分信号是 OOM 文案写 Metaspace 还是 Java heap space。文案已经换成 Metaspace。",
     "example": "类元数据打满时日志是 Metaspace，应看 MaxMetaspaceSize，而不是永久代大小。堆对象打满是 Java heap space。递归把栈打满则是另一句栈溢出，不能写成方法区一调用就耗尽。",
     "task": "对照 JVMS 方法区定义与当前 HotSpot 文档，列出“规范名 / 旧实现名 / 现行实现名”，并解释一处 OOM 文案该查哪块区域。",
@@ -2667,7 +2667,7 @@
     "diagram": "diagrams/jvm-soft-ref.svg"
   },
   "jvm-no-permgen-hotspot": {
-    "core": "年轻代 Eden + 两个 Survivor、老年代，这条还在。HotSpot 的永久代在 JDK 8 去掉，类元数据进 Metaspace，默认可吃本地内存，用 MaxMetaspaceSize 设上限，见 `jvm-method-area-metaspace`。资料里 Survivor“可以配置成多个”不是现行 HotSpot 的默认模型，就是两个。Full GC 不再有 Perm 被写满这一条。Serial/Parallel/G1/ZGC 的停顿模型也不要背成 JDK 5 的增量收集。",
+    "core": "年轻代 Eden + 两个 Survivor、老年代，这条还在。HotSpot 的永久代在 JDK 8 去掉，类元数据进 Metaspace，默认可吃本地内存，用 MaxMetaspaceSize 设上限，见 `jvm-method-area-metaspace`。有些资料里 Survivor“可以配置成多个”不是现行 HotSpot 的默认模型，就是两个。Full GC 不再有 Perm 被写满这一条。Serial/Parallel/G1/ZGC 的停顿模型也不要背成 JDK 5 的增量收集。",
     "why": "还用 -XX:MaxPermSize 去防类元数据把永久代写满，这个参数会被忽略，类加载泄漏要看的是元空间。区分信号是 HotSpot 年轻代只有 Eden 和两块 Survivor，没有第三块 Survivor，也没有永久代。",
     "example": "Java 21 的启动参数里写 -XX:MaxPermSize，不会再为永久代设出上限。类元数据改看 Metaspace，用 -XX:MaxMetaspaceSize=256m 才设得住。年轻代仍是 Eden 加上两块 Survivor，SurvivorRatio 调整的是这两块和 Eden 的比例，不是再加一块 Survivor。",
     "task": "对照 8 以后的 GC 文档，划掉 Perm 和 MaxPermSize；写出 Survivor 在 HotSpot 里有几块。",
@@ -4428,8 +4428,8 @@
     "core": "MySQL 8.4 默认存储引擎是 InnoDB。MyISAM 不支持事务、外键和 MVCC，锁粒度是表级，并在特定条件下支持并发插入；InnoDB 支持事务、外键、行级锁与多版本读。若表没有 PRIMARY KEY，也没有合适的全部 NOT NULL 唯一索引，InnoDB 会生成隐藏聚簇索引，行 ID 为 6 字节——这句与手册一致。不能再说 InnoDB 不支持全文索引；也不能把“MyISAM 查询一定更快”写成通则。MyISAM 表的数据与索引文件扩展名仍是 .MYD/.MYI，表定义在数据字典中；InnoDB 表空间上限与文件布局以表空间文档为准，而不是笼统的 2GB。",
     "why": "用过时对比表答题，会在默认 InnoDB 上推荐无事务引擎，或重复“InnoDB 没有全文”。信号是建表不写引擎时 SHOW ENGINES 与默认值都指向 InnoDB。默认引擎已经不是那张旧表。",
     "example": "新建业务表不写 ENGINE，默认就是 InnoDB。故意建一张无主键的 InnoDB 表，二级索引仍能靠隐藏的行 ID 回表。需要能迁移、能引用的主键时，应自己声明，不要依赖这 6 字节隐藏键。对照 SHOW ENGINES 的默认一行。",
-    "task": "用 SHOW ENGINES 与建表默认值确认当前默认引擎；再列出事务、外键、锁粒度、MVCC、隐藏主键五项对比，划掉资料里过时的全文句。",
-    "answer": "SHOW ENGINES 和建表默认值应看到 InnoDB。对比五项：InnoDB 有事务、外键、行锁、MVCC，无主键时生成 6 字节行 ID 做聚簇；MyISAM 这几项都没有。资料里“InnoDB 不支持全文”应划掉，全文以现行手册为准。",
+    "task": "用 SHOW ENGINES 与建表默认值确认当前默认引擎；再列出事务、外键、锁粒度、MVCC、隐藏主键五项对比，划掉有些资料里过时的全文句。",
+    "answer": "SHOW ENGINES 和建表默认值应看到 InnoDB。对比五项：InnoDB 有事务、外键、行锁、MVCC，无主键时生成 6 字节行 ID 做聚簇；MyISAM 这几项都没有。有些资料里“InnoDB 不支持全文”应划掉，全文以现行手册为准。",
     "deep": [
       {
         "title": "隐藏行 ID 不是主键",
@@ -4437,7 +4437,7 @@
       },
       {
         "title": "怎样自己验证",
-        "body": "执行 SHOW ENGINES，再看一张不写 ENGINE 的新表。列出事务、外键、锁粒度、MVCC、隐藏主键五项，把资料里过时的全文句划掉。隐藏键不能拿来当业务主键。"
+        "body": "执行 SHOW ENGINES，再看一张不写 ENGINE 的新表。列出事务、外键、锁粒度、MVCC、隐藏主键五项，把有些资料里过时的全文句划掉。隐藏键不能拿来当业务主键。"
       }
     ],
     "references": [
@@ -4464,7 +4464,7 @@
     "deep": [
       {
         "title": "两层上限",
-        "body": "引擎按页大小给出表空间的内部上限。文件还得放进操作系统的单个文件限制里。谁更小，谁先挡住增长。历史资料里的 2GB 属于后一层的旧例子，不能写成引擎今天的容量。"
+        "body": "引擎按页大小给出表空间的内部上限。文件还得放进操作系统的单个文件限制里。谁更小，谁先挡住增长。历史有些资料里的 2GB 属于后一层的旧例子，不能写成引擎今天的容量。"
       },
       {
         "title": "怎样自己验证",
@@ -4510,7 +4510,7 @@
     ]
   },
   "mysql-replication-flow": {
-    "core": "MySQL 复制默认是异步的。源服务器先把更新写入二进制日志。副本连上之后，源上的 Binlog Dump 线程发送事件；副本的 I/O（receiver）线程把事件写入本地中继日志（relay log）；SQL（applier）线程再读取中继日志并应用。副本并行复制时，协调线程把事务分给多个 worker。资料里的 replay log 是误称。基于位点的复制要对齐文件与位置；GTID 用事务标识简化故障转移。还有半同步、延迟复制等变体，不能把三步示意图当成唯一拓扑。",
+    "core": "MySQL 复制默认是异步的。源服务器先把更新写入二进制日志。副本连上之后，源上的 Binlog Dump 线程发送事件；副本的 I/O（receiver）线程把事件写入本地中继日志（relay log）；SQL（applier）线程再读取中继日志并应用。副本并行复制时，协调线程把事务分给多个 worker。有些资料里的 replay log 是误称。基于位点的复制要对齐文件与位置；GTID 用事务标识简化故障转移。还有半同步、延迟复制等变体，不能把三步示意图当成唯一拓扑。",
     "why": "把复制说成 replay log，排障时对不上手册里的 dump 和 applier，也会把并行应用和 GTID 想成单线程重做。信号是线程名和日志文件名对得上哪一章，而不是口头的“重做日志”。",
     "example": "SHOW REPLICA STATUS 里看接收与应用是否落后；源上 PROCESSLIST 可见 Binlog Dump。切换应用只读到副本前，要确认应用位点或 GTID 集合，而不是假设“能连上就一致”。",
     "task": "画出源与一个异步副本的三条线程和两类日志文件，标出 relay 与 binary 的区别，并写一句半同步比默认异步多等的是什么。",
@@ -4607,7 +4607,7 @@
     ]
   },
   "mysql-buffer-pool-size": {
-    "core": "innodb_buffer_pool_size 是 InnoDB 缓存表数据和索引数据的内存大小。MySQL 8.4 的默认值是 134217728 字节，也就是 128MB。它不会因为机器内存变大而自动改成某个百分比。手册对专用数据库服务器的说法是可以考虑设到物理内存的 80% 左右，同时警告操作系统换页，并说明 InnoDB 还会为控制结构再占用大约一成内存。缓冲池不大于 1GiB 时，innodb_buffer_pool_instances 默认是 1；大于 1GiB 时，默认值取「缓冲池块数的一半」和「逻辑处理器数的四分之一」里较小的那个，范围是 1 到 64，并且该变量只能在启动时设置。手册建议每个实例至少约 1GB，这不是启动后必须手工改成大于 1 的开关。innodb_dedicated_server 默认 OFF。只有在只跑 MySQL 的专用机、容器或虚拟机上启动该选项，且没有手工指定缓冲池时，才会按探测到的内存自动设置：不足 1GB 仍是 128MB，1GB 到 4GB 为内存的 50%，大于 4GB 为 75%。与其他应用混部时，手册不建议打开这个选项。key_buffer_size 的默认值是 8388608 字节（8MB），只缓冲 MyISAM 的索引块；手册把大约 25% 内存说成主要使用 MyISAM 时的可接受值，没有要求 InnoDB 实例为它预留大缓存。8.4 的内部临时表在内存中默认用 TempTable（也可改为 MEMORY），落盘时只用 InnoDB，手册写明 MyISAM 不再承担这个用途。系统变量表里已经没有 internal_tmp_disk_storage_engine。read_buffer_size 默认 131072 字节：手册把它说成 MyISAM 顺序扫描等场景的缓冲，并对其他引擎的若干缓存用途写明 InnoDB 除外；不能把“全表扫描慢就加大 read_buffer_size”当成 InnoDB 通用调法。",
+    "core": "innodb_buffer_pool_size 是 InnoDB 缓存表数据和索引的内存大小。MySQL 8.4 默认是 128MB（134217728 字节），不会随机器内存自动变成某个百分比。顺序是：先记住默认 128MB；再分清「专用机建议」和「混部机器」；最后才看 dedicated_server 自动分档，以及 key_buffer、read_buffer 各自服务谁。边界是：大约 80% 或自动配置里的 50%/75% 只属于专用库机器；混部不要先套这个比例。key_buffer_size 默认 8MB，只缓冲 MyISAM 索引；read_buffer_size 默认 128KB，不是 InnoDB 全表扫描的通用旋钮。缓冲池不大于 1GiB 时，instances 默认是 1；大于 1GiB 时，默认值取「缓冲池块数的一半」和「逻辑处理器数的四分之一」里较小的那个，范围 1 到 64，且只能在启动时设置。innodb_dedicated_server 默认 OFF。只有在只跑 MySQL 的专用机上打开它、又没有手工指定缓冲池时，才会按探测内存自动设置：不足 1GB 仍是 128MB，1GB 到 4GB 为 50%，大于 4GB 为 75%。8.4 的内部临时表在内存里默认用 TempTable，落盘只用 InnoDB；MyISAM 不再承担这个用途。",
     "why": "把专用机的比例套到混部机器上会挤占操作系统和其他进程；再用过时的 MyISAM 临时表理由去放大 key buffer，或拿 read_buffer_size 去“加速” InnoDB 扫描，会占着用不到的内存。",
     "example": "专用 32GB 机器若启用 innodb_dedicated_server 且未手工指定缓冲池，自动值约为 24GB，并仍要给控制结构和操作系统留余量。同一台机器还跑应用进程时，应从 128MB 这个默认值出发，按缓冲池命中和换页情况调整，而不是先乘 80%。InnoDB 慢扫描应先看索引与缓冲池，而不是先调 read_buffer_size。",
     "task": "在测试实例执行 SELECT VERSION()，再查看 innodb_buffer_pool_size、innodb_dedicated_server、key_buffer_size、read_buffer_size 和 internal_tmp_mem_storage_engine。对照手册确认磁盘内部临时表引擎，并说明混部时为什么不直接套 75% 或 80%，以及为何不能靠加大 read_buffer_size 优化 InnoDB 扫描。",
@@ -4647,7 +4647,8 @@
         "MySQL 8.4：内部临时表",
         "https://dev.mysql.com/doc/refman/8.4/en/internal-temporary-tables.html"
       ]
-    ]
+    ],
+    "diagram": "diagrams/mysql-buffer-pool.svg"
   },
   "mysql-query-cache-removal": {
     "core": "旧版 MySQL 的 Query Cache 曾缓存部分 SELECT 结果，但相关功能与 query_cache_size 等变量在 MySQL 8.0.3 被移除。MySQL 8.0 后不能再把“增大 Query Cache”作为通用优化方案。InnoDB Buffer Pool 缓存数据页和索引页，与旧的 SQL 结果缓存不是同一机制；应用侧缓存也需要单独设计一致性和失效策略。",
@@ -4921,9 +4922,9 @@
     ]
   },
   "redis-eviction-policy-menu": {
-    "core": "达到 maxmemory 后按 maxmemory-policy 淘汰。现行菜单包括 noeviction（写新数据报错）、allkeys 或 volatile 前缀搭配 lru / lfu / random，以及 volatile-ttl；新版本还有按最近修改的 lrm。LRU/LFU 都是近似算法，抽样估计，不是精确链表。volatile-* 只在带 TTL 的键里挑，没有过期键时行为接近禁止驱逐。资料里的 no-enviction 是拼写错误。要保留热点 20 万条，通常 allkeys-lru 或 allkeys-lfu 比“只从已设置过期的集合里 LRU”更符合“热点不一定设了 TTL”。哨兵与集群分工见既有 `redis-sentinel-cluster`。",
+    "core": "达到 maxmemory 后按 maxmemory-policy 淘汰。现行菜单包括 noeviction（写新数据报错）、allkeys 或 volatile 前缀搭配 lru / lfu / random，以及 volatile-ttl；新版本还有按最近修改的 lrm。LRU/LFU 都是近似算法，抽样估计，不是精确链表。volatile-* 只在带 TTL 的键里挑，没有过期键时行为接近禁止驱逐。有些资料里的 no-enviction 是拼写错误。要保留热点 20 万条，通常 allkeys-lru 或 allkeys-lfu 比“只从已设置过期的集合里 LRU”更符合“热点不一定设了 TTL”。哨兵与集群分工见既有 `redis-sentinel-cluster`。",
     "why": "只背 LRU 或旧的六项名字，键都没有 TTL 时会以为还会淘汰，写入其实直接报错。区分信号是政策名以 volatile 还是 allkeys 开头，以及拼写要和现行文档一致。写入报错才是信号。",
-    "example": "缓存实例用 allkeys-lru，内存满了按近似 LRU 淘汰任意键。配置键不能丢时不要放进这个实例指望 volatile-lru：没有 TTL 的键不参与，内存仍满就会写入失败。资料里的 no-enviction 拼写也要划掉。",
+    "example": "缓存实例用 allkeys-lru，内存满了按近似 LRU 淘汰任意键。配置键不能丢时不要放进这个实例指望 volatile-lru：没有 TTL 的键不参与，内存仍满就会写入失败。有些资料里的 no-enviction 拼写也要划掉。",
     "task": "对照当前 eviction 文档列出政策名，划掉资料中的六项穷尽和 no-enviction，说明没有 TTL 时 volatile-lru 会怎样。",
     "answer": "对照现行淘汰文档列出政策名，不要停在旧的六项。LRU 只是其中一种近似，不是唯一行为。volatile 开头的政策只处理带过期时间的键；键都没有 TTL 时，volatile-lru 淘汰不了，写入会失败。no-enviction 这句拼写和“只有六项”都划掉。",
     "deep": [
@@ -5192,7 +5193,7 @@
     ]
   },
   "redis-legacy-vm-limits": {
-    "core": "早期 Redis 试验过 Virtual Memory 把冷键换到磁盘，该方案早已废弃，现行版本不靠自研 VM 当内存不够的解决方案。内存不够应扩容、拆分、设 maxmemory 淘汰，或把权威数据放在磁盘数据库。字符串值的文档上限是 512 MB，不是资料里的 1GB，也不是另一份资料写的 key 512KB。Memcached 默认 item 约 1MB 受 slab 限制，可以改配置，但不能据此推出 Redis 一定更快。命令原子性不等于 MULTI/EXEC 能回滚；“全部成功或全部不执行”见既有 `redis-transaction`。",
+    "core": "早期 Redis 试验过 Virtual Memory 把冷键换到磁盘，该方案早已废弃，现行版本不靠自研 VM 当内存不够的解决方案。内存不够应扩容、拆分、设 maxmemory 淘汰，或把权威数据放在磁盘数据库。字符串值的文档上限是 512 MB，不是有些资料里的 1GB，也不是另一份资料写的 key 512KB。Memcached 默认 item 约 1MB 受 slab 限制，可以改配置，但不能据此推出 Redis 一定更快。命令原子性不等于 MULTI/EXEC 能回滚；“全部成功或全部不执行”见既有 `redis-transaction`。",
     "why": "把自建 VM、value 最大 1GB、key 最长 512KB 背成现行能力，容量规划会选错存储，也会把已经拿掉的换页当卖点。区分信号是文档里的字符串上限是 512MB，且没有 VM 换页。",
     "example": "会话字符串留在 KB 级。大文件放对象存储或数据库，不放进 Redis。不要指望 Redis 把冷数据换到自己的 VM 文件里。命令的原子性也不是关系数据库那种失败回滚事务。上限以文档的 512MB 为准。",
     "task": "在当前 Redis 文档里查 STRING 上限，确认没有 Virtual Memory 作为推荐特性；划掉 1GB / 512KB / 自建 VM 三句。",
@@ -5204,7 +5205,7 @@
       },
       {
         "title": "怎样自己验证",
-        "body": "打开当前 Redis 字符串文档，核对上限是不是 512MB，并确认没有 Virtual Memory 作为推荐特性。把资料里的 1GB、512KB 和自建 VM 三句划掉。"
+        "body": "打开当前 Redis 字符串文档，核对上限是不是 512MB，并确认没有 Virtual Memory 作为推荐特性。把有些资料里的 1GB、512KB 和自建 VM 三句划掉。"
       }
     ],
     "references": [
@@ -5435,7 +5436,7 @@
     ]
   },
   "spring-scope-catalog": {
-    "core": "作用域描述容器如何创建并共享某个 bean 定义的实例，不是“Spring 里只有单例”。默认确实常常是 singleton：每个容器一个共享实例。现行文档列出的常用内建作用域包括 singleton、prototype，以及 Web 环境下的 request、session、application、websocket；还可以注册自定义作用域。旧资料里的 global-session 来自 Portlet 全局会话语境，不应再当作通用 Web 应用的标准五项之一。singleton 属性或 scope 写错，只会改变实例数量与生命周期，不会自动带来字段级线程安全。",
+    "core": "作用域描述容器如何创建并共享某个 bean 定义的实例，不是“Spring 里只有单例”。默认确实常常是 singleton：每个容器一个共享实例。现行文档列出的常用内建作用域包括 singleton、prototype，以及 Web 环境下的 request、session、application、websocket；还可以注册自定义作用域。有些旧有些资料里的 global-session 来自 Portlet 全局会话语境，不应再当作通用 Web 应用的标准五项之一。singleton 属性或 scope 写错，只会改变实例数量与生命周期，不会自动带来字段级线程安全。",
     "why": "背过时的五种含 global-session，会在现代 Spring MVC/WebFlux 项目里说错作用域菜单，也会把默认单例理解成“所有 bean 只能单例”。",
     "example": "无状态 Service 用默认 singleton；每请求的表单草稿用 request 作用域或干脆放方法局部变量。不要去找一个已不在常规清单里的 global-session 来解释普通浏览器会话。",
     "task": "对照当前 Spring Bean Scopes 文档列出内建作用域，划掉资料中的 global-session，并说明为何“都是单件”与 prototype/request 矛盾。",
@@ -5447,7 +5448,7 @@
       },
       {
         "title": "怎样自己验证",
-        "body": "打开当前 Bean Scopes 文档，抄下内建名字，把资料里的 global-session 划掉。再声明一个 prototype 和一个 request 作用域，看是不是每次或每个请求都是另一份。"
+        "body": "打开当前 Bean Scopes 文档，抄下内建名字，把有些资料里的 global-session 划掉。再声明一个 prototype 和一个 request 作用域，看是不是每次或每个请求都是另一份。"
       }
     ],
     "references": [
@@ -5482,7 +5483,7 @@
   },
   "spring-legacy-config": {
     "core": "先区分历史 API 和当前项目选择。XmlBeanFactory 在 Spring 5.3 文档中已标记为自 3.1 起弃用；@Required 在 5.3 文档中标记为自 5.1 起弃用。XML 配置本身仍是可用方式，但不应把这两个旧 API 当成现代应用的默认入口。常规应用使用 ApplicationContext；必需依赖优先通过构造器表达。",
-    "why": "错把旧资料里的 XmlBeanFactory 和 @Required 写成今天的默认做法，新项目会多一套已经弃用的入口。能分开的信号是：这段 API 出现在遗留代码里，还是被推荐给没有版本前提的新服务。",
+    "why": "错把有些旧有些资料里的 XmlBeanFactory 和 @Required 写成今天的默认做法，新项目会多一套已经弃用的入口。能分开的信号是：这段 API 出现在遗留代码里，还是被推荐给没有版本前提的新服务。",
     "example": "维护旧 XML 项目时先确认 Spring 版本与现有 BeanDefinition 加载方式；新服务的必需 Repository 通过构造器注入，而不是为了校验 setter 再引入 @Required。",
     "task": "把一段“最常用 XmlBeanFactory、必需字段加 @Required”的答题稿改写成带版本条件的说明，并写出新项目的构造器注入方案。",
     "answer": "答题要写明版本：XmlBeanFactory 在 Spring 5.3 文档中已标为自 3.1 起弃用，@Required 标为自 5.1 起弃用，它们只用于认出遗留代码。XML 配置本身仍可用，但不是把这两个 API 捡回来。新项目用 ApplicationContext 管理上下文，必需依赖放进构造器，创建时就缺不了，而不是靠 @Required 去检查 setter。",
@@ -5728,7 +5729,7 @@
     ]
   },
   "spring-mvc-restcontroller": {
-    "core": "@RestController 等价于 @Controller 加上类级别 @ResponseBody：方法返回值直接写成 HTTP 体，不再走视图名解析。做 JSON API 时它就是推荐写法，不是非法替代。默认控制器仍是单例 bean，可变实例字段会在并发请求间共享；解决办法是把请求数据放在方法参数或请求作用域对象里，不是“控制器里不能有任何字段”——注入的服务字段正是常规做法。DispatcherServlet → HandlerMapping → HandlerAdapter 的骨架见既有 `spring-mvc-dispatch`。资料里的 @Conntroller 是拼写错误。",
+    "core": "@RestController 等价于 @Controller 加上类级别 @ResponseBody：方法返回值直接写成 HTTP 体，不再走视图名解析。做 JSON API 时它就是推荐写法，不是非法替代。默认控制器仍是单例 bean，可变实例字段会在并发请求间共享；解决办法是把请求数据放在方法参数或请求作用域对象里，不是“控制器里不能有任何字段”——注入的服务字段正是常规做法。DispatcherServlet → HandlerMapping → HandlerAdapter 的骨架见既有 `spring-mvc-dispatch`。有些资料里的 @Conntroller 是拼写错误。",
     "why": "背“表现层只能用 @Controller、别的注解不能代替”，会在只返回 JSON 的接口上拒绝 RestController，也会把单例理解成不能注入协作对象。区分信号是它组合了 Controller 和 ResponseBody。",
     "example": "订单查询用 @RestController，方法返回 OrderResponse，响应体就是这份 JSON。当前用户 id 放在方法参数里，从这次请求取。不要写成控制器的实例字段留给下一次请求，因为默认单例会被并发请求共用。",
     "task": "对照 Spring Web MVC 文档写出 RestController 的组合关系，并列出一处可以安全保留的注入字段和一处不能放的请求状态。",
@@ -5879,7 +5880,8 @@
         "Spring：Using @Transactional",
         "https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/annotations.html"
       ]
-    ]
+    ],
+    "diagram": "diagrams/spring-transaction.svg"
   },
   "spring-rollback": {
     "core": "Spring 声明式事务默认对 RuntimeException 和 Error 回滚，对受检异常默认不回滚；可以通过 rollbackFor 配置。事务是否进入还依赖调用是否经过代理。顺序是：代理开启事务，目标方法抛出，拦截器按异常类型决定提交或回滚。边界是：捕获异常后不再抛出，拦截器看到正常返回，事务提交。受检异常要显式列入回滚规则。自调用绕过代理时，这些规则都不会执行。业务上要一起成败的写入，必须真的在同一个已生效的事务里。默认回滚运行时异常和 Error。受检异常要写 rollbackFor。异常被 catch 后不再抛出，拦截器看到正常返回，写入会提交。",
@@ -6560,7 +6562,7 @@
     ]
   },
   "mybatis-pagehelper-next-query": {
-    "core": "现行插件类是 `com.github.pagehelper.PageInterceptor`。`PageHelper` 是默认方言，`startPage` 仍是调用入口，不要再把旧类名 `com.github.pagehelper.PageHelper` 注册成拦截器。Spring Boot 3 用 2.x 的 `pagehelper-spring-boot-starter`（PageHelper 6，JDK 17）；Spring Boot 4 用 4.x starter。两代 starter 不能混用。`startPage` 把页码放进当前线程的 ThreadLocal。紧跟着的第一条 MyBatis 查询会被改成当前数据库方言的 LIMIT，默认再发一条同步 COUNT；异步 count 要另外打开。拦截器跑完会在 finally 里清掉这个 ThreadLocal。若 startPage 之后的分支没有执行查询，拦截器没机会清，参数留在线程上；线程回到池里再接下一个请求时，不该分页的查询会吃掉这一页。安全写法是确认即将查询再 startPage；分支可能跳过查询时，在 finally 里调用 `PageHelper.clearPage`。这和 `mybatis-rowbounds-memory` 不同：RowBounds 默认在内存里截结果，PageHelper 改的是 SQL。不要再叠一套分页拦截器。",
+    "core": "现行插件类是 `com.github.pagehelper.PageInterceptor`。顺序是：先 startPage，再执行本线程的下一次查询；分页插件只作用于这一次。边界是：中间若先跑了别的查询，分页会打到那一次上，而不是你以为的那条业务 SQL。`PageHelper` 是默认方言，`startPage` 仍是调用入口，不要再把旧类名 `com.github.pagehelper.PageHelper` 注册成拦截器。Spring Boot 3 用 2.x 的 `pagehelper-spring-boot-starter`（PageHelper 6，JDK 17）；Spring Boot 4 用 4.x starter。两代 starter 不能混用。`startPage` 把页码放进当前线程的 ThreadLocal。紧跟着的第一条 MyBatis 查询会被改成当前数据库方言的 LIMIT，默认再发一条同步 COUNT；异步 count 要另外打开。拦截器跑完会在 finally 里清掉这个 ThreadLocal。若 startPage 之后的分支没有执行查询，拦截器没机会清，参数留在线程上；线程回到池里再接下一个请求时，不该分页的查询会吃掉这一页。安全写法是确认即将查询再 startPage；分支可能跳过查询时，在 finally 里调用 `PageHelper.clearPage`。这和 `mybatis-rowbounds-memory` 不同：RowBounds 默认在内存里截结果，PageHelper 改的是 SQL。不要再叠一套分页拦截器。",
     "why": "startPage 之后先查了字典，字典被 LIMIT 成 10 行，订单列表反而没分页。空参数跳过查询又不 clearPage 时，下一个请求会莫名少一页。",
     "example": "`startPage(1, 10)` 然后 `dictMapper.findAll()` 再 `orderMapper.list()`。日志里 findAll 带 LIMIT，list 没有。把 startPage 挪到 list 前一行，只有 list 带 LIMIT，并且多一条 COUNT。若 list 被 if 跳过且没有 clearPage，同一工作线程上的下一次查询可能带上这一页。",
     "task": "在 startPage 和目标查询之间插入另一条 SELECT，看 LIMIT 落在哪条。再让目标查询不执行且不 clearPage，用同一线程发下一次查询，看 LIMIT 还在不在。",
@@ -6618,7 +6620,7 @@
     ]
   },
   "mybatis-middleware-layers": {
-    "core": "先按层说，再说这个项目用了哪一个、和哪一代 Spring Boot 匹配的包。MyBatis 3.5 自己把 Mapper 方法绑到语句。分页、租户、乐观锁、禁止无条件更新，都是拦截器：PageHelper 6 的插件类是 `PageInterceptor`，MyBatis-Plus 是 InnerInterceptor，分页那个要放在链的最后，见 `mybatis-pagehelper-next-query` 和 `mybatis-plus-page-argument`。带问号的 SQL 用 MyBatis 的 DEBUG；填好参数的 SQL 用 p6spy，或 Boot 3 的 `druid-spring-boot-3-starter` 打开 StatFilter / Slf4jLogFilter。`@DS` 决定从哪个数据源拿连接。Spring 的 `@Transactional` 一开始拿到的连接会用到提交，中途再标 `@DS` 换不了这条连接。这个组件自己的 `@DSTransactional` 可以按库切换提交，它不是 XA；跨库要一起回滚仍用 Seata。Boot 3 的选库包是 `dynamic-datasource-spring-boot3-starter`。ShardingSphere-JDBC 在数据源之下把逻辑表改写成真实表。MyBatis Generator 和 MyBatisX 只在写代码、跳转 XML 时用。同一层留一个改写者，starter 的大版本要和 Boot 一致。",
+    "core": "先按层说，再说这个项目用了哪一个、和哪一代 Spring Boot 匹配的包。顺序是：选库决定拿哪条连接；拦截器改分页或附加条件；连接池或 JDBC 代理让你看见最终 SQL；分片在数据源之下把逻辑表改成真实表。边界是：Spring 的 `@Transactional` 一开始拿到的连接会用到提交，中途再标 `@DS` 换不了这条连接；`@DSTransactional` 可以按库切换提交，但它不是 XA。MyBatis 3.5 自己把 Mapper 方法绑到语句。分页、租户、乐观锁、禁止无条件更新，都是拦截器：PageHelper 6 的插件类是 `PageInterceptor`，MyBatis-Plus 是 InnerInterceptor，分页那个要放在链的最后，见 `mybatis-pagehelper-next-query` 和 `mybatis-plus-page-argument`。带问号的 SQL 用 MyBatis 的 DEBUG；填好参数的 SQL 用 p6spy，或 Boot 3 的 `druid-spring-boot-3-starter` 打开 StatFilter / Slf4jLogFilter。Boot 3 的选库包是 `dynamic-datasource-spring-boot3-starter`。ShardingSphere-JDBC 在数据源之下改写表名。MyBatis Generator 只在开发时生成代码，不出现在运行链上。",
     "why": "把 Druid 说成分页插件，或分页插件和分片各改一次 LIMIT，排障时会对着 XML 找一个运行时才出现的表名。",
     "example": "一次订单列表：`@DS(\"slave\")` 选从库，分页拦截器加上 LIMIT，若启用了 ShardingSphere，再把 `t_order` 改成 `t_order_03`。Druid 慢日志里看到的是最终语句。Generator 不出现在这条链上。同一个 `@Transactional` 里先访问主库再标 `@DS(\"slave\")`，第二条仍走事务已经持有的连接。要按库分开提交，用 `@DSTransactional`，不要把它当成一次 XA。",
     "task": "画一条查询经过的层：数据源路由、MyBatis 拦截器、连接池或 JDBC 代理、分片改写。每一层只留一个产品，并写上它改的是连接、语句还是表名。",
@@ -6642,7 +6644,8 @@
         "ShardingSphere",
         "https://shardingsphere.apache.org/document/current/en/overview/"
       ]
-    ]
+    ],
+    "diagram": "diagrams/mybatis-middleware-layers.svg"
   },
   "spring-security-filter-chain": {
     "core": "Spring Security 的过滤链包在 Servlet 过滤器里，在到达控制器之前运行。链上的过滤器依次处理安全上下文、认证、CSRF、授权。请求通过链之后，控制器用 SecurityContext 里的身份，而不是自己再解析一个头。漏配的路径会直接进控制器，这时你在方法里写的检查才是最后一道，而且很容易忘。授权规则应按路径和方法声明：哪些匿名可访问，哪些要角色，哪些要到对象级。对象级授权仍在拥有数据的服务里，过滤链不能根据订单 id 知道这张订单属不属于该用户。",
@@ -6907,7 +6910,7 @@
     ]
   },
   "jwt-payload-not-encrypted": {
-    "core": "常见的 JWS（RFC 7519）把 header.payload.signature 做 Base64url，载荷谁都能解码，签名用来防篡改，不是把 JSON 加密起来。敏感字段不要放进 payload。无状态 JWT 不能单票作废，除非改签发密钥、维护黑名单，或把会话放到 Redis。资料里的 Redis 存随机 token 是服务端会话，和 JWT 不是同一套。Tomcat 内存复制会话在多节点上会广播，规模大时确实不合适。把请求里的 Origin 原样写成允许源并开 Credentials，等于谁来都带 Cookie，见 `cors-credentials-allowlist`。",
+    "core": "常见的 JWS（RFC 7519）把 header.payload.signature 做 Base64url，载荷谁都能解码，签名用来防篡改，不是把 JSON 加密起来。敏感字段不要放进 payload。无状态 JWT 不能单票作废，除非改签发密钥、维护黑名单，或把会话放到 Redis。有些资料里的 Redis 存随机 token 是服务端会话，和 JWT 不是同一套。Tomcat 内存复制会话在多节点上会广播，规模大时确实不合适。把请求里的 Origin 原样写成允许源并开 Credentials，等于谁来都带 Cookie，见 `cors-credentials-allowlist`。",
     "why": "把 JWT 当成加密令牌，就会把手机号和权限塞进载荷，任何人 Base64url 解码都能看见；当成可以单张踢掉，无状态下登出又不会生效。区分信号是载荷能直接解出来，改的是签名密钥时所有旧票一起验签失败。",
     "example": "一段未加密的 access token 取中间一段做 Base64url 解码，得到明文 JSON，里面有 sub 和过期时间。服务端换成新的 HMAC 密钥后，旧票的签名对不上，全部被拒绝。若只想踢掉一张，无状态票做不到，除非把 jti 放进黑名单。",
     "task": "解码一段未加密 JWT 的 payload；写出仅改服务端密钥时，旧票怎样。",
@@ -7041,8 +7044,8 @@
     "core": "很多功能仍是编译开关，官方包也不是“任意 .so 都能热插”。但从 1.9.11 起，核心有 load_module，可在配置主上下文加载动态模块（例如 mail）。发行版提供的 nginx 往往把常用模块编成动态库，改配置再 reload 即可启用，不必为每个模块从源码重编。资料把早期静态链接习惯写成绝对定律，会让人以为加 stub_status 或 image filter 只能重编译。仍要注意：未随该二进制构建的第三方模块不能当运行时插件乱加载；reload 加载的是已构建的 .so，不是任意下载的代码。",
     "why": "把“只能编译时选模块”当成现行答案，会拒绝发行版里已经编好的动态模块，排障时也绕去重编整个二进制。区分信号是 nginx -V 里有动态模块路径，配置里可以 load_module。",
     "example": "主配置写 load_module modules/ngx_http_image_filter_module.so; 再 nginx -t && reload。源码自编时仍可用 --with-http_image_filter_module=dynamic。",
-    "task": "在当前 nginx -V 输出里找动态模块路径，对照文档确认 load_module 的出现版本，划掉资料里的“运行时完全不能选”。",
-    "answer": "nginx -V 里能看到模块路径，说明发行版可以带动态模块。文档里 load_module 从 1.9.11 起可以加载已经构建好的模块，不必为了加减一个模块就重编整个二进制。编译仍然决定有哪些模块可以被加载，不是运行中临时从源码变出新模块。资料里“运行时完全不能选”应划掉。",
+    "task": "在当前 nginx -V 输出里找动态模块路径，对照文档确认 load_module 的出现版本，划掉有些资料里的“运行时完全不能选”。",
+    "answer": "nginx -V 里能看到模块路径，说明发行版可以带动态模块。文档里 load_module 从 1.9.11 起可以加载已经构建好的模块，不必为了加减一个模块就重编整个二进制。编译仍然决定有哪些模块可以被加载，不是运行中临时从源码变出新模块。有些资料里“运行时完全不能选”应划掉。",
     "deep": [
       {
         "title": "加载不等于现场编译",
@@ -8093,7 +8096,7 @@
     "core": "资料把集群存活绑在 ZooKeeper 连接上，这是 ZooKeeper 模式控制器时代的叙事。Kafka 从 KRaft 起用内置的元数据仲裁替代 ZK：broker 向控制器注册、用副本状态看 ISR，不再先问“有没有 ZK 会话”。Kafka 4.0 文档路径按无 ZooKeeper 的 KRaft 部署讲解。follower 必须及时复制、落后会离开 ISR，这一句仍然成立，它解释的是同步副本集合，不是 ZK 心跳。acks=-1 / all 等到的是 ISR，不是磁盘上每一个 follower，细节见既有 `kafka-producer-acks` 与 `kafka-isr-hwm`。新项目不要先背一套 ZK 四字命令当运维入口。",
     "why": "面试仍答“必须连上 ZooKeeper 才算活着”，会在 KRaft 集群上找一个已经不存在的依赖，也会把 ISR 说成每一个 follower。区分信号是元数据在控制器，acks=all 等的是 ISR。",
     "example": "新集群按 KRaft 格式化存储后，启动控制器和 broker，不部署 ZooKeeper。看 ISR 是否包含足够副本，而不是看 ZK 临时节点。acks=all 只等 ISR 里的副本确认，不要求每一个 follower 都跟上。",
-    "task": "对照当前 Kafka 文档的 KRaft 说明，划掉资料里的两条 ZK 存活条件，改写成控制器与 ISR；并注明 acks=all 等的是 ISR。",
+    "task": "对照当前 Kafka 文档的 KRaft 说明，划掉有些资料里的两条 ZK 存活条件，改写成控制器与 ISR；并注明 acks=all 等的是 ISR。",
     "answer": "划掉“必须维持 ZooKeeper 心跳”和“follower 都要及时同步才算活着”。现行集群用 KRaft 控制器管元数据，副本是否跟上看 ISR。acks=all 等的是 ISR 中的副本，不是集群里每一个 follower。ZooKeeper 不是这套现行默认依赖。",
     "deep": [
       {
@@ -8102,7 +8105,7 @@
       },
       {
         "title": "怎样自己验证",
-        "body": "对照当前 Kafka 文档的 KRaft 说明，把资料里的两条 ZK 存活条件划掉，改写成控制器和 ISR。再看 acks=all 的定义，确认等的是 ISR 而不是每一个 follower。"
+        "body": "对照当前 Kafka 文档的 KRaft 说明，把有些资料里的两条 ZK 存活条件划掉，改写成控制器和 ISR。再看 acks=all 的定义，确认等的是 ISR 而不是每一个 follower。"
       }
     ],
     "references": [
@@ -8117,7 +8120,7 @@
     ]
   },
   "kafka-producer-does-batch": {
-    "core": "Kafka 生产者按分区攒 batch，linger.ms 和 batch.size 就是批量发送；服务端零拷贝追加日志。广播语义用多个订阅组或 fan-out，不是 AMQP 那种交换机名词，但不能说“不支持批量”。客户端和运维不要求写 Scala。文档在 kafka.apache.org。资料里 ActiveMQ 吞吐弱、Rabbit 用 Erlang、RocketMQ 适合堆积，方向可对照 `mq-compare-matrix`，具体以现行手册为准，不要把 2018 年的“社区新生”再当现状。",
+    "core": "Kafka 生产者按分区攒 batch，linger.ms 和 batch.size 就是批量发送；服务端零拷贝追加日志。广播语义用多个订阅组或 fan-out，不是 AMQP 那种交换机名词，但不能说“不支持批量”。客户端和运维不要求写 Scala。文档在 kafka.apache.org。有些资料里 ActiveMQ 吞吐弱、Rabbit 用 Erlang、RocketMQ 适合堆积，方向可对照 `mq-compare-matrix`，具体以现行手册为准，不要把 2018 年的“社区新生”再当现状。",
     "why": "按 Kafka 不支持批量去选型，会为了攒条再堆一套中间件；按必须懂 Scala 去招人，运维条件也会被写错。区分信号是生产者配置里有 batch.size，客户端按分区攒批，不要求用 Scala 写运维脚本。",
     "example": "日志生产者把 batch.size 调大并设置 linger.ms，发往同一分区的多条在客户端攒成一批再送出，吞吐上去。运维用发行包里的命令看消费者组滞后，不需要写 Scala。订单要广播时加另一个消费者组，而不是换成别的队列才叫支持批量。",
     "task": "对照 producer 配置指出 batch.size；划掉必须掌握 Scala。",
@@ -8405,7 +8408,7 @@
     ]
   },
   "rocketmq-store-not-ram-buffer": {
-    "core": "Broker 以提交日志和 ConsumeQueue 把消息落到磁盘，并按保留时间删除；“看起来无限”只是磁盘和 TTL 之内可堆积，不是内存里永远装得下，磁盘满或刷盘失败仍会挡生产者。消费是至少一次：先拉取再 ack，失败会重投，业务必须幂等。资料里的“只消费一次”自己也写了做不到。定时消息只支持固定 delay level，不是任意时刻。Kafka 现行主语言是 Java，不是只能 Scala。可靠性随同步刷盘、副本数变化，单盘损坏仍可能丢未复制的数据。模型见 `rocketmq-model`。",
+    "core": "Broker 以提交日志和 ConsumeQueue 把消息落到磁盘，并按保留时间删除；“看起来无限”只是磁盘和 TTL 之内可堆积，不是内存里永远装得下，磁盘满或刷盘失败仍会挡生产者。消费是至少一次：先拉取再 ack，失败会重投，业务必须幂等。有些资料里的“只消费一次”自己也写了做不到。定时消息只支持固定 delay level，不是任意时刻。Kafka 现行主语言是 Java，不是只能 Scala。可靠性随同步刷盘、副本数变化，单盘损坏仍可能丢未复制的数据。模型见 `rocketmq-model`。",
     "why": "按无限内存队列估容量，磁盘打满时生产才被堵住；按恰好一次去扣款，失败重投会再扣一次。区分信号是消息在 CommitLog 里按保留时间删除，消费失败会再次投递，直到业务确认。磁盘满时生产者会被挡住。",
     "example": "主题保留 3 天，消息写在磁盘上的 CommitLog，不是堆里的无限 Buffer。消费端处理失败没有 ack，同一条从重试主题再来。关单只能选固定 delay level，不能指定任意毫秒。磁盘满时发送被挡住，而不是继续堆在内存里。",
     "task": "对照 RocketMQ 存储与消费重试文档，划掉无限内存 Buffer 和恰好一次；写出 TTL 删除与至少一次 ack。",
@@ -8598,7 +8601,7 @@
     "why": "按“Lucene 是 B+ 树、ES 才用倒排”去对比，底层检索引擎会说错，分片、refresh 和映射演进也会被漏掉。区分信号是词指向文档列表，而不是一棵按键有序的树。画错结构，查询也会选错。",
     "example": "商品标题分词后，“耳机”指向包含它的文档编号列表。ES 把这种 Lucene 索引放到多个分片上并行搜。不要画一棵 B+ 树当 Lucene。删除后要等 refresh 才从搜索里消失，不是立刻永远看不见。",
     "task": "对照 ES 文档里的倒排索引说明，划掉资料中的 B+ 树对比，并写出 refresh 与“删除立即永远消失”的差别。",
-    "answer": "划掉资料里的 B+ 树对比：Lucene 和 ES 的检索都是倒排索引，词指向文档。ES 在此之上做分片和集群，不是另外发明一种索引。refresh 之后新文档才可搜，删除也不会简化成没有事务、立刻永远消失。映射怎么演进要单独看，不能并进这句对比。",
+    "answer": "划掉有些资料里的 B+ 树对比：Lucene 和 ES 的检索都是倒排索引，词指向文档。ES 在此之上做分片和集群，不是另外发明一种索引。refresh 之后新文档才可搜，删除也不会简化成没有事务、立刻永远消失。映射怎么演进要单独看，不能并进这句对比。",
     "deep": [
       {
         "title": "倒排回答的是词",
@@ -8890,7 +8893,7 @@
     ]
   },
   "sca-component-map": {
-    "core": "先用一句话放好每个组件。后面的课再展开，每个框只回答一个问题。",
+    "core": "先用一句话放好每个组件。后面章节再展开，每个框只回答一个问题。",
     "why": "学习者会把几个中间件的名字堆在同一张图上，排查时用配置去解释限流，或用注册名单去解释事务为什么没回滚。每个框只能回答一个问题，答不上来的框回到对应的一课，才不会把职责串在同一次调用里。",
     "example": "下单请求进入订单服务。Sentinel 先看下单资源是否超配额。订单服务按服务名从 Nacos 拿到库存实例，LoadBalancer 选一个，OpenFeign 发起调用。扣库存和写订单若要一起提交，由 Seata 协调两个数据库分支。提交成功后再发 RocketMQ 消息去通知发货，并用短信服务发模板短信。头像文件放在 OSS。超时关单由 SchedulerX 触发一次，而不是三个副本各自的本地定时器。",
     "task": "拿一张现有架构图，给每个框写上它回答的问题：地址在哪、参数是什么、要不要放行、消息发给谁、两个库是否一起提交、文件在哪、定时由谁触发、短信是否真的送达。答不上来的框，回到对应的一课。",
@@ -10443,7 +10446,7 @@
     ]
   },
   "redis-lock-setnx-expire-race": {
-    "core": "SETNX 成功之后、EXPIRE 执行之前崩溃，键会永远留下，所有人拿不到锁。两条命令之间别人也插得进。现行做法是一条 SET key token NX EX seconds（或 PX），用唯一 token 再按值删除。锁仍是租约：业务跑得比 TTL 长，旧持有者可能覆盖新持有者，还要版本或 fencing，见 `distributed-lock`。资料里的 ZooKeeper 临时有序节点方向可接受，细节以 Curator 互斥锁为准，不要手写“听前一个节点”却漏掉羊群效应。",
+    "core": "SETNX 成功之后、EXPIRE 执行之前崩溃，键会永远留下，所有人拿不到锁。两条命令之间别人也插得进。现行做法是一条 SET key token NX EX seconds（或 PX），用唯一 token 再按值删除。锁仍是租约：业务跑得比 TTL 长，旧持有者可能覆盖新持有者，还要版本或 fencing，见 `distributed-lock`。有些资料里的 ZooKeeper 临时有序节点方向可接受，细节以 Curator 互斥锁为准，不要手写“听前一个节点”却漏掉羊群效应。",
     "why": "SETNX 成功后、EXPIRE 执行前进程被杀，键永远留着，所有人拿不到锁。区分信号是两条命令中间有崩溃窗口，而 SET key token NX EX 在一条命令里同时写上过期。",
     "example": "客户端 SETNX lock:order:1 返回成功，还没执行 EXPIRE 就被杀死。键没有 TTL，别的实例一直加锁失败。改成 SET lock:order:1 <uuid> NX EX 30 后，崩溃也会在 30 秒后消失。释放时用脚本比较 uuid 再 DEL，避免删掉别人的锁。",
     "task": "画出 SETNX 成功、尚未 EXPIRE、进程被杀的时间线；对照 SET 文档写出 NX+EX 一条命令。",
@@ -10482,7 +10485,7 @@
       },
       {
         "title": "怎样自己验证",
-        "body": "把订单和库存先放回一次提交，失败时两边行数都是 0。再人为拆成两次提交并在中间杀进程，一边有一边无。只有第二种才需要这一章后面的课。"
+        "body": "把订单和库存先放回一次提交，失败时两边行数都是 0。再人为拆成两次提交并在中间杀进程，一边有一边无。只有第二种才需要这一章后面章节。"
       }
     ],
     "references": [

@@ -42,6 +42,7 @@ export const publishedSources = [
   'coverage-frontend-23.js',
   'coverage-frontend-24.js',
   'coverage-frontend-25.js',
+  'coverage-frontend-26.js',
   'coverage-java-10.js',
   'coverage-java-11.js',
   'coverage-java-12.js',
@@ -118,6 +119,7 @@ export const GROUP_ORDER = {
     'Vue',
     'Vue 生态',
     '技术选型',
+    '微前端',
     'React Native',
     'Flutter',
     'UniApp 与 Taro',
@@ -167,6 +169,7 @@ export const GROUP_LABEL = {
     Vue: 'Vue',
     'Vue 生态': 'Vue 生态',
     技术选型: '技术选型',
+    微前端: '微前端',
     'React Native': 'React Native',
     Flutter: 'Flutter',
     'UniApp 与 Taro': '小程序',
@@ -192,7 +195,7 @@ export const GROUP_LABEL = {
     Netty: 'Netty',
     消息队列: '消息队列',
     搜索: '搜索',
-    'Spring Cloud Alibaba': 'Spring Cloud',
+    'Spring Cloud Alibaba': 'Spring Cloud Alibaba',
     系统设计: '系统设计',
     '分布式与高并发': '分布式',
     '交付与运行': '交付与运行',
@@ -256,6 +259,12 @@ export const OUTLINE = {
       { title: '框架', ids: ['fe-react-framework-first', 'fe-vue-official-slots', 'fe-angular-first-party', 'fe-sveltekit-runes'] },
       { title: '生态', ids: ['fe-ecosystem-follows-model', 'fe-react-one-slot', 'fe-vue-data-one-slot', 'fe-angular-resource-not-ngrx', 'fe-svelte-load-not-store'] },
       { title: '跨端', ids: ['fe-cross-end-one-runtime', 'fe-expo-router-one-nav', 'fe-flutter-state-one-approach', 'fe-server-state-one-owner'] },
+    ],
+    微前端: [
+      { title: '边界', ids: ['mfe-when-to-split', 'mfe-not-for-everything', 'mfe-composition-models'] },
+      { title: '集成', ids: ['mfe-module-federation', 'mfe-shared-deps', 'mfe-runtime-lifecycle'] },
+      { title: '运行时', ids: ['mfe-routing-one-history', 'mfe-style-isolation', 'mfe-shared-auth'] },
+      { title: '交付', ids: ['mfe-independent-deploy', 'mfe-perf-cost', 'mfe-contract-version'] },
     ],
     'React 生态': [
       { title: '路由', ids: ['react-router-loader', 'react-router-element-api', 'react-router-error-element', 'rr-mode-gates-data', 'rr-outlet-keeps-layout', 'rr-redirect-before-render'] },
@@ -630,7 +639,14 @@ export function validateLessons(lessons, groupOrder = GROUP_ORDER) {
     if (lesson.map) assert(Array.isArray(lesson.map) && lesson.map.length >= 2 && lesson.map.every(x => typeof x.title === 'string' && x.title.trim() && typeof x.body === 'string' && x.body.trim()), `${lesson.id}: invalid model map`);
     if (lesson.diagram) {
       assert(/^diagrams\/[a-z-]+\.svg$/.test(lesson.diagram), `${lesson.id}: invalid diagram path`);
-      assert(fs.existsSync(path.join(root, 'curriculum', lesson.diagram)), `${lesson.id}: missing diagram`);
+      const diagramPath = path.join(root, 'curriculum', lesson.diagram);
+      assert(fs.existsSync(diagramPath), `${lesson.id}: missing diagram`);
+      const diagramBytes = fs.readFileSync(diagramPath);
+      try {
+        new TextDecoder('utf-8', { fatal: true }).decode(diagramBytes);
+      } catch {
+        assert.fail(`${lesson.id}: diagram ${lesson.diagram} is not valid UTF-8 (browser will show a broken image)`);
+      }
     }
   }
 }
@@ -688,7 +704,10 @@ lessons.sort((a, b) => {
   return rank(a) - rank(b);
 });
 
-const cleaned = polishLessons(lessons.map(({ _seq, ...lesson }) => lesson));
+const cleaned = polishLessons(
+  lessons.map(({ _seq, ...lesson }) => lesson),
+  pathLead,
+);
 validateLessons(cleaned);
 for (const track of ['frontend', 'java']) {
   for (const group of GROUP_ORDER[track]) {

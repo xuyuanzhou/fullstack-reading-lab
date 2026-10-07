@@ -14,6 +14,7 @@
       "Vue",
       "Vue 生态",
       "技术选型",
+      "微前端",
       "React Native",
       "Flutter",
       "UniApp 与 Taro",
@@ -61,6 +62,7 @@
       "Vue": "Vue",
       "Vue 生态": "Vue 生态",
       "技术选型": "技术选型",
+      "微前端": "微前端",
       "React Native": "React Native",
       "Flutter": "Flutter",
       "UniApp 与 Taro": "小程序",
@@ -86,7 +88,7 @@
       "Netty": "Netty",
       "消息队列": "消息队列",
       "搜索": "搜索",
-      "Spring Cloud Alibaba": "Spring Cloud",
+      "Spring Cloud Alibaba": "Spring Cloud Alibaba",
       "系统设计": "系统设计",
       "分布式与高并发": "分布式",
       "交付与运行": "交付与运行",
@@ -341,6 +343,20 @@
         "fe-expo-router-one-nav",
         "fe-flutter-state-one-approach",
         "fe-server-state-one-owner"
+      ],
+      "微前端": [
+        "mfe-when-to-split",
+        "mfe-not-for-everything",
+        "mfe-composition-models",
+        "mfe-module-federation",
+        "mfe-shared-deps",
+        "mfe-runtime-lifecycle",
+        "mfe-routing-one-history",
+        "mfe-style-isolation",
+        "mfe-shared-auth",
+        "mfe-independent-deploy",
+        "mfe-perf-cost",
+        "mfe-contract-version"
       ],
       "React Native": [
         "rn-view-not-div",
@@ -1212,6 +1228,40 @@
             "fe-expo-router-one-nav",
             "fe-flutter-state-one-approach",
             "fe-server-state-one-owner"
+          ]
+        }
+      ],
+      "微前端": [
+        {
+          "title": "边界",
+          "ids": [
+            "mfe-when-to-split",
+            "mfe-not-for-everything",
+            "mfe-composition-models"
+          ]
+        },
+        {
+          "title": "集成",
+          "ids": [
+            "mfe-module-federation",
+            "mfe-shared-deps",
+            "mfe-runtime-lifecycle"
+          ]
+        },
+        {
+          "title": "运行时",
+          "ids": [
+            "mfe-routing-one-history",
+            "mfe-style-isolation",
+            "mfe-shared-auth"
+          ]
+        },
+        {
+          "title": "交付",
+          "ids": [
+            "mfe-independent-deploy",
+            "mfe-perf-cost",
+            "mfe-contract-version"
           ]
         }
       ],
@@ -3747,7 +3797,7 @@
       "group": "React",
       "id": "react-gdsfp-copy",
       "title": "getDerivedStateFromProps 不是把 props 再存一份的默认通道",
-      "prompt": "为什么资料里用 getDerivedStateFromProps 把 props.counter 写回 state，以及把请求放进 componentWillReceiveProps，都不能当现行默认答案？",
+      "prompt": "为什么有些资料里用 getDerivedStateFromProps 把 props.counter 写回 state，以及把请求放进 componentWillReceiveProps，都不能当现行默认答案？",
       "keywords": "getDerivedStateFromProps componentWillReceiveProps UNSAFE 派生状态 key",
       "points": [
         "GDSFP 在 render 前调用，不是常规的 props→state 管道",
@@ -4546,6 +4596,169 @@
         "服务端列表只放在一个缓存里",
         "缓存键要包含会改变结果的参数",
         "全局 store 不保存同一份请求结果"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "微前端",
+      "id": "mfe-when-to-split",
+      "title": "先写清谁独立发版，再决定要不要拆应用",
+      "prompt": "为什么两个业务线共用一个仓库、同一次发版，却要上微前端？",
+      "keywords": "微前端 独立发布 团队边界 发版节奏",
+      "points": [
+        "微前端先问独立发版，不是先问目录怎么切",
+        "同一小队同一次发版不必拆成多个前端应用",
+        "多应用边界不等于在同一组件里混多套状态库"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "微前端",
+      "id": "mfe-not-for-everything",
+      "title": "小团队同仓同发，不要为了时髦上微前端",
+      "prompt": "是不是前端一超过十万行就必须上微前端？",
+      "promptAnswer": "不是。行数本身不是拆应用的理由。同小队、同发版窗口时，模块边界和构建拆分通常更便宜。",
+      "keywords": "微前端 反模式 懒加载 包边界",
+      "points": [
+        "行数大不等于必须微前端",
+        "同仓同发优先模块边界和懒加载",
+        "微前端买的是独立发布，不是目录美感"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "微前端",
+      "id": "mfe-composition-models",
+      "title": "组合发生在构建时、运行时还是服务端，不是同一种集成",
+      "prompt": "把子应用的 JS 用 script 标签挂上，和发版前打进同一个包，解决的是同一件事吗？",
+      "promptAnswer": "不是。构建时组合在发版前锁定版本；运行时组合在浏览器里再加载；服务端或边缘组合在返回 HTML 时拼接。失败点和回滚面不同。",
+      "keywords": "微前端 构建时组合 运行时组合 服务端组合",
+      "points": [
+        "构建时、运行时、服务端组合的失败点不同",
+        "能不能壳不发版就上线，决定选哪一种",
+        "iframe 是强隔离运行时，不是 Module Federation 的替身名词"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "微前端",
+      "id": "mfe-module-federation",
+      "title": "Module Federation：host 消费 remote，暴露的是模块不是整站复制",
+      "prompt": "配了 ModuleFederationPlugin 之后，是不是子应用的所有页面都会自动挂到主应用？",
+      "promptAnswer": "不是。只有 exposes 声明并被 host 的 remotes 引用的模块才会在运行时加载。没有声明的路由不会自动出现。",
+      "keywords": "Module Federation host remote exposes remoteEntry",
+      "points": [
+        "remote 只暴露 exposes 里的模块",
+        "host 通过 remotes 与异步 import 消费",
+        "shared 的 singleton 要双方约定，uniqueName 必须唯一"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "微前端",
+      "id": "mfe-shared-deps",
+      "title": "共享依赖要约定单例和版本，否则会加载两份 React",
+      "prompt": "host 和 remote 的 package.json 都写了 react，运行时是不是自动只用一份？",
+      "promptAnswer": "不是。未配置 shared，或双方版本进不了同一共享策略时，运行时可以同时存在多份 React，钩子与上下文会坏掉。",
+      "keywords": "shared singleton requiredVersion React 重复",
+      "points": [
+        "shared 不会因为 package.json 同名就自动单例",
+        "React 等带内部状态的库必须约定 singleton",
+        "版本对不上时要失败可见，不要静默双实例"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "微前端",
+      "id": "mfe-runtime-lifecycle",
+      "title": "子应用要有加载、挂载和卸载，离开后不能留下监听",
+      "prompt": "用户从订单页切到商品页，订单子应用的定时器和全局监听会不会自己消失？",
+      "promptAnswer": "不会。没有卸载钩子时，定时器、window 监听和残留 DOM 会留在壳里，表现为泄漏或串扰。",
+      "keywords": "single-spa mount unmount qiankun 生命周期",
+      "points": [
+        "运行时子应用要有挂载和卸载",
+        "Federation 加载模块不等于自动管理生命周期",
+        "离开后监听与定时器必须显式释放"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "微前端",
+      "id": "mfe-routing-one-history",
+      "title": "浏览器只有一条历史栈，子应用要挂在约定前缀下",
+      "prompt": "壳用 BrowserRouter，子应用再创建一个自己的 BrowserRouter 监听整站路径，会怎样？",
+      "keywords": "basename history BrowserRouter 微前端路由",
+      "points": [
+        "一页一条 history，壳拥有顶层前缀",
+        "子应用用 basename 只消化自己的一段",
+        "服务器回退与路由前缀要一起配"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "微前端",
+      "id": "mfe-style-isolation",
+      "title": "样式隔离要靠边界，全局 CSS 会串到别人的按钮",
+      "prompt": "两个子应用都写了 .button { color: red }，上线后会不会各管各的？",
+      "promptAnswer": "不会。同一文档里未隔离的全局选择器会互相覆盖，后加载的往往赢。",
+      "keywords": "CSS Modules Shadow DOM iframe 样式隔离",
+      "points": [
+        "全局类名在同一文档会串",
+        "隔离强度从命名、Shadow 到 iframe 递增",
+        "组件库版本与主题变量要统一来源"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "微前端",
+      "id": "mfe-shared-auth",
+      "title": "登录态跨应用靠约定通道，不要靠 window 上的全局变量",
+      "prompt": "壳登录后把 token 挂到 window.__TOKEN__，子应用直接读，这样可以吗？",
+      "keywords": "微前端 登录态 Cookie postMessage token",
+      "points": [
+        "跨应用身份要有明确通道与所有权",
+        "不要用长期 window 全局变量传 token",
+        "壳的登录态不替代后端对象级鉴权"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "微前端",
+      "id": "mfe-independent-deploy",
+      "title": "独立发布要有可回滚的入口地址与兼容窗口",
+      "prompt": "子应用一发版就改掉 CDN 上的 remoteEntry.js，壳不发版，为什么有时全站白屏？",
+      "keywords": "独立发布 remoteEntry 回滚 不可变产物",
+      "points": [
+        "运行时入口要用不可变产物加指针",
+        "回滚是拨指针，不是覆盖同一文件",
+        "壳要有子应用加载失败的降级"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "微前端",
+      "id": "mfe-perf-cost",
+      "title": "微前端的首屏成本要单独立账：重复框架与多次加载",
+      "prompt": "拆成三个子应用之后，首屏变慢，是不是只能怪业务组件太重？",
+      "promptAnswer": "不是。先核对是否加载了多份框架、是否串行拉多个 remoteEntry，再查业务组件。",
+      "keywords": "微前端 性能 remoteEntry LCP shared",
+      "points": [
+        "按路由加载当前子应用，不要首屏拉齐",
+        "重复框架先查 shared",
+        "用同一路径对比拆分前后的字节与 LCP"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "微前端",
+      "id": "mfe-contract-version",
+      "title": "跨应用契约要版本化：导出名称、路由前缀与共享依赖",
+      "prompt": "remote 把 exposes 的 ./OrderList 改成 ./OrderTable，壳没改，为什么只在部分用户那里炸？",
+      "keywords": "微前端 契约 版本 兼容 导出",
+      "points": [
+        "导出名、路由前缀、shared 范围都是契约",
+        "破坏性变更要双轨或同窗口",
+        "失败要能定位到哪个 remote 的哪个导出"
       ]
     },
     {
@@ -6205,7 +6418,7 @@
       "track": "java",
       "group": "设计模式",
       "id": "pattern-gof-catalog",
-      "title": "先把二十三种名字列全，再打开后面的课",
+      "title": "先把二十三种名字列全，再打开后面章节",
       "prompt": "为什么一上来就写策略模式，却说不清这一章一共有哪些名字？",
       "keywords": "设计模式 GoF 创建型 结构型 行为型",
       "points": [

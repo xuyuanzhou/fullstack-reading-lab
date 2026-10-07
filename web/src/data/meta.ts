@@ -15,7 +15,7 @@ export const LOCAL_CATEGORY_LABEL = {
 
 export const TRACK_INTRO: Record<Track, string> = {
   frontend:
-    '从页面怎么把一次请求交到后端开始。先学 JavaScript、类型和 CSS，再学浏览器和网络，然后才是 React、Vue 和跨端。选型只留一套，最后才是测试和工程。',
+    '从页面怎么把一次请求交到后端开始。先学 JavaScript、类型和 CSS，再学浏览器和网络，然后才是 React、Vue 和跨端。选型只留一套；多团队要独立发版时再进微前端。最后才是测试和工程。',
   java:
     '从一次写入怎么进数据库开始。先学 Java、算法和 JVM，再学库和缓存，然后才是 Spring。消息、网关和微服务放在后面，最后是架构、部署和工程。',
 }

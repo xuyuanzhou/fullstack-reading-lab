@@ -2,6 +2,20 @@
 
 const LESSON_ID = '[a-z][a-z0-9]*(?:-[a-z0-9]+)+';
 
+/** Attach figures to high-traffic mechanism lessons that lacked them. */
+export const DIAGRAM_FALLBACKS = {
+  'css-cascade': 'diagrams/css-cascade.svg',
+  'vue-reactivity': 'diagrams/vue-reactivity.svg',
+  'vue-defineproperty-proxy': 'diagrams/vue-reactivity.svg',
+  eventloop: 'diagrams/eventloop.svg',
+  'browser-event-loop-frame': 'diagrams/eventloop.svg',
+  'http-cache': 'diagrams/http-cache.svg',
+  'spring-transaction': 'diagrams/spring-transaction.svg',
+  'mysql-buffer-pool-size': 'diagrams/mysql-buffer-pool.svg',
+  'mybatis-middleware-layers': 'diagrams/mybatis-middleware-layers.svg',
+  'vue-patch-hoist': 'diagrams/vue-patch-hoist.svg',
+};
+
 function backtickSeeRefs(text, knownIds) {
   return text.replace(
     new RegExp(`见\\s*((?:\`?${LESSON_ID}\`?(?:\\s*[、,]\\s*)?)+)`, 'g'),
@@ -39,9 +53,22 @@ function replaceSlots(text, lessonId) {
   return text.replace(/槽位/g, '位置');
 }
 
-export function polishText(text, knownIds, lessonId = '') {
+function replaceOralRefs(text, prevId) {
+  let next = text;
+  next = next.replace(/(?<!有些)旧资料里/g, '有些旧资料里');
+  next = next.replace(/(?<!有些)资料里/g, '有些资料里');
+  next = next.replace(/既有课里/g, '前面相关课里');
+  next = next.replace(/既有课/g, '相关课');
+  // Do not auto-link「上一课」to pathLead prev — directory order ≠ narrative prev.
+  next = next.replace(/下一课之后的/g, '后面的');
+  next = next.replace(/后面的课/g, '后面章节');
+  return next;
+}
+
+export function polishText(text, knownIds, lessonId = '', prevId = null) {
   if (typeof text !== 'string' || !text) return text;
   let next = text;
+  next = replaceOralRefs(next, prevId);
   next = backtickSeeRefs(next, knownIds);
   next = backtickThatLesson(next, knownIds);
   next = next.replace(/变化点/g, '允许变的那一块');
@@ -50,15 +77,15 @@ export function polishText(text, knownIds, lessonId = '') {
   return next;
 }
 
-function polishValue(value, knownIds, lessonId) {
-  if (typeof value === 'string') return polishText(value, knownIds, lessonId);
+function polishValue(value, knownIds, lessonId, prevId) {
+  if (typeof value === 'string') return polishText(value, knownIds, lessonId, prevId);
   if (Array.isArray(value)) {
     return value.map((item) => {
-      if (typeof item === 'string') return polishText(item, knownIds, lessonId);
+      if (typeof item === 'string') return polishText(item, knownIds, lessonId, prevId);
       if (item && typeof item === 'object') {
         const copy = { ...item };
         for (const key of Object.keys(copy)) {
-          copy[key] = polishValue(copy[key], knownIds, lessonId);
+          copy[key] = polishValue(copy[key], knownIds, lessonId, prevId);
         }
         return copy;
       }
@@ -81,18 +108,29 @@ const STRING_FIELDS = [
   'origin',
 ];
 
-export function polishLesson(lesson, knownIds) {
+function previousLessonId(lesson, pathLead) {
+  const lead = pathLead?.[lesson.track]?.[lesson.group];
+  if (!Array.isArray(lead)) return null;
+  const index = lead.indexOf(lesson.id);
+  return index > 0 ? lead[index - 1] : null;
+}
+
+export function polishLesson(lesson, knownIds, pathLead) {
+  const prevId = previousLessonId(lesson, pathLead);
   const next = { ...lesson };
   for (const field of STRING_FIELDS) {
-    if (field in next) next[field] = polishText(next[field], knownIds, lesson.id);
+    if (field in next) next[field] = polishText(next[field], knownIds, lesson.id, prevId);
   }
-  if (next.points) next.points = polishValue(next.points, knownIds, lesson.id);
-  if (next.deep) next.deep = polishValue(next.deep, knownIds, lesson.id);
-  if (next.map) next.map = polishValue(next.map, knownIds, lesson.id);
+  if (next.points) next.points = polishValue(next.points, knownIds, lesson.id, prevId);
+  if (next.deep) next.deep = polishValue(next.deep, knownIds, lesson.id, prevId);
+  if (next.map) next.map = polishValue(next.map, knownIds, lesson.id, prevId);
+  if (!next.diagram && DIAGRAM_FALLBACKS[lesson.id]) {
+    next.diagram = DIAGRAM_FALLBACKS[lesson.id];
+  }
   return next;
 }
 
-export function polishLessons(lessons) {
+export function polishLessons(lessons, pathLead = {}) {
   const knownIds = new Set(lessons.map((lesson) => lesson.id));
-  return lessons.map((lesson) => polishLesson(lesson, knownIds));
+  return lessons.map((lesson) => polishLesson(lesson, knownIds, pathLead));
 }

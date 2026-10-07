@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-labelledby="title desc">
+  <title id="title">host 消费 remote</title>
+  <desc id="desc">只有 exposes 声明并被 host import 的模块才会加载。</desc>
+  <defs>
+    <filter id="soft" x="-6%" y="-8%" width="112%" height="124%"><feDropShadow dx="0" dy="1" stdDeviation="1.4" flood-color="#28302a" flood-opacity="0.07"/></filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#3f6a58"/></marker>
+  </defs>
+  <rect width="960" height="400" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="28" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">Module Federation</text>
+  <text x="32" y="56" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">host 消费 remote，暴露的是模块</text>
+  <rect x="48" y="100" width="300" height="200" rx="14" fill="#e6efe9" stroke="#3f6a58" filter="url(#soft)"/>
+  <text x="68" y="136" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2d4f41">host（壳）</text>
+  <text x="68" y="172" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">remotes: orders@…/remoteEntry.js</text>
+  <text x="68" y="200" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">import("orders/OrderList")</text>
+  <text x="68" y="228" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">shared: react singleton</text>
+  <text x="68" y="264" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#5a635e">uniqueName 必须唯一</text>
+  <line x1="360" y1="200" x2="430" y2="200" stroke="#3f6a58" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="372" y="188" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="12" fill="#3f6a58">运行时</text>
+  <rect x="444" y="100" width="300" height="200" rx="14" fill="#fafaf8" stroke="#d9ddd8" filter="url(#soft)"/>
+  <text x="464" y="136" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2e3330">remote（订单）</text>
+  <text x="464" y="172" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">filename: remoteEntry.js</text>
+  <text x="464" y="200" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">exposes: ./OrderList</text>
+  <text x="464" y="228" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">shared: react singleton</text>
+  <text x="464" y="264" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#5a635e">未 expose 的页面不会出现</text>
+  <rect x="772" y="120" width="156" height="160" rx="14" fill="#eef2ea" stroke="#b7c4b8"/>
+  <text x="792" y="156" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="600" fill="#2e3330">共享作用域</text>
+  <text x="792" y="190" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#2e3330">一份 React</text>
+  <text x="792" y="218" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#2e3330">版本要对上</text>
+  <text x="792" y="246" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#2e3330">否则双实例</text>
+  <rect x="32" y="328" width="896" height="44" rx="12" fill="#e6efe9"/>
+  <text x="52" y="356" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="600" fill="#2d4f41">Federation 加载模块；挂载、卸载与路由前缀仍要壳来管。</text>
+</svg>

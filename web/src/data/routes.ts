@@ -19,6 +19,7 @@ const GROUP_KEYS: Record<Track, Record<string, string>> = {
     'Vue 生态': 'vue-ecosystem',
     'UniApp 与 Taro': 'uniapp-taro',
     技术选型: 'selection',
+    微前端: 'micro-frontends',
     'Node.js': 'node',
     测试: 'testing',
     版本边界: 'versions',

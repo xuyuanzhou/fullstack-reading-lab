@@ -1,0 +1,9 @@
+# Cross-tool AI contract (short pointer)
+
+Full rules: docs/AI契约-变更记录规范.md
+Entry: AGENTS.md
+Change index: docs/ai-changes/README.md
+
+Before editing: read the latest entries in docs/ai-changes/README.md.
+After any repo change: write/update docs/ai-changes/YYYY-MM-DD-*.md and the index.
+Do not keep a second copy of the rules in this file.

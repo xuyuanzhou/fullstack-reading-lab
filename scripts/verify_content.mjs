@@ -31,6 +31,7 @@ assert.equal(publishedSources.includes('coverage-frontend-22.js'), true);
 assert.equal(publishedSources.includes('coverage-frontend-23.js'), true);
 assert.equal(publishedSources.includes('coverage-frontend-24.js'), true);
 assert.equal(publishedSources.includes('coverage-frontend-25.js'), true);
+assert.equal(publishedSources.includes('coverage-frontend-26.js'), true);
 assert.equal(publishedSources.includes('coverage-java-10.js'), true);
 assert.equal(publishedSources.includes('coverage-java-11.js'), true);
 assert.equal(publishedSources.includes('coverage-java-12.js'), true);

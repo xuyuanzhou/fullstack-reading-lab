@@ -1,0 +1,27 @@
+---
+description: 跨工具 AI 变更必须写入 docs/ai-changes（Cursor 适配层）
+alwaysApply: true
+---
+
+# AI 变更落盘（Cursor 适配）
+
+本仓库契约**不绑定 Cursor**。完整规范与其它工具入口见：
+
+- `AGENTS.md`
+- `docs/AI契约-变更记录规范.md`
+- `docs/ai-changes/README.md`
+- 模板：`docs/ai-changes/TEMPLATE.md`
+
+## 必须做
+
+1. 动手前读 `docs/ai-changes/README.md` 最近 3～5 条（上一手可能是 Claude/Copilot/Gemini）。
+2. 有仓库改动则新建或续写 `docs/ai-changes/YYYY-MM-DD-<slug>.md`，元信息填写「作者工具」。
+3. 更新 README 索引；回复用户时给出 MD 路径。
+
+## 不要做
+
+- 只改代码不写 MD（用户明确豁免除外）
+- 在本规则里复制一套与契约冲突的细则
+- 在变更记录里写私钥、私人原件正文
+
+只读且未改文件：不写。紧急热修：同会话结束前补记。
