@@ -1,6 +1,6 @@
 import { Button, Space, Typography } from 'antd'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
-import { findLesson, lessonsFor, lessonsInGroup, outlineFor, totals } from '@/data/curriculum'
+import { findLesson, lessonsFor, lessonsInGroup, outlineFor, prefetchTrackBodies, totals } from '@/data/curriculum'
 import { TRACK_INTRO, TRACK_LABEL } from '@/data/meta'
 import { shortTitle } from '@/data/reading'
 import { groupLabel, groupTitle, isTrack, lessonPath, resumePath } from '@/data/routes'
@@ -25,6 +25,8 @@ function LessonRows({
             key={item.id}
             className={`lesson-row${done ? ' is-done' : ''}`}
             to={lessonPath(item)}
+            onMouseEnter={() => prefetchTrackBodies(item.track)}
+            onFocus={() => prefetchTrackBodies(item.track)}
             onClick={() => onOpen(item.id)}
           >
             <span className="lesson-row-mark">{done ? '✓' : ''}</span>

@@ -138,11 +138,6 @@ export function AppLayout() {
     progress.selectLesson(routeTrack, routeGroupKey)
   }, [routeTrack, routeGroupKey, progress.selectLesson])
 
-  useEffect(() => {
-    if (onAi || !isTrack(activeTrack)) return
-    prefetchTrackBodies(activeTrack)
-  }, [onAi, activeTrack])
-
   const pathChoice = onAi ? 'ai' : location.pathname.startsWith('/local') ? progress.localCategory : activeTrack
   const selectedKeys = onLab ? ['ai:lab'] : onAi ? [`ai:${aiSectionKey}`] : currentLesson ? [currentLesson.id] : []
   const currentSectionKey = (() => {
@@ -160,6 +155,8 @@ export function AppLayout() {
       <Link
         to={lessonPath(lesson)}
         className="lesson-label"
+        onMouseEnter={() => prefetchTrackBodies(lesson.track)}
+        onFocus={() => prefetchTrackBodies(lesson.track)}
         onClick={() => {
           progress.remember(lesson.id)
           setMobileOpen(false)
@@ -288,7 +285,6 @@ export function AppLayout() {
               type={pathChoice === track ? 'primary' : 'default'}
               onClick={() => {
                 progress.setLocalCategory(track)
-                prefetchTrackBodies(track)
                 navigate(resumePath(track, ''))
                 setMobileOpen(false)
               }}
