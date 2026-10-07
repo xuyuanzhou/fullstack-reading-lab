@@ -309,14 +309,13 @@ html[data-theme='dark'] .brand-mark {
     height: auto !important;
     line-height: 1.45 !important;
     margin-block: 2px !important;
-    padding-block: 8px !important;
-    padding-inline: 12px 10px !important;
+    /* 简写压过 ant 的 padding-left calc，避免叶子贴边 */
+    padding: 8px 10px 8px 12px !important;
     white-space: normal;
   }
 
   .ant-menu-sub .ant-menu-item {
-    padding-block: 8px !important;
-    padding-inline: 12px 10px !important;
+    padding: 8px 10px 8px 12px !important;
   }
 
   .ant-menu-sub.ant-menu-inline {
