@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { Link, Navigate, useOutletContext, useParams } from 'react-router-dom'
 import { AiDiagram } from '@/components/AiDiagrams'
 import { AiPrereqGate } from '@/components/AiPrereqGate'
+import { AiRouteMap } from '@/components/AiRouteMap'
 import { InterviewWorkbench } from '@/components/InterviewWorkbench'
 import { L1Workbench } from '@/components/L1Workbench'
 import { L2Workbench } from '@/components/L2Workbench'
@@ -61,6 +62,7 @@ export function AiPage() {
           '每篇都可以在公开站读完。文末链接开放许可的材料和官方文档。已购手册的全文和配图只在本机阅读器连上时打开。'}
       </p>
       {!section.pageLead && <p className="muted">{section.lead}</p>}
+      {section.key === 'intro' ? <AiRouteMap /> : null}
       <div className="lesson-list">
         {notes.map((note, index) => (
           <Link key={note.key} className="lesson-row" to={`/ai/${section.key}/${note.key}`}>

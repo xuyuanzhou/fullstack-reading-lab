@@ -179,10 +179,23 @@ test('AI sample lessons expose practice answers and two follow-ups', async () =>
   const hits = searchAiNotes('KV Cache')
   assert.ok(hits.some((note) => note.key === 'kv-cache'))
   for (const note of AI_NOTES) {
-    for (const pre of withSampleExtras(note).prerequisites || []) {
+    const merged = withSampleExtras(note)
+    for (const pre of merged.prerequisites || []) {
       assert.ok(noteKeys.has(pre), `${note.key} missing prereq ${pre}`)
     }
+    assert.equal(
+      (merged.reading || []).some((line) => /^占位：见/.test(line.trim())),
+      false,
+      `${note.key} still has placeholder reading`,
+    )
   }
+  const { mainlineProgress } = await import('../web/src/data/aiPrereq.ts')
+  const empty = mainlineProgress([])
+  assert.equal(empty.completed, 0)
+  assert.ok(empty.total >= 8)
+  assert.equal(empty.percent, 0)
+  const full = mainlineProgress(empty.stages.flatMap((stage) => stage.keys.map((key) => `ai:${key}`)))
+  assert.equal(full.percent, 100)
 })
 
 test('L1 eval has zero ACL failures on hybrid mock path', async () => {
@@ -228,13 +241,25 @@ test('B5 interview bank has twelve drills linked to lessons', async () => {
     AI_DRILL_DISCLAIMER,
     AI_DRILL_BATCH1_SIZE,
     AI_DRILL_EDITOR_TARGET,
+    AI_DRILL_AREA_TARGETS,
+    AI_DRILL_AREAS,
+    countDrillsByArea,
+    drillArea,
   } = await import('../web/src/data/aiInterviewBank.ts')
   const { AI_NOTES, searchAiNotes } = await import('../web/src/data/aiCatalog.ts')
   const noteKeys = new Set(AI_NOTES.map((note) => note.key))
   assert.equal(AI_DRILL_BATCH1_SIZE, 12)
   assert.equal(AI_DRILL_EDITOR_TARGET, 60)
-  assert.equal(AI_DRILL_QUESTIONS.length, 24)
-  assert.equal(new Set(AI_DRILL_QUESTIONS.map((item) => item.id)).size, 24)
+  assert.equal(AI_DRILL_QUESTIONS.length, AI_DRILL_EDITOR_TARGET)
+  assert.equal(new Set(AI_DRILL_QUESTIONS.map((item) => item.id)).size, AI_DRILL_EDITOR_TARGET)
+  const areaCounts = countDrillsByArea()
+  let areaSum = 0
+  for (const area of AI_DRILL_AREAS) {
+    assert.ok(areaCounts[area] >= AI_DRILL_AREA_TARGETS[area], `${area} ${areaCounts[area]}`)
+    areaSum += areaCounts[area]
+  }
+  assert.equal(areaSum, AI_DRILL_EDITOR_TARGET)
+  assert.equal(drillArea(AI_DRILL_QUESTIONS[0]), '基础、数据与机器学习')
   assert.equal(AI_MOCK_INTERVIEWS.length, 3)
   assert.ok(AI_DRILL_DISCLAIMER.includes('不冒充'))
   for (const question of AI_DRILL_QUESTIONS) {
@@ -247,11 +272,15 @@ test('B5 interview bank has twelve drills linked to lessons', async () => {
   for (const mock of AI_MOCK_INTERVIEWS) {
     assert.ok(mock.questionIds.length >= 4)
     assert.ok(mock.questionIds.every((id) => AI_DRILL_QUESTIONS.some((item) => item.id === id)))
+    assert.equal(new Set(mock.questionIds).size, mock.questionIds.length, mock.id)
   }
   const hits = searchAiNotes('幂等')
   assert.ok(
     hits.some((note) => note.key === 'interview-bank' || note.key === 'controlled-agent' || note.key === 'l2-agent'),
   )
+  const { searchAiDrills } = await import('../web/src/data/aiInterviewBank.ts')
+  const drillHits = searchAiDrills('幂等')
+  assert.ok(drillHits.some((item) => item.id === 'q06-timeout-idempotent'))
 })
 
 test('U03 prereq gaps are skippable and U06 backup refuses silent overwrite', async () => {

@@ -11,7 +11,6 @@ import {
 import { Alert, Badge, Button, Drawer, Layout, Menu, Typography, theme } from 'antd'
 import { Suspense, useEffect, useMemo, useState } from 'react'
 import { Link, matchPath, Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { AI_NOTES, AI_SECTIONS, aiNote, notesInSection } from '@/data/aiCatalog'
 import { findLesson, lessonsFor, lessonsInGroup, outlineFor } from '@/data/curriculum'
 import { TRACK_LABEL } from '@/data/meta'
 import { shortTitle } from '@/data/reading'
@@ -86,22 +85,53 @@ export function AppLayout() {
   const onAi = location.pathname === '/ai' || location.pathname.startsWith('/ai/')
   const aiSectionKey = location.pathname.split('/')[2] || 'intro'
   const onLab = location.pathname.startsWith('/ai/lab')
-  const aiNoteTitle = onAi && !onLab ? aiNote(aiSectionKey, location.pathname.split('/')[3])?.title : ''
   const labTitle = location.pathname.startsWith('/ai/lab/agent') ? '开发 agent' : '优化提示词'
+  const [aiNav, setAiNav] = useState<{
+    sections: { key: string; label: string }[]
+    noteCount: number
+    sectionCounts: Record<string, number>
+    noteTitle: string
+    sectionLabel: string
+  } | null>(null)
+
+  useEffect(() => {
+    if (!onAi) {
+      setAiNav(null)
+      return
+    }
+    let cancelled = false
+    const noteKey = location.pathname.split('/')[3]
+    void import('@/data/aiCatalog').then((m) => {
+      if (cancelled) return
+      const sectionCounts: Record<string, number> = {}
+      for (const section of m.AI_SECTIONS) {
+        sectionCounts[section.key] = m.notesInSection(section.key).length
+      }
+      setAiNav({
+        sections: m.AI_SECTIONS.map((section) => ({ key: section.key, label: section.label })),
+        noteCount: m.AI_NOTES.length,
+        sectionCounts,
+        noteTitle: !onLab && noteKey ? m.aiNote(aiSectionKey, noteKey)?.title || '' : '',
+        sectionLabel: m.AI_SECTIONS.find((section) => section.key === aiSectionKey)?.label || '',
+      })
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [onAi, onLab, aiSectionKey, location.pathname])
 
   useEffect(() => {
     if (currentLesson) progress.remember(currentLesson.id)
-    const aiLabel = onAi && !onLab ? AI_SECTIONS.find((section) => section.key === aiSectionKey)?.label : ''
     document.title = currentLesson
       ? `${shortTitle(currentLesson.title)} · 全栈学习实验室`
       : onLab
         ? `${labTitle} · AI · 全栈学习实验室`
-        : aiNoteTitle
-          ? `${aiNoteTitle} · AI · 全栈学习实验室`
-          : aiLabel
-            ? `${aiLabel} · AI · 全栈学习实验室`
+        : aiNav?.noteTitle
+          ? `${aiNav.noteTitle} · AI · 全栈学习实验室`
+          : aiNav?.sectionLabel
+            ? `${aiNav.sectionLabel} · AI · 全栈学习实验室`
             : '全栈学习实验室'
-  }, [currentLesson, progress.remember, onAi, onLab, aiSectionKey, aiNoteTitle, labTitle])
+  }, [currentLesson, progress.remember, onLab, aiNav, labTitle])
 
   useEffect(() => {
     if (!isTrack(routeTrack) || !routeGroupKey || !groupLabel(routeTrack, routeGroupKey)) return
@@ -188,13 +218,13 @@ export function AppLayout() {
   })
 
   const aiMenuItems = [
-    ...AI_SECTIONS.map((section, index) => ({
+    ...(aiNav?.sections || []).map((section, index) => ({
       key: `ai:${section.key}`,
       label: (
         <Link to={`/ai/${section.key}`} className="group-label" onClick={() => setMobileOpen(false)}>
           <span className="group-index">{String(index + 1).padStart(2, '0')}</span>
           <span className="group-name">{section.label}</span>
-          <span className="group-count">{notesInSection(section.key).length}</span>
+          <span className="group-count">{aiNav?.sectionCounts[section.key] ?? 0}</span>
         </Link>
       ),
     })),
@@ -371,7 +401,7 @@ export function AppLayout() {
 
           <div className="header-tools">
             <span className="header-count">
-              {onAi ? `${AI_NOTES.length} 篇` : `${doneCount}/${trackLessons.length}`}
+              {onAi ? `${aiNav?.noteCount ?? '…'} 篇` : `${doneCount}/${trackLessons.length}`}
             </span>
             <Button
               type="text"

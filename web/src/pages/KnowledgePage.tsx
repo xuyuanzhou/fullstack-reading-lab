@@ -2,6 +2,7 @@ import { Button, Input, Typography } from 'antd'
 import { useMemo } from 'react'
 import { Link, useNavigate, useOutletContext } from 'react-router-dom'
 import { AI_SECTIONS, searchAiNotes } from '@/data/aiCatalog'
+import { drillArea, searchAiDrills } from '@/data/aiInterviewBank'
 import { groupsFor, lessonsFor } from '@/data/curriculum'
 import { shortTitle } from '@/data/reading'
 import { groupKeyForLabel, groupTitle, lessonPath } from '@/data/routes'
@@ -17,6 +18,7 @@ export function KnowledgePage() {
   const q = (onAi ? progress.aiQuery : progress.query).trim().toLocaleLowerCase()
 
   const aiCards = useMemo(() => (onAi ? searchAiNotes(q) : []), [onAi, q])
+  const aiDrills = useMemo(() => (onAi && q ? searchAiDrills(q).slice(0, 12) : []), [onAi, q])
   const cards = useMemo(
     () =>
       onAi
@@ -31,7 +33,8 @@ export function KnowledgePage() {
     [onAi, progress.track, q],
   )
   const pointCount = onAi
-    ? aiCards.reduce((sum, item) => sum + (item.outcomes?.length || 0) + (item.quizzes?.length || 0), 0)
+    ? aiCards.reduce((sum, item) => sum + (item.outcomes?.length || 0) + (item.quizzes?.length || 0), 0) +
+      aiDrills.length
     : cards.reduce((sum, item) => sum + item.points.length, 0)
 
   return (
@@ -55,7 +58,10 @@ export function KnowledgePage() {
             }
           />
           <span className="toolbar-meta">
-            {onAi ? `${aiCards.length} 篇` : `${cards.length} 课`} · {pointCount} 个要点
+            {onAi
+              ? `${aiCards.length} 篇${aiDrills.length ? ` · ${aiDrills.length} 题` : ''}`
+              : `${cards.length} 课`}{' '}
+            · {pointCount} 个要点
           </span>
         </div>
       </div>
@@ -68,6 +74,31 @@ export function KnowledgePage() {
           </div>
           <Button onClick={() => navigate('/local')}>打开本机资料</Button>
         </div>
+      ) : null}
+
+      {onAi && aiDrills.length ? (
+        <section className="knowledge-group">
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, marginBottom: 4 }}>
+            <h2 className="page-title" style={{ margin: 0 }}>
+              模拟题（原创）
+            </h2>
+            <Typography.Text type="secondary">{aiDrills.length} 题</Typography.Text>
+          </div>
+          {aiDrills.map((item) => (
+            <Link
+              key={item.id}
+              className="knowledge-row"
+              to={`/ai/interview/interview-bank?drill=${encodeURIComponent(item.id)}`}
+            >
+              <strong>
+                {item.id} · {drillArea(item)}
+              </strong>
+              <ul>
+                <li>{item.prompt}</li>
+              </ul>
+            </Link>
+          ))}
+        </section>
       ) : null}
 
       {onAi

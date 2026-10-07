@@ -2,6 +2,9 @@
  * B5 原创模拟主问题（首批 12 + 第二批 12；目标 60）。不冒充公司真题；评分 0–4 仅训练用。
  */
 import { AI_DRILL_QUESTIONS_BATCH2 } from './aiInterviewBankBatch2.ts'
+import { AI_DRILL_QUESTIONS_BATCH3 } from './aiInterviewBankBatch3.ts'
+import { AI_DRILL_QUESTIONS_BATCH4 } from './aiInterviewBankBatch4.ts'
+import { AI_DRILL_QUESTIONS_BATCH5 } from './aiInterviewBankBatch5.ts'
 
 export const AI_DRILL_BATCH1_SIZE = 12
 export const AI_DRILL_EDITOR_TARGET = 60
@@ -363,6 +366,9 @@ const AI_DRILL_QUESTIONS_BATCH1: AiDrillQuestion[] = [
 export const AI_DRILL_QUESTIONS: AiDrillQuestion[] = [
   ...AI_DRILL_QUESTIONS_BATCH1,
   ...AI_DRILL_QUESTIONS_BATCH2,
+  ...AI_DRILL_QUESTIONS_BATCH3,
+  ...AI_DRILL_QUESTIONS_BATCH4,
+  ...AI_DRILL_QUESTIONS_BATCH5,
 ]
 
 export const AI_MOCK_INTERVIEWS = [
@@ -370,25 +376,170 @@ export const AI_MOCK_INTERVIEWS = [
     id: 'mock-basic',
     title: '模拟面试 A：基础口述',
     durationMin: 35,
-    questionIds: ['q01-prompt-rag-ft', 'q08-causal-mask', 'q09-kv-gqa', 'q04-recall-up-answer-down'],
+    questionIds: [
+      'q01-prompt-rag-ft',
+      'q08-causal-mask',
+      'q09-kv-gqa',
+      'q25-softmax-hand',
+      'q15-temp-topp',
+    ],
     focus: '结论 → 机制 → 一个失败情形；不要求私有思维链。',
   },
   {
     id: 'mock-debug',
     title: '模拟面试 B：代码/排错',
     durationMin: 40,
-    questionIds: ['q03-json-vs-execute', 'q06-timeout-idempotent', 'q07-injection-email', 'q10-offline-online-gap'],
+    questionIds: [
+      'q03-json-vs-execute',
+      'q06-timeout-idempotent',
+      'q27-chunk-boundary',
+      'q32-retry-429',
+      'q10-offline-online-gap',
+    ],
     focus: '对着日志/轨迹字段归因；可结合 L1/L2 工作台。',
   },
   {
     id: 'mock-design',
     title: '模拟面试 C：系统设计/项目答辩',
     durationMin: 45,
-    questionIds: ['q02-conflict-policy', 'q05-cache-isolation', 'q11-budget-serve', 'q12-single-vs-multi'],
+    questionIds: [
+      'q02-conflict-policy',
+      'q05-cache-isolation',
+      'q36-mvp-scope',
+      'q11-budget-serve',
+      'q12-single-vs-multi',
+    ],
     focus: '画边界、指标、坏例与个人贡献；换约束时设计怎么变。',
   },
 ] as const
 
 export function drillById(id: string) {
   return AI_DRILL_QUESTIONS.find((item) => item.id === id)
+}
+
+/** 与缺口文档 §7 对齐的七大编辑域（筛选用，不改题面 domain 原文） */
+export const AI_DRILL_AREAS = [
+  '基础、数据与机器学习',
+  'Transformer、采样与缓存',
+  'RAG 与检索',
+  'Agent 与工具运行',
+  '评测、安全、部署与成本',
+  '微调与训练',
+  '综合设计、排错与项目答辩',
+] as const
+
+export type AiDrillArea = (typeof AI_DRILL_AREAS)[number]
+
+/** 各域建议下限（编辑目标，允许略多） */
+export const AI_DRILL_AREA_TARGETS: Record<AiDrillArea, number> = {
+  '基础、数据与机器学习': 8,
+  'Transformer、采样与缓存': 10,
+  'RAG 与检索': 10,
+  'Agent 与工具运行': 8,
+  '评测、安全、部署与成本': 10,
+  '微调与训练': 6,
+  '综合设计、排错与项目答辩': 8,
+}
+
+const AREA_BY_ID: Partial<Record<string, AiDrillArea>> = {
+  'q01-prompt-rag-ft': '基础、数据与机器学习',
+  'q02-conflict-policy': 'RAG 与检索',
+  'q03-json-vs-execute': 'Agent 与工具运行',
+  'q04-recall-up-answer-down': 'RAG 与检索',
+  'q05-cache-isolation': '评测、安全、部署与成本',
+  'q06-timeout-idempotent': 'Agent 与工具运行',
+  'q07-injection-email': '评测、安全、部署与成本',
+  'q08-causal-mask': 'Transformer、采样与缓存',
+  'q09-kv-gqa': 'Transformer、采样与缓存',
+  'q10-offline-online-gap': '综合设计、排错与项目答辩',
+  'q11-budget-serve': '评测、安全、部署与成本',
+  'q12-single-vs-multi': '综合设计、排错与项目答辩',
+  'q13-precision-recall': '基础、数据与机器学习',
+  'q14-train-loss-deploy': '基础、数据与机器学习',
+  'q15-temp-topp': 'Transformer、采样与缓存',
+  'q16-prefill-decode': 'Transformer、采样与缓存',
+  'q17-bm25-vs-dense': 'RAG 与检索',
+  'q18-rerank-worth': 'RAG 与检索',
+  'q19-long-context-vs-rag': 'Transformer、采样与缓存',
+  'q20-react-vs-tools': 'Agent 与工具运行',
+  'q21-tool-return-inject': '评测、安全、部署与成本',
+  'q22-llm-judge': '评测、安全、部署与成本',
+  'q23-dpo-vs-rlhf': '微调与训练',
+  'q24-lora-rank': '微调与训练',
+  'q25-softmax-hand': '基础、数据与机器学习',
+  'q26-embedding-space': '基础、数据与机器学习',
+  'q27-chunk-boundary': 'RAG 与检索',
+  'q28-delete-sync': 'RAG 与检索',
+  'q29-budget-steps': 'Agent 与工具运行',
+  'q30-confirm-params': 'Agent 与工具运行',
+  'q31-session-isolate': '评测、安全、部署与成本',
+  'q32-retry-429': '评测、安全、部署与成本',
+  'q33-quant-tradeoff': 'Transformer、采样与缓存',
+  'q34-sft-data-mix': '微调与训练',
+  'q35-paper-claim': '综合设计、排错与项目答辩',
+  'q36-mvp-scope': '综合设计、排错与项目答辩',
+  'q37-bias-variance': '基础、数据与机器学习',
+  'q38-positional': 'Transformer、采样与缓存',
+  'q39-mha-gqa': 'Transformer、采样与缓存',
+  'q40-hybrid-rrf': 'RAG 与检索',
+  'q41-cite-ground': 'RAG 与检索',
+  'q42-unknown-tool': 'Agent 与工具运行',
+  'q43-workflow-vs-agent': '综合设计、排错与项目答辩',
+  'q44-log-redact': '评测、安全、部署与成本',
+  'q45-canary-rollback': '综合设计、排错与项目答辩',
+  'q46-grad-accum': '微调与训练',
+  'q47-ocr-baseline': '综合设计、排错与项目答辩',
+  'q48-ablation-one': '基础、数据与机器学习',
+  'q49-dataset-split': '基础、数据与机器学习',
+  'q50-residual-norm': 'Transformer、采样与缓存',
+  'q51-prefix-cache': 'Transformer、采样与缓存',
+  'q52-empty-retrieve': 'RAG 与检索',
+  'q53-metadata-filter': 'RAG 与检索',
+  'q54-tool-schema': 'Agent 与工具运行',
+  'q55-human-gate': 'Agent 与工具运行',
+  'q56-cost-tokens': '评测、安全、部署与成本',
+  'q57-ppo-instability': '微调与训练',
+  'q58-fsdp-when': '微调与训练',
+  'q59-eval-online': '评测、安全、部署与成本',
+  'q60-defense-story': '综合设计、排错与项目答辩',
+}
+
+export function drillArea(question: Pick<AiDrillQuestion, 'id'>): AiDrillArea {
+  const mapped = AREA_BY_ID[question.id]
+  if (!mapped) throw new Error(`missing drill area for ${question.id}`)
+  return mapped
+}
+
+export function countDrillsByArea() {
+  const counts = Object.fromEntries(AI_DRILL_AREAS.map((area) => [area, 0])) as Record<AiDrillArea, number>
+  for (const question of AI_DRILL_QUESTIONS) {
+    counts[drillArea(question)] += 1
+  }
+  return counts
+}
+
+export function drillsInArea(area: AiDrillArea | 'all') {
+  if (area === 'all') return AI_DRILL_QUESTIONS
+  return AI_DRILL_QUESTIONS.filter((question) => drillArea(question) === area)
+}
+
+/** 知识点目录用：按题干/技能/mustSay 搜原创模拟题 */
+export function searchAiDrills(query: string) {
+  const q = query.trim().toLocaleLowerCase()
+  if (!q) return [] as AiDrillQuestion[]
+  return AI_DRILL_QUESTIONS.filter((item) => {
+    const hay = [
+      item.id,
+      item.prompt,
+      item.answerShort,
+      item.domain,
+      drillArea(item),
+      ...item.skills,
+      ...item.mustSay,
+      ...item.commonMistakes,
+    ]
+      .join(' ')
+      .toLocaleLowerCase()
+    return hay.includes(q)
+  })
 }

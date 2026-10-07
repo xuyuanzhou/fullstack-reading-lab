@@ -1,13 +1,18 @@
 import { Button, Collapse, Radio, Select, Typography } from 'antd'
-import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 import {
+  AI_DRILL_AREAS,
   AI_DRILL_DISCLAIMER,
   AI_DRILL_EDITOR_TARGET,
   AI_DRILL_QUESTIONS,
   AI_MOCK_INTERVIEWS,
   AI_SCORE_RUBRIC,
+  countDrillsByArea,
+  drillArea,
   drillById,
+  drillsInArea,
+  type AiDrillArea,
 } from '@/data/aiInterviewBank'
 import { sectionKeyForNote } from '@/data/aiCatalog'
 import { useProgress } from '@/state/progress'
@@ -19,21 +24,46 @@ export function InterviewWorkbench({
   filterIds?: string[]
   compact?: boolean
 }) {
-  const questions = useMemo(() => {
-    if (!filterIds?.length) return AI_DRILL_QUESTIONS
-    return filterIds.map((id) => drillById(id)).filter(Boolean) as typeof AI_DRILL_QUESTIONS
-  }, [filterIds])
   const progress = useProgress()
-  const [activeId, setActiveId] = useState(questions[0]?.id || '')
-  const active = drillById(activeId) || questions[0]
+  const [searchParams] = useSearchParams()
+  const drillParam = searchParams.get('drill') || ''
+  const appliedDrill = useRef('')
+  const [area, setArea] = useState<AiDrillArea | 'all'>('all')
+  const areaCounts = useMemo(() => countDrillsByArea(), [])
 
+  const questions = useMemo(() => {
+    const pool = filterIds?.length
+      ? (filterIds.map((id) => drillById(id)).filter(Boolean) as typeof AI_DRILL_QUESTIONS)
+      : drillsInArea(area)
+    return pool
+  }, [filterIds, area])
+
+  const [activeId, setActiveId] = useState(questions[0]?.id || '')
+  useEffect(() => {
+    if (drillParam && drillParam !== appliedDrill.current && drillById(drillParam)) {
+      appliedDrill.current = drillParam
+      setArea('all')
+      setActiveId(drillParam)
+      return
+    }
+    if (!questions.some((item) => item.id === activeId)) {
+      setActiveId(questions[0]?.id || '')
+    }
+  }, [questions, activeId, drillParam])
+
+  const active = drillById(activeId) || questions[0]
   if (!active) return null
+
+  const scored = Object.keys(progress.aiDrillScores).filter((id) =>
+    AI_DRILL_QUESTIONS.some((item) => item.id === id),
+  ).length
 
   return (
     <section className="ai-experiment">
       <h2 className="page-title">面试题训练台（原创模拟）</h2>
       <p className="muted">
-        {AI_DRILL_DISCLAIMER} 当前 {AI_DRILL_QUESTIONS.length}/{AI_DRILL_EDITOR_TARGET} 题。
+        {AI_DRILL_DISCLAIMER} 当前 {AI_DRILL_QUESTIONS.length}/{AI_DRILL_EDITOR_TARGET} 题 · 已自评{' '}
+        {scored} 题。
       </p>
       <p className="muted">评分参考：{AI_SCORE_RUBRIC.join('；')}</p>
       {!compact ? (
@@ -46,16 +76,38 @@ export function InterviewWorkbench({
               </li>
             ))}
           </ul>
+          <Typography.Text type="secondary">七域题量：</Typography.Text>
+          <ul>
+            {AI_DRILL_AREAS.map((name) => (
+              <li key={name}>
+                {name}：{areaCounts[name]}
+              </li>
+            ))}
+          </ul>
         </div>
       ) : null}
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12 }}>
+        {!filterIds?.length ? (
+          <Select
+            value={area}
+            style={{ minWidth: 220 }}
+            onChange={setArea}
+            options={[
+              { value: 'all', label: `全部域（${AI_DRILL_QUESTIONS.length}）` },
+              ...AI_DRILL_AREAS.map((name) => ({
+                value: name,
+                label: `${name}（${areaCounts[name]}）`,
+              })),
+            ]}
+          />
+        ) : null}
         <Select
           value={active.id}
           style={{ minWidth: 280 }}
           onChange={setActiveId}
           options={questions.map((item) => ({
             value: item.id,
-            label: `${item.id} · ${item.domain}`,
+            label: `${item.id} · ${drillArea(item)}`,
           }))}
         />
         <Button
@@ -71,7 +123,7 @@ export function InterviewWorkbench({
         <strong>{active.prompt}</strong>
       </Typography.Paragraph>
       <p className="muted">
-        路线 {active.track} · 难度 {active.difficulty} · 先修{' '}
+        域 {drillArea(active)} · 路线 {active.track} · 难度 {active.difficulty} · 先修{' '}
         {active.prerequisites.map((key, index) => (
           <span key={key}>
             {index ? '、' : ''}

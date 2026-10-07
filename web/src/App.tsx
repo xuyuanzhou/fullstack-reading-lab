@@ -4,8 +4,6 @@ import { lazy, Suspense } from 'react'
 import { HashRouter, Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { AppLayout } from '@/components/AppLayout'
 import { ProgressProvider, useProgress } from '@/state/progress'
-import { AiNotePage, AiPage } from '@/pages/AiPage'
-import { AiLabPage } from '@/pages/AiLabPage'
 import { HomePage } from '@/pages/HomePage'
 import { ReadingBoundary } from '@/components/ReadingBoundary'
 import { findLesson } from '@/data/curriculum'
@@ -17,6 +15,9 @@ const LessonPage = lazy(() => import('@/pages/LessonPage').then(m => ({ default:
 const LocalItemPage = lazy(() => import('@/pages/LocalItemPage').then(m => ({ default: m.LocalItemPage })))
 const LocalPage = lazy(() => import('@/pages/LocalPage').then(m => ({ default: m.LocalPage })))
 const ReviewPage = lazy(() => import('@/pages/ReviewPage').then(m => ({ default: m.ReviewPage })))
+const AiPage = lazy(() => import('@/pages/AiPage').then(m => ({ default: m.AiPage })))
+const AiNotePage = lazy(() => import('@/pages/AiPage').then(m => ({ default: m.AiNotePage })))
+const AiLabPage = lazy(() => import('@/pages/AiLabPage').then(m => ({ default: m.AiLabPage })))
 
 function ResumeRoute() {
   const progress = useProgress()

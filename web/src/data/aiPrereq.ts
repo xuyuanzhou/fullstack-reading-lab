@@ -23,7 +23,22 @@ const STAGE_ORDER = [
   { id: 'retrieve', label: '检索与 RAG', keys: ['retrieve-baseline', 'rag-pipeline', 'l1-kb'] },
   { id: 'agent', label: '受控 Agent', keys: ['controlled-agent', 'l2-agent'] },
   { id: 'interview', label: '表达与面试', keys: ['project-defense', 'interview-bank'] },
-  { id: 'algo', label: '算法支线', keys: ['algo-track', 'pytorch-train', 'l3-finetune'] },
+  {
+    id: 'algo',
+    label: '算法支线',
+    keys: [
+      'algo-track',
+      'pytorch-train',
+      'transformer-deep',
+      'lora-sft',
+      'l3-finetune',
+      'a04-preference-align',
+      'a05-inference-system',
+      'a06-train-scale',
+      'a07-multimodal-elective',
+      'a08-research-repro',
+    ],
+  },
 ] as const
 
 function noteMap() {
@@ -89,4 +104,21 @@ export function stageProgress(aiDone: string[]) {
     const completed = stage.keys.filter((key) => done.has(aiProgressId({ key }))).length
     return { id: stage.id, label: stage.label, completed, total, keys: stage.keys }
   })
+}
+
+/** 主线阶段（不含算法支线），用于侧栏总进度，避免工具/选修课稀释体感 */
+export const MAINLINE_STAGE_IDS = ['intro', 'retrieve', 'agent', 'interview'] as const
+
+export function mainlineProgress(aiDone: string[]) {
+  const stages = stageProgress(aiDone).filter((stage) =>
+    (MAINLINE_STAGE_IDS as readonly string[]).includes(stage.id),
+  )
+  const total = stages.reduce((sum, stage) => sum + stage.total, 0)
+  const completed = stages.reduce((sum, stage) => sum + stage.completed, 0)
+  return {
+    completed,
+    total,
+    percent: total ? Math.round((100 * completed) / total) : 0,
+    stages,
+  }
 }

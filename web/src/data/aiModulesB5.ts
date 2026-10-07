@@ -84,8 +84,8 @@ export const AI_B5_EXTRAS: Record<string, Extra> = {
   },
 
   'interview-bank': {
-    title: '可训练主问题（24/60）',
-    scope: '原创模拟题两批共 24 题；目标 60。结论/机制/追问/错因/补课；0–4 自评。',
+    title: '可训练主问题（60）',
+    scope: '原创模拟题五批共 60 题。结论/机制/追问/错因/补课；0–4 自评。',
     outcomes: [
       '能按题完成 30 秒结论与 2–3 分钟机制',
       '能应对至少两层追问要点',
@@ -95,7 +95,7 @@ export const AI_B5_EXTRAS: Record<string, Extra> = {
     reading: [
       '题库从“提问方向”变成可训练回答：每题有岗位路线、难度、先修、必须说到的条件。明确原创模拟，不冒充真题。',
       '评分 0–4 只用于训练反馈；界面不宣传录用概率。数学/机制题可用纸面推演；Agent 题可对照 L2 轨迹。',
-      '60 题是编辑目标：已发布 24 道（两批），后续按域扩展，禁止答案占位。',
+      '首期 60 道编辑目标已满：五批均无答案占位，不冒充公司真题；可按域继续增补。',
     ],
     practice: '打开本页题库工作台，任选 4 题闭卷答，再展开参考并自评。',
     practiceItems: [
@@ -135,7 +135,7 @@ export const AI_B5_EXTRAS: Record<string, Extra> = {
     outcomes: ['能在限时内答完 4 道口述题并自评'],
     prerequisites: ['interview-bank', 'kv-cache', 'change-how'],
     reading: [
-      '套题：q01、q08、q09、q04。不要求展示模型私有思维链；评可见答案与例子。',
+      '套题：q01、q08、q09、q25、q15。不要求展示模型私有思维链；评可见答案与例子。',
       '计时建议：每题 6–8 分钟含追问。结束后把 <3 分题链回课程。',
     ],
     practice: '用工作台筛选“模拟 A”四题，录音作答。',
@@ -173,7 +173,7 @@ export const AI_B5_EXTRAS: Record<string, Extra> = {
     outcomes: ['能用 L1/L2 字段解释停机与泄漏'],
     prerequisites: ['interview-bank', 'l2-agent', 'eval-runner'],
     reading: [
-      '套题：q03、q06、q07、q10。允许打开 L2 工作台指轨迹，但先自己说再对照。',
+      '套题：q03、q06、q27、q32、q10。允许打开 L2 工作台指轨迹，但先自己说再对照。',
     ],
     practice: '先闭卷答幂等与注入，再跑对应 fault 验证。',
     practiceItems: [
@@ -210,7 +210,7 @@ export const AI_B5_EXTRAS: Record<string, Extra> = {
     outcomes: ['能完成项目答辩结构并应对换约束'],
     prerequisites: ['project-defense', 'interview-bank', 'l1-kb'],
     reading: [
-      '套题：q02、q05、q11、q12。结合 M12 提纲；强调证据与局限声明。',
+      '套题：q02、q05、q36、q11、q12。结合 M12 提纲；强调证据与局限声明。',
     ],
     practice: '3 分钟项目介绍 + 两道约束变更追问。',
     practiceItems: [
