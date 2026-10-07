@@ -286,13 +286,14 @@ html[data-theme='dark'] .brand-mark {
     height: 36px !important;
     line-height: 36px !important;
     font-weight: 600;
+    margin-block: 2px 0 !important;
     padding-inline-start: 10px !important;
     padding-inline-end: 28px !important;
   }
 
-  /* 一级展开后：与二级分组留一点空隙，不宜过大 */
+  /* 一级展开后：紧贴二级，几乎不再额外加空 */
   > .ant-menu-submenu > .ant-menu-sub {
-    padding-block-start: 6px !important;
+    padding-block-start: 2px !important;
   }
 
   /* 相邻二级分组之间留一点分隔 */
