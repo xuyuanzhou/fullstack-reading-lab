@@ -62,6 +62,10 @@ export type ProgressState = {
   aiRecent: string[]
   aiNotes: Record<string, string>
   aiQuery: string
+  /** 用户主动跳过先修门槛的课 key（不是进度 id） */
+  aiSkippedPrereq: string[]
+  /** 面试题训练自评 0–4 */
+  aiDrillScores: Record<string, number>
   /** Monotonic write counter so a stale tab cannot blank a newer tab's notes. */
   revision: number
 }

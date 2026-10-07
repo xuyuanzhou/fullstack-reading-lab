@@ -28,6 +28,12 @@ type ProgressApi = ProgressState & {
   rememberAi: (id: string) => void
   setAiNote: (id: string, note: string) => void
   setAiQuery: (query: string) => void
+  skipAiPrereq: (noteKey: string) => void
+  setAiDrillScore: (questionId: string, score: number) => void
+  replaceAiProgress: (patch: Pick<
+    ProgressState,
+    'aiDone' | 'aiReview' | 'aiRecent' | 'aiNotes' | 'aiQuery' | 'aiSkippedPrereq' | 'aiDrillScores'
+  >) => void
   setTheme: (theme: 'light' | 'dark') => void
   setLocalQuery: (query: string) => void
   setLocalTopic: (topic: string) => void
@@ -188,6 +194,19 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       setAiNote: (id, note) =>
         setState((prev) => ({ ...prev, aiNotes: { ...prev.aiNotes, [id]: note } })),
       setAiQuery: (aiQuery) => setState((prev) => ({ ...prev, aiQuery })),
+      skipAiPrereq: (noteKey) =>
+        setState((prev) => ({
+          ...prev,
+          aiSkippedPrereq: prev.aiSkippedPrereq.includes(noteKey)
+            ? prev.aiSkippedPrereq
+            : [...prev.aiSkippedPrereq, noteKey],
+        })),
+      setAiDrillScore: (questionId, score) =>
+        setState((prev) => ({
+          ...prev,
+          aiDrillScores: { ...prev.aiDrillScores, [questionId]: score },
+        })),
+      replaceAiProgress: (patch) => setState((prev) => ({ ...prev, ...patch })),
       setTheme: (theme) => setState((prev) => ({ ...prev, theme })),
       setLocalQuery: (localQuery) => setState((prev) => ({ ...prev, localQuery })),
       setLocalTopic: (localTopic) => setState((prev) => ({ ...prev, localTopic })),

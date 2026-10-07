@@ -33,6 +33,13 @@ export function normalizeProgress(value: unknown, groups: ProgressGroups): Progr
   const aiNotes = object(saved.aiNotes)
     ? Object.fromEntries(Object.entries(saved.aiNotes).filter(([, note]) => typeof note === 'string')) as Record<string, string>
     : {}
+  const aiDrillScores = object(saved.aiDrillScores)
+    ? Object.fromEntries(
+        Object.entries(saved.aiDrillScores).filter(
+          ([, score]) => typeof score === 'number' && Number.isFinite(score) && score >= 0 && score <= 4,
+        ),
+      ) as Record<string, number>
+    : {}
   const audit = object(saved.audit)
     ? Object.fromEntries(Object.entries(saved.audit).filter(([, item]) => object(item) && typeof item.note === 'string' && typeof item.status === 'string')) as ProgressState['audit']
     : {}
@@ -47,6 +54,8 @@ export function normalizeProgress(value: unknown, groups: ProgressGroups): Progr
     aiRecent: strings(saved.aiRecent).slice(0, 12),
     aiNotes,
     aiQuery: text(saved.aiQuery),
+    aiSkippedPrereq: strings(saved.aiSkippedPrereq),
+    aiDrillScores,
     revision: revisionOf(saved.revision),
   }
 }
@@ -111,6 +120,19 @@ export function mergeForWrite(local: ProgressState, remote: ProgressState, base:
       touched = true
     }
   }
+  const aiDrillScores = { ...remote.aiDrillScores }
+  for (const [id, score] of Object.entries(local.aiDrillScores)) {
+    if (score !== base.aiDrillScores[id]) {
+      aiDrillScores[id] = score
+      touched = true
+    }
+  }
+  for (const id of Object.keys(base.aiDrillScores)) {
+    if (!(id in local.aiDrillScores) && base.aiDrillScores[id] != null) {
+      delete aiDrillScores[id]
+      touched = true
+    }
+  }
   const audit = { ...remote.audit }
   for (const [id, item] of Object.entries(local.audit)) {
     const prior = base.audit[id]
@@ -131,11 +153,15 @@ export function mergeForWrite(local: ProgressState, remote: ProgressState, base:
   const aiReview = listChanged(local.aiReview, base.aiReview)
     ? [...new Set([...remote.aiReview, ...local.aiReview])]
     : remote.aiReview
+  const aiSkippedPrereq = listChanged(local.aiSkippedPrereq, base.aiSkippedPrereq)
+    ? [...new Set([...remote.aiSkippedPrereq, ...local.aiSkippedPrereq])]
+    : remote.aiSkippedPrereq
   if (
     listChanged(local.done, base.done) ||
     listChanged(local.review, base.review) ||
     listChanged(local.aiDone, base.aiDone) ||
-    listChanged(local.aiReview, base.aiReview)
+    listChanged(local.aiReview, base.aiReview) ||
+    listChanged(local.aiSkippedPrereq, base.aiSkippedPrereq)
   ) {
     touched = true
   }
@@ -143,11 +169,13 @@ export function mergeForWrite(local: ProgressState, remote: ProgressState, base:
     ...remote,
     notes,
     aiNotes,
+    aiDrillScores,
     audit,
     done,
     review,
     aiDone,
     aiReview,
+    aiSkippedPrereq,
     revision: remote.revision + (touched ? 1 : 0),
   }
   // Prefer this tab's UI prefs only when it actually changed them since last sync.

@@ -134,12 +134,27 @@ test('exported runAgent counts failures for toString without inheriting Object m
 })
 
 test('AI sample lessons expose practice answers and two follow-ups', async () => {
-  const { AI_SAMPLE_EXTRAS, AI_B1_SAMPLE_KEYS, AI_B2_MODULE_KEYS, AI_B3_MODULE_KEYS, withSampleExtras } =
-    await import('../web/src/data/aiSamples.ts')
+  const {
+    AI_SAMPLE_EXTRAS,
+    AI_B1_SAMPLE_KEYS,
+    AI_B2_MODULE_KEYS,
+    AI_B3_MODULE_KEYS,
+    AI_B4_MODULE_KEYS,
+    AI_B5_MODULE_KEYS,
+    AI_B6_MODULE_KEYS,
+    withSampleExtras,
+  } = await import('../web/src/data/aiSamples.ts')
   const { AI_NOTES, searchAiNotes } = await import('../web/src/data/aiCatalog.ts')
   const noteKeys = new Set(AI_NOTES.map((note) => note.key))
   assert.equal(noteKeys.size, AI_NOTES.length, 'duplicate AI note keys')
-  for (const key of [...AI_B1_SAMPLE_KEYS, ...AI_B2_MODULE_KEYS, ...AI_B3_MODULE_KEYS]) {
+  for (const key of [
+    ...AI_B1_SAMPLE_KEYS,
+    ...AI_B2_MODULE_KEYS,
+    ...AI_B3_MODULE_KEYS,
+    ...AI_B4_MODULE_KEYS,
+    ...AI_B5_MODULE_KEYS,
+    ...AI_B6_MODULE_KEYS,
+  ]) {
     assert.ok(noteKeys.has(key), `missing base note ${key}`)
     const extra = AI_SAMPLE_EXTRAS[key]
     assert.ok(extra?.outcomes?.length, key)
@@ -181,6 +196,118 @@ test('L1 eval has zero ACL failures on hybrid mock path', async () => {
   assert.equal(report.unverifiedLiveModel, true)
   assert.ok(report.answerOkRate > 0.8)
   assert.equal(compareRetrieveModes().length, 3)
+})
+
+test('L2 fault suite covers approval idempotency and workflow contrast', async () => {
+  const { runL2FaultSuite, compareAgentVsWorkflow, resetL2Ledger, runL2 } = await import(
+    '../web/src/labs/l2Agent.ts'
+  )
+  const suite = runL2FaultSuite()
+  assert.ok(suite.length >= 10)
+  assert.ok(suite.every((item) => item.ok), suite.filter((item) => !item.ok).map((item) => item.fault).join(','))
+  resetL2Ledger()
+  const denied = runL2({
+    goal: '去杭州出差',
+    user: { id: 'u1', role: 'employee', budgetCents: 200_000 },
+    mode: 'agent',
+    fault: 'deny_approval',
+  })
+  assert.equal(denied.stop, 'denied')
+  assert.equal(denied.bookedTripId, null)
+  assert.equal(denied.generator, 'mock-rules')
+  assert.equal(denied.unverifiedLiveModel, true)
+  const compare = compareAgentVsWorkflow()
+  assert.equal(compare.sameBooking, true)
+  assert.ok(compare.agent.trace.some((event) => event.kind === 'approve_wait' || event.kind === 'approve'))
+})
+
+test('B5 interview bank has twelve drills linked to lessons', async () => {
+  const {
+    AI_DRILL_QUESTIONS,
+    AI_MOCK_INTERVIEWS,
+    AI_DRILL_DISCLAIMER,
+    AI_DRILL_BATCH1_SIZE,
+    AI_DRILL_EDITOR_TARGET,
+  } = await import('../web/src/data/aiInterviewBank.ts')
+  const { AI_NOTES, searchAiNotes } = await import('../web/src/data/aiCatalog.ts')
+  const noteKeys = new Set(AI_NOTES.map((note) => note.key))
+  assert.equal(AI_DRILL_BATCH1_SIZE, 12)
+  assert.equal(AI_DRILL_EDITOR_TARGET, 60)
+  assert.equal(AI_DRILL_QUESTIONS.length, 24)
+  assert.equal(new Set(AI_DRILL_QUESTIONS.map((item) => item.id)).size, 24)
+  assert.equal(AI_MOCK_INTERVIEWS.length, 3)
+  assert.ok(AI_DRILL_DISCLAIMER.includes('不冒充'))
+  for (const question of AI_DRILL_QUESTIONS) {
+    assert.ok(question.followUps.length >= 2, question.id)
+    assert.ok(question.answerShort.length > 10, question.id)
+    assert.ok(question.answerDeep.length > 20, question.id)
+    assert.ok(question.lessonKeys.every((key) => noteKeys.has(key)), question.id)
+    assert.ok(question.prerequisites.every((key) => noteKeys.has(key)), question.id)
+  }
+  for (const mock of AI_MOCK_INTERVIEWS) {
+    assert.ok(mock.questionIds.length >= 4)
+    assert.ok(mock.questionIds.every((id) => AI_DRILL_QUESTIONS.some((item) => item.id === id)))
+  }
+  const hits = searchAiNotes('幂等')
+  assert.ok(
+    hits.some((note) => note.key === 'interview-bank' || note.key === 'controlled-agent' || note.key === 'l2-agent'),
+  )
+})
+
+test('U03 prereq gaps are skippable and U06 backup refuses silent overwrite', async () => {
+  const { missingPrereqs, findPrereqCycles } = await import('../web/src/data/aiPrereq.ts')
+  const {
+    buildAiBackup,
+    parseAiBackup,
+    applyAiBackup,
+    AI_BACKUP_FORMAT,
+    AI_BACKUP_VERSION,
+  } = await import('../web/src/labs/aiBackup.ts')
+  assert.equal(findPrereqCycles().length, 0)
+  const blocked = missingPrereqs('rag-pipeline', [], [])
+  assert.equal(blocked.ready, false)
+  assert.ok(blocked.missing.length > 0)
+  const skipped = missingPrereqs('rag-pipeline', [], ['rag-pipeline'])
+  assert.equal(skipped.ready, true)
+  const state = {
+    track: 'frontend',
+    group: '',
+    done: [],
+    review: [],
+    recent: [],
+    notes: {},
+    theme: 'light',
+    query: '',
+    audit: {},
+    localQuery: '',
+    localTopic: '',
+    localCategory: 'ai',
+    aiDone: ['ai:l0-verify'],
+    aiReview: [],
+    aiRecent: [],
+    aiNotes: { 'ai:l0-verify': 'local note' },
+    aiQuery: '',
+    aiSkippedPrereq: [],
+    aiDrillScores: { 'q01-prompt-rag-ft': 3 },
+    revision: 1,
+  }
+  const file = buildAiBackup(state)
+  assert.equal(file.format, AI_BACKUP_FORMAT)
+  assert.equal(file.version, AI_BACKUP_VERSION)
+  const parsed = parseAiBackup(file)
+  assert.equal(parsed.ok, true)
+  if (!parsed.ok) return
+  const incoming = {
+    ...parsed.next,
+    aiNotes: { 'ai:l0-verify': 'imported should not win' },
+    aiDrillScores: { 'q01-prompt-rag-ft': 1 },
+  }
+  const merged = applyAiBackup(state, incoming, 'merge')
+  assert.equal(merged.state.aiNotes['ai:l0-verify'], 'local note')
+  assert.equal(merged.state.aiDrillScores['q01-prompt-rag-ft'], 3)
+  assert.ok(merged.warnings.length >= 1)
+  const bad = parseAiBackup({ format: 'nope', version: 1, payload: {} })
+  assert.equal(bad.ok, false)
 })
 
 test('L0 pack marks good samples pass and bad samples fail', async () => {

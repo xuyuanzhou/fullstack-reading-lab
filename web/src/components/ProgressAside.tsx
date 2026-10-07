@@ -1,5 +1,6 @@
 import { Button, Progress, Typography } from 'antd'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { AiBackupPanel } from '@/components/AiBackupPanel'
 import { AI_NOTES, aiNote, sectionKeyForNote } from '@/data/aiCatalog'
 import { findLesson, lessonsFor } from '@/data/curriculum'
 import { shortTitle } from '@/data/reading'
@@ -82,6 +83,7 @@ export function ProgressAside({ localReady }: { localReady: boolean }) {
             <Typography.Text type="secondary">打开 AI 课后会显示在这里。</Typography.Text>
           )}
         </div>
+        <AiBackupPanel />
         {localReady ? (
           <div className="aside-block">
             <h5>我的本机资料</h5>

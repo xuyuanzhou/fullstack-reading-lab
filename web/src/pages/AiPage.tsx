@@ -2,7 +2,12 @@ import { Button, Collapse, Input, Radio, Space } from 'antd'
 import { useEffect, useState } from 'react'
 import { Link, Navigate, useOutletContext, useParams } from 'react-router-dom'
 import { AiDiagram } from '@/components/AiDiagrams'
+import { AiPrereqGate } from '@/components/AiPrereqGate'
+import { InterviewWorkbench } from '@/components/InterviewWorkbench'
 import { L1Workbench } from '@/components/L1Workbench'
+import { L2Workbench } from '@/components/L2Workbench'
+import { L3Workbench } from '@/components/L3Workbench'
+import { AI_MOCK_INTERVIEWS } from '@/data/aiInterviewBank'
 import {
   aiNote,
   aiProgressId,
@@ -82,6 +87,22 @@ export function AiNotePage() {
   if (!note || note.section !== section.key) return <Navigate to={`/ai/${section.key}`} replace />
   const progressId = aiProgressId(note)
   const showL1 = ['retrieve-baseline', 'rag-pipeline', 'eval-runner', 'l1-kb'].includes(note.key)
+  const showL2 = ['controlled-agent', 'ai-security', 'ai-serving', 'l2-agent'].includes(note.key)
+  const showInterview = [
+    'project-defense',
+    'interview-bank',
+    'mock-interview-basic',
+    'mock-interview-debug',
+    'mock-interview-design',
+  ].includes(note.key)
+  const interviewFilter =
+    note.key === 'mock-interview-basic'
+      ? [...AI_MOCK_INTERVIEWS[0].questionIds]
+      : note.key === 'mock-interview-debug'
+        ? [...AI_MOCK_INTERVIEWS[1].questionIds]
+        : note.key === 'mock-interview-design'
+          ? [...AI_MOCK_INTERVIEWS[2].questionIds]
+          : undefined
 
   useEffect(() => {
     progress.rememberAi(progressId)
@@ -117,6 +138,7 @@ export function AiNotePage() {
           ))}
         </p>
       ) : null}
+      <AiPrereqGate noteKey={note.key} />
       {note.terms?.length ? (
         <section>
           <h2 className="page-title">术语</h2>
@@ -141,6 +163,14 @@ export function AiNotePage() {
       {note.key === 'ai-map' ? <DiagnosticPanel /> : null}
       {note.key === 'l0-verify' ? <L0VerifyPanel /> : null}
       {showL1 ? <L1Workbench compact={note.key === 'retrieve-baseline'} /> : null}
+      {showL2 ? <L2Workbench compact={note.key !== 'l2-agent'} /> : null}
+      {note.key === 'l3-finetune' ? <L3Workbench /> : null}
+      {showInterview ? (
+        <InterviewWorkbench
+          filterIds={interviewFilter}
+          compact={note.key === 'project-defense'}
+        />
+      ) : null}
       {note.experiment ? <ExperimentBlock experiment={note.experiment} /> : null}
       {note.sources.length > 0 && (
         <section>

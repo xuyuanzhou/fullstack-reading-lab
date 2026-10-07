@@ -5,6 +5,9 @@
 import type { AiNote } from './aiCatalog.ts'
 import { AI_B2_EXTRAS } from './aiModulesB2.ts'
 import { AI_B3_EXTRAS } from './aiModulesB3.ts'
+import { AI_B4_EXTRAS } from './aiModulesB4.ts'
+import { AI_B5_EXTRAS } from './aiModulesB5.ts'
+import { AI_B6_EXTRAS } from './aiModulesB6.ts'
 
 type SampleExtra = Partial<
   Pick<
@@ -28,6 +31,9 @@ type SampleExtra = Partial<
 export const AI_SAMPLE_EXTRAS: Record<string, SampleExtra> = {
   ...AI_B2_EXTRAS,
   ...AI_B3_EXTRAS,
+  ...AI_B4_EXTRAS,
+  ...AI_B5_EXTRAS,
+  ...AI_B6_EXTRAS,
   'first-model-call': {
     title: '第一次真实模型调用（样板）',
     scope: '用假供应商跑通消息、超时与 JSON 校验；有密钥时再换真实调用。分清样例结果与现场运行。',
@@ -279,4 +285,35 @@ export const AI_B3_MODULE_KEYS = [
   'rag-pipeline',
   'eval-runner',
   'l1-kb',
+] as const
+
+/** B4 受控 Agent / 安全 / 交付 / L2 */
+export const AI_B4_MODULE_KEYS = [
+  'controlled-agent',
+  'ai-security',
+  'ai-serving',
+  'l2-agent',
+] as const
+
+/** B5 面试表达 / 题库样板 / 三套模拟 */
+export const AI_B5_MODULE_KEYS = [
+  'project-defense',
+  'interview-bank',
+  'mock-interview-basic',
+  'mock-interview-debug',
+  'mock-interview-design',
+] as const
+
+/** B6 算法支线 A01–A08 / L3 / U03·U06 */
+export const AI_B6_MODULE_KEYS = [
+  'algo-track',
+  'pytorch-train',
+  'transformer-deep',
+  'lora-sft',
+  'l3-finetune',
+  'a04-preference-align',
+  'a05-inference-system',
+  'a06-train-scale',
+  'a07-multimodal-elective',
+  'a08-research-repro',
 ] as const
