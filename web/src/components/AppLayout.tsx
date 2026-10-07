@@ -306,7 +306,7 @@ export function AppLayout() {
         <Menu
         className="path-menu"
         mode="inline"
-        inlineIndent={18}
+        inlineIndent={8}
         selectedKeys={selectedKeys}
         openKeys={onAi ? [] : openKeys}
         onOpenChange={(keys) => {

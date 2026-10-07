@@ -281,23 +281,33 @@ html[data-theme='dark'] .brand-mark {
     border-radius: 8px !important;
   }
 
-  .ant-menu-submenu-title {
+  /* 一级标题：固定左侧；右侧留给展开箭头，避免压住 0/4 */
+  > .ant-menu-submenu > .ant-menu-submenu-title {
     height: 36px !important;
     line-height: 36px !important;
     font-weight: 600;
-    /* 右侧留给展开箭头，避免压住 0/4 计数 */
     padding-inline-start: 10px !important;
     padding-inline-end: 28px !important;
   }
 
-  /* 二级分组：与叶子拉开一点垂直节奏 */
+  /* 一级展开后：与二级分组拉开垂直间距 */
+  > .ant-menu-submenu > .ant-menu-sub {
+    padding-block-start: 16px !important;
+  }
+
+  /* 相邻二级分组之间留一点分隔 */
+  .ant-menu-sub > .ant-menu-submenu + .ant-menu-submenu {
+    margin-block-start: 6px !important;
+  }
+
+  /* 二级分组：显式左缩进，避免相对三级显得过深 */
   .ant-menu-sub .ant-menu-submenu > .ant-menu-submenu-title {
     height: auto !important;
-    min-height: 34px;
-    line-height: 1.4 !important;
-    margin-block: 4px 2px !important;
-    padding-block: 8px !important;
-    padding-inline-start: 10px !important;
+    min-height: 30px;
+    line-height: 1.35 !important;
+    margin-block: 0 !important;
+    padding-block: 5px !important;
+    padding-inline-start: 14px !important;
     padding-inline-end: 28px !important;
     font-size: 13px;
     font-weight: 600;
@@ -313,21 +323,24 @@ html[data-theme='dark'] .brand-mark {
   }
 
   /*
-   * 叶子课：只调上下/右侧内边距，保留 ant 嵌套缩进。
+   * 叶子课：只调上下/右侧与三级左缩进。
+   * 不要写 padding 简写，否则会盖掉其它方向。
    */
   .ant-menu-item {
-    position: relative;
     height: auto !important;
-    line-height: 1.5 !important;
-    margin-block: 3px !important;
-    padding-block: 10px !important;
-    padding-inline-end: 12px !important;
+    line-height: 1.4 !important;
+    margin-block: 0 !important;
+    padding-block: 5px !important;
+    padding-inline-end: 10px !important;
     white-space: normal;
   }
 
-  /* 分组下第一层叶子：与二级标题多留一点空隙 */
+  .ant-menu-sub .ant-menu-sub .ant-menu-item {
+    padding-inline-start: 18px !important;
+  }
+
   .ant-menu-sub .ant-menu-sub {
-    padding-block: 2px 6px !important;
+    padding-block: 0 !important;
     background: transparent !important;
   }
 
@@ -335,24 +348,11 @@ html[data-theme='dark'] .brand-mark {
     background: transparent !important;
   }
 
-  /* 选中：圆角底 + 独立竖条，避免 inset 阴影在圆角上变成「括号」 */
   .ant-menu-item-selected {
     background: var(--lab-accent-soft) !important;
     color: var(--lab-accent-strong) !important;
     font-weight: 600;
-    box-shadow: none !important;
-
-    &::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 8px;
-      bottom: 8px;
-      width: 2px;
-      border-radius: 1px;
-      background: var(--lab-accent);
-      pointer-events: none;
-    }
+    box-shadow: inset 2px 0 0 var(--lab-accent);
   }
 
   .ant-menu-submenu-selected > .ant-menu-submenu-title {
@@ -410,11 +410,11 @@ html[data-theme='dark'] .brand-mark {
 
 .lesson-label {
   display: grid;
-  grid-template-columns: 6px minmax(0, 1fr);
-  column-gap: 10px;
+  grid-template-columns: 5px minmax(0, 1fr);
+  column-gap: 6px;
   align-items: start;
   white-space: normal;
-  line-height: 1.5;
+  line-height: 1.4;
   font-size: 13px;
 }
 
