@@ -1,24 +1,55 @@
 import { Breadcrumb, Button, Collapse, Image, Input, Space, Typography } from 'antd'
+import { useEffect, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
-import { findLesson, lessonIndex, nextLesson } from '@/data/curriculum'
+import { findLesson, lessonIndex, loadFullLesson, nextLesson } from '@/data/curriculum'
 import { groupKeyForLabel, groupPath, groupTitle, isTrack, lessonPath } from '@/data/routes'
-import { shortTitle, splitProse } from '@/data/reading'
+import { shortTitle, splitProse, structureCore } from '@/data/reading'
 import { REACT_CHAPTERS, VUE_CHAPTERS, reactUrl, vueUrl } from '@/data/meta'
 import { useProgress } from '@/state/progress'
 import { LessonOutline } from '@/components/LessonOutline'
+import { RichProse } from '@/components/RichProse'
+import type { Lesson } from '@/types/curriculum'
 
 export function LessonPage() {
   const { track = '', groupKey = '', lessonId = '' } = useParams()
-  const lesson = findLesson(lessonId)
   const progress = useProgress()
+  const summary = findLesson(lessonId)
+  const [lesson, setLesson] = useState<Lesson | null | undefined>(undefined)
 
-  if (!lesson || !isTrack(lesson.track)) return <Navigate to="/" replace />
-  const chapterKey = groupKeyForLabel(lesson.track, lesson.group)
-  if (track !== lesson.track || groupKey !== chapterKey) return <Navigate to={lessonPath(lesson)} replace />
+  useEffect(() => {
+    if (!lessonId || !summary || !isTrack(summary.track)) {
+      setLesson(null)
+      return
+    }
+    let cancelled = false
+    setLesson(undefined)
+    void loadFullLesson(lessonId).then((full) => {
+      if (!cancelled) setLesson(full ?? null)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [lessonId, summary?.id, summary?.track])
+
+  if (!summary || !isTrack(summary.track)) return <Navigate to="/" replace />
+  const chapterKey = groupKeyForLabel(summary.track, summary.group)
+  if (track !== summary.track || groupKey !== chapterKey) {
+    return <Navigate to={lessonPath(summary)} replace />
+  }
+  if (lesson === undefined) {
+    return (
+      <div className="route-loading" role="status">
+        正在打开课程…
+      </div>
+    )
+  }
+  if (!lesson) return <Navigate to="/" replace />
+
   const chapterPath = groupPath(lesson.track, chapterKey)
-
   const index = lessonIndex(lesson.track, lesson.id)
   const next = nextLesson(lesson.track, lesson.id)
+  const core = structureCore(lesson.core)
+  const references = lesson.references || []
   const source =
     lesson.react && REACT_CHAPTERS[lesson.react]
       ? {
@@ -65,7 +96,7 @@ export function LessonPage() {
         ) : null}
         <div className="meta-line">
           <span>原创课程</span>
-          <span>{lesson.references.length} 项依据</span>
+          <span>{references.length} 项依据</span>
         </div>
       </header>
 
@@ -89,7 +120,7 @@ export function LessonPage() {
       </section>
 
       <section className="core-panel" id="lesson-model" tabIndex={-1}>
-        <span className="panel-label">02 / 说明</span>
+        <span className="panel-label">02 / 核心模型</span>
         {lesson.diagram ? (
           <figure className="concept-figure">
             <Image
@@ -100,9 +131,24 @@ export function LessonPage() {
           </figure>
         ) : null}
         <div className="lesson-core">
-          {splitProse(lesson.core).map((part) => (
-            <p key={part.slice(0, 40)}>{part}</p>
-          ))}
+          {core.lead ? <RichProse text={core.lead} className="core-lead" /> : null}
+          {core.facets.length ? (
+            <div className="core-facets">
+              {core.facets.map((facet, facetIndex) => (
+                <div className="core-facet" key={`${facet.label}-${facetIndex}`}>
+                  <span className="core-facet-label">{facet.label}</span>
+                  <RichProse text={facet.body} as="p" />
+                </div>
+              ))}
+            </div>
+          ) : null}
+          {core.beats.length ? (
+            <ol className="core-beats">
+              {core.beats.map((beat, beatIndex) => (
+                <RichProse key={`beat-${beatIndex}`} text={beat} as="li" />
+              ))}
+            </ol>
+          ) : null}
         </div>
         {lesson.map?.length ? (
           <table className="model-map">
@@ -134,7 +180,7 @@ export function LessonPage() {
               <div className="deep-item" key={part.title}>
                 <h3>{part.title}</h3>
                 {splitProse(part.body).map((para) => (
-                  <p key={para.slice(0, 40)}>{para}</p>
+                  <RichProse key={para.slice(0, 40)} text={para} />
                 ))}
               </div>
             ))}
@@ -150,15 +196,17 @@ export function LessonPage() {
       <section className="section-block" id="lesson-why" tabIndex={-1}>
         <span className="section-index">04</span>
         <h2>为什么</h2>
-        {splitProse(lesson.why).map((part) => (
-          <p key={part.slice(0, 40)}>{part}</p>
+        {splitProse(lesson.why || '').map((part) => (
+          <RichProse key={part.slice(0, 40)} text={part} />
         ))}
       </section>
 
       <section className="section-block" id="lesson-example" tabIndex={-1}>
         <span className="section-index">05</span>
         <h2>例子</h2>
-        <div className="example-box">{lesson.example}</div>
+        <div className="example-box">
+          <RichProse text={lesson.example || ''} as="span" />
+        </div>
       </section>
 
       {source ? (
@@ -198,8 +246,8 @@ export function LessonPage() {
           以官方文档、标准或固定版本源码为准。课程中的简化模型不代替实际运行验证。
         </p>
         <div className="ref-list">
-          {lesson.references.length ? (
-            lesson.references.map(([label, href]) => (
+          {references.length ? (
+            references.map(([label, href]) => (
               <a key={href} href={href} target="_blank" rel="noreferrer">
                 {label} ↗
               </a>

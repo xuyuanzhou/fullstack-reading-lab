@@ -49,30 +49,30 @@
   },
   "groupLabels": {
     "frontend": {
-      "全栈主线": "入门",
+      "全栈主线": "全栈主线",
       "语言基础": "JavaScript",
       "TypeScript": "TypeScript",
       "CSS 与布局": "CSS",
       "浏览器": "浏览器",
-      "网络与安全": "网络",
+      "网络与安全": "网络与安全",
       "安全": "安全",
       "React": "React",
-      "React 生态": "React库",
+      "React 生态": "React 生态",
       "Vue": "Vue",
-      "Vue 生态": "Vue库",
-      "技术选型": "选型",
-      "React Native": "RN",
+      "Vue 生态": "Vue 生态",
+      "技术选型": "技术选型",
+      "React Native": "React Native",
       "Flutter": "Flutter",
       "UniApp 与 Taro": "小程序",
-      "Node.js": "Node",
+      "Node.js": "Node.js",
       "测试": "测试",
-      "工程实践": "工程"
+      "工程实践": "工程实践"
     },
     "java": {
-      "全栈主线": "入门",
-      "Java 基础": "Java",
+      "全栈主线": "全栈主线",
+      "Java 基础": "Java 基础",
       "算法": "算法",
-      "设计模式": "模式",
+      "设计模式": "设计模式",
       "JVM": "JVM",
       "并发": "并发",
       "数据库": "数据库",
@@ -84,14 +84,14 @@
       "Nginx": "Nginx",
       "网关": "网关",
       "Netty": "Netty",
-      "消息队列": "消息",
+      "消息队列": "消息队列",
       "搜索": "搜索",
-      "Spring Cloud Alibaba": "微服务",
-      "系统设计": "架构",
+      "Spring Cloud Alibaba": "Spring Cloud",
+      "系统设计": "系统设计",
       "分布式与高并发": "分布式",
-      "交付与运行": "部署",
+      "交付与运行": "交付与运行",
       "测试": "测试",
-      "工程实践": "工程"
+      "工程实践": "工程实践"
     }
   },
   "pathLead": {
@@ -880,14 +880,14 @@
     "frontend": {
       "全栈主线": [
         {
-          "title": "四层",
+          "title": "分层",
           "ids": [
             "fs-four-layers",
             "fs-page-feature"
           ]
         },
         {
-          "title": "写完",
+          "title": "收尾",
           "ids": [
             "fs-write-ui",
             "fs-frontend-done"
@@ -932,7 +932,7 @@
           ]
         },
         {
-          "title": "协议",
+          "title": "迭代",
           "ids": [
             "js-iteration-protocol",
             "js-weakmap-lifetime"
@@ -941,7 +941,7 @@
       ],
       "TypeScript": [
         {
-          "title": "边界",
+          "title": "类型边界",
           "ids": [
             "ts-unknown",
             "ts-const-readonly",
@@ -964,7 +964,7 @@
       ],
       "CSS 与布局": [
         {
-          "title": "盒子",
+          "title": "盒模型",
           "ids": [
             "css-box-sizing",
             "css-cascade",
@@ -972,7 +972,7 @@
           ]
         },
         {
-          "title": "排版",
+          "title": "布局",
           "ids": [
             "css-position-flow",
             "css-containing-block",
@@ -1046,7 +1046,7 @@
           ]
         },
         {
-          "title": "绘制",
+          "title": "渲染",
           "ids": [
             "browser-event-loop-frame",
             "rendering",
@@ -1130,7 +1130,7 @@
           ]
         },
         {
-          "title": "体积",
+          "title": "打包",
           "ids": [
             "vue-design-goals-proxy",
             "vue-tree-shake-options",
@@ -1180,7 +1180,7 @@
       ],
       "技术选型": [
         {
-          "title": "交付面",
+          "title": "目标端",
           "ids": [
             "fe-pick-by-surface",
             "fe-ui-update-model"
@@ -1324,7 +1324,7 @@
           ]
         },
         {
-          "title": "契约",
+          "title": "契约测试",
           "ids": [
             "playwright-user-journey",
             "contract-test-path",
@@ -1344,7 +1344,7 @@
           ]
         },
         {
-          "title": "循环",
+          "title": "事件循环",
           "ids": [
             "node-nexttick",
             "node-event-loop-phases",
@@ -1369,7 +1369,7 @@
           ]
         },
         {
-          "title": "体验",
+          "title": "性能",
           "ids": [
             "web-vitals",
             "performance",
@@ -1384,7 +1384,7 @@
           ]
         },
         {
-          "title": "交付",
+          "title": "发布",
           "ids": [
             "vite-env-client-prefix",
             "ci-gate-not-only-build",
@@ -1495,7 +1495,7 @@
           ]
         },
         {
-          "title": "树",
+          "title": "树与图",
           "ids": [
             "algo-two-pointers",
             "algo-tree-walk",
@@ -1504,7 +1504,7 @@
           ]
         },
         {
-          "title": "窗口",
+          "title": "窗口与拓扑",
           "ids": [
             "algo-sliding-window",
             "algo-topo-kahn"
@@ -1513,7 +1513,7 @@
       ],
       "设计模式": [
         {
-          "title": "名单",
+          "title": "总览",
           "ids": [
             "pattern-gof-catalog",
             "pattern-family-test",
@@ -1522,7 +1522,7 @@
           ]
         },
         {
-          "title": "创建",
+          "title": "创建型",
           "ids": [
             "pattern-factory-method",
             "pattern-builder-assemble",
@@ -1530,7 +1530,7 @@
           ]
         },
         {
-          "title": "结构",
+          "title": "结构型",
           "ids": [
             "pattern-adapter-shape",
             "pattern-decorator-contract",
@@ -1542,7 +1542,7 @@
           ]
         },
         {
-          "title": "行为",
+          "title": "行为型",
           "ids": [
             "pattern-strategy-swap",
             "pattern-template-steps",
@@ -1552,7 +1552,7 @@
           ]
         },
         {
-          "title": "标准库",
+          "title": "Java 标准库",
           "ids": [
             "java-comparator-strategy",
             "java-buffered-stream-decorator",
@@ -1562,7 +1562,7 @@
           ]
         },
         {
-          "title": "容器",
+          "title": "Spring",
           "ids": [
             "spring-factorybean-product",
             "spring-event-sync-default",
@@ -1678,7 +1678,7 @@
       ],
       "缓存": [
         {
-          "title": "键",
+          "title": "键与类型",
           "ids": [
             "redis-data-types",
             "cache-aside-steps",
@@ -1716,7 +1716,7 @@
       ],
       "Nginx": [
         {
-          "title": "上游",
+          "title": "反向代理",
           "ids": [
             "nginx-request-phases",
             "nginx-upstream-passive",
@@ -1767,7 +1767,7 @@
       ],
       "网关": [
         {
-          "title": "入口",
+          "title": "路由",
           "ids": [
             "mw-proxy-lb-gateway",
             "gateway-route-predicate",
@@ -1782,7 +1782,7 @@
           ]
         },
         {
-          "title": "身份",
+          "title": "鉴权",
           "ids": [
             "gateway-auth-where",
             "gateway-body-buffer",
@@ -1803,7 +1803,7 @@
           ]
         },
         {
-          "title": "翻页",
+          "title": "分页",
           "ids": [
             "es-search-after",
             "es-mapping-reindex"
@@ -1996,7 +1996,7 @@
       ],
       "测试": [
         {
-          "title": "写什么",
+          "title": "用例",
           "ids": [
             "junit-instance-lifecycle",
             "test-one-behavior",
@@ -2004,7 +2004,7 @@
           ]
         },
         {
-          "title": "切片",
+          "title": "测试切片",
           "ids": [
             "spring-test-slice",
             "spring-test-transaction-rollback",
@@ -2149,7 +2149,7 @@
           ]
         },
         {
-          "title": "链路",
+          "title": "通用能力",
           "ids": [
             "idempotency",
             "cache",
@@ -2167,7 +2167,7 @@
           ]
         },
         {
-          "title": "领域",
+          "title": "领域驱动",
           "ids": [
             "ddd-same-word-two-contexts",
             "ddd-aggregate-transaction-boundary",
@@ -2248,14 +2248,14 @@
           ]
         },
         {
-          "title": "负载",
+          "title": "工作负载",
           "ids": [
             "k8s-pod-share-localhost",
             "k8s-deploy-not-lone-pod"
           ]
         },
         {
-          "title": "暴露",
+          "title": "对外访问",
           "ids": [
             "k8s-service-clusterip",
             "k8s-ingress-needs-controller"
@@ -2264,7 +2264,7 @@
       ],
       "工程实践": [
         {
-          "title": "追踪",
+          "title": "可观测性",
           "ids": [
             "request-trace-one-hop",
             "otel-three-signals",
@@ -2286,7 +2286,7 @@
           ]
         },
         {
-          "title": "交付",
+          "title": "发布运维",
           "ids": [
             "design-review",
             "docker-multistage",
@@ -2315,7 +2315,7 @@
       "id": "fs-four-layers",
       "title": "一个功能分成页面、契约、服务和数据四层",
       "prompt": "React 和 Spring 都会写了，为什么一个下单功能仍然对不齐？",
-      "core": "全栈指的是你能让同一件业务在四层里说的是同一件事。页面负责这次交互：路由上是哪一条资源，用户正在编辑什么，成功和失败各自画成什么。契约负责双方约定：方法、路径、成功时的字段、失败时的状态码和稳定的 type。服务负责这次用例：身份够不够、规则过不过、事务里哪些写入必须一起提交。数据负责最后的事实：表、唯一约束、索引，以及必要时的缓存副本。库存数属于数据和事务，不属于按钮的 disabled。按钮只减少双击。幂等键属于契约，唯一约束负责在并发下保住同一次业务只有一行。改一个字段时，先指出它属于哪一层，再改那一层，并让相邻层跟着契约变。后面的课程都是这四层里的一种失败方式。",
+      "core": "全栈指的是你能让同一件业务在四层里说的是同一件事。这里的「契约」就是前后端约定好的 HTTP 接口：方法、路径、成功时的字段、失败时的状态码，以及一个稳定的失败类型（type）。页面负责这次交互：路由上是哪一条资源，用户正在编辑什么，成功和失败各自画成什么。契约负责双方约定，服务和页面都只认这一份约定。服务负责这次用例：身份够不够、规则过不过、事务里哪些写入必须一起提交。数据负责最后的事实：表、唯一约束、索引，以及必要时的缓存副本。库存数属于数据和事务，不属于按钮的 disabled。按钮只减少双击。幂等键属于契约，唯一约束负责在并发下保住同一次业务只有一行。改一个字段时，先指出它属于哪一层，再改那一层，并让相邻层跟着契约变。后面的课程都是这四层里的一种失败方式。",
       "why": "学习者会以为前端和后端都会写，一个下单功能自然就对齐了。联调时按钮可点、接口字段和表上的约束各说各的话，库存不够却显示成功。按钮状态、库存结果和失败类型分别落在不同层，才说明四层不能互相代替。",
       "example": "下单页提交商品和数量。契约规定 POST /orders，成功返回订单号，库存不足返回 409 和约定的 type。服务在一个事务里写订单并扣库存。表上的唯一约束挡住同一个幂等键插两次。页面按 type 显示缺货，刷新后仍能用订单号打开详情。",
       "task": "选一个你熟悉的功能，写出四层各守的一句话，并标出三个事实分别属于哪一层：按钮是否可点、库存是否够、失败文案用哪一个 type。",
@@ -2332,9 +2332,9 @@
         }
       ],
       "points": [
+        "契约是前后端约定好的 HTTP 接口形状与失败类型",
         "同一业务要在页面、契约、服务、数据四层对齐",
-        "交互状态、失败类型、事务和唯一约束各有归属",
-        "改字段时先确定它属于哪一层"
+        "交互状态、失败类型、事务和唯一约束各有归属"
       ],
       "references": [
         [
@@ -4011,14 +4011,14 @@
       "id": "css-container-query",
       "title": "容器查询按组件自己的宽度换布局，不是只看视口",
       "prompt": "卡片在侧栏里变窄了，为什么媒体查询还按整页宽度给宽屏样式？",
-      "core": "@media 看的是视口。卡片嵌在窄侧栏里时，页面仍可能很宽，媒体查询不会改卡片内部。容器查询先给祖先设容器类型，再用 @container 按这个容器的宽度改子项。组件在主栏和侧栏各出现一次时，可以各走一套布局。没有容器祖先时，查询对不上。容器查询解决的是组件所处槽位，不是用户屏幕尺寸。落地顺序是：先把槽位上的祖先标成容器，再让后代按这个容器的 inline 宽度写条件，宽度跨过阈值才换子项布局。同一张卡片放进宽主栏和窄侧栏时，两处宽度不同，规则各自匹配。边界是：查询改的是后代，改不了容器自己，也看不到视口；没有容器祖先时条件对不上，卡片保持默认排法。整页按屏幕断开时，仍用媒体查询。",
-      "why": "误以为宽度断点只看整页视口就够了。侧栏里的窄卡片仍会拿到宽屏的横排，文字被挤出槽位。区分信号是同一张卡片在宽主栏和窄侧栏是否各走一套布局，整页明明很宽时，窄槽里的卡片仍会被排成横排。",
+      "core": "@media 看的是视口。卡片嵌在窄侧栏里时，页面仍可能很宽，媒体查询不会改卡片内部。容器查询先给祖先设容器类型，再用 @container 按这个容器的宽度改子项。组件在主栏和侧栏各出现一次时，可以各走一套布局。没有容器祖先时，查询对不上。容器查询解决的是组件所处所在位置，不是用户屏幕尺寸。落地顺序是：先把所在位置上的祖先标成容器，再让后代按这个容器的 inline 宽度写条件，宽度跨过阈值才换子项布局。同一张卡片放进宽主栏和窄侧栏时，两处宽度不同，规则各自匹配。边界是：查询改的是后代，改不了容器自己，也看不到视口；没有容器祖先时条件对不上，卡片保持默认排法。整页按屏幕断开时，仍用媒体查询。",
+      "why": "误以为宽度断点只看整页视口就够了。侧栏里的窄卡片仍会拿到宽屏的横排，文字被挤出所在位置。区分信号是同一张卡片在宽主栏和窄侧栏是否各走一套布局，整页明明很宽时，窄槽里的卡片仍会被排成横排。",
       "example": "卡片根上 container-type: inline-size。内部 @container (min-width: 280px) 把图和字排成一行。侧栏窄于 280px 时仍上下排。",
       "task": "同一卡片组件放进宽主栏和窄侧栏。分别用媒体查询和容器查询，对比两处布局。",
-      "answer": "两处都用媒体查询时，主栏和侧栏的卡片跟着视口一起变，窄侧栏里也会横排。改成容器查询后，宽主栏里的卡片横排，窄于阈值的侧栏仍上下排。可复用卡片要看所在槽的宽度。媒体查询的两处布局会一起变；容器查询只让跨过槽位阈值的那一张卡片换排法。没有容器祖先时，后一种条件对不上。",
+      "answer": "两处都用媒体查询时，主栏和侧栏的卡片跟着视口一起变，窄侧栏里也会横排。改成容器查询后，宽主栏里的卡片横排，窄于阈值的侧栏仍上下排。可复用卡片要看所在槽的宽度。媒体查询的两处布局会一起变；容器查询只让跨过所在位置阈值的那一张卡片换排法。没有容器祖先时，后一种条件对不上。",
       "deep": [
         {
-          "title": "条件读的是槽位宽度",
+          "title": "条件读的是所在位置宽度",
           "body": "媒体查询在视口宽度上判断，侧栏变窄不会单独触发它。容器查询要先有一个容器祖先，子项再按这个祖先的宽度选规则。没有这样的祖先时，条件没有宽度可读，布局保持默认，不会偷偷改用视口。"
         },
         {
@@ -4503,9 +4503,9 @@
       "prompt": "为什么同时写了 avif 和 jpg，网络里却只请求了 jpg？",
       "core": "picture 按源码顺序看每个 source。media 匹配并且 type 是浏览器能解码的类型时，这个 source 入选，后面的不再看。一个都不匹配时，用末尾 img 的 src。真正显示的是那个 img，source 只提供候选。srcset 配合 sizes 描述不同宽度的文件；w 描述符需要 sizes，否则按整窗宽度来选。同一条 srcset 里不要混用 w 和 x。img 自己带了 src、又被 CSS 拉大时，选文件的依据仍是 sizes 或默认的视口宽度，不是事后量出来的渲染尺寸。懒加载和占位见 `image-loading`。",
       "why": "把 jpg 的 source 写在 avif 前面，支持 avif 的浏览器也只请求 jpg。或者 type 写成 image/jpg，没有这种类型，候选被跳过。",
-      "example": "picture 里第一个 source 是 type=\"image/avif\"，第二个是 type=\"image/jpeg\"，最后 img src 指向 jpeg。支持 avif 的浏览器只请求 avif。把 jpeg 的 source 挪到前面，就只请求 jpeg。srcset=\"a.jpg 480w, b.jpg 800w\" 且 sizes=\"(min-width: 800px) 480px, 100vw\" 时，宽屏槽位按 480 CSS 像素去选，不会因为窗口是 1400 像素就拿 800w 那张。",
+      "example": "picture 里第一个 source 是 type=\"image/avif\"，第二个是 type=\"image/jpeg\"，最后 img src 指向 jpeg。支持 avif 的浏览器只请求 avif。把 jpeg 的 source 挪到前面，就只请求 jpeg。srcset=\"a.jpg 480w, b.jpg 800w\" 且 sizes=\"(min-width: 800px) 480px, 100vw\" 时，宽屏所在位置按 480 CSS 像素去选，不会因为窗口是 1400 像素就拿 800w 那张。",
       "task": "调换 avif 和 jpeg 两个 source 的顺序，各刷新一次，记下网络里的文件。再把 type 改错一次。最后用带 sizes 的 srcset，在宽屏和窄屏各看选中的宽度。",
-      "answer": "顺序在前且 media、type 都匹配的 source 被选中，后面的不请求。type 写错则跳过该 source。都不匹配时用 img 的 src。w 描述符按 sizes 给出的槽位选文件，不按元素最后被拉成的像素。",
+      "answer": "顺序在前且 media、type 都匹配的 source 被选中，后面的不请求。type 写错则跳过该 source。都不匹配时用 img 的 src。w 描述符按 sizes 给出的所在位置选文件，不按元素最后被拉成的像素。",
       "keywords": "picture source srcset sizes type avif",
       "deep": [
         {
@@ -4514,13 +4514,13 @@
         },
         {
           "title": "怎样自己验证",
-          "body": "在支持 avif 的浏览器里把 avif source 放第一，网络面板应只有 avif。对调后应只有 jpeg。把 type 改成 image/jpg，这个 source 应被跳过。改 sizes 后再看选中的文件名是否跟着槽位变，而不是跟着 CSS 放大变。"
+          "body": "在支持 avif 的浏览器里把 avif source 放第一，网络面板应只有 avif。对调后应只有 jpeg。把 type 改成 image/jpg，这个 source 应被跳过。改 sizes 后再看选中的文件名是否跟着所在位置变，而不是跟着 CSS 放大变。"
         }
       ],
       "points": [
         "picture 按顺序采用第一个匹配的 source",
         "type 或 media 不匹配就跳过",
-        "w 描述符按 sizes 的槽位选文件"
+        "w 描述符按 sizes 的所在位置选文件"
       ],
       "references": [
         [
@@ -5180,7 +5180,7 @@
         },
         {
           "title": "和 Java 课的对应",
-          "body": "服务端用同一份问题详情生成这些字段，见 spring-mvc-exception。两边必须对同一组 type。契约测试课会锁住这份形状。"
+          "body": "服务端用同一份问题详情生成这些字段，见 `spring-mvc-exception`。两边必须对同一组 type。契约测试课会锁住这份形状。"
         }
       ],
       "points": [
@@ -7099,8 +7099,8 @@
       "group": "React 生态",
       "id": "state-kind-picks-home",
       "title": "先分清这个值属于谁，再决定进哪个库",
-      "prompt": "为什么订单列表、主题和弹层开关进了同一个 store，备注却不更新？",
-      "core": "能在渲染时算出来的值不要再存一份。React 把互相矛盾、重复保存的状态当成结构问题。只传几层的数据用 props；中间层完全不用、只负责转发时，可以把 JSX 当 children 传下去。这两种都做不到，才用 Context。文档列出的用途包括主题和当前账号。服务端状态放在你不拥有的地方，要异步读取，别人也会改，并且会过期。TanStack Query 管的是这一类。Redux 管的是多处都要的客户端状态，而且更新频繁、逻辑复杂、代码库已经由很多人一起改。文档同时写明：不是每个应用都需要 Redux。选定 Redux 之后，新代码用 Toolkit，见 redux-rtk-today。订单列表的缓存主人见 query-server-state。",
+      "prompt": "为什么订单列表、主题和弹层开放进了同一个 store，备注却不更新？",
+      "core": "能在渲染时算出来的值不要再存一份。React 把互相矛盾、重复保存的状态当成结构问题。只传几层的数据用 props；中间层完全不用、只负责转发时，可以把 JSX 当 children 传下去。这两种都做不到，才用 Context。文档列出的用途包括主题和当前账号。服务端状态放在你不拥有的地方，要异步读取，别人也会改，并且会过期。TanStack Query 管的是这一类。Redux 管的是多处都要的客户端状态，而且更新频繁、逻辑复杂、代码库已经由很多人一起改。文档同时写明：不是每个应用都需要 Redux。选定 Redux 之后，新代码用 Toolkit，见 `redux-rtk-today`。订单列表的缓存主人见 `query-server-state`。",
       "why": "开发者把「要共享」理解成都放进一个 store。订单数组进了 slice 之后，没有过期和重新请求。另一台机器改了备注，这边侧栏仍是旧的。弹层开关并不被很多页面读取，它只是被一起放进来了。",
       "example": "主题用 Context。订单弹层的开关用页面里的 useState。订单数组只放在 queryKey 为 [\"orders\", status] 的查询里。页头和结算页都要改、而且规则要一起变的购物车，才拿去对照 Redux 的四条。购物车若只在一个页面里改，留在该页的 state。",
       "task": "拿一个真实页面写出四个值各住在哪：主题、弹层、订单列表、购物车规则。订单数组在 slice 里出现时删掉，只保留查询缓存。",
@@ -7443,7 +7443,7 @@
       "track": "frontend",
       "group": "Vue",
       "id": "vue-defineproperty-proxy",
-      "title": "Proxy 取代 defineProperty：能拦什么，仍要拦在代理上",
+      "title": "Proxy 取代 defineProperty，仍要拦在代理上",
       "prompt": "为什么“Proxy 能监听整个对象，所以比 defineProperty 全面更强，手写一个 Proxy 就等于 Vue 响应式”说不清边界？",
       "core": "Vue 2 时代用 Object.defineProperty 给已有属性装 getter/setter，是受当时浏览器能力约束；对对象后来才新增的属性、删除，以及数组下标与 length，都需要额外手段。Vue 3 对响应式对象改用 Proxy，可以拦截 get、set、deleteProperty、has 等操作，因此新增、删除和许多数组变更可以走同一套陷阱；ref 仍然用 getter/setter 持有 .value。Proxy 拦截的是代理对象上的操作：改原始对象、或把属性解构成普通变量后读写，都不会进入陷阱。深层对象仍要在被访问时再代理，手写只打日志的 get/set 也没有依赖收集与触发更新。null 不能做 Proxy 目标、以及 raw.push 不证明数组已被拦截，已在既有课里单独说明。",
       "why": "误以为换上 Proxy 就全面超过逐个定义属性，手写一个就算响应式。继续改原始对象时界面不更新，只打日志的陷阱也不会让组件重渲染。区分信号是操作落在代理上，并且真有依赖收集，而不只是多了几种拦截。",
@@ -7486,7 +7486,7 @@
       "track": "frontend",
       "group": "Vue",
       "id": "vue-proxy-null-guard",
-      "title": "手写 Proxy：先守住 null 与类型边界",
+      "title": "手写 Proxy 要先守住 null 与类型边界",
       "prompt": "为什么 typeof null 是 object，却不能 new Proxy(null, handler)？手写 reactive 示例又不等于什么？",
       "core": "Proxy（代理）的 target（目标）必须是对象；JavaScript 的历史规则使 typeof null 返回 \"object\"。因此练习代码若要跳过非对象值，条件应是 value === null || typeof value !== \"object\"，不能用两个条件同时成立的 &&。这个函数只演示 get/set 陷阱；它没有 Vue 的依赖收集、触发更新、代理缓存或其他边界处理，不能替代 Vue 的 reactive()。实际 Vue reactive() 适用于对象、数组和集合等对象类型；基本类型状态可使用 ref()。",
       "why": "一个布尔运算符错误会让 null 穿过检查并在创建代理时抛 TypeError。更大的误区是看到读写日志就以为已经实现了响应式：拦截操作与通知组件重新渲染是两件事。",
@@ -7529,7 +7529,7 @@
       "track": "frontend",
       "group": "Vue",
       "id": "vue-array-raw-proxy",
-      "title": "数组 push：改原数组还是改代理？",
+      "title": "数组 push 改的是原数组还是代理",
       "prompt": "raw 数组传给 reactive 后，为什么 raw.push() 与 proxy.push() 不是同一条响应式路径？",
       "core": "reactive(raw) 返回与 raw 身份不同的 proxy（代理）。只有经过代理的属性读取和修改才能进入代理陷阱，Vue 也明确指出直接修改原对象不会触发响应式更新。数组方法 push、shift、splice 可以在代理上工作，但不能因为“Proxy 支持数组”就推断 raw.push() 也被追踪。需要进一步区分：通过代理访问嵌套对象，Vue 会给嵌套对象做代理；而一个只记录顶层 get/set 的手写代理不会自动拥有 Vue 的深层响应式能力。",
       "why": "误以为数组方法本身就会让页面刷新。对 raw 调用 push 之后，控制台里的长度变了，界面却不动。区分信号是这次写入有没有经过代理：读取长度的 watchEffect 只在代理修改后重跑。",
@@ -8285,28 +8285,28 @@
       "track": "frontend",
       "group": "技术选型",
       "id": "fe-pick-by-surface",
-      "title": "先写交付面，再决定留哪一个框架",
+      "title": "先定目标端，再决定留哪一个框架",
       "prompt": "为什么「公司都在用 React」还是选不出该新建 Nuxt、小程序还是原生 App？",
-      "core": "选型先写这次要交到哪里、第一屏 HTML 里要不要有正文、团队已经会调试哪一种更新。浏览器里的操作台可以是客户端应用。文章、商品页要在查看源码时就有正文，用会在服务端取数的应用框架，或用 Astro 把静态 HTML 和少量交互岛分开。微信小程序要登记页面并交出该端模板，见 uniapp-pages-json-entry、taro-pages-in-app-config。没有 DOM 的手机界面分两支：像素要自己画、两端外观一致时用 Flutter，见 flutter-widget-not-html；要系统控件时用 React Native 的视图，见 rn-view-not-div。四个交付面可以是四个产品，同一个页面不要同时承诺四种运行时。谁画这一帧见 cross-four-who-paints。",
-      "why": "先按热度选定框架，再发现正文不在 HTML 里、小程序没有页面登记、手机上还在找 div。交付面写在前面时，框架只是该面的实现，换一句需求才会换框架。",
-      "example": "后台表格：浏览器应用，首屏可以是壳。帮助中心文章：源码里要有正文。客服入口只上微信：单独的小程序工程。已有 App 里要系统列表：React Native 的 View 和 FlatList，见 rn-flatlist-window。两端按钮必须长得一样、由引擎来画：Flutter。四句需求各留一个工程，不把四个脚手架装进同一个 package.json。",
-      "task": "给手上的功能写四格：谁打开、首屏 HTML 要不要正文、有没有小程序页面、有没有原生视图。每一格只留一个框架名，空着的格写「这次不交付」。",
-      "answer": "四格示例：谁打开写成浏览器操作台，框架留 Vue 或 React 客户端应用；小程序和原生两格写「这次不交付」。首屏 HTML 要正文时换成 Nuxt、Next 或 Astro。有小程序页面时留 uni-app 或 Taro，浏览器格写这次不交付。有原生视图时留 React Native 或 Flutter。每一格只一个名字。",
-      "keywords": "前端选型 交付面 SSR 小程序 React Native Astro",
+      "core": "选型先定这次交到哪一端：浏览器里的后台或工具页、要在「查看网页源码」里就有正文的内容页、微信小程序，还是手机 App。再写下第一屏 HTML 里要不要有正文，以及团队已经会调试哪一种界面更新方式。浏览器后台可以做成纯客户端应用，首屏允许先是空壳。文章、商品页要在源码里就有正文，用会在服务端取数的框架（如 Nuxt、Next），或用 Astro 把静态 HTML 和少量可交互组件分开。微信小程序要单独登记页面并交出该端模板，见 `uniapp-pages-json-entry`、`taro-pages-in-app-config`。没有 DOM 的手机界面分两支：自己画像素、两端外观一致时用 Flutter，见 `flutter-widget-not-html`；要系统原生控件时用 React Native，见 `rn-view-not-div`。四个目标端可以是四个产品；同一个页面不要同时承诺四种运行时。谁负责画这一帧，见 `cross-four-who-paints`。",
+      "why": "先按热度选定框架，再发现正文不在 HTML 里、小程序没有页面登记、手机上还在找 div。目标端写在前面时，框架只是该端的实现，换一句需求才会换框架。",
+      "example": "后台表格：浏览器应用，首屏可以是壳。帮助中心文章：源码里要有正文。客服入口只上微信：单独的小程序工程。已有 App 里要系统列表：React Native 的 View 和 FlatList，见 `rn-flatlist-window`。两端按钮必须长得一样、由引擎来画：Flutter。四句需求各留一个工程，不把四个脚手架装进同一个 package.json。",
+      "task": "给手上的功能写四格：谁打开、首屏 HTML 要不要正文、有没有小程序页面、有没有原生视图。每一格只留一个框架名，空着的格写「这次不做」。",
+      "answer": "四格示例：谁打开写成浏览器后台，框架留 Vue 或 React 客户端应用；小程序和原生两格写「这次不做」。首屏 HTML 要正文时换成 Nuxt、Next 或 Astro。有小程序页面时留 uni-app 或 Taro，浏览器格写这次不做。有原生视图时留 React Native 或 Flutter。每一格只一个名字。",
+      "keywords": "前端选型 目标端 SSR 小程序 React Native Astro",
       "diagram": "diagrams/fe-pick-surface.svg",
       "deep": [
         {
-          "title": "岛屿和整页应用",
-          "body": "Astro 先给出静态 HTML，只把标成岛屿的组件送去客户端执行。整页都是登录后的表格和表单时，路由、数据和权限是一整棵应用，用该 UI 模型自己的应用框架，而不是把每个按钮都包成一座岛。"
+          "title": "静态页里的可交互组件和整页应用",
+          "body": "Astro 先给出静态 HTML，只把标成可交互的组件送去客户端执行。整页都是登录后的表格和表单时，路由、数据和权限是一整棵应用，用该 UI 模型自己的应用框架，而不是把每个按钮都单独拆成一块客户端代码。"
         },
         {
           "title": "怎样自己验证",
-          "body": "打开页面源码。正文已经在 HTML 里，才算内容页的交付。源码只有空壳、数据在浏览器请求回来，就是客户端应用。再看仓库是不是还夹着第二套小程序或原生工程。"
+          "body": "打开页面源码。正文已经在 HTML 里，才算内容页交到了浏览器。源码只有空壳、数据在浏览器请求回来，就是客户端应用。再看仓库是不是还夹着第二套小程序或原生工程。"
         }
       ],
       "points": [
         "先写打开方式和首屏里有没有正文",
-        "内容页用服务端 HTML 或岛屿，操作台可以是客户端应用",
+        "内容页用服务端 HTML 或少量可交互组件，后台可以是客户端应用",
         "小程序和原生界面各自一个运行时"
       ],
       "references": [
@@ -8326,7 +8326,7 @@
       "id": "fe-ui-update-model",
       "title": "框架之间比的是谁负责更新界面",
       "prompt": "为什么把 React、Vue、Angular、Svelte 排成先进程度，仍然决定不了调试时先看哪一行？",
-      "core": "React 里界面是状态的函数，下一次画面要等你提交的更新，状态队列见 state-queue。Vue 用代理拦截读写，模板在编译期绑好依赖，改数据就会通知用到它的效果，见 vue-defineproperty-proxy。Angular 从 v21 起新应用默认无 Zone，模板里读到的信号变化会安排检查，见 fe-angular-first-party。Svelte 5 的 $state、$derived、$effect 是编译器指令，编译结果直接更新对应 DOM，应用框架是 SvelteKit。四种模型都能做表格。选型留下团队能指出「这次赋值为什么会或不会重画」的那一种。星数、招聘广告和去年的路线图不参与这句判断。",
+      "core": "React 里界面是状态的函数，下一次画面要等你提交的更新，状态队列见 `state-queue`。Vue 用代理拦截读写，模板在编译期绑好依赖，改数据就会通知用到它的效果，见 `vue-defineproperty-proxy`。Angular 从 v21 起新应用默认无 Zone，模板里读到的信号变化会安排检查，见 `fe-angular-first-party`。Svelte 5 的 $state、$derived、$effect 是编译器指令，编译结果直接更新对应 DOM，应用框架是 SvelteKit。四种模型都能做表格。选型留下团队能指出「这次赋值为什么会或不会重画」的那一种。星数、招聘广告和去年的路线图不参与这句判断。",
       "why": "按先进程度各装一套之后，同一个字段在仓库里既有 setState，又有代理，又有信号。线上少画一次时，没有人知道该打断点的是哪一种通知。",
       "example": "计数器：React 写 setCount。Vue 改 ref 或 reactive 字段。Angular 写 signal.set。Svelte 写 count++，前提是 count 来自 $state。四种写法都不要出现在同一个按钮组件里。",
       "task": "选一个已经会讲清楚的更新模型，用它实现计数。另外三种只写出「这次不引入」和对应的官方应用框架名字，不新建工程。",
@@ -8336,7 +8336,7 @@
       "deep": [
         {
           "title": "模型和生态是两笔",
-          "body": "选定谁负责更新之后，路由、跨页状态和请求缓存跟着这个模型走，见 fe-ecosystem-follows-model。先装齐四个生态、再决定用哪个模型，槽位会重复。"
+          "body": "选定谁负责更新之后，路由、跨页状态和请求缓存跟着这个模型走，见 `fe-ecosystem-follows-model`。先装齐四个生态、再决定用哪个模型，职责位会重复。"
         },
         {
           "title": "怎样自己验证",
@@ -8369,11 +8369,11 @@
       "id": "fe-react-framework-first",
       "title": "新的 React 应用从文档列出的框架起",
       "prompt": "为什么只用 Vite 配上 react 和 react-dom，路由和取数仍然要自己再做一套框架？",
-      "core": "React 文档推荐新项目使用已集成路由、数据获取和打包的框架。页面上列出的是 Next.js 的 App Router，以及可与 Vite 搭配的 React Router 框架模式，创建命令分别是 create-next-app 和 create-react-router。Create React App 已经日落，见 retired-frontend-stack。服务端组件和客户端组件的边界见 react-rsc-vs-client。loader 只在数据模式和框架模式里、于渲染前执行，见 rr-mode-gates-data、react-router-loader。用 Vite 从零组装是允许的，文档同时写明你要自己选定路由和数据获取，那相当于自建框架。原生方向文档把 Expo 和这两个 Web 框架并列，视图模型仍是 React Native，见 rn-view-not-div。",
-      "why": "把「能打开开发服务器」当成选型结束。下一周补路由、再下一周补服务端数据，仓库里出现第二套路由和手写的请求缓存，文档里的框架本来已经带了这些槽位。",
-      "example": "新的全栈页面用 create-next-app，或用 create-react-router 的框架模式。已有特殊约束、必须自己控制打包时，用 Vite 模板，并在同一天写上唯一的路由库和唯一的服务端数据槽位。不要再执行已经日落的 create-react-app。",
-      "task": "写出本次的创建命令。若命令是 Vite 模板，在旁边写上路由库和数据获取各一个名字。若命令是文档列出的框架，这两个槽位写「框架自带」。",
-      "answer": "新项目的创建命令来自 React 文档列出的框架，或明确写成 Vite 自建并补上路由和数据两个槽位。Create React App 不再是起点。原生界面另走 Expo 所接的 React Native 视图，不把 Web 框架当成手机运行时。",
+      "core": "React 文档推荐新项目使用已集成路由、数据获取和打包的框架。页面上列出的是 Next.js 的 App Router，以及可与 Vite 搭配的 React Router 框架模式，创建命令分别是 create-next-app 和 create-react-router。Create React App 已经日落，见 `retired-frontend-stack`。服务端组件和客户端组件的边界见 `react-rsc-vs-client`。loader 只在数据模式和框架模式里、于渲染前执行，见 `rr-mode-gates-data`、`react-router-loader`。用 Vite 从零组装是允许的，文档同时写明你要自己选定路由和数据获取，那相当于自建框架。原生方向文档把 Expo 和这两个 Web 框架并列，视图模型仍是 React Native，见 `rn-view-not-div`。",
+      "why": "把「能打开开发服务器」当成选型结束。下一周补路由、再下一周补服务端数据，仓库里出现第二套路由和手写的请求缓存，文档里的框架本来已经带了这些职责位。",
+      "example": "新的全栈页面用 create-next-app，或用 create-react-router 的框架模式。已有特殊约束、必须自己控制打包时，用 Vite 模板，并在同一天写上唯一的路由库和唯一的服务端数据职责位。不要再执行已经日落的 create-react-app。",
+      "task": "写出本次的创建命令。若命令是 Vite 模板，在旁边写上路由库和数据获取各一个名字。若命令是文档列出的框架，这两个职责位写「框架自带」。",
+      "answer": "新项目的创建命令来自 React 文档列出的框架，或明确写成 Vite 自建并补上路由和数据两个职责位。Create React App 不再是起点。原生界面另走 Expo 所接的 React Native 视图，不把 Web 框架当成手机运行时。",
       "keywords": "Next.js React Router create-react-app Vite Expo",
       "deep": [
         {
@@ -8382,7 +8382,7 @@
         },
         {
           "title": "怎样自己验证",
-          "body": "看 package.json 的创建痕迹和依赖。存在 next 或框架模式的 React Router 插件时，路由槽位算框架自带。只有 react 和 react-dom 时，列出你另外选定的那一个路由库。"
+          "body": "看 package.json 的创建痕迹和依赖。存在 next 或框架模式的 React Router 插件时，路由职责位算框架自带。只有 react 和 react-dom 时，列出你另外选定的那一个路由库。"
         }
       ],
       "points": [
@@ -8409,19 +8409,19 @@
       "track": "frontend",
       "group": "技术选型",
       "id": "fe-vue-official-slots",
-      "title": "Vue 新项目的槽位是 Vite、Router 和 Pinia",
+      "title": "Vue 新项目的职责位是 Vite、Router 和 Pinia",
       "prompt": "为什么 Vue 3 工程里又出现 Vue CLI、Vuex 和一套手写 history？",
-      "core": "官方脚手架 create-vue 基于 Vite。创建时可选 Vue Router、Pinia、Vitest 和端到端测试。迁移说明里的现行默认是：构建用 Vite，Vue CLI 只维护旧项目；跨页状态用 Pinia，Vuex 只维护已有仓库，见 pinia-not-vuex；编辑器用 Vue 官方扩展。需要文件路由、服务端渲染和把数据放进首屏 HTML 时用 Nuxt，取数走 useFetch 或 useAsyncData，见 nuxt-payload。Nuxt 默认用 Vite，不再附带 Vuex。页面级路由在 SPA 里是 Vue Router，不要再平行装一个 history 库去管同一批 URL。",
+      "core": "官方脚手架 create-vue 基于 Vite。创建时可选 Vue Router、Pinia、Vitest 和端到端测试。迁移说明里的现行默认是：构建用 Vite，Vue CLI 只维护旧项目；跨页状态用 Pinia，Vuex 只维护已有仓库，见 `pinia-not-vuex`；编辑器用 Vue 官方扩展。需要文件路由、服务端渲染和把数据放进首屏 HTML 时用 Nuxt，取数走 useFetch 或 useAsyncData，见 `nuxt-payload`。Nuxt 默认用 Vite，不再附带 Vuex。页面级路由在 SPA 里是 Vue Router，不要再平行装一个 history 库去管同一批 URL。",
       "why": "三套构建和两套 store 同时在依赖里，热更新走的是哪一条、退出登录该清哪一份状态，都要对着两份文档。新项目按脚手架的选项各留一个，旧项目才保留 Vuex 或 Vue CLI。",
       "example": "管理后台：create-vue，勾上 Vue Router 和 Pinia。文章站要看源码里的正文：Nuxt，数据用 useAsyncData。两份 package.json 都不要新增 vuex，也不要同时用 vue-cli-service 和 vite 作为开发命令。",
-      "task": "打开创建选项或 package.json，列出构建、路由、跨页状态各一个包名。出现 vuex 或 @vue/cli 时，写明这是旧仓库保留，还是这次误加的第二槽位。",
+      "task": "打开创建选项或 package.json，列出构建、路由、跨页状态各一个包名。出现 vuex 或 @vue/cli 时，写明这是旧仓库保留，还是这次误加的第二职责位。",
       "answer": "新的 Vue 单页应用用 Vite、Vue Router 和 Pinia。要服务端 HTML 时换 Nuxt，仍然用 Pinia，数据进 payload。Vuex 和 Vue CLI 只留在已经使用它们的仓库。同一批 URL 只交给一个路由实现。",
       "keywords": "create-vue Vite Vue Router Pinia Nuxt Vuex",
       "diagram": "diagrams/fe-ecosystem-slots.svg",
       "deep": [
         {
           "title": "和机制课的分工",
-          "body": "路由复用、守卫和 Pinia 的 storeToRefs 在 Vue 与 Vue 生态那两章。这里只决定槽位留谁。选定 Pinia 之后，不要为了「更简单」再导出一份 reactive({}) 当第二份全局会话。"
+          "body": "路由复用、守卫和 Pinia 的 storeToRefs 在 Vue 与 Vue 生态那两章。这里只决定职责位留谁。选定 Pinia 之后，不要为了「更简单」再导出一份 reactive({}) 当第二份全局会话。"
         },
         {
           "title": "怎样自己验证",
@@ -8454,7 +8454,7 @@
       "id": "fe-angular-first-party",
       "title": "Angular 的路由、HTTP 和表单用自己的包",
       "prompt": "为什么新的 Angular 工程还要再装一套 React Query、Redux 和 react-router？",
-      "core": "Angular v21 起，新应用默认采用无 Zone 的变更检测，引导配置里不要再用 provideZoneChangeDetection 把它改回去。模板读取的信号更新、markForCheck、组件输入和模板事件会安排检查。信号用 signal、computed 和 effect 描述状态和派生。HttpClient 从 v21 起默认可注入；更早的工程用 provideHttpClient，而不是再引入已不推荐的 HttpClientModule 当现行写法。路由用 provideRouter 和 RouterOutlet。表单是应用主体时用响应式表单，模型放在组件类里。这些包都在 @angular 下。输入钩子何时触发见 angular-ngonchanges-primitives。已有工程可以仍带着 zone.js，那是迁移状态，不是新项目的默认。",
+      "core": "Angular v21 起，新应用默认采用无 Zone 的变更检测，引导配置里不要再用 provideZoneChangeDetection 把它改回去。模板读取的信号更新、markForCheck、组件输入和模板事件会安排检查。信号用 signal、computed 和 effect 描述状态和派生。HttpClient 从 v21 起默认可注入；更早的工程用 provideHttpClient，而不是再引入已不推荐的 HttpClientModule 当现行写法。路由用 provideRouter 和 RouterOutlet。表单是应用主体时用响应式表单，模型放在组件类里。这些包都在 @angular 下。输入钩子何时触发见 `angular-ngonchanges-primitives`。已有工程可以仍带着 zone.js，那是迁移状态，不是新项目的默认。",
       "why": "把 React 生态的请求缓存和路由再装一份之后，同一次跳转既走 Angular Router 又走另一个 history，列表既在 HttpClient 的流里又在第二份缓存里。取消订阅和刷新列表会对不上。",
       "example": "订单 API 放在可注入的服务里，组件订阅 HttpClient 返回的 Observable，或按文档用资源把异步数据接进信号。地址用 routerLink。不要为这个工程添加 @tanstack/react-query 或 react-router-dom。",
       "task": "在新工程的依赖里确认路由、HTTP、表单都来自 @angular。若 zone.js 还在，写明这是 v21 之前的工程还是有意覆盖了默认。",
@@ -8463,7 +8463,7 @@
       "deep": [
         {
           "title": "Observable 要有订阅者",
-          "body": "HttpClient 的方法返回冷 Observable，订阅才发出请求，同一 Observable 订阅两次会请求两次。选 Angular 的数据槽位，就要按这个时机处理取消和重复，而不是再包一层只认 hook 的缓存库。"
+          "body": "HttpClient 的方法返回冷 Observable，订阅才发出请求，同一 Observable 订阅两次会请求两次。选 Angular 的数据职责位，就要按这个时机处理取消和重复，而不是再包一层只认 hook 的缓存库。"
         },
         {
           "title": "怎样自己验证",
@@ -8534,12 +8534,12 @@
       "id": "fe-ecosystem-follows-model",
       "title": "选定更新模型之后，生态跟着这一套走",
       "prompt": "为什么已经选定 Vue，仓库里还会同时出现 React Router、Pinia 和 HttpClient？",
-      "core": "更新模型决定后面四个槽位跟谁：应用框架、路由、只存在于客户端的共享状态、服务端列表的缓存。React 新项目是 Next.js 或 React Router 框架模式，路由不要再配第二个；客户端会话才考虑 Redux Toolkit，列表缓存用 Query 或框架加载器，见 fe-react-one-slot。Vue 新项目是 Vite、Vue Router、Pinia，要首屏 HTML 时换 Nuxt，见 fe-vue-official-slots。Angular 的路由、HTTP、表单都在 @angular 下，见 fe-angular-first-party。Svelte 应用是 SvelteKit，状态用 runes，见 fe-sveltekit-runes。四个模型可以各做一张订单表，但同一张表不要从四套文档里各抄一个库。跨端运行时另算一笔，见 fe-cross-end-one-runtime。",
+      "core": "更新模型决定后面四个职责位跟谁：应用框架、路由、只存在于客户端的共享状态、服务端列表的缓存。React 新项目是 Next.js 或 React Router 框架模式，路由不要再配第二个；客户端会话才考虑 Redux Toolkit，列表缓存用 Query 或框架加载器，见 `fe-react-one-slot`。Vue 新项目是 Vite、Vue Router、Pinia，要首屏 HTML 时换 Nuxt，见 `fe-vue-official-slots`。Angular 的路由、HTTP、表单都在 @angular 下，见 `fe-angular-first-party`。Svelte 应用是 SvelteKit，状态用 runes，见 `fe-sveltekit-runes`。四个模型可以各做一张订单表，但同一张表不要从四套文档里各抄一个库。跨端运行时另算一笔，见 `fe-cross-end-one-runtime`。",
       "why": "按热度把各生态的明星库装齐。同一次跳转既改 history 又走 Vue Router，列表既在 Pinia 又在 Query 里。线上少画一次时，没有一份文档能同时解释这两套通知。",
       "example": "后台表格选定 Vue：create-vue 勾上 Vue Router 和 Pinia。不要再添加 react-router-dom、@angular/router 或 SvelteKit。文章站要源码里有正文：同一模型下换 Nuxt，仍然用 Pinia，不要为了「更像 React」再装一套 Next。",
       "task": "写出这次留下的更新模型，再填四格：应用框架、路由、客户端共享状态、服务端列表。每格一个名字。出现另一模型的包名时划掉。",
       "answer": "这次留下 Vue。四格：应用框架 Vite（要首屏 HTML 时换 Nuxt）；路由 Vue Router；客户端共享状态 Pinia；服务端列表用该模型的加载器或查询库。出现 React Router、Redux、@tanstack/react-query、@angular/router 时划掉。",
-      "keywords": "技术选型 生态槽位 React Vue Angular Svelte",
+      "keywords": "技术选型 生态职责位 React Vue Angular Svelte",
       "diagram": "diagrams/fe-ecosystem-map.svg",
       "deep": [
         {
@@ -8548,7 +8548,7 @@
         },
         {
           "title": "怎样自己验证",
-          "body": "在 package.json 里搜索另一模型的路由包和请求缓存包。新功能路径上只应命中选定模型的那一套。再打开一张订单页，表格的数据表达式只能追到一个赋值点，见 fe-server-state-one-owner。"
+          "body": "在 package.json 里搜索另一模型的路由包和请求缓存包。新功能路径上只应命中选定模型的那一套。再打开一张订单页，表格的数据表达式只能追到一个赋值点，见 `fe-server-state-one-owner`。"
         }
       ],
       "points": [
@@ -8575,14 +8575,14 @@
       "track": "frontend",
       "group": "技术选型",
       "id": "fe-react-one-slot",
-      "title": "React 每个生态槽位只留一个库",
+      "title": "React 每个生态职责位只留一个库",
       "prompt": "为什么 Redux、Zustand、React Query 和两套路由会同时出现在一个新仓库？",
-      "core": "槽位按职责拆开。应用框架占用「路由 + 打包 + 数据入口」时，不要再装第二个路由。自建时文档建议的路由是 React Router 或 TanStack Router，二选一，加载器见 react-router-loader。服务端列表的缓存用 TanStack Query：它保存的是请求结果，组件里调用的仍然是你的请求函数，见 query-cache-not-http-client、query-fn-calls-the-client。多个页面共享、而且只存在于客户端的会话，才考虑 Redux Toolkit，见 redux-rtk-today。同一份订单列表不要既进 Query 又进 slice。主题、弹层、列表、购物车各住哪里，见 state-kind-picks-home。样式同样只留一条进入组件的路径。测试断言用 Testing Library 的角色查询，见 react-enzyme-not-default。",
+      "core": "职责位按职责拆开。应用框架占用「路由 + 打包 + 数据入口」时，不要再装第二个路由。自建时文档建议的路由是 React Router 或 TanStack Router，二选一，加载器见 `react-router-loader`。服务端列表的缓存用 TanStack Query：它保存的是请求结果，组件里调用的仍然是你的请求函数，见 `query-cache-not-http-client`、`query-fn-calls-the-client`。多个页面共享、而且只存在于客户端的会话，才考虑 Redux Toolkit，见 `redux-rtk-today`。同一份订单列表不要既进 Query 又进 slice。主题、弹层、列表、购物车各住哪里，见 `state-kind-picks-home`。样式同样只留一条进入组件的路径。测试断言用 Testing Library 的角色查询，见 `react-enzyme-not-default`。",
       "why": "每个热门库都装上之后，失效订单列表要记两个 API，路由参数有两套钩子。新人无法从目录判断该改哪一个文件。",
       "example": "Next 应用：路由和服务器数据入口用框架的。浏览器里复用的 GET 用 Query，queryKey 包含筛选条件。登录态若必须全局可读，用一份 Toolkit store，里面不复制订单数组。包管理文件里不应同时有 react-router 和 @tanstack/react-router，除非写明一个只用于遗留页面并有删除日期。",
       "task": "画五格：应用框架、路由、服务端缓存、客户端全局状态、样式。每格一个名字或「不需要」。两格写了同一个职责时删到一格。",
-      "answer": "框架自带的路由不要再配第二个路由库。服务端列表留在 Query 或路由加载器。Redux Toolkit 只放客户端共享状态。样式和测试各一条路径。同一份服务器数据只有一个缓存主人，见 fe-server-state-one-owner。",
-      "keywords": "TanStack Query Redux Toolkit React Router 槽位",
+      "answer": "框架自带的路由不要再配第二个路由库。服务端列表留在 Query 或路由加载器。Redux Toolkit 只放客户端共享状态。样式和测试各一条路径。同一份服务器数据只有一个缓存主人，见 `fe-server-state-one-owner`。",
+      "keywords": "TanStack Query Redux Toolkit React Router 职责位",
       "deep": [
         {
           "title": "RTK Query 也占数据槽",
@@ -8619,7 +8619,7 @@
       "id": "fe-vue-data-one-slot",
       "title": "Vue 的服务端列表不要再抄进 Pinia",
       "prompt": "为什么 Nuxt 页已经用了 useAsyncData，表格却仍显示 Pinia 里那份旧订单？",
-      "core": "Vue 单页应用里，只用一次、离开就丢的列表可以放在页面里请求。需要文件路由和首屏 HTML 时，Nuxt 用 useAsyncData 或 useFetch 把结果放进 payload，水合时不再打同一枪，见 nuxt-payload。Pinia 是客户端还要继续改、并且多个页面一起读的状态，官方推荐取代 Vuex，见 pinia-not-vuex、fe-vue-official-slots。同一份 GET 列表不要在 onSuccess 里再写入 store。TanStack Vue Query 也可以做服务端缓存，它和 useAsyncData 不要同时当表格的主人。筛选条件变了，键或 watch 的来源要变。",
+      "core": "Vue 单页应用里，只用一次、离开就丢的列表可以放在页面里请求。需要文件路由和首屏 HTML 时，Nuxt 用 useAsyncData 或 useFetch 把结果放进 payload，水合时不再打同一枪，见 `nuxt-payload`。Pinia 是客户端还要继续改、并且多个页面一起读的状态，官方推荐取代 Vuex，见 `pinia-not-vuex`、`fe-vue-official-slots`。同一份 GET 列表不要在 onSuccess 里再写入 store。TanStack Vue Query 也可以做服务端缓存，它和 useAsyncData 不要同时当表格的主人。筛选条件变了，键或 watch 的来源要变。",
       "why": "为了「全局都能读」把 payload 再抄进 Pinia。刷新只清了 useAsyncData，模板绑的是 store 里的数组。网络面板里新响应已经回来，格子上仍是上一份。",
       "example": "订单页：const { data } = await useAsyncData(\"orders-\"+status, () => $fetch(\"/api/orders\", { query: { status } }))。表格只读 data。登录态、主题这种客户端共享值才进 defineStore。不要在请求成功后再 store.orders = data。",
       "task": "找到表格绑定。若同时出现 useAsyncData 或 useFetch，以及 Pinia 里的同一数组，删掉 store 那一份，改筛选后确认第一行属于新参数。",
@@ -8661,7 +8661,7 @@
       "id": "fe-angular-resource-not-ngrx",
       "title": "Angular 的 GET 用 HttpClient 这一路，不必先装 NgRx",
       "prompt": "为什么新的无 Zone 应用还没写出第一张订单表，就已经加了 Store、Effects 和 React Query？",
-      "core": "Angular v21 新应用默认无 Zone，状态用信号，路由用 provideRouter，见 fe-angular-first-party。读列表时走 HttpClient 这一路：订阅返回的 Observable，或用文档里已标成开发者稳定的 httpResource，把请求结果暴露成信号。httpResource 会在依赖的信号变化时发新请求，未完成的旧请求会被取消；它会立刻发出请求，和「订阅才发出」的 HttpClient 方法不同。改服务端数据的 POST、PUT 仍用 HttpClient，文档写明不要用 httpResource 做变更。NgRx 是独立的状态库，不是 @angular 下的默认槽位。多处都要改、规则已经复杂的客户端状态，才考虑另选一个状态库。不要把 @tanstack/react-query 装进这个工程。",
+      "core": "Angular v21 新应用默认无 Zone，状态用信号，路由用 provideRouter，见 `fe-angular-first-party`。读列表时走 HttpClient 这一路：订阅返回的 Observable，或用文档里已标成开发者稳定的 httpResource，把请求结果暴露成信号。httpResource 会在依赖的信号变化时发新请求，未完成的旧请求会被取消；它会立刻发出请求，和「订阅才发出」的 HttpClient 方法不同。改服务端数据的 POST、PUT 仍用 HttpClient，文档写明不要用 httpResource 做变更。NgRx 是独立的状态库，不是 @angular 下的默认职责位。多处都要改、规则已经复杂的客户端状态，才考虑另选一个状态库。不要把 @tanstack/react-query 装进这个工程。",
       "why": "把 React 生态的缓存和 NgRx 一起当作 Angular 的标配。同一份订单既在 Store 里，又在 httpResource 的 value 里。失效只打了其中一个 API，表格读的是另一个。",
       "example": "订单编号来自信号 id。const orders = httpResource(() => `/api/orders/${id()}`)。模板读 orders.value()。提交备注用 HttpClient.post。依赖里不要出现 ngrx/store，除非写明这是已有大应用的客户端规则，并且表格不从 Store 再读同一数组。",
       "task": "新建订单页：GET 只走 HttpClient 或 httpResource。确认没有为这一页添加 Store。提交用 HttpClient。再搜索 react-query，新路径上应当没有。",
@@ -8681,7 +8681,7 @@
       "points": [
         "GET 走 HttpClient 或 httpResource，结果用信号读",
         "httpResource 不做 POST、PUT，变更仍用 HttpClient",
-        "NgRx 不是新应用的默认数据槽位"
+        "NgRx 不是新应用的默认数据职责位"
       ],
       "references": [
         [
@@ -8747,7 +8747,7 @@
       "id": "fe-cross-end-one-runtime",
       "title": "跨端先选定一个运行时",
       "prompt": "为什么同一份 React 组件既打进网页，又期望小程序和 App 都不用改？",
-      "core": "运行时决定组件最后画到什么上。浏览器应用画到 DOM，用前面选定的 Web 框架。小程序要在逻辑层和视图层之间交数据：uni-app 改的是 Vue 数据，Taro 把模拟树 setData 到模板，两边的页面清单和钩子不能互换，见 taro-and-uniapp-layers。要编成 Android 原生语言的新工程是 uni-app x，页面是 uvue，不能把旧的 .vue 直接混进去，见 uniapp-x-uts-not-vue-page。没有 DOM 时再分宿主：像素自己画、用 Dart 和 Widget，选 Flutter，路由见 flutter-gorouter-not-named；要系统控件，选 React Native 的 View、Text 和 Pressable，见 rn-view-not-div、rn-pressable-not-click。React 文档把 Expo 列为原生应用的推荐框架，它接的仍是 React Native 的视图。四套各自的宿主见 cross-four-where-it-fits。一个产品面只留一个运行时。营销页和小程序可以是两个仓库。",
+      "core": "运行时决定组件最后画到什么上。浏览器应用画到 DOM，用前面选定的 Web 框架。小程序要在逻辑层和视图层之间交数据：uni-app 改的是 Vue 数据，Taro 把模拟树 setData 到模板，两边的页面清单和钩子不能互换，见 `taro-and-uniapp-layers`。要编成 Android 原生语言的新工程是 uni-app x，页面是 uvue，不能把旧的 .vue 直接混进去，见 `uniapp-x-uts-not-vue-page`。没有 DOM 时再分宿主：像素自己画、用 Dart 和 Widget，选 Flutter，路由见 `flutter-gorouter-not-named`；要系统控件，选 React Native 的 View、Text 和 Pressable，见 `rn-view-not-div`、`rn-pressable-not-click`。React 文档把 Expo 列为原生应用的推荐框架，它接的仍是 React Native 的视图。四套各自的宿主见 `cross-four-where-it-fits`。一个产品面只留一个运行时。营销页和小程序可以是两个仓库。",
       "why": "用条件编译把三套运行时缝进一个组件。网页上的 div、小程序的 view 和原生 View 在同一个文件里各写一支，布局和事件只要改一处就会漏端。",
       "example": "活动 H5 用 Vite 的 Web 应用。微信里的同一活动若必须是小程序，另开 uni-app 或 Taro，只保留一个。两端外观要由引擎画成一样：Flutter。已上架 App 要系统控件：Expo 所接的 React Native 组件。这些工程不要共用一个写着 document 的入口。",
       "task": "列出这次要上的端。每个端写下运行时和页面登记文件。超过一个运行时时，拆成多个工程，或写明只有一个编译目标、其余端本次不做。",
@@ -8788,13 +8788,13 @@
       "track": "frontend",
       "group": "技术选型",
       "id": "fe-expo-router-one-nav",
-      "title": "新的 Expo 应用路由槽位是 Expo Router",
+      "title": "新的 Expo 应用路由职责位是 Expo Router",
       "prompt": "为什么 create-expo-app 之后又装了一套 React Navigation，两个地方都在改同一条地址？",
-      "core": "React Native 核心包不带导航。React 文档把 Expo 列为原生应用的推荐框架，视图仍是 View 和 Text，见 rn-view-not-div。Expo 文档写明：新项目在 Expo 里一般在 React Navigation 和 Expo Router 里选一个。create-expo-app 的现行模板默认带上 Expo Router，按 app 目录生成路由，并接好深链和打包。Expo Router 建立在 React Navigation 之上，但应用代码里只应有一个地址主人。不用 Expo 的仓库，才直接用 React Navigation；react-native 文档也把 React Navigation 当作入门导航。navigate 已经停在该屏时不会再压栈，见 rn-navigate-not-push。不要把 Next.js 或 Vue Router 当成原生路由。",
+      "core": "React Native 核心包不带导航。React 文档把 Expo 列为原生应用的推荐框架，视图仍是 View 和 Text，见 `rn-view-not-div`。Expo 文档写明：新项目在 Expo 里一般在 React Navigation 和 Expo Router 里选一个。create-expo-app 的现行模板默认带上 Expo Router，按 app 目录生成路由，并接好深链和打包。Expo Router 建立在 React Navigation 之上，但应用代码里只应有一个地址主人。不用 Expo 的仓库，才直接用 React Navigation；react-native 文档也把 React Navigation 当作入门导航。navigate 已经停在该屏时不会再压栈，见 `rn-navigate-not-push`。不要把 Next.js 或 Vue Router 当成原生路由。",
       "why": "模板已经用文件生成路由，又在根组件里再挂一个 NavigationContainer。一次点击走了两套栈，返回键回到的不是用户以为的上一屏。",
       "example": "npx create-expo-app 之后，订单页是 app/orders/[id].tsx。跳转用 Expo Router 的路由 API。不要再包一层独立的 NavigationContainer 去登记同一批屏幕。已有只用 React Navigation 的仓库，保持那一套，直到明确迁到 Expo Router。",
       "task": "看入口是 Expo Router 的 app 目录，还是自己写的导航容器。两套都在改 URL 时删掉后加的那一套。确认从列表进详情再返回，停在原来的列表位置。",
-      "answer": "新的 Expo 应用把路由留给 Expo Router。不用 Expo 时才直接用 React Navigation。同一产品不要两个导航容器。Web 框架的路由不是原生槽位。",
+      "answer": "新的 Expo 应用把路由留给 Expo Router。不用 Expo 时才直接用 React Navigation。同一产品不要两个导航容器。Web 框架的路由不是原生职责位。",
       "keywords": "Expo Router React Navigation create-expo-app 深链",
       "diagram": "diagrams/fe-expo-nav.svg",
       "deep": [
@@ -8804,7 +8804,7 @@
         },
         {
           "title": "怎样自己验证",
-          "body": "搜索 NavigationContainer 和 app 目录里的 _layout。新功能路径上只应命中一种。从详情返回时，列表滚动位置应还在。出现 Next.js 的 App Router 文件时，那是 Web 工程，不是这个原生槽位。"
+          "body": "搜索 NavigationContainer 和 app 目录里的 _layout。新功能路径上只应命中一种。从详情返回时，列表滚动位置应还在。出现 Next.js 的 App Router 文件时，那是 Web 工程，不是这个原生职责位。"
         }
       ],
       "points": [
@@ -8833,7 +8833,7 @@
       "id": "fe-flutter-state-one-approach",
       "title": "Flutter 深链用 go_router，共享状态只留一种做法",
       "prompt": "为什么同一份订单既进了 Provider，又进了 Riverpod，深链打开却再叠一层页面？",
-      "core": "像素由引擎自己画，见 flutter-widget-not-html。只属于当前 Widget 的瞬时值，用 setState，见 flutter-setstate-rebuilds。需要深链、多个 Navigator 或 Web 上直接打开路径时，用 go_router：context.go 按路径声明配栈，不要只靠命名路由再 push，见 flutter-gorouter-not-named。跨多个路由仍要读的值，从文档列出的做法里留一种：InheritedWidget、provider、Riverpod、BLoC 等。官方把状态管理写成有多条路，没有指定唯一赢家。同一份订单数组不要进两个包。go_router 不是网页的 React Router，也不是小程序的 pages.json。",
+      "core": "像素由引擎自己画，见 `flutter-widget-not-html`。只属于当前 Widget 的瞬时值，用 setState，见 `flutter-setstate-rebuilds`。需要深链、多个 Navigator 或 Web 上直接打开路径时，用 go_router：context.go 按路径声明配栈，不要只靠命名路由再 push，见 `flutter-gorouter-not-named`。跨多个路由仍要读的值，从文档列出的做法里留一种：InheritedWidget、provider、Riverpod、BLoC 等。官方把状态管理写成有多条路，没有指定唯一赢家。同一份订单数组不要进两个包。go_router 不是网页的 React Router，也不是小程序的 pages.json。",
       "why": "每个热门状态包都加依赖，失效订单要记两套 API。深链仍走命名路由，每次分享都在栈上再压一层。",
       "example": "MaterialApp.router 接 GoRouter。订单路径是 /order/:id，打开用 context.go。列表页的展开开关留在该页 setState。购物车这种多页都要改的客户端值，只放进选定的那一个方案里。pubspec 不要同时出现 provider 和 flutter_riverpod，除非写明一个只用于遗留页并有删除日期。",
       "task": "写出路由包名和共享状态方案各一个。瞬时开关确认在 setState。用同一深链打开两次，确认栈没有叠两层订单。",
@@ -8876,7 +8876,7 @@
       "id": "fe-server-state-one-owner",
       "title": "同一份服务端数据只留一个缓存主人",
       "prompt": "为什么接口已经返回新订单，页面仍显示改之前的列表？",
-      "core": "GET 回来的列表是服务端状态。它的缓存主人只能有一个：Query 的 queryKey、路由加载器、Nuxt 的 useAsyncData、Angular 服务里的那一次流，或仅属于当前页的组件状态。Pinia 和 Redux 放的是客户端还要继续改、并且多个页面一起读的数据，见 pinia-not-vuex。把同一列表再提交进 store，失效时只清了请求库，store 里仍是旧数组，界面继续读旧的那份。主人负责键：筛选条件变了，键要变，否则会把上一页的结果留在下一页。",
+      "core": "GET 回来的列表是服务端状态。它的缓存主人只能有一个：Query 的 queryKey、路由加载器、Nuxt 的 useAsyncData、Angular 服务里的那一次流，或仅属于当前页的组件状态。Pinia 和 Redux 放的是客户端还要继续改、并且多个页面一起读的数据，见 `pinia-not-vuex`。把同一列表再提交进 store，失效时只清了请求库，store 里仍是旧数组，界面继续读旧的那份。主人负责键：筛选条件变了，键要变，否则会把上一页的结果留在下一页。",
       "why": "为了「保险」写两份缓存。刷新按钮清掉其中一份，绑定在模板上的是另一份。用户看到的仍是旧订单，网络面板里新响应已经回来了。",
       "example": "订单页的列表只放在 useQuery({ queryKey: [\"orders\", status] })。状态筛选变了，键跟着变。不要在 onSuccess 里再 dispatch(setOrders)。Vue 页同理：要么页面内的请求，要么 Pinia 里一份，不要两份一起绑定到表格。",
       "task": "找到表格的数据表达式，向上追到唯一的赋值点。若还有第二处把同一响应写进全局 store，删掉第二处，再改筛选条件确认不会留下上一份列表。",
@@ -8918,7 +8918,7 @@
       "id": "rn-view-not-div",
       "title": "View 只是让人想起 div，它不是浏览器里的元素",
       "prompt": "为什么把网页卡片里的 div 原样写进组件，打包过不去，document.getElementById 也没有节点可查？",
-      "core": "React Native 把 React 组件画成各平台的原生视图，不是把一份 DOM 放进手机浏览器。文档说 View 和 Text 像 div 和 p，那只是对照：iOS 上 View 落到 UIView 一类原生容器，Android 上落到 ViewGroup 一类容器，子节点由 Yoga 按 Flexbox 排，不是你手写 LinearLayout。没有 HTML 元素、className、全局 CSS，也没有 document。样式是 StyleSheet 里的数字对象，不是 CSS 字符串。要嵌一个网址才用 WebView，那是另一个组件，和排卡片的 View 不是同一条路。setState 改完这棵 React 树之后，还要经过渲染、提交、挂载，原生视图才更新，见 rn-jsi-not-json-bridge。",
+      "core": "React Native 把 React 组件画成各平台的原生视图，不是把一份 DOM 放进手机浏览器。文档说 View 和 Text 像 div 和 p，那只是对照：iOS 上 View 落到 UIView 一类原生容器，Android 上落到 ViewGroup 一类容器，子节点由 Yoga 按 Flexbox 排，不是你手写 LinearLayout。没有 HTML 元素、className、全局 CSS，也没有 document。样式是 StyleSheet 里的数字对象，不是 CSS 字符串。要嵌一个网址才用 WebView，那是另一个组件，和排卡片的 View 不是同一条路。setState 改完这棵 React 树之后，还要经过渲染、提交、挂载，原生视图才更新，见 `rn-jsi-not-json-bridge`。",
       "why": "把网页组件原样搬进来，div 不是宿主组件，className 没有落点。空白或打包失败不是少装了 CSS 框架，是运行时没有文档树。",
       "example": "网页卡片是 div 包着 p，字体写在 className 上。到了 React Native，外层是 View，文字是 Text，宽高和间距写在 StyleSheet.create 返回的对象上。document.getElementById 没有这个卡片对应的节点。业务要打开某个网址时，那一块单独用 WebView，不要把整页都当成那个网页。",
       "task": "拿一个网页卡片，列出哪些标签必须换成 View 或 Text，样式从 className 改到哪里。再指出哪一块如果真要显示网页，不能用 View 代替。",
@@ -9230,7 +9230,7 @@
       "id": "rn-hermes-default",
       "title": "默认引擎是 Hermes，不是手机浏览器里的那一个",
       "prompt": "为什么在 Chrome 里能跑的写法，到了默认的 React Native 工程却对不上？",
-      "core": "Hermes 是面向 React Native 的开源 JavaScript 引擎。文档写明新工程默认使用它，不必再为了「打开 Hermes」加配置。和 JavaScriptCore 比，文档给出的收益是启动更快、内存更低、包更小。React Native 仍允许按社区说明退出 Hermes 改回 JavaScriptCore，那是可选退路，不是默认。手机里的 Chrome 或 Safari 引擎不负责跑这份应用脚本。哪些函数被补上，看 JavaScript 环境文档的列表，见 rn-fetch-not-document，不由「设备上有没有 Chrome」决定。Hermes 只执行脚本。View 仍然画成原生视图，换引擎不会把界面变成 DOM。",
+      "core": "Hermes 是面向 React Native 的开源 JavaScript 引擎。文档写明新工程默认使用它，不必再为了「打开 Hermes」加配置。和 JavaScriptCore 比，文档给出的收益是启动更快、内存更低、包更小。React Native 仍允许按社区说明退出 Hermes 改回 JavaScriptCore，那是可选退路，不是默认。手机里的 Chrome 或 Safari 引擎不负责跑这份应用脚本。哪些函数被补上，看 JavaScript 环境文档的列表，见 `rn-fetch-not-document`，不由「设备上有没有 Chrome」决定。Hermes 只执行脚本。View 仍然画成原生视图，换引擎不会把界面变成 DOM。",
       "why": "用浏览器引擎的某个未在 Hermes 上同样可用的行为来解释线上脚本，会对不上默认运行时。再去工程里找「打开 Hermes」的开关，文档说默认已经启用。",
       "example": "新工程不改引擎配置，脚本跑在 Hermes 上。若按社区说明退出，才改回 JavaScriptCore。在 Chrome 控制台里验证通过的冷门语法或引擎差异，不能直接当成这台设备上的结果。",
       "task": "对照 Hermes 文档写出默认引擎是哪一个，以及要换成 JavaScriptCore 时是启用还是退出。再确认环境补齐列表和引擎名字不是同一份文档。",
@@ -9347,7 +9347,7 @@
       "id": "rn-fetch-not-document",
       "title": "环境补上了 fetch，没有因此补上 document",
       "prompt": "为什么登录请求用 fetch 已经成功，紧接着 localStorage.setItem 存令牌却没有这个对象？",
-      "core": "JavaScript 环境文档列出各运行时都提供的补齐：require、console、XMLHttpRequest、fetch、定时器和动画帧，以及一批列出的语言方法。这份浏览器小节没有 document，没有 localStorage，也没有 window.location。有 fetch 只说明网络请求在列表里，不说明网页文档对象也在。界面树是原生视图，document.getElementById 找不到 View 对应的节点。令牌不要写入 localStorage，用各平台提供的存储。Hermes 负责执行脚本，不负责提供 DOM，见 rn-hermes-default。",
+      "core": "JavaScript 环境文档列出各运行时都提供的补齐：require、console、XMLHttpRequest、fetch、定时器和动画帧，以及一批列出的语言方法。这份浏览器小节没有 document，没有 localStorage，也没有 window.location。有 fetch 只说明网络请求在列表里，不说明网页文档对象也在。界面树是原生视图，document.getElementById 找不到 View 对应的节点。令牌不要写入 localStorage，用各平台提供的存储。Hermes 负责执行脚本，不负责提供 DOM，见 `rn-hermes-default`。",
       "why": "登录请求用 fetch 已经成功，于是把令牌写入 localStorage。调用时这个名字不在环境补齐里，脚本在取令牌时失败。网络可用和文档对象可用被当成了同一件事。",
       "example": "fetch(\"/me\") 可以按文档里的补齐使用。紧接着的 localStorage.setItem(\"token\", t) 不在该列表中，不能当成已经提供。document.getElementById(\"card\") 同样不在列表里，也找不到 View 对应的 DOM 节点。",
       "task": "对照环境文档的浏览器补齐列表，标出 fetch 在不在、document 和 localStorage 在不在。写出令牌不应该存进哪一个网页 API。",
@@ -9386,7 +9386,7 @@
       "id": "flutter-widget-not-html",
       "title": "Flutter 的界面是 Widget，不是 HTML 元素",
       "prompt": "为什么 build 里写了 div 和 className，卡片既编不过，也没有一棵文档可以查？",
-      "core": "一次界面要经过三层。build 返回的 Widget 是不可变配置，描述这一帧该长什么样。框架用 Element 把新旧 Widget 对上，State 挂在 Element 上，所以 Widget 重建不等于状态丢失。真正布局、绘制、命中测试在 RenderObject 上。文字要写成 Text，它背后是负责排字的渲染对象；排孩子用 Row、Column 这类布局 Widget。没有 div，没有 className，没有 document，也没有沿文档继承的全局 CSS。样式要从 Theme 或显式参数走进 Widget，不会因为外层写了字体就自动落到里面的文字上。和 React Native 的差别见 rn-view-not-div：那边 View 会变成平台原生视图，这边 Widget 只是配置，像素由引擎再画。",
+      "core": "一次界面要经过三层。build 返回的 Widget 是不可变配置，描述这一帧该长什么样。框架用 Element 把新旧 Widget 对上，State 挂在 Element 上，所以 Widget 重建不等于状态丢失。真正布局、绘制、命中测试在 RenderObject 上。文字要写成 Text，它背后是负责排字的渲染对象；排孩子用 Row、Column 这类布局 Widget。没有 div，没有 className，没有 document，也没有沿文档继承的全局 CSS。样式要从 Theme 或显式参数走进 Widget，不会因为外层写了字体就自动落到里面的文字上。和 React Native 的差别见 `rn-view-not-div`：那边 View 会变成平台原生视图，这边 Widget 只是配置，像素由引擎再画。",
       "why": "把网页组件原样搬进来，div 不是 Widget，编译直接失败。空白不是少装了一个 CSS 框架，是运行时根本没有文档树。",
       "example": "网页卡片是 div 包着 p，字体写在 body 上。Flutter 里外层是 Column 或 Container，文字是 Text(订单号)。build 每次可以返回新的 Text 实例，Element 仍对得上原来那一格，RenderObject 再按新配置去画。全局搜索 document 和 className，界面文件里没有落点。",
       "task": "拿一个网页卡片，写出外层和文字各换成哪个 Widget。再指出 build 返回的对象、挂状态的对象、真正 paint 的对象分别是哪一层。",
@@ -9500,7 +9500,7 @@
       "id": "flutter-setstate-rebuilds",
       "title": "setState 安排的是这棵子树再 build 一次",
       "prompt": "为什么计数已经变成 2，按钮上的 Text 仍显示 1？",
-      "core": "State.setState 的回调是同步执行的：回调里的 count += 1 返回前字段已经是新值。它通知的是框架把这个 Element 标脏，并安排后续帧里对这个 State 再调用一次 build。build 读到新的 count，返回新的 Text 配置，RenderObject 再在这帧里更新。只写 count += 1 而不调用 setState，字段同样会变成 2，但 Element 不会标脏，下一帧不会因为这次赋值来 build，Text 仍是上一次的配置。setState 返回也不等于像素已经画完，绘制还在这帧后面的 paint。不要在 build 里面调用 setState，那会在构建过程中又把自己标脏。Widget 从树里卸下后，State.dispose 之后再 setState 会失败。父级重建时，标成 const 的子 Widget 可以因为还是同一个实例而被跳过。这不是小程序把序列化结果 setData 到视图层，也不是过桥去改系统控件，见 taro-react-setdata-bridge 和 rn-jsi-not-json-bridge。",
+      "core": "State.setState 的回调是同步执行的：回调里的 count += 1 返回前字段已经是新值。它通知的是框架把这个 Element 标脏，并安排后续帧里对这个 State 再调用一次 build。build 读到新的 count，返回新的 Text 配置，RenderObject 再在这帧里更新。只写 count += 1 而不调用 setState，字段同样会变成 2，但 Element 不会标脏，下一帧不会因为这次赋值来 build，Text 仍是上一次的配置。setState 返回也不等于像素已经画完，绘制还在这帧后面的 paint。不要在 build 里面调用 setState，那会在构建过程中又把自己标脏。Widget 从树里卸下后，State.dispose 之后再 setState 会失败。父级重建时，标成 const 的子 Widget 可以因为还是同一个实例而被跳过。这不是小程序把序列化结果 setData 到视图层，也不是过桥去改系统控件，见 `taro-react-setdata-bridge` 和 rn-jsi-not-json-bridge。",
       "why": "在 onPressed 里把计数加一，调试器里看到字段已是 2，界面仍是 1。于是去查 Impeller 有没有画完，其实这帧的 build 根本没被安排。",
       "example": "onPressed 里只有 count += 1。回调结束时 count 是 2，Text 仍显示 1。改成 setState(() { count += 1; })，回调结束时字段已是 2，随后那一帧的 build 把 Text 的 data 配成 2，屏幕才变。标题写成 const Text，按按钮只重建计数这一支，标题那一段不会因为这次标脏再 build。",
       "task": "先只改字段，在赋值的下一行打印 count，并看 Text 是否仍是旧数字。再包进 setState，确认字段立刻变、Text 在随后的帧里变。最后确认没有在 build 里调用 setState。",
@@ -9576,7 +9576,7 @@
       "id": "cross-four-who-paints",
       "title": "四套跨端里，像素是谁画的并不相同",
       "prompt": "为什么都说一套代码，同一颗提交按钮却分别落在系统视图、自绘表面和小程序模板上？",
-      "core": "先追这一帧像素从哪来，再追数字改完之后要等哪一步才画上去。React Native 的脚本默认跑在 Hermes 上。0.76 起 JavaScript 经 JSI 持有 C++ 对象直接调用，不再默认把这次调用编成桥上的 JSON。View 和 Text 会变成平台原生视图，样式是数字而不是 CSS 字符串，见 rn-view-not-div、rn-jsi-not-json-bridge。setState 返回之后还要等渲染、提交、挂载，原生像素才更新。Flutter 用 Dart。build 交出 Widget 配置，Element 挂状态，RenderObject 做布局和 paint，引擎把像素画到自己的表面：iOS 只用 Impeller，Android API 29+ 默认 Impeller，Web 仍是 Skia，见 flutter-impeller-own-pixels。setState 只是把 State 标脏，build 在随后的帧。Taro 在小程序逻辑层用模拟 DOM 跑 React 或 Vue，静态 wxml 要等 setData 送来的序列化结果才重画，见 taro-react-setdata-bridge。uni-app 的 Vue 3 改的是响应式数据，编译结果对接小程序模板或 Web；要在 Android 上编成 Kotlin，那是另一个 uni-app x 工程的 uts，见 uniapp-x-uts-not-vue-page。",
+      "core": "先追这一帧像素从哪来，再追数字改完之后要等哪一步才画上去。React Native 的脚本默认跑在 Hermes 上。0.76 起 JavaScript 经 JSI 持有 C++ 对象直接调用，不再默认把这次调用编成桥上的 JSON。View 和 Text 会变成平台原生视图，样式是数字而不是 CSS 字符串，见 `rn-view-not-div`、`rn-jsi-not-json-bridge`。setState 返回之后还要等渲染、提交、挂载，原生像素才更新。Flutter 用 Dart。build 交出 Widget 配置，Element 挂状态，RenderObject 做布局和 paint，引擎把像素画到自己的表面：iOS 只用 Impeller，Android API 29+ 默认 Impeller，Web 仍是 Skia，见 `flutter-impeller-own-pixels`。setState 只是把 State 标脏，build 在随后的帧。Taro 在小程序逻辑层用模拟 DOM 跑 React 或 Vue，静态 wxml 要等 setData 送来的序列化结果才重画，见 `taro-react-setdata-bridge`。uni-app 的 Vue 3 改的是响应式数据，编译结果对接小程序模板或 Web；要在 Android 上编成 Kotlin，那是另一个 uni-app x 工程的 uts，见 `uniapp-x-uts-not-vue-page`。",
       "why": "在 Flutter 里按系统控件找样式，或在 Taro 里按 Impeller 找绘制后端，查到的是另一套运行时。数字已经变了而界面没变时，修的等待点也不一样。",
       "example": "同一颗提交。React Native 是 Pressable 的 onPress，子节点是 Text，按下后改 state，原生视图要等这次提交挂载。Flutter 是引擎按主题画出来的按钮，onPressed 里要 setState，下一帧的 build 才交出新 Text。Taro 打到微信时，节点在 wxml 模板上，setState 之后还要等 setData。uni-app 打到微信时，改的是 Vue 数据，由编译后的模板接住；若工程是 uni-app x 的 Android，页面得是 uvue，产物是 Kotlin，不是这颗 Flutter 按钮。",
       "task": "给四套各写三句：语言是什么，像素落在系统视图、自绘表面还是小程序模板，状态改完后还要等哪一步屏幕才变。",
@@ -9618,7 +9618,7 @@
       "id": "cross-four-where-it-fits",
       "title": "先看宿主：小程序、自绘 App，还是系统视图",
       "prompt": "为什么四套都能做移动界面，页面打不开或返回不刷新时却要查不同的文件？",
-      "core": "先选定宿主，再打开那一套的路由文件和刷新钩子。主场是微信等小程序时，用 uni-app 的 Vue 3 加 pages.json，或 Taro 4 的 React / Vue 3 加 app.config。两边都是页面数组，第一项是冷启动页，url 没登记就打不开。uni-app 从详情返回只再走 onShow，query 是 onLoad 里那次字符串。Taro 函数组件从详情返回走 useDidShow，参数在 useLoad，界面还要等 setData。要 iOS 和 Android 上像素一致、自己画界面，用 Flutter：简单跳转是 Navigator.push 加 MaterialPageRoute，深链用 go_router 的 context.go，命名路由接深链会再压一层，见 flutter-gorouter-not-named。返回后数字不变，先看 onPressed 里有没有 setState，再看下一帧 build 有没有读到新字段。团队已是 React、要系统控件和原生模块，用 React Native，导航来自 React Navigation，不是 react-native 包：已经停在该屏时 navigate 不会再压栈，要叠一层用 push，见 rn-navigate-not-push。已有的 .vue 要编成 Android 的 Kotlin，另开 uni-app x，不能把 Flutter 的 Widget 或 Taro 的小程序页混进那个工程。",
+      "core": "先选定宿主，再打开那一套的路由文件和刷新钩子。主场是微信等小程序时，用 uni-app 的 Vue 3 加 pages.json，或 Taro 4 的 React / Vue 3 加 app.config。两边都是页面数组，第一项是冷启动页，url 没登记就打不开。uni-app 从详情返回只再走 onShow，query 是 onLoad 里那次字符串。Taro 函数组件从详情返回走 useDidShow，参数在 useLoad，界面还要等 setData。要 iOS 和 Android 上像素一致、自己画界面，用 Flutter：简单跳转是 Navigator.push 加 MaterialPageRoute，深链用 go_router 的 context.go，命名路由接深链会再压一层，见 `flutter-gorouter-not-named`。返回后数字不变，先看 onPressed 里有没有 setState，再看下一帧 build 有没有读到新字段。团队已是 React、要系统控件和原生模块，用 React Native，导航来自 React Navigation，不是 react-native 包：已经停在该屏时 navigate 不会再压栈，要叠一层用 push，见 `rn-navigate-not-push`。已有的 .vue 要编成 Android 的 Kotlin，另开 uni-app x，不能把 Flutter 的 Widget 或 Taro 的小程序页混进那个工程。",
       "why": "用 pages.json 去管 Flutter 的深链，或用 onShow 去管 React Native 的返回，文件对不上，改完页面仍打不开或仍不刷新。",
       "example": "返回列表要刷新。uni-app 把请求放到 onShow，onLoad 次数保持 1。Taro 把请求放到 useDidShow，并等到 setData 把新数组交到模板。Flutter 在 setState 之后的 build 里读新列表。React Native 让这次 state 进入渲染并提交到原生列表。页面打不开时，小程序先看页面数组的第一项和这条 url，Flutter 看 go_router 的路径或 Navigator 有没有 push，React Native 看 React Navigation 的屏幕表里有没有这个名字。",
       "task": "写「打不开」和「返回不刷新」。每个症状下给四套各写一个先打开的文件或钩子，空着的格子不要用另一套的答案填上。",
@@ -9888,7 +9888,7 @@
       "id": "taro-4-compiler-choice",
       "title": "Taro 4 可选 webpack5 或 Vite，小程序产物仍是四件套",
       "prompt": "为什么 compiler 改成 vite 之后，微信开发者工具仍要等整包，而不是浏览器那种换一个模块？",
-      "core": "现行主线是 Taro 4，不要把补丁版本写死。framework 和 compiler 是两项：framework 选 react、vue3、preact 等，决定你写哪种组件；compiler 选 webpack5 或 vite，决定用哪条打包链。小程序不能从网络按需加载业务 JS，所以即使用 Vite，打 weapp 仍是一次打包，产物还是该页的 js、模板、样式和 json 四件套。Vite 开发服务器那种原生 ESM 主要出现在 H5。样式按设计稿宽度换算，官方示例的 designWidth 是 750：源码里写的尺寸相对这条设计稿，不是浏览器里未换算的 CSS 像素。换 Vite 不会换成浏览器 DOM，逻辑层模拟树再 setData 的那条路还在，见 taro-react-setdata-bridge。Taro 1、2 以 Nerv 为主的写法不是新项目的入口。",
+      "core": "现行主线是 Taro 4，不要把补丁版本写死。framework 和 compiler 是两项：framework 选 react、vue3、preact 等，决定你写哪种组件；compiler 选 webpack5 或 vite，决定用哪条打包链。小程序不能从网络按需加载业务 JS，所以即使用 Vite，打 weapp 仍是一次打包，产物还是该页的 js、模板、样式和 json 四件套。Vite 开发服务器那种原生 ESM 主要出现在 H5。样式按设计稿宽度换算，官方示例的 designWidth 是 750：源码里写的尺寸相对这条设计稿，不是浏览器里未换算的 CSS 像素。换 Vite 不会换成浏览器 DOM，逻辑层模拟树再 setData 的那条路还在，见 `taro-react-setdata-bridge`。Taro 1、2 以 Nerv 为主的写法不是新项目的入口。",
       "why": "以为选了 Vite，预览就会按单个模块热替换进小程序。小程序 IDE 打开的仍是整包，等待时间在编译和预览，不在浏览器的 ESM。",
       "example": "配置里 framework 是 react，compiler 是 vite，目标是 weapp。dist 里一个页面目录同时有 js、wxml、wxss、json。同一配置打 h5，开发时才是 Vite 服务打开的网页。源码里按 750 宽写的尺寸，换算后才是设备上的长度。",
       "task": "读出 framework 和 compiler。打 weapp，确认一个页面目录是四件套，并且没有按需从网络加载的业务模块。再打 h5，确认打开的是网页开发服务器。",
@@ -10894,7 +10894,7 @@
       "id": "angular-ngonchanges-primitives",
       "title": "ngOnChanges 不单是引用变了才跑，也不是整棵树每次必脏检查",
       "prompt": "为什么把 ngOnChanges 说成“只有对象引用变化才触发”，又把 Angular 2+ 说成每次从根脏检查整棵树？",
-      "core": "ngOnChanges 在输入绑定变化时调用，第一次一定在 ngOnInit 之前。输入是基本类型时，值变就会进 SimpleChanges；对象要引用变才会当输入变了，这是绑定的比较方式，不是钩子自己忽略深变化。OnPush 可以让子树在输入引用不变时跳过检查。新应用从 Angular v21 起默认不再带 zone.js，更新靠信号和模板事件安排检查，见 fe-angular-first-party。已有工程仍可能留着 Zone。两种都不是 AngularJS 的 `$digest` 队列。`[(ngModel)]` 是属性绑定加事件绑定的语法糖。指令分组件、属性指令、结构指令，这点资料方向对。",
+      "core": "ngOnChanges 在输入绑定变化时调用，第一次一定在 ngOnInit 之前。输入是基本类型时，值变就会进 SimpleChanges；对象要引用变才会当输入变了，这是绑定的比较方式，不是钩子自己忽略深变化。OnPush 可以让子树在输入引用不变时跳过检查。新应用从 Angular v21 起默认不再带 zone.js，更新靠信号和模板事件安排检查，见 `fe-angular-first-party`。已有工程仍可能留着 Zone。两种都不是 AngularJS 的 `$digest` 队列。`[(ngModel)]` 是属性绑定加事件绑定的语法糖。指令分组件、属性指令、结构指令，这点资料方向对。",
       "why": "把 ngOnChanges 说成只有对象引用变化才触发，number 从 1 改到 2 会以为钩子坏了；再把检查说成每次从根扫整棵树，OnPush 跳过子树就会被漏掉。区分信号是基本类型按值比较，OnPush 看输入引用。",
       "example": "@Input() id: number 从 1 到 2 会触发 ngOnChanges。@Input() user 只改 user.name 不换对象则钩子不来，要 OnPush+不可变或自己 ngDoCheck。",
       "task": "对照生命周期文档，写出首次 ngOnChanges 相对 ngOnInit 的顺序；说明 OnPush 何时跳过。",
@@ -11254,7 +11254,7 @@
         },
         {
           "title": "异常怎样离开用例",
-          "body": "用例抛出的业务失败要变成问题详情，而不是堆栈 HTML。这是 spring-mvc-exception 那一课。控制器捕获后返回 200，页面会把它当成成功。"
+          "body": "用例抛出的业务失败要变成问题详情，而不是堆栈 HTML。这是 `spring-mvc-exception` 那一课。控制器捕获后返回 200，页面会把它当成成功。"
         }
       ],
       "points": [
@@ -12644,7 +12644,7 @@
       "id": "java-arrays-aslist-fixed",
       "title": "Arrays.asList 返回固定大小的列表，不是 ArrayList",
       "prompt": "为什么 asList 之后 add 会失败，也不能把它当成可变 ArrayList？",
-      "core": "Arrays.asList 返回的是 Arrays 的私有 ArrayList（和 java.util.ArrayList 不是一个类），它包装原数组：set 可以改槽位并写回数组，add/remove 抛 UnsupportedOperationException。长度跟原数组走，不是“final 数组所以一切只读”——元素若可变，列表里看到的也变。要独立可变副本用 new ArrayList<>(Arrays.asList(...))。List.sort 与 Collections.sort 都可排序可变 List。Vector 同步但不是现行并发首选。ArrayList 空构造先是空数组，第一次 add 扩到默认容量 10，不要背成“JDK7 之后永远容量 0”。",
+      "core": "Arrays.asList 返回的是 Arrays 自己的私有 ArrayList，和 java.util.ArrayList 不是一个类。它只是包装原数组：set 可以改对应下标并写回数组；add/remove 会抛 UnsupportedOperationException。长度跟原数组走，不是“final 数组所以一切只读”——元素对象若可变，从列表里看到的也会变。要独立可变副本，用 new ArrayList<>(Arrays.asList(...))。List.sort 与 Collections.sort 都可排序可变 List。Vector 同步但不是现行并发首选。ArrayList 空构造先是空数组，第一次 add 扩到默认容量 10，不要背成“JDK7 之后永远容量 0”。",
       "why": "把 asList 的结果当成可增删的 ArrayList，add 会在运行时抛异常，set 还会写回原来的数组，别的持有者一起被改。区分信号是它的长度固定，类型也不是 java.util.ArrayList。",
       "example": "String[] ids = {\"a\",\"b\"}; List<String> view = Arrays.asList(ids); view.set(0,\"x\") 会改 ids[0]；view.add(\"y\") 失败。",
       "task": "写一段 asList 后 set、add、再包一层 java.util.ArrayList 的实验，记录哪一步改原数组、哪一步抛异常。",
@@ -13550,9 +13550,9 @@
       "id": "pattern-gof-catalog",
       "title": "先把二十三种名字列全，再打开后面的课",
       "prompt": "为什么一上来就写策略模式，却说不清这一章一共有哪些名字？",
-      "core": "设计模式是给反复出现的那一块变化起的名字，不是一份必须背完才许写代码的咒语。Gamma、Helm、Johnson、Vlissides 那本书把对象结构里最常被点名的解法收成二十三种，按三族分开：创建型五个、结构型七个、行为型十一个。创建型管“这一次造出哪一份、怎么组装、范围是不是一份”：工厂方法、抽象工厂、建造者、原型、单例。结构型管“对象怎么接在一起还不把调用方绑死”：适配器、桥接、组合、装饰器、外观、享元、代理。行为型管“一次请求或一次算法怎么走”：责任链、命令、解释器、迭代器、中介者、备忘录、观察者、状态、策略、模板方法、访问者。这一课只列名单。后面按族深入已经有单独课的那些；名单上还有、但还没写成整课的七个，下一课之后的 `pattern-gof-rest` 先写清变化点。没有名单就先写策略，是在用一个名字代替目录。",
+      "core": "设计模式是给反复出现的那一块变化起的名字，不是一份必须背完才许写代码的咒语。Gamma、Helm、Johnson、Vlissides 那本书把对象结构里最常被点名的解法收成二十三种，按三族分开：创建型五个、结构型七个、行为型十一个。创建型管“这一次造出哪一份、怎么组装、范围是不是一份”：工厂方法、抽象工厂、建造者、原型、单例。结构型管“对象怎么接在一起还不把调用方绑死”：适配器、桥接、组合、装饰器、外观、享元、代理。行为型管“一次请求或一次算法怎么走”：责任链、命令、解释器、迭代器、中介者、备忘录、观察者、状态、策略、模板方法、访问者。这一课只列名单。后面按族深入已经有单独课的那些；名单上还有、但还没写成整课的七个，见 `pattern-gof-rest`，那里会先写清允许变的是哪一块。没有名单就先写策略，是在用一个名字代替目录。",
       "why": "面试或改代码时直接说“上个策略”，对方问还有哪些、这一次为什么不是工厂或装饰器，答不上来。名字成了口头禅，目录从未打开。",
-      "example": "结算要换计价规则，变化点是已经造好的对象怎么算，对应行为型里的策略，深入课是 `pattern-strategy-swap`。渠道客户端方法名对不上自己的 Payment，变化点是接口形状，对应结构型里的适配器，深入课是 `pattern-adapter-shape`。HttpRequest 有一堆可选项，变化点是组装过程，对应创建型里的建造者，深入课是 `pattern-builder-assemble`。三件事不是同一个模式，但都属于这一份二十三的名单。",
+      "example": "结算要换计价规则，允许变的是已经造好的对象怎么算，对应行为型里的策略，深入课是 `pattern-strategy-swap`。渠道客户端方法名对不上自己的 Payment，允许变的是接口形状，对应结构型里的适配器，深入课是 `pattern-adapter-shape`。HttpRequest 有一堆可选项，允许变的是组装过程，对应创建型里的建造者，深入课是 `pattern-builder-assemble`。三件事不是同一个模式，但都属于这一份二十三的名单。",
       "task": "不看后面的课，先按创建、结构、行为三列写出二十三个中文名。再各举一件本周会碰到的需求，标上它落在哪一列、哪一个名字。不要先写类图。",
       "answer": "创建型五个：工厂方法、抽象工厂、建造者、原型、单例。结构型七个：适配器、桥接、组合、装饰器、外观、享元、代理。行为型十一个：责任链、命令、解释器、迭代器、中介者、备忘录、观察者、状态、策略、模板方法、访问者。计价规则换算法是策略；第三方方法名对不上是适配器；可选项分步放进成品是建造者。写不出三列时，不要开始画某一个模式的类。",
       "keywords": "设计模式 GoF 创建型 结构型 行为型",
@@ -13590,7 +13590,7 @@
       "title": "先问这一次变的是创建、连接，还是请求怎么走",
       "prompt": "为什么分不清该用工厂还是策略，就把两个类都建上？",
       "core": "对着二十三个名字挑选之前，先用三句问把族定下来。造出哪一个、可选部件怎么放、这一份实例的范围，是创建型。把一个已经存在的对象接到你要的接口上、叠一层同一接口的行为、用替身挡住目标，是结构型。已经有对象之后，换算法、换某一步正文、沿链传递、按状态切换、通知谁来响应，是行为型。工厂方法结束在返回产品；策略开始在产品已经在手里、只换怎么算。两个类都建上，通常是族还没问。Java 的接口只规定调用方能调用哪些方法，见基础课 `java-interface-contract`；族决定的是接口后面那一块准备被谁替换。",
-      "why": "既写 DiscountFactory.create 又在 create 里 new 三种算法对象，再让结算去调用 apply。新增规则时两个类一起改。选择发生了两次，变化点却仍糊在一起。",
+      "why": "既写 DiscountFactory.create 又在 create 里 new 三种算法对象，再让结算去调用 apply。新增规则时两个类一起改。选择发生了两次，允许变的那一块却仍糊在一起。",
       "example": "NumberFormat.getInstance 按地区返回格式器，调用方不 new DecimalFormat，这是创建。BufferedInputStream 包住另一个 InputStream，变量类型仍是 InputStream，这是结构。List.sort 传入不同 Comparator，排序过程的比较算法被换掉，这是行为。三处都可以说“用了模式”，但族不同，后面打开的课也不同。",
       "task": "给三件事各标一个族：按地区得到日期格式器；给已有数据源套一层超时；结算时换成会员价算法。不要同时写工厂和策略两个类。",
       "answer": "按地区得到格式器是创建，打开工厂方法那一课。给数据源套超时是结构，打开装饰器那一课。结算换成会员价是行为，打开策略那一课。create 里如果还在写算法正文，族就还没分开。",
@@ -13599,11 +13599,11 @@
       "deep": [
         {
           "title": "同一需求会跨族，但每一块仍要分开",
-          "body": "先用工厂造出支付渠道，再用适配器接到 Payment，最后用策略换手续费算法。三块可以同时出现，但每一块的变化点不同，不要塞进一个 Manager。"
+          "body": "先用工厂造出支付渠道，再用适配器接到 Payment，最后用策略换手续费算法。三块可以同时出现，但每一块的允许变的那一块不同，不要塞进一个 Manager。"
         },
         {
           "title": "怎样自己验证",
-          "body": "在纸上只允许勾选一个族。若必须勾两个，把需求拆成两句话再各标一次。拆不开时，先写变化点，不要先起两个模式名。"
+          "body": "在纸上只允许勾选一个族。若必须勾两个，把需求拆成两句话再各标一次。拆不开时，先写允许变的那一块，不要先起两个模式名。"
         }
       ],
       "points": [
@@ -13626,10 +13626,10 @@
       "track": "java",
       "group": "设计模式",
       "id": "pattern-gof-rest",
-      "title": "名单上还有七个：先写清变化点，再决定要不要单独立课",
+      "title": "名单上还有七个：先写清允许变的那一块，再决定要不要单独立课",
       "prompt": "为什么二十三里只记住策略和单例，其余都说“用不到可以不看”？",
-      "core": "名单要完整，不等于每一个都值得立刻加一层类。这一课只给还没有单独深入课的七个写出变化点。原型：用一份已有实例当样本，复制后改不同的那几项，而不是每次从零装配。命令：把一次请求收成对象，让它能排队、撤销或记日志，Runnable 是标准库里的同形，见 `java-runnable-is-command`。迭代器：在不暴露内部结构的前提下按顺序取出元素，调用方用的是 Iterator，不是底层数组。中介者：一群对象不再两两引用，改成只和同一个协调者说话。备忘录：把对象内部状态存成一份快照，供之后恢复，且快照不把私有字段公开给调用方。访问者：在一棵固定的元素类型上加一种新操作，而不去改那些元素类。解释器：把一种小语言的文法收成对象树再求值，SQL 或正则不是让你手写解释器的理由。这七个先认得，再决定后面要不要单独立课；不要为了凑齐二十三就先加一层。",
-      "why": "为了在笔记里写满二十三，给每个按钮请求包一个 Command 接口，队列里却只有同步调用。名字齐了，变化点并不存在。",
+      "core": "名单要完整，不等于每一个都值得立刻加一层类。这一课只给还没有单独深入课的七个写出允许变的那一块。原型：用一份已有实例当样本，复制后改不同的那几项，而不是每次从零装配。命令：把一次请求收成对象，让它能排队、撤销或记日志，Runnable 是标准库里的同形，见 `java-runnable-is-command`。迭代器：在不暴露内部结构的前提下按顺序取出元素，调用方用的是 Iterator，不是底层数组。中介者：一群对象不再两两引用，改成只和同一个协调者说话。备忘录：把对象内部状态存成一份快照，供之后恢复，且快照不把私有字段公开给调用方。访问者：在一棵固定的元素类型上加一种新操作，而不去改那些元素类。解释器：把一种小语言的文法收成对象树再求值，SQL 或正则不是让你手写解释器的理由。这七个先认得，再决定后面要不要单独立课；不要为了凑齐二十三就先加一层。",
+      "why": "为了在笔记里写满二十三，给每个按钮请求包一个 Command 接口，队列里却只有同步调用。名字齐了，允许变的那一块并不存在。",
       "example": "编辑器的撤销需要恢复光标和正文，这是备忘录，不是把整个窗口再 new 一次。文件系统树要加“统计体积”且不能改 Directory 和 File 的类，这是访问者。菜单项被点之后既要执行又要写操作历史，这是命令。若只是当场调一个方法、不要排队也不要撤销，就不要先做 Command。",
       "task": "给“撤销一次编辑”“遍历列表但不暴露数组”“按钮点击要记历史”“一棵不能改的树上加导出 XML”各标一个名字。再写下哪一件其实只是普通方法调用，不该为了凑数加接口。",
       "answer": "撤销是备忘录。遍历不暴露数组是迭代器。点击要记历史是命令。不能改的树上加导出是访问者。只当场调一个方法、没有排队或撤销，不要加 Command。原型、中介者、解释器同样：指不出那一块变化时，不要先建类。",
@@ -13646,7 +13646,7 @@
         }
       ],
       "points": [
-        "七个未单独立课的名字也要写得出变化点",
+        "七个未单独立课的名字也要写得出允许变的那一块",
         "Runnable 和 Iterator 是命令与迭代器在标准库里的同形",
         "凑齐二十三不是先加一层类的理由"
       ],
@@ -13667,27 +13667,27 @@
       "id": "pattern-one-variation",
       "title": "先指出哪一块允许变，再决定叫什么模式",
       "prompt": "为什么类名写成 DiscountFactory，里面仍是一长串 if，就觉得已经用了工厂？",
-      "core": "名单课已经列出二十三种名字。这一课只做一件事：指出当前允许换的那一块，再决定打开后面哪一课。模式是给“哪一块允许换”起的名字，不是给类名起的后缀。调用方看见的方法可以不变，变的可能是算法、某一步的正文、包在外面的行为、别人的接口形状，或谁来响应一件事。创建哪一个产品、怎样组装可选部件、这一份实例的范围，也各是一块。指不出这一块，类名里的 Factory、Manager、Strategy 只是单词。Java 基础里的接口规定调用方能调用哪些方法；这一课接着问接口后面那一块，到底哪一块准备被换掉。",
-      "why": "类名改成工厂之后，新的折扣规则仍然要改同一个方法里的 if。调用方没有少改，测试也仍然要覆盖这条方法里的每一支。名字没有把变化关进一个可以单独替换的对象。",
+      "core": "设计模式的二十三种名字已经列过（见上一课名单）。这一课只做一件事：先指出当前允许替换的那一块变化，再决定打开后面哪一课。模式名称是给「哪一块允许换」起的标签，不是给类名加的后缀。调用方看见的方法可以不变；变的可能是算法、某一步里的实现、外面多包的一层行为、别人接口的形状，或谁来响应这件事。造出哪一个产品、怎样组装可选部件、这一份实例管多大范围，也各是一块变化。指不出这一块时，类名里的 Factory、Manager、Strategy 只是单词。Java 的接口规定调用方能调用哪些方法；这一课接着问：接口后面那一块，到底准备被谁换掉。",
+      "why": "类名改成工厂之后，新的折扣规则仍然要改同一个方法里的 if。调用方没有少改，测试也仍然要覆盖这条方法里的每一支。名字没有把变化放进一个可以单独替换的对象。",
       "example": "结算方法里用 if 区分满减、会员价和优惠券。类改名为 DiscountFactory 之后，这三支 if 还在同一个方法里。新增“限时价”时，仍然打开这个方法加一支。把每种算法做成单独的对象之后，结算方法只保留“选中哪一个对象再调用”，新增规则才不必再编辑这条方法的分支。",
       "task": "找出一个名字里带 Factory 或 Manager、方法内部仍在按类型分支的类。写下真正会变的那一块，以及调用方现在还要不要跟着改。",
-      "answer": "真正会变的是分支里的算法，不是类名。调用方如果还要修改这条 if，或者每加一种规则都要改这个方法，工厂这个名字没有成立。变化应关进可以单独替换的对象，调用方只保留选择和调用。指不出那一块时，不要先起模式的名字。",
-      "keywords": "设计模式 变化点 工厂 接口",
+      "answer": "真正会变的是分支里的算法，不是类名。调用方如果还要修改这条 if，或者每加一种规则都要改这个方法，工厂这个名字没有成立。变化应放进可以单独替换的对象，调用方只保留选择和调用。指不出那一块时，不要先起模式的名字。",
+      "keywords": "设计模式 允许变的那一块 工厂 接口",
       "diagram": "diagrams/pattern-one-variation.svg",
       "deep": [
         {
-          "title": "先对上变化点，再打开对应的课",
+          "title": "先对上允许变的那一块，再打开对应的课",
           "body": "算法是策略，一步的正文是模板，外层行为是装饰器，接口形状是适配器，谁来响应是观察者。创建哪一个产品、可选部件怎样组装、一份实例的范围、能不能碰到目标、子系统收成一次调用、链上停不停、状态自己切换、两个维度不要相乘、叶子和容器用同一接口、不变部分拿来共享，各自是后面的一课。复制一份再改、为了撤销保存快照、在一棵固定的树上加一种新操作，先不要为了凑齐名单再加一层类。"
         },
         {
           "title": "怎样自己验证",
-          "body": "选一个带 Factory 或 Manager 后缀的类，数一数新增一种情况要改几个方法。如果仍然要打开原来的 if 加一支，把变化点记在这支分支上，而不是记在类名上。"
+          "body": "选一个带 Factory 或 Manager 后缀的类，数一数新增一种情况要改几个方法。如果仍然要打开原来的 if 加一支，把允许变的那一块记在这支分支上，而不是记在类名上。"
         }
       ],
       "points": [
         "模式命名的是允许替换的那一块",
         "类名带 Factory 不能代替方法里的分支",
-        "先对上变化点，再打开对应的那一课"
+        "先对上允许变的那一块，再打开对应的那一课"
       ],
       "references": [
         [
@@ -13706,9 +13706,9 @@
       "id": "pattern-factory-method",
       "title": "工厂方法换的是创建哪一个产品",
       "prompt": "为什么调用方已经不写 new，方法里却还在按类型 if，就叫工厂方法？",
-      "core": "工厂方法把“创建哪一个具体产品”关进可替换的创建者。调用方依赖产品接口，自己的代码里不出现具体类的 new。创建者的方法直接返回那一种产品。上一课那个 DiscountFactory 里仍是一长串 if，变化点还在同一个方法里，名字不成立。多种产品必须成套、不能混用时，才由一个创建者同时给出这一套：账单和回执一起给，调用方不能自己拼一个 JSON 账单配 XML 回执。只换一种产品时，不要先做两层工厂。策略换的是已经造好的对象怎么算；这一课换的是这一次造出哪一个。",
+      "core": "工厂方法把“创建哪一个具体产品”放进可替换的创建者。调用方依赖产品接口，自己的代码里不出现具体类的 new。创建者的方法直接返回那一种产品。上一课那个 DiscountFactory 里仍是一长串 if，允许变的那一块还在同一个方法里，名字不成立。多种产品必须成套、不能混用时，才由一个创建者同时给出这一套：账单和回执一起给，调用方不能自己拼一个 JSON 账单配 XML 回执。只换一种产品时，不要先做两层工厂。策略换的是已经造好的对象怎么算；这一课换的是这一次造出哪一个。",
       "why": "每加一种折扣，仍打开同一个 create 加 else if。调用方虽然不写 new，测试仍要覆盖这条方法的每一支，新增规则也仍改这个类。",
-      "example": "create 里 if 满减、会员、优惠券。改成每个规则一个创建者，方法直接返回自己的产品。结算方只拿 Discount。再加限时价时新增一个创建者，原来的 create 不再加分支。NumberFormat.getInstance 按地区返回格式器，调用方不 new DecimalFormat。Calendar.getInstance 每次返回新日历，那是工厂方法，不是单例，见 java-calendar-not-singleton。",
+      "example": "create 里 if 满减、会员、优惠券。改成每个规则一个创建者，方法直接返回自己的产品。结算方只拿 Discount。再加限时价时新增一个创建者，原来的 create 不再加分支。NumberFormat.getInstance 按地区返回格式器，调用方不 new DecimalFormat。Calendar.getInstance 每次返回新日历，那是工厂方法，不是单例，见 `java-calendar-not-singleton`。",
       "task": "找出一个名为 Factory、内部仍按类型分支的 create。改成一种产品一个创建者。写下新增一种产品时哪个文件变，哪个文件不应再出现 else if。",
       "answer": "调用方只依赖产品接口。每种产品由自己的创建者返回，create 里不再按类型分支。新增产品时新增创建者，原来的 create 不应再加 else if。只有必须成套创建、禁止混搭时，才让一个创建者同时返回这一套。一个方法里继续 if，工厂方法这个名字没有成立。",
       "keywords": "工厂方法 抽象工厂 创建者 NumberFormat",
@@ -13784,7 +13784,7 @@
       "id": "pattern-singleton-scope",
       "title": "单例先写明这一份的范围",
       "prompt": "为什么类上有 getInstance，就把 Calendar、Spring Bean 和进程级对象都叫成同一个单例？",
-      "core": "单例承诺两件事：在说好的范围里只有一份实例，并且调用方用一个固定入口拿到它。范围不写明，这个名字就没有内容。Runtime.getRuntime 的范围是这个进程。Spring 默认 singleton 的范围是这一个容器，两个容器就是两份，见 spring-scope-catalog。Calendar.getInstance 每次新对象，是工厂方法，见 java-calendar-not-singleton。懒加载手写双重检查要 volatile，枚举常量由类初始化发布，见 java-dcl-volatile-enum。一份实例还不等于字段安全：上面的可变字段，所有调用方一起改。能放进构造器的协作者，不要为了少写一个参数改成 getInstance，测试会从参数上看不见这份依赖。",
+      "core": "单例承诺两件事：在说好的范围里只有一份实例，并且调用方用一个固定入口拿到它。范围不写明，这个名字就没有内容。Runtime.getRuntime 的范围是这个进程。Spring 默认 singleton 的范围是这一个容器，两个容器就是两份，见 `spring-scope-catalog`。Calendar.getInstance 每次新对象，是工厂方法，见 `java-calendar-not-singleton`。懒加载手写双重检查要 volatile，枚举常量由类初始化发布，见 `java-dcl-volatile-enum`。一份实例还不等于字段安全：上面的可变字段，所有调用方一起改。能放进构造器的协作者，不要为了少写一个参数改成 getInstance，测试会从参数上看不见这份依赖。",
       "why": "把容器里的用户服务当成全 JVM 只有一个，测试再起一个容器就对不上。把可变的日历放进静态字段，后一次 set 会改掉前一次还在用的日期。",
       "example": "同一进程里 Runtime.getRuntime 两次拿到的是同一对象。同一 Spring 容器里无状态的 InventoryClient 默认一份。再起一个容器，同名 Bean 是另一份。静态字段里放一个 Calendar，两个请求先后 setTime，后一个请求看见的是前一个改过的日期。",
       "task": "给一个 getInstance 写下范围：进程、容器，还是每次调用都新建。再写下这份实例上有没有会被并发改掉的字段。",
@@ -13901,7 +13901,7 @@
       "id": "pattern-proxy-stand-in",
       "title": "代理决定你能不能碰到目标，装饰器在外面加行为",
       "prompt": "为什么代理和装饰器都是同一接口再包一层，就当成同一个模式？",
-      "core": "两者都实现同一接口，并且里面持有另一个对象。差别在包这一层的原因。装饰器假定目标动作会发生，它在前后加上可拆掉的行为，例如缓冲；这层拆掉之后，目标仍按原样执行。代理决定调用方能不能、以及何时碰到目标：还没创建就先拦住、没有权限就拒绝、目标在另一台机器上就由代理转发。被拒绝时目标方法没有运行。JDK 的 Proxy.newProxyInstance 只是生成这种替身的一种办法，而且只能代理接口，见 java-proxy-needs-interface。生成方式不能代替“这一层在控制什么”。目标内部自己调自己的方法时，调用不经过外面的代理，见 spring-aop-self-invocation。",
+      "core": "两者都实现同一接口，并且里面持有另一个对象。差别在包这一层的原因。装饰器假定目标动作会发生，它在前后加上可拆掉的行为，例如缓冲；这层拆掉之后，目标仍按原样执行。代理决定调用方能不能、以及何时碰到目标：还没创建就先拦住、没有权限就拒绝、目标在另一台机器上就由代理转发。被拒绝时目标方法没有运行。JDK 的 Proxy.newProxyInstance 只是生成这种替身的一种办法，而且只能代理接口，见 `java-proxy-needs-interface`。生成方式不能代替“这一层在控制什么”。目标内部自己调自己的方法时，调用不经过外面的代理，见 `spring-aop-self-invocation`。",
       "why": "把权限检查写成总是转发的一层，失败时仍然调用了扣款。把缓冲说成代理，调用方以为关掉外层就读不到文件，其实只是少了一层缓冲。",
       "example": "读文件外面包 BufferedInputStream，read 仍会读到文件，这是装饰器。下单前面放一个检查登录的替身，未登录时 place 没有被调用，这是代理。两者的字段都是里面那个对象，只看字段区分不开。",
       "task": "选一个包了一层的类。写下里面那个方法在什么条件下不会被调用。一次都不跳过，就不要叫代理。",
@@ -13940,7 +13940,7 @@
       "id": "pattern-facade-entry",
       "title": "外观把子系统的顺序收成一次调用",
       "prompt": "为什么调用方要按顺序自己调用库存、支付和写单，还说这是三个策略？",
-      "core": "外观给一组必须按顺序协作的对象一个粗粒度入口。调用方调用这一次，不再自己持有这几个子系统，也不再记住谁先谁后。它不换算法，所以不是策略。它不把别人的方法改成你的方法名，所以不是适配器。子系统仍保留自己的接口，给需要细粒度的代码用。外观只多一个入口，不是把无关的查询、报表、退款都收进同一个上帝类。JdbcTemplate 把连接、语句和结果集的开关收进模板，SQL 仍由回调给出，那是模板方法加一个窄入口，见 spring-jdbctemplate-callback。业务上的 place(order) 若把库存、支付、写单藏进这一次调用，控制器里就不应再出现这三行。",
+      "core": "外观给一组必须按顺序协作的对象一个粗粒度入口。调用方调用这一次，不再自己持有这几个子系统，也不再记住谁先谁后。它不换算法，所以不是策略。它不把别人的方法改成你的方法名，所以不是适配器。子系统仍保留自己的接口，给需要细粒度的代码用。外观只多一个入口，不是把无关的查询、报表、退款都收进同一个上帝类。JdbcTemplate 把连接、语句和结果集的开关收进模板，SQL 仍由回调给出，那是模板方法加一个窄入口，见 `spring-jdbctemplate-callback`。业务上的 place(order) 若把库存、支付、写单藏进这一次调用，控制器里就不应再出现这三行。",
       "why": "三个调用散落在控制器里，下一处下单忘了先占库存。改顺序时要改每一处调用方。",
       "example": "控制器里依次 inventory.reserve、payment.charge、orders.save。抽成 Checkout.place(order) 之后，控制器只留这一行。库存失败时支付不应被调用，这个判断留在 place 里面。控制器的 diff 里不再出现 payment。",
       "task": "找出一处按固定顺序调用三个以上协作者的方法。收成一次调用后，写下调用方还剩哪一行，以及失败时哪一个子系统不应再被碰到。",
@@ -14057,7 +14057,7 @@
       "id": "pattern-flyweight-share",
       "title": "享元共享的是不变的那一部分，变化的部分调用时再传入",
       "prompt": "为什么很多相同的商品规格各 new 一份，就把共享一份叫成单例？",
-      "core": "享元把很多逻辑对象里相同且不变的内部状态共享成一份，把每次不同的外部状态留在调用参数里。共享的那份不能被某一次调用改掉，否则所有逻辑对象一起变。单例是整个对象在范围内只有一份。享元通常有很多个逻辑对象，只是它们的不变部分指向同一份。Integer.valueOf 对一小段整数返回缓存实例，这是库里的共享；这段缓存不是数值相等的定义，比较包装值仍看值，见 java-autoboxing-cache。不要为了省对象去共享一个还会改的订单。",
+      "core": "享元把很多逻辑对象里相同且不变的内部状态共享成一份，把每次不同的外部状态留在调用参数里。共享的那份不能被某一次调用改掉，否则所有逻辑对象一起变。单例是整个对象在范围内只有一份。享元通常有很多个逻辑对象，只是它们的不变部分指向同一份。Integer.valueOf 对一小段整数返回缓存实例，这是库里的共享；这段缓存不是数值相等的定义，比较包装值仍看值，见 `java-autoboxing-cache`。不要为了省对象去共享一个还会改的订单。",
       "why": "一万行订单明细各带一份相同的币种、单位和展示名，这些不变字段重复占用。把整个明细做成单例，数量和单价就会串。",
       "example": "币种 CNY 的代码和符号是一份共享对象。每一行的金额是调用时传入的，不写进共享对象。两个明细的币种是同一引用，金额各是各的。有人改了共享对象的符号，所有 CNY 行的符号一起变，这一份就不能再共享。",
       "task": "标出一份会被很多对象用到的数据里，哪些字段创建后不再变，哪些每次调用都不同。只把不变的那一份共享。",
@@ -14096,11 +14096,11 @@
       "id": "pattern-strategy-swap",
       "title": "策略换掉的是算法，调用那一行保持不变",
       "prompt": "为什么每加一种计价规则，都去结算方法里再写一个 else if？",
-      "core": "策略把会变的算法做成同一个接口的不同对象。调用方持有这个接口，调用的方法名不变，换的是对象。上一课要求先指出变化点：这里变化点就是算法本身。如果连步骤的先后顺序都要换，那不是策略，是下一课的模板解决不了、应继续把整个算法换成另一个对象的情况。稳定的两三支判断可以留在原地；会按产品不断加规则时，才值得把每支提出去。",
+      "core": "策略把会变的算法做成同一个接口的不同对象。调用方持有这个接口，调用的方法名不变，换的是对象。上一课要求先指出允许变的那一块：这里允许变的那一块就是算法本身。如果连步骤的先后顺序都要换，那不是策略，是下一课的模板解决不了、应继续把整个算法换成另一个对象的情况。稳定的两三支判断可以留在原地；会按产品不断加规则时，才值得把每支提出去。",
       "why": "规则都写在结算方法里时，新规则必须修改这条已经上线的方法，旧规则的测试也会被一起打开。算法对象分开之后，新规则是一个新类，结算方法仍调用同一个接口方法。",
       "example": "settle(order) 里用 else if 处理满减、会员价、优惠券。调用方写成 Discount discount = …; discount.apply(order) 之后，三种规则是三个类，settle 不再出现这三支。再加限时价时，新增一个实现，settle 的调用行仍是 apply。",
       "task": "把一段按类型分支的计价改成“同一个方法、不同对象”。写下调用行，以及新增一种规则时哪个文件会变、哪个文件不应再变。",
-      "answer": "调用行保持为接口上的同一个方法，例如 apply。新增规则时新增一个实现类。结算方法不应再增加 else if。如果新增规则必须改调用顺序或改掉方法名，变化点就不是一个可替换的算法，不要把它叫成策略。",
+      "answer": "调用行保持为接口上的同一个方法，例如 apply。新增规则时新增一个实现类。结算方法不应再增加 else if。如果新增规则必须改调用顺序或改掉方法名，允许变的那一块就不是一个可替换的算法，不要把它叫成策略。",
       "keywords": "策略模式 算法 接口 分支",
       "diagram": "diagrams/pattern-strategy.svg",
       "deep": [
@@ -14135,7 +14135,7 @@
       "id": "pattern-template-steps",
       "title": "模板定死步骤顺序，只换其中一步的正文",
       "prompt": "为什么把打开、计算、关闭都写成子类可以随便重排的方法？",
-      "core": "模板把顺序写在一处：先准备，再调用那一步，再收尾。子类或回调只替换其中一步的正文，不能改顺序。上一课的策略是整个算法都可以换；这一课的变化点只是某一步里面做什么。若两种流程的步骤先后不同，应做成两个策略，而不是在子类里重写整个骨架。调用方调用的是骨架那一个方法，不自己串联每一步。",
+      "core": "模板把顺序写在一处：先准备，再调用那一步，再收尾。子类或回调只替换其中一步的正文，不能改顺序。上一课的策略是整个算法都可以换；这一课的允许变的那一块只是某一步里面做什么。若两种流程的步骤先后不同，应做成两个策略，而不是在子类里重写整个骨架。调用方调用的是骨架那一个方法，不自己串联每一步。",
       "why": "每个子类都复制“打开、计算、关闭”时，有人会漏掉关闭，或把关闭写到计算前面。顺序一旦散落，资源泄漏和半成品会按子类不同的方式出现。骨架只留一份时，漏掉的是同一种错误，而不是每种导出各漏一次。",
       "example": "导出报表的顺序是打开写入器、写正文、关闭写入器。子类只实现写正文。调用方只调用 export()。如果某个子类把关闭挪到写正文之前，写入还没发生就把写入器关了，这份骨架就被拆掉了。那种流程应另做一个对象，而不是重写 export 的顺序。",
       "task": "写一个三步骨架，只把中间一步留给替换。再写一种必须调换前后顺序的需求，说明它为什么不能放进这个骨架。",
@@ -14174,7 +14174,7 @@
       "id": "pattern-observer-push",
       "title": "观察者自己登记，主体不把每个响应者写进返回值",
       "prompt": "为什么每增加一个要通知的模块，就去订单方法里再注入一个服务并调用它？",
-      "core": "观察者先登记，主体在事情发生时通知已登记的各方。订单方法的返回值仍是这次下单的结果，不是审计、邮件、积分各自返回值拼起来的东西。上一课的适配器解决形状不合；这一课的变化点是“谁要知道这件事”，而且这些人会继续增加。主体如果逐个注入并调用，每增加一方就要改主体。登记之后，主体只保留“通知已经发生”。通知默认并不等于换一条线程稍后执行，那是投递方式，后面 Spring 那一课再分开。",
+      "core": "观察者先登记，主体在事情发生时通知已登记的各方。订单方法的返回值仍是这次下单的结果，不是审计、邮件、积分各自返回值拼起来的东西。上一课的适配器解决形状不合；这一课的允许变的那一块是“谁要知道这件事”，而且这些人会继续增加。主体如果逐个注入并调用，每增加一方就要改主体。登记之后，主体只保留“通知已经发生”。通知默认并不等于换一条线程稍后执行，那是投递方式，后面 Spring 那一课再分开。",
       "why": "订单方法里依次调用账单、审计和邮件时，邮件抛错会决定订单方法的成败，而且每加一个下游都要改订单。下游的名单散落在业务方法里，读代码的人无法从登记处看见全部响应者。",
       "example": "placeOrder 在保存成功后调用 billing.onPaid 和 mail.onPaid，返回值是 OrderId。增加审计时必须再注入 AuditService 并加一次调用。改成审计自己登记之后，placeOrder 只发出“已支付”这件事，返回值仍是 OrderId，审计的处理结果不写进这个返回值。",
       "task": "列出一个业务方法里所有“顺便调用”的下游。说明哪些应该改为登记，以及业务方法的返回值还是什么。",
@@ -14213,7 +14213,7 @@
       "id": "pattern-chain-stop",
       "title": "责任链上的一环可以选择不往后传",
       "prompt": "为什么每个处理者都调用下一个，就和装饰器分不开？",
-      "core": "责任链把处理者排成一列，每个处理者决定自己处理之后还要不要把请求交给下一个。停下来是这个模式的内容：不调用下一个，后面的处理者和最终目标都不会运行。装饰器通常总是把调用转进去，加的是行为。过滤器里调用 chain.doFilter 就是继续；不调用就是停。Spring Security 的过滤链用的是这件事：未登录的请求在链上被拒绝，控制器不会执行。认证放在哪一层、和拦截器差在哪，见 spring-security-filter-chain 和 spring-filter-vs-interceptor。这一课只核对“停”和“继续”是谁的责任。观察者是事情已经发生、多方各自响应；链是请求还在路上，下一环可能根本到不了。",
+      "core": "责任链把处理者排成一列，每个处理者决定自己处理之后还要不要把请求交给下一个。停下来是这个模式的内容：不调用下一个，后面的处理者和最终目标都不会运行。装饰器通常总是把调用转进去，加的是行为。过滤器里调用 chain.doFilter 就是继续；不调用就是停。Spring Security 的过滤链用的是这件事：未登录的请求在链上被拒绝，控制器不会执行。认证放在哪一层、和拦截器差在哪，见 `spring-security-filter-chain` 和 spring-filter-vs-interceptor。这一课只核对“停”和“继续”是谁的责任。观察者是事情已经发生、多方各自响应；链是请求还在路上，下一环可能根本到不了。",
       "why": "每个过滤器都无条件 doFilter，权限失败仍会进控制器。把“不继续”写成总是转发的一层，读代码的人会以为目标动作仍然发生。",
       "example": "日志过滤器调用 chain.doFilter，请求继续。认证过滤器在没有身份时直接写 401，不调用下一个，控制器没有日志。两条都实现同一接口，差别只在有没有把请求交出去。",
       "task": "在一列处理者里标出哪一环可以不调用下一个。写出不调用时，后面哪一段代码不会运行。",
@@ -14447,7 +14447,7 @@
       "id": "java-runnable-is-command",
       "title": "把要做的事放进 Runnable，线程池里不写业务",
       "prompt": "为什么把发货步骤直接写进线程池的实现，每换一种任务就改池子？",
-      "core": "Runnable 把一段要执行的工作收成对象，Executor.execute 接收这个对象。池子负责何时在哪条线程上调用 run，不包含订单或邮件的步骤。这是命令：变化点是工作内容，调用方是 execute 那一行。池的队列容量、拒绝策略是另一课，这里不改那些参数。工作对象可以带上这次的订单号，池子的类源码里不应出现订单。",
+      "core": "Runnable 把一段要执行的工作收成对象，Executor.execute 接收这个对象。池子负责何时在哪条线程上调用 run，不包含订单或邮件的步骤。这是命令：允许变的那一块是工作内容，调用方是 execute 那一行。池的队列容量、拒绝策略是另一课，这里不改那些参数。工作对象可以带上这次的订单号，池子的类源码里不应出现订单。",
       "why": "发货逻辑写进池的实现之后，发邮件也要改同一份池子，两种业务互相看见。把工作放进 Runnable 之后，换一种任务只是换提交给 execute 的对象，池的类不用打开。",
       "example": "executor.execute(() -> ship(orderId))。execute 的参数是这段工作。线程池源码和配置类里没有 ship。另一处 executor.execute(() -> mail(orderId)) 仍调用同一个 execute。orderId 被工作对象带上，而不是写成池子的字段。",
       "task": "提交两种工作给同一个 Executor。指出池的类不应修改的原因，以及订单号应放在哪里。",
@@ -15541,7 +15541,7 @@
       "id": "java-lock-flexibility",
       "title": "Lock 的优势不是“自带读写锁”",
       "prompt": "为什么把 Lock 接口的最大优势说成“读写分开的锁，好写 ConcurrentHashMap”不准确？",
-      "core": "java.util.concurrent.locks.Lock 相对 synchronized 的关键能力是：可在不同代码块里 lock/unlock、tryLock 非阻塞尝试、限时获取、可中断的获取，以及 newCondition()。读写分离属于 ReadWriteLock（及其 ReadLock/WriteLock），不是 Lock 接口的默认语义；ReentrantLock 仍是互斥锁。ConcurrentHashMap 的并发结构是专门实现，不能概括成“外面套一把读写锁”。需要多读者单写者时，应显式选择 ReadWriteLock 或并发容器，并说明释放锁仍要放在 finally。",
+      "core": "java.util.concurrent.locks.Lock 相对 synchronized，多了几条获取与释放方式。可以在不同代码块里 lock/unlock。可以用 tryLock 做非阻塞尝试，也可以限时获取，获取过程还可以中断。另外还能 newCondition()。读写分离属于 ReadWriteLock（及其 ReadLock/WriteLock），不是 Lock 接口的默认语义。ReentrantLock 仍是互斥锁。ConcurrentHashMap 的并发结构是专门实现，不能概括成“外面套一把读写锁”。需要多读者单写者时，应显式选择 ReadWriteLock 或并发容器，并说明释放锁仍要放在 finally。",
       "why": "把 Lock 背成“自带读写锁、用来写 ConcurrentHashMap”，只要互斥时会选错接口，也会把并发容器讲成外层加锁。区分信号是读写分离在 ReadWriteLock 上，ReentrantLock 仍然是互斥锁。",
       "example": "缓存更新用 ReentrantLock + tryLock 做超时失败；多读少写的树用 ReentrantReadWriteLock。统计表用 ConcurrentHashMap.computeIfAbsent，而不是自己持有写锁去 get/put。",
       "task": "列出 Lock 相对 synchronized 的四条能力，并标明哪一条其实属于 ReadWriteLock；再写一句为何不能说 ConcurrentHashMap=读写锁。",
@@ -17708,7 +17708,7 @@
       "id": "mysql-replication-flow",
       "title": "复制三步：dump、relay、applier，不是 replay log",
       "prompt": "为什么把复制说成“主库写日志、从库拷到中继再重做”时，还要改掉 replay log 并补上线程模型？",
-      "core": "MySQL 复制默认异步：源服务器把更新写入二进制日志；副本连接后，源上的 Binlog Dump 线程发送事件；副本的 I/O（receiver）线程把事件写入本地中继日志（relay log）；SQL（applier）线程读取中继日志并应用。副本并行复制时，协调线程把事务分给多个 worker。资料里的 replay log 是误称。基于位点的复制要对齐文件与位置；GTID 用事务标识简化故障转移。还有半同步、延迟复制等变体，不能把三步示意图当成唯一拓扑。",
+      "core": "MySQL 复制默认是异步的。源服务器先把更新写入二进制日志。副本连上之后，源上的 Binlog Dump 线程发送事件；副本的 I/O（receiver）线程把事件写入本地中继日志（relay log）；SQL（applier）线程再读取中继日志并应用。副本并行复制时，协调线程把事务分给多个 worker。资料里的 replay log 是误称。基于位点的复制要对齐文件与位置；GTID 用事务标识简化故障转移。还有半同步、延迟复制等变体，不能把三步示意图当成唯一拓扑。",
       "why": "把复制说成 replay log，排障时对不上手册里的 dump 和 applier，也会把并行应用和 GTID 想成单线程重做。信号是线程名和日志文件名对得上哪一章，而不是口头的“重做日志”。",
       "example": "SHOW REPLICA STATUS 里看接收与应用是否落后；源上 PROCESSLIST 可见 Binlog Dump。切换应用只读到副本前，要确认应用位点或 GTID 集合，而不是假设“能连上就一致”。",
       "task": "画出源与一个异步副本的三条线程和两类日志文件，标出 relay 与 binary 的区别，并写一句半同步比默认异步多等的是什么。",
@@ -18785,11 +18785,11 @@
       "id": "redis-cluster-cli-not-trib",
       "title": "创建集群用 redis-cli --cluster，不是 redis-trib",
       "prompt": "为什么导图还指向 cluster-install.sh 和 Redis 3.0 才有的安装脚本？",
-      "core": "集群能力从 Redis 3.0 进入核心，这点仍对。**创建和运维入口**在 Redis 5 换成 `redis-cli --cluster`（create、add-node、reshard）。`redis-trib.rb` 已移除。槽位仍是 16384，不是一致性哈希，见 `redis-string-max-512mb`。哨兵不分片，见 `redis-sentinel-cluster`。导图上的 Cluster-install.sh 不能当现行答案。",
+      "core": "集群能力从 Redis 3.0 进入核心，这点仍对。**创建和运维入口**在 Redis 5 换成 `redis-cli --cluster`（create、add-node、reshard）。`redis-trib.rb` 已移除。哈希槽仍是 16384，不是一致性哈希，见 `redis-string-max-512mb`。哨兵不分片，见 `redis-sentinel-cluster`。导图上的 Cluster-install.sh 不能当现行答案。",
       "why": "按旧脚本去找 redis-trib.rb，新版本包里没有这个文件，会误以为集群只能靠第三方 Codis。",
       "example": "redis-cli --cluster create 127.0.0.1:7001 ... --cluster-replicas 1。不要再执行 redis-trib.rb create。CLUSTER NODES 里看 16384 个槽的分配。",
       "task": "划掉 redis-trib 和 Codis 默认。写出创建命令，以及哨兵是否分片。",
-      "answer": "划掉「redis-trib 和 Codis 默认」。创建用 redis-cli --cluster。槽位 16384。哨兵只做主从切换。3.0 起核心才有集群，这点保留。",
+      "answer": "划掉「redis-trib 和 Codis 默认」。创建用 redis-cli --cluster。哈希槽 16384。哨兵只做主从切换。3.0 起核心才有集群，这点保留。",
       "keywords": "Redis Cluster redis-cli redis-trib 16384",
       "origin": "本地库 Redis 思维导图的集群枝",
       "diagram": "diagrams/redis-cluster-cli.svg",
@@ -18806,7 +18806,7 @@
       "points": [
         "运维入口是 redis-cli --cluster",
         "redis-trib.rb 已不是创建命令",
-        "集群从 3.0 进入核心，槽位仍是 16384"
+        "集群从 3.0 进入核心，哈希槽仍是 16384"
       ],
       "references": [
         [
@@ -21767,7 +21767,7 @@
       "id": "gateway-auth-where",
       "title": "网关证明“是谁”，对象级“能不能改这行”仍在服务里",
       "prompt": "网关已经校验了 JWT，订单服务是不是可以不再检查用户？",
-      "core": "网关适合做全站统一的身份：令牌是否有效、有没有登录、是不是这个租户的入口。它看不到订单行属不属于这个用户，也不该为了做对象级授权去查每张业务表。顺序是先在网关证明是谁，再把主体传到服务，由服务核对这行订单的所有者。边界是网关 401 表示没证明身份，服务 403 表示这个身份不许动这份资源。把鉴权只做在网关，内部调用被绕过时就会没有第二道。服务不能只信任“请求是从网关进来的”。沿顺序看，前一步的输出是后一步的输入。边界不满足就停在这一步，不要把失败算到旁边的组件上，也不要几处一起改。改之前先写下这一步单独的预测。只改对得上的那一步。现象对不上就停在这一步，不要把邻接的配置一起改掉。",
+      "core": "网关适合做全站统一的身份：令牌是否有效、有没有登录、是不是这个租户的入口。它看不到订单行属不属于这个用户，也不该为了做对象级授权去查每张业务表。顺序是先在网关证明是谁，再把主体传到服务，由服务核对这行订单的所有者。边界是网关 401 表示没证明身份，服务 403 表示这个身份不许动这份资源。把鉴权只做在网关，内部调用被绕过时就会没有第二道。服务不能只信任“请求是从网放进来的”。沿顺序看，前一步的输出是后一步的输入。边界不满足就停在这一步，不要把失败算到旁边的组件上，也不要几处一起改。改之前先写下这一步单独的预测。只改对得上的那一步。现象对不上就停在这一步，不要把邻接的配置一起改掉。",
       "why": "只在网关验一次令牌，内部调用和对象级权限会漏，别人的订单号也能被改。区分信号是网关看令牌，服务看这行数据属不属于这个用户。看走眼时会把旁边那一层一起改掉，真正的差别要能单独指出来。",
       "example": "网关拒绝没有令牌的请求。GET /orders/99 即使令牌有效，订单服务仍要确认 99 属于当前用户，不能只因为网关放行就返回。网关 401 是没证明身份，服务 403 是这个身份不许动这行。把输入、输出和失败时留下的那一行同时记下来，不要只看最后没有报错。",
       "task": "画出登录请求经过网关和服务的两道检查。标出哪一道看令牌，哪一道看行数据。",
@@ -22925,7 +22925,7 @@
         },
         {
           "title": "与下一课",
-          "body": "交换器类型与绑定细节见 rabbit-exchange-binding；ack 时序见 rabbit-ack。"
+          "body": "交换器类型与绑定细节见 `rabbit-exchange-binding`；ack 时序见 `rabbit-ack`。"
         }
       ],
       "points": [
@@ -23116,7 +23116,7 @@
         },
         {
           "title": "顺序课",
-          "body": "同一主题乱序的原因与按键固定队列，见 rocketmq-queue-order。"
+          "body": "同一主题乱序的原因与按键固定队列，见 `rocketmq-queue-order`。"
         }
       ],
       "points": [
@@ -23856,7 +23856,7 @@
       "example": "订单服务只导入 BOM，再加入 Nacos 发现、Nacos 配置和 Sentinel。调用库存使用 OpenFeign，地址由 LoadBalancer 从 Nacos 的名单里选择。入口网关跑在另一个进程里。",
       "task": "画出一次下单经过的进程，标出谁保存地址、谁选择地址、谁拒绝超额流量、谁提交两个数据库。再对照 BOM 版本和当前 Spring Boot 版本是否落在官方说明的同一行。",
       "promptAnswer": "不是。BOM 只对齐版本，不会把注册、网关、限流和分布式事务一起装进进程。",
-      "answer": "进程：浏览器 → 独立的网关进程 → 订单服务 → 库存服务。保存地址的是 Nacos，名单里是库存实例的 IP 和端口。选择地址的是订单进程里的 LoadBalancer，OpenFeign 只按选中的地址发 HTTP。拒绝超额流量的是订单进程里的 Sentinel，请求已经进入这个进程后才按资源规则拦截。提交两个数据库：这一次示例只加了 Nacos 和 Sentinel，没有 Seata，订单库和库存库各自提交，没有人做跨库提交；要两个库一起成功或一起回滚，才接入 Seata。版本：以 2023.x README 为例，Spring Cloud Alibaba BOM 与 Spring Cloud 2023、Spring Boot 3.2.x 同一行，最低 JDK 17；当前项目的 Boot 版本必须落在这一行，对不上就不能混用。",
+      "answer": "进程：浏览器 → 独立的网放进程 → 订单服务 → 库存服务。保存地址的是 Nacos，名单里是库存实例的 IP 和端口。选择地址的是订单进程里的 LoadBalancer，OpenFeign 只按选中的地址发 HTTP。拒绝超额流量的是订单进程里的 Sentinel，请求已经进入这个进程后才按资源规则拦截。提交两个数据库：这一次示例只加了 Nacos 和 Sentinel，没有 Seata，订单库和库存库各自提交，没有人做跨库提交；要两个库一起成功或一起回滚，才接入 Seata。版本：以 2023.x README 为例，Spring Cloud Alibaba BOM 与 Spring Cloud 2023、Spring Boot 3.2.x 同一行，最低 JDK 17；当前项目的 Boot 版本必须落在这一行，对不上就不能混用。",
       "keywords": "Spring Cloud Alibaba BOM Nacos Sentinel Seata 版本对齐",
       "deep": [
         {
@@ -24385,7 +24385,7 @@
       "id": "dubbo-loadbalance-random-default",
       "title": "Dubbo 默认是加权随机，轮询会在慢节点上堆积",
       "prompt": "为什么只背 RoundRobin，或把 LeastActive 说成“响应最短”，会对不上 Dubbo 的负载均衡？",
-      "core": "Apache Dubbo 常见策略是 RandomLoadBalance（默认、可加权）、RoundRobinLoadBalance、LeastActiveLoadBalance、ConsistentHashLoadBalance，较新版本还有 ShortestResponseLoadBalance。LeastActive 看的是进行中的调用数，不是直接比 RT。轮询会把请求打到已经变慢但未摘除的提供者上，调用被拖住后后续仍轮到它，形成堆积。一致性哈希用虚拟节点降低增减节点时的剧烈迁移。用 loadbalance 参数在服务或方法上指定。",
+      "core": "Apache Dubbo 常见负载策略有这些。默认是可加权的 RandomLoadBalance，另外还有 RoundRobinLoadBalance、LeastActiveLoadBalance、ConsistentHashLoadBalance。较新版本还有 ShortestResponseLoadBalance。LeastActive 看的是进行中的调用数，不是直接比响应时间。轮询会把请求打到已经变慢但未摘除的提供者上；调用被拖住后，后续仍轮到它，形成堆积。一致性哈希用虚拟节点，降低增减节点时的剧烈迁移。用 loadbalance 参数在服务或方法上指定。",
       "why": "只背 RoundRobin，或把 LeastActive 当成响应最短，线上会去拧错误的旋钮。区分信号是默认策略是加权随机；一台变慢但还活着时，轮询仍按次序把请求打过去，调用在那台上面堆积。",
       "example": "未写 loadbalance 的服务，提供者按权重被随机选中，不是依次轮询。把一台提供者的处理拖慢但不摘除，roundrobin 仍轮到它，进行中的调用变多。改成 leastactive 后，新请求更少分给这台进行中调用已经很多的节点。",
       "task": "对照 Dubbo LoadBalance 文档列出默认策略；说明 roundrobin 在一台变慢未挂时会发生什么。",
@@ -27520,7 +27520,7 @@
       "track": "java",
       "group": "工程实践",
       "id": "request-trace-one-hop",
-      "title": "一次下单只应有一条追踪，从网关进到 SQL 出",
+      "title": "一次下单只应有一条追踪，从网放进到 SQL 出",
       "prompt": "用户说下单慢，日志、指标、链路各有一段数字，为什么仍定位不到是哪一跳？",
       "core": "一次请求进出系统要带同一个追踪标识。W3C Trace Context 用 traceparent 在进程间传递。网关、订单服务、数据库访问都应挂在同一条 trace 上，span 表示这一跳花了多少时间。日志里写入 trace id，才能从一条用户投诉跳到那一次调用。指标回答“这一类请求现在怎样”，链路回答“这一次卡在哪”。Nginx 超时、网关超时、HTTP 客户端超时、连接池等待、SQL 执行是不同的 span，不能共用一个数字。没有传播时，服务 A 和服务 B 的日志对不上同一笔订单。",
       "why": "学习者会把日志、指标和链路分成三张互不认识的截图，每张都有一个数字。用户说下单慢时，对不出是网关、连接池还是语句。同一笔请求在三处出现同一个追踪标识，变慢的那一段是借连接而不是语句，才说明定位的是这一跳。",

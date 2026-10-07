@@ -5,14 +5,14 @@ import { TRACK_INTRO, TRACK_LABEL } from '@/data/meta'
 import { shortTitle } from '@/data/reading'
 import { groupLabel, groupTitle, isTrack, lessonPath, resumePath } from '@/data/routes'
 import { useProgress } from '@/state/progress'
-import type { Lesson } from '@/types/curriculum'
+import type { LessonSummary } from '@/data/curriculum'
 
 function LessonRows({
   items,
   doneIds,
   onOpen,
 }: {
-  items: Lesson[]
+  items: LessonSummary[]
   doneIds: string[]
   onOpen: (id: string) => void
 }) {
@@ -117,7 +117,7 @@ export function HomePage() {
             {sections.map((section) => {
               const items = section.ids
                 .map((id) => findLesson(id))
-                .filter((item): item is Lesson => !!item && item.track === track && item.group === label)
+                .filter((item): item is LessonSummary => !!item && item.track === track && item.group === label)
               if (!items.length) return null
               return (
                 <div key={section.title}>

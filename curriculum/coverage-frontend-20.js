@@ -3,19 +3,19 @@
 const COVERAGE_FRONTEND_20 = [
   {
     track:'frontend', group:'技术选型', id:'fe-pick-by-surface',
-    title:'先写交付面，再决定留哪一个框架',
+    title:'先定目标端，再决定留哪一个框架',
     prompt:'为什么「公司都在用 React」还是选不出该新建 Nuxt、小程序还是原生 App？',
-    core:'选型先写这次要交到哪里、第一屏 HTML 里要不要有正文、团队已经会调试哪一种更新。浏览器里的操作台可以是客户端应用。文章、商品页要在查看源码时就有正文，用会在服务端取数的应用框架，或用 Astro 把静态 HTML 和少量交互岛分开。微信小程序要登记页面并交出该端模板，见 uniapp-pages-json-entry、taro-pages-in-app-config。没有 DOM 的手机界面分两支：像素要自己画、两端外观一致时用 Flutter，见 flutter-widget-not-html；要系统控件时用 React Native 的视图，见 rn-view-not-div。四个交付面可以是四个产品，同一个页面不要同时承诺四种运行时。谁画这一帧见 cross-four-who-paints。',
-    why:'先按热度选定框架，再发现正文不在 HTML 里、小程序没有页面登记、手机上还在找 div。交付面写在前面时，框架只是该面的实现，换一句需求才会换框架。',
-    example:'后台表格：浏览器应用，首屏可以是壳。帮助中心文章：源码里要有正文。客服入口只上微信：单独的小程序工程。已有 App 里要系统列表：React Native 的 View 和 FlatList，见 rn-flatlist-window。两端按钮必须长得一样、由引擎来画：Flutter。四句需求各留一个工程，不把四个脚手架装进同一个 package.json。',
-    task:'给手上的功能写四格：谁打开、首屏 HTML 要不要正文、有没有小程序页面、有没有原生视图。每一格只留一个框架名，空着的格写「这次不交付」。',
-    answer:'四格示例：谁打开写成浏览器操作台，框架留 Vue 或 React 客户端应用；小程序和原生两格写「这次不交付」。首屏 HTML 要正文时换成 Nuxt、Next 或 Astro。有小程序页面时留 uni-app 或 Taro，浏览器格写这次不交付。有原生视图时留 React Native 或 Flutter。每一格只一个名字。',
-    keywords:'前端选型 交付面 SSR 小程序 React Native Astro',
+    core:'选型先定这次交到哪一端：浏览器里的后台或工具页、要在「查看网页源码」里就有正文的内容页、微信小程序，还是手机 App。再写下第一屏 HTML 里要不要有正文，以及团队已经会调试哪一种界面更新方式。浏览器后台可以做成纯客户端应用，首屏允许先是空壳。文章、商品页要在源码里就有正文，用会在服务端取数的框架（如 Nuxt、Next），或用 Astro 把静态 HTML 和少量可交互组件分开。微信小程序要单独登记页面并交出该端模板，见 `uniapp-pages-json-entry`、`taro-pages-in-app-config`。没有 DOM 的手机界面分两支：自己画像素、两端外观一致时用 Flutter，见 `flutter-widget-not-html`；要系统原生控件时用 React Native，见 `rn-view-not-div`。四个目标端可以是四个产品；同一个页面不要同时承诺四种运行时。谁负责画这一帧，见 `cross-four-who-paints`。',
+    why:'先按热度选定框架，再发现正文不在 HTML 里、小程序没有页面登记、手机上还在找 div。目标端写在前面时，框架只是该端的实现，换一句需求才会换框架。',
+    example:'后台表格：浏览器应用，首屏可以是壳。帮助中心文章：源码里要有正文。客服入口只上微信：单独的小程序工程。已有 App 里要系统列表：React Native 的 View 和 FlatList，见 `rn-flatlist-window`。两端按钮必须长得一样、由引擎来画：Flutter。四句需求各留一个工程，不把四个脚手架装进同一个 package.json。',
+    task:'给手上的功能写四格：谁打开、首屏 HTML 要不要正文、有没有小程序页面、有没有原生视图。每一格只留一个框架名，空着的格写「这次不做」。',
+    answer:'四格示例：谁打开写成浏览器后台，框架留 Vue 或 React 客户端应用；小程序和原生两格写「这次不做」。首屏 HTML 要正文时换成 Nuxt、Next 或 Astro。有小程序页面时留 uni-app 或 Taro，浏览器格写这次不做。有原生视图时留 React Native 或 Flutter。每一格只一个名字。',
+    keywords:'前端选型 目标端 SSR 小程序 React Native Astro',
     diagram:'diagrams/fe-pick-surface.svg',
-    points:['先写打开方式和首屏里有没有正文','内容页用服务端 HTML 或岛屿，操作台可以是客户端应用','小程序和原生界面各自一个运行时'],
+    points:['先写打开方式和首屏里有没有正文','内容页用服务端 HTML 或少量可交互组件，后台可以是客户端应用','小程序和原生界面各自一个运行时'],
     deep:[
-      {title:'岛屿和整页应用',body:'Astro 先给出静态 HTML，只把标成岛屿的组件送去客户端执行。整页都是登录后的表格和表单时，路由、数据和权限是一整棵应用，用该 UI 模型自己的应用框架，而不是把每个按钮都包成一座岛。'},
-      {title:'怎样自己验证',body:'打开页面源码。正文已经在 HTML 里，才算内容页的交付。源码只有空壳、数据在浏览器请求回来，就是客户端应用。再看仓库是不是还夹着第二套小程序或原生工程。'}
+      {title:'静态页里的可交互组件和整页应用',body:'Astro 先给出静态 HTML，只把标成可交互的组件送去客户端执行。整页都是登录后的表格和表单时，路由、数据和权限是一整棵应用，用该 UI 模型自己的应用框架，而不是把每个按钮都单独拆成一块客户端代码。'},
+      {title:'怎样自己验证',body:'打开页面源码。正文已经在 HTML 里，才算内容页交到了浏览器。源码只有空壳、数据在浏览器请求回来，就是客户端应用。再看仓库是不是还夹着第二套小程序或原生工程。'}
     ],
     refs:[['Astro：岛屿架构','https://docs.astro.build/en/concepts/islands/'],['React：创建应用','https://react.dev/learn/creating-a-react-app']]
   },

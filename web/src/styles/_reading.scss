@@ -714,16 +714,90 @@
 .lesson-core {
   font-size: var(--lab-text-body);
   line-height: 1.7;
-  white-space: pre-wrap;
   margin: 0;
   max-width: 46rem;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.core-lead {
+  margin: 0;
+  font-size: 1.05em;
+  font-weight: 600;
+  line-height: 1.65;
+  color: var(--lab-ink);
+}
+
+.lesson-ref {
+  color: var(--lab-accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+
+  &:hover {
+    color: var(--lab-ink);
+  }
+}
+
+.core-facets {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.core-facet {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px 12px;
+  align-items: start;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--lab-bg);
+  border: 1px solid var(--lab-line);
 
   p {
-    margin: 0 0 0.85em;
+    margin: 0;
+    line-height: 1.65;
   }
+}
 
-  p:last-child {
-    margin-bottom: 0;
+.core-facet-label {
+  @include label;
+  color: var(--lab-accent);
+  margin-top: 2px;
+}
+
+.core-beats {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  counter-reset: core-beat;
+
+  li {
+    position: relative;
+    padding: 0 0 0 1.75rem;
+    line-height: 1.65;
+    counter-increment: core-beat;
+
+    &::before {
+      content: counter(core-beat, decimal-leading-zero);
+      position: absolute;
+      left: 0;
+      top: 0.15em;
+      font-size: 0.72em;
+      font-weight: 650;
+      letter-spacing: 0.04em;
+      color: var(--lab-muted);
+      font-variant-numeric: tabular-nums;
+    }
   }
 }
 

@@ -26,7 +26,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
-    // antd + 主壳仍会超过默认阈值；AI 课/题库已改为路由懒加载，勿用手动 group 把共享依赖塞进 AI chunk。
-    chunkSizeWarningLimit: 3200,
+    // 主壳含 antd + curriculum-index；bodies / AI 已懒加载。勿用手动 group 把共享依赖塞进 AI chunk。
+    chunkSizeWarningLimit: 1300,
   },
 })

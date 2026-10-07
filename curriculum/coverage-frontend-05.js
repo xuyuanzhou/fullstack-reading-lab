@@ -2,7 +2,7 @@
 const COVERAGE_FRONTEND_05 = [
   {
     track:'frontend', group:'Vue', id:'vue-proxy-null-guard',
-    title:'手写 Proxy：先守住 null 与类型边界',
+    title:'手写 Proxy 要先守住 null 与类型边界',
     prompt:'为什么 typeof null 是 object，却不能 new Proxy(null, handler)？手写 reactive 示例又不等于什么？',
     core:'Proxy（代理）的 target（目标）必须是对象；JavaScript 的历史规则使 typeof null 返回 "object"。因此练习代码若要跳过非对象值，条件应是 value === null || typeof value !== "object"，不能用两个条件同时成立的 &&。这个函数只演示 get/set 陷阱；它没有 Vue 的依赖收集、触发更新、代理缓存或其他边界处理，不能替代 Vue 的 reactive()。实际 Vue reactive() 适用于对象、数组和集合等对象类型；基本类型状态可使用 ref()。',
     why:'一个布尔运算符错误会让 null 穿过检查并在创建代理时抛 TypeError。更大的误区是看到读写日志就以为已经实现了响应式：拦截操作与通知组件重新渲染是两件事。',
@@ -20,7 +20,7 @@ const COVERAGE_FRONTEND_05 = [
   },
   {
     track:'frontend', group:'Vue', id:'vue-array-raw-proxy',
-    title:'数组 push：改原数组还是改代理？',
+    title:'数组 push 改的是原数组还是代理',
     prompt:'raw 数组传给 reactive 后，为什么 raw.push() 与 proxy.push() 不是同一条响应式路径？',
     core:'reactive(raw) 返回与 raw 身份不同的 proxy（代理）。只有经过代理的属性读取和修改才能进入代理陷阱，Vue 也明确指出直接修改原对象不会触发响应式更新。数组方法 push、shift、splice 可以在代理上工作，但不能因为“Proxy 支持数组”就推断 raw.push() 也被追踪。需要进一步区分：通过代理访问嵌套对象，Vue 会给嵌套对象做代理；而一个只记录顶层 get/set 的手写代理不会自动拥有 Vue 的深层响应式能力。',
     why:'误以为数组方法本身就会让页面刷新。对 raw 调用 push 之后，控制台里的长度变了，界面却不动。区分信号是这次写入有没有经过代理：读取长度的 watchEffect 只在代理修改后重跑。',

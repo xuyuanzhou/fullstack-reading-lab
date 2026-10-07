@@ -52,7 +52,7 @@ function svg(kicker, title, desc, height, body) {
 }
 
 const diagrams = {
-  'pattern-gof-catalog.svg': svg('名单', '二十三种先按三族列出', '创建五个、结构七个、行为十一个。这一课只列名字，深入在后面的课。', 420, [
+  'pattern-gof-catalog.svg': svg('设计模式', '二十三种先按三族列出', '创建五个、结构七个、行为十一个。这一课只列名字，深入在后面的课。', 420, [
     card(32, 88, 288, 232, 'accent'),
     tx(48, 120, '创建 5', { size: 16, weight: 600, fill: '#2d4f41' }),
     lines(48, 156, ['工厂方法  抽象工厂', '建造者  原型', '单例'], { size: 14, fill: '#2e3330', lh: 28 }),
@@ -65,7 +65,7 @@ const diagrams = {
     takeaway(340, '写不出这三列时，不要先画某一个模式的类。'),
   ].join('')),
 
-  'pattern-family-test.svg': svg('分族', '先问变的是哪一类', '造出哪一份是创建。怎么接在一起是结构。已经有对象之后怎么走是行为。', 400, [
+  'pattern-family-test.svg': svg('设计模式', '先问变的是哪一类', '造出哪一份是创建。怎么接在一起是结构。已经有对象之后怎么走是行为。', 400, [
     card(32, 88, 288, 180, 'accent'),
     tx(176, 140, '创建', { size: 20, weight: 600, fill: '#2d4f41', anchor: 'middle' }),
     tx(176, 178, '造出哪一份', { size: 14, fill: '#3f6a58', anchor: 'middle' }),
@@ -81,27 +81,27 @@ const diagrams = {
     takeaway(292, '工厂结束在交出产品。策略开始在产品已经在手里。'),
   ].join('')),
 
-  'pattern-gof-rest.svg': svg('其余', '七个先写变化点', '认得名字不等于现在就加一层类。指不出那一块时不要凑数。', 400, [
+  'pattern-gof-rest.svg': svg('设计模式', '七个先写允许变的那一块', '认得名字不等于现在就加一层类。指不出那一块时不要凑数。', 400, [
     card(32, 88, 430, 188),
     tx(48, 120, '标准库已经对上', { size: 16, weight: 600, fill: '#2e3330' }),
     lines(48, 160, ['命令 → Runnable', '迭代器 → Iterator', '先打开 Java 标准库那一组'], { size: 15, fill: '#2e3330' }),
     card(498, 88, 430, 188, 'warn'),
     tx(514, 120, '还没有单独深入课', { size: 16, weight: 600, fill: '#6e3530' }),
-    lines(514, 160, ['原型  中介者  备忘录', '访问者  解释器', '先写变化点，再决定立课'], { size: 15, fill: '#2e3330' }),
+    lines(514, 160, ['原型  中介者  备忘录', '访问者  解释器', '先写允许变的那一块，再决定立课'], { size: 15, fill: '#2e3330' }),
     takeaway(300, '只当场调一个方法、不要排队也不要撤销，不要先做 Command。'),
   ].join('')),
 
-  'pattern-one-variation.svg': svg('模式', '名字不能代替变化点', '类名写成 Factory 之后，若新规则仍要修改同一个 if，变化点还在那个方法里。', 400, [
+  'pattern-one-variation.svg': svg('设计模式', '名字不能代替允许变的那一块', '类名写成 Factory 之后，若新规则仍要修改同一个 if，允许变的那一块还在那个方法里。', 400, [
     card(32, 88, 430, 188, 'warn'),
     tx(48, 120, 'DiscountFactory', { size: 18, weight: 600, fill: '#6e3530' }),
     lines(48, 160, ['if 满减', 'else if 会员价', 'else if 优惠券'], { size: 16, fill: '#2e3330' }),
     card(498, 88, 430, 188, 'accent'),
-    tx(514, 120, '变化点在算法对象', { size: 18, weight: 600, fill: '#2d4f41' }),
+    tx(514, 120, '允许变的那一块在算法对象', { size: 18, weight: 600, fill: '#2d4f41' }),
     lines(514, 160, ['满减、会员价、优惠券', '各是一个对象', '结算只负责选中再调用'], { size: 16, fill: '#2e3330' }),
     takeaway(300, '新增一种规则仍要打开原来的 if，这个工厂名就不成立。'),
   ].join('')),
 
-  'pattern-strategy.svg': svg('模式', '调用行不变，换的是算法对象', '策略保持方法名，替换实现该接口的对象。步骤顺序也要变时，就不是策略。', 400, [
+  'pattern-strategy.svg': svg('设计模式', '调用行不变，换的是算法对象', '策略保持方法名，替换实现该接口的对象。步骤顺序也要变时，就不是策略。', 400, [
     card(32, 88, 250, 180, 'ink'),
     tx(157, 150, 'settle(order)', { size: 18, weight: 600, fill: '#fafaf8', anchor: 'middle' }),
     tx(157, 182, '调用行保持这一行', { size: 13, fill: '#c5ddd0', anchor: 'middle' }),
@@ -117,7 +117,7 @@ const diagrams = {
     takeaway(292, '新增限时价时增加一个类。settle 里不应再长出 else if。'),
   ].join('')),
 
-  'pattern-template.svg': svg('模式', '顺序写死，只换中间那一步', '模板的准备和收尾不交给每个子类重写。顺序本身要变时，做成另一个策略。', 400, [
+  'pattern-template.svg': svg('设计模式', '顺序写死，只换中间那一步', '模板的准备和收尾不交给每个子类重写。顺序本身要变时，做成另一个策略。', 400, [
     card(32, 88, 896, 64, 'mute'),
     tx(480, 128, '准备  →  这一步可替换  →  收尾', { size: 18, weight: 600, fill: '#2e3330', anchor: 'middle' }),
     card(32, 172, 430, 100, 'accent'),
@@ -129,7 +129,7 @@ const diagrams = {
     takeaway(300, '替换方抛错时，收尾仍按骨架执行。不要让每个子类自己记得关闭。'),
   ].join('')),
 
-  'pattern-decorator.svg': svg('模式', '套一层，类型仍然是同一个接口', '装饰器把行为叠在同一接口上。调用方不用改成一个新的子类。', 400, [
+  'pattern-decorator.svg': svg('设计模式', '套一层，类型仍然是同一个接口', '装饰器把行为叠在同一接口上。调用方不用改成一个新的子类。', 400, [
     card(32, 88, 896, 180),
     tx(48, 124, '变量类型 DataSource', { size: 16, weight: 600, fill: '#2e3330' }),
     card(48, 148, 250, 88, 'mute'),
@@ -144,7 +144,7 @@ const diagrams = {
     takeaway(292, '只想要计时时，去掉重试那一层。不要再写一个带两种能力的子类。'),
   ].join('')),
 
-  'pattern-adapter.svg': svg('模式', '把别人的方法收成你的接口', '适配器两边的方法名可以不同。同一接口上加行为仍然是装饰器。', 400, [
+  'pattern-adapter.svg': svg('设计模式', '把别人的方法收成你的接口', '适配器两边的方法名可以不同。同一接口上加行为仍然是装饰器。', 400, [
     card(32, 88, 280, 180, 'mute'),
     tx(48, 124, '现成客户端', { size: 13, weight: 600 }),
     tx(48, 168, 'payByXml', { size: 22, weight: 600, fill: '#2e3330' }),
@@ -160,7 +160,7 @@ const diagrams = {
     takeaway(292, '重试不要写进适配器。它包在 charge 这个接口外面。'),
   ].join('')),
 
-  'pattern-observer.svg': svg('模式', '响应者自己登记，返回值仍是订单号', '主体不逐个注入下游。通知本身还不表示已经换到别的线程。', 420, [
+  'pattern-observer.svg': svg('设计模式', '响应者自己登记，返回值仍是订单号', '主体不逐个注入下游。通知本身还不表示已经换到别的线程。', 420, [
     card(32, 88, 430, 200, 'warn'),
     tx(48, 120, '订单方法里点名', { size: 16, weight: 600, fill: '#6e3530' }),
     lines(48, 160, ['注入账单', '注入邮件', '再加审计就要改这里'], { size: 16, fill: '#2e3330' }),
@@ -276,7 +276,7 @@ const diagrams = {
     takeaway(300, '构造器上已经有的协作者，不要在方法里再按名字取一次。'),
   ].join('')),
 
-  'pattern-factory-method.svg': svg('创建', '一种产品一个创建者', '调用方只看见产品接口。create 里再按类型分支，变化点还在原来的方法里。', 420, [
+  'pattern-factory-method.svg': svg('创建型', '一种产品一个创建者', '调用方只看见产品接口。create 里再按类型分支，允许变的那一块还在原来的方法里。', 420, [
     card(32, 88, 280, 200, 'warn'),
     tx(48, 124, '一个 create', { size: 16, weight: 600, fill: '#6e3530' }),
     lines(48, 168, ['if 满减', 'else if 会员', '再加规则仍改这里'], { size: 16, fill: '#2e3330' }),
@@ -289,7 +289,7 @@ const diagrams = {
     takeaway(316, '新增一种产品时，旧的 create 不应再增加 else if。'),
   ].join('')),
 
-  'pattern-builder-assemble.svg': svg('创建', 'build 之前还没有成品', '可选部件留在建造过程。工厂方法一次调用就要交出成品。', 400, [
+  'pattern-builder-assemble.svg': svg('创建型', 'build 之前还没有成品', '可选部件留在建造过程。工厂方法一次调用就要交出成品。', 400, [
     card(32, 88, 430, 188),
     tx(48, 124, '建造过程', { size: 16, weight: 600, fill: '#2e3330' }),
     lines(48, 168, ['address 必填', 'coupon 可空', '此时还不能发送'], { size: 16, fill: '#2e3330' }),
@@ -299,7 +299,7 @@ const diagrams = {
     takeaway(300, '漏掉必填项应失败在 build，而不是先交出一个能被使用的半成品。'),
   ].join('')),
 
-  'pattern-singleton-scope.svg': svg('创建', '先写明这一份的范围', '进程一份、容器一份、每次 new，是三种不同的承诺。', 420, [
+  'pattern-singleton-scope.svg': svg('创建型', '先写明这一份的范围', '进程一份、容器一份、每次 new，是三种不同的承诺。', 420, [
     card(32, 88, 280, 200, 'accent'),
     tx(48, 124, 'Runtime', { size: 16, weight: 600, fill: '#2d4f41' }),
     lines(48, 168, ['这个进程一份', '两次取到同一引用', '范围是 JVM 进程'], { size: 16, fill: '#2e3330' }),
@@ -312,7 +312,7 @@ const diagrams = {
     takeaway(316, '范围内只有一份，也不保护这份实例上的可变字段。'),
   ].join('')),
 
-  'pattern-proxy-stand-in.svg': svg('结构', '拒绝时目标没有运行', '同一接口再包一层。装饰器每次都转进去，代理可以不转。', 400, [
+  'pattern-proxy-stand-in.svg': svg('结构型', '拒绝时目标没有运行', '同一接口再包一层。装饰器每次都转进去，代理可以不转。', 400, [
     card(32, 88, 430, 188, 'accent'),
     tx(48, 124, '装饰器', { size: 16, weight: 600, fill: '#2d4f41' }),
     lines(48, 168, ['缓冲加在读之前', 'read 仍会读到文件', '这层可以拆掉'], { size: 16, fill: '#2e3330' }),
@@ -322,7 +322,7 @@ const diagrams = {
     takeaway(300, '只因为类名带 Proxy，不能说明这一层在控制访问。'),
   ].join('')),
 
-  'pattern-facade-entry.svg': svg('结构', '调用方只剩一次调用', '库存、支付、写单的顺序留在入口里。调用方不再持有这三样。', 400, [
+  'pattern-facade-entry.svg': svg('结构型', '调用方只剩一次调用', '库存、支付、写单的顺序留在入口里。调用方不再持有这三样。', 400, [
     card(32, 88, 280, 188, 'mute'),
     tx(172, 168, '控制器', { size: 18, weight: 600, fill: '#2e3330', anchor: 'middle' }),
     tx(172, 198, 'place(order)', { size: 15, anchor: 'middle' }),
@@ -334,7 +334,7 @@ const diagrams = {
     takeaway(300, '库存失败时，支付不应再被调用。这个判断不放回控制器。'),
   ].join('')),
 
-  'pattern-chain-stop.svg': svg('请求', '不调用下一个，后面就不运行', '链上的一环可以选择停。每一环都无条件往后传，目标动作仍会发生。', 400, [
+  'pattern-chain-stop.svg': svg('行为型', '不调用下一个，后面就不运行', '链上的一环可以选择停。每一环都无条件往后传，目标动作仍会发生。', 400, [
     card(32, 88, 280, 188),
     tx(48, 124, '日志', { size: 16, weight: 600, fill: '#2e3330' }),
     lines(48, 168, ['记下请求', '调用下一个', '请求继续'], { size: 16, fill: '#2e3330' }),
@@ -347,7 +347,7 @@ const diagrams = {
     takeaway(300, '能停的那一环在拒绝时不把请求交出去。'),
   ].join('')),
 
-  'pattern-state-transition.svg': svg('请求', '动作之后，当前状态换成下一个', '对外方法只委托。按 status 字符串在每个方法里分支，新增状态就要改每一处。', 420, [
+  'pattern-state-transition.svg': svg('行为型', '动作之后，当前状态换成下一个', '对外方法只委托。按 status 字符串在每个方法里分支，新增状态就要改每一处。', 420, [
     card(32, 88, 280, 200),
     tx(48, 124, '未支付', { size: 16, weight: 600, fill: '#2e3330' }),
     lines(48, 168, ['pay 允许', '完成后换成已支付', '订单类里没有 if'], { size: 16, fill: '#2e3330' }),
@@ -360,7 +360,7 @@ const diagrams = {
     takeaway(316, '新增一种状态应是新类。旧的 pay、ship 不应再加分支。'),
   ].join('')),
 
-  'pattern-bridge-two-axes.svg': svg('结构', '两边各自加，不要相乘', '消息种类和发送通道都会变。继承乘在一起时，加一种通道要复制每一种消息。', 400, [
+  'pattern-bridge-two-axes.svg': svg('结构型', '两边各自加，不要相乘', '消息种类和发送通道都会变。继承乘在一起时，加一种通道要复制每一种消息。', 400, [
     card(32, 88, 430, 188, 'warn'),
     tx(48, 124, '相乘', { size: 16, weight: 600, fill: '#6e3530' }),
     lines(48, 168, ['普通短信、普通邮件', '加急短信、加急邮件', '加通道就要复制两套'], { size: 16, fill: '#2e3330' }),
@@ -370,7 +370,7 @@ const diagrams = {
     takeaway(300, '两种消息、三种通道：相乘是六，拆开是二加三。'),
   ].join('')),
 
-  'pattern-composite-tree.svg': svg('结构', '对根调用一次，不用先问是不是叶子', '叶子和容器是同一接口。容器把调用转给子节点再汇总。', 400, [
+  'pattern-composite-tree.svg': svg('结构型', '对根调用一次，不用先问是不是叶子', '叶子和容器是同一接口。容器把调用转给子节点再汇总。', 400, [
     card(360, 88, 240, 72, 'accent'),
     tx(480, 132, '套装.price', { size: 16, weight: 600, fill: '#2d4f41', anchor: 'middle' }),
     card(80, 200, 220, 88),
@@ -383,7 +383,7 @@ const diagrams = {
     takeaway(316, '调用方不写 instanceof。只包一个对象并加行为，那是装饰器。'),
   ].join('')),
 
-  'pattern-flyweight-share.svg': svg('结构', '共享的是不变部分', '币种可以是同一份。金额由这一次调用传入，不能写进共享对象。', 400, [
+  'pattern-flyweight-share.svg': svg('结构型', '共享的是不变部分', '币种可以是同一份。金额由这一次调用传入，不能写进共享对象。', 400, [
     card(32, 88, 896, 72, 'mute'),
     tx(480, 132, '币种 CNY：代码和符号，创建后不再改', { size: 16, weight: 600, fill: '#2e3330', anchor: 'middle' }),
     card(32, 184, 430, 100, 'accent'),

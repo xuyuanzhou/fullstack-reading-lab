@@ -5,6 +5,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
+import { polishLessons } from './polish-readability.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 /** The only publication list. Add a script here to publish it; drafts stay out until then. */
@@ -151,33 +152,33 @@ export const GROUP_ORDER = {
   ],
 };
 
-/** Short names shown in the sidebar. Keys stay as lesson.group. */
+/** Sidebar labels. Prefer standard course names over cryptic abbreviations. */
 export const GROUP_LABEL = {
   frontend: {
-    全栈主线: '入门',
+    全栈主线: '全栈主线',
     语言基础: 'JavaScript',
     TypeScript: 'TypeScript',
     'CSS 与布局': 'CSS',
     浏览器: '浏览器',
-    '网络与安全': '网络',
+    '网络与安全': '网络与安全',
     安全: '安全',
     React: 'React',
-    'React 生态': 'React库',
+    'React 生态': 'React 生态',
     Vue: 'Vue',
-    'Vue 生态': 'Vue库',
-    技术选型: '选型',
-    'React Native': 'RN',
+    'Vue 生态': 'Vue 生态',
+    技术选型: '技术选型',
+    'React Native': 'React Native',
     Flutter: 'Flutter',
     'UniApp 与 Taro': '小程序',
-    'Node.js': 'Node',
+    'Node.js': 'Node.js',
     测试: '测试',
-    工程实践: '工程',
+    工程实践: '工程实践',
   },
   java: {
-    全栈主线: '入门',
-    'Java 基础': 'Java',
+    全栈主线: '全栈主线',
+    'Java 基础': 'Java 基础',
     算法: '算法',
-    设计模式: '模式',
+    设计模式: '设计模式',
     JVM: 'JVM',
     并发: '并发',
     数据库: '数据库',
@@ -189,14 +190,14 @@ export const GROUP_LABEL = {
     Nginx: 'Nginx',
     网关: '网关',
     Netty: 'Netty',
-    消息队列: '消息',
+    消息队列: '消息队列',
     搜索: '搜索',
-    'Spring Cloud Alibaba': '微服务',
-    系统设计: '架构',
+    'Spring Cloud Alibaba': 'Spring Cloud',
+    系统设计: '系统设计',
     '分布式与高并发': '分布式',
-    '交付与运行': '部署',
+    '交付与运行': '交付与运行',
     测试: '测试',
-    工程实践: '工程',
+    工程实践: '工程实践',
   },
 };
 
@@ -204,22 +205,22 @@ export const GROUP_LABEL = {
 export const OUTLINE = {
   frontend: {
     全栈主线: [
-      { title: '四层', ids: ['fs-four-layers', 'fs-page-feature'] },
-      { title: '写完', ids: ['fs-write-ui', 'fs-frontend-done'] },
+      { title: '分层', ids: ['fs-four-layers', 'fs-page-feature'] },
+      { title: '收尾', ids: ['fs-write-ui', 'fs-frontend-done'] },
     ],
     语言基础: [
       { title: '语法', ids: ['js-equality', 'js-scope-tdz', 'js-this-callsite', 'js-prototype-chain', 'js-not-everything-object', 'js-arrow-has-no-prototype', 'js-regex-dot-not-newline', 'js-json-stringify-not-equal'] },
       { title: 'ES6', ids: ['es6-const-binding', 'es6-destructure-copies', 'es6-rest-spread-position', 'es6-default-param-call-time', 'es6-template-expression', 'es6-map-set-keys', 'es6-for-of-iterable', 'es6-symbol-key'] },
       { title: '异步', ids: ['closure', 'eventloop', 'promise-chain', 'js-async-await', 'esm'] },
-      { title: '协议', ids: ['js-iteration-protocol', 'js-weakmap-lifetime'] },
+      { title: '迭代', ids: ['js-iteration-protocol', 'js-weakmap-lifetime'] },
     ],
     TypeScript: [
-      { title: '边界', ids: ['ts-unknown', 'ts-const-readonly', 'ts-type-vs-interface', 'ts-satisfies', 'ts-module-resolution', 'react-flow-not-default'] },
+      { title: '类型边界', ids: ['ts-unknown', 'ts-const-readonly', 'ts-type-vs-interface', 'ts-satisfies', 'ts-module-resolution', 'react-flow-not-default'] },
       { title: '类型', ids: ['ts-narrowing', 'ts-generics', 'ts-structural', 'ts-utility-types', 'ts-template-literal-types'] },
     ],
     'CSS 与布局': [
-      { title: '盒子', ids: ['css-box-sizing', 'css-cascade', 'css-stacking'] },
-      { title: '排版', ids: ['css-position-flow', 'css-containing-block', 'css-flex', 'css-grid-flex', 'css-container-query', 'css-has-parent', 'css-aspect-ratio'] },
+      { title: '盒模型', ids: ['css-box-sizing', 'css-cascade', 'css-stacking'] },
+      { title: '布局', ids: ['css-position-flow', 'css-containing-block', 'css-flex', 'css-grid-flex', 'css-container-query', 'css-has-parent', 'css-aspect-ratio'] },
     ],
     '网络与安全': [
       { title: 'HTTP', ids: ['http-methods', 'http-status-auth', 'fetch-credentials', 'api-error-contract', 'http-patch-rfc5789', 'http-503-unavailable'] },
@@ -229,7 +230,7 @@ export const OUTLINE = {
     浏览器: [
       { title: '页面', ids: ['html-form-semantics', 'dom-event-flow', 'html-dialog-modal', 'miniprogram-wx-if-not-wxif'] },
       { title: 'HTML5', ids: ['html5-main-landmark', 'html5-constraint-before-submit', 'html5-media-play-promise', 'html5-canvas-buffer', 'html5-pushstate-popstate', 'html5-dataset-string', 'html5-picture-source', 'html5-drop-prevent-default'] },
-      { title: '绘制', ids: ['browser-event-loop-frame', 'rendering', 'layout', 'image-loading'] },
+      { title: '渲染', ids: ['browser-event-loop-frame', 'rendering', 'layout', 'image-loading'] },
       { title: '缓存', ids: ['http-cache', 'cors', 'cors-credentials-allowlist', 'html-form-cross-origin-navigate', 'fetch-abort', 'browser-storage', 'bfcache-pageshow', 'service-worker-stale', 'same-origin-script-still-runs'] },
     ],
     React: [
@@ -240,7 +241,7 @@ export const OUTLINE = {
     Vue: [
       { title: '响应式', ids: ['vue-reactivity', 'vue-defineproperty-proxy', 'vue-proxy-null-guard', 'vue-array-raw-proxy', 'vue-computed-watch', 'vue-nexttick'] },
       { title: '组件', ids: ['vue-props-one-way', 'vue-list-key', 'vue-composition-options', 'vue-modal-programmatic', 'vue-vnode-not-fragment'] },
-      { title: '体积', ids: ['vue-design-goals-proxy', 'vue-tree-shake-options', 'vue-tree-shake-faster', 'vue-patch-hoist'] },
+      { title: '打包', ids: ['vue-design-goals-proxy', 'vue-tree-shake-options', 'vue-tree-shake-faster', 'vue-patch-hoist'] },
     ],
     'Vue 生态': [
       { title: '路由', ids: ['vue-router-reuse', 'vue-router-guard', 'vue-router-scroll'] },
@@ -251,7 +252,7 @@ export const OUTLINE = {
       { title: 'Taro', ids: ['taro-react-setdata-bridge', 'taro-pages-in-app-config', 'taro-4-compiler-choice', 'taro-and-uniapp-layers'] },
     ],
     技术选型: [
-      { title: '交付面', ids: ['fe-pick-by-surface', 'fe-ui-update-model'] },
+      { title: '目标端', ids: ['fe-pick-by-surface', 'fe-ui-update-model'] },
       { title: '框架', ids: ['fe-react-framework-first', 'fe-vue-official-slots', 'fe-angular-first-party', 'fe-sveltekit-runes'] },
       { title: '生态', ids: ['fe-ecosystem-follows-model', 'fe-react-one-slot', 'fe-vue-data-one-slot', 'fe-angular-resource-not-ngrx', 'fe-svelte-load-not-store'] },
       { title: '跨端', ids: ['fe-cross-end-one-runtime', 'fe-expo-router-one-nav', 'fe-flutter-state-one-approach', 'fe-server-state-one-owner'] },
@@ -276,17 +277,17 @@ export const OUTLINE = {
     ],
     测试: [
       { title: '组件', ids: ['frontend-testing', 'testing-library-role', 'test-mock-boundary', 'test-fake-timers', 'react-enzyme-not-default'] },
-      { title: '契约', ids: ['playwright-user-journey', 'contract-test-path', 'msw-http-mock'] },
+      { title: '契约测试', ids: ['playwright-user-journey', 'contract-test-path', 'msw-http-mock'] },
     ],
     'Node.js': [
       { title: '请求', ids: ['node-http-cookie', 'node-unhandled-rejection', 'node-emitter', 'node-global-fetch', 'node-http-close'] },
-      { title: '循环', ids: ['node-nexttick', 'node-event-loop-phases', 'node-libuv-threadpool', 'node-stream', 'node-buffer', 'node-worker-cluster'] },
+      { title: '事件循环', ids: ['node-nexttick', 'node-event-loop-phases', 'node-libuv-threadpool', 'node-stream', 'node-buffer', 'node-worker-cluster'] },
     ],
     工程实践: [
       { title: '构建', ids: ['vite-module-graph', 'build-code-splitting', 'build-cache', 'ssr-hydration', 'react-ssr-not-fewer-http', 'vite-sourcemap-prod', 'angular-ngonchanges-primitives'] },
-      { title: '体验', ids: ['web-vitals', 'performance', 'accessibility'] },
+      { title: '性能', ids: ['web-vitals', 'performance', 'accessibility'] },
       { title: '排查', ids: ['fe-slow-page-where', 'fe-tune-one-layer'] },
-      { title: '交付', ids: ['vite-env-client-prefix', 'ci-gate-not-only-build', 'retired-frontend-stack'] },
+      { title: '发布', ids: ['vite-env-client-prefix', 'ci-gate-not-only-build', 'retired-frontend-stack'] },
     ],
   },
   java: {
@@ -302,16 +303,16 @@ export const OUTLINE = {
     ],
     算法: [
       { title: '查找', ids: ['complexity', 'algo-hash-lookup', 'java-binary-search', 'algo-stable-sort', 'hash-open-addressing-probe', 'quicksort-average-nlogn'] },
-      { title: '树', ids: ['algo-two-pointers', 'algo-tree-walk', 'bfs', 'java-priority-queue'] },
-      { title: '窗口', ids: ['algo-sliding-window', 'algo-topo-kahn'] },
+      { title: '树与图', ids: ['algo-two-pointers', 'algo-tree-walk', 'bfs', 'java-priority-queue'] },
+      { title: '窗口与拓扑', ids: ['algo-sliding-window', 'algo-topo-kahn'] },
     ],
     设计模式: [
-      { title: '名单', ids: ['pattern-gof-catalog', 'pattern-family-test', 'pattern-gof-rest', 'pattern-one-variation'] },
-      { title: '创建', ids: ['pattern-factory-method', 'pattern-builder-assemble', 'pattern-singleton-scope'] },
-      { title: '结构', ids: ['pattern-adapter-shape', 'pattern-decorator-contract', 'pattern-proxy-stand-in', 'pattern-facade-entry', 'pattern-bridge-two-axes', 'pattern-composite-tree', 'pattern-flyweight-share'] },
-      { title: '行为', ids: ['pattern-strategy-swap', 'pattern-template-steps', 'pattern-observer-push', 'pattern-chain-stop', 'pattern-state-transition'] },
-      { title: '标准库', ids: ['java-comparator-strategy', 'java-buffered-stream-decorator', 'java-proxy-needs-interface', 'java-unmodifiable-is-view', 'java-runnable-is-command'] },
-      { title: '容器', ids: ['spring-factorybean-product', 'spring-event-sync-default', 'spring-jdbctemplate-callback', 'spring-getbean-hides-deps'] },
+      { title: '总览', ids: ['pattern-gof-catalog', 'pattern-family-test', 'pattern-gof-rest', 'pattern-one-variation'] },
+      { title: '创建型', ids: ['pattern-factory-method', 'pattern-builder-assemble', 'pattern-singleton-scope'] },
+      { title: '结构型', ids: ['pattern-adapter-shape', 'pattern-decorator-contract', 'pattern-proxy-stand-in', 'pattern-facade-entry', 'pattern-bridge-two-axes', 'pattern-composite-tree', 'pattern-flyweight-share'] },
+      { title: '行为型', ids: ['pattern-strategy-swap', 'pattern-template-steps', 'pattern-observer-push', 'pattern-chain-stop', 'pattern-state-transition'] },
+      { title: 'Java 标准库', ids: ['java-comparator-strategy', 'java-buffered-stream-decorator', 'java-proxy-needs-interface', 'java-unmodifiable-is-view', 'java-runnable-is-command'] },
+      { title: 'Spring', ids: ['spring-factorybean-product', 'spring-event-sync-default', 'spring-jdbctemplate-callback', 'spring-getbean-hides-deps'] },
     ],
     Spring: [
       { title: '容器', ids: ['spring-ioc-wiring', 'spring-bean-lifecycle', 'spring-scopes', 'spring-scope-catalog', 'spring-external-config', 'spring-legacy-config', 'spring-boot-war-still-ok', 'spring-boot3-autoconfig-imports', 'tomcat-nio-not-bio-default', 'spring-xmlbeanfactory-removed'] },
@@ -330,12 +331,12 @@ export const OUTLINE = {
       { title: '分页', ids: ['mybatis-log-preparing-parameters', 'mybatis-jdbc-log-inlines', 'mybatis-debug-boundsql', 'mybatis-pagehelper-next-query', 'mybatis-plus-page-argument', 'mybatis-middleware-layers'] },
     ],
     缓存: [
-      { title: '键', ids: ['redis-data-types', 'cache-aside-steps', 'redis-big-hot-key', 'redis-expire', 'redis-eviction-policy-menu', 'cache-penetration-vs-breakdown', 'redis-fifo-not-maxmemory', 'cache-local-vs-distributed', 'redis-string-max-512mb', 'redis-list-quicklist-listpack'] },
+      { title: '键与类型', ids: ['redis-data-types', 'cache-aside-steps', 'redis-big-hot-key', 'redis-expire', 'redis-eviction-policy-menu', 'cache-penetration-vs-breakdown', 'redis-fifo-not-maxmemory', 'cache-local-vs-distributed', 'redis-string-max-512mb', 'redis-list-quicklist-listpack'] },
       { title: '集群', ids: ['redis-persistence', 'redis-transaction', 'redis-single-thread', 'redis-sentinel-cluster', 'redis-pipeline', 'redis-legacy-vm-limits', 'redis-repl-psync-not-sql', 'redis-aof-keeps-rdb', 'redis-cluster-cli-not-trib'] },
       { title: '脚本', ids: ['redis-lua-atomic', 'redis-stream-vs-pubsub'] },
     ],
     Nginx: [
-      { title: '上游', ids: ['nginx-request-phases', 'nginx-upstream-passive', 'nginx-proxy-timeout', 'nginx-gunzip-not-compress', 'nginx-load-module', 'nginx-proxy-host', 'nginx-ip-hash-session', 'nginx-forward-not-direct'] },
+      { title: '反向代理', ids: ['nginx-request-phases', 'nginx-upstream-passive', 'nginx-proxy-timeout', 'nginx-gunzip-not-compress', 'nginx-load-module', 'nginx-proxy-host', 'nginx-ip-hash-session', 'nginx-forward-not-direct'] },
       { title: '限速', ids: ['nginx-static-cache-headers', 'nginx-limit-req', 'nginx-buffer-body', 'nginx-limit-req-not-iptables-loop'] },
     ],
     Netty: [
@@ -344,13 +345,13 @@ export const OUTLINE = {
       { title: '发送', ids: ['netty-watermark-backpressure', 'netty-length-field-frame', 'netty-file-region'] },
     ],
     网关: [
-      { title: '入口', ids: ['mw-proxy-lb-gateway', 'gateway-route-predicate', 'gateway-one-hop'] },
+      { title: '路由', ids: ['mw-proxy-lb-gateway', 'gateway-route-predicate', 'gateway-one-hop'] },
       { title: '超时', ids: ['gateway-retry-idempotent', 'gateway-timeout-chain'] },
-      { title: '身份', ids: ['gateway-auth-where', 'gateway-body-buffer', 'gateway-websocket-upgrade'] },
+      { title: '鉴权', ids: ['gateway-auth-where', 'gateway-body-buffer', 'gateway-websocket-upgrade'] },
     ],
     搜索: [
       { title: '查询', ids: ['es-inverted-index', 'es-lucene-not-btree', 'elastic-analysis', 'es-filter-context', 'es-refresh-visibility', 'es-term-lookup-not-o1'] },
-      { title: '翻页', ids: ['es-search-after', 'es-mapping-reindex'] },
+      { title: '分页', ids: ['es-search-after', 'es-mapping-reindex'] },
       { title: '聚合', ids: ['es-aggregations', 'es-custom-routing'] },
     ],
     数据库: [
@@ -375,8 +376,8 @@ export const OUTLINE = {
       { title: '口令', ids: ['password-adaptive-hash', 'spring-csrf-spa', 'spring-security-cors', 'runtime-config', 'spring-session-stateless', 'jwt-payload-not-encrypted'] },
     ],
     测试: [
-      { title: '写什么', ids: ['junit-instance-lifecycle', 'test-one-behavior', 'test-observable-result'] },
-      { title: '切片', ids: ['spring-test-slice', 'spring-test-transaction-rollback', 'testcontainers-real-db', 'spring-dirties-context'] },
+      { title: '用例', ids: ['junit-instance-lifecycle', 'test-one-behavior', 'test-observable-result'] },
+      { title: '测试切片', ids: ['spring-test-slice', 'spring-test-transaction-rollback', 'testcontainers-real-db', 'spring-dirties-context'] },
     ],
     消息队列: [
       { title: '选型', ids: ['mq-why-decouple', 'mq-delivery-semantics', 'mq-compare-matrix', 'mq-pick-workload', 'mq-backpressure-producer', 'mq-dlq-backlog', 'mq-consume-idempotent-key', 'mq-backlog-expand-queues'] },
@@ -395,9 +396,9 @@ export const OUTLINE = {
     ],
     系统设计: [
       { title: '拆分', ids: ['arch-evolution-stages', 'arch-monolith-when', 'arch-modular-boundary', 'arch-scale-before-split', 'arch-microservice-split', 'arch-split-order-case', 'arch-sync-vs-async'] },
-      { title: '链路', ids: ['idempotency', 'cache', 'message-delivery', 'rate-limit', 'sql-keyset-page'] },
+      { title: '通用能力', ids: ['idempotency', 'cache', 'message-delivery', 'rate-limit', 'sql-keyset-page'] },
       { title: '容量', ids: ['arch-slo-budget', 'arch-queue-wait', 'arch-design-one-path'] },
-      { title: '领域', ids: ['ddd-same-word-two-contexts', 'ddd-aggregate-transaction-boundary', 'ddd-entity-or-value', 'ddd-repository-one-entry'] },
+      { title: '领域驱动', ids: ['ddd-same-word-two-contexts', 'ddd-aggregate-transaction-boundary', 'ddd-entity-or-value', 'ddd-repository-one-entry'] },
     ],
     '分布式与高并发': [
       { title: '一致性', ids: ['distributed-cap', 'distributed-consistency-three-words', 'distributed-xa', 'distributed-outbox', 'distributed-lock', 'zk-linearizable-not-realtime', 'redis-lock-setnx-expire-race'] },
@@ -409,13 +410,13 @@ export const OUTLINE = {
       { title: 'CI', ids: ['gha-workflow-in-dot-github', 'gha-job-needs-success', 'gha-artifact-between-jobs'] },
       { title: '镜像', ids: ['docker-layer-cache-copy', 'compose-service-name-dns'] },
       { title: '集群', ids: ['kubeadm-cni-before-coredns', 'kubeadm-control-plane-taint'] },
-      { title: '负载', ids: ['k8s-pod-share-localhost', 'k8s-deploy-not-lone-pod'] },
-      { title: '暴露', ids: ['k8s-service-clusterip', 'k8s-ingress-needs-controller'] },
+      { title: '工作负载', ids: ['k8s-pod-share-localhost', 'k8s-deploy-not-lone-pod'] },
+      { title: '对外访问', ids: ['k8s-service-clusterip', 'k8s-ingress-needs-controller'] },
     ],
     工程实践: [
-      { title: '追踪', ids: ['request-trace-one-hop', 'otel-three-signals', 'java-http-timeout', 'hikari-pool-timeout', 'jdbc-datasource-not-diy-pool', 'spring-graceful-shutdown', 'log-correlation-id', 'zabbix-active-at-scale'] },
+      { title: '可观测性', ids: ['request-trace-one-hop', 'otel-three-signals', 'java-http-timeout', 'hikari-pool-timeout', 'jdbc-datasource-not-diy-pool', 'spring-graceful-shutdown', 'log-correlation-id', 'zabbix-active-at-scale'] },
       { title: '排查', ids: ['server-slow-which-resource', 'backend-tune-the-span', 'cpu-cache-line-sharing', 'cpu-heap-not-cpu-cache'] },
-      { title: '交付', ids: ['design-review', 'docker-multistage', 'k8s-probes', 'k8s-memory-limit', 'secrets-not-in-image', 'spring-boot-devtools-restarts', 'git-restore-over-checkout', 'linux-bkl-gone', 'k8s-runtime-not-only-docker', 'linux-root-group-not-root', 'linux-fork-copies-one-thread', 'docker-root-not-host-root', 'etcd-v3-grpc-not-rest', 'git-default-branch-not-master', 'retired-spring-cloud-netflix'] },
+      { title: '发布运维', ids: ['design-review', 'docker-multistage', 'k8s-probes', 'k8s-memory-limit', 'secrets-not-in-image', 'spring-boot-devtools-restarts', 'git-restore-over-checkout', 'linux-bkl-gone', 'k8s-runtime-not-only-docker', 'linux-root-group-not-root', 'linux-fork-copies-one-thread', 'docker-root-not-host-root', 'etcd-v3-grpc-not-rest', 'git-default-branch-not-master', 'retired-spring-cloud-netflix'] },
     ],
   },
 };
@@ -687,7 +688,7 @@ lessons.sort((a, b) => {
   return rank(a) - rank(b);
 });
 
-const cleaned = lessons.map(({ _seq, ...lesson }) => lesson);
+const cleaned = polishLessons(lessons.map(({ _seq, ...lesson }) => lesson));
 validateLessons(cleaned);
 for (const track of ['frontend', 'java']) {
   for (const group of GROUP_ORDER[track]) {

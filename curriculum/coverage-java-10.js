@@ -4,7 +4,7 @@ const COVERAGE_JAVA_10 = [
     track:'java', group:'并发', id:'java-lock-flexibility',
     title:'Lock 的优势不是“自带读写锁”',
     prompt:'为什么把 Lock 接口的最大优势说成“读写分开的锁，好写 ConcurrentHashMap”不准确？',
-    core:'java.util.concurrent.locks.Lock 相对 synchronized 的关键能力是：可在不同代码块里 lock/unlock、tryLock 非阻塞尝试、限时获取、可中断的获取，以及 newCondition()。读写分离属于 ReadWriteLock（及其 ReadLock/WriteLock），不是 Lock 接口的默认语义；ReentrantLock 仍是互斥锁。ConcurrentHashMap 的并发结构是专门实现，不能概括成“外面套一把读写锁”。需要多读者单写者时，应显式选择 ReadWriteLock 或并发容器，并说明释放锁仍要放在 finally。',
+    core:'java.util.concurrent.locks.Lock 相对 synchronized，多了几条获取与释放方式。可以在不同代码块里 lock/unlock。可以用 tryLock 做非阻塞尝试，也可以限时获取，获取过程还可以中断。另外还能 newCondition()。读写分离属于 ReadWriteLock（及其 ReadLock/WriteLock），不是 Lock 接口的默认语义。ReentrantLock 仍是互斥锁。ConcurrentHashMap 的并发结构是专门实现，不能概括成“外面套一把读写锁”。需要多读者单写者时，应显式选择 ReadWriteLock 或并发容器，并说明释放锁仍要放在 finally。',
     why:'把 Lock 背成“自带读写锁、用来写 ConcurrentHashMap”，只要互斥时会选错接口，也会把并发容器讲成外层加锁。区分信号是读写分离在 ReadWriteLock 上，ReentrantLock 仍然是互斥锁。',
     example:'缓存更新用 ReentrantLock + tryLock 做超时失败；多读少写的树用 ReentrantReadWriteLock。统计表用 ConcurrentHashMap.computeIfAbsent，而不是自己持有写锁去 get/put。',
     task:'列出 Lock 相对 synchronized 的四条能力，并标明哪一条其实属于 ReadWriteLock；再写一句为何不能说 ConcurrentHashMap=读写锁。',

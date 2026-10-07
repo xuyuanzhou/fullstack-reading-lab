@@ -102,9 +102,9 @@ const diagrams = {
     takeaway(292, '页头和结算都在改、规则又复杂时，才轮到 Redux。'),
   ].join('')),
 
-  'fe-pick-surface.svg': svg('先写这次交到哪里', '四个交付面可以是四个产品。同一页不承诺四种运行时。', 400, [
+  'fe-pick-surface.svg': svg('先写这次交到哪一端', '四个目标端可以是四个产品。同一页不承诺四种运行时。', 400, [
     card(32, 88, 214, 180),
-    tx(48, 124, '操作台', { size: 16, weight: 600, fill: '#2e3330' }),
+    tx(48, 124, '后台', { size: 16, weight: 600, fill: '#2e3330' }),
     lines(48, 164, ['浏览器应用', '首屏可以是壳'], { size: 15, fill: '#2e3330', lh: 28 }),
     card(262, 88, 214, 180, 'accent'),
     tx(278, 124, '文章', { size: 16, weight: 600, fill: '#2d4f41' }),
@@ -115,7 +115,7 @@ const diagrams = {
     card(722, 88, 206, 180),
     tx(738, 124, '已有 App', { size: 16, weight: 600, fill: '#2e3330' }),
     lines(738, 164, ['React Native', 'View 与列表'], { size: 15, fill: '#2e3330', lh: 28 }),
-    takeaway(292, '热度不是交付面。空着的格这次不交付。'),
+    takeaway(292, '热度不是目标端。空着的格这次不做。'),
   ].join(''), '选型'),
 
   'fe-ui-update-model.svg': svg('留下一种更新模型', '同一个按钮里不混四种赋值。', 380, [
@@ -134,7 +134,7 @@ const diagrams = {
     takeaway(272, '选定之后，路由和请求缓存跟着这一种模型走。'),
   ].join(''), '选型'),
 
-  'fe-ecosystem-slots.svg': svg('Vue 新项目各留一个槽位', '构建、路由、跨页状态不要各有两套。', 360, [
+  'fe-ecosystem-slots.svg': svg('Vue 新项目各留一个职责位', '构建、路由、跨页状态不要各有两套。', 360, [
     card(32, 88, 288, 150, 'accent'),
     tx(48, 124, '构建', { size: 16, weight: 600, fill: '#2d4f41' }),
     tx(48, 168, 'Vite', { size: 18, fill: '#2e3330' }),
@@ -147,7 +147,7 @@ const diagrams = {
     takeaway(262, '要首屏正文时用 Nuxt。Vuex 只留在已有仓库。'),
   ].join(''), '选型'),
 
-  'fe-ecosystem-map.svg': svg('四个槽位跟一种模型', '同一张订单表不要从四套文档各抄一个库。', 400, [
+  'fe-ecosystem-map.svg': svg('四个职责位跟一种模型', '同一张订单表不要从四套文档各抄一个库。', 400, [
     card(32, 88, 214, 196, 'accent'),
     tx(48, 124, 'React', { size: 16, weight: 600, fill: '#2d4f41' }),
     lines(48, 160, ['Next / RR 框架', 'Query 或加载器', 'Toolkit 只放会话'], { size: 14, fill: '#2e3330', lh: 28 }),

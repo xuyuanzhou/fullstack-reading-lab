@@ -1,10 +1,10 @@
 # 技术选型
 
-新开「技术选型」。先写交付面，再留下一种界面更新模型，以及该模型对应的应用框架、路由、跨页状态和服务端数据。机制仍在 React、Vue、Flutter、React Native、uni-app 各章。
+新开「技术选型」。先定目标端（浏览器后台、内容页、小程序、手机 App），再留下一种界面更新模型，以及该模型对应的应用框架、路由、跨页状态和服务端数据。机制仍在 React、Vue、Flutter、React Native、uni-app 各章。
 
 | 课程 | 说法 |
 | --- | --- |
-| `fe-pick-by-surface` | 操作台、要进 HTML 的内容、小程序、手机 App 各是一个交付面 |
+| `fe-pick-by-surface` | 后台、要进 HTML 的内容、小程序、手机 App 各是一个目标端 |
 | `fe-ui-update-model` | React 提交更新，Vue 用代理，Angular 新应用用信号，Svelte 用 runes |
 | `fe-react-framework-first` | 新项目用文档列出的 Next.js 或 React Router 框架模式 |
 | `fe-vue-official-slots` | 新项目用 Vite、Vue Router、Pinia；要首屏 HTML 时用 Nuxt |

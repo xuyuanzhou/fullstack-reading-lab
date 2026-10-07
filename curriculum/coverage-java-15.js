@@ -106,7 +106,7 @@ const COVERAGE_JAVA_15 = [
     track:'java', group:'Java 基础', id:'java-arrays-aslist-fixed',
     title:'Arrays.asList 返回固定大小的列表，不是 ArrayList',
     prompt:'为什么 asList 之后 add 会失败，也不能把它当成可变 ArrayList？',
-    core:'Arrays.asList 返回的是 Arrays 的私有 ArrayList（和 java.util.ArrayList 不是一个类），它包装原数组：set 可以改槽位并写回数组，add/remove 抛 UnsupportedOperationException。长度跟原数组走，不是“final 数组所以一切只读”——元素若可变，列表里看到的也变。要独立可变副本用 new ArrayList<>(Arrays.asList(...))。List.sort 与 Collections.sort 都可排序可变 List。Vector 同步但不是现行并发首选。ArrayList 空构造先是空数组，第一次 add 扩到默认容量 10，不要背成“JDK7 之后永远容量 0”。',
+    core:'Arrays.asList 返回的是 Arrays 自己的私有 ArrayList，和 java.util.ArrayList 不是一个类。它只是包装原数组：set 可以改对应下标并写回数组；add/remove 会抛 UnsupportedOperationException。长度跟原数组走，不是“final 数组所以一切只读”——元素对象若可变，从列表里看到的也会变。要独立可变副本，用 new ArrayList<>(Arrays.asList(...))。List.sort 与 Collections.sort 都可排序可变 List。Vector 同步但不是现行并发首选。ArrayList 空构造先是空数组，第一次 add 扩到默认容量 10，不要背成“JDK7 之后永远容量 0”。',
     why:'把 asList 的结果当成可增删的 ArrayList，add 会在运行时抛异常，set 还会写回原来的数组，别的持有者一起被改。区分信号是它的长度固定，类型也不是 java.util.ArrayList。',
     example:'String[] ids = {"a","b"}; List<String> view = Arrays.asList(ids); view.set(0,"x") 会改 ids[0]；view.add("y") 失败。',
     task:'写一段 asList 后 set、add、再包一层 java.util.ArrayList 的实验，记录哪一步改原数组、哪一步抛异常。',

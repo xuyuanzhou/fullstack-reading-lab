@@ -4,11 +4,11 @@ import { lazy, Suspense } from 'react'
 import { HashRouter, Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { AppLayout } from '@/components/AppLayout'
 import { ProgressProvider, useProgress } from '@/state/progress'
-import { HomePage } from '@/pages/HomePage'
 import { ReadingBoundary } from '@/components/ReadingBoundary'
 import { findLesson } from '@/data/curriculum'
 import { isTrack, lessonPath, resumePath } from '@/data/routes'
 
+const HomePage = lazy(() => import('@/pages/HomePage').then(m => ({ default: m.HomePage })))
 const AuditPage = lazy(() => import('@/pages/AuditPage').then(m => ({ default: m.AuditPage })))
 const KnowledgePage = lazy(() => import('@/pages/KnowledgePage').then(m => ({ default: m.KnowledgePage })))
 const LessonPage = lazy(() => import('@/pages/LessonPage').then(m => ({ default: m.LessonPage })))

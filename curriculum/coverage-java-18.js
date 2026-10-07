@@ -21,7 +21,7 @@ const COVERAGE_JAVA_18 = [
     track:'java', group:'Spring Cloud Alibaba', id:'dubbo-loadbalance-random-default',
     title:'Dubbo 默认是加权随机，轮询会在慢节点上堆积',
     prompt:'为什么只背 RoundRobin，或把 LeastActive 说成“响应最短”，会对不上 Dubbo 的负载均衡？',
-    core:'Apache Dubbo 常见策略是 RandomLoadBalance（默认、可加权）、RoundRobinLoadBalance、LeastActiveLoadBalance、ConsistentHashLoadBalance，较新版本还有 ShortestResponseLoadBalance。LeastActive 看的是进行中的调用数，不是直接比 RT。轮询会把请求打到已经变慢但未摘除的提供者上，调用被拖住后后续仍轮到它，形成堆积。一致性哈希用虚拟节点降低增减节点时的剧烈迁移。用 loadbalance 参数在服务或方法上指定。',
+    core:'Apache Dubbo 常见负载策略有这些。默认是可加权的 RandomLoadBalance，另外还有 RoundRobinLoadBalance、LeastActiveLoadBalance、ConsistentHashLoadBalance。较新版本还有 ShortestResponseLoadBalance。LeastActive 看的是进行中的调用数，不是直接比响应时间。轮询会把请求打到已经变慢但未摘除的提供者上；调用被拖住后，后续仍轮到它，形成堆积。一致性哈希用虚拟节点，降低增减节点时的剧烈迁移。用 loadbalance 参数在服务或方法上指定。',
     why:'只背 RoundRobin，或把 LeastActive 当成响应最短，线上会去拧错误的旋钮。区分信号是默认策略是加权随机；一台变慢但还活着时，轮询仍按次序把请求打过去，调用在那台上面堆积。',
     example:'未写 loadbalance 的服务，提供者按权重被随机选中，不是依次轮询。把一台提供者的处理拖慢但不摘除，roundrobin 仍轮到它，进行中的调用变多。改成 leastactive 后，新请求更少分给这台进行中调用已经很多的节点。',
     task:'对照 Dubbo LoadBalance 文档列出默认策略；说明 roundrobin 在一台变慢未挂时会发生什么。',

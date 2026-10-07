@@ -38,7 +38,7 @@ const COVERAGE_JAVA_09 = [
     track:'java', group:'数据库', id:'mysql-replication-flow',
     title:'复制三步：dump、relay、applier，不是 replay log',
     prompt:'为什么把复制说成“主库写日志、从库拷到中继再重做”时，还要改掉 replay log 并补上线程模型？',
-    core:'MySQL 复制默认异步：源服务器把更新写入二进制日志；副本连接后，源上的 Binlog Dump 线程发送事件；副本的 I/O（receiver）线程把事件写入本地中继日志（relay log）；SQL（applier）线程读取中继日志并应用。副本并行复制时，协调线程把事务分给多个 worker。资料里的 replay log 是误称。基于位点的复制要对齐文件与位置；GTID 用事务标识简化故障转移。还有半同步、延迟复制等变体，不能把三步示意图当成唯一拓扑。',
+    core:'MySQL 复制默认是异步的。源服务器先把更新写入二进制日志。副本连上之后，源上的 Binlog Dump 线程发送事件；副本的 I/O（receiver）线程把事件写入本地中继日志（relay log）；SQL（applier）线程再读取中继日志并应用。副本并行复制时，协调线程把事务分给多个 worker。资料里的 replay log 是误称。基于位点的复制要对齐文件与位置；GTID 用事务标识简化故障转移。还有半同步、延迟复制等变体，不能把三步示意图当成唯一拓扑。',
     why:'把复制说成 replay log，排障时对不上手册里的 dump 和 applier，也会把并行应用和 GTID 想成单线程重做。信号是线程名和日志文件名对得上哪一章，而不是口头的“重做日志”。',
     example:'SHOW REPLICA STATUS 里看接收与应用是否落后；源上 PROCESSLIST 可见 Binlog Dump。切换应用只读到副本前，要确认应用位点或 GTID 集合，而不是假设“能连上就一致”。',
     task:'画出源与一个异步副本的三条线程和两类日志文件，标出 relay 与 binary 的区别，并写一句半同步比默认异步多等的是什么。',

@@ -20,7 +20,7 @@ const COVERAGE_FRONTEND_08 = [
   },
   {
     track:'frontend', group:'Vue', id:'vue-defineproperty-proxy',
-    title:'Proxy 取代 defineProperty：能拦什么，仍要拦在代理上',
+    title:'Proxy 取代 defineProperty，仍要拦在代理上',
     prompt:'为什么“Proxy 能监听整个对象，所以比 defineProperty 全面更强，手写一个 Proxy 就等于 Vue 响应式”说不清边界？',
     core:'Vue 2 时代用 Object.defineProperty 给已有属性装 getter/setter，是受当时浏览器能力约束；对对象后来才新增的属性、删除，以及数组下标与 length，都需要额外手段。Vue 3 对响应式对象改用 Proxy，可以拦截 get、set、deleteProperty、has 等操作，因此新增、删除和许多数组变更可以走同一套陷阱；ref 仍然用 getter/setter 持有 .value。Proxy 拦截的是代理对象上的操作：改原始对象、或把属性解构成普通变量后读写，都不会进入陷阱。深层对象仍要在被访问时再代理，手写只打日志的 get/set 也没有依赖收集与触发更新。null 不能做 Proxy 目标、以及 raw.push 不证明数组已被拦截，已在既有课里单独说明。',
     why:'误以为换上 Proxy 就全面超过逐个定义属性，手写一个就算响应式。继续改原始对象时界面不更新，只打日志的陷阱也不会让组件重渲染。区分信号是操作落在代理上，并且真有依赖收集，而不只是多了几种拦截。',
