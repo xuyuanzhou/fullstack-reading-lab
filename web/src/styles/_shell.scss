@@ -290,42 +290,69 @@ html[data-theme='dark'] .brand-mark {
     padding-inline-end: 28px !important;
   }
 
-  /* 二级分组：中文用 13px；右侧同样给箭头留位 */
+  /* 二级分组：与叶子拉开一点垂直节奏 */
   .ant-menu-sub .ant-menu-submenu > .ant-menu-submenu-title {
     height: auto !important;
     min-height: 34px;
     line-height: 1.4 !important;
-    padding-block: 7px !important;
+    margin-block: 4px 2px !important;
+    padding-block: 8px !important;
     padding-inline-start: 10px !important;
     padding-inline-end: 28px !important;
     font-size: 13px;
     font-weight: 600;
     color: var(--lab-muted);
     white-space: normal;
+    background: transparent !important;
+  }
+
+  .ant-menu-sub .ant-menu-submenu-active > .ant-menu-submenu-title,
+  .ant-menu-sub .ant-menu-submenu-selected > .ant-menu-submenu-title {
+    background: transparent !important;
+    color: var(--lab-ink) !important;
   }
 
   /*
-   * 叶子课：只调上下/右侧内边距。
-   * 不要写 padding / padding-left 简写，否则会盖掉 ant 的嵌套缩进。
+   * 叶子课：只调上下/右侧内边距，保留 ant 嵌套缩进。
    */
   .ant-menu-item {
+    position: relative;
     height: auto !important;
-    line-height: 1.45 !important;
-    margin-block: 2px !important;
-    padding-block: 8px !important;
-    padding-inline-end: 10px !important;
+    line-height: 1.5 !important;
+    margin-block: 3px !important;
+    padding-block: 10px !important;
+    padding-inline-end: 12px !important;
     white-space: normal;
+  }
+
+  /* 分组下第一层叶子：与二级标题多留一点空隙 */
+  .ant-menu-sub .ant-menu-sub {
+    padding-block: 2px 6px !important;
+    background: transparent !important;
   }
 
   .ant-menu-sub.ant-menu-inline {
     background: transparent !important;
   }
 
+  /* 选中：圆角底 + 独立竖条，避免 inset 阴影在圆角上变成「括号」 */
   .ant-menu-item-selected {
     background: var(--lab-accent-soft) !important;
     color: var(--lab-accent-strong) !important;
     font-weight: 600;
-    box-shadow: inset 2px 0 0 var(--lab-accent);
+    box-shadow: none !important;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      border-radius: 1px;
+      background: var(--lab-accent);
+      pointer-events: none;
+    }
   }
 
   .ant-menu-submenu-selected > .ant-menu-submenu-title {
@@ -383,20 +410,24 @@ html[data-theme='dark'] .brand-mark {
 
 .lesson-label {
   display: grid;
-  grid-template-columns: 8px minmax(0, 1fr);
+  grid-template-columns: 6px minmax(0, 1fr);
   column-gap: 10px;
   align-items: start;
   white-space: normal;
-  line-height: 1.45;
+  line-height: 1.5;
   font-size: 13px;
 }
 
 .lesson-status {
-  width: 6px;
-  height: 6px;
-  margin-top: 0.45em;
+  width: 5px;
+  height: 5px;
+  margin-top: 0.55em;
   border-radius: 50%;
   background: var(--lab-line);
+}
+
+.ant-menu-item-selected .lesson-status {
+  background: var(--lab-accent);
 }
 
 .lesson-status.is-done {
