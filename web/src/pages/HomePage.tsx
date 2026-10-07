@@ -26,7 +26,6 @@ function LessonRows({
             className={`lesson-row${done ? ' is-done' : ''}`}
             to={lessonPath(item)}
             onMouseEnter={() => prefetchTrackBodies(item.track)}
-            onFocus={() => prefetchTrackBodies(item.track)}
             onClick={() => onOpen(item.id)}
           >
             <span className="lesson-row-mark">{done ? '✓' : ''}</span>

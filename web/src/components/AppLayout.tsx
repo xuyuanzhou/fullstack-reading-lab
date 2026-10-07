@@ -156,7 +156,6 @@ export function AppLayout() {
         to={lessonPath(lesson)}
         className="lesson-label"
         onMouseEnter={() => prefetchTrackBodies(lesson.track)}
-        onFocus={() => prefetchTrackBodies(lesson.track)}
         onClick={() => {
           progress.remember(lesson.id)
           setMobileOpen(false)
