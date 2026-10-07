@@ -1,10 +1,10 @@
 import rawIndex from './curriculum-index.json'
 import type { Curriculum, Lesson, Track } from '@/types/curriculum'
 
-/** Nav / list / search card — body fields load on demand. */
+/** Nav / list / search card — core and body fields load with the track pack. */
 export type LessonSummary = Pick<
   Lesson,
-  'track' | 'group' | 'id' | 'title' | 'prompt' | 'keywords' | 'points' | 'core'
+  'track' | 'group' | 'id' | 'title' | 'prompt' | 'keywords' | 'points'
 > & {
   promptAnswer?: string
 }
@@ -16,7 +16,18 @@ type CurriculumIndex = Omit<Curriculum, 'lessons'> & {
 type LessonBody = Partial<
   Pick<
     Lesson,
-    'why' | 'example' | 'task' | 'answer' | 'deep' | 'map' | 'references' | 'diagram' | 'origin' | 'react' | 'vue'
+    | 'core'
+    | 'why'
+    | 'example'
+    | 'task'
+    | 'answer'
+    | 'deep'
+    | 'map'
+    | 'references'
+    | 'diagram'
+    | 'origin'
+    | 'react'
+    | 'vue'
   >
 >
 
@@ -27,15 +38,19 @@ const byTrack: Record<Track, LessonSummary[]> = {
   java: curriculum.lessons.filter((lesson) => lesson.track === 'java'),
 }
 
-let bodiesPromise: Promise<Record<string, LessonBody>> | null = null
+const bodiesCache: Partial<Record<Track, Promise<Record<string, LessonBody>>>> = {}
 
-function loadBodies() {
-  if (!bodiesPromise) {
-    bodiesPromise = import('./curriculum-bodies.json').then(
+function loadBodies(track: Track) {
+  if (!bodiesCache[track]) {
+    const loader =
+      track === 'frontend'
+        ? import('./curriculum-bodies-frontend.json')
+        : import('./curriculum-bodies-java.json')
+    bodiesCache[track] = loader.then(
       (mod) => (mod.default || mod) as unknown as Record<string, LessonBody>,
     )
   }
-  return bodiesPromise
+  return bodiesCache[track]!
 }
 
 export function lessonsFor(track: Track): LessonSummary[] {
@@ -60,13 +75,27 @@ export function findLesson(id: string): LessonSummary | undefined {
   return byId.get(id)
 }
 
-/** Full lesson for the reading page; pulls the bodies chunk once then caches. */
+/** Full lesson for the reading page; loads only that track's bodies chunk. */
 export async function loadFullLesson(id: string): Promise<Lesson | undefined> {
   const summary = byId.get(id)
   if (!summary) return undefined
-  const bodies = await loadBodies()
+  const bodies = await loadBodies(summary.track)
   const body = bodies[id] || {}
-  return { ...summary, ...body } as Lesson
+  return {
+    ...summary,
+    core: body.core || '',
+    why: body.why || '',
+    example: body.example || '',
+    task: body.task || '',
+    answer: body.answer || '',
+    references: body.references || [],
+    ...body,
+  } as Lesson
+}
+
+/** Prefetch a track pack (e.g. when switching to that route). */
+export function prefetchTrackBodies(track: Track) {
+  void loadBodies(track)
 }
 
 export function nextLesson(track: Track, id: string): LessonSummary | undefined {

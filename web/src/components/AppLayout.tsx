@@ -11,7 +11,7 @@ import {
 import { Alert, Badge, Button, Drawer, Layout, Menu, Typography, theme } from 'antd'
 import { Suspense, useEffect, useMemo, useState } from 'react'
 import { Link, matchPath, Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { findLesson, lessonsFor, lessonsInGroup, outlineFor } from '@/data/curriculum'
+import { findLesson, lessonsFor, lessonsInGroup, outlineFor, prefetchTrackBodies } from '@/data/curriculum'
 import { TRACK_LABEL } from '@/data/meta'
 import { shortTitle } from '@/data/reading'
 import { courseGroups, groupLabel, groupPath, isTrack, lessonPath, resumePath } from '@/data/routes'
@@ -137,6 +137,11 @@ export function AppLayout() {
     if (!isTrack(routeTrack) || !routeGroupKey || !groupLabel(routeTrack, routeGroupKey)) return
     progress.selectLesson(routeTrack, routeGroupKey)
   }, [routeTrack, routeGroupKey, progress.selectLesson])
+
+  useEffect(() => {
+    if (onAi || !isTrack(activeTrack)) return
+    prefetchTrackBodies(activeTrack)
+  }, [onAi, activeTrack])
 
   const pathChoice = onAi ? 'ai' : location.pathname.startsWith('/local') ? progress.localCategory : activeTrack
   const selectedKeys = onLab ? ['ai:lab'] : onAi ? [`ai:${aiSectionKey}`] : currentLesson ? [currentLesson.id] : []
@@ -283,6 +288,7 @@ export function AppLayout() {
               type={pathChoice === track ? 'primary' : 'default'}
               onClick={() => {
                 progress.setLocalCategory(track)
+                prefetchTrackBodies(track)
                 navigate(resumePath(track, ''))
                 setMobileOpen(false)
               }}

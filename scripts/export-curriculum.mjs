@@ -9,18 +9,10 @@ const payload = loadCurriculum();
 const dataDir = path.join(root, 'web', 'src', 'data');
 fs.mkdirSync(dataDir, { recursive: true });
 
-const INDEX_KEYS = [
-  'track',
-  'group',
-  'id',
-  'title',
-  'prompt',
-  'promptAnswer',
-  'keywords',
-  'points',
-  'core',
-];
+/** Slim shell fields only — core lives in track bodies with lesson text. */
+const INDEX_KEYS = ['track', 'group', 'id', 'title', 'prompt', 'promptAnswer', 'keywords', 'points'];
 const BODY_KEYS = [
+  'core',
   'why',
   'example',
   'task',
@@ -49,19 +41,29 @@ const index = {
   }),
 };
 
-const bodies = {};
+const bodiesByTrack = { frontend: {}, java: {} };
 for (const lesson of payload.lessons) {
   const row = {};
   for (const key of BODY_KEYS) {
     if (lesson[key] !== undefined) row[key] = lesson[key];
   }
-  bodies[lesson.id] = row;
+  bodiesByTrack[lesson.track][lesson.id] = row;
 }
 
-// Full dump kept for verify_content / audits; runtime prefers index + bodies.
+// Full dump kept for verify_content / audits; runtime uses index + per-track bodies.
 fs.writeFileSync(path.join(dataDir, 'curriculum.json'), JSON.stringify(payload, null, 2) + '\n');
 fs.writeFileSync(path.join(dataDir, 'curriculum-index.json'), JSON.stringify(index, null, 2) + '\n');
-fs.writeFileSync(path.join(dataDir, 'curriculum-bodies.json'), JSON.stringify(bodies, null, 2) + '\n');
+fs.writeFileSync(
+  path.join(dataDir, 'curriculum-bodies-frontend.json'),
+  JSON.stringify(bodiesByTrack.frontend, null, 2) + '\n',
+);
+fs.writeFileSync(
+  path.join(dataDir, 'curriculum-bodies-java.json'),
+  JSON.stringify(bodiesByTrack.java, null, 2) + '\n',
+);
+
+const legacyBodies = path.join(dataDir, 'curriculum-bodies.json');
+if (fs.existsSync(legacyBodies)) fs.unlinkSync(legacyBodies);
 
 const legacyOrder = `window.GROUP_ORDER = ${JSON.stringify(payload.groupOrder)};\nwindow.PATH_LEAD = ${JSON.stringify(payload.pathLead)};\n`;
 fs.writeFileSync(path.join(root, 'legacy', 'publication-order.js'), legacyOrder);
@@ -77,5 +79,5 @@ for (const name of fs.readdirSync(publicDiagrams)) {
   if (!keep.has(name)) fs.unlinkSync(path.join(publicDiagrams, name));
 }
 console.log(
-  `Exported ${payload.lessons.length} lessons → curriculum.json + index (${index.lessons.length}) + bodies (${Object.keys(bodies).length})`,
+  `Exported ${payload.lessons.length} lessons → index (${index.lessons.length}) + bodies fe/${Object.keys(bodiesByTrack.frontend).length} java/${Object.keys(bodiesByTrack.java).length}`,
 );

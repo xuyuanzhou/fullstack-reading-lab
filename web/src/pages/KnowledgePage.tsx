@@ -25,7 +25,7 @@ export function KnowledgePage() {
         ? []
         : lessonsFor(progress.track).filter((item) => {
             if (!q) return true
-            const hay = [item.title, item.prompt, item.core, item.keywords, ...item.points]
+            const hay = [item.title, item.prompt, item.keywords, ...item.points]
               .join(' ')
               .toLocaleLowerCase()
             return hay.includes(q)
