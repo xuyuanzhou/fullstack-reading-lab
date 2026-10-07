@@ -285,24 +285,38 @@ html[data-theme='dark'] .brand-mark {
     height: 36px !important;
     line-height: 36px !important;
     font-weight: 600;
+    padding-inline: 10px 8px !important;
   }
 
+  /* 二级分组：中文 12px 偏紧，与叶子同级字号更易扫读 */
   .ant-menu-sub .ant-menu-submenu > .ant-menu-submenu-title {
     height: auto !important;
-    min-height: 32px;
-    line-height: 1.35 !important;
-    font-size: 12px;
-    font-weight: 650;
+    min-height: 34px;
+    line-height: 1.4 !important;
+    padding-block: 7px !important;
+    padding-inline: 10px 8px !important;
+    font-size: 13px;
+    font-weight: 600;
     color: var(--lab-muted);
     white-space: normal;
   }
 
+  /*
+   * 叶子课：必须有明确内边距。嵌套缩进只负责层级，选中底不该贴字。
+   * 旧值 6/10 在多行中文下会显得“没 padding”。
+   */
   .ant-menu-item {
     height: auto !important;
-    line-height: 1.4 !important;
-    padding-block: 6px !important;
-    padding-inline: 10px 8px !important;
+    line-height: 1.45 !important;
+    margin-block: 2px !important;
+    padding-block: 8px !important;
+    padding-inline: 12px 10px !important;
     white-space: normal;
+  }
+
+  .ant-menu-sub .ant-menu-item {
+    padding-block: 8px !important;
+    padding-inline: 12px 10px !important;
   }
 
   .ant-menu-sub.ant-menu-inline {
@@ -365,17 +379,17 @@ html[data-theme='dark'] .brand-mark {
 .lesson-label {
   display: grid;
   grid-template-columns: 8px minmax(0, 1fr);
-  gap: 8px;
+  column-gap: 10px;
   align-items: start;
   white-space: normal;
-  line-height: 1.4;
+  line-height: 1.45;
   font-size: 13px;
 }
 
 .lesson-status {
   width: 6px;
   height: 6px;
-  margin-top: 6px;
+  margin-top: 0.45em;
   border-radius: 50%;
   background: var(--lab-line);
 }
