@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-labelledby="title desc">
+  <title id="title">带 eval 的 source map 只给开发重建</title>
+  <desc id="desc">eval、cheap-eval-source-map 一类为了重建速度，不适合生产。生产要么不公开 map，要么用 hidden / 私有通道。</desc>
+  <rect width="960" height="400" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3d5a80">BUILD</text>
+  <text x="32" y="64" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">重建快的那一列，不是线上那一列</text>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <rect x="32" y="96" width="430" height="168" rx="14" fill="#e6efe9" stroke="#3d5a80"/>
+    <text x="52" y="132" font-size="15" font-weight="600" fill="#2e3330">开发</text>
+    <text x="52" y="164" font-size="14" fill="#3d5a80">eval / cheap-module-eval-...</text>
+    <text x="52" y="196" font-size="14" fill="#3d5a80">重建快，质量够改本地</text>
+    <text x="52" y="228" font-size="14" fill="#5e6661">表上「生产环境」一列是 no</text>
+    <rect x="496" y="96" width="432" height="168" rx="14" fill="#f6ecea" stroke="#a05048"/>
+    <text x="516" y="132" font-size="15" font-weight="600" fill="#6e3530">生产</text>
+    <text x="516" y="164" font-size="14" fill="#2e3330">不要公开 eval 系 map</text>
+    <text x="516" y="196" font-size="14" fill="#6e3530">需要排障用 hidden 或私有上传</text>
+    <text x="516" y="228" font-size="14" fill="#5e6661">Vite 侧见 vite-sourcemap-prod</text>
+    <rect x="32" y="288" width="896" height="80" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="52" y="320" font-size="15" font-weight="600" fill="#2e3330">对照官方表：重建速度高的一行，生产环境标记是否为 no。</text>
+    <text x="52" y="348" font-size="14" fill="#5e6661">公开 .map 等于交出源码，和工具名无关</text>
+  </g>
+</svg>

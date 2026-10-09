@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-labelledby="title desc">
+  <title id="title">定时器第一个参数传函数，不要传字符串</title>
+  <desc id="desc">setTimeout 和 setInterval 若传入字符串，会按脚本去求值，类似 eval。应传入函数引用。</desc>
+  <rect width="960" height="400" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3d5a80">JS</text>
+  <text x="32" y="64" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">延迟到点要跑的是函数，不是一段代码字符串</text>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <rect x="32" y="96" width="430" height="168" rx="14" fill="#f6ecea" stroke="#a05048"/>
+    <text x="52" y="132" font-size="15" font-weight="600" fill="#6e3530">setInterval("clock()", 1000)</text>
+    <text x="52" y="164" font-size="14" fill="#2e3330">字符串会再被求值</text>
+    <text x="52" y="196" font-size="14" fill="#6e3530">作用域和 CSP 都麻烦</text>
+    <text x="52" y="228" font-size="14" fill="#5e6661">教材图里常见的旧写法</text>
+    <rect x="496" y="96" width="432" height="168" rx="14" fill="#e6efe9" stroke="#3d5a80"/>
+    <text x="516" y="132" font-size="15" font-weight="600" fill="#2e3330">setInterval(clock, 1000)</text>
+    <text x="516" y="164" font-size="14" fill="#3d5a80">或 () =&gt; clock()</text>
+    <text x="516" y="196" font-size="14" fill="#3d5a80">到点调用这个函数</text>
+    <text x="516" y="228" font-size="14" fill="#5e6661">用返回的 id 去做 clear</text>
+    <rect x="32" y="288" width="896" height="80" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="52" y="320" font-size="15" font-weight="600" fill="#2e3330">clearInterval / clearTimeout 要拿到同一次调用返回的句柄。</text>
+    <text x="52" y="348" font-size="14" fill="#5e6661">测试里用假时钟推进，见 test-fake-timers</text>
+  </g>
+</svg>

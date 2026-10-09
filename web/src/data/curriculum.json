@@ -243,6 +243,7 @@
         "ssr-hydration",
         "react-ssr-not-fewer-http",
         "vite-sourcemap-prod",
+        "webpack-eval-sourcemap-dev-only",
         "angular-ngonchanges-primitives",
         "web-vitals",
         "performance",
@@ -275,6 +276,7 @@
         "promise-chain",
         "js-async-await",
         "esm",
+        "js-timer-fn-not-string",
         "js-iteration-protocol",
         "js-weakmap-lifetime"
       ],
@@ -692,6 +694,8 @@
         "redis-repl-psync-not-sql",
         "redis-aof-keeps-rdb",
         "redis-cluster-cli-not-trib",
+        "redis-proxy-hash-not-cluster",
+        "redis-save-blocks-bgsave",
         "redis-lua-atomic",
         "redis-stream-vs-pubsub"
       ],
@@ -953,7 +957,8 @@
             "eventloop",
             "promise-chain",
             "js-async-await",
-            "esm"
+            "esm",
+            "js-timer-fn-not-string"
           ]
         },
         {
@@ -1443,6 +1448,7 @@
             "ssr-hydration",
             "react-ssr-not-fewer-http",
             "vite-sourcemap-prod",
+            "webpack-eval-sourcemap-dev-only",
             "angular-ngonchanges-primitives"
           ]
         },
@@ -1781,7 +1787,9 @@
             "redis-legacy-vm-limits",
             "redis-repl-psync-not-sql",
             "redis-aof-keeps-rdb",
-            "redis-cluster-cli-not-trib"
+            "redis-cluster-cli-not-trib",
+            "redis-proxy-hash-not-cluster",
+            "redis-save-blocks-bgsave"
           ]
         },
         {
@@ -3334,6 +3342,46 @@
         [
           "MDN：JavaScript modules",
           "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules"
+        ]
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
+      "id": "js-timer-fn-not-string",
+      "title": "定时器第一个参数传函数，不要传代码字符串",
+      "prompt": "为什么旧图还写 setInterval(\"clock()\", 1000)，现在一跑就被规范或打包拦住？",
+      "core": "`setTimeout` / `setInterval` 的第一个参数应是**函数**（或实现了回调约定的对象）。传入字符串时，实现会把这段文本再当脚本求值，行为和 `eval` 一类，作用域难料，也容易撞上 CSP。正确写法是 `setInterval(clock, 1000)` 或 `setInterval(() => clock(), 1000)`。取消要用同一次调用返回的句柄做 `clearInterval` / `clearTimeout`。测试里用假时钟推进，见 `test-fake-timers`。",
+      "why": "照图抄字符串，严格 CSP 下定时器根本不跑；能跑时闭包变量也对不上，调试像「函数没定义」。",
+      "example": "`setInterval(\"clock()\", 1000)` 依赖到点再解析全局名 `clock`。改成 `const id = setInterval(() => clock(), 1000)`，卸载时 `clearInterval(id)`。",
+      "task": "划掉字符串形式的 setInterval。写出传入函数的两种写法，以及 clear 要用什么。",
+      "answer": "划掉「字符串形式的 setInterval」。第一个参数传函数引用或箭头函数。不要传 \"clock()\"。clear 使用同一次调用返回的 id。",
+      "keywords": "setTimeout setInterval eval CSP clearInterval",
+      "origin": "本地库 JavaScript 思维导图 BOM 枝里的 setInterval(\"clock()\", 1000)",
+      "diagram": "diagrams/js-timer-fn-not-string.svg",
+      "deep": [
+        {
+          "title": "和立刻调用的括号",
+          "body": "`setTimeout(clock(), 1000)` 会马上执行 clock，把返回值交给定时器，通常也是错的。要延迟执行就传 `clock` 或 `() => clock()`，不要在传参时加一对会立刻调用的括号。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "打开 MDN 的 setInterval，确认推荐函数形式。在开了禁止 eval 的 CSP 页面试字符串形式，应失败或被挡住。再改成函数形式，用返回的 id 清除。"
+        }
+      ],
+      "points": [
+        "定时器第一个参数应是函数",
+        "字符串形式会再求值，类似 eval",
+        "clear 必须用同一次调用返回的句柄"
+      ],
+      "references": [
+        [
+          "MDN：setInterval",
+          "https://developer.mozilla.org/en-US/docs/Web/API/Window/setInterval"
+        ],
+        [
+          "MDN：setTimeout",
+          "https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout"
         ]
       ]
     },
@@ -11833,6 +11881,46 @@
     {
       "track": "frontend",
       "group": "工程实践",
+      "id": "webpack-eval-sourcemap-dev-only",
+      "title": "带 eval 的 source map 只给开发重建，不要上生产",
+      "prompt": "为什么优化表里 eval 一列「重建速度」很高，有人就把它写进生产配置？",
+      "core": "Webpack 的 `eval`、`cheap-module-eval-source-map` 一类用 `eval` 包模块，**重建快**，官方对照表里「生产环境」一列是 **no**。生产若公开 map，等于交出源码，见 `vite-sourcemap-prod`（Vite 的 hidden / 私有上传同一道理）。线上要堆栈时用 `hidden-source-map` 或把 `.map` 只交给错误监控，不要图重建速度把 eval 系带到 CDN。",
+      "why": "生产开了 eval-source-map，包体积和解析方式都按开发来，还可能把源码路径暴露给匿名用户。",
+      "example": "开发 `devtool: \"cheap-module-eval-source-map\"`。生产 `devtool: false` 或 `hidden-source-map`，`.map` 只上传监控。不要 `production` 模式仍写 `eval`。",
+      "task": "对照 Webpack devtool 表，标出 eval 系在「生产环境」列是否为 no；写出生产若要排障用哪一类。",
+      "answer": "eval 系只给开发。生产不要公开它们。需要排障用 hidden 或私有 map 通道，和 Vite 的 hidden 同一意图。",
+      "keywords": "webpack devtool eval-source-map hidden-source-map 生产",
+      "origin": "本地库 webpack improve_build 文档里的 devtool 对照表",
+      "diagram": "diagrams/webpack-eval-sourcemap.svg",
+      "deep": [
+        {
+          "title": "和 Vite 那一课",
+          "body": "工具名不同，边界相同：开发要快映射，生产不要把还原源码的文件挂到公网。Vite 用 `build.sourcemap: \"hidden\"`，Webpack 用 `hidden-source-map`。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "打开 Webpack Devtool 文档表，确认 eval 行的 production 为 no。看生产构建产物有没有 sourceMappingURL 和可下载的 .map。"
+        }
+      ],
+      "points": [
+        "eval 系 source map 为重建速度服务",
+        "官方表上它们不标给生产",
+        "生产公开 map 等于公开源码，应用 hidden 或私有通道"
+      ],
+      "references": [
+        [
+          "Webpack：Devtool",
+          "https://webpack.js.org/configuration/devtool/"
+        ],
+        [
+          "Vite：build.sourcemap",
+          "https://vite.dev/config/build-options.html#build-sourcemap"
+        ]
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "工程实践",
       "id": "angular-ngonchanges-primitives",
       "title": "ngOnChanges 不单是引用变了才跑，也不是整棵树每次必脏检查",
       "prompt": "为什么把 ngOnChanges 说成“只有对象引用变化才触发”，又把 Angular 2+ 说成每次从根脏检查整棵树？",
@@ -19759,6 +19847,90 @@
         [
           "Redis：集群规范",
           "https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "缓存",
+      "id": "redis-proxy-hash-not-cluster",
+      "title": "Twemproxy 取模分片不是 Redis Cluster",
+      "prompt": "为什么导图把 Twitter 的代理、Hash 取模和「Redis 集群」画在同一枝上？",
+      "core": "Twemproxy、Codis 一类方案在客户端或代理上按哈希（常是取模）把键分到多台**彼此不知道对方**的 Redis。官方 **Redis Cluster** 从 3.0 起用 **16384 槽**、节点互知、`MOVED`/`ASK` 重定向；运维入口是 `redis-cli --cluster`，见 `redis-cluster-cli-not-trib`。槽不是一致性哈希环，见 `redis-string-max-512mb`。哨兵只做主从切换，不分片，见 `redis-sentinel-cluster`。导图上的代理不能当现行默认集群答案。",
+      "why": "按取模代理去扩容，加减节点几乎整表搬家，还以为自己开了官方 Cluster。客户端只连代理时，也学不会处理重定向。",
+      "example": "三台独立 Redis 前面挂 Twemproxy，键 `user:1` 落在第 2 台。加第四台后取模结果变了，大量键要迁移。Cluster 里同一键对应固定槽，迁移按槽进行，客户端收到 MOVED 再换节点。",
+      "task": "划掉“集群=代理+取模”。分别写出代理方案和 Cluster 的分片单位、客户端是否要处理重定向。",
+      "answer": "划掉「集群=代理+取模」。代理取模分的是独立实例，客户端常只看见代理。Cluster 分的是 16384 槽，节点互知，客户端要跟 MOVED/ASK。新部署不要把 Twemproxy 画成默认。",
+      "keywords": "Redis Cluster Twemproxy Codis 16384 槽 取模",
+      "origin": "本地库 Redis 思维导图把 Twemproxy、Hash 取模与集群画在一起",
+      "diagram": "diagrams/redis-proxy-hash.svg",
+      "deep": [
+        {
+          "title": "和 Codis",
+          "body": "Codis 也是旧分片代理路线。官方文档讲集群时不再把它当默认。看见「代理用户读写」要先问是不是 Cluster 协议。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "对照 Redis Cluster 规范：槽数、MOVED。再看 Twemproxy 说明：它不实现 Cluster 协议。本机用 redis-cli --cluster nodes 应看到槽分配，而不是代理配置文件里的取模列表。"
+        }
+      ],
+      "points": [
+        "代理取模后面是多台互不知晓的 Redis",
+        "Cluster 用 16384 槽和客户端重定向",
+        "加减节点时取模几乎整表搬家，槽迁移只动受影响的键"
+      ],
+      "references": [
+        [
+          "Redis：集群规范",
+          "https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/"
+        ],
+        [
+          "Redis：缩放集群",
+          "https://redis.io/docs/latest/operate/oss_and_stack/management/scaling/"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "缓存",
+      "id": "redis-save-blocks-bgsave",
+      "title": "SAVE 堵住命令处理，BGSAVE 才是线上快照",
+      "prompt": "为什么导图把 SAVE 和 BGSAVE 并排，有人就在高峰直接 SAVE？",
+      "core": "`SAVE` 在**当前服务线程**里把数据集写成 RDB，写完之前**不处理别的命令**。`BGSAVE` **fork 子进程**去做快照，父进程继续接命令；配置文件里的 `save` 规则触发的也是 BGSAVE。fork 瞬间仍可能有短停顿，写时拷贝会占额外内存，但不会像 SAVE 那样整段堵死。AOF 打开后 RDB 仍可并存，见 `redis-aof-keeps-rdb`。持久化窗口见 `redis-persistence`。",
+      "why": "高峰执行 SAVE，所有读写卡在快照写盘上，延迟尖刺被当成「Redis 挂了」。",
+      "example": "凌晨维护可以 `SAVE`。白天流量里应 `BGSAVE` 或靠 `save 900 1` 一类规则。子进程写 dump.rdb 时，父进程仍能 `GET`。",
+      "task": "划掉“两种快照一样、随便用”。写出 SAVE 与 BGSAVE 谁堵住命令循环，配置里的 save 走哪条。",
+      "answer": "划掉「两种快照一样、随便用」。SAVE 堵住命令处理。BGSAVE 用子进程，父进程继续服务。配置自动快照走 BGSAVE。fork 仍有短停顿和内存代价，但不是整段堵死。",
+      "keywords": "Redis SAVE BGSAVE RDB fork copy-on-write",
+      "origin": "本地库 Redis 思维导图把 SAVE 与 BGSAVE 并列为两种产生 RDB 的方式",
+      "diagram": "diagrams/redis-save-bgsave.svg",
+      "deep": [
+        {
+          "title": "写时拷贝不是免费的",
+          "body": "子进程与父进程共享页，父进程一改页就复制。大实例上 BGSAVE 仍要盯内存和 fork 耗时，只是不必用 SAVE 堵死流量。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "读 Redis 持久化文档里 SAVE 与 BGSAVE。在测试实例高峰模拟 SAVE，观察其他客户端是否阻塞；改 BGSAVE 后父进程应仍能响应。"
+        }
+      ],
+      "points": [
+        "SAVE 在服务线程写完快照，期间不接命令",
+        "BGSAVE fork 子进程，父进程继续服务",
+        "配置里的 save 规则触发的是 BGSAVE"
+      ],
+      "references": [
+        [
+          "Redis：持久化",
+          "https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/"
+        ],
+        [
+          "Redis：SAVE",
+          "https://redis.io/docs/latest/commands/save/"
+        ],
+        [
+          "Redis：BGSAVE",
+          "https://redis.io/docs/latest/commands/bgsave/"
         ]
       ]
     },

@@ -10,6 +10,7 @@
 
 | 日期 | 状态 | 标题 |
 | --- | --- | --- |
+| 2026-10-09 | 已完成 | [导图续抽：定时器、webpack eval map、Redis 代理/SAVE（4 课）](2026-10-09-mindmap-timer-redis-sourcemap.md) |
 | 2026-10-09 | 已完成 | [微前端补选型矩阵与各方案具体用法（9 课）](2026-10-09-mfe-selection-usage.md) |
 | 2026-10-07 | 已完成 | [新增前端「微前端」章节（12 课）](2026-10-07-micro-frontends-chapter.md) |
 | 2026-10-07 | 已完成 | [侧栏 path-menu 层级间距修正](2026-10-07-path-menu-spacing.md) |

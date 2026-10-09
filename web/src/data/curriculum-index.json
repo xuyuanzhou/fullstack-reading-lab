@@ -243,6 +243,7 @@
         "ssr-hydration",
         "react-ssr-not-fewer-http",
         "vite-sourcemap-prod",
+        "webpack-eval-sourcemap-dev-only",
         "angular-ngonchanges-primitives",
         "web-vitals",
         "performance",
@@ -275,6 +276,7 @@
         "promise-chain",
         "js-async-await",
         "esm",
+        "js-timer-fn-not-string",
         "js-iteration-protocol",
         "js-weakmap-lifetime"
       ],
@@ -692,6 +694,8 @@
         "redis-repl-psync-not-sql",
         "redis-aof-keeps-rdb",
         "redis-cluster-cli-not-trib",
+        "redis-proxy-hash-not-cluster",
+        "redis-save-blocks-bgsave",
         "redis-lua-atomic",
         "redis-stream-vs-pubsub"
       ],
@@ -953,7 +957,8 @@
             "eventloop",
             "promise-chain",
             "js-async-await",
-            "esm"
+            "esm",
+            "js-timer-fn-not-string"
           ]
         },
         {
@@ -1443,6 +1448,7 @@
             "ssr-hydration",
             "react-ssr-not-fewer-http",
             "vite-sourcemap-prod",
+            "webpack-eval-sourcemap-dev-only",
             "angular-ngonchanges-primitives"
           ]
         },
@@ -1781,7 +1787,9 @@
             "redis-legacy-vm-limits",
             "redis-repl-psync-not-sql",
             "redis-aof-keeps-rdb",
-            "redis-cluster-cli-not-trib"
+            "redis-cluster-cli-not-trib",
+            "redis-proxy-hash-not-cluster",
+            "redis-save-blocks-bgsave"
           ]
         },
         {
@@ -2710,6 +2718,19 @@
         "import 建立的是模块绑定，不是源码粘贴",
         "依赖图决定加载和分包",
         "循环依赖时可能读到尚未初始化的绑定"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
+      "id": "js-timer-fn-not-string",
+      "title": "定时器第一个参数传函数，不要传代码字符串",
+      "prompt": "为什么旧图还写 setInterval(\"clock()\", 1000)，现在一跑就被规范或打包拦住？",
+      "keywords": "setTimeout setInterval eval CSP clearInterval",
+      "points": [
+        "定时器第一个参数应是函数",
+        "字符串形式会再求值，类似 eval",
+        "clear 必须用同一次调用返回的句柄"
       ]
     },
     {
@@ -5591,6 +5612,19 @@
     {
       "track": "frontend",
       "group": "工程实践",
+      "id": "webpack-eval-sourcemap-dev-only",
+      "title": "带 eval 的 source map 只给开发重建，不要上生产",
+      "prompt": "为什么优化表里 eval 一列「重建速度」很高，有人就把它写进生产配置？",
+      "keywords": "webpack devtool eval-source-map hidden-source-map 生产",
+      "points": [
+        "eval 系 source map 为重建速度服务",
+        "官方表上它们不标给生产",
+        "生产公开 map 等于公开源码，应用 hidden 或私有通道"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "工程实践",
       "id": "angular-ngonchanges-primitives",
       "title": "ngOnChanges 不单是引用变了才跑，也不是整棵树每次必脏检查",
       "prompt": "为什么把 ngOnChanges 说成“只有对象引用变化才触发”，又把 Angular 2+ 说成每次从根脏检查整棵树？",
@@ -8395,6 +8429,32 @@
         "运维入口是 redis-cli --cluster",
         "redis-trib.rb 已不是创建命令",
         "集群从 3.0 进入核心，哈希槽仍是 16384"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "缓存",
+      "id": "redis-proxy-hash-not-cluster",
+      "title": "Twemproxy 取模分片不是 Redis Cluster",
+      "prompt": "为什么导图把 Twitter 的代理、Hash 取模和「Redis 集群」画在同一枝上？",
+      "keywords": "Redis Cluster Twemproxy Codis 16384 槽 取模",
+      "points": [
+        "代理取模后面是多台互不知晓的 Redis",
+        "Cluster 用 16384 槽和客户端重定向",
+        "加减节点时取模几乎整表搬家，槽迁移只动受影响的键"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "缓存",
+      "id": "redis-save-blocks-bgsave",
+      "title": "SAVE 堵住命令处理，BGSAVE 才是线上快照",
+      "prompt": "为什么导图把 SAVE 和 BGSAVE 并排，有人就在高峰直接 SAVE？",
+      "keywords": "Redis SAVE BGSAVE RDB fork copy-on-write",
+      "points": [
+        "SAVE 在服务线程写完快照，期间不接命令",
+        "BGSAVE fork 子进程，父进程继续服务",
+        "配置里的 save 规则触发的是 BGSAVE"
       ]
     },
     {

@@ -5304,6 +5304,68 @@
     "diagram": "diagrams/redis-cluster-cli.svg",
     "origin": "本地库 Redis 思维导图的集群枝"
   },
+  "redis-proxy-hash-not-cluster": {
+    "core": "Twemproxy、Codis 一类方案在客户端或代理上按哈希（常是取模）把键分到多台**彼此不知道对方**的 Redis。官方 **Redis Cluster** 从 3.0 起用 **16384 槽**、节点互知、`MOVED`/`ASK` 重定向；运维入口是 `redis-cli --cluster`，见 `redis-cluster-cli-not-trib`。槽不是一致性哈希环，见 `redis-string-max-512mb`。哨兵只做主从切换，不分片，见 `redis-sentinel-cluster`。导图上的代理不能当现行默认集群答案。",
+    "why": "按取模代理去扩容，加减节点几乎整表搬家，还以为自己开了官方 Cluster。客户端只连代理时，也学不会处理重定向。",
+    "example": "三台独立 Redis 前面挂 Twemproxy，键 `user:1` 落在第 2 台。加第四台后取模结果变了，大量键要迁移。Cluster 里同一键对应固定槽，迁移按槽进行，客户端收到 MOVED 再换节点。",
+    "task": "划掉“集群=代理+取模”。分别写出代理方案和 Cluster 的分片单位、客户端是否要处理重定向。",
+    "answer": "划掉「集群=代理+取模」。代理取模分的是独立实例，客户端常只看见代理。Cluster 分的是 16384 槽，节点互知，客户端要跟 MOVED/ASK。新部署不要把 Twemproxy 画成默认。",
+    "deep": [
+      {
+        "title": "和 Codis",
+        "body": "Codis 也是旧分片代理路线。官方文档讲集群时不再把它当默认。看见「代理用户读写」要先问是不是 Cluster 协议。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对照 Redis Cluster 规范：槽数、MOVED。再看 Twemproxy 说明：它不实现 Cluster 协议。本机用 redis-cli --cluster nodes 应看到槽分配，而不是代理配置文件里的取模列表。"
+      }
+    ],
+    "references": [
+      [
+        "Redis：集群规范",
+        "https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/"
+      ],
+      [
+        "Redis：缩放集群",
+        "https://redis.io/docs/latest/operate/oss_and_stack/management/scaling/"
+      ]
+    ],
+    "diagram": "diagrams/redis-proxy-hash.svg",
+    "origin": "本地库 Redis 思维导图把 Twemproxy、Hash 取模与集群画在一起"
+  },
+  "redis-save-blocks-bgsave": {
+    "core": "`SAVE` 在**当前服务线程**里把数据集写成 RDB，写完之前**不处理别的命令**。`BGSAVE` **fork 子进程**去做快照，父进程继续接命令；配置文件里的 `save` 规则触发的也是 BGSAVE。fork 瞬间仍可能有短停顿，写时拷贝会占额外内存，但不会像 SAVE 那样整段堵死。AOF 打开后 RDB 仍可并存，见 `redis-aof-keeps-rdb`。持久化窗口见 `redis-persistence`。",
+    "why": "高峰执行 SAVE，所有读写卡在快照写盘上，延迟尖刺被当成「Redis 挂了」。",
+    "example": "凌晨维护可以 `SAVE`。白天流量里应 `BGSAVE` 或靠 `save 900 1` 一类规则。子进程写 dump.rdb 时，父进程仍能 `GET`。",
+    "task": "划掉“两种快照一样、随便用”。写出 SAVE 与 BGSAVE 谁堵住命令循环，配置里的 save 走哪条。",
+    "answer": "划掉「两种快照一样、随便用」。SAVE 堵住命令处理。BGSAVE 用子进程，父进程继续服务。配置自动快照走 BGSAVE。fork 仍有短停顿和内存代价，但不是整段堵死。",
+    "deep": [
+      {
+        "title": "写时拷贝不是免费的",
+        "body": "子进程与父进程共享页，父进程一改页就复制。大实例上 BGSAVE 仍要盯内存和 fork 耗时，只是不必用 SAVE 堵死流量。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "读 Redis 持久化文档里 SAVE 与 BGSAVE。在测试实例高峰模拟 SAVE，观察其他客户端是否阻塞；改 BGSAVE 后父进程应仍能响应。"
+      }
+    ],
+    "references": [
+      [
+        "Redis：持久化",
+        "https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/"
+      ],
+      [
+        "Redis：SAVE",
+        "https://redis.io/docs/latest/commands/save/"
+      ],
+      [
+        "Redis：BGSAVE",
+        "https://redis.io/docs/latest/commands/bgsave/"
+      ]
+    ],
+    "diagram": "diagrams/redis-save-bgsave.svg",
+    "origin": "本地库 Redis 思维导图把 SAVE 与 BGSAVE 并列为两种产生 RDB 的方式"
+  },
   "redis-lua-atomic": {
     "core": "每个 Redis 命令自己原子，两个命令之间别人能插进来。EVAL 把脚本放在服务端一次跑完，中间不会插入别的命令。脚本里要用到的键放 KEYS，参数放 ARGV，方便集群把脚本送到正确节点。脚本应短、可重入、不要在里面做随机长时间循环。持久化与复制按脚本整体效果走。能用单条命令（INCR、SET NX）就不要上脚本。",
     "why": "客户端先 GET 再 SET 减库存，两条命令之间另一个请求插进来，两边都读到大于 0，秒杀超卖。区分信号是同一库存键，GET+SET 并发会减成负数，EVAL 里读完再 DECR 则只有一个请求成功。",
