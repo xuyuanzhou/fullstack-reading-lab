@@ -30,6 +30,7 @@ const COVERAGE_FRONTEND_30 = [
     points:['HttpOnly 禁止 document.cookie 读取','Secure 限制只在 HTTPS 发送','SameSite 限制跨站附带，None 必须配 Secure'],
     deep:[
       {title:'和 credentials',body:'浏览器有 Cookie 不等于 fetch 跨源会带。跨源还要 `credentials:\"include\"` 且 CORS 允许。'},
+      {title:'前缀与分区',body:'__Host-/__Secure- 与 Partitioned 进一步限制谁能种、第三方如何隔离，见 cookie-prefix-partitioned。'},
       {title:'怎样自己验证',body:'Application 面板看 Cookie 勾选。控制台读 document.cookie。用跨站表单 POST 对照是否带上 sid。'}
     ],
     refs:[['MDN：Set-Cookie','https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Set-Cookie'],['MDN：SameSite cookies','https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Cookies#controlling_third-party_cookies_with_samesite']]
@@ -46,7 +47,7 @@ const COVERAGE_FRONTEND_30 = [
     keywords:'长轮询 WebSocket 短轮询 实时',
     points:['短轮询是定时新请求','长轮询把 HTTP 请求挂到有事件或超时','WebSocket 是握手后的双工长连接'],
     deep:[
-      {title:'和 SSE',body:'Server-Sent Events 是服务端到客户端的单向流，仍走 HTTP。只要下行推送时可比 WS 简单。'},
+      {title:'和 SSE',body:'Server-Sent Events 是服务端到客户端的单向流，仍走 HTTP。机制与选型见 sse-one-way-http-stream。只要下行推送时可比 WS 简单。'},
       {title:'怎样自己验证',body:'在 Network 里区分：反复短请求、单请求 pending 很久、还是 101 Switching Protocols。'}
     ],
     refs:[['MDN：WebSocket','https://developer.mozilla.org/en-US/docs/Web/API/WebSocket'],['MDN：Server-sent events','https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events']]

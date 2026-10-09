@@ -19,9 +19,12 @@
 | localStorage | `browser-storage` |
 | sessionStorage | `session-storage-tab-only` |
 | IndexedDB | `indexeddb-when-needed` |
+| Service Worker 生命周期 | `service-worker-stale` |
+| SW 缓存策略选型 | `sw-cache-strategy-pick` |
 | DOM 事件流 | `dom-event-flow` |
 | 迭代协议 | `js-iteration-protocol` |
 | Generator / yield | `js-generator-yield-pause` |
+| async generator / for await | `js-async-generator-for-await` |
 
 ## 前端 · 网络
 
@@ -30,8 +33,10 @@
 | HTTP 方法 | `http-methods`、`http-create-post-not-put` |
 | Content-Type | `http-content-type-body` |
 | Cookie / SameSite | `cookie-set-attributes`、`cookie-credential`、`fetch-credentials` |
+| Cookie 前缀 / Partitioned | `cookie-prefix-partitioned` |
 | CORS | `cors`、`cors-credentials-allowlist` |
 | 长轮询 / WebSocket | `long-poll-vs-websocket` |
+| SSE 单向推送 | `sse-one-way-http-stream` |
 | 中止请求 | `fetch-abort` |
 | 响应体流（单次消费） | `fetch-response-body-once` |
 
@@ -48,11 +53,15 @@
 | INNER JOIN | `mysql-inner-join-match` |
 | 外连接 WHERE 陷阱 | `sql-outer-join-where` |
 | GROUP BY / HAVING | `mysql-where-having`、`mysql-group-by-having` |
+| 窗口函数保留行 | `mysql-window-keeps-rows` |
 | VIEW 机制 | `mysql-view-is-stored-query` |
 | 存储过程≠自动事务 | `mysql-procedure-not-auto-txn` |
+| 触发器副作用 | `mysql-trigger-side-effect-hidden` |
 | MULTI / WATCH | `redis-transaction` |
 | Lua 原子 | `redis-lua-atomic` |
 | MULTI vs Lua 选型 | `redis-multi-vs-lua-pick` |
+| Pipeline≠原子 | `redis-pipeline`（第四轮仅加厚交叉） |
+| GEO≠完整 GIS | `redis-geo-on-zset-not-gis` |
 
 ## 微前端 / D8
 
@@ -72,4 +81,12 @@
 
 已补：Generator、`fetch` 响应体单次消费、存储过程非自动事务、MULTI vs Lua 选型。加厚：`js-iteration-protocol`、`fetch-abort`、`redis-transaction`、`redis-lua-atomic`。
 
-下一轮可继续扫：`async function*` / `for await`、SSE vs Fetch 流、MySQL 触发器副作用边界、Redis Pipeline≠原子（若尚无独立课）。
+## 第四轮（2026-10-09）
+
+已补：`async function*` / `for await`、SSE 单向流、触发器副作用。Pipeline 不新开，加厚 `redis-pipeline`。
+
+## 第五轮（2026-10-09）
+
+已补：SW 策略选型、Cookie 前缀/Partitioned、窗口函数行数、GEO≠GIS（BITFIELD 仅在 deep 区分）。
+
+下一轮可继续扫：CSP report-only 边界、CORS preflight 缓存、MySQL CTE 机制、Redis Stream 修剪策略加厚（有则只交叉）。

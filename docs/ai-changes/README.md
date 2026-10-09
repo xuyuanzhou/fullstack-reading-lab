@@ -2,7 +2,8 @@
 
 跨工具入口：[AGENTS.md](../../AGENTS.md)  
 规范全文：[AI契约-变更记录规范.md](../AI契约-变更记录规范.md)  
-新建记录：复制 [TEMPLATE.md](TEMPLATE.md) → `YYYY-MM-DD-<slug>.md`，并把链接插到下表**最上方**。
+新建记录：复制 [TEMPLATE.md](TEMPLATE.md) → `YYYY-MM-DD-<slug>.md`，并把链接插到下表**最上方**。  
+写法示例（含代码）：[EXAMPLES.md](EXAMPLES.md)
 
 任意 AI 产品改本仓库前，先读下表最近几条。
 
@@ -10,6 +11,11 @@
 
 | 日期 | 状态 | 标题 |
 | --- | --- | --- |
+| 2026-10-09 | 已完成 | [D8 续抽：NOT NULL 默认值与 TEXT 禁令（2 课）](2026-10-09-d8-notnull-text.md) |
+| 2026-10-09 | 已完成 | [W3CSchool 第五轮：SW 策略 / Cookie 前缀 / 窗口函数 / GEO（4 课）](2026-10-09-w3cschool-round5-sw-cookie-window-geo.md) |
+| 2026-10-09 | 已完成 | [W3CSchool 第四轮：async generator / SSE / 触发器（3 课）](2026-10-09-w3cschool-round4-async-sse-trigger.md) |
+| 2026-10-09 | 已完成 | [契约补充写法与代码示例](2026-10-09-ai-change-examples.md) |
+| 2026-10-09 | 已完成 | [W3CSchool 第三轮：Generator / Fetch 流 / 存储过程 / MULTI-Lua（4 课）](2026-10-09-w3cschool-round3-generator-fetch-proc.md) |
 | 2026-10-09 | 已完成 | [D8 续抽：货币小数与 MVCC 两列模型（2 课）](2026-10-09-d8-money-mvcc.md) |
 | 2026-10-09 | 已完成 | [AI 笔记页的记阅读钩子挪到提前返回之前](2026-10-09-ai-note-hook-order.md) |
 | 2026-10-09 | 已完成 | [交付没勾完，进度不到 100%](2026-10-09-path-percent-includes-delivery.md) |

@@ -149,6 +149,7 @@ const COVERAGE_INFRA_13 = [
     points:['Pipeline 把多条命令打包以减少网络往返','MULTI 批次中间不被插队，但失败不会回滚已成功命令','原子读写要用 Lua 或 WATCH，不是 Pipeline'],
     deep:[
       {title:'少往返不等于原子',body:'Pipeline 把多条命令的等待叠在一起，服务器仍按到达顺序一条条执行，中间可以夹着别人的命令。MULTI 保证这批不被插队，但语法错误之外，已经执行的写入不会整批回滚。'},
+      {title:'选型对照',body:'批量只读用 Pipeline；批内不插队用 MULTI；读后分支用 Lua。口诀见 redis-multi-vs-lua-pick，机制见 redis-transaction、redis-lua-atomic。'},
       {title:'怎样自己验证',body:'分别测二十次 GET、一次 Pipeline、一次 MULTI。比较耗时。Pipeline 执行期间用另一个客户端插入一条写入，看它能否出现在这二十条中间。MULTI 期间不应被插进这批。'},
     ],
     refs:[['Redis：Pipelining','https://redis.io/docs/latest/develop/using-commands/pipelining/'],['Redis：Transactions','https://redis.io/docs/latest/develop/using-commands/transactions/']]

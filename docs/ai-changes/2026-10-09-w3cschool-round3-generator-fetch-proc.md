@@ -33,13 +33,13 @@
 node scripts/export-curriculum.mjs && node scripts/verify_content.mjs
 ```
 
-- 结果：以命令输出为准（预期 +4 课）。
+- 结果：764 课（前端 271 / Java 493），2299 知识点（含并行 D8 java-63）。
 
 ## 后续
 
 - [x] Generator / Fetch 流 / 过程 / MULTI-Lua
-- [ ] 下一轮：async generator、SSE、触发器副作用、Pipeline≠原子（见 CROSSWALK）
-- [ ] 下一空闲号 `coverage-java-63.js` / `coverage-frontend-33.js`（先 ls）
+- [x] 下一轮见 `2026-10-09-w3cschool-round4-async-sse-trigger.md`
+- [x] `frontend-33` / `java-64` 已占用；再下 `frontend-34` / `java-65`
 
 ## 给下一模型
 

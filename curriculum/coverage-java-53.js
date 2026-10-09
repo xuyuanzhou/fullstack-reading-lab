@@ -30,6 +30,7 @@ const COVERAGE_JAVA_53 = [
     points:['ZSet 按 score 有序','TopN 与名次用范围/排名命令','同分再按成员序，成员必须唯一'],
     deep:[
       {title:'和延时任务',body:'分用执行时间戳，定时 ZRANGEBYSCORE 取出到期成员。仍要处理重复消费。'},
+      {title:'和 GEO',body:'附近点查询用 GEO（底层也是 ZSet/geohash），不要把排行榜 ZSet 当成地图索引，见 redis-geo-on-zset-not-gis。'},
       {title:'怎样自己验证',body:'插入多成员后改一个分，确认范围结果顺序变化，无需应用 sort。'}
     ],
     refs:[['Redis：Sorted sets','https://redis.io/docs/latest/develop/data-types/sorted-sets/'],['Redis：ZRANGE','https://redis.io/docs/latest/commands/zrange/']]
@@ -81,6 +82,7 @@ const COVERAGE_JAVA_53 = [
     points:['WHERE 在分组前过滤行','HAVING 在分组后过滤组','聚合门槛用 HAVING 或子查询'],
     deep:[
       {title:'和 ONLY_FULL_GROUP_BY',body:'选了未分组、未聚合的列会报错。要么写入 GROUP BY，要么用聚合函数。'},
+      {title:'和窗口函数',body:'要保留明细行并挂排名/组内累计，用 OVER，不要硬 GROUP BY，见 mysql-window-keeps-rows。'},
       {title:'怎样自己验证',body:'对比 WHERE 与 HAVING 位置错误时的报错信息；修正后组数应变少。'}
     ],
     refs:[['MySQL：GROUP BY','https://dev.mysql.com/doc/refman/8.4/en/group-by-modifiers.html'],['MySQL：HAVING','https://dev.mysql.com/doc/refman/8.4/en/select.html']]

@@ -805,6 +805,10 @@
         "body": "手写 [Symbol.iterator] 返回 { next } 也能 for-of。生成器是用 yield 写这种状态机的语法糖，见 `js-iteration-protocol`。"
       },
       {
+        "title": "异步生成器",
+        "body": "要边 await 边产出，用 async function* 与 for await，见 `js-async-generator-for-await`。不要对同步生成器 for await 混用预期。"
+      },
+      {
         "title": "怎样自己验证",
         "body": "调用后立刻看 g.next 是否存在、函数体副作用是否未发生。连续 next 两次对照 value。耗尽后再 next 应 done:true。"
       }
@@ -817,6 +821,33 @@
       [
         "MDN：function*",
         "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*"
+      ]
+    ]
+  },
+  "js-async-generator-for-await": {
+    "core": "`async function*` 返回**异步生成器**：每次 `next()` 得到的是 **Promise**，产出值在 Promise 兑现之后才可用。消费应用 **`for await...of`**（或手动 `await g.next()`），不要用同步 `for...of` 去取。它把“可暂停迭代”与“等待异步”合在一起，适合按页拉取、按块读流。同步 `function*` 仍用普通 `for...of`，见 `js-generator-yield-pause`。`for await` 也会消费异步可迭代对象（实现 `@@asyncIterator`），与同步 `@@iterator` 是两套协议。",
+    "why": "把 async 生成器丢进普通 for-of，拿到的是 Promise 对象当元素，或直接类型错误；以为加了 async 就自动并发跑完所有 yield。",
+    "example": "`async function* pages() { yield await fetchPage(1); yield await fetchPage(2); } for await (const p of pages()) { ... }`。写成 `for (const p of pages())` 得不到页面数据。读 `Response.body` 时也可用异步迭代（实现支持时）按块处理，见 `fetch-response-body-once`。",
+    "task": "划掉“async function*=自动跑完的同步生成器”。写出：应用哪种循环；每次 next 得到的是什么。",
+    "answer": "划掉「async function*=自动跑完的同步生成器」。用 for await...of 或 await next()。每次 next 先得到 Promise，兑现后才是 value。同步 for-of 不对。",
+    "deep": [
+      {
+        "title": "和 Promise.all",
+        "body": "for await 是顺序等每一页；要并行拉多页仍用 Promise.all，再迭代结果。异步生成器不自动并行。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对同一 async 生成器分别试 for-of 与 for await，对照能否得到 yield 的值。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：for await...of",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of"
+      ],
+      [
+        "MDN：AsyncGenerator",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AsyncGenerator"
       ]
     ]
   },
@@ -963,7 +994,7 @@
     "react": "hooks"
   },
   "ts-unknown": {
-    "core": "any 会绕过许多静态检查；unknown 可接收任意值，但在读取属性或调用前必须缩小类型。JSON 解析结果即使语法正确，也不代表符合业务对象结构。顺序是：入口收 unknown，先判断非 null 对象，再逐个检查必需字段的类型，通过后才收窄成 User。边界是：any 会让后面的属性访问全部跳过检查，风险从边界扩散到所有调用方。JSON.parse 只保证文本合法，不保证有 id，更不保证 id 是字符串。缺少字段和类型不对都要停在 parseUser 里。调用方拿到的要么是 User，要么是错误，不能是一个还可以点出任意属性的值。不要把未知值传进去。",
+    "core": "any 会绕过许多静态检查；**unknown（TS 3.0）** 可接收任意值，但在读取属性或调用前必须缩小类型。JSON 解析结果即使语法正确，也不代表符合业务对象结构。顺序是：入口收 unknown，先判断非 null 对象，再逐个检查必需字段的类型，通过后才收窄成 User。边界是：any 会让后面的属性访问全部跳过检查，风险从边界扩散到所有调用方。JSON.parse 只保证文本合法，不保证有 id，更不保证 id 是字符串。缺少字段和类型不对都要停在 parseUser 里。调用方拿到的要么是 User，要么是错误，不能是一个还可以点出任意属性的值。不要把未知值传进去。",
     "why": "错把接口 JSON 标成 any，字段缺失或类型不对会一直传到调用方，直到运行时才崩。编译器不再提醒。能分开的信号是：入口类型是 unknown，并且在读取属性之前有没有缩小类型。",
     "example": "parseUser 收到 {id:1}。检查发现 id 不是字符串，函数返回错误，不构造 User。收到 {id:\"u1\"} 且其余字段通过后，才返回 User。缺少 id 的 {} 同样在边界失败。",
     "task": "把一个返回 unknown 的 parseUser 函数改成安全读取，并测试缺少 id、id 为数字和正确对象三种输入。",
@@ -1223,7 +1254,7 @@
     ]
   },
   "ts-template-literal-types": {
-    "core": "模板字面量类型把字符串字面量拼起来，例如 `on${Capitalize<K>}`。对象键、路由路径、CSS 变量这种有固定模式的字符串，可以用它把非法组合挡在编译期。它仍是类型，不会在运行时生成函数。模式太宽（`${string}`）就等于没限制。和联合、映射类型一起用时，先写出有限的键集合。键集合先收成有限联合再映射，拼出来的每个路径都能点名。模式放宽成任意字符串之后，编译器不再拒绝多出来的字符。类型擦除后没有这段检查，拼错的名字仍要到运行时才暴露。先写出有限的键再去拼。",
+    "core": "模板字面量类型（**TS 4.1**）把字符串字面量拼起来，例如 `on${Capitalize<K>}`。对象键、路由路径、CSS 变量这种有固定模式的字符串，可以用它把非法组合挡在编译期。它仍是类型，不会在运行时生成函数。模式太宽（`${string}`）就等于没限制。和联合、映射类型一起用时，先写出有限的键集合。键集合先收成有限联合再映射，拼出来的每个路径都能点名。模式放宽成任意字符串之后，编译器不再拒绝多出来的字符。类型擦除后没有这段检查，拼错的名字仍要到运行时才暴露。先写出有限的键再去拼。",
     "why": "事件名写成 string，onClick 拼成 onClik 仍能通过编译，要点击才发现没有处理函数。区分信号是键集合有限时，\"/api/users\" 这种多余的 s 会在赋值处报错，而不是等到请求发出。",
     "example": "type ApiPath = `/api/${\"user\" | \"order\"}`，得到 \"/api/user\" | \"/api/order\"。把变量写成 \"/api/users\" 再赋给 ApiPath，编译失败；改回 \"/api/user\" 才通过。运行时不会凭这个类型去拼接字符串。",
     "task": "给 \"user\" | \"order\" 拼出 \"/api/user\" | \"/api/order\"。故意写 \"/api/users\" 看报错。",
@@ -2117,6 +2148,10 @@
         "body": "新版本可以已经安装，只是旧页面还占着控制权。服务器上的新包是在的。排查却在源站找文件，会错过浏览器里这份旧缓存。接口若也缓存优先，连数据都是旧的。边界不满足时就停，不要把这次失败算到下一层头上。"
       },
       {
+        "title": "策略怎么选",
+        "body": "静态与 API 不要同一套 cache-first。选型口诀见 `sw-cache-strategy-pick`。"
+      },
+      {
         "title": "怎样自己验证",
         "body": "对照生命周期写出 installing、waiting、activated。标出用户仍看旧脚本的 waiting。更新后不要关旧页，确认界面不变；关掉再开，才应看到新脚本。接口响应不应来自这份缓存。"
       }
@@ -2129,6 +2164,33 @@
       [
         "MDN：Service Worker 生命周期",
         "https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers"
+      ]
+    ]
+  },
+  "sw-cache-strategy-pick": {
+    "core": "Service Worker 的 **Cache API** 策略是你在 `fetch` 事件里写的分支，不是浏览器默认 HTTP 缓存的另一名字，见 `http-cache`、`service-worker-stale`。常见口诀：**cache-first** 适合带内容哈希的不可变静态；**network-first** / **stale-while-revalidate** 适合要尽快看见更新的页面壳；**API / 个性化数据默认走网络**，需要离线再单独设计。策略选错等于把错误数据当权威。发版后用户仍见旧脚本，首先查生命周期 waiting，其次才查策略是否永远命中旧条目。",
+    "why": "把所有请求都 cache-first，用户看到过期订单；或以为配了 SW 就等于配了 Cache-Control。",
+    "example": "`/assets/app.a1b2.js` cache-first。`/api/orders` 只 network，失败再决定是否展示离线提示。HTML 壳可用 network-first，避免永久钉死旧入口。",
+    "task": "划掉“上了 SW=全部先读缓存”。给：带哈希静态、订单 API、HTML 入口，各选一种策略倾向。",
+    "answer": "划掉「上了 SW=全部先读缓存」。带哈希静态：cache-first。订单 API：网络优先/只网络。HTML 入口：network-first 或短缓存。不要一律 cache-first。",
+    "deep": [
+      {
+        "title": "和 HTTP 缓存",
+        "body": "Cache-Control 管浏览器 HTTP 缓存；SW Cache 是另一层。两层叠在一起时，先分清响应来自哪一层再排障。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "Application → Cache 看条目。改 API 策略前后，断网或慢网下订单页是否仍吐旧 JSON。"
+      }
+    ],
+    "references": [
+      [
+        "web.dev：缓存策略",
+        "https://web.dev/articles/offline-cookbook"
+      ],
+      [
+        "MDN：Cache",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Cache"
       ]
     ]
   },
@@ -2505,6 +2567,10 @@
         "body": "浏览器有 Cookie 不等于 fetch 跨源会带。跨源还要 `credentials:\"include\"` 且 CORS 允许。"
       },
       {
+        "title": "前缀与分区",
+        "body": "__Host-/__Secure- 与 Partitioned 进一步限制谁能种、第三方如何隔离，见 `cookie-prefix-partitioned`。"
+      },
+      {
         "title": "怎样自己验证",
         "body": "Application 面板看 Cookie 勾选。控制台读 document.cookie。用跨站表单 POST 对照是否带上 sid。"
       }
@@ -2520,6 +2586,37 @@
       ]
     ]
   },
+  "cookie-prefix-partitioned": {
+    "core": "**名称前缀**是约定约束：`__Host-` 要求 `Secure`、无 `Domain`、`Path=/`，防止子域乱种；`__Secure-` 要求至少 `Secure`。不满足时浏览器**拒绝收下**。**Partitioned**（CHIPS）把第三方上下文里的 Cookie 按顶层站点分区存放，减轻跨站追踪，和 `SameSite` 互补而非替代，见 `cookie-set-attributes`。第三方嵌入场景要同时考虑 SameSite=None; Secure、分区与浏览器逐步禁用第三方 Cookie 的政策。不要以为“有 Secure 就能当稳定第三方登录态”。",
+    "why": "子域 XSS 种了同名会话 Cookie 抬走流量；或第三方小组件依赖未分区 Cookie，Chrome 一收紧就丢登录。",
+    "example": "`Set-Cookie: __Host-session=...; Secure; Path=/; HttpOnly; SameSite=Lax` 不能再带 `Domain=example.com`。嵌入小部件若仍要第三方 Cookie，需 `Partitioned` 并接受按顶层站点隔离。",
+    "task": "划掉“Secure=随便种”。写出 __Host- 相对普通 Secure Cookie 多出来的限制；Partitioned 主要防什么。",
+    "answer": "划掉「Secure=随便种」。__Host- 还要求无 Domain、Path=/。Partitioned 把第三方 Cookie 按顶层站点分开，减轻跨站共享。SameSite 仍要单独设对。",
+    "deep": [
+      {
+        "title": "和 HttpOnly",
+        "body": "前缀管“谁能种、种在哪”；HttpOnly 管脚本能不能读。会话 Cookie 常一起用。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "故意给 __Host- 加 Domain，应种不上。对照无前缀同名可种。查文档确认当前浏览器对 Partitioned 的支持。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：Cookie prefixes",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Cookies#cookie_prefixes"
+      ],
+      [
+        "MDN：Partitioned",
+        "https://developer.mozilla.org/en-US/docs/Web/Privacy/Guides/Privacy_sandbox/Partitioned_cookies"
+      ],
+      [
+        "CHIPS 说明",
+        "https://developers.google.com/privacy-sandbox/cookies/chips"
+      ]
+    ]
+  },
   "long-poll-vs-websocket": {
     "core": "**短轮询**：客户端定时新请求，服务端马上返回。**长轮询**：客户端请求挂着，服务端有事件或超时才返回，然后客户端立刻再挂。**WebSocket**：握手后双工长连接，任一方可推帧。选型看：是否必须服务端随时推、代理是否支持升级、要不要自动重连与心跳。通知量小且基础设施只允 HTTP 时，长轮询常见；高频双向用 WebSocket。它们都不是替代 HTTP 缓存或 SSE 的万能答案。中止挂起的 fetch 见 `fetch-abort`。",
     "why": "用短轮询硬撑“实时”，空打爆 QPS；或在不支持的反向代理后硬上 WS，握手一直失败。",
@@ -2529,7 +2626,7 @@
     "deep": [
       {
         "title": "和 SSE",
-        "body": "Server-Sent Events 是服务端到客户端的单向流，仍走 HTTP。只要下行推送时可比 WS 简单。"
+        "body": "Server-Sent Events 是服务端到客户端的单向流，仍走 HTTP。机制与选型见 `sse-one-way-http-stream`。只要下行推送时可比 WS 简单。"
       },
       {
         "title": "怎样自己验证",
@@ -2544,6 +2641,37 @@
       [
         "MDN：Server-sent events",
         "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events"
+      ]
+    ]
+  },
+  "sse-one-way-http-stream": {
+    "core": "**Server-Sent Events（SSE）** 用普通 HTTP 响应保持打开，服务端按 `text/event-stream` 持续推事件；浏览器 **`EventSource`** 自动重连（可带 `Last-Event-ID`）。方向是**服务端 → 客户端**。客户端要上行仍走另一次 HTTP 或改用 **WebSocket** 双工，见 `long-poll-vs-websocket`。用 `fetch` 读流式正文（`getReader` / `for await`）也能做自定义下行流，但要自己处理重连与事件分帧，见 `fetch-response-body-once`、`js-async-generator-for-await`。SSE 不是“更轻的 WebSocket”，也替代不了需要客户端高频上送的场景。",
+    "why": "把聊天室做成纯 EventSource，发出去的消息还要另开接口却以为一条连接双向；或在只支持 WS 的网关后硬上 SSE 失败。",
+    "example": "股票报价、通知铃铛：`new EventSource(\"/events\")` 听 `message`。用户点赞仍 `POST /like`。对战游戏选 WebSocket。大文件下载进度用 fetch 流，不必 EventSource。",
+    "task": "划掉“SSE=WebSocket”。给：单向服务端推、双向上下话、自控分帧下载，各选 SSE / WS / fetch 流之一。",
+    "answer": "划掉「SSE=WebSocket」。单向推选 SSE。双向上下话选 WebSocket。自控分帧下载选 fetch 流。三者不是同一种连接。",
+    "deep": [
+      {
+        "title": "和长轮询",
+        "body": "长轮询每次响应结束要再挂；SSE 一次响应多事件。代理若缓冲整包会破坏流，需禁用对该路径的响应缓冲。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "Network 里看 EventStream / text/event-stream 长连接。尝试 EventSource.send 应不存在；对照 WebSocket 可双向。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：Server-sent events",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events"
+      ],
+      [
+        "MDN：EventSource",
+        "https://developer.mozilla.org/en-US/docs/Web/API/EventSource"
+      ],
+      [
+        "HTML：Server-sent events",
+        "https://html.spec.whatwg.org/multipage/server-sent-events.html"
       ]
     ]
   },
@@ -2638,6 +2766,10 @@
       {
         "title": "和中止",
         "body": "AbortController 可在流读到一半取消。取消后不要假定还能再读剩余块，见 `fetch-abort`。"
+      },
+      {
+        "title": "和 SSE",
+        "body": "EventSource 是浏览器封装的事件流；自控分帧下行仍可用 fetch 流。对照见 `sse-one-way-http-stream`。"
       },
       {
         "title": "怎样自己验证",
@@ -4820,7 +4952,7 @@
     ]
   },
   "fe-vue-official-slots": {
-    "core": "官方脚手架 create-vue 基于 Vite。创建时可选 Vue Router、Pinia、Vitest 和端到端测试。迁移说明里的现行默认是：构建用 Vite，Vue CLI 只维护旧项目；跨页状态用 Pinia，Vuex 只维护已有仓库，见 `pinia-not-vuex`；编辑器用 Vue 官方扩展。需要文件路由、服务端渲染和把数据放进首屏 HTML 时用 Nuxt，取数走 useFetch 或 useAsyncData，见 `nuxt-payload`。Nuxt 默认用 Vite，不再附带 Vuex。页面级路由在 SPA 里是 Vue Router，不要再平行装一个 history 库去管同一批 URL。",
+    "core": "官方脚手架 **create-vue**（Vue 3）基于 Vite。创建时可选 Vue Router、Pinia、Vitest 和端到端测试。迁移说明里的现行默认是：构建用 Vite，Vue CLI 只维护旧项目；跨页状态用 Pinia，Vuex 只维护已有仓库，见 `pinia-not-vuex`；编辑器用 Vue 官方扩展。需要文件路由、服务端渲染和把数据放进首屏 HTML 时用 Nuxt，取数走 useFetch 或 useAsyncData，见 `nuxt-payload`。Nuxt 默认用 Vite，不再附带 Vuex。页面级路由在 SPA 里是 Vue Router，不要再平行装一个 history 库去管同一批 URL。",
     "why": "三套构建和两套 store 同时在依赖里，热更新走的是哪一条、退出登录该清哪一份状态，都要对着两份文档。新项目按脚手架的选项各留一个，旧项目才保留 Vuex 或 Vue CLI。",
     "example": "管理后台：create-vue，勾上 Vue Router 和 Pinia。文章站要看源码里的正文：Nuxt，数据用 useAsyncData。两份 package.json 都不要新增 vuex，也不要同时用 vue-cli-service 和 vite 作为开发命令。",
     "task": "打开创建选项或 package.json，列出构建、路由、跨页状态各一个包名。出现 vuex 或 @vue/cli 时，写明这是旧仓库保留，还是这次误加的第二职责位。",
@@ -7280,7 +7412,7 @@
     ]
   },
   "web-vitals": {
-    "core": "Core Web Vitals 量的是用户看得见的结果。LCP 是视口里最大内容绘制出来的时间。INP 是交互到下一次绘制的延迟，用来代替已经退出主指标的 FID。CLS 是意外布局偏移的累计。它们不由包体积直接决定。大图、字体、长任务和没有尺寸的图片会分别拉高这三项。实验数据说明一次访问，现场数据说明真实用户分布。顺序是先用一次访问的记录指出最大内容元素、一次交互的长任务和造成偏移的节点，再逐项修改并复测。实验数据只说明这一次，现场数据才是真实用户的分布。边界是这三项互不替代：图的发现时间、主线程长任务和未声明尺寸要分开看，包体积不是其中任何一项的读数。",
+    "core": "**Core Web Vitals** 量的是用户看得见的结果。LCP 是视口里最大内容绘制出来的时间。**INP** 是交互到下一次绘制的延迟，用来代替已经退出主指标的 FID。CLS 是意外布局偏移的累计。它们不由包体积直接决定。大图、字体、长任务和没有尺寸的图片会分别拉高这三项。实验数据说明一次访问，现场数据说明真实用户分布。顺序是先用一次访问的记录指出最大内容元素、一次交互的长任务和造成偏移的节点，再逐项修改并复测。实验数据只说明这一次，现场数据才是真实用户的分布。边界是这三项互不替代：图的发现时间、主线程长任务和未声明尺寸要分开看，包体积不是其中任何一项的读数。",
     "why": "学习者会以为打包体积变小，用户就能更快看到页面。实验室里分数上升了，首屏大图仍晚，点击后主线程还被长任务占着，布局也在跳。体积数字和这三项对不上，才说明要分别看最大内容、交互延迟和偏移，而不是只比构建产物的大小。",
     "example": "首屏英雄图没有宽高，加载后把下面的文字顶下去，累计偏移升高。点击按钮时主线程跑一段 300 毫秒的长任务，交互到下一次绘制变慢。图很大且发现得晚，最大内容绘制超过数秒。把包再压小 20KB，这三项记录仍分开超标。",
     "task": "用一次性能记录指出 LCP 元素、一次交互的长任务，以及造成偏移的节点，再分别改一项并复测。",

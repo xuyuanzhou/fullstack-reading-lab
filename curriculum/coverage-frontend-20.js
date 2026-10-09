@@ -56,9 +56,9 @@ const COVERAGE_FRONTEND_20 = [
   },
   {
     track:'frontend', group:'技术选型', id:'fe-vue-official-slots',
-    title:'Vue 新项目的槽位是 Vite、Router 和 Pinia',
+    title:'Vue 新项目的槽位是 Vite、Router 和 Pinia（Vue 3）',
     prompt:'为什么 Vue 3 工程里又出现 Vue CLI、Vuex 和一套手写 history？',
-    core:'官方脚手架 create-vue 基于 Vite。创建时可选 Vue Router、Pinia、Vitest 和端到端测试。迁移说明里的现行默认是：构建用 Vite，Vue CLI 只维护旧项目；跨页状态用 Pinia，Vuex 只维护已有仓库，见 pinia-not-vuex；编辑器用 Vue 官方扩展。需要文件路由、服务端渲染和把数据放进首屏 HTML 时用 Nuxt，取数走 useFetch 或 useAsyncData，见 nuxt-payload。Nuxt 默认用 Vite，不再附带 Vuex。页面级路由在 SPA 里是 Vue Router，不要再平行装一个 history 库去管同一批 URL。',
+    core:'官方脚手架 **create-vue**（Vue 3）基于 Vite。创建时可选 Vue Router、Pinia、Vitest 和端到端测试。迁移说明里的现行默认是：构建用 Vite，Vue CLI 只维护旧项目；跨页状态用 Pinia，Vuex 只维护已有仓库，见 pinia-not-vuex；编辑器用 Vue 官方扩展。需要文件路由、服务端渲染和把数据放进首屏 HTML 时用 Nuxt，取数走 useFetch 或 useAsyncData，见 nuxt-payload。Nuxt 默认用 Vite，不再附带 Vuex。页面级路由在 SPA 里是 Vue Router，不要再平行装一个 history 库去管同一批 URL。',
     why:'三套构建和两套 store 同时在依赖里，热更新走的是哪一条、退出登录该清哪一份状态，都要对着两份文档。新项目按脚手架的选项各留一个，旧项目才保留 Vuex 或 Vue CLI。',
     example:'管理后台：create-vue，勾上 Vue Router 和 Pinia。文章站要看源码里的正文：Nuxt，数据用 useAsyncData。两份 package.json 都不要新增 vuex，也不要同时用 vue-cli-service 和 vite 作为开发命令。',
     task:'打开创建选项或 package.json，列出构建、路由、跨页状态各一个包名。出现 vuex 或 @vue/cli 时，写明这是旧仓库保留，还是这次误加的第二槽位。',

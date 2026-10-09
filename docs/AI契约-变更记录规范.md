@@ -10,6 +10,7 @@
 | 契约正文（本文件） | `docs/AI契约-变更记录规范.md` |
 | 变更索引 | `docs/ai-changes/README.md` |
 | 单条模板 | `docs/ai-changes/TEMPLATE.md` |
+| 写法示例（含代码） | `docs/ai-changes/EXAMPLES.md` |
 | 跨工具总入口 | `AGENTS.md` |
 
 各工具自己的说明文件**只做指针**，禁止复制出第二套互相打架的细则。改规则只改本文件 + 必要时改 `AGENTS.md` 摘要。
@@ -64,17 +65,37 @@ docs/ai-changes/
 
 ## 4. 单条记录必须包含的字段
 
-按 [`TEMPLATE.md`](ai-changes/TEMPLATE.md) 填写，至少这些块：
+按 [`TEMPLATE.md`](ai-changes/TEMPLATE.md) 填写；**可抄写的完整样例与正反对照**见 [`EXAMPLES.md`](ai-changes/EXAMPLES.md)。
+
+至少这些块：
 
 | 块 | 说明 |
 | --- | --- |
-| 元信息 | 日期、状态、关联、**作者工具**（Cursor / Claude / Copilot / Gemini / 其它） |
+| 元信息 | 日期、状态、关联、**作者工具**（Cursor / Codex / Claude / Copilot / Gemini / 其它） |
 | 背景 | 一句话问题；不要复述整段聊天 |
 | 决策 | 选了什么方案、刻意不做什么 |
 | 改动清单 | 路径 + 做了什么（不是贴整文件） |
 | 验证 | 跑过的命令与结果；没跑的写「未跑」 |
 | 后续 | 明确下一刀该谁做、不要重做的边界 |
 | 给下一模型 | 3～7 条可执行指令（先读什么、改哪里、禁区）；**假定下一模型可能不是同一产品** |
+
+### 4.1 最小代码示例（写在「改动清单」下，可选）
+
+需要帮助下一模型定位时，可附 **≤15 行** 关键片段；不要贴整文件。
+
+```ts
+// ✅ 足够定位
+export function structureCore(core: string): StructuredCore {
+  const sentences = sentencesOf(core)
+  // lead / facets / beats ...
+}
+```
+
+```ts
+// ❌ 禁止：整文件或无关重构 diff
+```
+
+更多「完整一条 MD」「bash 新建流程」「正反对照」见 [`EXAMPLES.md`](ai-changes/EXAMPLES.md)。
 
 ## 5. 工作流（每次任务）
 

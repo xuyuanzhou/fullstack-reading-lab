@@ -140,6 +140,7 @@
         "http-cache",
         "bfcache-pageshow",
         "service-worker-stale",
+        "sw-cache-strategy-pick",
         "cors",
         "cors-credentials-allowlist",
         "same-origin-script-still-runs",
@@ -156,7 +157,9 @@
         "http-patch-rfc5789",
         "http-503-unavailable",
         "cookie-set-attributes",
+        "cookie-prefix-partitioned",
         "long-poll-vs-websocket",
+        "sse-one-way-http-stream",
         "ajax-page-update-not-a-library",
         "fetch-platform-client",
         "fetch-method-body-timeout",
@@ -289,6 +292,7 @@
         "es6-for-of-iterable",
         "js-iteration-protocol",
         "js-generator-yield-pause",
+        "js-async-generator-for-await",
         "js-weakmap-lifetime",
         "js-timer-fn-not-string",
         "js-regex-dot-not-newline",
@@ -587,15 +591,18 @@
       ],
       "数据库": [
         "mysql-null-comparison",
+        "mysql-not-null-default-not-absolute",
         "sql-outer-join-where",
         "mysql-inner-join-match",
         "mysql-join-ban-not-absolute",
         "mysql-or-not-must-become-in",
         "mysql-where-having",
         "mysql-group-by-having",
+        "mysql-window-keeps-rows",
         "mysql-union-distinct",
         "mysql-second-nf",
         "mysql-select-star",
+        "mysql-text-ban-not-absolute",
         "mysql-varchar-length",
         "mysql-varchar-row-max",
         "mysql-wide-column-split",
@@ -607,6 +614,7 @@
         "mysql-split-not-at-ten-million",
         "mysql-view-is-stored-query",
         "mysql-procedure-not-auto-txn",
+        "mysql-trigger-side-effect-hidden",
         "table-design-from-facts",
         "table-row-one-grain",
         "table-constraint-holds-rule",
@@ -704,6 +712,7 @@
         "redis-data-types",
         "redis-hash-field-update",
         "redis-zset-rank-range",
+        "redis-geo-on-zset-not-gis",
         "redis-hyperloglog-approx",
         "cache-aside-steps",
         "redis-big-hot-key",
@@ -1018,6 +1027,7 @@
             "es6-for-of-iterable",
             "js-iteration-protocol",
             "js-generator-yield-pause",
+            "js-async-generator-for-await",
             "js-weakmap-lifetime"
           ]
         },
@@ -1099,7 +1109,9 @@
             "http-patch-rfc5789",
             "http-503-unavailable",
             "cookie-set-attributes",
-            "long-poll-vs-websocket"
+            "cookie-prefix-partitioned",
+            "long-poll-vs-websocket",
+            "sse-one-way-http-stream"
           ]
         },
         {
@@ -1170,7 +1182,8 @@
             "indexeddb-when-needed",
             "http-cache",
             "bfcache-pageshow",
-            "service-worker-stale"
+            "service-worker-stale",
+            "sw-cache-strategy-pick"
           ]
         },
         {
@@ -1861,6 +1874,7 @@
             "redis-data-types",
             "redis-hash-field-update",
             "redis-zset-rank-range",
+            "redis-geo-on-zset-not-gis",
             "redis-hyperloglog-approx",
             "cache-aside-steps",
             "redis-big-hot-key",
@@ -2009,15 +2023,18 @@
           "title": "表",
           "ids": [
             "mysql-null-comparison",
+            "mysql-not-null-default-not-absolute",
             "sql-outer-join-where",
             "mysql-inner-join-match",
             "mysql-join-ban-not-absolute",
             "mysql-or-not-must-become-in",
             "mysql-where-having",
             "mysql-group-by-having",
+            "mysql-window-keeps-rows",
             "mysql-union-distinct",
             "mysql-second-nf",
             "mysql-select-star",
+            "mysql-text-ban-not-absolute",
             "mysql-varchar-length",
             "mysql-varchar-row-max",
             "mysql-wide-column-split",
@@ -2028,7 +2045,8 @@
             "mysql-money-decimal-not-ban",
             "mysql-split-not-at-ten-million",
             "mysql-view-is-stored-query",
-            "mysql-procedure-not-auto-txn"
+            "mysql-procedure-not-auto-txn",
+            "mysql-trigger-side-effect-hidden"
           ]
         },
         {
@@ -2935,6 +2953,20 @@
     {
       "track": "frontend",
       "group": "语言基础",
+      "id": "js-async-generator-for-await",
+      "title": "async function* 用 for await 消费，不是普通 for-of",
+      "prompt": "为什么对 async function* 写 for (const x of g()) 会报错或行为不对？",
+      "keywords": "async generator for await 异步迭代",
+      "points": [
+        "async function* 的 next 返回 Promise",
+        "用 for await...of 消费",
+        "与同步 generator / for-of 是两套协议"
+      ],
+      "since": "ES2018"
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
       "id": "js-weakmap-lifetime",
       "title": "WeakMap 的键随对象一起被回收，不能枚举",
       "prompt": "把 DOM 节点当 Map 的键缓存数据，节点删了为什么内存还在？",
@@ -3002,14 +3034,15 @@
       "track": "frontend",
       "group": "TypeScript",
       "id": "ts-unknown",
-      "title": "unknown 与 any：先验证再使用",
+      "title": "unknown 与 any：先验证再使用（TS 3.0）",
       "prompt": "接口返回值的形状不可信，为什么不直接写成 any？",
       "keywords": "TypeScript unknown any runtime validation 类型守卫",
       "points": [
         "any 会关掉检查，错误会传到后面的调用",
         "unknown 能接收任何值，读取前必须先缩小类型",
         "外部 JSON 先做运行时检查，再当成业务对象"
-      ]
+      ],
+      "since": "TS 3.0"
     },
     {
       "track": "frontend",
@@ -3129,20 +3162,22 @@
         "Partial 让全部字段可选",
         "Pick 和 Omit 按键增减字段",
         "工具类型不在运行时删除多余字段"
-      ]
+      ],
+      "since": "TypeScript"
     },
     {
       "track": "frontend",
       "group": "TypeScript",
       "id": "ts-template-literal-types",
-      "title": "模板字面量类型能拼出合法字符串，拼不出的键会在编译期失败",
+      "title": "模板字面量类型能拼出合法字符串，拼不出的键会在编译期失败（TS 4.1）",
       "prompt": "事件名必须是 on 加字段名，为什么还要用 string 然后运行时再检查？",
       "keywords": "TypeScript template literal types Capitalize 映射类型",
       "points": [
         "模板字面量类型拼接字符串字面量",
         "非法组合会在编译期失败",
         "太宽的 ${string} 等于没有约束"
-      ]
+      ],
+      "since": "TS 4.1"
     },
     {
       "track": "frontend",
@@ -3597,6 +3632,20 @@
     {
       "track": "frontend",
       "group": "浏览器",
+      "id": "sw-cache-strategy-pick",
+      "title": "Service Worker 缓存策略要按资源选，不是一律 cache-first",
+      "prompt": "为什么静态脚本用缓存优先没问题，订单列表也 cache-first 就会出事？",
+      "keywords": "Service Worker Cache API cache-first network-first",
+      "points": [
+        "SW 策略是 fetch 里自写的分支，不是 HTTP 缓存换皮",
+        "不可变静态才适合 cache-first",
+        "API 默认不要进静态缓存策略"
+      ],
+      "since": "Service Worker"
+    },
+    {
+      "track": "frontend",
+      "group": "浏览器",
       "id": "cors",
       "title": "同源策略与 CORS",
       "prompt": "前端设置 Access-Control-Allow-Origin 请求头就能跨域吗？",
@@ -3784,6 +3833,20 @@
     {
       "track": "frontend",
       "group": "网络与安全",
+      "id": "cookie-prefix-partitioned",
+      "title": "__Host- / __Secure- 前缀与 Partitioned：收紧谁能种 Cookie",
+      "prompt": "为什么设了 Secure、SameSite=None，第三方 iframe 里种的 Cookie 仍越来越种不上？",
+      "keywords": "Cookie __Host- __Secure- Partitioned CHIPS SameSite",
+      "points": [
+        "__Host-/__Secure- 不满足属性则拒收",
+        "Partitioned 按顶层站点隔离第三方 Cookie",
+        "与 SameSite/HttpOnly 叠加，不互相替代"
+      ],
+      "since": "Cookie Prefix/CHIPS"
+    },
+    {
+      "track": "frontend",
+      "group": "网络与安全",
       "id": "long-poll-vs-websocket",
       "title": "长轮询与 WebSocket：谁持连接、谁推消息",
       "prompt": "为什么“实时通知”有人用 setInterval 拉接口，有人上 WebSocket，还能说成长轮询？",
@@ -3794,6 +3857,20 @@
         "WebSocket 是握手后的双工长连接"
       ],
       "since": "RFC 6455"
+    },
+    {
+      "track": "frontend",
+      "group": "网络与安全",
+      "id": "sse-one-way-http-stream",
+      "title": "SSE 是单向 HTTP 事件流，不是 WebSocket 换皮",
+      "prompt": "为什么用 EventSource 收推送时，客户端发不回去消息，有人却说“和 WS 一样实时”？",
+      "keywords": "SSE EventSource WebSocket fetch 流",
+      "points": [
+        "SSE 是服务端到客户端的 HTTP 事件流",
+        "EventSource 管重连，上行另走请求",
+        "双向场景用 WebSocket，不要硬套 SSE"
+      ],
+      "since": "HTML SSE"
     },
     {
       "track": "frontend",
@@ -4101,7 +4178,8 @@
         "Hook 单向链表与调用顺序",
         "Fiber 的 child/sibling/return/alternate",
         "Lane 位掩码表达更新集合"
-      ]
+      ],
+      "since": "React Hooks"
     },
     {
       "track": "frontend",
@@ -4114,7 +4192,8 @@
         "一次渲染中的 state 变量不会因为 setState 而改变",
         "更新按队列顺序应用，后面的直接值会覆盖前面的结果",
         "函数式更新使用的是队列中的前一个结果"
-      ]
+      ],
+      "since": "React 18 batch"
     },
     {
       "track": "frontend",
@@ -4637,7 +4716,8 @@
         "状态修改与 DOM 刷新分离",
         "批量更新减少重复工作",
         "nextTick 后执行 DOM 测量"
-      ]
+      ],
+      "since": "Vue"
     },
     {
       "track": "frontend",
@@ -4650,7 +4730,8 @@
         "prop 从父组件流向子组件",
         "子组件用事件请求变更，不直接写 prop",
         "本地副本要在父数据变化时再同步"
-      ]
+      ],
+      "since": "Vue"
     },
     {
       "track": "frontend",
@@ -4663,7 +4744,8 @@
         "就地修补的默认行为",
         "稳定 key 对应业务身份",
         "下标与随机 key 的风险"
-      ]
+      ],
+      "since": "Vue"
     },
     {
       "track": "frontend",
@@ -4898,14 +4980,15 @@
       "track": "frontend",
       "group": "技术选型",
       "id": "fe-vue-official-slots",
-      "title": "Vue 新项目的职责位是 Vite、Router 和 Pinia",
+      "title": "Vue 新项目的职责位是 Vite、Router 和 Pinia（Vue 3）",
       "prompt": "为什么 Vue 3 工程里又出现 Vue CLI、Vuex 和一套手写 history？",
       "keywords": "create-vue Vite Vue Router Pinia Nuxt Vuex",
       "points": [
         "create-vue 的构建是 Vite，可选 Router 和 Pinia",
         "Nuxt 负责文件路由和首屏数据，状态库仍是 Pinia",
         "Vuex 与 Vue CLI 只维护旧项目"
-      ]
+      ],
+      "since": "Vue 3 / create-vue"
     },
     {
       "track": "frontend",
@@ -4945,7 +5028,8 @@
         "路由、客户端状态和服务端缓存跟着选定的更新模型",
         "四个模型不要在同一张表上各装一套库",
         "跨端运行时是另一笔，不跟 Web 框架混进一个组件"
-      ]
+      ],
+      "since": "framework slots"
     },
     {
       "track": "frontend",
@@ -4971,7 +5055,8 @@
         "Nuxt 的列表走 useAsyncData 或 useFetch，结果进 payload",
         "Pinia 放客户端共享状态，不复制同一份 GET 列表",
         "Vue Query 与 useAsyncData 不要同时当表格主人"
-      ]
+      ],
+      "since": "Vue / Nuxt / Pinia"
     },
     {
       "track": "frontend",
@@ -5050,7 +5135,8 @@
         "服务端列表只放在一个缓存里",
         "缓存键要包含会改变结果的参数",
         "全局 store 不保存同一份请求结果"
-      ]
+      ],
+      "since": "one cache owner"
     },
     {
       "track": "frontend",
@@ -5493,7 +5579,8 @@
         "fetch 和 XMLHttpRequest 在环境补齐列表里",
         "document 和 localStorage 不在这份列表里",
         "有网络请求不等于有网页文档对象"
-      ]
+      ],
+      "since": "RN JS env"
     },
     {
       "track": "frontend",
@@ -5814,7 +5901,8 @@
         "Writable.write 返回 false",
         "drain 与生产者背压",
         "pipeline 的错误和关闭处理"
-      ]
+      ],
+      "since": "Node Stream"
     },
     {
       "track": "frontend",
@@ -5827,7 +5915,8 @@
         "字符数与 UTF-8 字节数",
         "Buffer.alloc 的初始化",
         "allocUnsafe 的数据泄露边界"
-      ]
+      ],
+      "since": "Node Buffer"
     },
     {
       "track": "frontend",
@@ -5840,7 +5929,8 @@
         "一个事件循环不会把同步代码跑到多个核上",
         "cluster 是多进程，各自有独立的堆",
         "worker_threads 用消息或转移内存交换数据"
-      ]
+      ],
+      "since": "Node cluster/worker"
     },
     {
       "track": "frontend",
@@ -5866,7 +5956,8 @@
         "优先用角色和可访问名称查询",
         "类名和内部结构不是用户契约",
         "getBy 找不到就失败，queryBy 用来断言不存在"
-      ]
+      ],
+      "since": "Testing Library"
     },
     {
       "track": "frontend",
@@ -5920,7 +6011,8 @@
         "浏览器测试覆盖用户走完的一条路径",
         "等待由测试运行器处理，而不是固定 sleep",
         "细分支留在单元测试，避免每条都启动浏览器"
-      ]
+      ],
+      "since": "Playwright"
     },
     {
       "track": "frontend",
@@ -5946,7 +6038,8 @@
         "MSW 按方法和路径拦截请求",
         "测试应断言界面和契约，而不是 fetch 调用次数",
         "不要用它冒充整套后端规则"
-      ]
+      ],
+      "since": "MSW"
     },
     {
       "track": "frontend",
@@ -6059,14 +6152,15 @@
       "track": "frontend",
       "group": "工程实践",
       "id": "web-vitals",
-      "title": "先看三次用户可见的等待",
+      "title": "先看三次用户可见的等待（CWV / INP）",
       "prompt": "打包体积小了，就能说明页面变快了吗？",
       "keywords": "Core Web Vitals LCP INP CLS 性能",
       "points": [
         "LCP 衡量最大内容何时绘制",
         "INP 衡量交互到下一次绘制",
         "CLS 累计意外的布局偏移"
-      ]
+      ],
+      "since": "CWV / INP"
     },
     {
       "track": "frontend",
@@ -7620,7 +7714,8 @@
         "Young/Minor 只收新生代",
         "Major 在 CMS 语境可只收老年代",
         "Full 才是整堆，不要和 Major 混名"
-      ]
+      ],
+      "since": "HotSpot GC"
     },
     {
       "track": "java",
@@ -7754,7 +7849,8 @@
         "Lock 支持 tryLock、限时与可中断获取",
         "读写锁是 ReadWriteLock，不是 Lock 默认能力",
         "ConcurrentHashMap 不能概括成外层读写锁"
-      ]
+      ],
+      "since": "JDK 5 Lock"
     },
     {
       "track": "java",
@@ -7836,7 +7932,8 @@
         "读锁共享，写锁独占",
         "允许写锁降级到读锁",
         "持读锁时申请写锁不能升级，须先释放再复查"
-      ]
+      ],
+      "since": "JDK 5 RWLock"
     },
     {
       "track": "java",
@@ -7849,7 +7946,8 @@
         "CAS 比较的是当前值，不是对象经历过的历史",
         "ABA 要用 stamp 或不可复用身份来拆穿",
         "公开入口是原子类和 VarHandle，不是 Unsafe"
-      ]
+      ],
+      "since": "JDK 5 Atomic*"
     },
     {
       "track": "java",
@@ -7976,14 +8074,15 @@
       "track": "java",
       "group": "并发",
       "id": "java-tpe-execute-order",
-      "title": "ThreadPoolExecutor 是 execute 时才建线程，不是队列里先堆着不动",
+      "title": "ThreadPoolExecutor 是 execute 时才建线程，不是队列里先堆着不动（JDK 5）",
       "prompt": "为什么说“没调用 prestartAllCoreThreads 时，工作队列里已有任务也不会执行”会误导？",
       "keywords": "ThreadPoolExecutor execute corePoolSize 工作队列 拒绝策略",
       "points": [
         "任务经 execute/submit 进入池，不是凭空堆在队列里",
         "先建到 core，再入队，队列满才涨到 max",
         "prestartAllCoreThreads 只是预热，不是开关"
-      ]
+      ],
+      "since": "JDK 5 TPE"
     },
     {
       "track": "java",
@@ -8023,6 +8122,19 @@
         "NULL 表示未知，和空字符串不同",
         "WHERE 的等号保留不了 NULL 行",
         "COUNT(列) 跳过 NULL，COUNT(*) 计入行"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-not-null-default-not-absolute",
+      "title": "“一律 NOT NULL 再塞默认值”会伪造未知",
+      "prompt": "为什么规范写“必须把字段定义为 NOT NULL 并且提供默认值”，还列 NULL 难优化、占空间？",
+      "keywords": "NOT NULL 默认值 NULL 三值逻辑 约束",
+      "points": [
+        "必填用 NOT NULL 挡脏写",
+        "可选未知应允许 NULL",
+        "魔法默认值会伪造已知"
       ]
     },
     {
@@ -8107,6 +8219,20 @@
     {
       "track": "java",
       "group": "数据库",
+      "id": "mysql-window-keeps-rows",
+      "title": "窗口函数算排名不折叠行，GROUP BY 才会收成一组一行",
+      "prompt": "为什么用 RANK() OVER (...) 之后，行数还是和明细一样多，有人却期待变成每组一行？",
+      "keywords": "MySQL 窗口函数 OVER PARTITION BY GROUP BY",
+      "points": [
+        "窗口函数不折叠行数",
+        "GROUP BY 才按组收成一行",
+        "排名与组内累计用 OVER，不要硬改成 GROUP BY"
+      ],
+      "since": "MySQL 8.0"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
       "id": "mysql-union-distinct",
       "title": "UNION 去重，并不保证按字段排序",
       "prompt": "为什么“用 UNION 就会按字段顺序排序，UNION ALL 才不排序”不能当结论？",
@@ -8143,6 +8269,19 @@
         "Using index 要求列都来自同一索引",
         "显式列同样要解析数据字典",
         "列改名后客户端的列名或位置仍要更新"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-text-ban-not-absolute",
+      "title": "“禁止 TEXT/BLOB”禁的是乱查大列，不是禁类型",
+      "prompt": "为什么规范写死“禁止使用 TEXT、BLOB”，理由是浪费空间、淘汰热数据？",
+      "keywords": "TEXT BLOB SELECT 缓冲池 规范",
+      "points": [
+        "TEXT 适合真正的长内容",
+        "危险是热点查询拖出大列",
+        "拆列表字段，不要禁用类型名"
       ]
     },
     {
@@ -8212,7 +8351,8 @@
         "每次结构变化是带版本的脚本，按顺序应用",
         "空库和旧库跑完同一套脚本后结构应一致",
         "删列和改语义要拆发布，回滚应用不能假设库会自动退回"
-      ]
+      ],
+      "since": "Flyway-style"
     },
     {
       "track": "java",
@@ -8291,6 +8431,19 @@
         "存储过程是例程，不是事务包装器",
         "默认不自动全部回滚",
         "事务边界仍靠显式事务或会话设置"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-trigger-side-effect-hidden",
+      "title": "触发器是隐蔽副作用，不是自动正确的业务层",
+      "prompt": "为什么应用只写了一条 INSERT，库存却被改了，代码里找不到 UPDATE？",
+      "keywords": "MySQL 触发器 副作用 事务 可维护性",
+      "points": [
+        "触发器在 DML 时自动执行，源码侧常不可见",
+        "通常与语句同事务，但排障成本高",
+        "禁止触发器是团队启发式，不是语法禁令"
       ]
     },
     {
@@ -8833,6 +8986,20 @@
     {
       "track": "java",
       "group": "缓存",
+      "id": "redis-geo-on-zset-not-gis",
+      "title": "GEO 是经纬度索引的快捷命令，不是完整空间数据库",
+      "prompt": "为什么用 GEOADD 存了门店，还做不了复杂多边形围栏和投影换算？",
+      "keywords": "Redis GEO geohash ZSet GIS BITFIELD",
+      "points": [
+        "GEO 基于 ZSet/geohash，服务附近点查询",
+        "不是完整 GIS / 多边形引擎",
+        "BITFIELD 是位域命令，与 GEO 无关"
+      ],
+      "since": "Redis GEO"
+    },
+    {
+      "track": "java",
+      "group": "缓存",
       "id": "redis-hyperloglog-approx",
       "title": "HyperLogLog 只估基数，不保存每个元素",
       "prompt": "为什么用 HyperLogLog 统计 UV 之后，却列不出“都有谁访问过”？",
@@ -8984,7 +9151,8 @@
         "MULTI 入队与 EXEC 执行",
         "WATCH 的乐观冲突检测",
         "与数据库回滚语义的差异"
-      ]
+      ],
+      "since": "Redis MULTI"
     },
     {
       "track": "java",
@@ -9023,7 +9191,8 @@
         "Pipeline 把多条命令打包以减少网络往返",
         "MULTI 批次中间不被插队，但失败不会回滚已成功命令",
         "原子读写要用 Lua 或 WATCH，不是 Pipeline"
-      ]
+      ],
+      "since": "Redis Pipeline"
     },
     {
       "track": "java",
@@ -9131,7 +9300,8 @@
         "单条命令原子，两条命令之间可被插入",
         "Lua 脚本在服务端连续执行",
         "用到的键必须声明在 KEYS 里"
-      ]
+      ],
+      "since": "Redis EVAL"
     },
     {
       "track": "java",
@@ -9184,7 +9354,8 @@
         "容器负责创建对象并注入依赖",
         "注入按类型或名字匹配候选 Bean",
         "多个同类型 Bean 时要标明用哪一个"
-      ]
+      ],
+      "since": "Spring"
     },
     {
       "track": "java",
@@ -9197,7 +9368,8 @@
         "顺序是构造、注入、初始化",
         "构造器里还没有字段注入的依赖",
         "构造器循环依赖不能靠半成品提前暴露"
-      ]
+      ],
+      "since": "Spring"
     },
     {
       "track": "java",
@@ -9210,7 +9382,8 @@
         "singleton 是容器内共享实例",
         "prototype 与 request 生命周期",
         "共享可变字段的并发风险"
-      ]
+      ],
+      "since": "Spring"
     },
     {
       "track": "java",
@@ -9358,7 +9531,8 @@
         "先绑定对象，再按约束校验",
         "控制器上校验失败通常是 400",
         "服务方法上的 @Validated 不会自动变成字段级 400"
-      ]
+      ],
+      "since": "Bean Validation"
     },
     {
       "track": "java",
@@ -9437,7 +9611,8 @@
         "声明式事务拦截的是进入代理的外部调用",
         "同类 this 调用不经过这层代理",
         "捕获异常后不再抛出，事务会按成功提交"
-      ]
+      ],
+      "since": "Spring AOP TX"
     },
     {
       "track": "java",
@@ -9450,7 +9625,8 @@
         "运行时异常的默认回滚",
         "受检异常与 rollbackFor",
         "代理调用路径影响事务入口"
-      ]
+      ],
+      "since": "Spring TX"
     },
     {
       "track": "java",
@@ -9463,7 +9639,8 @@
         "外层事务与内层事务",
         "REQUIRES_NEW 的独立提交",
         "资源连接与回滚边界"
-      ]
+      ],
+      "since": "Spring TX"
     },
     {
       "track": "java",
@@ -9476,7 +9653,8 @@
         "同一持久化上下文里，同一主键对应同一实例",
         "内存中的字段可以暂时和表不一致",
         "equals 应以稳定主键为中心设计"
-      ]
+      ],
+      "since": "JPA"
     },
     {
       "track": "java",
@@ -9502,7 +9680,8 @@
         "save 不等于立刻对其他连接可见",
         "flush 把脏状态写成 SQL",
         "提交成功后事务外才能稳定读到"
-      ]
+      ],
+      "since": "JPA"
     },
     {
       "track": "java",
@@ -9699,7 +9878,8 @@
         "SIMPLE 每条语句一次往返，BATCH 把更新攒起来",
         "循环中查询会打断当前批处理",
         "批处理的约束错误可能在 flush 时才出现"
-      ]
+      ],
+      "since": "MyBatis"
     },
     {
       "track": "java",
@@ -9738,7 +9918,8 @@
         "一级缓存只在同一个 SqlSession",
         "二级缓存跨会话，提交后才可见",
         "联表和多 mapper 写入很容易脏读缓存"
-      ]
+      ],
+      "since": "MyBatis"
     },
     {
       "track": "java",
@@ -9991,7 +10172,8 @@
         "upstream 保存可转发的后端名单",
         "被动摘除统计连接或超时失败",
         "业务错误码不等于自动摘除"
-      ]
+      ],
+      "since": "Nginx upstream"
     },
     {
       "track": "java",
@@ -10109,7 +10291,8 @@
         "limit_req 的 key 决定谁和谁共用配额",
         "固定 key 会让所有客户端抢同一个桶",
         "超出时可排队或立刻拒绝，与应用内限流是两层"
-      ]
+      ],
+      "since": "Nginx limit_req"
     },
     {
       "track": "java",
@@ -10269,7 +10452,8 @@
         "Pipeline 按顺序处理入站和出站事件",
         "先拆完整帧，再做业务解码",
         "handler 顺序错误会导致半包或错解"
-      ]
+      ],
+      "since": "Netty Pipeline"
     },
     {
       "track": "java",
@@ -10503,7 +10687,8 @@
         "主题由分区组成，分区是有序追加日志",
         "消费组内分摊分区，组间各自一份位点",
         "保留期内可重放，顺序只在分区内成立"
-      ]
+      ],
+      "since": "Kafka"
     },
     {
       "track": "java",
@@ -10623,7 +10808,8 @@
         "生产者面向交换器与路由键",
         "绑定决定队列如何接收",
         "确认与预取管消费侧可靠性，不提供默认日志重放"
-      ]
+      ],
+      "since": "AMQP / RabbitMQ"
     },
     {
       "track": "java",
@@ -10688,7 +10874,8 @@
         "队列是顺序与并行单位，标签只做过滤",
         "延迟消息由服务端推迟投递",
         "事务消息绑定本地事务与发送，不代替下游幂等"
-      ]
+      ],
+      "since": "RocketMQ"
     },
     {
       "track": "java",
@@ -10740,7 +10927,8 @@
         "三种发送：同步、异步回调、oneway",
         "oneway 适合可丢日志，不适合关键业务",
         "有回执不等于端到端不丢，还看刷盘、复制和 ACK"
-      ]
+      ],
+      "since": "RocketMQ"
     },
     {
       "track": "java",
@@ -10781,7 +10969,8 @@
         "队列默认预取一批未确认消息给单个消费者",
         "ack 前这批不会转给其它消费者",
         "重试耗尽进入死信队列，次数可配"
-      ]
+      ],
+      "since": "ActiveMQ"
     },
     {
       "track": "java",
@@ -10794,7 +10983,8 @@
         "Queue 的多消费者是竞争，每条消息只交付一次",
         "Topic 才广播，离线保留要靠持久订阅",
         "竞争消费不保证跨进程的处理顺序"
-      ]
+      ],
+      "since": "JMS Queue"
     },
     {
       "track": "java",
@@ -10807,7 +10997,8 @@
         "倒排记录每个词出现在哪些文档",
         "写入时分词，查询时用同一套规则",
         "精确值用 keyword，全文用 text"
-      ]
+      ],
+      "since": "inverted index"
     },
     {
       "track": "java",
@@ -10820,7 +11011,8 @@
         "Lucene 用倒排表，不是用 B+ 树做全文检索",
         "ES 在 Lucene 之上做分片、副本与 HTTP API",
         "删除与可见性要看 refresh/副本，不是“没有事务”四个字"
-      ]
+      ],
+      "since": "Lucene / ES"
     },
     {
       "track": "java",
@@ -10873,7 +11065,8 @@
         "倒排避免逐篇扫描，查词不是哈希 O(1)",
         "FST 查找与词长相关，还要扫倒排表",
         "高频词贵在倒排表长度，不在词典"
-      ]
+      ],
+      "since": "Lucene postings"
     },
     {
       "track": "java",
@@ -10913,7 +11106,8 @@
         "聚合在命中文档上算桶和指标",
         "返回统计结果，不是整行文档列表",
         "text 分词字段通常不能直接 terms"
-      ]
+      ],
+      "since": "ES aggs"
     },
     {
       "track": "java",
@@ -10940,7 +11134,8 @@
         "BOM 只对齐版本，组件要按需单独引入",
         "发现、负载均衡、限流、事务和网关由不同项目负责",
         "版本必须对照官方发行列车，不能混用已停更的 Netflix 组件"
-      ]
+      ],
+      "since": "SCA"
     },
     {
       "track": "java",
@@ -11019,7 +11214,8 @@
         "配置读多写少，定时盲拉多半空跑",
         "变更通知或长轮询驱动拉取",
         "本地缓存要版本与兜底，分钟延迟是窗口"
-      ]
+      ],
+      "since": "config watch"
     },
     {
       "track": "java",
@@ -11113,7 +11309,8 @@
         "Stream 的 destination 对应主题，不改变投递语义",
         "顺序仍靠同一队列，重复仍靠业务键",
         "延迟消息和事务消息不是 Stream 默认能力"
-      ]
+      ],
+      "since": "SC Stream"
     },
     {
       "track": "java",
@@ -11126,7 +11323,8 @@
         "默认 RandomLoadBalance，可加权",
         "LeastActive 统计活跃调用数，不是直接最短响应",
         "RoundRobin 会在慢但未摘除的节点上堆积"
-      ]
+      ],
+      "since": "Dubbo"
     },
     {
       "track": "java",
@@ -11166,7 +11364,8 @@
         "超时发生在消费方，提供方线程默认继续",
         "retries 默认 2，最多约 3 次调用",
         "写操作要幂等或关闭重试"
-      ]
+      ],
+      "since": "Dubbo"
     },
     {
       "track": "java",
@@ -11251,14 +11450,15 @@
       "track": "java",
       "group": "Spring Cloud Alibaba",
       "id": "sca-circuit-not-only-hystrix",
-      "title": "Spring Cloud 不是 Hystrix 说明书，断路器已换代",
+      "title": "Spring Cloud 不是 Hystrix 说明书，断路器已换代（CircuitBreaker）",
       "prompt": "为什么把 Spring Cloud 定义成 Stream 启动器，并把容错只背 Hystrix？",
       "keywords": "Spring Cloud Hystrix Resilience4j Sentinel Eureka",
       "points": [
         "Spring Cloud 不是 Stream 或 Task 的别名",
         "Hystrix 维护模式，改用 CircuitBreaker 或 Sentinel",
         "发现与负载均衡也不只有 Eureka/Ribbon"
-      ]
+      ],
+      "since": "SC CircuitBreaker"
     },
     {
       "track": "java",

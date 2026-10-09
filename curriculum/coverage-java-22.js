@@ -19,9 +19,9 @@ const COVERAGE_JAVA_22 = [
   },
   {
     track:'java', group:'Spring Cloud Alibaba', id:'sca-circuit-not-only-hystrix',
-    title:'Spring Cloud 不是 Hystrix 说明书，断路器已换代',
+    title:'Spring Cloud 不是 Hystrix 说明书，断路器已换代（CircuitBreaker）',
     prompt:'为什么把 Spring Cloud 定义成 Stream 启动器，并把容错只背 Hystrix？',
-    core:'Spring Cloud 是一套分布式系统工具（配置、发现、网关、负载均衡、熔断抽象），不是 Spring Cloud Stream 的别名，更不是 Task 的别名。Netflix Hystrix 已进入维护模式，现行常用 Resilience4j 或 Spring Cloud CircuitBreaker，阿里栈用 Sentinel，见既有 Sentinel 课。Eureka、Ribbon、Zuul 也大量被 Spring Cloud LoadBalancer、Gateway 替代。Feign 仍在，但是 OpenFeign。服务发现还可以是 Nacos、Consul，不是只有 Eureka。',
+    core:'Spring Cloud 是一套分布式系统工具（配置、发现、网关、负载均衡、熔断抽象），不是 Spring Cloud Stream 的别名，更不是 Task 的别名。Netflix Hystrix 已进入维护模式，现行常用 **Resilience4j 或 Spring Cloud CircuitBreaker**，阿里栈用 Sentinel，见既有 Sentinel 课。Eureka、Ribbon、Zuul 也大量被 Spring Cloud LoadBalancer、Gateway 替代。Feign 仍在，但是 OpenFeign。服务发现还可以是 Nacos、Consul，不是只有 Eureka。',
     why:'按 Netflix 全家桶去搭现行工程，Hystrix、Ribbon、Zuul 会停在维护模式，新依赖对不上文档。区分信号是熔断已换成 CircuitBreaker 或 Sentinel，发现也可以是 Nacos 或 Consul。',
     example:'新项目用 Spring Cloud LoadBalancer + Gateway + CircuitBreaker（Resilience4j）或 Sentinel。不要把 Hystrix 当默认作业。',
     task:'对照当前 Spring Cloud 项目页，划掉“Spring Cloud = Stream 启动器”；列出一种现行断路器。',

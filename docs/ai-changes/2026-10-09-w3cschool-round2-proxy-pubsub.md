@@ -40,8 +40,8 @@ node scripts/export-curriculum.mjs && node scripts/verify_content.mjs
 ## 后续
 
 - [x] Proxy / extends / 私有 / VIEW / PSUBSCRIBE
-- [ ] 下一轮：Iterator-Generator 细边界、Fetch 流、存储过程「不是自动事务」（见 CROSSWALK）
-- [ ] 下一空闲号 `coverage-java-58.js` / `coverage-frontend-32.js`（先 ls）
+- [x] 下一轮见 `2026-10-09-w3cschool-round3-generator-fetch-proc.md`
+- [x] `coverage-frontend-32` / `coverage-java-62` 已占用；再下 `frontend-33` / `java-64`
 
 ## 给下一模型
 

@@ -319,6 +319,7 @@ const COVERAGE_SHIP_15 = [
     points:['cache-first 会先给旧响应','新 Worker 默认等待旧页面关闭才激活','接口请求不要默认走静态缓存策略'],
     deep:[
       {title:'等待不是没部署',body:'新版本可以已经安装，只是旧页面还占着控制权。服务器上的新包是在的。排查却在源站找文件，会错过浏览器里这份旧缓存。接口若也缓存优先，连数据都是旧的。边界不满足时就停，不要把这次失败算到下一层头上。'},
+      {title:'策略怎么选',body:'静态与 API 不要同一套 cache-first。选型口诀见 sw-cache-strategy-pick。'},
       {title:'怎样自己验证',body:'对照生命周期写出 installing、waiting、activated。标出用户仍看旧脚本的 waiting。更新后不要关旧页，确认界面不变；关掉再开，才应看到新脚本。接口响应不应来自这份缓存。'},
     ],
     refs:[['MDN：Service Worker API','https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API'],['MDN：Service Worker 生命周期','https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers']]

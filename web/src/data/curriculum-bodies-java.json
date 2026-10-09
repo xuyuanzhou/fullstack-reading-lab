@@ -3409,7 +3409,7 @@
     ]
   },
   "java-tpe-execute-order": {
-    "core": "ThreadPoolExecutor 的常规入口是 execute/submit。任务数少于 corePoolSize 时会新建线程；否则尝试入队；队列满且线程数仍小于 maximumPoolSize 时再新建；再不行走拒绝策略。prestartAllCoreThreads 只是提前把核心线程拉起来，不是“否则队列里的任务永远不跑”。资料把“当前任务数减队列容量”算最大线程的公式写乱了，不要背。工作队列里出现任务，是因为已经有过 execute，核心线程通常已经在跑。",
+    "core": "ThreadPoolExecutor（**JDK 5**，`java.util.concurrent`）的常规入口是 execute/submit。任务数少于 corePoolSize 时会新建线程；否则尝试入队；队列满且线程数仍小于 maximumPoolSize 时再新建；再不行走拒绝策略。prestartAllCoreThreads 只是提前把核心线程拉起来，不是“否则队列里的任务永远不跑”。资料把“当前任务数减队列容量”算最大线程的公式写乱了，不要背。工作队列里出现任务，是因为已经有过 execute，核心线程通常已经在跑。",
     "why": "按没调用 prestart 队列里的任务也不会跑去理解线程池，会在已经 execute 的任务上干等，或把队列和 max 设反。区分信号是第 13 个任务在队列满之后才新建超出 core 的线程，而不是先把队列堆满却不执行。",
     "example": "core 为 2、队列 10、max 为 4。前两个 execute 各建一条线程并开始跑。第 3 到第 12 个进入队列，由已有线程取走。第 13、14 个因队列已满且线程数还小于 max，再新建线程。第 15 个走拒绝。全程没有调用 prestart。",
     "task": "对照 Javadoc 的 execute 三段，划掉“队列有任务也不会执行”；写出队列满之后才涨到 max 的条件。",
@@ -3501,6 +3501,39 @@
         "https://docs.oracle.com/cd/E17952_01/mysql-8.4-en/problems-with-null.html"
       ]
     ]
+  },
+  "mysql-not-null-default-not-absolute": {
+    "core": "**有业务含义的必填**（订单金额、用户 id）应 NOT NULL，用约束挡住脏写，见 `table-constraint-holds-rule`。但“未知/未采集/可选”本身就是合法状态时，硬 NOT NULL 再塞 `''`、`0`、`1970-01-01`，会把**未知伪装成已知**，报表与三值逻辑一起坏，见 `mysql-null-comparison`。资料把 NULL 的比较、统计复杂度说成必须消灭 NULL，夸张了：InnoDB 对可空列有开销，但用魔法默认值换来的语义错误通常更贵。正确做法：必填列 NOT NULL（默认值仅当“插入时省略=明确业务默认”才设）；可选列允许 NULL，查询用 `IS NULL`；不要为了规范把所有列填满假值。",
+    "why": "手机号未知被写成空串，统计“有手机号用户”把空串算进去；或用 0 当地址 id，外键/关联全乱。",
+    "example": "`middle_name` 允许 NULL 表示未填。规范强迫 `DEFAULT ''` 后，`WHERE middle_name IS NULL` 永远空，业务无法区分“没有中间名”和“没采集”。`amount` 则必须 NOT NULL，禁止用 NULL 表示未计价。",
+    "task": "划掉“所有列必须 NOT NULL+默认值”。给必填金额、可选中间名各写：是否允许 NULL，默认值代表什么。",
+    "answer": "划掉一律 NOT NULL。必填用不变量约束；可选允许 NULL，勿用空串/0 冒充未知。默认值只表示明确的业务默认，不是填洞。",
+    "deep": [
+      {
+        "title": "和性能口诀",
+        "body": "NULL 比较要用 IS NULL，索引与统计确实要多考虑。这是写对 SQL 的理由，不是把所有列改成假值的理由。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "建可选列可空与强制 DEFAULT '' 两表，插入“未采集”行后用 IS NULL 统计。假默认值表应统计失败。"
+      }
+    ],
+    "references": [
+      [
+        "MySQL：NULL",
+        "https://dev.mysql.com/doc/refman/8.4/en/problems-with-null.html"
+      ],
+      [
+        "MySQL：CREATE TABLE",
+        "https://dev.mysql.com/doc/refman/8.4/en/create-table.html"
+      ],
+      [
+        "MySQL：数据默认值",
+        "https://dev.mysql.com/doc/refman/8.4/en/data-type-defaults.html"
+      ]
+    ],
+    "diagram": "diagrams/mysql-not-null-default-not-absolute.svg",
+    "origin": "《分布式高并发.pdf》约第 104 页：必须 NOT NULL 并且提供默认值"
   },
   "sql-outer-join-where": {
     "core": "LEFT JOIN 先保留左表每一行，右表没有匹配时用 NULL 补齐。若随后在 WHERE 里判断右表列等于某个值，NULL 的比较不是 TRUE，这些补齐行会被丢掉，结果和内连接一样。右表的匹配条件应写在 ON 里。左表自己的过滤可以写在 WHERE，因为它本来就不是要保留的“缺失”。选了右表列却用 WHERE 排除 NULL，就是在要回那些行。",
@@ -3673,6 +3706,10 @@
         "body": "选了未分组、未聚合的列会报错。要么写入 GROUP BY，要么用聚合函数。"
       },
       {
+        "title": "和窗口函数",
+        "body": "要保留明细行并挂排名/组内累计，用 OVER，不要硬 GROUP BY，见 `mysql-window-keeps-rows`。"
+      },
+      {
         "title": "怎样自己验证",
         "body": "对比 WHERE 与 HAVING 位置错误时的报错信息；修正后组数应变少。"
       }
@@ -3685,6 +3722,33 @@
       [
         "MySQL：HAVING",
         "https://dev.mysql.com/doc/refman/8.4/en/select.html"
+      ]
+    ]
+  },
+  "mysql-window-keeps-rows": {
+    "core": "**窗口函数**（`OVER`）在**保留原结果集行数**的前提下，为每一行附加排名、累计、前后行取值等。`PARTITION BY` 划窗口，`ORDER BY` 定窗口内次序；它**不是** `GROUP BY`。要“每组一行 + 聚合”，用 `GROUP BY` / `HAVING`，见 `mysql-where-having`、`mysql-group-by-having`。把窗口写成“高级 GROUP BY”会在报表里多出重复明细，或误删需要的行。窗口与 WHERE 的求值顺序按 SQL 标准：窗口通常在过滤与分组之后、最终投影阶段计算（以实现/手册为准）。",
+    "why": "把 RANK 当分组聚合，再对结果去重，反而丢掉并列明细；或抱怨“窗口函数没把组收起来”。",
+    "example": "订单明细每行一个商品。`SUM(amount) OVER (PARTITION BY order_id)` 给每行挂上该单合计，行数不变。`GROUP BY order_id` 才变成每单一行。",
+    "task": "划掉“窗口=GROUP BY 换皮”。写出：窗口与 GROUP BY 对结果行数的差别；各适合什么问题。",
+    "answer": "划掉「窗口=GROUP BY 换皮」。窗口保留行数并附加列。GROUP BY 把多行收成一组一行。排名/累计用窗口；每组只要汇总用 GROUP BY。",
+    "deep": [
+      {
+        "title": "和子查询",
+        "body": "也可用派生表先聚合再 JOIN 回明细。窗口常更短，但要注意大数据分区排序成本。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "同一明细分别跑 RANK OVER 与 GROUP BY COUNT，对比行数。窗口结果行数应等于明细。"
+      }
+    ],
+    "references": [
+      [
+        "MySQL：窗口函数",
+        "https://dev.mysql.com/doc/refman/8.4/en/window-functions.html"
+      ],
+      [
+        "MySQL：窗口函数概念",
+        "https://dev.mysql.com/doc/refman/8.4/en/window-functions-usage.html"
       ]
     ]
   },
@@ -3772,6 +3836,39 @@
         "https://dev.mysql.com/doc/refman/8.4/en/statement-caching.html"
       ]
     ]
+  },
+  "mysql-text-ban-not-absolute": {
+    "core": "TEXT/BLOB 适合存**真正的长内容**（文章正文、二进制附件元数据旁的大对象策略另说）。绝对禁止会逼人把长文塞进过短的 VARCHAR，或拆到对象存储却无主键关联。资料担心的点对的是：**列表/热点路径 `SELECT *` 把大列读进缓冲池**，挤掉热行，见 `mysql-select-star`、`mysql-wide-column-split`。InnoDB 常把长大字段放溢出页，列表不选中该列时未必读全；该拆表、该 OSS、该禁止的是无过滤的大列扫描，不是类型名。规范应写成：热点查询不要投影 TEXT/BLOB；正文与列表字段分离；需要时用前缀索引而不是幻想整列普通索引，见前缀索引课。",
+    "why": "规范背成“表里不能有 TEXT”，CMS 正文改成 VARCHAR(500) 被截断；或全文搜索另上引擎只因为不敢建 TEXT。",
+    "example": "`posts` 有 `title VARCHAR`、`body TEXT`。列表 `SELECT id,title` 不碰 body。详情再查 body。禁止的是列表 `SELECT *` 把 body 打进结果集，不是禁止 body 列存在。",
+    "task": "划掉“禁止 TEXT 类型”。写出：类型何时合理；查询上要禁止哪一类用法。",
+    "answer": "划掉禁止类型。长正文用 TEXT（或等价）合理。禁止的是热点路径投影大列、无必要的大字段进缓冲。列表与正文分离，用 EXPLAIN/列清单证明。",
+    "deep": [
+      {
+        "title": "和 ENUM 禁令",
+        "body": "同页禁 ENUM 改 TINYINT：DDL 增枚举值痛苦是真问题，但 TINYINT 无含义时要靠字典表。同样是启发式，不是语法禁令。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "同表列表选/不选 TEXT 列，对比 handler read 与耗时。确认列表不投影大列后缓冲压力下降。"
+      }
+    ],
+    "references": [
+      [
+        "MySQL：BLOB 与 TEXT",
+        "https://dev.mysql.com/doc/refman/8.4/en/blob.html"
+      ],
+      [
+        "MySQL：InnoDB 行格式",
+        "https://dev.mysql.com/doc/refman/8.4/en/innodb-row-format.html"
+      ],
+      [
+        "MySQL：SELECT",
+        "https://dev.mysql.com/doc/refman/8.4/en/select.html"
+      ]
+    ],
+    "diagram": "diagrams/mysql-text-ban-not-absolute.svg",
+    "origin": "《分布式高并发.pdf》约第 104 页：禁止使用 TEXT、BLOB"
   },
   "mysql-varchar-length": {
     "core": "在 MySQL 8.4 中，VARCHAR(M) 的 M 表示可存储的最大字符数；实际字节数取决于列字符集和具体内容。VARCHAR 值另有 1 或 2 字节的长度前缀。声明上限仍受整行最大字节数等限制，不能把“50 字符”推导成“任意 50 字符总能在任意表结构里创建并存储”。BINARY/VARBINARY 的 M 才以字节计。",
@@ -4083,6 +4180,33 @@
       [
         "MySQL：事务",
         "https://dev.mysql.com/doc/refman/8.4/en/commit.html"
+      ]
+    ]
+  },
+  "mysql-trigger-side-effect-hidden": {
+    "core": "**触发器**在指定表上对 INSERT/UPDATE/DELETE（及时机 BEFORE/AFTER）自动跑的一段 SQL。它和语句通常处在**同一事务**里：外层回滚，触发器改动一并撤销（具体以引擎与语句类型为准）。好处是库内强制约束；代价是**调用方源码看不见**这条路径，排障、性能和权限都变难。不要用触发器代替明确的应用用例与事务边界，见 `mysql-procedure-not-auto-txn`。团队“禁止触发器”多半是容量与可维护性启发式，不是 SQL 真理——和“禁止 JOIN”同类，见 `mysql-join-ban-not-absolute`。",
+    "why": "以为业务只在 Java 服务里，库内 BEFORE INSERT 又改了别的表，对账对不上；或误以为禁触发器是数据库定律。",
+    "example": "订单 INSERT 触发器里 UPDATE 库存。应用日志只有 insertOrder。库存异常时要查 `SHOW TRIGGERS` / information_schema，而不是只搜 Java。若团队禁用触发器，库存扣减应显式写在同一应用事务里。",
+    "task": "划掉“触发器=隐形微服务，永远更安全”和“触发器绝对禁止=SQL 规定”。写出：触发器相对应用代码的可见性；禁令通常保护什么。",
+    "answer": "划掉「触发器=隐形微服务，永远更安全」。触发器在库内自动跑，应用源码默认看不见。禁令多为可维护性/容量启发式。业务不变量仍应能在显式路径上讲清。",
+    "deep": [
+      {
+        "title": "和存储过程",
+        "body": "过程要 CALL 才跑；触发器挂在表事件上。两者都不是“自动分布式事务”。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "建 AFTER INSERT 触发器改另一表，应用只 INSERT 后查第二表。SHOW TRIGGERS 应列出。关掉触发器后同样 INSERT 不应再改第二表。"
+      }
+    ],
+    "references": [
+      [
+        "MySQL：触发器",
+        "https://dev.mysql.com/doc/refman/8.4/en/triggers.html"
+      ],
+      [
+        "MySQL：TRIGGER 语法",
+        "https://dev.mysql.com/doc/refman/8.4/en/create-trigger.html"
       ]
     ]
   },
@@ -5192,6 +5316,10 @@
         "body": "分用执行时间戳，定时 ZRANGEBYSCORE 取出到期成员。仍要处理重复消费。"
       },
       {
+        "title": "和 GEO",
+        "body": "附近点查询用 GEO（底层也是 ZSet/geohash），不要把排行榜 ZSet 当成地图索引，见 `redis-geo-on-zset-not-gis`。"
+      },
+      {
         "title": "怎样自己验证",
         "body": "插入多成员后改一个分，确认范围结果顺序变化，无需应用 sort。"
       }
@@ -5204,6 +5332,37 @@
       [
         "Redis：ZRANGE",
         "https://redis.io/docs/latest/commands/zrange/"
+      ]
+    ]
+  },
+  "redis-geo-on-zset-not-gis": {
+    "core": "Redis **GEO** 命令（`GEOADD` / `GEOSEARCH` 等）在底层用 **有序集合 + geohash** 存经纬度，方便半径/盒范围查附近点。它适合“附近的人/店”这类近似检索，**不是** PostGIS 那种完整 GIS：复杂多边形、精确测地、多层空间关系要放到专门空间库或自建索引。成员仍是 ZSet 成员名，精度与 geohash 网格有关。`BITFIELD` 是另一类紧凑整数位域命令，和 GEO 无关，不要混进“空间课”。选型：热点附近查询可 GEO；严肃地理业务用空间库，Redis 只做缓存或粗筛。",
+    "why": "把业务围栏全写在 Redis GEO 上，边界案例对不齐测绘结果；或把 BITFIELD 当成存坐标的方式。",
+    "example": "`GEOADD shops 116.4 39.9 storeA` 后 `GEOSEARCH` 半径 3km。不规则行政区围栏仍查 PostGIS，Redis 只缓存“附近候选 id 列表”。",
+    "task": "划掉“GEO=迷你 PostGIS”。写出 GEO 擅长什么；复杂围栏应落到哪一类系统。",
+    "answer": "划掉「GEO=迷你 PostGIS」。GEO 擅长点与半径/盒的近似附近查。复杂多边形与精确空间关系用空间库。BITFIELD 不是存坐标。",
+    "deep": [
+      {
+        "title": "和 ZSet",
+        "body": "GEO 成员可与 ZSet 命令部分互通，但不要绕过 GEO API 随便改分值，容易破坏 geohash 编码。排行场景仍用普通 ZSet，见 `redis-zset-rank-range`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "GEOADD 两点后 GEOSEARCH 应按距离返回。对照：同一需求若要多边形包含，应在空间库验证，而不是只调 GEO。"
+      }
+    ],
+    "references": [
+      [
+        "Redis：Geo indexes",
+        "https://redis.io/docs/latest/develop/data-types/geospatial/"
+      ],
+      [
+        "Redis：GEOADD",
+        "https://redis.io/docs/latest/commands/geoadd/"
+      ],
+      [
+        "Redis：BITFIELD",
+        "https://redis.io/docs/latest/commands/bitfield/"
       ]
     ]
   },
@@ -5570,6 +5729,10 @@
       {
         "title": "少往返不等于原子",
         "body": "Pipeline 把多条命令的等待叠在一起，服务器仍按到达顺序一条条执行，中间可以夹着别人的命令。MULTI 保证这批不被插队，但语法错误之外，已经执行的写入不会整批回滚。"
+      },
+      {
+        "title": "选型对照",
+        "body": "批量只读用 Pipeline；批内不插队用 MULTI；读后分支用 Lua。口诀见 `redis-multi-vs-lua-pick`，机制见 `redis-transaction`、`redis-lua-atomic`。"
       },
       {
         "title": "怎样自己验证",
@@ -10172,7 +10335,7 @@
     ]
   },
   "sca-circuit-not-only-hystrix": {
-    "core": "Spring Cloud 是一套分布式系统工具（配置、发现、网关、负载均衡、熔断抽象），不是 Spring Cloud Stream 的别名，更不是 Task 的别名。Netflix Hystrix 已进入维护模式，现行常用 Resilience4j 或 Spring Cloud CircuitBreaker，阿里栈用 Sentinel，见既有 Sentinel 课。Eureka、Ribbon、Zuul 也大量被 Spring Cloud LoadBalancer、Gateway 替代。Feign 仍在，但是 OpenFeign。服务发现还可以是 Nacos、Consul，不是只有 Eureka。",
+    "core": "Spring Cloud 是一套分布式系统工具（配置、发现、网关、负载均衡、熔断抽象），不是 Spring Cloud Stream 的别名，更不是 Task 的别名。Netflix Hystrix 已进入维护模式，现行常用 **Resilience4j 或 Spring Cloud CircuitBreaker**，阿里栈用 Sentinel，见既有 Sentinel 课。Eureka、Ribbon、Zuul 也大量被 Spring Cloud LoadBalancer、Gateway 替代。Feign 仍在，但是 OpenFeign。服务发现还可以是 Nacos、Consul，不是只有 Eureka。",
     "why": "按 Netflix 全家桶去搭现行工程，Hystrix、Ribbon、Zuul 会停在维护模式，新依赖对不上文档。区分信号是熔断已换成 CircuitBreaker 或 Sentinel，发现也可以是 Nacos 或 Consul。",
     "example": "新项目用 Spring Cloud LoadBalancer + Gateway + CircuitBreaker（Resilience4j）或 Sentinel。不要把 Hystrix 当默认作业。",
     "task": "对照当前 Spring Cloud 项目页，划掉“Spring Cloud = Stream 启动器”；列出一种现行断路器。",

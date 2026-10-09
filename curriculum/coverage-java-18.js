@@ -2,9 +2,9 @@
 const COVERAGE_JAVA_18 = [
   {
     track:'java', group:'并发', id:'java-tpe-execute-order',
-    title:'ThreadPoolExecutor 是 execute 时才建线程，不是队列里先堆着不动',
+    title:'ThreadPoolExecutor 是 execute 时才建线程，不是队列里先堆着不动（JDK 5）',
     prompt:'为什么说“没调用 prestartAllCoreThreads 时，工作队列里已有任务也不会执行”会误导？',
-    core:'ThreadPoolExecutor 的常规入口是 execute/submit。任务数少于 corePoolSize 时会新建线程；否则尝试入队；队列满且线程数仍小于 maximumPoolSize 时再新建；再不行走拒绝策略。prestartAllCoreThreads 只是提前把核心线程拉起来，不是“否则队列里的任务永远不跑”。资料把“当前任务数减队列容量”算最大线程的公式写乱了，不要背。工作队列里出现任务，是因为已经有过 execute，核心线程通常已经在跑。',
+    core:'ThreadPoolExecutor（**JDK 5**，`java.util.concurrent`）的常规入口是 execute/submit。任务数少于 corePoolSize 时会新建线程；否则尝试入队；队列满且线程数仍小于 maximumPoolSize 时再新建；再不行走拒绝策略。prestartAllCoreThreads 只是提前把核心线程拉起来，不是“否则队列里的任务永远不跑”。资料把“当前任务数减队列容量”算最大线程的公式写乱了，不要背。工作队列里出现任务，是因为已经有过 execute，核心线程通常已经在跑。',
     why:'按没调用 prestart 队列里的任务也不会跑去理解线程池，会在已经 execute 的任务上干等，或把队列和 max 设反。区分信号是第 13 个任务在队列满之后才新建超出 core 的线程，而不是先把队列堆满却不执行。',
     example:'core 为 2、队列 10、max 为 4。前两个 execute 各建一条线程并开始跑。第 3 到第 12 个进入队列，由已有线程取走。第 13、14 个因队列已满且线程数还小于 max，再新建线程。第 15 个走拒绝。全程没有调用 prestart。',
     task:'对照 Javadoc 的 execute 三段，划掉“队列有任务也不会执行”；写出队列满之后才涨到 max 的条件。',

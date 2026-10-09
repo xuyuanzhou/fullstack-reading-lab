@@ -140,6 +140,7 @@
         "http-cache",
         "bfcache-pageshow",
         "service-worker-stale",
+        "sw-cache-strategy-pick",
         "cors",
         "cors-credentials-allowlist",
         "same-origin-script-still-runs",
@@ -156,7 +157,9 @@
         "http-patch-rfc5789",
         "http-503-unavailable",
         "cookie-set-attributes",
+        "cookie-prefix-partitioned",
         "long-poll-vs-websocket",
+        "sse-one-way-http-stream",
         "ajax-page-update-not-a-library",
         "fetch-platform-client",
         "fetch-method-body-timeout",
@@ -289,6 +292,7 @@
         "es6-for-of-iterable",
         "js-iteration-protocol",
         "js-generator-yield-pause",
+        "js-async-generator-for-await",
         "js-weakmap-lifetime",
         "js-timer-fn-not-string",
         "js-regex-dot-not-newline",
@@ -587,15 +591,18 @@
       ],
       "数据库": [
         "mysql-null-comparison",
+        "mysql-not-null-default-not-absolute",
         "sql-outer-join-where",
         "mysql-inner-join-match",
         "mysql-join-ban-not-absolute",
         "mysql-or-not-must-become-in",
         "mysql-where-having",
         "mysql-group-by-having",
+        "mysql-window-keeps-rows",
         "mysql-union-distinct",
         "mysql-second-nf",
         "mysql-select-star",
+        "mysql-text-ban-not-absolute",
         "mysql-varchar-length",
         "mysql-varchar-row-max",
         "mysql-wide-column-split",
@@ -607,6 +614,7 @@
         "mysql-split-not-at-ten-million",
         "mysql-view-is-stored-query",
         "mysql-procedure-not-auto-txn",
+        "mysql-trigger-side-effect-hidden",
         "table-design-from-facts",
         "table-row-one-grain",
         "table-constraint-holds-rule",
@@ -704,6 +712,7 @@
         "redis-data-types",
         "redis-hash-field-update",
         "redis-zset-rank-range",
+        "redis-geo-on-zset-not-gis",
         "redis-hyperloglog-approx",
         "cache-aside-steps",
         "redis-big-hot-key",
@@ -1018,6 +1027,7 @@
             "es6-for-of-iterable",
             "js-iteration-protocol",
             "js-generator-yield-pause",
+            "js-async-generator-for-await",
             "js-weakmap-lifetime"
           ]
         },
@@ -1099,7 +1109,9 @@
             "http-patch-rfc5789",
             "http-503-unavailable",
             "cookie-set-attributes",
-            "long-poll-vs-websocket"
+            "cookie-prefix-partitioned",
+            "long-poll-vs-websocket",
+            "sse-one-way-http-stream"
           ]
         },
         {
@@ -1170,7 +1182,8 @@
             "indexeddb-when-needed",
             "http-cache",
             "bfcache-pageshow",
-            "service-worker-stale"
+            "service-worker-stale",
+            "sw-cache-strategy-pick"
           ]
         },
         {
@@ -1861,6 +1874,7 @@
             "redis-data-types",
             "redis-hash-field-update",
             "redis-zset-rank-range",
+            "redis-geo-on-zset-not-gis",
             "redis-hyperloglog-approx",
             "cache-aside-steps",
             "redis-big-hot-key",
@@ -2009,15 +2023,18 @@
           "title": "表",
           "ids": [
             "mysql-null-comparison",
+            "mysql-not-null-default-not-absolute",
             "sql-outer-join-where",
             "mysql-inner-join-match",
             "mysql-join-ban-not-absolute",
             "mysql-or-not-must-become-in",
             "mysql-where-having",
             "mysql-group-by-having",
+            "mysql-window-keeps-rows",
             "mysql-union-distinct",
             "mysql-second-nf",
             "mysql-select-star",
+            "mysql-text-ban-not-absolute",
             "mysql-varchar-length",
             "mysql-varchar-row-max",
             "mysql-wide-column-split",
@@ -2028,7 +2045,8 @@
             "mysql-money-decimal-not-ban",
             "mysql-split-not-at-ten-million",
             "mysql-view-is-stored-query",
-            "mysql-procedure-not-auto-txn"
+            "mysql-procedure-not-auto-txn",
+            "mysql-trigger-side-effect-hidden"
           ]
         },
         {
@@ -3672,6 +3690,10 @@
           "body": "手写 [Symbol.iterator] 返回 { next } 也能 for-of。生成器是用 yield 写这种状态机的语法糖，见 `js-iteration-protocol`。"
         },
         {
+          "title": "异步生成器",
+          "body": "要边 await 边产出，用 async function* 与 for await，见 `js-async-generator-for-await`。不要对同步生成器 for await 混用预期。"
+        },
+        {
           "title": "怎样自己验证",
           "body": "调用后立刻看 g.next 是否存在、函数体副作用是否未发生。连续 next 两次对照 value。耗尽后再 next 应 done:true。"
         }
@@ -3690,6 +3712,45 @@
         [
           "MDN：function*",
           "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*"
+        ]
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
+      "id": "js-async-generator-for-await",
+      "title": "async function* 用 for await 消费，不是普通 for-of",
+      "prompt": "为什么对 async function* 写 for (const x of g()) 会报错或行为不对？",
+      "core": "`async function*` 返回**异步生成器**：每次 `next()` 得到的是 **Promise**，产出值在 Promise 兑现之后才可用。消费应用 **`for await...of`**（或手动 `await g.next()`），不要用同步 `for...of` 去取。它把“可暂停迭代”与“等待异步”合在一起，适合按页拉取、按块读流。同步 `function*` 仍用普通 `for...of`，见 `js-generator-yield-pause`。`for await` 也会消费异步可迭代对象（实现 `@@asyncIterator`），与同步 `@@iterator` 是两套协议。",
+      "why": "把 async 生成器丢进普通 for-of，拿到的是 Promise 对象当元素，或直接类型错误；以为加了 async 就自动并发跑完所有 yield。",
+      "example": "`async function* pages() { yield await fetchPage(1); yield await fetchPage(2); } for await (const p of pages()) { ... }`。写成 `for (const p of pages())` 得不到页面数据。读 `Response.body` 时也可用异步迭代（实现支持时）按块处理，见 `fetch-response-body-once`。",
+      "task": "划掉“async function*=自动跑完的同步生成器”。写出：应用哪种循环；每次 next 得到的是什么。",
+      "answer": "划掉「async function*=自动跑完的同步生成器」。用 for await...of 或 await next()。每次 next 先得到 Promise，兑现后才是 value。同步 for-of 不对。",
+      "keywords": "async generator for await 异步迭代",
+      "deep": [
+        {
+          "title": "和 Promise.all",
+          "body": "for await 是顺序等每一页；要并行拉多页仍用 Promise.all，再迭代结果。异步生成器不自动并行。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "对同一 async 生成器分别试 for-of 与 for await，对照能否得到 yield 的值。"
+        }
+      ],
+      "since": "ES2018",
+      "points": [
+        "async function* 的 next 返回 Promise",
+        "用 for await...of 消费",
+        "与同步 generator / for-of 是两套协议"
+      ],
+      "references": [
+        [
+          "MDN：for await...of",
+          "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of"
+        ],
+        [
+          "MDN：AsyncGenerator",
+          "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AsyncGenerator"
         ]
       ]
     },
@@ -3895,9 +3956,10 @@
       "track": "frontend",
       "group": "TypeScript",
       "id": "ts-unknown",
-      "title": "unknown 与 any：先验证再使用",
+      "since": "TS 3.0",
+      "title": "unknown 与 any：先验证再使用（TS 3.0）",
       "prompt": "接口返回值的形状不可信，为什么不直接写成 any？",
-      "core": "any 会绕过许多静态检查；unknown 可接收任意值，但在读取属性或调用前必须缩小类型。JSON 解析结果即使语法正确，也不代表符合业务对象结构。顺序是：入口收 unknown，先判断非 null 对象，再逐个检查必需字段的类型，通过后才收窄成 User。边界是：any 会让后面的属性访问全部跳过检查，风险从边界扩散到所有调用方。JSON.parse 只保证文本合法，不保证有 id，更不保证 id 是字符串。缺少字段和类型不对都要停在 parseUser 里。调用方拿到的要么是 User，要么是错误，不能是一个还可以点出任意属性的值。不要把未知值传进去。",
+      "core": "any 会绕过许多静态检查；**unknown（TS 3.0）** 可接收任意值，但在读取属性或调用前必须缩小类型。JSON 解析结果即使语法正确，也不代表符合业务对象结构。顺序是：入口收 unknown，先判断非 null 对象，再逐个检查必需字段的类型，通过后才收窄成 User。边界是：any 会让后面的属性访问全部跳过检查，风险从边界扩散到所有调用方。JSON.parse 只保证文本合法，不保证有 id，更不保证 id 是字符串。缺少字段和类型不对都要停在 parseUser 里。调用方拿到的要么是 User，要么是错误，不能是一个还可以点出任意属性的值。不要把未知值传进去。",
       "why": "错把接口 JSON 标成 any，字段缺失或类型不对会一直传到调用方，直到运行时才崩。编译器不再提醒。能分开的信号是：入口类型是 unknown，并且在读取属性之前有没有缩小类型。",
       "example": "parseUser 收到 {id:1}。检查发现 id 不是字符串，函数返回错误，不构造 User。收到 {id:\"u1\"} 且其余字段通过后，才返回 User。缺少 id 的 {} 同样在边界失败。",
       "task": "把一个返回 unknown 的 parseUser 函数改成安全读取，并测试缺少 id、id 为数字和正确对象三种输入。",
@@ -4248,6 +4310,7 @@
           "body": "给 User 写出创建和更新两种类型，更新排除 id。故意把 id 放进补丁，确认报错。再发一份带 id 的 JSON，确认运行时仍要自己丢掉这个字段。编译报错和运行时多字段是两道关。"
         }
       ],
+      "since": "TypeScript",
       "points": [
         "Partial 让全部字段可选",
         "Pick 和 Omit 按键增减字段",
@@ -4268,9 +4331,9 @@
       "track": "frontend",
       "group": "TypeScript",
       "id": "ts-template-literal-types",
-      "title": "模板字面量类型能拼出合法字符串，拼不出的键会在编译期失败",
+      "title": "模板字面量类型能拼出合法字符串，拼不出的键会在编译期失败（TS 4.1）",
       "prompt": "事件名必须是 on 加字段名，为什么还要用 string 然后运行时再检查？",
-      "core": "模板字面量类型把字符串字面量拼起来，例如 `on${Capitalize<K>}`。对象键、路由路径、CSS 变量这种有固定模式的字符串，可以用它把非法组合挡在编译期。它仍是类型，不会在运行时生成函数。模式太宽（`${string}`）就等于没限制。和联合、映射类型一起用时，先写出有限的键集合。键集合先收成有限联合再映射，拼出来的每个路径都能点名。模式放宽成任意字符串之后，编译器不再拒绝多出来的字符。类型擦除后没有这段检查，拼错的名字仍要到运行时才暴露。先写出有限的键再去拼。",
+      "core": "模板字面量类型（**TS 4.1**）把字符串字面量拼起来，例如 `on${Capitalize<K>}`。对象键、路由路径、CSS 变量这种有固定模式的字符串，可以用它把非法组合挡在编译期。它仍是类型，不会在运行时生成函数。模式太宽（`${string}`）就等于没限制。和联合、映射类型一起用时，先写出有限的键集合。键集合先收成有限联合再映射，拼出来的每个路径都能点名。模式放宽成任意字符串之后，编译器不再拒绝多出来的字符。类型擦除后没有这段检查，拼错的名字仍要到运行时才暴露。先写出有限的键再去拼。",
       "why": "事件名写成 string，onClick 拼成 onClik 仍能通过编译，要点击才发现没有处理函数。区分信号是键集合有限时，\"/api/users\" 这种多余的 s 会在赋值处报错，而不是等到请求发出。",
       "example": "type ApiPath = `/api/${\"user\" | \"order\"}`，得到 \"/api/user\" | \"/api/order\"。把变量写成 \"/api/users\" 再赋给 ApiPath，编译失败；改回 \"/api/user\" 才通过。运行时不会凭这个类型去拼接字符串。",
       "task": "给 \"user\" | \"order\" 拼出 \"/api/user\" | \"/api/order\"。故意写 \"/api/users\" 看报错。",
@@ -4286,6 +4349,7 @@
           "body": "给 \"user\" | \"order\" 拼出 \"/api/user\" | \"/api/order\"。再把 \"/api/users\" 赋给这个类型，预测出现类型错误。改回两个合法路径之一，错误应消失，且运行时没有被类型生成的函数。"
         }
       ],
+      "since": "TS 4.1",
       "points": [
         "模板字面量类型拼接字符串字面量",
         "非法组合会在编译期失败",
@@ -5548,6 +5612,10 @@
           "body": "新版本可以已经安装，只是旧页面还占着控制权。服务器上的新包是在的。排查却在源站找文件，会错过浏览器里这份旧缓存。接口若也缓存优先，连数据都是旧的。边界不满足时就停，不要把这次失败算到下一层头上。"
         },
         {
+          "title": "策略怎么选",
+          "body": "静态与 API 不要同一套 cache-first。选型口诀见 `sw-cache-strategy-pick`。"
+        },
+        {
           "title": "怎样自己验证",
           "body": "对照生命周期写出 installing、waiting、activated。标出用户仍看旧脚本的 waiting。更新后不要关旧页，确认界面不变；关掉再开，才应看到新脚本。接口响应不应来自这份缓存。"
         }
@@ -5566,6 +5634,45 @@
         [
           "MDN：Service Worker 生命周期",
           "https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers"
+        ]
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "浏览器",
+      "id": "sw-cache-strategy-pick",
+      "title": "Service Worker 缓存策略要按资源选，不是一律 cache-first",
+      "prompt": "为什么静态脚本用缓存优先没问题，订单列表也 cache-first 就会出事？",
+      "core": "Service Worker 的 **Cache API** 策略是你在 `fetch` 事件里写的分支，不是浏览器默认 HTTP 缓存的另一名字，见 `http-cache`、`service-worker-stale`。常见口诀：**cache-first** 适合带内容哈希的不可变静态；**network-first** / **stale-while-revalidate** 适合要尽快看见更新的页面壳；**API / 个性化数据默认走网络**，需要离线再单独设计。策略选错等于把错误数据当权威。发版后用户仍见旧脚本，首先查生命周期 waiting，其次才查策略是否永远命中旧条目。",
+      "why": "把所有请求都 cache-first，用户看到过期订单；或以为配了 SW 就等于配了 Cache-Control。",
+      "example": "`/assets/app.a1b2.js` cache-first。`/api/orders` 只 network，失败再决定是否展示离线提示。HTML 壳可用 network-first，避免永久钉死旧入口。",
+      "task": "划掉“上了 SW=全部先读缓存”。给：带哈希静态、订单 API、HTML 入口，各选一种策略倾向。",
+      "answer": "划掉「上了 SW=全部先读缓存」。带哈希静态：cache-first。订单 API：网络优先/只网络。HTML 入口：network-first 或短缓存。不要一律 cache-first。",
+      "keywords": "Service Worker Cache API cache-first network-first",
+      "deep": [
+        {
+          "title": "和 HTTP 缓存",
+          "body": "Cache-Control 管浏览器 HTTP 缓存；SW Cache 是另一层。两层叠在一起时，先分清响应来自哪一层再排障。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "Application → Cache 看条目。改 API 策略前后，断网或慢网下订单页是否仍吐旧 JSON。"
+        }
+      ],
+      "since": "Service Worker",
+      "points": [
+        "SW 策略是 fetch 里自写的分支，不是 HTTP 缓存换皮",
+        "不可变静态才适合 cache-first",
+        "API 默认不要进静态缓存策略"
+      ],
+      "references": [
+        [
+          "web.dev：缓存策略",
+          "https://web.dev/articles/offline-cookbook"
+        ],
+        [
+          "MDN：Cache",
+          "https://developer.mozilla.org/en-US/docs/Web/API/Cache"
         ]
       ]
     },
@@ -6095,6 +6202,10 @@
           "body": "浏览器有 Cookie 不等于 fetch 跨源会带。跨源还要 `credentials:\"include\"` 且 CORS 允许。"
         },
         {
+          "title": "前缀与分区",
+          "body": "__Host-/__Secure- 与 Partitioned 进一步限制谁能种、第三方如何隔离，见 `cookie-prefix-partitioned`。"
+        },
+        {
           "title": "怎样自己验证",
           "body": "Application 面板看 Cookie 勾选。控制台读 document.cookie。用跨站表单 POST 对照是否带上 sid。"
         }
@@ -6119,6 +6230,49 @@
     {
       "track": "frontend",
       "group": "网络与安全",
+      "id": "cookie-prefix-partitioned",
+      "title": "__Host- / __Secure- 前缀与 Partitioned：收紧谁能种 Cookie",
+      "prompt": "为什么设了 Secure、SameSite=None，第三方 iframe 里种的 Cookie 仍越来越种不上？",
+      "core": "**名称前缀**是约定约束：`__Host-` 要求 `Secure`、无 `Domain`、`Path=/`，防止子域乱种；`__Secure-` 要求至少 `Secure`。不满足时浏览器**拒绝收下**。**Partitioned**（CHIPS）把第三方上下文里的 Cookie 按顶层站点分区存放，减轻跨站追踪，和 `SameSite` 互补而非替代，见 `cookie-set-attributes`。第三方嵌入场景要同时考虑 SameSite=None; Secure、分区与浏览器逐步禁用第三方 Cookie 的政策。不要以为“有 Secure 就能当稳定第三方登录态”。",
+      "why": "子域 XSS 种了同名会话 Cookie 抬走流量；或第三方小组件依赖未分区 Cookie，Chrome 一收紧就丢登录。",
+      "example": "`Set-Cookie: __Host-session=...; Secure; Path=/; HttpOnly; SameSite=Lax` 不能再带 `Domain=example.com`。嵌入小部件若仍要第三方 Cookie，需 `Partitioned` 并接受按顶层站点隔离。",
+      "task": "划掉“Secure=随便种”。写出 __Host- 相对普通 Secure Cookie 多出来的限制；Partitioned 主要防什么。",
+      "answer": "划掉「Secure=随便种」。__Host- 还要求无 Domain、Path=/。Partitioned 把第三方 Cookie 按顶层站点分开，减轻跨站共享。SameSite 仍要单独设对。",
+      "keywords": "Cookie __Host- __Secure- Partitioned CHIPS SameSite",
+      "deep": [
+        {
+          "title": "和 HttpOnly",
+          "body": "前缀管“谁能种、种在哪”；HttpOnly 管脚本能不能读。会话 Cookie 常一起用。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "故意给 __Host- 加 Domain，应种不上。对照无前缀同名可种。查文档确认当前浏览器对 Partitioned 的支持。"
+        }
+      ],
+      "since": "Cookie Prefix/CHIPS",
+      "points": [
+        "__Host-/__Secure- 不满足属性则拒收",
+        "Partitioned 按顶层站点隔离第三方 Cookie",
+        "与 SameSite/HttpOnly 叠加，不互相替代"
+      ],
+      "references": [
+        [
+          "MDN：Cookie prefixes",
+          "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Cookies#cookie_prefixes"
+        ],
+        [
+          "MDN：Partitioned",
+          "https://developer.mozilla.org/en-US/docs/Web/Privacy/Guides/Privacy_sandbox/Partitioned_cookies"
+        ],
+        [
+          "CHIPS 说明",
+          "https://developers.google.com/privacy-sandbox/cookies/chips"
+        ]
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "网络与安全",
       "id": "long-poll-vs-websocket",
       "title": "长轮询与 WebSocket：谁持连接、谁推消息",
       "prompt": "为什么“实时通知”有人用 setInterval 拉接口，有人上 WebSocket，还能说成长轮询？",
@@ -6131,7 +6285,7 @@
       "deep": [
         {
           "title": "和 SSE",
-          "body": "Server-Sent Events 是服务端到客户端的单向流，仍走 HTTP。只要下行推送时可比 WS 简单。"
+          "body": "Server-Sent Events 是服务端到客户端的单向流，仍走 HTTP。机制与选型见 `sse-one-way-http-stream`。只要下行推送时可比 WS 简单。"
         },
         {
           "title": "怎样自己验证",
@@ -6152,6 +6306,49 @@
         [
           "MDN：Server-sent events",
           "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events"
+        ]
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "网络与安全",
+      "id": "sse-one-way-http-stream",
+      "title": "SSE 是单向 HTTP 事件流，不是 WebSocket 换皮",
+      "prompt": "为什么用 EventSource 收推送时，客户端发不回去消息，有人却说“和 WS 一样实时”？",
+      "core": "**Server-Sent Events（SSE）** 用普通 HTTP 响应保持打开，服务端按 `text/event-stream` 持续推事件；浏览器 **`EventSource`** 自动重连（可带 `Last-Event-ID`）。方向是**服务端 → 客户端**。客户端要上行仍走另一次 HTTP 或改用 **WebSocket** 双工，见 `long-poll-vs-websocket`。用 `fetch` 读流式正文（`getReader` / `for await`）也能做自定义下行流，但要自己处理重连与事件分帧，见 `fetch-response-body-once`、`js-async-generator-for-await`。SSE 不是“更轻的 WebSocket”，也替代不了需要客户端高频上送的场景。",
+      "why": "把聊天室做成纯 EventSource，发出去的消息还要另开接口却以为一条连接双向；或在只支持 WS 的网关后硬上 SSE 失败。",
+      "example": "股票报价、通知铃铛：`new EventSource(\"/events\")` 听 `message`。用户点赞仍 `POST /like`。对战游戏选 WebSocket。大文件下载进度用 fetch 流，不必 EventSource。",
+      "task": "划掉“SSE=WebSocket”。给：单向服务端推、双向上下话、自控分帧下载，各选 SSE / WS / fetch 流之一。",
+      "answer": "划掉「SSE=WebSocket」。单向推选 SSE。双向上下话选 WebSocket。自控分帧下载选 fetch 流。三者不是同一种连接。",
+      "keywords": "SSE EventSource WebSocket fetch 流",
+      "deep": [
+        {
+          "title": "和长轮询",
+          "body": "长轮询每次响应结束要再挂；SSE 一次响应多事件。代理若缓冲整包会破坏流，需禁用对该路径的响应缓冲。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "Network 里看 EventStream / text/event-stream 长连接。尝试 EventSource.send 应不存在；对照 WebSocket 可双向。"
+        }
+      ],
+      "since": "HTML SSE",
+      "points": [
+        "SSE 是服务端到客户端的 HTTP 事件流",
+        "EventSource 管重连，上行另走请求",
+        "双向场景用 WebSocket，不要硬套 SSE"
+      ],
+      "references": [
+        [
+          "MDN：Server-sent events",
+          "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events"
+        ],
+        [
+          "MDN：EventSource",
+          "https://developer.mozilla.org/en-US/docs/Web/API/EventSource"
+        ],
+        [
+          "HTML：Server-sent events",
+          "https://html.spec.whatwg.org/multipage/server-sent-events.html"
         ]
       ]
     },
@@ -6287,6 +6484,10 @@
         {
           "title": "和中止",
           "body": "AbortController 可在流读到一半取消。取消后不要假定还能再读剩余块，见 `fetch-abort`。"
+        },
+        {
+          "title": "和 SSE",
+          "body": "EventSource 是浏览器封装的事件流；自控分帧下行仍可用 fetch 流。对照见 `sse-one-way-http-stream`。"
         },
         {
           "title": "怎样自己验证",
@@ -7015,6 +7216,7 @@
           "body": "在组件里连续写两个 useState，把第二个放进 if 并来回切换条件。观察第二个状态是否串到第一个的值上。再画 App、Header、Main 的 child、sibling、return 和 alternate。"
         }
       ],
+      "since": "React Hooks",
       "points": [
         "Hook 单向链表与调用顺序",
         "Fiber 的 child/sibling/return/alternate",
@@ -7050,6 +7252,7 @@
           "body": "每次 setCount 前后都打印变量。再在下一次渲染的组件顶层打印。两个打印位置看到的是两次渲染，不是同一次调用里变化的变量。"
         }
       ],
+      "since": "React 18 batch",
       "points": [
         "一次渲染中的 state 变量不会因为 setState 而改变",
         "更新按队列顺序应用，后面的直接值会覆盖前面的结果",
@@ -8574,6 +8777,7 @@
           "body": "点击时增加列表项，分别在同步代码和 await nextTick() 之后打印容器高度。同步读数应仍是旧高度。再把 nextTick 换成一个很短的 setTimeout，多次点击，观察读数并不稳定。"
         }
       ],
+      "since": "Vue",
       "points": [
         "状态修改与 DOM 刷新分离",
         "批量更新减少重复工作",
@@ -8609,6 +8813,7 @@
           "body": "先在子组件直接改一个对象 prop 的字段，看父组件是否被带改、控制台有没有变异警告。再改成 emit，由父组件写入，确认警告消失且父组件的值是它自己更新的。emit 之后父组件的值来自它自己的写入。"
         }
       ],
+      "since": "Vue",
       "points": [
         "prop 从父组件流向子组件",
         "子组件用事件请求变更，不直接写 prop",
@@ -8648,6 +8853,7 @@
           "body": "两项各带输入框，在第一项打字后交换顺序。分别用 id、下标和随机数当 key，记录文字留在哪一项、DOM 是否被重建。只有 id 应让文字跟着原来的项。三种 key 各做一次。"
         }
       ],
+      "since": "Vue",
       "points": [
         "就地修补的默认行为",
         "稳定 key 对应业务身份",
@@ -9366,9 +9572,9 @@
       "track": "frontend",
       "group": "技术选型",
       "id": "fe-vue-official-slots",
-      "title": "Vue 新项目的职责位是 Vite、Router 和 Pinia",
+      "title": "Vue 新项目的职责位是 Vite、Router 和 Pinia（Vue 3）",
       "prompt": "为什么 Vue 3 工程里又出现 Vue CLI、Vuex 和一套手写 history？",
-      "core": "官方脚手架 create-vue 基于 Vite。创建时可选 Vue Router、Pinia、Vitest 和端到端测试。迁移说明里的现行默认是：构建用 Vite，Vue CLI 只维护旧项目；跨页状态用 Pinia，Vuex 只维护已有仓库，见 `pinia-not-vuex`；编辑器用 Vue 官方扩展。需要文件路由、服务端渲染和把数据放进首屏 HTML 时用 Nuxt，取数走 useFetch 或 useAsyncData，见 `nuxt-payload`。Nuxt 默认用 Vite，不再附带 Vuex。页面级路由在 SPA 里是 Vue Router，不要再平行装一个 history 库去管同一批 URL。",
+      "core": "官方脚手架 **create-vue**（Vue 3）基于 Vite。创建时可选 Vue Router、Pinia、Vitest 和端到端测试。迁移说明里的现行默认是：构建用 Vite，Vue CLI 只维护旧项目；跨页状态用 Pinia，Vuex 只维护已有仓库，见 `pinia-not-vuex`；编辑器用 Vue 官方扩展。需要文件路由、服务端渲染和把数据放进首屏 HTML 时用 Nuxt，取数走 useFetch 或 useAsyncData，见 `nuxt-payload`。Nuxt 默认用 Vite，不再附带 Vuex。页面级路由在 SPA 里是 Vue Router，不要再平行装一个 history 库去管同一批 URL。",
       "why": "三套构建和两套 store 同时在依赖里，热更新走的是哪一条、退出登录该清哪一份状态，都要对着两份文档。新项目按脚手架的选项各留一个，旧项目才保留 Vuex 或 Vue CLI。",
       "example": "管理后台：create-vue，勾上 Vue Router 和 Pinia。文章站要看源码里的正文：Nuxt，数据用 useAsyncData。两份 package.json 都不要新增 vuex，也不要同时用 vue-cli-service 和 vite 作为开发命令。",
       "task": "打开创建选项或 package.json，列出构建、路由、跨页状态各一个包名。出现 vuex 或 @vue/cli 时，写明这是旧仓库保留，还是这次误加的第二职责位。",
@@ -9385,6 +9591,7 @@
           "body": "npm run dev 实际执行的应是 Vite 或 Nuxt，而不是同时还有 vue-cli-service。store 目录的定义来自 defineStore。搜索 new Vuex.Store，新代码路径上应当没有。"
         }
       ],
+      "since": "Vue 3 / create-vue",
       "points": [
         "create-vue 的构建是 Vite，可选 Router 和 Pinia",
         "Nuxt 负责文件路由和首屏数据，状态库仍是 Pinia",
@@ -9509,6 +9716,7 @@
           "body": "在 package.json 里搜索另一模型的路由包和请求缓存包。新功能路径上只应命中选定模型的那一套。再打开一张订单页，表格的数据表达式只能追到一个赋值点，见 `fe-server-state-one-owner`。"
         }
       ],
+      "since": "framework slots",
       "points": [
         "路由、客户端状态和服务端缓存跟着选定的更新模型",
         "四个模型不要在同一张表上各装一套库",
@@ -9593,6 +9801,7 @@
           "body": "改状态筛选后看网络请求的查询参数和表格第一行。第一行必须属于新参数。若第一行仍是旧数据，说明绑定读的是没有跟着键失效的那一份 store。"
         }
       ],
+      "since": "Vue / Nuxt / Pinia",
       "points": [
         "Nuxt 的列表走 useAsyncData 或 useFetch，结果进 payload",
         "Pinia 放客户端共享状态，不复制同一份 GET 列表",
@@ -9851,6 +10060,7 @@
           "body": "改筛选后看网络请求的查询参数，以及表格第一行。第一行必须属于新参数。若第一行仍是旧数据，说明绑定读的是没有跟着键失效的那一份。"
         }
       ],
+      "since": "one cache owner",
       "points": [
         "服务端列表只放在一个缓存里",
         "缓存键要包含会改变结果的参数",
@@ -11194,6 +11404,7 @@
           "body": "打开 JavaScript 环境文档的浏览器补齐，确认能看到 fetch，看不到 document 和 localStorage。在组件里调用 localStorage.setItem，应不能当已有 API 使用。同一组件里的 fetch 仍按列表可用。"
         }
       ],
+      "since": "RN JS env",
       "points": [
         "fetch 和 XMLHttpRequest 在环境补齐列表里",
         "document 和 localStorage 不在这份列表里",
@@ -12115,6 +12326,7 @@
           "body": "写一个每次延迟才消费的 Writable，上游不停 write。记录返回 false 后的缓冲长度，忽略时它应持续增长。改成等待 drain 或改用 pipeline 后，缓冲应停在阈值附近，并在错误时两端都结束。"
         }
       ],
+      "since": "Node Stream",
       "points": [
         "Writable.write 返回 false",
         "drain 与生产者背压",
@@ -12149,6 +12361,7 @@
           "body": "分别打印 alloc(8) 和刚分配的 allocUnsafe(8)。前者应为 0。后者在写满前不要发送。再对“中”比较字符串 length 和 Buffer.byteLength，确认字节数更大，按字符下标去 slice 会切坏编码。"
         }
       ],
+      "since": "Node Buffer",
       "points": [
         "字符数与 UTF-8 字节数",
         "Buffer.alloc 的初始化",
@@ -12183,6 +12396,7 @@
           "body": "先在主线程跑死循环并同时发一个 HTTP 请求，确认请求被堵住。再把循环放进工作线程，看请求是否还能返回 200，以及结果是不是靠消息回来而不是共享同一个对象。"
         }
       ],
+      "since": "Node cluster/worker",
       "points": [
         "一个事件循环不会把同步代码跑到多个核上",
         "cluster 是多进程，各自有独立的堆",
@@ -12255,6 +12469,7 @@
           "body": "写一条用类名点击按钮的测试，再改成按按钮角色和名称查询。只修改类名、不改文字，后一条应仍通过。暂时去掉按钮文字，查询应失败并提示页面上还有哪些角色。去掉按钮文字后，失败信息里应能看到页面上还剩哪些角色。"
         }
       ],
+      "since": "Testing Library",
       "points": [
         "优先用角色和可访问名称查询",
         "类名和内部结构不是用户契约",
@@ -12411,6 +12626,7 @@
         }
       ],
       "promptAnswer": "不是。不是每个函数都该配一条浏览器测试。浏览器只守一条用户路径，细分支留在单元测试。",
+      "since": "Playwright",
       "points": [
         "浏览器测试覆盖用户走完的一条路径",
         "等待由测试运行器处理，而不是固定 sleep",
@@ -12487,6 +12703,7 @@
         }
       ],
       "keywords": "MSW mock service worker HttpResponse 组件测试",
+      "since": "MSW",
       "points": [
         "MSW 按方法和路径拦截请求",
         "测试应断言界面和契约，而不是 fetch 调用次数",
@@ -12813,9 +13030,9 @@
       "track": "frontend",
       "group": "工程实践",
       "id": "web-vitals",
-      "title": "先看三次用户可见的等待",
+      "title": "先看三次用户可见的等待（CWV / INP）",
       "prompt": "打包体积小了，就能说明页面变快了吗？",
-      "core": "Core Web Vitals 量的是用户看得见的结果。LCP 是视口里最大内容绘制出来的时间。INP 是交互到下一次绘制的延迟，用来代替已经退出主指标的 FID。CLS 是意外布局偏移的累计。它们不由包体积直接决定。大图、字体、长任务和没有尺寸的图片会分别拉高这三项。实验数据说明一次访问，现场数据说明真实用户分布。顺序是先用一次访问的记录指出最大内容元素、一次交互的长任务和造成偏移的节点，再逐项修改并复测。实验数据只说明这一次，现场数据才是真实用户的分布。边界是这三项互不替代：图的发现时间、主线程长任务和未声明尺寸要分开看，包体积不是其中任何一项的读数。",
+      "core": "**Core Web Vitals** 量的是用户看得见的结果。LCP 是视口里最大内容绘制出来的时间。**INP** 是交互到下一次绘制的延迟，用来代替已经退出主指标的 FID。CLS 是意外布局偏移的累计。它们不由包体积直接决定。大图、字体、长任务和没有尺寸的图片会分别拉高这三项。实验数据说明一次访问，现场数据说明真实用户分布。顺序是先用一次访问的记录指出最大内容元素、一次交互的长任务和造成偏移的节点，再逐项修改并复测。实验数据只说明这一次，现场数据才是真实用户的分布。边界是这三项互不替代：图的发现时间、主线程长任务和未声明尺寸要分开看，包体积不是其中任何一项的读数。",
       "why": "学习者会以为打包体积变小，用户就能更快看到页面。实验室里分数上升了，首屏大图仍晚，点击后主线程还被长任务占着，布局也在跳。体积数字和这三项对不上，才说明要分别看最大内容、交互延迟和偏移，而不是只比构建产物的大小。",
       "example": "首屏英雄图没有宽高，加载后把下面的文字顶下去，累计偏移升高。点击按钮时主线程跑一段 300 毫秒的长任务，交互到下一次绘制变慢。图很大且发现得晚，最大内容绘制超过数秒。把包再压小 20KB，这三项记录仍分开超标。",
       "task": "用一次性能记录指出 LCP 元素、一次交互的长任务，以及造成偏移的节点，再分别改一项并复测。",
@@ -12831,6 +13048,7 @@
           "body": "做一次性能记录，标出最大内容元素、一次点击中的长任务、以及后来把布局撑开的节点。每次只改一项再录一次，看只有对应的那一项下降，另外两项可以不变。包体积那一次下降不能代替这三项记录。"
         }
       ],
+      "since": "CWV / INP",
       "points": [
         "LCP 衡量最大内容何时绘制",
         "INP 衡量交互到下一次绘制",
@@ -17114,6 +17332,7 @@
       "answer": "Young 只收新生代。Major 有时只是老年代。Mixed 是新生代加部分老年代。Full 才是整堆。",
       "keywords": "Minor GC Major GC Mixed GC Full GC CMS G1",
       "diagram": "diagrams/jvm-gc-scope.svg",
+      "since": "HotSpot GC",
       "points": [
         "Young/Minor 只收新生代",
         "Major 在 CMS 语境可只收老年代",
@@ -17472,6 +17691,7 @@
           "body": "对照 Lock 的说明列出四条获取方式，再打开 ReadWriteLock，确认读写分离不在 Lock 里。最后看 ConcurrentHashMap 的更新方法，它不是先拿写锁再 get/put。"
         }
       ],
+      "since": "JDK 5 Lock",
       "points": [
         "Lock 支持 tryLock、限时与可中断获取",
         "读写锁是 ReadWriteLock，不是 Lock 默认能力",
@@ -17700,6 +17920,7 @@
           "body": "对照 ReentrantReadWriteLock 的说明，按降级三步写下来，并标出禁止升级的那句。在持有读锁时尝试获取写锁，应失败或一直等待；先释放再获取，才能写。"
         }
       ],
+      "since": "JDK 5 RWLock",
       "points": [
         "读锁共享，写锁独占",
         "允许写锁降级到读锁",
@@ -17738,6 +17959,7 @@
           "body": "画出引用 A 到 B 再回到 A，同时 stamp 从 1 加到 2。用旧 stamp 做 CAS，预测失败。在业务代码里搜索 Unsafe，这些调用应改成原子类或 VarHandle。"
         }
       ],
+      "since": "JDK 5 Atomic*",
       "points": [
         "CAS 比较的是当前值，不是对象经历过的历史",
         "ABA 要用 stamp 或不可复用身份来拆穿",
@@ -18072,9 +18294,9 @@
       "track": "java",
       "group": "并发",
       "id": "java-tpe-execute-order",
-      "title": "ThreadPoolExecutor 是 execute 时才建线程，不是队列里先堆着不动",
+      "title": "ThreadPoolExecutor 是 execute 时才建线程，不是队列里先堆着不动（JDK 5）",
       "prompt": "为什么说“没调用 prestartAllCoreThreads 时，工作队列里已有任务也不会执行”会误导？",
-      "core": "ThreadPoolExecutor 的常规入口是 execute/submit。任务数少于 corePoolSize 时会新建线程；否则尝试入队；队列满且线程数仍小于 maximumPoolSize 时再新建；再不行走拒绝策略。prestartAllCoreThreads 只是提前把核心线程拉起来，不是“否则队列里的任务永远不跑”。资料把“当前任务数减队列容量”算最大线程的公式写乱了，不要背。工作队列里出现任务，是因为已经有过 execute，核心线程通常已经在跑。",
+      "core": "ThreadPoolExecutor（**JDK 5**，`java.util.concurrent`）的常规入口是 execute/submit。任务数少于 corePoolSize 时会新建线程；否则尝试入队；队列满且线程数仍小于 maximumPoolSize 时再新建；再不行走拒绝策略。prestartAllCoreThreads 只是提前把核心线程拉起来，不是“否则队列里的任务永远不跑”。资料把“当前任务数减队列容量”算最大线程的公式写乱了，不要背。工作队列里出现任务，是因为已经有过 execute，核心线程通常已经在跑。",
       "why": "按没调用 prestart 队列里的任务也不会跑去理解线程池，会在已经 execute 的任务上干等，或把队列和 max 设反。区分信号是第 13 个任务在队列满之后才新建超出 core 的线程，而不是先把队列堆满却不执行。",
       "example": "core 为 2、队列 10、max 为 4。前两个 execute 各建一条线程并开始跑。第 3 到第 12 个进入队列，由已有线程取走。第 13、14 个因队列已满且线程数还小于 max，再新建线程。第 15 个走拒绝。全程没有调用 prestart。",
       "task": "对照 Javadoc 的 execute 三段，划掉“队列有任务也不会执行”；写出队列满之后才涨到 max 的条件。",
@@ -18090,6 +18312,7 @@
           "body": "按 core、有界队列、max 的顺序提交任务。队列未满时应保持 core 条线程。队列满后再提交，线程数才应涨到 max。再多一个应被拒绝。不要先调用 prestart。"
         }
       ],
+      "since": "JDK 5 TPE",
       "points": [
         "任务经 execute/submit 进入池，不是凭空堆在队列里",
         "先建到 core，再入队，队列满才涨到 max",
@@ -18204,6 +18427,50 @@
         [
           "MySQL 8.4 手册镜像：NULL",
           "https://docs.oracle.com/cd/E17952_01/mysql-8.4-en/problems-with-null.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-not-null-default-not-absolute",
+      "title": "“一律 NOT NULL 再塞默认值”会伪造未知",
+      "prompt": "为什么规范写“必须把字段定义为 NOT NULL 并且提供默认值”，还列 NULL 难优化、占空间？",
+      "core": "**有业务含义的必填**（订单金额、用户 id）应 NOT NULL，用约束挡住脏写，见 `table-constraint-holds-rule`。但“未知/未采集/可选”本身就是合法状态时，硬 NOT NULL 再塞 `''`、`0`、`1970-01-01`，会把**未知伪装成已知**，报表与三值逻辑一起坏，见 `mysql-null-comparison`。资料把 NULL 的比较、统计复杂度说成必须消灭 NULL，夸张了：InnoDB 对可空列有开销，但用魔法默认值换来的语义错误通常更贵。正确做法：必填列 NOT NULL（默认值仅当“插入时省略=明确业务默认”才设）；可选列允许 NULL，查询用 `IS NULL`；不要为了规范把所有列填满假值。",
+      "why": "手机号未知被写成空串，统计“有手机号用户”把空串算进去；或用 0 当地址 id，外键/关联全乱。",
+      "example": "`middle_name` 允许 NULL 表示未填。规范强迫 `DEFAULT ''` 后，`WHERE middle_name IS NULL` 永远空，业务无法区分“没有中间名”和“没采集”。`amount` 则必须 NOT NULL，禁止用 NULL 表示未计价。",
+      "task": "划掉“所有列必须 NOT NULL+默认值”。给必填金额、可选中间名各写：是否允许 NULL，默认值代表什么。",
+      "answer": "划掉一律 NOT NULL。必填用不变量约束；可选允许 NULL，勿用空串/0 冒充未知。默认值只表示明确的业务默认，不是填洞。",
+      "keywords": "NOT NULL 默认值 NULL 三值逻辑 约束",
+      "origin": "《分布式高并发.pdf》约第 104 页：必须 NOT NULL 并且提供默认值",
+      "diagram": "diagrams/mysql-not-null-default-not-absolute.svg",
+      "deep": [
+        {
+          "title": "和性能口诀",
+          "body": "NULL 比较要用 IS NULL，索引与统计确实要多考虑。这是写对 SQL 的理由，不是把所有列改成假值的理由。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "建可选列可空与强制 DEFAULT '' 两表，插入“未采集”行后用 IS NULL 统计。假默认值表应统计失败。"
+        }
+      ],
+      "points": [
+        "必填用 NOT NULL 挡脏写",
+        "可选未知应允许 NULL",
+        "魔法默认值会伪造已知"
+      ],
+      "references": [
+        [
+          "MySQL：NULL",
+          "https://dev.mysql.com/doc/refman/8.4/en/problems-with-null.html"
+        ],
+        [
+          "MySQL：CREATE TABLE",
+          "https://dev.mysql.com/doc/refman/8.4/en/create-table.html"
+        ],
+        [
+          "MySQL：数据默认值",
+          "https://dev.mysql.com/doc/refman/8.4/en/data-type-defaults.html"
         ]
       ]
     },
@@ -18440,6 +18707,10 @@
           "body": "选了未分组、未聚合的列会报错。要么写入 GROUP BY，要么用聚合函数。"
         },
         {
+          "title": "和窗口函数",
+          "body": "要保留明细行并挂排名/组内累计，用 OVER，不要硬 GROUP BY，见 `mysql-window-keeps-rows`。"
+        },
+        {
           "title": "怎样自己验证",
           "body": "对比 WHERE 与 HAVING 位置错误时的报错信息；修正后组数应变少。"
         }
@@ -18457,6 +18728,45 @@
         [
           "MySQL：HAVING",
           "https://dev.mysql.com/doc/refman/8.4/en/select.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-window-keeps-rows",
+      "title": "窗口函数算排名不折叠行，GROUP BY 才会收成一组一行",
+      "prompt": "为什么用 RANK() OVER (...) 之后，行数还是和明细一样多，有人却期待变成每组一行？",
+      "core": "**窗口函数**（`OVER`）在**保留原结果集行数**的前提下，为每一行附加排名、累计、前后行取值等。`PARTITION BY` 划窗口，`ORDER BY` 定窗口内次序；它**不是** `GROUP BY`。要“每组一行 + 聚合”，用 `GROUP BY` / `HAVING`，见 `mysql-where-having`、`mysql-group-by-having`。把窗口写成“高级 GROUP BY”会在报表里多出重复明细，或误删需要的行。窗口与 WHERE 的求值顺序按 SQL 标准：窗口通常在过滤与分组之后、最终投影阶段计算（以实现/手册为准）。",
+      "why": "把 RANK 当分组聚合，再对结果去重，反而丢掉并列明细；或抱怨“窗口函数没把组收起来”。",
+      "example": "订单明细每行一个商品。`SUM(amount) OVER (PARTITION BY order_id)` 给每行挂上该单合计，行数不变。`GROUP BY order_id` 才变成每单一行。",
+      "task": "划掉“窗口=GROUP BY 换皮”。写出：窗口与 GROUP BY 对结果行数的差别；各适合什么问题。",
+      "answer": "划掉「窗口=GROUP BY 换皮」。窗口保留行数并附加列。GROUP BY 把多行收成一组一行。排名/累计用窗口；每组只要汇总用 GROUP BY。",
+      "keywords": "MySQL 窗口函数 OVER PARTITION BY GROUP BY",
+      "deep": [
+        {
+          "title": "和子查询",
+          "body": "也可用派生表先聚合再 JOIN 回明细。窗口常更短，但要注意大数据分区排序成本。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "同一明细分别跑 RANK OVER 与 GROUP BY COUNT，对比行数。窗口结果行数应等于明细。"
+        }
+      ],
+      "since": "MySQL 8.0",
+      "points": [
+        "窗口函数不折叠行数",
+        "GROUP BY 才按组收成一行",
+        "排名与组内累计用 OVER，不要硬改成 GROUP BY"
+      ],
+      "references": [
+        [
+          "MySQL：窗口函数",
+          "https://dev.mysql.com/doc/refman/8.4/en/window-functions.html"
+        ],
+        [
+          "MySQL：窗口函数概念",
+          "https://dev.mysql.com/doc/refman/8.4/en/window-functions-usage.html"
         ]
       ]
     },
@@ -18577,6 +18887,50 @@
         [
           "MySQL 8.4：预处理语句缓存",
           "https://dev.mysql.com/doc/refman/8.4/en/statement-caching.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-text-ban-not-absolute",
+      "title": "“禁止 TEXT/BLOB”禁的是乱查大列，不是禁类型",
+      "prompt": "为什么规范写死“禁止使用 TEXT、BLOB”，理由是浪费空间、淘汰热数据？",
+      "core": "TEXT/BLOB 适合存**真正的长内容**（文章正文、二进制附件元数据旁的大对象策略另说）。绝对禁止会逼人把长文塞进过短的 VARCHAR，或拆到对象存储却无主键关联。资料担心的点对的是：**列表/热点路径 `SELECT *` 把大列读进缓冲池**，挤掉热行，见 `mysql-select-star`、`mysql-wide-column-split`。InnoDB 常把长大字段放溢出页，列表不选中该列时未必读全；该拆表、该 OSS、该禁止的是无过滤的大列扫描，不是类型名。规范应写成：热点查询不要投影 TEXT/BLOB；正文与列表字段分离；需要时用前缀索引而不是幻想整列普通索引，见前缀索引课。",
+      "why": "规范背成“表里不能有 TEXT”，CMS 正文改成 VARCHAR(500) 被截断；或全文搜索另上引擎只因为不敢建 TEXT。",
+      "example": "`posts` 有 `title VARCHAR`、`body TEXT`。列表 `SELECT id,title` 不碰 body。详情再查 body。禁止的是列表 `SELECT *` 把 body 打进结果集，不是禁止 body 列存在。",
+      "task": "划掉“禁止 TEXT 类型”。写出：类型何时合理；查询上要禁止哪一类用法。",
+      "answer": "划掉禁止类型。长正文用 TEXT（或等价）合理。禁止的是热点路径投影大列、无必要的大字段进缓冲。列表与正文分离，用 EXPLAIN/列清单证明。",
+      "keywords": "TEXT BLOB SELECT 缓冲池 规范",
+      "origin": "《分布式高并发.pdf》约第 104 页：禁止使用 TEXT、BLOB",
+      "diagram": "diagrams/mysql-text-ban-not-absolute.svg",
+      "deep": [
+        {
+          "title": "和 ENUM 禁令",
+          "body": "同页禁 ENUM 改 TINYINT：DDL 增枚举值痛苦是真问题，但 TINYINT 无含义时要靠字典表。同样是启发式，不是语法禁令。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "同表列表选/不选 TEXT 列，对比 handler read 与耗时。确认列表不投影大列后缓冲压力下降。"
+        }
+      ],
+      "points": [
+        "TEXT 适合真正的长内容",
+        "危险是热点查询拖出大列",
+        "拆列表字段，不要禁用类型名"
+      ],
+      "references": [
+        [
+          "MySQL：BLOB 与 TEXT",
+          "https://dev.mysql.com/doc/refman/8.4/en/blob.html"
+        ],
+        [
+          "MySQL：InnoDB 行格式",
+          "https://dev.mysql.com/doc/refman/8.4/en/innodb-row-format.html"
+        ],
+        [
+          "MySQL：SELECT",
+          "https://dev.mysql.com/doc/refman/8.4/en/select.html"
         ]
       ]
     },
@@ -18766,6 +19120,7 @@
           "body": "大表加索引或改列会锁表。迁移要写预计锁时间和是否在线 DDL。把它当成普通发版步骤，而不是启动时的惊喜。"
         }
       ],
+      "since": "Flyway-style",
       "points": [
         "每次结构变化是带版本的脚本，按顺序应用",
         "空库和旧库跑完同一套脚本后结构应一致",
@@ -19016,6 +19371,44 @@
         [
           "MySQL：事务",
           "https://dev.mysql.com/doc/refman/8.4/en/commit.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-trigger-side-effect-hidden",
+      "title": "触发器是隐蔽副作用，不是自动正确的业务层",
+      "prompt": "为什么应用只写了一条 INSERT，库存却被改了，代码里找不到 UPDATE？",
+      "core": "**触发器**在指定表上对 INSERT/UPDATE/DELETE（及时机 BEFORE/AFTER）自动跑的一段 SQL。它和语句通常处在**同一事务**里：外层回滚，触发器改动一并撤销（具体以引擎与语句类型为准）。好处是库内强制约束；代价是**调用方源码看不见**这条路径，排障、性能和权限都变难。不要用触发器代替明确的应用用例与事务边界，见 `mysql-procedure-not-auto-txn`。团队“禁止触发器”多半是容量与可维护性启发式，不是 SQL 真理——和“禁止 JOIN”同类，见 `mysql-join-ban-not-absolute`。",
+      "why": "以为业务只在 Java 服务里，库内 BEFORE INSERT 又改了别的表，对账对不上；或误以为禁触发器是数据库定律。",
+      "example": "订单 INSERT 触发器里 UPDATE 库存。应用日志只有 insertOrder。库存异常时要查 `SHOW TRIGGERS` / information_schema，而不是只搜 Java。若团队禁用触发器，库存扣减应显式写在同一应用事务里。",
+      "task": "划掉“触发器=隐形微服务，永远更安全”和“触发器绝对禁止=SQL 规定”。写出：触发器相对应用代码的可见性；禁令通常保护什么。",
+      "answer": "划掉「触发器=隐形微服务，永远更安全」。触发器在库内自动跑，应用源码默认看不见。禁令多为可维护性/容量启发式。业务不变量仍应能在显式路径上讲清。",
+      "keywords": "MySQL 触发器 副作用 事务 可维护性",
+      "deep": [
+        {
+          "title": "和存储过程",
+          "body": "过程要 CALL 才跑；触发器挂在表事件上。两者都不是“自动分布式事务”。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "建 AFTER INSERT 触发器改另一表，应用只 INSERT 后查第二表。SHOW TRIGGERS 应列出。关掉触发器后同样 INSERT 不应再改第二表。"
+        }
+      ],
+      "points": [
+        "触发器在 DML 时自动执行，源码侧常不可见",
+        "通常与语句同事务，但排障成本高",
+        "禁止触发器是团队启发式，不是语法禁令"
+      ],
+      "references": [
+        [
+          "MySQL：触发器",
+          "https://dev.mysql.com/doc/refman/8.4/en/triggers.html"
+        ],
+        [
+          "MySQL：TRIGGER 语法",
+          "https://dev.mysql.com/doc/refman/8.4/en/create-trigger.html"
         ]
       ]
     },
@@ -20577,6 +20970,10 @@
           "body": "分用执行时间戳，定时 ZRANGEBYSCORE 取出到期成员。仍要处理重复消费。"
         },
         {
+          "title": "和 GEO",
+          "body": "附近点查询用 GEO（底层也是 ZSet/geohash），不要把排行榜 ZSet 当成地图索引，见 `redis-geo-on-zset-not-gis`。"
+        },
+        {
           "title": "怎样自己验证",
           "body": "插入多成员后改一个分，确认范围结果顺序变化，无需应用 sort。"
         }
@@ -20594,6 +20991,49 @@
         [
           "Redis：ZRANGE",
           "https://redis.io/docs/latest/commands/zrange/"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "缓存",
+      "id": "redis-geo-on-zset-not-gis",
+      "title": "GEO 是经纬度索引的快捷命令，不是完整空间数据库",
+      "prompt": "为什么用 GEOADD 存了门店，还做不了复杂多边形围栏和投影换算？",
+      "core": "Redis **GEO** 命令（`GEOADD` / `GEOSEARCH` 等）在底层用 **有序集合 + geohash** 存经纬度，方便半径/盒范围查附近点。它适合“附近的人/店”这类近似检索，**不是** PostGIS 那种完整 GIS：复杂多边形、精确测地、多层空间关系要放到专门空间库或自建索引。成员仍是 ZSet 成员名，精度与 geohash 网格有关。`BITFIELD` 是另一类紧凑整数位域命令，和 GEO 无关，不要混进“空间课”。选型：热点附近查询可 GEO；严肃地理业务用空间库，Redis 只做缓存或粗筛。",
+      "why": "把业务围栏全写在 Redis GEO 上，边界案例对不齐测绘结果；或把 BITFIELD 当成存坐标的方式。",
+      "example": "`GEOADD shops 116.4 39.9 storeA` 后 `GEOSEARCH` 半径 3km。不规则行政区围栏仍查 PostGIS，Redis 只缓存“附近候选 id 列表”。",
+      "task": "划掉“GEO=迷你 PostGIS”。写出 GEO 擅长什么；复杂围栏应落到哪一类系统。",
+      "answer": "划掉「GEO=迷你 PostGIS」。GEO 擅长点与半径/盒的近似附近查。复杂多边形与精确空间关系用空间库。BITFIELD 不是存坐标。",
+      "keywords": "Redis GEO geohash ZSet GIS BITFIELD",
+      "deep": [
+        {
+          "title": "和 ZSet",
+          "body": "GEO 成员可与 ZSet 命令部分互通，但不要绕过 GEO API 随便改分值，容易破坏 geohash 编码。排行场景仍用普通 ZSet，见 `redis-zset-rank-range`。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "GEOADD 两点后 GEOSEARCH 应按距离返回。对照：同一需求若要多边形包含，应在空间库验证，而不是只调 GEO。"
+        }
+      ],
+      "since": "Redis GEO",
+      "points": [
+        "GEO 基于 ZSet/geohash，服务附近点查询",
+        "不是完整 GIS / 多边形引擎",
+        "BITFIELD 是位域命令，与 GEO 无关"
+      ],
+      "references": [
+        [
+          "Redis：Geo indexes",
+          "https://redis.io/docs/latest/develop/data-types/geospatial/"
+        ],
+        [
+          "Redis：GEOADD",
+          "https://redis.io/docs/latest/commands/geoadd/"
+        ],
+        [
+          "Redis：BITFIELD",
+          "https://redis.io/docs/latest/commands/bitfield/"
         ]
       ]
     },
@@ -21016,6 +21456,7 @@
           "body": "两个客户端 WATCH 同一库存键。让乙先改并完成，再让甲 EXEC。甲应失败，值保持乙写下的结果。去掉 WATCH 再交错一次，确认后执行的写入盖掉前者。不要用这次实验代替跨库事务。"
         }
       ],
+      "since": "Redis MULTI",
       "points": [
         "MULTI 入队与 EXEC 执行",
         "WATCH 的乐观冲突检测",
@@ -21122,10 +21563,15 @@
           "body": "Pipeline 把多条命令的等待叠在一起，服务器仍按到达顺序一条条执行，中间可以夹着别人的命令。MULTI 保证这批不被插队，但语法错误之外，已经执行的写入不会整批回滚。"
         },
         {
+          "title": "选型对照",
+          "body": "批量只读用 Pipeline；批内不插队用 MULTI；读后分支用 Lua。口诀见 `redis-multi-vs-lua-pick`，机制见 `redis-transaction`、`redis-lua-atomic`。"
+        },
+        {
           "title": "怎样自己验证",
           "body": "分别测二十次 GET、一次 Pipeline、一次 MULTI。比较耗时。Pipeline 执行期间用另一个客户端插入一条写入，看它能否出现在这二十条中间。MULTI 期间不应被插进这批。"
         }
       ],
+      "since": "Redis Pipeline",
       "points": [
         "Pipeline 把多条命令打包以减少网络往返",
         "MULTI 批次中间不被插队，但失败不会回滚已成功命令",
@@ -21456,6 +21902,7 @@
           "body": "对照 EVAL 写下 KEYS 放键、ARGV 放参数。库存为 1 时并发 GET+SET，预测两笔都成功。改成脚本里判断再 DECR，同样并发应只有一笔返回成功。"
         }
       ],
+      "since": "Redis EVAL",
       "points": [
         "单条命令原子，两条命令之间可被插入",
         "Lua 脚本在服务端连续执行",
@@ -21613,6 +22060,7 @@
           "body": "切片测试只装一部分 Bean。缺依赖时，先看测试有没有把需要的 Bean 引进来。"
         }
       ],
+      "since": "Spring",
       "points": [
         "容器负责创建对象并注入依赖",
         "注入按类型或名字匹配候选 Bean",
@@ -21651,6 +22099,7 @@
           "body": "用构造器注入和字段注入各写一个 Bean，在构造器里打印依赖是否为空。再让两个构造器互相依赖，看容器是否在启动时失败，而不是运行到第一次调用才空指针。循环依赖应在启动日志里失败，而不是第一次调用才空指针。"
         }
       ],
+      "since": "Spring",
       "points": [
         "顺序是构造、注入、初始化",
         "构造器里还没有字段注入的依赖",
@@ -21689,6 +22138,7 @@
           "body": "给 Service 加一个 currentUser 字段，并发发两个用户的请求，看是否出现串用户。把该值改成方法参数后再发，两笔结果应各自正确。再确认这个 Bean 的作用域注解并没有代替这次修改。"
         }
       ],
+      "since": "Spring",
       "points": [
         "singleton 是容器内共享实例",
         "prototype 与 request 生命周期",
@@ -22104,6 +22554,7 @@
           "body": "给 DTO 加 NotBlank，分别写带 BindingResult 和不带的控制器。不带时应直接 400 且方法不执行。再在服务方法上校验，看异常类型是否和服务入口不同。"
         }
       ],
+      "since": "Bean Validation",
       "points": [
         "先绑定对象，再按约束校验",
         "控制器上校验失败通常是 400",
@@ -22329,6 +22780,7 @@
           "body": "在被 this 调用的方法里抛运行时异常，看外层没有事务时数据是否写入。再改为通过另一个 Bean 调用，比较回滚结果。"
         }
       ],
+      "since": "Spring AOP TX",
       "points": [
         "声明式事务拦截的是进入代理的外部调用",
         "同类 this 调用不经过这层代理",
@@ -22364,6 +22816,7 @@
           "body": "分别抛运行时异常和受检异常，各看一次订单表。再给受检异常加上 rollbackFor，第三次应不再留下订单。"
         }
       ],
+      "since": "Spring TX",
       "points": [
         "运行时异常的默认回滚",
         "受检异常与 rollbackFor",
@@ -22398,6 +22851,7 @@
           "body": "审计方法放在另一个 Bean 上，主业务在它返回后抛运行时异常。看审计表有行、订单表没有行。再改成同一个类的 this 调用，比较审计行是否还独立提交。"
         }
       ],
+      "since": "Spring TX",
       "points": [
         "外层事务与内层事务",
         "REQUIRES_NEW 的独立提交",
@@ -22432,6 +22886,7 @@
           "body": "在同一事务里按编号加载两次，用双等号比较并改一边的备注，看另一边是否同时变。再在事务外 new 两个同号对象，确认双等号为假，并试一次按全部字段比较会让集合去重不稳定。"
         }
       ],
+      "since": "JPA",
       "points": [
         "同一持久化上下文里，同一主键对应同一实例",
         "内存中的字段可以暂时和表不一致",
@@ -22508,6 +22963,7 @@
           "body": "在事务里保存后，立刻用另一个数据库连接查询，行数应为 0。方法正常结束后再查，行数应为 1。再让方法抛错回滚，结束后用另一连接确认这一行不在。方法抛错的那次，结束后另一连接仍应查不到新行。"
         }
       ],
+      "since": "JPA",
       "points": [
         "save 不等于立刻对其他连接可见",
         "flush 把脏状态写成 SQL",
@@ -23068,6 +23524,7 @@
           "body": "用 SIMPLE 和 BATCH 各插 1000 行，比较往返次数和耗时。再故意插入重复键，看异常出现在循环中还是 flush。最后在循环里插一条查询，看批是否被打断。"
         }
       ],
+      "since": "MyBatis",
       "points": [
         "SIMPLE 每条语句一次往返，BATCH 把更新攒起来",
         "循环中查询会打断当前批处理",
@@ -23178,6 +23635,7 @@
           "body": "对照 cache 文档写下一级只在当前 SqlSession、二级跨会话。再写一条订单联库存的查询并打开二级缓存，用另一个 mapper 改库存后重查，详情应仍是旧库存。"
         }
       ],
+      "since": "MyBatis",
       "points": [
         "一级缓存只在同一个 SqlSession",
         "二级缓存跨会话，提交后才可见",
@@ -23903,6 +24361,7 @@
           "body": "关掉名单里一台的端口，看访问日志在连续失败后是否不再选它。再让另一台只返回 500，对比它是否仍被选中。最后恢复端口，确认过了时间窗口后又会被打到。关端口的那台在达到次数前仍会出现在访问日志里。"
         }
       ],
+      "since": "Nginx upstream",
       "points": [
         "upstream 保存可转发的后端名单",
         "被动摘除统计连接或超时失败",
@@ -24240,6 +24699,7 @@
           "body": "用固定 key 和按地址的 key 各压一次登录。两个来源同时请求时，固定 key 下第二个来源会被拖进 503；按地址分桶时，第二个来源仍能通过。两个来源要同时压，才能看出是不是一把锁。"
         }
       ],
+      "since": "Nginx limit_req",
       "points": [
         "limit_req 的 key 决定谁和谁共用配额",
         "固定 key 会让所有客户端抢同一个桶",
@@ -24693,6 +25153,7 @@
           "body": "画出入站链，标出哪一步之后才是完整请求。先去掉拆帧发一个不完整包，业务应拿到半包或直接失败。按长度拆帧放回最前之后，业务应只在完整帧到达时执行。拆帧放回链头之后，不完整的那次读取不应再进入业务。"
         }
       ],
+      "since": "Netty Pipeline",
       "points": [
         "Pipeline 按顺序处理入站和出站事件",
         "先拆完整帧，再做业务解码",
@@ -25396,6 +25857,7 @@
           "body": "生产者 acks 与消费者提交位点的时序，在后续两课展开。"
         }
       ],
+      "since": "Kafka",
       "points": [
         "主题由分区组成，分区是有序追加日志",
         "消费组内分摊分区，组间各自一份位点",
@@ -25728,6 +26190,7 @@
           "body": "交换器类型与绑定细节见 `rabbit-exchange-binding`；ack 时序见 `rabbit-ack`。"
         }
       ],
+      "since": "AMQP / RabbitMQ",
       "points": [
         "生产者面向交换器与路由键",
         "绑定决定队列如何接收",
@@ -25919,6 +26382,7 @@
           "body": "同一主题乱序的原因与按键固定队列，见 `rocketmq-queue-order`。"
         }
       ],
+      "since": "RocketMQ",
       "points": [
         "队列是顺序与并行单位，标签只做过滤",
         "延迟消息由服务端推迟投递",
@@ -26071,6 +26535,7 @@
           "body": "对照三种发送，确认 oneway 没有回调。再把 Broker 设成异步刷盘，同步 send 返回成功后模拟断电，重启后这条消息应可能不在。订单路径不要用 oneway。"
         }
       ],
+      "since": "RocketMQ",
       "points": [
         "三种发送：同步、异步回调、oneway",
         "oneway 适合可丢日志，不适合关键业务",
@@ -26187,6 +26652,7 @@
           "body": "对照 ActiveMQ 预取文档写出队列默认值。开两个消费者处理很慢的任务，看未确认的消息是否堆在一个上面。把预取改为 1 再观察是否轮流取走，失败超过次数后应进入死信队列。"
         }
       ],
+      "since": "ActiveMQ",
       "points": [
         "队列默认预取一批未确认消息给单个消费者",
         "ack 前这批不会转给其它消费者",
@@ -26225,6 +26691,7 @@
           "body": "用同一个队列名启动两个消费者，发送编号 1 到 10。每个编号只应出现在一个进程里，两边打印的顺序会交错。再向一个非持久 Topic 发送时关掉其中一个订阅者，它应错过这几条。改成持久订阅，两次连接使用同一个 clientId 和同一个订阅名，重新连上后应补到离线期间的消息。"
         }
       ],
+      "since": "JMS Queue",
       "points": [
         "Queue 的多消费者是竞争，每条消息只交付一次",
         "Topic 才广播，离线保留要靠持久订阅",
@@ -26263,6 +26730,7 @@
           "body": "用三个短句手工写出每个词后面的文档编号，再查其中一个词，确认只读这一项。把同一个词改一下大小写重新分析，看它是否仍落在原来的项里；精确字段则不应被切成另一个词。"
         }
       ],
+      "since": "inverted index",
       "points": [
         "倒排记录每个词出现在哪些文档",
         "写入时分词，查询时用同一套规则",
@@ -26301,6 +26769,7 @@
           "body": "对照 ES 文档里的倒排索引说明，划掉资料中的 B+ 树句子。写一条标题检索，看命中的是分词后的词。再对比 refresh 前后，新文档并不是写入瞬间就能搜到。"
         }
       ],
+      "since": "Lucene / ES",
       "points": [
         "Lucene 用倒排表，不是用 B+ 树做全文检索",
         "ES 在 Lucene 之上做分片、副本与 HTTP API",
@@ -26450,6 +26919,7 @@
           "body": "在一个有稀有词和高频词的索引上，对同一个 keyword 字段各发一次 term 查询，并带上 \"profile\": true。两次的词典部分都应很快。高频词那次在倒排表上前进的文档数应明显更多，took 也通常更长。再对一个 text 字段用整句做 term 查询，应很少命中，因为索引里是分析之后的词，不是原句。"
         }
       ],
+      "since": "Lucene postings",
       "points": [
         "倒排避免逐篇扫描，查词不是哈希 O(1)",
         "FST 查找与词长相关，还要扫倒排表",
@@ -26565,6 +27035,7 @@
         }
       ],
       "keywords": "Elasticsearch aggregations terms 分桶 keyword",
+      "since": "ES aggs",
       "points": [
         "聚合在命中文档上算桶和指标",
         "返回统计结果，不是整行文档列表",
@@ -26672,6 +27143,7 @@
           "body": "官方 README 把全链路灰度、无损上下线、离群实例摘除和企业级网关放在配套的商业方案里。阅读开源文档时，不要把这些控制台能力写成默认注解的效果。"
         }
       ],
+      "since": "SCA",
       "points": [
         "BOM 只对齐版本，组件要按需单独引入",
         "发现、负载均衡、限流、事务和网关由不同项目负责",
@@ -26941,6 +27413,7 @@
           "body": "压一千个客户端每 5 秒拉全量，看配置服务 QPS。改成只在版本变更时拉，空闲 QPS 应接近心跳。改一关键开关后，确认不是固定等满本地/Redis 一分钟。"
         }
       ],
+      "since": "config watch",
       "points": [
         "配置读多写少，定时盲拉多半空跑",
         "变更通知或长轮询驱动拉取",
@@ -27214,6 +27687,7 @@
           "body": "写出 destination、消费组、分区键和幂等键。同一订单号应总进同一队列。把同一条消息投递两次，幂等键应让第二次不再扣减。延迟关单不要写在监听里空等。"
         }
       ],
+      "since": "SC Stream",
       "points": [
         "Stream 的 destination 对应主题，不改变投递语义",
         "顺序仍靠同一队列，重复仍靠业务键",
@@ -27252,6 +27726,7 @@
           "body": "对照文档确认未配置时是加权随机。再把一台提供者人为变慢且不摘除，roundrobin 下这台的进行中调用应继续增加。换成 leastactive 后，新增调用应少分给它。"
         }
       ],
+      "since": "Dubbo",
       "points": [
         "默认 RandomLoadBalance，可加权",
         "LeastActive 统计活跃调用数，不是直接最短响应",
@@ -27363,6 +27838,7 @@
           "body": "提供方睡 3 秒再插入一行并打印时间。消费方超时设为 1 秒，retries 先保持默认，发起一次调用。消费方应先报超时，提供方的插入日志应晚于这个报错，表里最多大约 3 行。再把 retries 设为 0 重试同一实验，报错还在，新增行数应为 1。"
         }
       ],
+      "since": "Dubbo",
       "points": [
         "超时发生在消费方，提供方线程默认继续",
         "retries 默认 2，最多约 3 次调用",
@@ -27616,9 +28092,9 @@
       "track": "java",
       "group": "Spring Cloud Alibaba",
       "id": "sca-circuit-not-only-hystrix",
-      "title": "Spring Cloud 不是 Hystrix 说明书，断路器已换代",
+      "title": "Spring Cloud 不是 Hystrix 说明书，断路器已换代（CircuitBreaker）",
       "prompt": "为什么把 Spring Cloud 定义成 Stream 启动器，并把容错只背 Hystrix？",
-      "core": "Spring Cloud 是一套分布式系统工具（配置、发现、网关、负载均衡、熔断抽象），不是 Spring Cloud Stream 的别名，更不是 Task 的别名。Netflix Hystrix 已进入维护模式，现行常用 Resilience4j 或 Spring Cloud CircuitBreaker，阿里栈用 Sentinel，见既有 Sentinel 课。Eureka、Ribbon、Zuul 也大量被 Spring Cloud LoadBalancer、Gateway 替代。Feign 仍在，但是 OpenFeign。服务发现还可以是 Nacos、Consul，不是只有 Eureka。",
+      "core": "Spring Cloud 是一套分布式系统工具（配置、发现、网关、负载均衡、熔断抽象），不是 Spring Cloud Stream 的别名，更不是 Task 的别名。Netflix Hystrix 已进入维护模式，现行常用 **Resilience4j 或 Spring Cloud CircuitBreaker**，阿里栈用 Sentinel，见既有 Sentinel 课。Eureka、Ribbon、Zuul 也大量被 Spring Cloud LoadBalancer、Gateway 替代。Feign 仍在，但是 OpenFeign。服务发现还可以是 Nacos、Consul，不是只有 Eureka。",
       "why": "按 Netflix 全家桶去搭现行工程，Hystrix、Ribbon、Zuul 会停在维护模式，新依赖对不上文档。区分信号是熔断已换成 CircuitBreaker 或 Sentinel，发现也可以是 Nacos 或 Consul。",
       "example": "新项目用 Spring Cloud LoadBalancer + Gateway + CircuitBreaker（Resilience4j）或 Sentinel。不要把 Hystrix 当默认作业。",
       "task": "对照当前 Spring Cloud 项目页，划掉“Spring Cloud = Stream 启动器”；列出一种现行断路器。",
@@ -27634,6 +28110,7 @@
           "body": "打开 Spring Cloud 项目页，确认它不是 Stream 的别名，并把 Hystrix 从默认清单划掉。再点开 CircuitBreaker 或 Sentinel 其中一页，能指出一种现行断路器即可。"
         }
       ],
+      "since": "SC CircuitBreaker",
       "points": [
         "Spring Cloud 不是 Stream 或 Task 的别名",
         "Hystrix 维护模式，改用 CircuitBreaker 或 Sentinel",

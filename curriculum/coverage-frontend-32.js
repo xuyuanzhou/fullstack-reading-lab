@@ -13,6 +13,7 @@ const COVERAGE_FRONTEND_32 = [
     points:['调用 function* 只得到生成器对象','next/for-of 才推进到下一个 yield','默认同步，不是自动异步'],
     deep:[
       {title:'和普通迭代器',body:'手写 [Symbol.iterator] 返回 { next } 也能 for-of。生成器是用 yield 写这种状态机的语法糖，见 js-iteration-protocol。'},
+      {title:'异步生成器',body:'要边 await 边产出，用 async function* 与 for await，见 js-async-generator-for-await。不要对同步生成器 for await 混用预期。'},
       {title:'怎样自己验证',body:'调用后立刻看 g.next 是否存在、函数体副作用是否未发生。连续 next 两次对照 value。耗尽后再 next 应 done:true。'}
     ],
     refs:[['MDN：生成器','https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator'],['MDN：function*','https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*']]
@@ -30,6 +31,7 @@ const COVERAGE_FRONTEND_32 = [
     points:['Response body 只能完整消费一次','json/text 等都会读干流','需要两份用 clone 或 tee'],
     deep:[
       {title:'和中止',body:'AbortController 可在流读到一半取消。取消后不要假定还能再读剩余块，见 fetch-abort。'},
+      {title:'和 SSE',body:'EventSource 是浏览器封装的事件流；自控分帧下行仍可用 fetch 流。对照见 sse-one-way-http-stream。'},
       {title:'怎样自己验证',body:'对同一 Response 连续 await text 再 json，应第二次失败。clone 后再各读一次应成功。'}
     ],
     refs:[['MDN：Response','https://developer.mozilla.org/en-US/docs/Web/API/Response'],['MDN：ReadableStream','https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream'],['MDN：Body','https://developer.mozilla.org/en-US/docs/Web/API/Body']]
