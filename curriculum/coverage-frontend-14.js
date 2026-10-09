@@ -2,9 +2,9 @@
 const COVERAGE_FRONTEND_14 = [
   {
     track:'frontend', group:'React', id:'react-context-stable',
-    title:'Context 已是稳定 API，不是实验功能',
+    title:'Context 已是稳定 API，不是实验功能（React 16.3）',
     prompt:'为什么“Context 还在实验、app 里不要用、靠 getChildContext，且中间 shouldComponentUpdate 返回 false 就会丢更新”不能当 React 19 的答案？',
-    core:'现行 Context 是 createContext、Provider 与 useContext（类组件用 Context.Consumer 或 contextType）。它用来把主题、当前用户、路由一类跨层数据交给任意深层消费者，而不必逐层传 props。官方仍建议：能用 props 说清楚就先用 props；Context 适合许多组件都要读的稳定数据，不是实验开关。旧的 childContextTypes / getChildContext 是遗留 API。createContext 出现后，中间祖先即使 shouldComponentUpdate 返回 false，消费者仍会在 Provider 的 value 变化时更新——资料里“不可靠、会被 SCU 挡掉”描述的是更早的旧 Context。不要把 Context 当成全局 Redux：value 用新对象字面量会导致所有消费者重渲染；高频草稿仍应留在局部 state。Provider 边界与重渲染见既有 `context` 课。',
+    core:'现行 Context（**React 16.3** 起的 `createContext`）是 Provider 与 useContext（类组件用 Context.Consumer 或 contextType）。它用来把主题、当前用户、路由一类跨层数据交给任意深层消费者，而不必逐层传 props。官方仍建议：能用 props 说清楚就先用 props；Context 适合许多组件都要读的稳定数据，不是实验开关。旧的 childContextTypes / getChildContext 是遗留 API。createContext 出现后，中间祖先即使 shouldComponentUpdate 返回 false，消费者仍会在 Provider 的 value 变化时更新——资料里“不可靠、会被 SCU 挡掉”描述的是更早的旧 Context。不要把 Context 当成全局 Redux：value 用新对象字面量会导致所有消费者重渲染；高频草稿仍应留在局部 state。Provider 边界与重渲染见既有 `context` 课。',
     why:'误以为 Context 仍是实验功能，中间组件一旦跳过更新就会丢掉。新项目会避开主题这类官方用法，或继续写已经退役的子上下文方法。区分信号是消费者跟的是 Provider 的 value，不跟中间组件是否跳过更新。',
     example:'const ThemeContext = createContext("light"); 根上 <ThemeContext.Provider value={theme}>，深层 const theme = useContext(ThemeContext)。不要写 getChildContext(){ return {color} }。',
     task:'对照 Passing Data Deeply with Context，划掉资料里“实验阶段、app 不要用”；再用一个 SCU 返回 false 的中间组件，确认 useContext 消费者仍能收到新 theme。',

@@ -2,9 +2,9 @@
 const COVERAGE_FRONTEND_12 = [
   {
     track:'frontend', group:'React', id:'react-gdsfp-copy',
-    title:'getDerivedStateFromProps 不是把 props 再存一份的默认通道',
+    title:'getDerivedStateFromProps 不是把 props 再存一份的默认通道（React 16.3）',
     prompt:'为什么资料里用 getDerivedStateFromProps 把 props.counter 写回 state，以及把请求放进 componentWillReceiveProps，都不能当现行默认答案？',
-    core:'getDerivedStateFromProps 会在挂载和后续更新（含 setState、forceUpdate）里、render 之前调用，返回对象合并进 state 或返回 null。它是少数“状态必须随 props 身份变化而重置”的逃生口，不是把传入值再拷一份的常规管道。资料示例一旦 props 与本地 state 不等就写回 counter，会把用户刚 setState 加上的值立刻打回 props，形成双重真相。官方更稳的路径：能派生就渲染期计算；要整块重置就给组件换 key。componentWillReceiveProps 已标 UNSAFE，还会在一次更新里被打断后再次进入；把数据请求放在这里既过时也不安全。需要副作用用 componentDidMount / componentDidUpdate 或函数组件的 useEffect，并区分“外部系统”与“把 props 灌进 state”。',
+    core:'`getDerivedStateFromProps`（**React 16.3** 起）会在挂载和后续更新（含 setState、forceUpdate）里、render 之前调用，返回对象合并进 state 或返回 null。它是少数“状态必须随 props 身份变化而重置”的逃生口，不是把传入值再拷一份的常规管道。资料示例一旦 props 与本地 state 不等就写回 counter，会把用户刚 setState 加上的值立刻打回 props，形成双重真相。官方更稳的路径：能派生就渲染期计算；要整块重置就给组件换 key。componentWillReceiveProps 已标 UNSAFE，还会在一次更新里被打断后再次进入；把数据请求放在这里既过时也不安全。需要副作用用 componentDidMount / componentDidUpdate 或函数组件的 useEffect，并区分“外部系统”与“把 props 灌进 state”。',
     why:'误以为这个生命周期就是把 props 再存进 state 的作业。点击自增后，不等的值会被写回父组件传入的计数，像随机重置。区分信号是它在渲染前合并返回值，用户刚改的本地状态会被盖掉。',
     example:'父传入 userId。子组件用 key={userId} 重置草稿；或直接渲染 props.user。不要 GDSFP 里 if (props.counter !== state.counter) return {counter: props.counter}，那会吃掉点击自增。',
     task:'按资料示例点一次自增，看 state 是否被 props 打回；再改成渲染期派生或 key 重置，确认本地更新能留下。',

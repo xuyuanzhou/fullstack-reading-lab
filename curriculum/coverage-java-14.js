@@ -36,9 +36,9 @@ const COVERAGE_JAVA_14 = [
   },
   {
     track:'java', group:'Spring', id:'spring-mvc-restcontroller',
-    title:'@RestController 可以替代只返回 JSON 的 @Controller',
+    title:'@RestController 可以替代只返回 JSON 的 @Controller（Spring 4）',
     prompt:'为什么说“表现层只能用 @Controller、不能用别的注解代替”不成立？',
-    core:'@RestController 等价于 @Controller 加上类级别 @ResponseBody：方法返回值直接写成 HTTP 体，不再走视图名解析。做 JSON API 时它就是推荐写法，不是非法替代。默认控制器仍是单例 bean，可变实例字段会在并发请求间共享；解决办法是把请求数据放在方法参数或请求作用域对象里，不是“控制器里不能有任何字段”——注入的服务字段正是常规做法。DispatcherServlet → HandlerMapping → HandlerAdapter 的骨架见既有 `spring-mvc-dispatch`。资料里的 @Conntroller 是拼写错误。',
+    core:'`@RestController`（**Spring 4** 起）等价于 `@Controller` 加上类级别 `@ResponseBody`：方法返回值直接写成 HTTP 体，不再走视图名解析。做 JSON API 时它就是推荐写法，不是非法替代。默认控制器仍是单例 bean，可变实例字段会在并发请求间共享；解决办法是把请求数据放在方法参数或请求作用域对象里，不是“控制器里不能有任何字段”——注入的服务字段正是常规做法。DispatcherServlet → HandlerMapping → HandlerAdapter 的骨架见既有 `spring-mvc-dispatch`。资料里的 @Conntroller 是拼写错误。',
     why:'背“表现层只能用 @Controller、别的注解不能代替”，会在只返回 JSON 的接口上拒绝 RestController，也会把单例理解成不能注入协作对象。区分信号是它组合了 Controller 和 ResponseBody。',
     example:'订单查询用 @RestController，方法返回 OrderResponse，响应体就是这份 JSON。当前用户 id 放在方法参数里，从这次请求取。不要写成控制器的实例字段留给下一次请求，因为默认单例会被并发请求共用。',
     task:'对照 Spring Web MVC 文档写出 RestController 的组合关系，并列出一处可以安全保留的注入字段和一处不能放的请求状态。',

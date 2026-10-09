@@ -29,9 +29,9 @@ const COVERAGE_JAVA_34 = [
   },
   {
     track:'java', group:'缓存', id:'redis-list-quicklist-listpack',
-    title:'List 早已不是“双向链表或压缩列表”二选一那么简单',
+    title:'List 早已不是“双向链表或压缩列表”二选一那么简单（Redis 3.2/7）',
     prompt:'为什么还按 Redis 3.0 把 List 背成 ziplist 或 linkedlist？',
-    core:'3.2 起 List 底层是 **quicklist**（分段的 ziplist 串起来）。7.0 起 ziplist 被 **listpack** 替换，Hash/Zset 小对象也走 listpack。键空间本身是字典，平均查找很快，最坏仍可能冲突、rehash。不要把 3.0 教材的“压缩列表或双向链表”当成现行默认。命令仍在执行线程排队，见 `redis-single-thread`。',
+    core:'**Redis 3.2** 起 List 底层是 **quicklist**（分段的 ziplist 串起来）。**Redis 7.0** 起 ziplist 被 **listpack** 替换，Hash/Zset 小对象也走 listpack。键空间本身是字典，平均查找很快，最坏仍可能冲突、rehash。不要把 3.0 教材的“压缩列表或双向链表”当成现行默认。命令仍在执行线程排队，见 `redis-single-thread`。',
     why:'按 ziplist/linkedlist 去估大 List 的内存和复杂度，会和现在的 quicklist 对不上。',
     example:'`LRANGE` 一个短 List，内部是几段 listpack。超长 List 分段，不是一根双向链表从头走到尾。',
     task:'写出 3.2 的 quicklist 和 7.0 的 listpack；划掉“List=链表或 ziplist”。',

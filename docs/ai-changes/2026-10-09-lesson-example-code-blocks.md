@@ -42,7 +42,7 @@ cd web && npm run export:curriculum && npx tsc --noEmit -p tsconfig.app.json
 
 ## 后续
 
-- [ ] 按章节继续往 `example-code-blocks.js`（或各 coverage）加围栏，优先语言基础 / React / Java 基础
+- [x] 第二批 +25：见 [2026-10-09-lesson-example-code-batch2.md](2026-10-09-lesson-example-code-batch2.md)（合计 37）
 - [ ] 不需要代码的场景课保持纯叙述即可
 - [ ] 勿为排版去改 core 机制句
 

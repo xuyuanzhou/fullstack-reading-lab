@@ -11,6 +11,8 @@
 
 | 日期 | 状态 | 标题 |
 | --- | --- | --- |
+| 2026-10-09 | 已完成 | [基础课标注引入版本（since）](2026-10-09-lesson-since-versions.md) |
+| 2026-10-09 | 已完成 | [学习课例子代码块第二批（+25）](2026-10-09-lesson-example-code-batch2.md) |
 | 2026-10-09 | 已完成 | [学习课例子支持代码块（12 课试点）](2026-10-09-lesson-example-code-blocks.md) |
 | 2026-10-09 | 已完成 | [D8 续抽：NOT NULL 默认值与 TEXT 禁令（2 课）](2026-10-09-d8-notnull-text.md) |
 | 2026-10-09 | 已完成 | [W3CSchool 第五轮：SW 策略 / Cookie 前缀 / 窗口函数 / GEO（4 课）](2026-10-09-w3cschool-round5-sw-cookie-window-geo.md) |
@@ -26,7 +28,6 @@
 | 2026-10-09 | 已完成 | [交付勾选放到这一关课表后面](2026-10-09-path-deliver-after-lessons.md) |
 | 2026-10-09 | 已完成 | [主线页只展开下一节，交交付物滚到勾选](2026-10-09-path-focus-next.md) |
 | 2026-10-09 | 已完成 | [D8 续抽：可重入身份与“可重入=避免死锁”（2 课）](2026-10-09-d8-reentrant-owner-deadlock.md) |
-| 2026-10-09 | 已完成 | [基础课标注引入版本（since）](2026-10-09-lesson-since-versions.md) |
 | 2026-10-09 | 已完成 | [读课和主线页都能看见这一关的交付进度](2026-10-09-path-aside-delivery-count.md) |
 | 2026-10-09 | 已完成 | [D8 续抽：HTTP 302 LB 与配置中心盲轮询（2 课）](2026-10-09-d8-redirect-config-poll.md) |
 | 2026-10-09 | 已完成 | [基础章课序教学审查与微调](2026-10-09-basics-outline-teaching-audit.md) |

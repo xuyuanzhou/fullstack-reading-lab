@@ -53,9 +53,9 @@ const COVERAGE_JAVA_16 = [
   },
   {
     track:'java', group:'Java 基础', id:'java-dcl-volatile-enum',
-    title:'双重检查单例要 volatile，枚举更不容易写错',
+    title:'双重检查单例要 volatile，枚举更不容易写错（JDK 5）',
     prompt:'为什么手写懒汉双重检查却漏掉 volatile，运行时仍可能看到半初始化实例？',
-    core:'new Singleton() 不是一个原子发布：可能先把引用写进 instance，再跑构造器。另一个线程在外层读到非 null 就返回，可能看见默认字段。把 instance 标成 volatile 才能建立安全发布。双重检查锁能用，但容易漏修饰符。Effective Java 推荐枚举单例：JVM 保证枚举常量初始化的线程安全，还能挡住部分反射和反序列化套路。饿汉静态字段也简单。不要把双重检查当唯一标准答案。',
+    core:'`new Singleton()` 不是一个原子发布：可能先把引用写进 instance，再跑构造器。另一个线程在外层读到非 null 就返回，可能看见默认字段。把 instance 标成 `volatile`（**JDK 5** JMM 起写读建立 happens-before）才能建立安全发布。双重检查锁能用，但容易漏修饰符。Effective Java 推荐枚举单例：JVM 保证枚举常量初始化的线程安全，还能挡住部分反射和反序列化套路。饿汉静态字段也简单。不要把双重检查当唯一标准答案。',
     why:'手写双重检查却漏掉 volatile，另一个线程可能读到已经非空、构造还没写完的实例，字段仍是默认值。区分信号是同一段交错里，引用先被看见；枚举常量由类初始化发布，不必自己再加这把锁。',
     example:'线程 1 执行 new Singleton()，引用已写入 instance，构造器里的 name 还是 null。线程 2 在外层看见非 null 就返回，接着调用 name 出现空指针。把 instance 标成 volatile 后，线程 2 不会看见这次半初始化。改用枚举常量则不必再写这套检查。',
     task:'画出无 volatile 的 DCL 下“引用先于构造完成可见”的交错；对照枚举初始化写一句为什么不必自己加锁。',

@@ -22,11 +22,12 @@
 
 | 路径 | 变更 |
 | --- | --- |
-| `scripts/curriculum.mjs` | `LESSON_SINCE`（基础 + 并发/JVM/React/Vue/Node/Spring/数据） |
+| `scripts/curriculum.mjs` | `LESSON_SINCE`（基础 + 并发/JVM/React/Vue/Node/Spring/数据；第六轮至 273 条） |
 | `scripts/export-curriculum.mjs` | index 导出 `since` |
 | `web/src/types/curriculum.ts` 等 | 类型与摘要含 `since` |
 | `LessonPage` / `AppLayout` / SCSS | 展示徽章与 chip |
 | 若干 coverage / extra | 标题或核心点明版本 |
+| `legacy/index.html` | 补载 `example-code-blocks.js`（与 `publishedSources` 对齐） |
 
 ## 验证
 
@@ -34,7 +35,7 @@
 cd web && npm run export:curriculum && node ../scripts/verify_content.mjs
 ```
 
-- 结果：见本轮导出日志；样例含 `java-stream → JDK 8`、`java-virtual-threads → JDK 21`、`api-error-contract → RFC 9457`。
+- 结果：773 课；`LESSON_SINCE` **273** 条。样例：`java-stream → JDK 8`、`react-memo-when → React 16.6`、`fe-sveltekit-runes → Svelte 5`、`redis-list-quicklist-listpack → Redis 3.2/7`。
 
 ## 后续
 
@@ -43,7 +44,8 @@ cd web && npm run export:curriculum && node ../scripts/verify_content.mjs
 - [x] 第三轮：MySQL 8.0 自增/初始化、Mongo 4.0 事务、Redis 5 Stream、Tomcat NIO、ForkJoin、CHM compute*
 - [x] 第四轮：CompletableFuture、Suspense、Angular v21、MySQL 并行复制、Hermes、JUnit 5、Kafka lag.time、TanStack Query / RTK 等
 - [x] 第五轮：Vue create-vue 槽位、SC CircuitBreaker、TPE/Lock/CAS、TS unknown/模板字面量、Kafka/Rabbit/RocketMQ 模型、Playwright/MSW、CWV/INP 等
-- [ ] 课文仅顺带提到版本、主题并非「引入界」的课不要硬贴（如 `Thread.start` 勿标 JDK 21）
+- [x] 第六轮：React memo/Context/gDSFP/Fiber、Svelte 5 runes、Vue 3 Proxy 叙事、动态 import ES2020、DCL volatile JDK 5、Redis quicklist/listpack、RestController Spring 4；并补 `legacy/index.html` 对 `example-code-blocks.js` 的脚本序
+- [ ] 课文仅顺带提到版本、主题并非「引入界」的课不要硬贴（如 `Thread.start` 勿标 JDK 21；MySQL 课仅手册链接写 8.4 也不要一律贴）
 - [ ] 勿把预览版年份当定稿（record 写 JDK 16，不写 14 preview）
 
 ## 给下一模型
@@ -51,4 +53,4 @@ cd web && npm run export:curriculum && node ../scripts/verify_content.mjs
 1. 先读：本文与 `LESSON_SINCE`
 2. 新课若有明确引入版：在源课写 `since`，或补进 `LESSON_SINCE`
 3. 禁区：勿臆造版本号；对照 JEP / MDN / Oracle API「Since」栏
-
+4. 导出后若 verify 报 legacy 脚本序：按 `publishedSources` 同步 `legacy/index.html`

@@ -91,9 +91,9 @@ const COVERAGE_FRONTEND_20 = [
   },
   {
     track:'frontend', group:'技术选型', id:'fe-sveltekit-runes',
-    title:'Svelte 应用用 SvelteKit，状态用 runes',
+    title:'Svelte 应用用 SvelteKit，状态用 runes（Svelte 5）',
     prompt:'为什么选了 Svelte 又装上 Vue Router，编译却仍然不管那些路由组件？',
-    core:'Svelte 把组件编译成直接更新 DOM 的代码，运行时没有一份虚拟 DOM 库负责 diff。Svelte 5 用 runes 告诉编译器哪些值要追踪：$state 声明状态，$derived 声明派生，$effect 声明副作用。它们是编译期语法，不是可以 import 的函数，也能用在 .svelte.js 和 .svelte.ts 里共享状态。官方应用框架是 SvelteKit，负责文件路由、加载数据和适配部署，开发服务器基于 Vite。新项目用 sv create。只做组件库时可以用 vite-plugin-svelte，路由和加载数据就不再由 SvelteKit 提供，要另选并写明。',
+    core:'Svelte 把组件编译成直接更新 DOM 的代码，运行时没有一份虚拟 DOM 库负责 diff。**Svelte 5** 用 runes 告诉编译器哪些值要追踪：$state 声明状态，$derived 声明派生，$effect 声明副作用。它们是编译期语法，不是可以 import 的函数，也能用在 .svelte.js 和 .svelte.ts 里共享状态。官方应用框架是 SvelteKit，负责文件路由、加载数据和适配部署，开发服务器基于 Vite。新项目用 sv create。只做组件库时可以用 vite-plugin-svelte，路由和加载数据就不再由 SvelteKit 提供，要另选并写明。',
     why:'Svelte 的单文件组件进了 Vue 或 React 的路由出口，编译器没有参与那些页面的依赖追踪。交互要么不更新，要么又引进第二套运行时。',
     task:'决定这次是 SvelteKit 应用还是只发布组件。应用的话，路由和 load 都留在 SvelteKit；组件库的话，写出嵌入方是谁，以及 .svelte 文件由谁编译。',
     example:'文章页是 src/routes 下的 +page.svelte，数据在对应的 load。计数写 let count = $state(0)。不要把这个页面改成 vue-router 的一个 component 选项，也不要在同一仓库再初始化 createRoot。',

@@ -4280,14 +4280,15 @@
       "track": "frontend",
       "group": "React",
       "id": "react-context-stable",
-      "title": "Context 已是稳定 API，不是实验功能",
+      "title": "Context 已是稳定 API，不是实验功能（React 16.3）",
       "prompt": "为什么“Context 还在实验、app 里不要用、靠 getChildContext，且中间 shouldComponentUpdate 返回 false 就会丢更新”不能当 React 19 的答案？",
       "keywords": "React Context createContext useContext getChildContext shouldComponentUpdate",
       "points": [
         "createContext / useContext 是现行稳定 API",
         "getChildContext 属于遗留 Context",
         "中间 SCU 挡不住现行 Context 消费者更新"
-      ]
+      ],
+      "since": "React 16.3"
     },
     {
       "track": "frontend",
@@ -4306,14 +4307,15 @@
       "track": "frontend",
       "group": "React",
       "id": "react-gdsfp-copy",
-      "title": "getDerivedStateFromProps 不是把 props 再存一份的默认通道",
+      "title": "getDerivedStateFromProps 不是把 props 再存一份的默认通道（React 16.3）",
       "prompt": "为什么有些资料里用 getDerivedStateFromProps 把 props.counter 写回 state，以及把请求放进 componentWillReceiveProps，都不能当现行默认答案？",
       "keywords": "getDerivedStateFromProps componentWillReceiveProps UNSAFE 派生状态 key",
       "points": [
         "GDSFP 在 render 前调用，不是常规的 props→state 管道",
         "示例里按不等就写回会覆盖本地 setState",
         "CWRP 已标 UNSAFE，不适合当请求生命周期"
-      ]
+      ],
+      "since": "React 16.3"
     },
     {
       "track": "frontend",
@@ -4360,14 +4362,15 @@
       "track": "frontend",
       "group": "React",
       "id": "react-memo-when",
-      "title": "memo 只跳过 props 没变的那次渲染",
+      "title": "memo 只跳过 props 没变的那次渲染（React 16.6）",
       "prompt": "给每个组件包上 memo，页面就会变快吗？",
       "keywords": "React memo 浅比较 props 渲染",
       "points": [
         "memo 用浅比较决定要不要跳过渲染",
         "每次新建的对象或函数会让比较失败",
         "组件自身的 state 更新不受 memo 阻止"
-      ]
+      ],
+      "since": "React 16.6"
     },
     {
       "track": "frontend",
@@ -4380,7 +4383,8 @@
         "Fiber 是可调度的协调工作单元与树结构",
         "渲染可中断，提交 DOM 仍应尽快完成",
         "不要把 JIT/reflow 修正写成 Fiber 的合同能力"
-      ]
+      ],
+      "since": "React 16"
     },
     {
       "track": "frontend",
@@ -4800,7 +4804,8 @@
         "更小更快要落到编译与构建机制",
         "core 仓库是 monorepo，reactivity 可独立使用",
         "深层代理按访问路径建立，不是初始化无脑遍历"
-      ]
+      ],
+      "since": "Vue 3"
     },
     {
       "track": "frontend",
@@ -5008,14 +5013,15 @@
       "track": "frontend",
       "group": "技术选型",
       "id": "fe-sveltekit-runes",
-      "title": "Svelte 应用用 SvelteKit，状态用 runes",
+      "title": "Svelte 应用用 SvelteKit，状态用 runes（Svelte 5）",
       "prompt": "为什么选了 Svelte 又装上 Vue Router，编译却仍然不管那些路由组件？",
       "keywords": "SvelteKit runes $state Vite sv create",
       "points": [
         "Svelte 5 用 runes 在编译期标出依赖",
         "SvelteKit 是官方应用框架，并基于 Vite",
         "组件库模式要单独写明路由和编译由谁负责"
-      ]
+      ],
+      "since": "Svelte 5"
     },
     {
       "track": "frontend",
@@ -6066,7 +6072,8 @@
         "动态 import 创建加载边界",
         "首屏和后续路由的成本转移",
         "chunk 加载失败的恢复"
-      ]
+      ],
+      "since": "ES2020"
     },
     {
       "track": "frontend",
@@ -6225,7 +6232,8 @@
         "只有 VITE_ 前缀会进入客户端包",
         "构建时替换成字面量，包里能搜到",
         "运行时机密放服务端，前端只拿公开基址"
-      ]
+      ],
+      "since": "Vite"
     },
     {
       "track": "frontend",
@@ -6847,14 +6855,15 @@
       "track": "java",
       "group": "Java 基础",
       "id": "java-dcl-volatile-enum",
-      "title": "双重检查单例要 volatile，枚举更不容易写错",
+      "title": "双重检查单例要 volatile，枚举更不容易写错（JDK 5）",
       "prompt": "为什么手写懒汉双重检查却漏掉 volatile，运行时仍可能看到半初始化实例？",
       "keywords": "双重检查 volatile 枚举单例 安全发布",
       "points": [
         "无 volatile 的 DCL 可能读到半初始化对象",
         "枚举常量初始化由 JVM 保证线程安全",
         "单例只保证一份实例，不保证字段并发安全"
-      ]
+      ],
+      "since": "JDK 5"
     },
     {
       "track": "java",
@@ -9008,7 +9017,8 @@
         "HLL 估算基数，固定省内存",
         "无法列出成员",
         "要精确集合用 Set，不要用 HLL 冒充"
-      ]
+      ],
+      "since": "Redis 2.8+"
     },
     {
       "track": "java",
@@ -9118,14 +9128,15 @@
       "track": "java",
       "group": "缓存",
       "id": "redis-list-quicklist-listpack",
-      "title": "List 早已不是“双向链表或压缩列表”二选一那么简单",
+      "title": "List 早已不是“双向链表或压缩列表”二选一那么简单（Redis 3.2/7）",
       "prompt": "为什么还按 Redis 3.0 把 List 背成 ziplist 或 linkedlist？",
       "keywords": "Redis quicklist listpack ziplist List",
       "points": [
         "3.2 之后 List 是 quicklist",
         "7.0 用 listpack 替代 ziplist",
         "键空间哈希平均快，不是绝对最坏 O(1)"
-      ]
+      ],
+      "since": "Redis 3.2/7"
     },
     {
       "track": "java",
@@ -9538,14 +9549,15 @@
       "track": "java",
       "group": "Spring",
       "id": "spring-mvc-restcontroller",
-      "title": "@RestController 可以替代只返回 JSON 的 @Controller",
+      "title": "@RestController 可以替代只返回 JSON 的 @Controller（Spring 4）",
       "prompt": "为什么说“表现层只能用 @Controller、不能用别的注解代替”不成立？",
       "keywords": "RestController Controller ResponseBody Spring MVC 单例",
       "points": [
         "RestController 是 Controller 加 ResponseBody",
         "默认单例只禁止可变请求状态，不禁止注入服务",
         "DispatcherServlet 调度不依赖“只能用 Controller”这句口诀"
-      ]
+      ],
+      "since": "Spring 4"
     },
     {
       "track": "java",
