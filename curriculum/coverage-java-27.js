@@ -2,9 +2,9 @@
 const COVERAGE_JAVA_27 = [
   {
     track:'java', group:'消息队列', id:'kafka-isr-lag-time-not-count',
-    title:'踢出 ISR 看落后时间，不是数差了四千条',
+    title:'踢出 ISR 看落后时间，不是数差了四千条（Kafka lag.time）',
     prompt:'为什么还把 replica.lag.max.messages=4000 当成现行 ISR 踢人条件？',
-    core:'上一课说过，acks=all 等的是当时的 ISR，不是机房里每一台副本。副本怎样被划出这个集合，现行看的是时间，不是条数。replica.lag.max.messages 已经从 broker 配置里去掉，不能再按差 4000 条来踢。现在的配置是 replica.lag.time.max.ms，默认 30000 毫秒。官方条件有两句：follower 超过这段时间没有发起 fetch，或者超过这段时间还没有消费到领导者的日志末端（log end offset），领导者就把它移出 ISR。所以“还在 fetch”本身不够。高峰时健康副本也会瞬间落后几千条，只要在这 30 秒里追上末端，就留在 ISR；旧的 4000 条规则会在这种高峰误踢。反过来，一直在拉、但超过 30 秒仍没到达末端，同样离开。离开之后，acks=all 不再等它。',
+    core:'上一课说过，acks=all 等的是当时的 ISR，不是机房里每一台副本。副本怎样被划出这个集合，现行看的是时间，不是条数。replica.lag.max.messages 已经从 broker 配置里去掉，不能再按差 4000 条来踢。现在的配置是 **replica.lag.time.max.ms**，默认 30000 毫秒。官方条件有两句：follower 超过这段时间没有发起 fetch，或者超过这段时间还没有消费到领导者的日志末端（log end offset），领导者就把它移出 ISR。所以“还在 fetch”本身不够。高峰时健康副本也会瞬间落后几千条，只要在这 30 秒里追上末端，就留在 ISR；旧的 4000 条规则会在这种高峰误踢。反过来，一直在拉、但超过 30 秒仍没到达末端，同样离开。离开之后，acks=all 不再等它。',
     why:'按四千条去看监控，高峰会把还追得上的副本赶出 ISR，acks=all 更难凑齐。只盯着“有没有 fetch”也会漏掉另一种落后：请求还在发，日志末端却一直没追上，30 秒一到照样被移出。',
     example:'高峰里 follower 落后 5000 条，两秒后追上领导者的日志末端，ISR 里还有它。若按 4000 条，这台会被踢。另一台每隔一会儿就 fetch 一次，但超过 30 秒仍没消费到末端，领导者把它移出 ISR，acks=all 不再等它。第三台超过 30 秒根本没有 fetch，同样离开。',
     task:'对照 broker 配置，写出现行 ISR 滞后条件；划掉 replica.lag.max.messages。',

@@ -20,6 +20,8 @@
 | sessionStorage | `session-storage-tab-only` |
 | IndexedDB | `indexeddb-when-needed` |
 | DOM 事件流 | `dom-event-flow` |
+| 迭代协议 | `js-iteration-protocol` |
+| Generator / yield | `js-generator-yield-pause` |
 
 ## 前端 · 网络
 
@@ -31,6 +33,7 @@
 | CORS | `cors`、`cors-credentials-allowlist` |
 | 长轮询 / WebSocket | `long-poll-vs-websocket` |
 | 中止请求 | `fetch-abort` |
+| 响应体流（单次消费） | `fetch-response-body-once` |
 
 ## Java · Redis / MySQL
 
@@ -46,6 +49,10 @@
 | 外连接 WHERE 陷阱 | `sql-outer-join-where` |
 | GROUP BY / HAVING | `mysql-where-having`、`mysql-group-by-having` |
 | VIEW 机制 | `mysql-view-is-stored-query` |
+| 存储过程≠自动事务 | `mysql-procedure-not-auto-txn` |
+| MULTI / WATCH | `redis-transaction` |
+| Lua 原子 | `redis-lua-atomic` |
+| MULTI vs Lua 选型 | `redis-multi-vs-lua-pick` |
 
 ## 微前端 / D8
 
@@ -61,4 +68,8 @@
 
 已补：Proxy / extends / `#` 私有、PSUBSCRIBE、VIEW。加厚：`js-prototype-chain`、`redis-stream-vs-pubsub`。
 
-下一轮可继续扫：Iterator / Generator 细边界、Fetch 流式读取、MySQL 存储过程「只是例程不是自动事务」、Redis 事务 vs Lua 对照加厚（已有 `redis-transaction` / `redis-lua-atomic` 则只交叉链接）。
+## 第三轮（2026-10-09）
+
+已补：Generator、`fetch` 响应体单次消费、存储过程非自动事务、MULTI vs Lua 选型。加厚：`js-iteration-protocol`、`fetch-abort`、`redis-transaction`、`redis-lua-atomic`。
+
+下一轮可继续扫：`async function*` / `for await`、SSE vs Fetch 流、MySQL 触发器副作用边界、Redis Pipeline≠原子（若尚无独立课）。

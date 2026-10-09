@@ -41,6 +41,7 @@ cd web && npm run export:curriculum && node ../scripts/verify_content.mjs
 - [x] 并发虚拟线程 JDK 21、Spring Boot 3、React/Vue/Node/Kafka 等继续补进表
 - [x] 再扫一轮：RFC / TLS / RR loader / TS bundler / MySQL 8.4 手册基线 / HttpClient 等
 - [x] 第三轮：MySQL 8.0 自增/初始化、Mongo 4.0 事务、Redis 5 Stream、Tomcat NIO、ForkJoin、CHM compute*
+- [x] 第四轮：CompletableFuture、Suspense、Angular v21、MySQL 并行复制、Hermes、JUnit 5、Kafka lag.time、TanStack Query / RTK 等
 - [ ] 课文仅顺带提到版本、主题并非「引入界」的课不要硬贴（如 `Thread.start` 勿标 JDK 21）
 - [ ] 勿把预览版年份当定稿（record 写 JDK 16，不写 14 preview）
 

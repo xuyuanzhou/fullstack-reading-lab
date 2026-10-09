@@ -146,9 +146,9 @@ const COVERAGE_FRONTEND_18 = [
   },
   {
     track:'frontend', group:'React Native', id:'rn-hermes-default',
-    title:'默认引擎是 Hermes，不是手机浏览器里的那一个',
+    title:'默认引擎是 Hermes，不是手机浏览器里的那一个（RN 默认）',
     prompt:'为什么在 Chrome 里能跑的写法，到了默认的 React Native 工程却对不上？',
-    core:'Hermes 是面向 React Native 的开源 JavaScript 引擎。文档写明新工程默认使用它，不必再为了「打开 Hermes」加配置。和 JavaScriptCore 比，文档给出的收益是启动更快、内存更低、包更小。React Native 仍允许按社区说明退出 Hermes 改回 JavaScriptCore，那是可选退路，不是默认。手机里的 Chrome 或 Safari 引擎不负责跑这份应用脚本。哪些函数被补上，看 JavaScript 环境文档的列表，见 rn-fetch-not-document，不由「设备上有没有 Chrome」决定。Hermes 只执行脚本。View 仍然画成原生视图，换引擎不会把界面变成 DOM。',
+    core:'Hermes 是面向 React Native 的开源 JavaScript 引擎。文档写明**新工程默认使用它**，不必再为了「打开 Hermes」加配置。和 JavaScriptCore 比，文档给出的收益是启动更快、内存更低、包更小。React Native 仍允许按社区说明退出 Hermes 改回 JavaScriptCore，那是可选退路，不是默认。手机里的 Chrome 或 Safari 引擎不负责跑这份应用脚本。哪些函数被补上，看 JavaScript 环境文档的列表，见 rn-fetch-not-document，不由「设备上有没有 Chrome」决定。Hermes 只执行脚本。View 仍然画成原生视图，换引擎不会把界面变成 DOM。',
     why:'用浏览器引擎的某个未在 Hermes 上同样可用的行为来解释线上脚本，会对不上默认运行时。再去工程里找「打开 Hermes」的开关，文档说默认已经启用。',
     example:'新工程不改引擎配置，脚本跑在 Hermes 上。若按社区说明退出，才改回 JavaScriptCore。在 Chrome 控制台里验证通过的冷门语法或引擎差异，不能直接当成这台设备上的结果。',
     task:'对照 Hermes 文档写出默认引擎是哪一个，以及要换成 JavaScriptCore 时是启用还是退出。再确认环境补齐列表和引擎名字不是同一份文档。',

@@ -160,6 +160,7 @@
         "ajax-page-update-not-a-library",
         "fetch-platform-client",
         "fetch-method-body-timeout",
+        "fetch-response-body-once",
         "axios-rejects-http-errors",
         "axios-shared-instance",
         "http-connection-reuse",
@@ -287,6 +288,7 @@
         "esm",
         "es6-for-of-iterable",
         "js-iteration-protocol",
+        "js-generator-yield-pause",
         "js-weakmap-lifetime",
         "js-timer-fn-not-string",
         "js-regex-dot-not-newline",
@@ -604,6 +606,7 @@
         "mysql-money-decimal-not-ban",
         "mysql-split-not-at-ten-million",
         "mysql-view-is-stored-query",
+        "mysql-procedure-not-auto-txn",
         "table-design-from-facts",
         "table-row-one-grain",
         "table-constraint-holds-rule",
@@ -724,6 +727,7 @@
         "redis-save-blocks-bgsave",
         "redis-cluster-incr-not-five-steps",
         "redis-lua-atomic",
+        "redis-multi-vs-lua-pick",
         "redis-stream-vs-pubsub",
         "redis-pubsub-pattern-subscribe"
       ],
@@ -1013,6 +1017,7 @@
             "esm",
             "es6-for-of-iterable",
             "js-iteration-protocol",
+            "js-generator-yield-pause",
             "js-weakmap-lifetime"
           ]
         },
@@ -1103,6 +1108,7 @@
             "ajax-page-update-not-a-library",
             "fetch-platform-client",
             "fetch-method-body-timeout",
+            "fetch-response-body-once",
             "axios-rejects-http-errors",
             "axios-shared-instance"
           ]
@@ -1888,6 +1894,7 @@
           "title": "脚本",
           "ids": [
             "redis-lua-atomic",
+            "redis-multi-vs-lua-pick",
             "redis-stream-vs-pubsub",
             "redis-pubsub-pattern-subscribe"
           ]
@@ -2020,7 +2027,8 @@
             "mysql-float-ieee-not-8-digits",
             "mysql-money-decimal-not-ban",
             "mysql-split-not-at-ten-million",
-            "mysql-view-is-stored-query"
+            "mysql-view-is-stored-query",
+            "mysql-procedure-not-auto-txn"
           ]
         },
         {
@@ -2907,6 +2915,20 @@
         "可迭代对象提供 @@iterator",
         "for-of 和展开走同一套协议",
         "普通对象默认不可 for-of"
+      ],
+      "since": "ES2015"
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
+      "id": "js-generator-yield-pause",
+      "title": "生成器是可暂停的迭代器，不是异步魔法",
+      "prompt": "为什么写了 function* 还要 next()，直接调用并不自动跑完全部 yield？",
+      "keywords": "generator yield iterator function* 同步",
+      "points": [
+        "调用 function* 只得到生成器对象",
+        "next/for-of 才推进到下一个 yield",
+        "默认同步，不是自动异步"
       ],
       "since": "ES2015"
     },
@@ -3813,6 +3835,20 @@
         "截止时间用 AbortSignal.timeout"
       ],
       "since": "AbortSignal.timeout"
+    },
+    {
+      "track": "frontend",
+      "group": "网络与安全",
+      "id": "fetch-response-body-once",
+      "title": "响应体是一次性流，读过就不能再 json() 一遍",
+      "prompt": "为什么先 response.text() 再 response.json() 会报 body 已使用？",
+      "keywords": "fetch ReadableStream body clone json",
+      "points": [
+        "Response body 只能完整消费一次",
+        "json/text 等都会读干流",
+        "需要两份用 clone 或 tee"
+      ],
+      "since": "Fetch Streams"
     },
     {
       "track": "frontend",
@@ -5409,7 +5445,7 @@
       "track": "frontend",
       "group": "React Native",
       "id": "rn-hermes-default",
-      "title": "默认引擎是 Hermes，不是手机浏览器里的那一个",
+      "title": "默认引擎是 Hermes，不是手机浏览器里的那一个（RN 默认）",
       "prompt": "为什么在 Chrome 里能跑的写法，到了默认的 React Native 工程却对不上？",
       "keywords": "Hermes JavaScriptCore 默认引擎 React Native",
       "points": [
@@ -6009,7 +6045,7 @@
       "track": "frontend",
       "group": "工程实践",
       "id": "angular-ngonchanges-primitives",
-      "title": "ngOnChanges 不单是引用变了才跑，也不是整棵树每次必脏检查",
+      "title": "ngOnChanges 不单是引用变了才跑，也不是整棵树每次必脏检查（Angular v21）",
       "prompt": "为什么把 ngOnChanges 说成“只有对象引用变化才触发”，又把 Angular 2+ 说成每次从根脏检查整棵树？",
       "keywords": "Angular ngOnChanges OnPush SimpleChanges Zone",
       "points": [
@@ -8247,6 +8283,19 @@
     {
       "track": "java",
       "group": "数据库",
+      "id": "mysql-procedure-not-auto-txn",
+      "title": "存储过程是例程，不会自动给你一整段事务",
+      "prompt": "为什么把几条 UPDATE 放进 PROCEDURE 里，中途报错后有的行已经改掉了？",
+      "keywords": "MySQL 存储过程 事务 autocommit CALL",
+      "points": [
+        "存储过程是例程，不是事务包装器",
+        "默认不自动全部回滚",
+        "事务边界仍靠显式事务或会话设置"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "数据库",
       "id": "table-design-from-facts",
       "title": "表从一次提交后必须成立的事实长出来",
       "prompt": "为什么按页面输入框各做一列，下单提交之后金额和库存仍对不齐？",
@@ -9082,6 +9131,19 @@
         "单条命令原子，两条命令之间可被插入",
         "Lua 脚本在服务端连续执行",
         "用到的键必须声明在 KEYS 里"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "缓存",
+      "id": "redis-multi-vs-lua-pick",
+      "title": "MULTI 排队与 Lua 脚本：原子缝不同，都不是 SQL 回滚",
+      "prompt": "为什么 WATCH+MULTI 老是 EXEC 失败，有人建议改成 Lua，有人又说 MULTI 就够了？",
+      "keywords": "Redis MULTI Lua WATCH 原子 回滚",
+      "points": [
+        "MULTI 保证批内不插队，不保证 SQL 回滚",
+        "Lua 适合服务端读改一体的短脚本",
+        "跨库一致性不在这两层解决"
       ]
     },
     {
@@ -10526,7 +10588,7 @@
       "track": "java",
       "group": "消息队列",
       "id": "kafka-isr-lag-time-not-count",
-      "title": "踢出 ISR 看落后时间，不是数差了四千条",
+      "title": "踢出 ISR 看落后时间，不是数差了四千条（Kafka lag.time）",
       "prompt": "为什么还把 replica.lag.max.messages=4000 当成现行 ISR 踢人条件？",
       "keywords": "Kafka ISR replica.lag.time.max.ms KRaft",
       "points": [
@@ -12182,7 +12244,7 @@
       "track": "java",
       "group": "测试",
       "id": "junit-instance-lifecycle",
-      "title": "测试要能单独跑、换序也能跑",
+      "title": "测试要能单独跑、换序也能跑（JUnit 5）",
       "prompt": "第二个测试方法为什么看得到第一个测试放进 List 的数据？",
       "keywords": "JUnit 5 TestInstance PER_METHOD 测试隔离",
       "points": [

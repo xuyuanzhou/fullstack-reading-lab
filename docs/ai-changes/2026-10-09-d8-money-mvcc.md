@@ -14,16 +14,16 @@
 
 ## 决策
 
-- 采用：`coverage-java-62.js` 两课；货币挂「表」浮点课旁，MVCC 挂「事务」`mysql-mvcc` 旁。
-- 不采用：不重写整节浮点精度课；不以资料表格代替 InnoDB 手册。
+- 采用：落在 `coverage-java-63.js`（`coverage-java-62.js` 已被并行 W3C 课占用：过程事务 + MULTI/Lua）；货币挂「表」浮点课旁，MVCC 挂「事务」`mysql-mvcc` 旁。
+- 不采用：不覆盖 java-62；不以资料表格代替 InnoDB 手册。
 
 ## 改动清单
 
 | 路径 | 变更 |
 | --- | --- |
-| `curriculum/coverage-java-62.js` | 2 课 |
-| 图与 `scripts/curriculum.mjs`、`legacy/index.html`、`verify_content.mjs` | 接入 |
-| 审计 / 队列 / 校订 / 交接 / README | 台账 D30–D31 |
+| `curriculum/coverage-java-63.js` | D8 两课 |
+| `scripts/curriculum.mjs` | 接入 java-63；并为 java-62 的 `mysql-procedure-not-auto-txn` / `redis-multi-vs-lua-pick` 补 OUTLINE |
+| 图 / legacy / verify / 审计 / 队列 / 校订 / 交接 / README | 台账 D30–D31 |
 
 ## 验证
 
@@ -31,17 +31,17 @@
 node scripts/export-curriculum.mjs && node scripts/verify_content.mjs
 ```
 
-- 结果：760 课（前端 269 / Java 491），2287 知识点。
+- 结果：764 课（前端 271 / Java 493），2299 知识点（含并行侧其它课）。
 
 ## 后续
 
 - [x] 货币小数 / MVCC 两列开课
 - [ ] D8 其余页继续主题抽查（候选：禁止视图/触发器绝对化；必须 NOT NULL+默认值）
-- [ ] 下一空闲号先 ls：`coverage-java-63.js` / `coverage-frontend-32.js`
+- [ ] 下一空闲号先 ls：`coverage-java-64.js` / `coverage-frontend-32.js`
 
 ## 给下一模型
 
 1. 先读：本文 + `docs/ai-changes/README.md`
-2. 再读：`coverage-java-62.js`、`mysql-float-ieee-not-8-digits`、`mysql-mvcc`
-3. 若续作：空闲号先 ls；勿覆盖 frontend-26/27、java-56
+2. 再读：`coverage-java-63.js`、`mysql-float-ieee-not-8-digits`、`mysql-mvcc`
+3. 若续作：空闲号先 ls；勿覆盖 frontend-26/27、java-56、java-62
 4. 禁区：勿上传库原文；勿全文盖章 206 页

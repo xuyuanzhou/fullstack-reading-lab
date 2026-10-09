@@ -48,6 +48,7 @@ export const publishedSources = [
   'coverage-frontend-29.js',
   'coverage-frontend-30.js',
   'coverage-frontend-31.js',
+  'coverage-frontend-32.js',
   'coverage-java-10.js',
   'coverage-java-11.js',
   'coverage-java-12.js',
@@ -101,6 +102,7 @@ export const publishedSources = [
   'coverage-java-60.js',
   'coverage-java-61.js',
   'coverage-java-62.js',
+  'coverage-java-63.js',
   'coverage-path.js',
   'coverage-path-02.js',
   'coverage-path-03.js',
@@ -234,7 +236,7 @@ export const OUTLINE = {
       { title: '作用域与对象', ids: ['js-scope-tdz', 'js-this-callsite', 'js-prototype-chain', 'js-not-everything-object', 'js-arrow-has-no-prototype', 'js-class-extends-super', 'js-private-field-hash'] },
       { title: '语法扩展', ids: ['es6-rest-spread-position', 'es6-map-set-keys', 'es6-symbol-key', 'js-optional-chaining', 'js-proxy-get-set-trap'] },
       { title: '异步', ids: ['eventloop', 'js-microtask-vs-macrotask', 'promise-chain', 'js-async-await', 'promise-all-and-settled'] },
-      { title: '模块与迭代', ids: ['esm', 'es6-for-of-iterable', 'js-iteration-protocol', 'js-weakmap-lifetime'] },
+      { title: '模块与迭代', ids: ['esm', 'es6-for-of-iterable', 'js-iteration-protocol', 'js-generator-yield-pause', 'js-weakmap-lifetime'] },
       { title: '易错', ids: ['js-timer-fn-not-string', 'js-regex-dot-not-newline', 'js-json-stringify-not-equal', 'closure'] },
     ],
     TypeScript: [
@@ -249,7 +251,7 @@ export const OUTLINE = {
     ],
     '网络与安全': [
       { title: 'HTTP', ids: ['http-methods', 'http-create-post-not-put', 'http-content-type-body', 'http-status-auth', 'fetch-credentials', 'api-error-contract', 'http-patch-rfc5789', 'http-503-unavailable', 'cookie-set-attributes', 'long-poll-vs-websocket'] },
-      { title: '请求', ids: ['ajax-page-update-not-a-library', 'fetch-platform-client', 'fetch-method-body-timeout', 'axios-rejects-http-errors', 'axios-shared-instance'] },
+      { title: '请求', ids: ['ajax-page-update-not-a-library', 'fetch-platform-client', 'fetch-method-body-timeout', 'fetch-response-body-once', 'axios-rejects-http-errors', 'axios-shared-instance'] },
       { title: '传输', ids: ['http-connection-reuse', 'http-compression', 'http-range', 'http2-multiplex', 'tls-hostname-verify', 'tcp-is-l4-not-http-handshake', 'https-tls13-not-12-packets', 'tcp-stream-needs-framing', 'https-port-443-not-80', 'tcp-reliable-not-never-lose'] },
     ],
     浏览器: [
@@ -369,7 +371,7 @@ export const OUTLINE = {
     缓存: [
       { title: '键与类型', ids: ['redis-data-types', 'redis-hash-field-update', 'redis-zset-rank-range', 'redis-hyperloglog-approx', 'cache-aside-steps', 'redis-big-hot-key', 'redis-expire', 'redis-eviction-policy-menu', 'cache-penetration-vs-breakdown', 'redis-fifo-not-maxmemory', 'cache-local-vs-distributed', 'redis-string-max-512mb', 'redis-list-quicklist-listpack'] },
       { title: '集群', ids: ['redis-persistence', 'redis-transaction', 'redis-single-thread', 'redis-sentinel-cluster', 'redis-pipeline', 'redis-legacy-vm-limits', 'redis-repl-psync-not-sql', 'redis-aof-keeps-rdb', 'redis-cluster-cli-not-trib', 'redis-proxy-hash-not-cluster', 'redis-save-blocks-bgsave', 'redis-cluster-incr-not-five-steps'] },
-      { title: '脚本', ids: ['redis-lua-atomic', 'redis-stream-vs-pubsub', 'redis-pubsub-pattern-subscribe'] },
+      { title: '脚本', ids: ['redis-lua-atomic', 'redis-multi-vs-lua-pick', 'redis-stream-vs-pubsub', 'redis-pubsub-pattern-subscribe'] },
     ],
     Nginx: [
       { title: '反向代理', ids: ['nginx-request-phases', 'nginx-upstream-passive', 'nginx-proxy-timeout', 'nginx-gunzip-not-compress', 'nginx-load-module', 'nginx-proxy-host', 'nginx-ip-hash-session', 'nginx-forward-not-direct', 'cdn-not-just-reverse-proxy-cache'] },
@@ -391,7 +393,7 @@ export const OUTLINE = {
       { title: '聚合', ids: ['es-aggregations', 'es-custom-routing'] },
     ],
     数据库: [
-      { title: '表', ids: ['mysql-null-comparison', 'sql-outer-join-where', 'mysql-inner-join-match', 'mysql-join-ban-not-absolute', 'mysql-or-not-must-become-in', 'mysql-where-having', 'mysql-group-by-having', 'mysql-union-distinct', 'mysql-second-nf', 'mysql-select-star', 'mysql-varchar-length', 'mysql-varchar-row-max', 'mysql-wide-column-split', 'mysql-fk-redundancy', 'schema-migration', 'mysql-datetime-vs-timestamp', 'mysql-float-ieee-not-8-digits', 'mysql-money-decimal-not-ban', 'mysql-split-not-at-ten-million', 'mysql-view-is-stored-query'] },
+      { title: '表', ids: ['mysql-null-comparison', 'sql-outer-join-where', 'mysql-inner-join-match', 'mysql-join-ban-not-absolute', 'mysql-or-not-must-become-in', 'mysql-where-having', 'mysql-group-by-having', 'mysql-union-distinct', 'mysql-second-nf', 'mysql-select-star', 'mysql-varchar-length', 'mysql-varchar-row-max', 'mysql-wide-column-split', 'mysql-fk-redundancy', 'schema-migration', 'mysql-datetime-vs-timestamp', 'mysql-float-ieee-not-8-digits', 'mysql-money-decimal-not-ban', 'mysql-split-not-at-ten-million', 'mysql-view-is-stored-query', 'mysql-procedure-not-auto-txn'] },
       { title: '表设计', ids: ['table-design-from-facts', 'table-row-one-grain', 'table-constraint-holds-rule'] },
       { title: '索引', ids: ['mysql-index', 'mysql-index-kinds', 'mysql-explain-analyze', 'mysql-innodb-fulltext', 'mysql-innodb-index-lock', 'mysql-unique-change-buffer', 'mysql-prefix-index-and-cost', 'mysql-covering-not-index-kind', 'mysql-innodb-no-user-hash'] },
       { title: '慢查询', ids: ['mysql-slow-sql-locate', 'mysql-slow-sql-optimize'] },
@@ -676,7 +678,9 @@ export const LESSON_SINCE = {
   esm: 'ES2015',
   'es6-for-of-iterable': 'ES2015',
   'js-iteration-protocol': 'ES2015',
+  'js-generator-yield-pause': 'ES2015',
   'js-weakmap-lifetime': 'ES2015',
+  'fetch-response-body-once': 'Fetch Streams',
   // CSS
   'css-flex': 'CSS Flexbox',
   'css-grid-flex': 'CSS Grid',

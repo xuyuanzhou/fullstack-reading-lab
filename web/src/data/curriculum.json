@@ -160,6 +160,7 @@
         "ajax-page-update-not-a-library",
         "fetch-platform-client",
         "fetch-method-body-timeout",
+        "fetch-response-body-once",
         "axios-rejects-http-errors",
         "axios-shared-instance",
         "http-connection-reuse",
@@ -287,6 +288,7 @@
         "esm",
         "es6-for-of-iterable",
         "js-iteration-protocol",
+        "js-generator-yield-pause",
         "js-weakmap-lifetime",
         "js-timer-fn-not-string",
         "js-regex-dot-not-newline",
@@ -604,6 +606,7 @@
         "mysql-money-decimal-not-ban",
         "mysql-split-not-at-ten-million",
         "mysql-view-is-stored-query",
+        "mysql-procedure-not-auto-txn",
         "table-design-from-facts",
         "table-row-one-grain",
         "table-constraint-holds-rule",
@@ -724,6 +727,7 @@
         "redis-save-blocks-bgsave",
         "redis-cluster-incr-not-five-steps",
         "redis-lua-atomic",
+        "redis-multi-vs-lua-pick",
         "redis-stream-vs-pubsub",
         "redis-pubsub-pattern-subscribe"
       ],
@@ -1013,6 +1017,7 @@
             "esm",
             "es6-for-of-iterable",
             "js-iteration-protocol",
+            "js-generator-yield-pause",
             "js-weakmap-lifetime"
           ]
         },
@@ -1103,6 +1108,7 @@
             "ajax-page-update-not-a-library",
             "fetch-platform-client",
             "fetch-method-body-timeout",
+            "fetch-response-body-once",
             "axios-rejects-http-errors",
             "axios-shared-instance"
           ]
@@ -1888,6 +1894,7 @@
           "title": "脚本",
           "ids": [
             "redis-lua-atomic",
+            "redis-multi-vs-lua-pick",
             "redis-stream-vs-pubsub",
             "redis-pubsub-pattern-subscribe"
           ]
@@ -2020,7 +2027,8 @@
             "mysql-float-ieee-not-8-digits",
             "mysql-money-decimal-not-ban",
             "mysql-split-not-at-ten-million",
-            "mysql-view-is-stored-query"
+            "mysql-view-is-stored-query",
+            "mysql-procedure-not-auto-txn"
           ]
         },
         {
@@ -3620,6 +3628,10 @@
           "body": "for-of、展开和 Array.from 都是先调用迭代器方法，再不断 next。普通对象没有这个方法。生成器函数的返回值本身就是迭代器。一次拿到的迭代器被消费到结束之后，不会自动回到起点。"
         },
         {
+          "title": "生成器",
+          "body": "function* 用 yield 写这种状态机，调用本身不跑完，见 `js-generator-yield-pause`。不要把 * 当成异步。"
+        },
+        {
           "title": "怎样自己验证",
           "body": "给范围对象写上迭代器方法，用 for-of 和展开各走一遍，两次都应从起点走完。再手动保存一个迭代器，连续交给两段循环，第二段应接着上次的 next，而不是从头。"
         }
@@ -3639,6 +3651,45 @@
         [
           "MDN：for...of",
           "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of"
+        ]
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
+      "id": "js-generator-yield-pause",
+      "title": "生成器是可暂停的迭代器，不是异步魔法",
+      "prompt": "为什么写了 function* 还要 next()，直接调用并不自动跑完全部 yield？",
+      "core": "`function*` 返回的是**生成器对象**，它同时是迭代器与可迭代对象，见 `js-iteration-protocol`。调用生成器函数本身只创建对象，**不**执行函数体。每次 `next()`（或 `for...of`）才推进到下一个 `yield`，把表达式结果当作 `value` 交出，并暂停。`return` / 迭代结束则 `done: true`。生成器默认是同步的；要边等 Promise 边产出，用 `async function*` 与 `for await...of`，那是另一套异步迭代协议。不要把 `*` 当成“自动并发”或“代替 Promise”。",
+      "why": "以为调用 `gen()` 就会跑完所有 yield；或把生成器当后台线程，结果卡在第一个 yield 之后再也没人 next。",
+      "example": "`function* count() { yield 1; yield 2; } const g = count(); g.next()` 得到 `{value:1,done:false}`，再 `next` 才是 2。`for (const n of count())` 每次重新要迭代器，能走完。把同一个 `g` 用两次 for-of，第二次立刻结束。",
+      "task": "划掉“function*=自动跑完/自动异步”。写出：调用生成器函数得到什么；谁负责推进到下一个 yield。",
+      "answer": "划掉「function*=自动跑完/自动异步」。调用得到生成器对象，函数体尚未跑完。next 或 for-of 才推进到 yield。默认同步；异步要 async function*。",
+      "keywords": "generator yield iterator function* 同步",
+      "deep": [
+        {
+          "title": "和普通迭代器",
+          "body": "手写 [Symbol.iterator] 返回 { next } 也能 for-of。生成器是用 yield 写这种状态机的语法糖，见 `js-iteration-protocol`。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "调用后立刻看 g.next 是否存在、函数体副作用是否未发生。连续 next 两次对照 value。耗尽后再 next 应 done:true。"
+        }
+      ],
+      "since": "ES2015",
+      "points": [
+        "调用 function* 只得到生成器对象",
+        "next/for-of 才推进到下一个 yield",
+        "默认同步，不是自动异步"
+      ],
+      "references": [
+        [
+          "MDN：生成器",
+          "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator"
+        ],
+        [
+          "MDN：function*",
+          "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*"
         ]
       ]
     },
@@ -5684,6 +5735,10 @@
           "body": "AbortController 用来停掉还在飞的请求。已经返回的响应、超时回调和其他异步步骤仍可能执行。写界面前必须再核对请求身份，两步缺一都会把旧结果留在屏幕上。"
         },
         {
+          "title": "响应体只读一次",
+          "body": "同一 Response 的 body 是流，json/text 会读干，见 `fetch-response-body-once`。取消读到一半后不要假定还能再读剩余块。"
+        },
+        {
           "title": "怎样自己验证",
           "body": "让第一次搜索故意慢于第二次。只 abort 时看慢响应还会不会写界面。只核对序号、不 abort 时，界面应保持新结果，但网络面板里旧请求仍会跑完。两步一起做再对比。"
         }
@@ -6213,6 +6268,49 @@
         [
           "MDN：AbortSignal.timeout",
           "https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal/timeout"
+        ]
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "网络与安全",
+      "id": "fetch-response-body-once",
+      "title": "响应体是一次性流，读过就不能再 json() 一遍",
+      "prompt": "为什么先 response.text() 再 response.json() 会报 body 已使用？",
+      "core": "`fetch` 返回的 `Response` 的 **body** 是 `ReadableStream`（或等价单次消费通道）。`json()` / `text()` / `arrayBuffer()` / `blob()` / `formData()` 都会**读干**这条流。第二次再读会失败（body used / locked）。需要两种格式时：先读一种，或 `clone()` / `tee()` 再分别消费。大文件用 `body.getReader()` 按块读，不要假设整包已在内存。取消仍用 `AbortController`，见 `fetch-abort`。流式与“下载完再解析”是同一条体上的不同消费方式，不是两份副本。",
+      "why": "日志里先 text 打印，再 json 解析业务，第二次抛错；或大文件全进内存导致卡顿。",
+      "example": "`const r = await fetch(url); const t = await r.text(); await r.json()` 第二次失败。改成 `const r2 = r.clone();` 一边 text 一边 json，或只 json 一次。对大包 `const reader = r.body.getReader()` 循环 `read()`。",
+      "task": "划掉“响应对象里永远留着完整正文可反复读”。写出：json/text 对 body 做了什么；要读两次该怎么办。",
+      "answer": "划掉「响应对象里永远留着完整正文可反复读」。每种读取方法都会消费掉 body 流。要两次就 clone/tee，或只读一次再自己解析。大文件用 getReader 分块。",
+      "keywords": "fetch ReadableStream body clone json",
+      "deep": [
+        {
+          "title": "和中止",
+          "body": "AbortController 可在流读到一半取消。取消后不要假定还能再读剩余块，见 `fetch-abort`。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "对同一 Response 连续 await text 再 json，应第二次失败。clone 后再各读一次应成功。"
+        }
+      ],
+      "since": "Fetch Streams",
+      "points": [
+        "Response body 只能完整消费一次",
+        "json/text 等都会读干流",
+        "需要两份用 clone 或 tee"
+      ],
+      "references": [
+        [
+          "MDN：Response",
+          "https://developer.mozilla.org/en-US/docs/Web/API/Response"
+        ],
+        [
+          "MDN：ReadableStream",
+          "https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream"
+        ],
+        [
+          "MDN：Body",
+          "https://developer.mozilla.org/en-US/docs/Web/API/Body"
         ]
       ]
     },
@@ -10958,9 +11056,9 @@
       "track": "frontend",
       "group": "React Native",
       "id": "rn-hermes-default",
-      "title": "默认引擎是 Hermes，不是手机浏览器里的那一个",
+      "title": "默认引擎是 Hermes，不是手机浏览器里的那一个（RN 默认）",
       "prompt": "为什么在 Chrome 里能跑的写法，到了默认的 React Native 工程却对不上？",
-      "core": "Hermes 是面向 React Native 的开源 JavaScript 引擎。文档写明新工程默认使用它，不必再为了「打开 Hermes」加配置。和 JavaScriptCore 比，文档给出的收益是启动更快、内存更低、包更小。React Native 仍允许按社区说明退出 Hermes 改回 JavaScriptCore，那是可选退路，不是默认。手机里的 Chrome 或 Safari 引擎不负责跑这份应用脚本。哪些函数被补上，看 JavaScript 环境文档的列表，见 `rn-fetch-not-document`，不由「设备上有没有 Chrome」决定。Hermes 只执行脚本。View 仍然画成原生视图，换引擎不会把界面变成 DOM。",
+      "core": "Hermes 是面向 React Native 的开源 JavaScript 引擎。文档写明**新工程默认使用它**，不必再为了「打开 Hermes」加配置。和 JavaScriptCore 比，文档给出的收益是启动更快、内存更低、包更小。React Native 仍允许按社区说明退出 Hermes 改回 JavaScriptCore，那是可选退路，不是默认。手机里的 Chrome 或 Safari 引擎不负责跑这份应用脚本。哪些函数被补上，看 JavaScript 环境文档的列表，见 `rn-fetch-not-document`，不由「设备上有没有 Chrome」决定。Hermes 只执行脚本。View 仍然画成原生视图，换引擎不会把界面变成 DOM。",
       "why": "用浏览器引擎的某个未在 Hermes 上同样可用的行为来解释线上脚本，会对不上默认运行时。再去工程里找「打开 Hermes」的开关，文档说默认已经启用。",
       "example": "新工程不改引擎配置，脚本跑在 Hermes 上。若按社区说明退出，才改回 JavaScriptCore。在 Chrome 控制台里验证通过的冷门语法或引擎差异，不能直接当成这台设备上的结果。",
       "task": "对照 Hermes 文档写出默认引擎是哪一个，以及要换成 JavaScriptCore 时是启用还是退出。再确认环境补齐列表和引擎名字不是同一份文档。",
@@ -12676,9 +12774,9 @@
       "track": "frontend",
       "group": "工程实践",
       "id": "angular-ngonchanges-primitives",
-      "title": "ngOnChanges 不单是引用变了才跑，也不是整棵树每次必脏检查",
+      "title": "ngOnChanges 不单是引用变了才跑，也不是整棵树每次必脏检查（Angular v21）",
       "prompt": "为什么把 ngOnChanges 说成“只有对象引用变化才触发”，又把 Angular 2+ 说成每次从根脏检查整棵树？",
-      "core": "ngOnChanges 在输入绑定变化时调用，第一次一定在 ngOnInit 之前。输入是基本类型时，值变就会进 SimpleChanges；对象要引用变才会当输入变了，这是绑定的比较方式，不是钩子自己忽略深变化。OnPush 可以让子树在输入引用不变时跳过检查。新应用从 Angular v21 起默认不再带 zone.js，更新靠信号和模板事件安排检查，见 `fe-angular-first-party`。已有工程仍可能留着 Zone。两种都不是 AngularJS 的 `$digest` 队列。`[(ngModel)]` 是属性绑定加事件绑定的语法糖。指令分组件、属性指令、结构指令，这点资料方向对。",
+      "core": "ngOnChanges 在输入绑定变化时调用，第一次一定在 ngOnInit 之前。输入是基本类型时，值变就会进 SimpleChanges；对象要引用变才会当输入变了，这是绑定的比较方式，不是钩子自己忽略深变化。OnPush 可以让子树在输入引用不变时跳过检查。新应用从 **Angular v21** 起默认不再带 zone.js，更新靠信号和模板事件安排检查，见 `fe-angular-first-party`。已有工程仍可能留着 Zone。两种都不是 AngularJS 的 `$digest` 队列。`[(ngModel)]` 是属性绑定加事件绑定的语法糖。指令分组件、属性指令、结构指令，这点资料方向对。",
       "why": "把 ngOnChanges 说成只有对象引用变化才触发，number 从 1 改到 2 会以为钩子坏了；再把检查说成每次从根扫整棵树，OnPush 跳过子树就会被漏掉。区分信号是基本类型按值比较，OnPush 看输入引用。",
       "example": "@Input() id: number 从 1 到 2 会触发 ngOnChanges。@Input() user 只改 user.name 不换对象则钩子不来，要 OnPush+不可变或自己 ngDoCheck。",
       "task": "对照生命周期文档，写出首次 ngOnChanges 相对 ngOnInit 的顺序；说明 OnPush 何时跳过。",
@@ -18886,6 +18984,44 @@
     {
       "track": "java",
       "group": "数据库",
+      "id": "mysql-procedure-not-auto-txn",
+      "title": "存储过程是例程，不会自动给你一整段事务",
+      "prompt": "为什么把几条 UPDATE 放进 PROCEDURE 里，中途报错后有的行已经改掉了？",
+      "core": "**存储过程**是库里存好的 SQL 例程（`CREATE PROCEDURE` + `CALL`），方便复用与权限收口。它**默认不会**把过程体包成“全部成功或全部回滚”的事务。是否开启事务、是否提交，仍看会话的 `autocommit`、过程里有没有显式 `START TRANSACTION` / `COMMIT` / `ROLLBACK`，以及语句自身的隐式提交（DDL 等）。应用层事务（Spring `@Transactional`）也不会因为“调用了过程”就自动覆盖过程内部的提交点。不要把“写进过程”当成分布式或本地事务的替代品。",
+      "why": "以为 CALL 失败就会整段撤销，对账发现过程前半段已提交，后半段没跑。",
+      "example": "过程里先扣库存再写订单，中间抛错；若 autocommit=1 且无显式事务，库存已扣、订单没有。应在过程或调用方显式开事务，错误路径 ROLLBACK；或把关键路径留在应用事务里、过程只做单语句辅助。",
+      "task": "划掉“存储过程=自动事务”。写出：过程提供什么；事务边界还靠什么决定。",
+      "answer": "划掉「存储过程=自动事务」。过程只是可调用的例程。事务仍靠 autocommit、显式 START/COMMIT/ROLLBACK 或调用方事务。中途失败不自动整段回滚。",
+      "keywords": "MySQL 存储过程 事务 autocommit CALL",
+      "deep": [
+        {
+          "title": "和视图",
+          "body": "VIEW 存查询定义，见 `mysql-view-is-stored-query`。PROCEDURE 存可执行语句序列。两者都不是“自动正确的业务封装”。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "写一个中途故意失败的过程：不开事务时前半应已生效；包进 START TRANSACTION 并 ROLLBACK 后应全无。"
+        }
+      ],
+      "points": [
+        "存储过程是例程，不是事务包装器",
+        "默认不自动全部回滚",
+        "事务边界仍靠显式事务或会话设置"
+      ],
+      "references": [
+        [
+          "MySQL：存储程序",
+          "https://dev.mysql.com/doc/refman/8.4/en/stored-programs-defining.html"
+        ],
+        [
+          "MySQL：事务",
+          "https://dev.mysql.com/doc/refman/8.4/en/commit.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "数据库",
       "id": "table-design-from-facts",
       "title": "表从一次提交后必须成立的事实长出来",
       "prompt": "为什么按页面输入框各做一列，下单提交之后金额和库存仍对不齐？",
@@ -20872,6 +21008,10 @@
           "body": "MULTI 到 EXEC 之间是排队。EXEC 才改数据，并且这一段不被别人插入。WATCH 在 EXEC 时发现键变了就放弃整批。批里某一条的运行时错误不会按数据库的方式撤销已经执行的兄弟命令。"
         },
         {
+          "title": "和 Lua",
+          "body": "读后要分支再写时，Lua 更合适；对照见 `redis-multi-vs-lua-pick`、`redis-lua-atomic`。MULTI 不解跨库事务。"
+        },
+        {
           "title": "怎样自己验证",
           "body": "两个客户端 WATCH 同一库存键。让乙先改并完成，再让甲 EXEC。甲应失败，值保持乙写下的结果。去掉 WATCH 再交错一次，确认后执行的写入盖掉前者。不要用这次实验代替跨库事务。"
         }
@@ -21308,6 +21448,10 @@
           "body": "每条 Redis 命令自己是原子的，GET 和 SET 之间别人仍能插进来。EVAL 在服务端把这段连续跑完。键必须放进 KEYS，能用 INCR 或 SET NX 一条命令完成时不必写脚本。"
         },
         {
+          "title": "和 MULTI",
+          "body": "无分支批量写可用 MULTI/WATCH；读改一体用 Lua。对照见 `redis-multi-vs-lua-pick`、`redis-transaction`。"
+        },
+        {
           "title": "怎样自己验证",
           "body": "对照 EVAL 写下 KEYS 放键、ARGV 放参数。库存为 1 时并发 GET+SET，预测两笔都成功。改成脚本里判断再 DECR，同样并发应只有一笔返回成功。"
         }
@@ -21325,6 +21469,44 @@
         [
           "Redis：Lua programming",
           "https://redis.io/docs/latest/develop/programmability/eval-intro/"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "缓存",
+      "id": "redis-multi-vs-lua-pick",
+      "title": "MULTI 排队与 Lua 脚本：原子缝不同，都不是 SQL 回滚",
+      "prompt": "为什么 WATCH+MULTI 老是 EXEC 失败，有人建议改成 Lua，有人又说 MULTI 就够了？",
+      "core": "**MULTI/EXEC** 把命令入队，EXEC 时连续执行，中间不插别人的命令；**WATCH** 在 EXEC 前发现键被改则整批放弃。批内某条运行时失败**不会**按 SQL 方式回滚已执行的兄弟命令，见 `redis-transaction`。**Lua EVAL** 在服务端把脚本当一段连续逻辑跑完，读改可写在同一脚本里，适合“读库存再决定是否 DECR”这种带分支的原子，见 `redis-lua-atomic`。选型：无分支的一小撮写命令、可接受乐观重试 → MULTI/WATCH；必须在服务端根据读结果分支且不想客户端往返 → Lua。两者都**不是**跨 Redis 与 MySQL 的分布式事务。",
+      "why": "把 MULTI 当数据库事务，失败以为前面已写入会撤销；或凡并发都上 Lua，简单递增也写成难维护的脚本。",
+      "example": "两个客户端 WATCH 同一库存，交错改，后 EXEC 的失败——这是乐观冲突，重读再试。秒杀“读完再减”用 EVAL 一次判断，避免 GET 与 DECR 之间的缝。单纯 INCR 计数器用一条命令，不必 MULTI 也不必 Lua。",
+      "task": "划掉“MULTI=SQL 事务、Lua=更强的同一种事务”。给：无分支批量写、读后分支扣减、跨库扣减，各选哪一层。",
+      "answer": "划掉「MULTI=SQL 事务、Lua=更强的同一种事务」。无分支批量写可用 MULTI；读后分支用 Lua；跨库仍要 Outbox/业务事务，不在 MULTI/Lua 里。两者都不提供 SQL 式回滚。",
+      "keywords": "Redis MULTI Lua WATCH 原子 回滚",
+      "deep": [
+        {
+          "title": "和 Pipeline",
+          "body": "Pipeline 只减网络往返，不提供原子。不要把 pipeline 当成 MULTI。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "WATCH 冲突应整批不执行。Lua 并发扣库存为 1 时应只有一次成功。确认失败命令不会“撤销”同批已执行写入（对照手册）。"
+        }
+      ],
+      "points": [
+        "MULTI 保证批内不插队，不保证 SQL 回滚",
+        "Lua 适合服务端读改一体的短脚本",
+        "跨库一致性不在这两层解决"
+      ],
+      "references": [
+        [
+          "Redis：Transactions",
+          "https://redis.io/docs/latest/develop/using-commands/transactions/"
+        ],
+        [
+          "Redis：EVAL",
+          "https://redis.io/docs/latest/commands/eval/"
         ]
       ]
     },
@@ -25460,9 +25642,9 @@
       "track": "java",
       "group": "消息队列",
       "id": "kafka-isr-lag-time-not-count",
-      "title": "踢出 ISR 看落后时间，不是数差了四千条",
+      "title": "踢出 ISR 看落后时间，不是数差了四千条（Kafka lag.time）",
       "prompt": "为什么还把 replica.lag.max.messages=4000 当成现行 ISR 踢人条件？",
-      "core": "上一课说过，acks=all 等的是当时的 ISR，不是机房里每一台副本。副本怎样被划出这个集合，现行看的是时间，不是条数。replica.lag.max.messages 已经从 broker 配置里去掉，不能再按差 4000 条来踢。现在的配置是 replica.lag.time.max.ms，默认 30000 毫秒。官方条件有两句：follower 超过这段时间没有发起 fetch，或者超过这段时间还没有消费到领导者的日志末端（log end offset），领导者就把它移出 ISR。所以“还在 fetch”本身不够。高峰时健康副本也会瞬间落后几千条，只要在这 30 秒里追上末端，就留在 ISR；旧的 4000 条规则会在这种高峰误踢。反过来，一直在拉、但超过 30 秒仍没到达末端，同样离开。离开之后，acks=all 不再等它。",
+      "core": "上一课说过，acks=all 等的是当时的 ISR，不是机房里每一台副本。副本怎样被划出这个集合，现行看的是时间，不是条数。replica.lag.max.messages 已经从 broker 配置里去掉，不能再按差 4000 条来踢。现在的配置是 **replica.lag.time.max.ms**，默认 30000 毫秒。官方条件有两句：follower 超过这段时间没有发起 fetch，或者超过这段时间还没有消费到领导者的日志末端（log end offset），领导者就把它移出 ISR。所以“还在 fetch”本身不够。高峰时健康副本也会瞬间落后几千条，只要在这 30 秒里追上末端，就留在 ISR；旧的 4000 条规则会在这种高峰误踢。反过来，一直在拉、但超过 30 秒仍没到达末端，同样离开。离开之后，acks=all 不再等它。",
       "why": "按四千条去看监控，高峰会把还追得上的副本赶出 ISR，acks=all 更难凑齐。只盯着“有没有 fetch”也会漏掉另一种落后：请求还在发，日志末端却一直没追上，30 秒一到照样被移出。",
       "example": "高峰里 follower 落后 5000 条，两秒后追上领导者的日志末端，ISR 里还有它。若按 4000 条，这台会被踢。另一台每隔一会儿就 fetch 一次，但超过 30 秒仍没消费到末端，领导者把它移出 ISR，acks=all 不再等它。第三台超过 30 秒根本没有 fetch，同样离开。",
       "task": "对照 broker 配置，写出现行 ISR 滞后条件；划掉 replica.lag.max.messages。",
@@ -30420,9 +30602,9 @@
       "track": "java",
       "group": "测试",
       "id": "junit-instance-lifecycle",
-      "title": "测试要能单独跑、换序也能跑",
+      "title": "测试要能单独跑、换序也能跑（JUnit 5）",
       "prompt": "第二个测试方法为什么看得到第一个测试放进 List 的数据？",
-      "core": "JUnit Jupiter 默认对每个测试方法创建新的测试实例，实例字段因此不会自动带到下一个方法。静态字段、单例、没关闭的外部资源和静态替换过的依赖仍然跨方法保留。若把生命周期改成每个类一个实例，实例字段也会在方法之间留下来。测试应能单独运行，也能按任意顺序运行。顺序是每个测试方法开始前创建新实例，方法结束就丢弃，所以实例字段不会带到下一个方法。静态字段、单例和没关掉的外部资源不在这条生命周期里。边界是若改成每个类一个实例，实例字段也会留下来；单独运行第二个方法时没有第一次写入，依赖顺序的断言就会失败。全量通过而单跑失败，说明断言依赖了别的方法留下的静态数据。",
+      "core": "**JUnit Jupiter（JUnit 5）** 默认对每个测试方法创建新的测试实例，实例字段因此不会自动带到下一个方法。静态字段、单例、没关闭的外部资源和静态替换过的依赖仍然跨方法保留。若把生命周期改成每个类一个实例，实例字段也会在方法之间留下来。测试应能单独运行，也能按任意顺序运行。顺序是每个测试方法开始前创建新实例，方法结束就丢弃，所以实例字段不会带到下一个方法。静态字段、单例和没关掉的外部资源不在这条生命周期里。边界是若改成每个类一个实例，实例字段也会留下来；单独运行第二个方法时没有第一次写入，依赖顺序的断言就会失败。全量通过而单跑失败，说明断言依赖了别的方法留下的静态数据。",
       "why": "学习者会以为测试按类从上到下跑，后一个方法可以接着用前一个放进列表的数据。单独重跑第二个时列表是空的，断言失败，全量却能通过，失败也指不出是哪条规格坏了。第二个方法单独运行仍失败，改成方法内数据后换序也通过，才说明泄漏的是静态状态。",
       "example": "静态列表在第一个测试里加入一项，断言大小为 1，通过。第二个断言列表为空，全量运行失败，实际大小是 1。只运行第二个时列表为空，这个断言反而通过。改成每个方法自己的局部列表后，两种顺序都通过。顺序一换，通过和失败对调。",
       "task": "写两个测试共用一个静态集合，单独运行第二个。再改成每个测试自己的数据，确认顺序变化不影响结果。",

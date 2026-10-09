@@ -88,6 +88,10 @@ const COVERAGE_LESSONS = [
         body:'AbortController 用来停掉还在飞的请求。已经返回的响应、超时回调和其他异步步骤仍可能执行。写界面前必须再核对请求身份，两步缺一都会把旧结果留在屏幕上。'
       },
       {
+        title:'响应体只读一次',
+        body:'同一 Response 的 body 是流，json/text 会读干，见 fetch-response-body-once。取消读到一半后不要假定还能再读剩余块。'
+      },
+      {
         title:'怎样自己验证',
         body:'让第一次搜索故意慢于第二次。只 abort 时看慢响应还会不会写界面。只核对序号、不 abort 时，界面应保持新结果，但网络面板里旧请求仍会跑完。两步一起做再对比。'
       }
