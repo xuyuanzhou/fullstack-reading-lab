@@ -2,6 +2,7 @@ import { Button, Progress, Typography } from 'antd'
 import { lazy, Suspense } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { findLesson, lessonsFor } from '@/data/curriculum'
+import { PATHS, deliverableKey, gateCleared, spineNextId, spinePlace } from '@/data/learningPaths'
 import { shortTitle } from '@/data/reading'
 import { lessonPath } from '@/data/routes'
 import { useProgress } from '@/state/progress'
@@ -14,10 +15,14 @@ export function ProgressAside({ localReady }: { localReady: boolean }) {
   const progress = useProgress()
   const navigate = useNavigate()
   const location = useLocation()
-  const onAi =
-    progress.localCategory === 'ai' ||
-    location.pathname === '/ai' ||
-    location.pathname.startsWith('/ai/')
+  const onPath = location.pathname === '/paths' || location.pathname.startsWith('/paths/')
+  const pathParts = location.pathname.split('/').filter(Boolean)
+  const readingId = pathParts.length === 3 && (pathParts[0] === 'frontend' || pathParts[0] === 'java') ? pathParts[2] : ''
+  const spine = readingId ? spinePlace(readingId) : undefined
+  const spineNext = spine ? findLesson(spineNextId(readingId) || '') : undefined
+  const onCourse = onPath || pathParts[0] === 'frontend' || pathParts[0] === 'java'
+  const onAiRoute = location.pathname === '/ai' || location.pathname.startsWith('/ai/')
+  const onAi = onAiRoute || (!onCourse && progress.localCategory === 'ai')
 
   if (onAi) {
     return (
@@ -27,10 +32,23 @@ export function ProgressAside({ localReady }: { localReady: boolean }) {
     )
   }
 
+  const checks = progress.pathChecks ?? []
+  const openIndex = PATHS.architect.gates.findIndex((stage) => !gateCleared(stage, progress.done, checks))
+  const gateIndex = spine ? spine.index : openIndex === -1 ? PATHS.architect.gates.length - 1 : openIndex
+  const focus = spine?.gate ?? (onPath ? PATHS.architect.gates[gateIndex] : undefined)
   const current = lessonsFor(progress.track)
-  const completed = current.filter((lesson) => progress.done.includes(lesson.id)).length
-  const percent = current.length ? Math.round((100 * completed) / current.length) : 0
-  const next = current.find((lesson) => !progress.done.includes(lesson.id))
+  const lessonDone = focus ? focus.lessons.filter((item) => progress.done.includes(item.id)).length : 0
+  const lessonTotal = focus?.lessons.length ?? 0
+  const checkDone = focus ? focus.outputs.filter((_, index) => checks.includes(deliverableKey(focus.id, index))).length : 0
+  const checkTotal = focus?.outputs.length ?? 0
+  const completed = focus ? lessonDone : current.filter((lesson) => progress.done.includes(lesson.id)).length
+  const total = focus ? lessonTotal : current.length
+  const percent = focus
+    ? (lessonTotal ? Math.round((100 * lessonDone) / lessonTotal) : checkTotal ? Math.round((100 * checkDone) / checkTotal) : 0)
+    : total ? Math.round((100 * completed) / total) : 0
+  const unreadInGate = focus?.lessons.map((item) => findLesson(item.id)).find((lesson) => lesson && !progress.done.includes(lesson.id))
+  const next = spine ? spineNext : focus ? unreadInGate : current.find((lesson) => !progress.done.includes(lesson.id))
+  const waitingOnDelivery = Boolean(focus && !unreadInGate && checkDone < checkTotal)
   const recent = progress.recent
     .map((id) => findLesson(id))
     .filter((item) => item && item.track === progress.track)
@@ -39,10 +57,14 @@ export function ProgressAside({ localReady }: { localReady: boolean }) {
   return (
     <div className="aside-stack">
       <div className="aside-block">
-        <span className="aside-label">进度</span>
+        <span className="aside-label">{focus ? `第 ${gateIndex + 1} 关` : '进度'}</span>
         <div className="progress-figure">{percent}%</div>
         <Typography.Text type="secondary">
-          {completed} / {current.length} 课已掌握
+          {focus
+            ? lessonTotal
+              ? `已读 ${lessonDone}/${lessonTotal} · 交付 ${checkDone}/${checkTotal}`
+              : `交付 ${checkDone}/${checkTotal}`
+            : `${completed} / ${total} 课已掌握`}
         </Typography.Text>
         <Progress
           percent={percent}
@@ -56,7 +78,19 @@ export function ProgressAside({ localReady }: { localReady: boolean }) {
 
       <div className="aside-block">
         <h5>下一步</h5>
-        {next ? (
+        {waitingOnDelivery ? (
+          spine ? (
+            <Link className="text-link" to="/paths?focus=deliver">
+              回去勾这一关的交付 →
+            </Link>
+          ) : (
+            <Typography.Text type="secondary">勾上这一关的交付，下一关才会打开。</Typography.Text>
+          )
+        ) : spine && !next ? (
+          <Link className="text-link" to="/paths?focus=deliver">
+            回去交这一关的交付物 →
+          </Link>
+        ) : next ? (
           <Link
             className="text-link"
             to={lessonPath(next)}
@@ -65,7 +99,9 @@ export function ProgressAside({ localReady }: { localReady: boolean }) {
             {shortTitle(next.title)} →
           </Link>
         ) : (
-          <Typography.Text type="secondary">当前路线全部完成，可以进入复习清单。</Typography.Text>
+          <Typography.Text type="secondary">
+            {onPath ? '点名必读已读完。过关仍看交付物。' : '当前路线全部完成，可以进入复习清单。'}
+          </Typography.Text>
         )}
       </div>
 

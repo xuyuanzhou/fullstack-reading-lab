@@ -66,6 +66,8 @@ export type ProgressState = {
   aiSkippedPrereq: string[]
   /** 面试题训练自评 0–4 */
   aiDrillScores: Record<string, number>
+  /** 主线交付勾选，形如 g1:0。课读完并且本关条目都勾上，才进入下一关。 */
+  pathChecks: string[]
   /** Monotonic write counter so a stale tab cannot blank a newer tab's notes. */
   revision: number
 }

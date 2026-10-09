@@ -19,6 +19,7 @@ type ProgressApi = ProgressState & {
   setTrack: (track: Track) => void
   setGroup: (group: string) => void
   toggleDone: (id: string) => void
+  togglePathCheck: (id: string) => void
   toggleReview: (id: string) => void
   remember: (id: string) => void
   setNote: (id: string, note: string) => void
@@ -151,9 +152,9 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     setState(prev => prev.track === track && prev.group === group ? prev : { ...prev, track, group })
   }, [])
 
-  const toggleList = useCallback((key: 'done' | 'review' | 'aiDone' | 'aiReview', id: string) => {
+  const toggleList = useCallback((key: 'done' | 'review' | 'aiDone' | 'aiReview' | 'pathChecks', id: string) => {
     setState((prev) => {
-      const list = prev[key]
+      const list = prev[key] ?? []
       return {
         ...prev,
         [key]: list.includes(id) ? list.filter((item) => item !== id) : [id, ...list],
@@ -183,6 +184,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       setTrack,
       setGroup,
       toggleDone: (id) => toggleList('done', id),
+      togglePathCheck: (id) => toggleList('pathChecks', id),
       toggleReview: (id) => toggleList('review', id),
       remember,
       setNote: (id, note) =>

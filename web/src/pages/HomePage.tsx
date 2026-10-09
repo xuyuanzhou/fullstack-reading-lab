@@ -83,6 +83,9 @@ export function HomePage() {
           >
             继续学习 →
           </Button>
+          <Button onClick={() => navigate('/paths')}>
+            按主线学
+          </Button>
           <Button onClick={() => navigate('/knowledge')}>
             浏览知识库
           </Button>

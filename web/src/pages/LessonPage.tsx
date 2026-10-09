@@ -2,6 +2,7 @@ import { Breadcrumb, Button, Collapse, Image, Input, Space, Typography } from 'a
 import { useEffect, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { findLesson, lessonIndex, loadFullLesson, nextLesson } from '@/data/curriculum'
+import { deliverableKey, spineNextId, spinePlace, spinePrevId } from '@/data/learningPaths'
 import { groupKeyForLabel, groupPath, groupTitle, isTrack, lessonPath } from '@/data/routes'
 import { shortTitle, splitProse, structureCore } from '@/data/reading'
 import { REACT_CHAPTERS, VUE_CHAPTERS, reactUrl, vueUrl } from '@/data/meta'
@@ -48,6 +49,9 @@ export function LessonPage() {
   const chapterPath = groupPath(lesson.track, chapterKey)
   const index = lessonIndex(lesson.track, lesson.id)
   const next = nextLesson(lesson.track, lesson.id)
+  const onSpine = spinePlace(lesson.id)
+  const spineNext = findLesson(spineNextId(lesson.id) || '')
+  const spinePrev = findLesson(spinePrevId(lesson.id) || '')
   const core = structureCore(lesson.core)
   const references = lesson.references || []
   const source =
@@ -67,6 +71,30 @@ export function LessonPage() {
 
   return (
     <article className="article-shell">
+      {onSpine ? (
+        <section className="path-strip">
+          <p className="path-strip-kicker">
+            <Link to="/paths">
+              第 {onSpine.index + 1} 关 · {onSpine.gate.learnTitle}
+            </Link>
+            <span>
+              第 {onSpine.step + 1}/{onSpine.gate.lessons.length} 节
+            </span>
+            <span>
+              交付 {onSpine.gate.outputs.filter((_, outputIndex) => (progress.pathChecks ?? []).includes(deliverableKey(onSpine.gate.id, outputIndex))).length}/{onSpine.gate.outputs.length}
+            </span>
+            {spineNext ? (
+              <Link to={lessonPath(spineNext)} onClick={() => progress.remember(spineNext.id)}>
+                下一节 · {shortTitle(spineNext.title)}
+              </Link>
+            ) : (
+              <Link to="/paths?focus=deliver">回主线交交付物</Link>
+            )}
+          </p>
+          {onSpine.gate.lessons[onSpine.step]?.job ? <p>{onSpine.gate.lessons[onSpine.step].job}</p> : null}
+        </section>
+      ) : null}
+
       <Breadcrumb
         items={[
           { title: <Link to={chapterPath}>学习路线</Link> },
@@ -283,7 +311,49 @@ export function LessonPage() {
         </Button>
       </Space>
 
-      {next ? (
+      {onSpine ? (
+        <div className="path-turn">
+          {spinePrev ? (
+            <Link className="path-turn-prev" to={lessonPath(spinePrev)} onClick={() => progress.remember(spinePrev.id)}>
+              上一节 · {shortTitle(spinePrev.title)}
+            </Link>
+          ) : (
+            <Link className="path-turn-prev" to="/paths">
+              返回这一关
+            </Link>
+          )}
+          {spineNext ? (
+            <Link
+              className="next-card"
+              to={lessonPath(spineNext)}
+              onClick={() => {
+                if (!progress.done.includes(lesson.id)) progress.toggleDone(lesson.id)
+                progress.remember(spineNext.id)
+              }}
+            >
+              <div>
+                <small>{progress.done.includes(lesson.id) ? '主线下一节' : '记为已读，下一节'}</small>
+                <strong>{shortTitle(spineNext.title)}</strong>
+              </div>
+              <span>→</span>
+            </Link>
+          ) : (
+            <Link
+              className="next-card"
+              to="/paths?focus=deliver"
+              onClick={() => {
+                if (!progress.done.includes(lesson.id)) progress.toggleDone(lesson.id)
+              }}
+            >
+              <div>
+                <small>{progress.done.includes(lesson.id) ? '本关读完' : '记为已读'}</small>
+                <strong>回去交交付物</strong>
+              </div>
+              <span>→</span>
+            </Link>
+          )}
+        </div>
+      ) : next ? (
         <Link
           className="next-card"
           to={lessonPath(next)}

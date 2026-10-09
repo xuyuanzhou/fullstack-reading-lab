@@ -56,6 +56,7 @@ export function normalizeProgress(value: unknown, groups: ProgressGroups): Progr
     aiQuery: text(saved.aiQuery),
     aiSkippedPrereq: strings(saved.aiSkippedPrereq),
     aiDrillScores,
+    pathChecks: strings(saved.pathChecks),
     revision: revisionOf(saved.revision),
   }
 }
@@ -156,12 +157,16 @@ export function mergeForWrite(local: ProgressState, remote: ProgressState, base:
   const aiSkippedPrereq = listChanged(local.aiSkippedPrereq, base.aiSkippedPrereq)
     ? [...new Set([...remote.aiSkippedPrereq, ...local.aiSkippedPrereq])]
     : remote.aiSkippedPrereq
+  const pathChecks = listChanged(local.pathChecks, base.pathChecks)
+    ? [...new Set([...remote.pathChecks, ...local.pathChecks])]
+    : remote.pathChecks
   if (
     listChanged(local.done, base.done) ||
     listChanged(local.review, base.review) ||
     listChanged(local.aiDone, base.aiDone) ||
     listChanged(local.aiReview, base.aiReview) ||
-    listChanged(local.aiSkippedPrereq, base.aiSkippedPrereq)
+    listChanged(local.aiSkippedPrereq, base.aiSkippedPrereq) ||
+    listChanged(local.pathChecks, base.pathChecks)
   ) {
     touched = true
   }
@@ -176,6 +181,7 @@ export function mergeForWrite(local: ProgressState, remote: ProgressState, base:
     aiDone,
     aiReview,
     aiSkippedPrereq,
+    pathChecks,
     revision: remote.revision + (touched ? 1 : 0),
   }
   // Prefer this tab's UI prefs only when it actually changed them since last sync.
