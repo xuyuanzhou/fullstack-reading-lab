@@ -222,10 +222,10 @@ const COVERAGE_SHIP_15 = [
     refs:[['Resilience4j：Bulkhead','https://resilience4j.readme.io/docs/bulkhead'],['Resilience4j：线程池隔离','https://resilience4j.readme.io/docs/bulkhead#threadpoolbulkhead']]
   },
   {
-    track:'java', group:'Java 基础', id:'java-time-instant',
-    title:'Instant 是时间线上的一点，LocalDateTime 没有时区',
+    track:'java', group:'Java 基础',     id:'java-time-instant',
+    title:'Instant 是时间线上的一点，LocalDateTime 没有时区（JDK 8）',
     prompt:'用 LocalDateTime.now() 存到库里，夏令时切换那天会怎样？',
-    core:'Instant 表示 UTC 时间线上的一个点，适合存库和跨机比较。LocalDateTime 只有日期和钟面时间，没有时区，不能确定是哪一个瞬时。ZonedDateTime / OffsetDateTime 才带区。展示给用户时，用存下来的 Instant 按用户时区格式化。now() 若不指定时钟和区，测试和跨机都会漂。比较先后用 Instant，不要用去掉时区的本地时间相减。',
+    core:'`java.time.Instant`（JDK 8 起）表示 UTC 时间线上的一个点，适合存库和跨机比较。LocalDateTime 只有日期和钟面时间，没有时区，不能确定是哪一个瞬时。ZonedDateTime / OffsetDateTime 才带区。展示给用户时，用存下来的 Instant 按用户时区格式化。now() 若不指定时钟和区，测试和跨机都会漂。比较先后用 Instant，不要用去掉时区的本地时间相减。',
     why:'把没有时区的钟面时间当绝对时刻存进库，夏令时或跨时区对账会错一小时甚至错一天。区分信号是库存的是时间线上的一点，展示时才放进时区。看走眼时会把旁边那一层一起改掉，真正的差别要能单独指出来。',
     example:'下单时间存绝对时刻。页面用上海时区格式化给用户看。不要把“2026-03-08 02:30”这种没有区的字符串当唯一真相。两台机器打印本地日期时间，即使表示同一瞬间，钟面也可能不同，不能拿来比先后。把输入、输出和失败时留下的那一行同时记下来，不要只看最后没有报错。',
     task:'分别打印 Instant.now 和 LocalDateTime.now。解释为什么后者不能当跨机顺序。',

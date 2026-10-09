@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-labelledby="title desc">
+  <title id="title">MVCC 不是两列版本号表结构</title>
+  <desc id="desc">资料用创建/删除版本两列表格讲 MVCC。InnoDB 靠事务 ID、回滚指针与 undo，不是业务表上两列。</desc>
+  <rect width="960" height="400" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">INNODB / MVCC</text>
+  <text x="32" y="64" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">表格是直觉，不是 SHOW CREATE</text>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <rect x="32" y="96" width="430" height="176" rx="14" fill="#f6ecea" stroke="#a05048"/>
+    <text x="52" y="132" font-size="15" font-weight="600" fill="#6e3530">资料模型</text>
+    <text x="52" y="164" font-size="14" fill="#2e3330">行尾创建版本 / 删除版本</text>
+    <text x="52" y="196" font-size="14" fill="#2e3330">更新=标删+插新行</text>
+    <text x="52" y="228" font-size="14" fill="#5e6661">当成物理表结构</text>
+    <rect x="496" y="96" width="432" height="176" rx="14" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="516" y="132" font-size="15" font-weight="600" fill="#2e3330">InnoDB</text>
+    <text x="516" y="164" font-size="14" fill="#3f6a58">事务 ID + 回滚指针</text>
+    <text x="516" y="196" font-size="14" fill="#3f6a58">旧版本在 undo 链</text>
+    <text x="516" y="228" font-size="14" fill="#5e6661">Read View 判可见性</text>
+    <rect x="32" y="296" width="896" height="72" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="52" y="328" font-size="15" font-weight="600" fill="#2e3330">快照读与 FOR UPDATE 不是同一套规则。</text>
+    <text x="52" y="352" font-size="14" fill="#5e6661">见 mysql-mvcc、mysql-redo-undo-binlog</text>
+  </g>
+</svg>

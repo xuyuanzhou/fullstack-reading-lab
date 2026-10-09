@@ -70,7 +70,7 @@ const COVERAGE_JAVA_16 = [
   },
   {
     track:'java', group:'Java 基础', id:'java-string-strip-not-trim',
-    title:'trim 清的不是全部空白，getBytes 必须写字符集',
+    title:'trim 清的不是全部空白，getBytes 必须写字符集（JDK 11 strip）',
     prompt:'为什么“trim 去掉首尾空白、getBytes 就能转字节、new String(byte[]) 一定对”会在现行 JDK 里翻车？',
     core:'String.trim() 去掉的是代码点 ≤ U+0020 的字符，对不少 Unicode 空白（如不间断空格）不动。Java 11 的 strip/stripLeading/stripTrailing 按 Character.isWhitespace 判断。无参 getBytes() 和 new String(byte[]) 走默认字符集；Java 18 起默认常是 UTF-8，但旧环境、显式 -Dfile.encoding 仍会变，契约是写明 StandardCharsets。switch 从 Java 7 起可用 String。final 的 String 不能继承。自定义 java.lang.String 不能替代引导类加载器里的那份。intern 与 new String("abc") 的对象个数依赖池里是否已有字面量，不要背死“一定两个”。',
     why:'用 trim 清洗用户名，不间断空格还在，校验和唯一约束会对不上；无参 getBytes 再跨环境，中文会按另一套默认字符集变成乱码。区分信号是同一段 U+00A0，trim 还在，strip 去掉。',
@@ -104,9 +104,9 @@ const COVERAGE_JAVA_16 = [
   },
   {
     track:'frontend', group:'网络与安全', id:'http-503-unavailable',
-    title:'503 是暂时不可用，不是“服务器宕机”的同义词',
+    title:'503 是暂时不可用，不是“服务器宕机”的同义词（RFC 9110）',
     prompt:'为什么把 5xx 背成“500 内部错误、503 宕机”，以及把 3xx 说成浏览器总会自动跳，会误导排障？',
-    core:'503 Service Unavailable 表示此刻不能处理，常见于过载、维护、依赖熔断，响应可带 Retry-After；进程崩溃更常表现为连接失败或代理 502，而不是一张保证出现的 503。500 是服务器在处理中遇到未抓住的错误。401/403 见既有 `http-status-auth`。3xx 里 Location 引导重定向；浏览器对页面导航会跟，但 fetch 默认对非 301/302/303 等有自己的跟随规则，API 客户端不应假定“拿到 302 就一定换域名打开新页”。301 永久、302 历史里常被当临时，现行语义以 RFC 9110 为准。',
+    core:'503 Service Unavailable 表示此刻不能处理，常见于过载、维护、依赖熔断，响应可带 Retry-After；进程崩溃更常表现为连接失败或代理 502，而不是一张保证出现的 503。500 是服务器在处理中遇到未抓住的错误。401/403 见既有 `http-status-auth`。3xx 里 Location 引导重定向；浏览器对页面导航会跟，但 fetch 默认对非 301/302/303 等有自己的跟随规则，API 客户端不应假定“拿到 302 就一定换域名打开新页”。301 永久、302 历史里常被当临时，现行语义以 **RFC 9110** 为准。',
     why:'把 503 背成宕机就去重启机器，过载和维护其实只要限流或等依赖恢复。区分信号是 503 仍有 HTTP 响应，还可以带 Retry-After；进程崩溃常常是连接失败，客户端根本没有状态码。',
     example:'发布窗口返回 503，头里 Retry-After 为 30，进程仍在听端口。数据库把请求处理到一半抛错，更常是 500。直接把进程杀掉，客户端看到的是连接被拒绝或重置，抓包里没有 503 这一行。此时端口已经不再监听。',
     task:'对照 RFC 9110 写出 500 与 503 的差别，并说明什么情况下客户端根本拿不到状态码。',

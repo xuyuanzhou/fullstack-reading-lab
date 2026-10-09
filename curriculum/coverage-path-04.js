@@ -31,15 +31,16 @@ const COVERAGE_PATH_04 = [
     points:['class 方法放在构造函数的 prototype 上','实例字段在对象自身，会挡住同名原型属性','instanceof 沿原型链判断，直到 null'],
     deep:[
       {title:'遮挡',body:'实例自己有同名属性时，查找停在实例，不再使用原型上的方法。删除实例属性后，原型上的方法又可见。这不是复制了一份方法，只是查找顺序。'},
-      {title:'不要用原型保存业务数据',body:'原型上的对象和数组被所有实例共享。把缓存、列表放上去，一个实例 push 会让别的实例看见。每个对象自己的状态放在实例字段。'}
+      {title:'不要用原型保存业务数据',body:'原型上的对象和数组被所有实例共享。把缓存、列表放上去，一个实例 push 会让别的实例看见。每个对象自己的状态放在实例字段。'},
+      {title:'extends 与私有字段',body:'子类构造要先 super 再碰 this，见 js-class-extends-super。# 私有字段不在原型上共享给外部，见 js-private-field-hash。'}
     ],
     refs:[['MDN：继承与原型链','https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain'],['MDN：class','https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes']]
   },
   {
     track:'frontend', group:'React 生态', id:'react-router-loader',
-    title:'路由数据在渲染前装好',
+    title:'路由数据在渲染前装好（RR 6.4）',
     prompt:'每个页面都在 useEffect 里请求，和路由的 loader 有什么不同？',
-    core:'React Router 的数据路由用 loader 在进入路由、渲染对应元素之前加载数据。组件用 useLoaderData 读取结果，而不是先画出空页面再在 effect 里请求。客户端切换路由时，框架可以在导航完成前知道成功或失败，并用 errorElement 接住 loader 抛出的错误。useEffect 请求发生在提交之后，首屏必然先空再填，取消和过期响应还要自己处理。链接用 Link 或 navigate，这样导航走路由，而不是整页刷新。搜索参数属于 URL，刷新和分享要能还原，不要只放在组件 state 里。',
+    core:'React Router 的数据路由（**6.4** 起的 loader 模式）在进入路由、渲染对应元素之前加载数据。组件用 useLoaderData 读取结果，而不是先画出空页面再在 effect 里请求。客户端切换路由时，框架可以在导航完成前知道成功或失败，并用 errorElement 接住 loader 抛出的错误。useEffect 请求发生在提交之后，首屏必然先空再填，取消和过期响应还要自己处理。链接用 Link 或 navigate，这样导航走路由，而不是整页刷新。搜索参数属于 URL，刷新和分享要能还原，不要只放在组件 state 里。',
     why:'学习者会把每个页面的请求都放进 effect，以为和路由装数据只是写法不同。刷新、后退或直接打开带查询串的地址时，筛选条件丢了，错误也要等空白页之后才出现。数据在进入页面之前就失败并进到错误元素，才说明装载发生在渲染之前。',
     example:'订单详情路由的 loader 按 params.id 请求。失败时抛出带 status 的响应，errorElement 显示没有这张订单。筛选条件写在 ?status=paid，而不是只保存在 useState。',
     task:'把一个 useEffect 拉详情的页面改成 loader。刷新、点浏览器后退、直接打开带查询串的地址，确认数据条件和错误页面都还在。',

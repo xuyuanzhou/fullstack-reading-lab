@@ -140,10 +140,10 @@ const COVERAGE_DEPTH_14 = [
     refs:[['ThreadLocal','https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/ThreadLocal.html'],['ThreadLocal.remove','https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/ThreadLocal.html#remove()']]
   },
   {
-    track:'java', group:'并发', id:'java-fork-join-pool',
-    title:'ForkJoin 适合可拆分的计算，不适合堵住工作线程的 IO',
+    track:'java', group:'并发',     id:'java-fork-join-pool',
+    title:'ForkJoin 适合可拆分的计算，不适合堵住工作线程的 IO（JDK 7）',
     prompt:'在 parallelStream 里调远程接口，为什么有时整个公共池都卡住？',
-    core:'ForkJoinPool 用工作窃取处理可以拆开再合并的任务。parallelStream 默认走公共池，池大小和 CPU 相关。任务里如果阻塞等 IO，工作线程就被占住，别的计算也排队。阻塞式 IO 用普通线程池或异步客户端，把 ForkJoin 留给 CPU 计算。公共池还被 JVM 自己的一些任务共用，不要在里面做长时间阻塞。需要独立隔离时，自建 ForkJoinPool 再提交，不要默认挤公共池。',
+    core:'ForkJoinPool（**JDK 7**）用工作窃取处理可以拆开再合并的任务。parallelStream 默认走公共池，池大小和 CPU 相关。任务里如果阻塞等 IO，工作线程就被占住，别的计算也排队。阻塞式 IO 用普通线程池或异步客户端，把 ForkJoin 留给 CPU 计算。公共池还被 JVM 自己的一些任务共用，不要在里面做长时间阻塞。需要独立隔离时，自建 ForkJoinPool 再提交，不要默认挤公共池。',
     why:'在 parallelStream 里调远程接口，下游一慢，公共池里的工作线程都堵在网络上，同进程其他并行计算一起停。区分信号是纯计算能铺开，阻塞 sleep 或 HTTP 会把池占死。',
     example:'对集合 parallelStream 去调库存 HTTP。下游变慢后，公共池的工作线程都停在网络读，别的 parallelStream 也排不上。同样的集合若只做 CPU 计算，线程会忙在计算上，而不是全部等 I/O。阻塞任务应离开公共池。',
     task:'对比 CPU 计算和阻塞 sleep 两种任务在 parallelStream 下的耗时。写出哪一种不该用公共池。',
@@ -225,10 +225,10 @@ const COVERAGE_DEPTH_14 = [
     refs:[['Testcontainers','https://java.testcontainers.org/'],['Spring Boot：动态属性','https://docs.spring.io/spring-boot/reference/testing/testcontainers.html']]
   },
   {
-    track:'frontend', group:'TypeScript', id:'ts-satisfies',
-    title:'satisfies 核对形状，但不把字面量放宽成宽类型',
+    track:'frontend', group:'TypeScript',     id:'ts-satisfies',
+    title:'satisfies 核对形状，但不把字面量放宽成宽类型（TS 4.9）',
     prompt:'给主题对象加 as Theme，为什么会丢掉“这个键一定是这几个颜色”？',
-    core:'as 是断言：编译器按目标类型看待这个值，字面量里更窄的信息可能被丢掉。satisfies 先检查值符合约定的类型，再保留字面量上的具体键和字面量类型。顺序是先写对象，再用 satisfies 核对形状，后面的访问仍按具体键检查。边界是它只在编译期，替代不了对外部 JSON 的运行时校验；断言则可能让拼错的键不再报错。对象既要符合约定，又要让后面的代码仍能按具体键自动补全时，用 satisfies。不要为了消掉报错而改成断言，那会把键放宽成宽类型。排障时按这个顺序往下看，边界条件不满足就停在这一步，不要把前后两段并成一个原因。satisfies 只在编译期核对，外部 JSON 仍要另做校验。',
+    core:'as 是断言：编译器按目标类型看待这个值，字面量里更窄的信息可能被丢掉。`satisfies`（TypeScript 4.9）先检查值符合约定的类型，再保留字面量上的具体键和字面量类型。顺序是先写对象，再用 satisfies 核对形状，后面的访问仍按具体键检查。边界是它只在编译期，替代不了对外部 JSON 的运行时校验；断言则可能让拼错的键不再报错。对象既要符合约定，又要让后面的代码仍能按具体键自动补全时，用 satisfies。不要为了消掉报错而改成断言，那会把键放宽成宽类型。排障时按这个顺序往下看，边界条件不满足就停在这一步，不要把前后两段并成一个原因。satisfies 只在编译期核对，外部 JSON 仍要另做校验。',
     why:'用 as 把主题断言成宽类型，配色表的键会变成宽的索引，写错键也不再报错。区分信号是 satisfies 之后，拼错的键仍然报错，as 之后可能不报。拼错的键在断言之后可能悄悄通过编译。',
     example:'const colors = { primary: "#09f", danger: "#f00" } satisfies Record<string, string>。colors.primary 仍是这个字面量字符串。',
     task:'分别用 as 和 satisfies 标注同一份配色。看访问拼错的键时，哪一种还能报错。',

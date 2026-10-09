@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-labelledby="title desc">
+  <title id="title">行数不是拆分开关</title>
+  <desc id="desc">先测热数据，再谈拆表</desc>
+  <rect width="960" height="400" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">MYSQL</text>
+  <text x="32" y="64" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">先测热数据，再谈拆表</text>
+  <rect x="32" y="96" width="430" height="200" rx="14" fill="#f6ecea" stroke="#a05048"/>
+  <text x="52" y="132" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="15" font-weight="600" fill="#6e3530">口诀</text>
+  <text x="52" y="168" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">单表一千万以内</text>
+<text x="52" y="200" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">到数就分库</text>
+<text x="52" y="232" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">先切再看查询</text>
+  <rect x="496" y="96" width="432" height="200" rx="14" fill="#e6efe9" stroke="#3f6a58"/>
+  <text x="516" y="132" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="15" font-weight="600" fill="#2e3330">先看的三项</text>
+  <text x="516" y="168" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">热页能否进缓冲池</text>
+<text x="516" y="200" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">点查还是大扫描</text>
+<text x="516" y="232" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">复制与备份是否超窗</text>
+  <rect x="32" y="320" width="896" height="52" rx="12" fill="#e6efe9"/>
+  <text x="52" y="352" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="600" fill="#2d4f41">这三项都健康时，保留单表。</text>
+</svg>

@@ -2,7 +2,7 @@
 const COVERAGE_JAVA_39 = [
   {
     track:'java', group:'Java 基础', id:'java-default-class-wins-conflict',
-    title:'默认方法不是 C++ 那种类多继承，冲突时类方法优先',
+    title:'默认方法不是 C++ 那种类多继承，冲突时类方法优先（JDK 8）',
     prompt:'为什么把 Java 8 默认方法背成“终于有多继承了，两个接口同名方法随便用”？',
     core:'类仍然只能 `extends` 一个类。默认方法是接口上的行为，见 `java-interface-contract`。两个接口声明了同一签名的默认方法，实现类或子接口必须自己覆盖，或写成 abstract。父类已有同名实例方法时，用父类的，不用接口默认方法。更具体的子接口覆盖祖先接口。没有字段、没有构造器冲突，这不是 C++ 多继承。',
     why:'按“随便用两个默认实现”去编译，会卡在 unrelated defaults；按类多继承去加字段，接口上也加不上。',

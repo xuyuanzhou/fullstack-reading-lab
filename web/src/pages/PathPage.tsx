@@ -2,7 +2,7 @@ import { Button } from 'antd'
 import { useEffect } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { findLesson } from '@/data/curriculum'
-import { PATHS, deliverableKey, gateCleared, slotsOf, type PathGate } from '@/data/learningPaths'
+import { PATHS, deliverableKey, gateCleared, nextInGate, slotsOf, type PathGate } from '@/data/learningPaths'
 import { lessonPath } from '@/data/routes'
 import { shortTitle } from '@/data/reading'
 import { useProgress } from '@/state/progress'
@@ -21,10 +21,7 @@ export function PathPage() {
   const openIndex = stages.findIndex((stage) => !gateCleared(stage, progress.done, progress.pathChecks))
   const currentIndex = openIndex === -1 ? stages.length - 1 : openIndex
   const current = stages[currentIndex]
-  const next = current.lessons
-    .map((item) => findLesson(item.id))
-    .find((lesson) => lesson && !done.has(lesson.id))
-  const readCount = current.lessons.filter((item) => done.has(item.id)).length
+  const next = findLesson(nextInGate(current, progress.done) || '')
 
   return (
     <div className="article-shell path-page">
@@ -41,7 +38,6 @@ export function PathPage() {
       <StageDetail
         stage={current}
         index={currentIndex}
-        readCount={readCount}
         done={done}
         nextId={next?.id}
         checks={new Set(progress.pathChecks ?? [])}
@@ -85,7 +81,6 @@ export function PathPage() {
 function StageDetail({
   stage,
   index,
-  readCount,
   done,
   nextId,
   checks,
@@ -94,7 +89,6 @@ function StageDetail({
 }: {
   stage: PathGate
   index: number
-  readCount: number
   done: Set<string>
   nextId?: string
   checks: Set<string>
@@ -102,7 +96,8 @@ function StageDetail({
   onOpenNext?: () => void
 }) {
   const slots = slotsOf(stage.lessons)
-  const lessonsDone = slots.length === 0 || slots.every((slot) => slot.some((id) => done.has(id)))
+  const readSlots = slots.filter((slot) => slot.some((id) => done.has(id))).length
+  const lessonsDone = slots.length === 0 || readSlots === slots.length
   const nextControl = onOpenNext ? (
     <Button type="primary" onClick={onOpenNext}>
       下一节 · {shortTitle(findLesson(nextId || '')?.title || '')}
@@ -122,7 +117,7 @@ function StageDetail({
     <section className="path-now">
       <p className="path-now-kicker">
         现在 · 第 {index + 1} 关 · {stage.weeks}
-        {stage.lessons.length ? ` · 已读 ${readCount}/${stage.lessons.length}` : ''}
+        {slots.length ? ` · 已读 ${readSlots}/${slots.length}` : ''}
       </p>
       <h2>{stage.learnTitle}</h2>
       {stage.milestone ? <p className="path-milestone">{stage.milestone}</p> : null}
@@ -140,24 +135,33 @@ function StageDetail({
         <>
           <h3>按这个顺序</h3>
           <ol className="path-lessons">
-            {stage.lessons.map((item, lessonIndex) => {
-              const lesson = findLesson(item.id)
-              if (!lesson) return null
-              const read = done.has(lesson.id)
-              const upcoming = item.id === nextId
+            {slots.map((slot, slotIndex) => {
+              const rows = slot.flatMap((id) => {
+                const item = stage.lessons.find((lesson) => lesson.id === id)
+                const lesson = findLesson(id)
+                return item && lesson ? [{ item, lesson }] : []
+              })
+              if (!rows.length) return null
+              const read = slot.some((id) => done.has(id))
+              const upcoming = !read && slot.includes(nextId || '')
+              const lead = rows[0].lesson
               return (
-                <li key={item.id} className={read ? 'is-read' : upcoming ? 'is-next' : undefined}>
-                  <p className="path-lesson-title">
-                    <span>{String(lessonIndex + 1).padStart(2, '0')}</span>
-                    <Link to={lessonPath(lesson)}>{shortTitle(lesson.title)}</Link>
-                    {item.note ? <em>{item.note}</em> : null}
-                  </p>
-                  {item.job ? <p>{item.job}</p> : null}
+                <li key={slot.join('+')} className={read ? 'is-read' : upcoming ? 'is-next' : undefined}>
+                  {rows.map(({ item, lesson }, rowIndex) => (
+                    <div key={lesson.id}>
+                      <p className="path-lesson-title">
+                        <span>{rowIndex === 0 ? String(slotIndex + 1).padStart(2, '0') : '或'}</span>
+                        <Link to={lessonPath(lesson)}>{shortTitle(lesson.title)}</Link>
+                        {item.note ? <em>{item.note}</em> : null}
+                      </p>
+                      {item.job ? <p>{item.job}</p> : null}
+                    </div>
+                  ))}
                   {upcoming ? (
                     <>
-                      <p className="path-lesson-ask">先回答：{lesson.prompt}</p>
+                      <p className="path-lesson-ask">先回答：{lead.prompt}</p>
                       <ul>
-                        {lesson.points.map((point) => (
+                        {lead.points.map((point) => (
                           <li key={point}>{point}</li>
                         ))}
                       </ul>

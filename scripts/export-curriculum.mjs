@@ -10,7 +10,7 @@ const dataDir = path.join(root, 'web', 'src', 'data');
 fs.mkdirSync(dataDir, { recursive: true });
 
 /** Slim shell fields only — core lives in track bodies with lesson text. */
-const INDEX_KEYS = ['track', 'group', 'id', 'title', 'prompt', 'promptAnswer', 'keywords', 'points'];
+const INDEX_KEYS = ['track', 'group', 'id', 'title', 'prompt', 'promptAnswer', 'keywords', 'points', 'since'];
 const BODY_KEYS = [
   'core',
   'why',

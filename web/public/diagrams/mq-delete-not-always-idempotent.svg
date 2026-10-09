@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-labelledby="title desc">
+  <title id="title">业务删除不总是天然幂等</title>
+  <desc id="desc">SQL 按主键 DELETE 到不存在，终态可以相同。软删除、扣库存、关账户带副作用的“删除”重复执行可能再改一次状态，必须用业务键约束。</desc>
+  <rect width="960" height="400" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">IDEMPOTENT</text>
+  <text x="32" y="64" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">“删除”三个字，终态不一定相同</text>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <rect x="32" y="96" width="430" height="176" rx="14" fill="#f6ecea" stroke="#a05048"/>
+    <text x="52" y="132" font-size="15" font-weight="600" fill="#6e3530">资料口误</text>
+    <text x="52" y="164" font-size="14" fill="#2e3330">删除一次和多次都是删掉</text>
+    <text x="52" y="196" font-size="14" fill="#2e3330">所以删除天然幂等</text>
+    <text x="52" y="228" font-size="14" fill="#5e6661">状态码不同也无所谓</text>
+    <rect x="496" y="96" width="432" height="176" rx="14" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="516" y="132" font-size="15" font-weight="600" fill="#2e3330">要拆开看</text>
+    <text x="516" y="164" font-size="14" fill="#3f6a58">主键物理删除：终态常可幂等</text>
+    <text x="516" y="196" font-size="14" fill="#3f6a58">软删/扣减/关户：可能再改一次</text>
+    <text x="516" y="228" font-size="14" fill="#5e6661">用业务键或状态机挡住重放</text>
+    <rect x="32" y="296" width="896" height="72" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="52" y="328" font-size="15" font-weight="600" fill="#2e3330">消息重放时，先问这次“删除”会不会第二次改余额或再发通知。</text>
+    <text x="52" y="352" font-size="14" fill="#5e6661">见 mq-consume-idempotent-key、http-methods</text>
+  </g>
+</svg>

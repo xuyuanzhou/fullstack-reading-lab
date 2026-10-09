@@ -2,9 +2,9 @@
 const COVERAGE_OPS_17 = [
   {
     track:'frontend', group:'TypeScript', id:'ts-module-resolution',
-    title:'moduleResolution 决定怎么找到 .js，bundler 和 Node 不是同一套',
+    title:'moduleResolution 决定怎么找到 .js，bundler 和 Node 不是同一套（TS 5.0）',
     prompt:'本地能编译，CI 里却说找不到模块，常常差在哪一项配置？',
-    core:'TypeScript 按 moduleResolution 去猜导入路径。node10/node 跟旧 Node 的文件查找走；bundler 更贴近 Vite/webpack：允许扩展名省略、也更认 package.json 的 exports。两边混用会出现“编辑器绿、构建红”。路径别名要和打包器、测试运行器写成同一份。不要用 paths 去映射到不存在的发行文件。改这项之后要清缓存再编。',
+    core:'TypeScript 按 moduleResolution 去猜导入路径。node10/node 跟旧 Node 的文件查找走；**TS 5.0 的 bundler** 更贴近 Vite/webpack：允许扩展名省略、也更认 package.json 的 exports。两边混用会出现“编辑器绿、构建红”。路径别名要和打包器、测试运行器写成同一份。不要用 paths 去映射到不存在的发行文件。改这项之后要清缓存再编。',
     why:'把官网示例里的 moduleResolution 原样抄进 Vite 项目，编辑器按 bundler 能解析，CI 按 Node 的文件查找就报找不到模块。区分信号是同一条相对导入，bundler 允许省略扩展名，node/node10 要落到真实文件。',
     example:'本地 tsconfig 写 moduleResolution 为 bundler，import "./api" 能过。流水线改用 Node 那套解析后，同一行报找不到模块；把导入改成带扩展名的真实文件，或让 CI 也用 bundler，报错消失。',
     task:'打开当前 tsconfig 的 moduleResolution。对照 Vite 或 Node 文档，标出它允许省略的扩展名。',
@@ -121,9 +121,9 @@ const COVERAGE_OPS_17 = [
   },
   {
     track:'java', group:'缓存', id:'redis-stream-vs-pubsub',
-    title:'要积压和确认用 Stream，Pub/Sub 不记得历史',
+    title:'要积压和确认用 Stream，Pub/Sub 不记得历史（Redis 5）',
     prompt:'用 SUBSCRIBE 发下单事件，消费者重启后为什么丢了那段时间的消息？',
-    core:'Pub/Sub 是当时在线的订阅者才收得到，不持久、不确认、没积压。Stream 把条目追加到列表，有 ID，消费者组用 XREADGROUP 领取，XACK 确认。离线期间的消息还在，直到修剪。它仍不是 Kafka 那种多分区日志的全集，但比 Pub/Sub 适合“至少处理一次”。只做瞬时通知（踢人、刷缓存）才用 Pub/Sub。',
+    core:'Pub/Sub 是当时在线的订阅者才收得到，不持久、不确认、没积压。**Redis 5** 起的 Stream 把条目追加到列表，有 ID，消费者组用 XREADGROUP 领取，XACK 确认。离线期间的消息还在，直到修剪。它仍不是 Kafka 那种多分区日志的全集，但比 Pub/Sub 适合“至少处理一次”。只做瞬时通知（踢人、刷缓存）才用 Pub/Sub。',
     why:'用 SUBSCRIBE 接下单事件，消费者重启的那段时间没有人在线上，消息不会被补发，表现为丢单。区分信号是 Pub/Sub 没有积压和确认，Stream 用 XADD 留下的条目在重启后仍能被消费者组 XREADGROUP 领走。',
     example:'下单执行 XADD orders * user 1 amount 9 后消费者进程退出。重启后用消费者组 cg1 执行 XREADGROUP，仍能领到这条，处理完 XACK。同一时段用 PUBLISH 发出的踢人通知，离线的订阅者收不到，也没有 ID 可补。',
     task:'列出 Pub/Sub 和 Stream 在持久化、确认、积压上的差别。给下单和“踢下线”各选一种。',
@@ -132,6 +132,7 @@ const COVERAGE_OPS_17 = [
     points:['Pub/Sub 只投递给当时在线的订阅者','Stream 可积压、可确认、有消费者组','业务事件不要默认走 Pub/Sub'],
     deep:[
       {title:'频道不记得刚才那条',body:'SUBSCRIBE 当时不在线，重启后没有历史可补。Stream 的条目留到修剪为止，消费者组用 XACK 表示处理过。只做踢人或刷缓存，才用 Pub/Sub。'},
+      {title:'模式订阅',body:'PSUBSCRIBE 只按频道名 glob 匹配，仍无历史，见 redis-pubsub-pattern-subscribe。不要把 P* 当成可翻历史的查询。'},
       {title:'怎样自己验证',body:'先 XADD 一条下单再停掉消费者，重启后 XREADGROUP 应仍能领到并 XACK。同样停掉订阅者期间 PUBLISH 一条踢人消息，重启后的订阅者应拿不到那一条。'},
     ],
     refs:[['Redis：Streams','https://redis.io/docs/latest/develop/data-types/streams/'],['Redis：Pub/Sub','https://redis.io/docs/latest/develop/pubsub/']]
@@ -239,10 +240,10 @@ const COVERAGE_OPS_17 = [
     refs:[['MDN：aspect-ratio','https://developer.mozilla.org/en-US/docs/Web/CSS/aspect-ratio'],['web.dev：Optimize Cumulative Layout Shift','https://web.dev/articles/optimize-cls']]
   },
   {
-    track:'java', group:'Java 基础', id:'java-record-accessor',
-    title:'record 按分量生成 equals，适合不可变数据，不适合当 JPA 实体',
+    track:'java', group:'Java 基础',     id:'java-record-accessor',
+    title:'record 按分量生成 equals，适合不可变数据，不适合当 JPA 实体（JDK 16）',
     prompt:'为什么把实体改成 record 之后，懒加载和脏检查都乱了？',
-    core:'record 声明分量后，编译器生成 final 字段、取值方法、按全部分量的 equals/hashCode/toString。它默认不可变，适合作为 API 返回、Map 键、模式匹配的数据载体。JPA 实体需要可变字段、无参构造、代理子类，和 record 的约束冲突。不要把 record 当“更短的 Lombok 实体”。分量名称就是取值方法名，没有 JavaBean 的 get 前缀也可以，但和部分框架的属性解析要核对。',
+    core:'record（JDK 16 定稿，JEP 395）声明分量后，编译器生成 final 字段、取值方法、按全部分量的 equals/hashCode/toString。它默认不可变，适合作为 API 返回、Map 键、模式匹配的数据载体。JPA 实体需要可变字段、无参构造、代理子类，和 record 的约束冲突。不要把 record 当“更短的 Lombok 实体”。分量名称就是取值方法名，没有 JavaBean 的 get 前缀也可以，但和部分框架的属性解析要核对。',
     why:'把订单实体改成 record 图省事，Hibernate 要无参构造和可写字段，代理也做不出来，懒加载和脏检查对不上。区分信号是两个 Money(100,"CNY") 按分量相等，而订单实体仍必须是可被代理的 class。',
     example:'public record Money(long cents, String currency) {}。new Money(100,"CNY") 与另一个同分量实例 equals 为 true，取值方法就是 cents() 而不是 getCents()。把 OrderEntity 改成 record 后，会话无法按可写字段做脏检查，也不能生成所需的代理子类。',
     task:'写一个 record 看生成的 equals。再列出 JPA 实体需要、record 默认没有的三项能力。',

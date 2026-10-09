@@ -111,6 +111,10 @@ const COVERAGE_LESSONS = [
         body:'安全和幂等是方法的约定，不是某个框架自动加上的锁。查询不应靠它改状态。覆盖更新可以设计成幂等。扣款、下单必须另有业务键，否则 POST 重试就会重复生效。看表里的行数，不要只看方法名。'
       },
       {
+        title:'创建与正文类型',
+        body:'服务分配 id 的创建常用 POST，不要默认背成 PUT，见 http-create-post-not-put。正文是 JSON、表单还是 multipart，见 http-content-type-body、formdata-multipart-upload。'
+      },
+      {
         title:'怎样自己验证',
         body:'对同一资源连续 DELETE 两次，记录两次状态码和资源是否还在。再对创建订单连续 POST 两次相同正文：没有幂等键时应有两张单，加上唯一键后应只剩一张并返回同一结果。'
       }
@@ -155,6 +159,10 @@ const COVERAGE_LESSONS = [
       {
         title:'事件给别人',
         body:'storage 通知的是共享这个源的其他文档。写入者不会收到自己的事件。只在监听里更新界面，当前标签就会停在旧状态。写入函数里要同步改自己的那一份。写入和收事件是两个文档。'
+      },
+      {
+        title:'和 session / IndexedDB',
+        body:'跨标签共享用 localStorage。只跟当前标签的向导进度用 sessionStorage，见 session-storage-tab-only。结构化大数据与索引用 IndexedDB，见 indexeddb-when-needed。不要把三种都当成“浏览器缓存”一个词。'
       },
       {
         title:'怎样自己验证',
@@ -330,14 +338,14 @@ const COVERAGE_LESSONS = [
     track:'java',
     group:'Java 基础',
     id:'java-stream',
-    title:'Stream 懒执行与副作用',
+    title:'Stream 懒执行与副作用（JDK 8）',
     prompt:'只调用 map 却没有终端操作，转换函数会运行吗？',
-    core:'Java Stream 的中间操作形成延迟执行的流水线，通常在终端操作启动后才按需要处理元素。实现可进行优化；不要依赖中间操作中的副作用一定运行或运行固定次数。顺序是：中间操作先串成流水线，终端操作才开始拉元素，每个元素按需经过前面的步骤。边界是：没有终端操作，map 里的函数不会运行。短路终端可能只处理前缀。并行流和实现优化还会改变副作用的次数和线程。要用 map 的返回值，不要用它去改外部变量。把日志打在 map 里只能观察拉动了多少元素，不能驱动业务。终端操作缺席时，这段日志一次都不会出现。findFirst 只拉动需要的前缀，后面的 map 可以一次都不执行。',
+    core:'Java Stream（JDK 8 起，`java.util.stream`）的中间操作形成延迟执行的流水线，通常在终端操作启动后才按需要处理元素。实现可进行优化；不要依赖中间操作中的副作用一定运行或运行固定次数。顺序是：中间操作先串成流水线，终端操作才开始拉元素，每个元素按需经过前面的步骤。边界是：没有终端操作，map 里的函数不会运行。短路终端可能只处理前缀。并行流和实现优化还会改变副作用的次数和线程。要用 map 的返回值，不要用它去改外部变量。把日志打在 map 里只能观察拉动了多少元素，不能驱动业务。终端操作缺席时，这段日志一次都不会出现。findFirst 只拉动需要的前缀，后面的 map 可以一次都不执行。',
     why:'错把 map 当成调用时就遍历，没有终端操作时转换函数一次都不跑，副作用也没发生。加上 findFirst 后又会以为每个元素都经过了 map。能分开的信号是：流水线有没有终端操作，以及它会不会短路。',
     example:'list 含 1、2、3。只调用 stream().map(x -> { log(x); return x * 2; })，日志不出现。接上 collect 后，1、2、3 都打印。把终端改成 findFirst，往往只打印 1。',
     task:'给 Stream 加 filter、map、findFirst 和日志，观察哪些元素真正经过各步。',
     answer:'filter、map 都是中间操作，在 findFirst 这种终端操作启动前不会为了副作用跑完整表。findFirst 短路，找到第一个符合的元素就可以停，后面的元素可能不经过 map。因此日志里出现的只是需要的前缀，不是整份列表。不要把中间操作写成必然会执行固定次数。',
-    keywords:'Java Stream lazy intermediate terminal short circuit 懒执行',
+    keywords:'Java Stream JDK 8 lazy intermediate terminal short circuit 懒执行',
     deep:[
       {
         title:'拉的时候才算',
@@ -376,9 +384,9 @@ const COVERAGE_LESSONS = [
     track:'java',
     group:'并发',
     id:'java-future-errors',
-    title:'CompletableFuture 的错误恢复',
+    title:'CompletableFuture 的错误恢复（JDK 8）',
     prompt:'whenComplete 打印了异常，后续阶段就恢复正常了吗？',
-    core:'whenComplete 主要观察完成结果，通常不会把原有异常替换成正常值；exceptionally 可从异常产生替代结果，handle 同时接收结果与异常并计算新结果。不同 *Async 方法还涉及执行器选择。顺序是：前一阶段异常完成后，whenComplete 能看见它但不替换它；exceptionally 只在异常时计算替代结果；handle 无论成败都计算一个新结果。边界是：打印栈不会改变完成状态。替代函数若再抛，链继续异常。*Async 变体把回调放到执行器上，默认执行器和业务池不是一回事，阻塞回调会占住池里的线程。下游是成功还是失败，看替代值有没有返回，不看日志里有没有栈。',
+    core:'CompletableFuture（**JDK 8**）里，whenComplete 主要观察完成结果，通常不会把原有异常替换成正常值；exceptionally 可从异常产生替代结果，handle 同时接收结果与异常并计算新结果。不同 *Async 方法还涉及执行器选择。顺序是：前一阶段异常完成后，whenComplete 能看见它但不替换它；exceptionally 只在异常时计算替代结果；handle 无论成败都计算一个新结果。边界是：打印栈不会改变完成状态。替代函数若再抛，链继续异常。*Async 变体把回调放到执行器上，默认执行器和业务池不是一回事，阻塞回调会占住池里的线程。下游是成功还是失败，看替代值有没有返回，不看日志里有没有栈。',
     why:'错把 whenComplete 里打印了异常当成链已经恢复，后面的 join 仍会抛出原来的失败。日志有了，结果没有。能分开的信号是：这一步是在观察异常，还是返回了一个替代值，看 join。',
     example:'supplyAsync 里抛出 IllegalStateException。whenComplete 打印了原因，接着 join 仍然抛出这个异常。在 whenComplete 前面接 exceptionally 返回 0 之后，join 得到 0，不再抛。',
     task:'分别用 whenComplete、exceptionally、handle 处理同一个失败 Future，观察下游完成状态。',
@@ -399,9 +407,9 @@ const COVERAGE_LESSONS = [
     track:'java',
     group:'并发',
     id:'java-concurrent-map',
-    title:'ConcurrentHashMap 的复合操作',
+    title:'ConcurrentHashMap 的复合操作（JDK 8 compute*）',
     prompt:'先 get，发现没有，再 put，就保证只初始化一次吗？',
-    core:'即使用线程安全 Map，两次独立操作之间也可能被其他线程插入。需要单个原子复合操作，如 putIfAbsent 或 ConcurrentHashMap.computeIfAbsent；映射函数应保持简短且避免递归修改同一 Map。顺序是：需要“缺席才计算并放入”时调用一次复合方法，让映射表在这个键上串行完成检查和插入。边界是：两次独立的 get 与 put 之间，别的线程可以插入。映射函数里再调用同一个 Map 的更新可能死锁或重入。函数返回 null 通常表示不放入，已经产生的副作用不会自动撤销。线程安全的单个方法不会把你外面的一段业务事务变原子。再统计创建次数。',
+    core:'即使用线程安全 Map，两次独立操作之间也可能被其他线程插入。需要单个原子复合操作，如 putIfAbsent 或 ConcurrentHashMap.computeIfAbsent（**JDK 8** 起的 compute 族）；映射函数应保持简短且避免递归修改同一 Map。顺序是：需要“缺席才计算并放入”时调用一次复合方法，让映射表在这个键上串行完成检查和插入。边界是：两次独立的 get 与 put 之间，别的线程可以插入。映射函数里再调用同一个 Map 的更新可能死锁或重入。函数返回 null 通常表示不放入，已经产生的副作用不会自动撤销。线程安全的单个方法不会把你外面的一段业务事务变原子。再统计创建次数。',
     why:'错把线程安全的 get 和 put 当成合在一起也安全，两个线程都看到缺键，就会各创建一次昂贵对象并互相覆盖。容器安全不等于业务复合操作安全。能分开的信号是：创建函数是不是放进了单次原子方法里。',
     example:'两个线程同时对同一键 get，都得到 null，然后都 new 一个连接并 put。创建函数跑了两次，Map 里只留下后放入的那一个，前一个连接被丢掉。改成 computeIfAbsent 后，这个键只创建一次。',
     task:'并发运行两个初始化任务，统计创建函数调用次数并检查最终值。',

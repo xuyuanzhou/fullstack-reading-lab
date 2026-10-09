@@ -86,8 +86,12 @@ export function AiNotePage() {
   const note = aiNote(section.key, noteKey)
   const { localReady } = useOutletContext<OutletCtx>()
   const progress = useProgress()
+  const progressId = note && note.section === section.key ? aiProgressId(note) : ''
+  useEffect(() => {
+    if (!progressId) return
+    progress.rememberAi(progressId)
+  }, [progressId, progress.rememberAi])
   if (!note || note.section !== section.key) return <Navigate to={`/ai/${section.key}`} replace />
-  const progressId = aiProgressId(note)
   const showL1 = ['retrieve-baseline', 'rag-pipeline', 'eval-runner', 'l1-kb'].includes(note.key)
   const showL2 = ['controlled-agent', 'ai-security', 'ai-serving', 'l2-agent'].includes(note.key)
   const showInterview = [
@@ -105,10 +109,6 @@ export function AiNotePage() {
         : note.key === 'mock-interview-design'
           ? [...AI_MOCK_INTERVIEWS[2].questionIds]
           : undefined
-
-  useEffect(() => {
-    progress.rememberAi(progressId)
-  }, [progressId, progress.rememberAi])
 
   return (
     <div className="article-shell">

@@ -106,10 +106,10 @@
       ],
       "CSS 与布局": [
         "css-box-sizing",
-        "css-cascade",
-        "css-stacking",
         "css-position-flow",
         "css-containing-block",
+        "css-cascade",
+        "css-stacking",
         "css-flex",
         "css-grid-flex",
         "css-container-query",
@@ -117,39 +117,46 @@
         "css-aspect-ratio"
       ],
       "浏览器": [
-        "html-form-semantics",
         "dom-event-flow",
         "html-dialog-modal",
-        "miniprogram-wx-if-not-wxif",
-        "html5-main-landmark",
+        "html-form-semantics",
         "html5-constraint-before-submit",
+        "formdata-multipart-upload",
+        "html5-main-landmark",
         "html5-media-play-promise",
         "html5-canvas-buffer",
         "html5-pushstate-popstate",
         "html5-dataset-string",
         "html5-picture-source",
         "html5-drop-prevent-default",
+        "miniprogram-wx-if-not-wxif",
         "browser-event-loop-frame",
         "rendering",
         "layout",
         "image-loading",
-        "http-cache",
-        "cors",
-        "cors-credentials-allowlist",
-        "html-form-cross-origin-navigate",
-        "fetch-abort",
         "browser-storage",
+        "session-storage-tab-only",
+        "indexeddb-when-needed",
+        "http-cache",
         "bfcache-pageshow",
         "service-worker-stale",
-        "same-origin-script-still-runs"
+        "cors",
+        "cors-credentials-allowlist",
+        "same-origin-script-still-runs",
+        "html-form-cross-origin-navigate",
+        "fetch-abort"
       ],
       "网络与安全": [
         "http-methods",
+        "http-create-post-not-put",
+        "http-content-type-body",
         "http-status-auth",
         "fetch-credentials",
         "api-error-contract",
         "http-patch-rfc5789",
         "http-503-unavailable",
+        "cookie-set-attributes",
+        "long-poll-vs-websocket",
         "ajax-page-update-not-a-library",
         "fetch-platform-client",
         "fetch-method-body-timeout",
@@ -256,29 +263,35 @@
       ],
       "语言基础": [
         "js-equality",
+        "es6-const-binding",
+        "es6-destructure-copies",
+        "es6-default-param-call-time",
+        "es6-template-expression",
         "js-scope-tdz",
         "js-this-callsite",
         "js-prototype-chain",
         "js-not-everything-object",
         "js-arrow-has-no-prototype",
-        "js-regex-dot-not-newline",
-        "js-json-stringify-not-equal",
-        "es6-const-binding",
-        "es6-destructure-copies",
+        "js-class-extends-super",
+        "js-private-field-hash",
         "es6-rest-spread-position",
-        "es6-default-param-call-time",
-        "es6-template-expression",
         "es6-map-set-keys",
-        "es6-for-of-iterable",
         "es6-symbol-key",
-        "closure",
+        "js-optional-chaining",
+        "js-proxy-get-set-trap",
         "eventloop",
+        "js-microtask-vs-macrotask",
         "promise-chain",
         "js-async-await",
+        "promise-all-and-settled",
         "esm",
-        "js-timer-fn-not-string",
+        "es6-for-of-iterable",
         "js-iteration-protocol",
-        "js-weakmap-lifetime"
+        "js-weakmap-lifetime",
+        "js-timer-fn-not-string",
+        "js-regex-dot-not-newline",
+        "js-json-stringify-not-equal",
+        "closure"
       ],
       "Node.js": [
         "node-http-cookie",
@@ -401,56 +414,55 @@
         "fs-ship-bar"
       ],
       "Java 基础": [
-        "java-interface-contract",
-        "java-generics",
-        "java-equals-contract",
-        "java-string-immutability",
-        "java-autoboxing-cache",
-        "java-calendar-not-singleton",
         "java-main-launcher",
-        "java-record-accessor",
-        "java-dcl-volatile-enum",
         "java-pass-by-value",
-        "java-long-atomic-on-64bit",
+        "java-autoboxing-cache",
+        "java-string-immutability",
+        "java-string-new-vs-pool",
+        "java-generics",
+        "java-record-accessor",
+        "java-equals-contract",
+        "java-interface-contract",
+        "java-polymorphism-not-only-extends",
         "java-protected-other-pkg-subclass",
         "java-anonymous-extends-or-implements",
-        "java-string-new-vs-pool",
-        "jdk-feature-release-six-months",
-        "java-polymorphism-not-only-extends",
-        "java-not-every-class-clone-serializable",
-        "java-ctor-implicit-super-noarg",
-        "java-raw-type-skips-checks",
         "java-default-class-wins-conflict",
-        "java-class-newinstance-deprecated",
-        "java-final-not-fifty-percent",
-        "java-shift-not-times-eight",
-        "java-stringbuilder-not-buffer",
-        "java-switch-arrow-no-fall",
+        "java-ctor-implicit-super-noarg",
         "java-exceptions",
-        "java-optional",
-        "java-finalize-not-guaranteed",
         "java-unchecked-not-must-catch",
         "java-runtime-ex-not-auto-caught",
+        "java-optional",
+        "java-finalize-not-guaranteed",
         "java-clone-exception-checked",
         "java-collections",
         "java-arraylist-linkedlist",
-        "java-stream",
-        "java-memory",
-        "java-enumeration-not-faster",
-        "java-arrays-aslist-fixed",
-        "hashmap-treeify-need-capacity",
-        "chm-iterator-weakly-consistent",
-        "hashmap-initial-16-not-max",
-        "chm-jdk8-not-segment-lock",
-        "java-vector-cme-not-because-sync",
         "java-stack-prefer-deque",
-        "java-foreach-remove-cme",
         "java-set-not-always-sorted",
         "java-collection-vs-collections",
+        "java-arrays-aslist-fixed",
+        "java-stream",
+        "java-foreach-remove-cme",
+        "hashmap-initial-16-not-max",
+        "hashmap-treeify-need-capacity",
+        "chm-jdk8-not-segment-lock",
+        "chm-iterator-weakly-consistent",
+        "java-vector-cme-not-because-sync",
+        "java-enumeration-not-faster",
+        "java-stringbuilder-not-buffer",
         "java-time-instant",
         "java-charset-default",
         "java-string-strip-not-trim",
-        "java-pattern-dot-not-nl"
+        "java-pattern-dot-not-nl",
+        "java-calendar-not-singleton",
+        "java-dcl-volatile-enum",
+        "java-long-atomic-on-64bit",
+        "jdk-feature-release-six-months",
+        "java-not-every-class-clone-serializable",
+        "java-raw-type-skips-checks",
+        "java-class-newinstance-deprecated",
+        "java-final-not-fifty-percent",
+        "java-shift-not-times-eight",
+        "java-switch-arrow-no-fall"
       ],
       "算法": [
         "complexity",
@@ -469,6 +481,7 @@
       "JVM": [
         "jvm-areas",
         "java-classloading",
+        "java-memory",
         "jvm-method-area-metaspace",
         "jvm-platform-classloader-not-ext",
         "jvm-jmm-not-runtime-areas",
@@ -523,6 +536,7 @@
         "mq-backpressure-producer",
         "mq-dlq-backlog",
         "mq-consume-idempotent-key",
+        "mq-delete-not-always-idempotent",
         "mq-backlog-expand-queues",
         "kafka-model",
         "kafka-producer-acks",
@@ -572,7 +586,11 @@
       "数据库": [
         "mysql-null-comparison",
         "sql-outer-join-where",
+        "mysql-inner-join-match",
+        "mysql-join-ban-not-absolute",
+        "mysql-or-not-must-become-in",
         "mysql-where-having",
+        "mysql-group-by-having",
         "mysql-union-distinct",
         "mysql-second-nf",
         "mysql-select-star",
@@ -583,6 +601,8 @@
         "schema-migration",
         "mysql-datetime-vs-timestamp",
         "mysql-float-ieee-not-8-digits",
+        "mysql-split-not-at-ten-million",
+        "mysql-view-is-stored-query",
         "table-design-from-facts",
         "table-row-one-grain",
         "table-constraint-holds-rule",
@@ -605,6 +625,7 @@
         "mongo-multi-doc-txn",
         "mongo-bson-use-lazy",
         "mysql-acid-c-is-consistency",
+        "nosql-label-not-eventual",
         "mysql-myisam-innodb",
         "mysql-innodb-tablespace",
         "mysql-binlog-format",
@@ -676,6 +697,9 @@
       ],
       "缓存": [
         "redis-data-types",
+        "redis-hash-field-update",
+        "redis-zset-rank-range",
+        "redis-hyperloglog-approx",
         "cache-aside-steps",
         "redis-big-hot-key",
         "redis-expire",
@@ -696,8 +720,10 @@
         "redis-cluster-cli-not-trib",
         "redis-proxy-hash-not-cluster",
         "redis-save-blocks-bgsave",
+        "redis-cluster-incr-not-five-steps",
         "redis-lua-atomic",
-        "redis-stream-vs-pubsub"
+        "redis-stream-vs-pubsub",
+        "redis-pubsub-pattern-subscribe"
       ],
       "Nginx": [
         "nginx-request-phases",
@@ -708,6 +734,7 @@
         "nginx-proxy-host",
         "nginx-ip-hash-session",
         "nginx-forward-not-direct",
+        "cdn-not-just-reverse-proxy-cache",
         "nginx-static-cache-headers",
         "nginx-limit-req",
         "nginx-buffer-body",
@@ -835,6 +862,7 @@
         "sca-nacos-intro",
         "sca-nacos-register",
         "sca-nacos-config",
+        "config-center-poll-needs-watch",
         "sca-nacos-ephemeral",
         "sca-nacos-shared-config",
         "sca-deregister-shutdown",
@@ -864,12 +892,17 @@
       ],
       "分布式与高并发": [
         "distributed-cap",
+        "base-slogan-not-ban-tx",
         "distributed-consistency-three-words",
         "distributed-xa",
         "distributed-outbox",
         "distributed-lock",
+        "dist-lock-owner-not-mac-pid-tid",
+        "dist-lock-reentrant-not-deadlock-cure",
         "zk-linearizable-not-realtime",
         "redis-lock-setnx-expire-race",
+        "redis-lock-getset-wall-clock",
+        "mysql-for-update-not-dist-lease",
         "distributed-one-db-first",
         "distributed-tx-not-cover-rpc",
         "distributed-xid-must-travel",
@@ -881,10 +914,16 @@
         "distributed-reconcile-last",
         "distributed-token-bucket",
         "distributed-seckill",
+        "seckill-js-needs-cache-control",
+        "seckill-client-gate-not-enough",
+        "distributed-mq-not-erase-invariant",
         "distributed-consistent-hash",
         "distributed-bloom",
         "distributed-cache",
+        "lru-capacity-not-ttl-expire",
         "distributed-kafka-order",
+        "dns-lb-not-just-round-robin",
+        "http-redirect-lb-two-hops",
         "distributed-clock-skew",
         "distributed-unique-id",
         "distributed-bulkhead",
@@ -925,47 +964,63 @@
       ],
       "语言基础": [
         {
-          "title": "语法",
+          "title": "值与绑定",
           "ids": [
             "js-equality",
+            "es6-const-binding",
+            "es6-destructure-copies",
+            "es6-default-param-call-time",
+            "es6-template-expression"
+          ]
+        },
+        {
+          "title": "作用域与对象",
+          "ids": [
             "js-scope-tdz",
             "js-this-callsite",
             "js-prototype-chain",
             "js-not-everything-object",
             "js-arrow-has-no-prototype",
-            "js-regex-dot-not-newline",
-            "js-json-stringify-not-equal"
+            "js-class-extends-super",
+            "js-private-field-hash"
           ]
         },
         {
-          "title": "ES6",
+          "title": "语法扩展",
           "ids": [
-            "es6-const-binding",
-            "es6-destructure-copies",
             "es6-rest-spread-position",
-            "es6-default-param-call-time",
-            "es6-template-expression",
             "es6-map-set-keys",
-            "es6-for-of-iterable",
-            "es6-symbol-key"
+            "es6-symbol-key",
+            "js-optional-chaining",
+            "js-proxy-get-set-trap"
           ]
         },
         {
           "title": "异步",
           "ids": [
-            "closure",
             "eventloop",
+            "js-microtask-vs-macrotask",
             "promise-chain",
             "js-async-await",
-            "esm",
-            "js-timer-fn-not-string"
+            "promise-all-and-settled"
           ]
         },
         {
-          "title": "迭代",
+          "title": "模块与迭代",
           "ids": [
+            "esm",
+            "es6-for-of-iterable",
             "js-iteration-protocol",
             "js-weakmap-lifetime"
+          ]
+        },
+        {
+          "title": "易错",
+          "ids": [
+            "js-timer-fn-not-string",
+            "js-regex-dot-not-newline",
+            "js-json-stringify-not-equal",
+            "closure"
           ]
         }
       ],
@@ -994,20 +1049,30 @@
       ],
       "CSS 与布局": [
         {
-          "title": "盒模型",
+          "title": "盒模型与文档流",
           "ids": [
             "css-box-sizing",
+            "css-position-flow",
+            "css-containing-block"
+          ]
+        },
+        {
+          "title": "层叠",
+          "ids": [
             "css-cascade",
             "css-stacking"
           ]
         },
         {
-          "title": "布局",
+          "title": "Flex 与 Grid",
           "ids": [
-            "css-position-flow",
-            "css-containing-block",
             "css-flex",
-            "css-grid-flex",
+            "css-grid-flex"
+          ]
+        },
+        {
+          "title": "现代特性",
+          "ids": [
             "css-container-query",
             "css-has-parent",
             "css-aspect-ratio"
@@ -1019,11 +1084,15 @@
           "title": "HTTP",
           "ids": [
             "http-methods",
+            "http-create-post-not-put",
+            "http-content-type-body",
             "http-status-auth",
             "fetch-credentials",
             "api-error-contract",
             "http-patch-rfc5789",
-            "http-503-unavailable"
+            "http-503-unavailable",
+            "cookie-set-attributes",
+            "long-poll-vs-websocket"
           ]
         },
         {
@@ -1054,25 +1123,26 @@
       ],
       "浏览器": [
         {
-          "title": "页面",
+          "title": "DOM 与事件",
           "ids": [
-            "html-form-semantics",
             "dom-event-flow",
-            "html-dialog-modal",
-            "miniprogram-wx-if-not-wxif"
+            "html-dialog-modal"
           ]
         },
         {
-          "title": "HTML5",
+          "title": "表单与 HTML",
           "ids": [
-            "html5-main-landmark",
+            "html-form-semantics",
             "html5-constraint-before-submit",
+            "formdata-multipart-upload",
+            "html5-main-landmark",
             "html5-media-play-promise",
             "html5-canvas-buffer",
             "html5-pushstate-popstate",
             "html5-dataset-string",
             "html5-picture-source",
-            "html5-drop-prevent-default"
+            "html5-drop-prevent-default",
+            "miniprogram-wx-if-not-wxif"
           ]
         },
         {
@@ -1085,17 +1155,24 @@
           ]
         },
         {
-          "title": "缓存",
+          "title": "存储与缓存",
           "ids": [
+            "browser-storage",
+            "session-storage-tab-only",
+            "indexeddb-when-needed",
             "http-cache",
+            "bfcache-pageshow",
+            "service-worker-stale"
+          ]
+        },
+        {
+          "title": "同源与跨域",
+          "ids": [
             "cors",
             "cors-credentials-allowlist",
+            "same-origin-script-still-runs",
             "html-form-cross-origin-navigate",
-            "fetch-abort",
-            "browser-storage",
-            "bfcache-pageshow",
-            "service-worker-stale",
-            "same-origin-script-still-runs"
+            "fetch-abort"
           ]
         }
       ],
@@ -1496,43 +1573,37 @@
       ],
       "Java 基础": [
         {
-          "title": "类型",
+          "title": "入门与类型",
+          "ids": [
+            "java-main-launcher",
+            "java-pass-by-value",
+            "java-autoboxing-cache",
+            "java-string-immutability",
+            "java-string-new-vs-pool",
+            "java-generics",
+            "java-record-accessor",
+            "java-equals-contract"
+          ]
+        },
+        {
+          "title": "面向对象",
           "ids": [
             "java-interface-contract",
-            "java-generics",
-            "java-equals-contract",
-            "java-string-immutability",
-            "java-autoboxing-cache",
-            "java-calendar-not-singleton",
-            "java-main-launcher",
-            "java-record-accessor",
-            "java-dcl-volatile-enum",
-            "java-pass-by-value",
-            "java-long-atomic-on-64bit",
+            "java-polymorphism-not-only-extends",
             "java-protected-other-pkg-subclass",
             "java-anonymous-extends-or-implements",
-            "java-string-new-vs-pool",
-            "jdk-feature-release-six-months",
-            "java-polymorphism-not-only-extends",
-            "java-not-every-class-clone-serializable",
-            "java-ctor-implicit-super-noarg",
-            "java-raw-type-skips-checks",
             "java-default-class-wins-conflict",
-            "java-class-newinstance-deprecated",
-            "java-final-not-fifty-percent",
-            "java-shift-not-times-eight",
-            "java-stringbuilder-not-buffer",
-            "java-switch-arrow-no-fall"
+            "java-ctor-implicit-super-noarg"
           ]
         },
         {
           "title": "异常",
           "ids": [
             "java-exceptions",
-            "java-optional",
-            "java-finalize-not-guaranteed",
             "java-unchecked-not-must-catch",
             "java-runtime-ex-not-auto-caught",
+            "java-optional",
+            "java-finalize-not-guaranteed",
             "java-clone-exception-checked"
           ]
         },
@@ -1541,28 +1612,43 @@
           "ids": [
             "java-collections",
             "java-arraylist-linkedlist",
-            "java-stream",
-            "java-memory",
-            "java-enumeration-not-faster",
-            "java-arrays-aslist-fixed",
-            "hashmap-treeify-need-capacity",
-            "chm-iterator-weakly-consistent",
-            "hashmap-initial-16-not-max",
-            "chm-jdk8-not-segment-lock",
-            "java-vector-cme-not-because-sync",
             "java-stack-prefer-deque",
-            "java-foreach-remove-cme",
             "java-set-not-always-sorted",
-            "java-collection-vs-collections"
+            "java-collection-vs-collections",
+            "java-arrays-aslist-fixed",
+            "java-stream",
+            "java-foreach-remove-cme",
+            "hashmap-initial-16-not-max",
+            "hashmap-treeify-need-capacity",
+            "chm-jdk8-not-segment-lock",
+            "chm-iterator-weakly-consistent",
+            "java-vector-cme-not-because-sync",
+            "java-enumeration-not-faster"
           ]
         },
         {
-          "title": "时间",
+          "title": "字符串与时间",
           "ids": [
+            "java-stringbuilder-not-buffer",
             "java-time-instant",
             "java-charset-default",
             "java-string-strip-not-trim",
             "java-pattern-dot-not-nl"
+          ]
+        },
+        {
+          "title": "易错",
+          "ids": [
+            "java-calendar-not-singleton",
+            "java-dcl-volatile-enum",
+            "java-long-atomic-on-64bit",
+            "jdk-feature-release-six-months",
+            "java-not-every-class-clone-serializable",
+            "java-raw-type-skips-checks",
+            "java-class-newinstance-deprecated",
+            "java-final-not-fifty-percent",
+            "java-shift-not-times-eight",
+            "java-switch-arrow-no-fall"
           ]
         }
       ],
@@ -1765,6 +1851,9 @@
           "title": "键与类型",
           "ids": [
             "redis-data-types",
+            "redis-hash-field-update",
+            "redis-zset-rank-range",
+            "redis-hyperloglog-approx",
             "cache-aside-steps",
             "redis-big-hot-key",
             "redis-expire",
@@ -1789,14 +1878,16 @@
             "redis-aof-keeps-rdb",
             "redis-cluster-cli-not-trib",
             "redis-proxy-hash-not-cluster",
-            "redis-save-blocks-bgsave"
+            "redis-save-blocks-bgsave",
+            "redis-cluster-incr-not-five-steps"
           ]
         },
         {
           "title": "脚本",
           "ids": [
             "redis-lua-atomic",
-            "redis-stream-vs-pubsub"
+            "redis-stream-vs-pubsub",
+            "redis-pubsub-pattern-subscribe"
           ]
         }
       ],
@@ -1811,7 +1902,8 @@
             "nginx-load-module",
             "nginx-proxy-host",
             "nginx-ip-hash-session",
-            "nginx-forward-not-direct"
+            "nginx-forward-not-direct",
+            "cdn-not-just-reverse-proxy-cache"
           ]
         },
         {
@@ -1909,7 +2001,11 @@
           "ids": [
             "mysql-null-comparison",
             "sql-outer-join-where",
+            "mysql-inner-join-match",
+            "mysql-join-ban-not-absolute",
+            "mysql-or-not-must-become-in",
             "mysql-where-having",
+            "mysql-group-by-having",
             "mysql-union-distinct",
             "mysql-second-nf",
             "mysql-select-star",
@@ -1919,7 +2015,9 @@
             "mysql-fk-redundancy",
             "schema-migration",
             "mysql-datetime-vs-timestamp",
-            "mysql-float-ieee-not-8-digits"
+            "mysql-float-ieee-not-8-digits",
+            "mysql-split-not-at-ten-million",
+            "mysql-view-is-stored-query"
           ]
         },
         {
@@ -1961,7 +2059,8 @@
             "mysql-upsert",
             "mongo-multi-doc-txn",
             "mongo-bson-use-lazy",
-            "mysql-acid-c-is-consistency"
+            "mysql-acid-c-is-consistency",
+            "nosql-label-not-eventual"
           ]
         },
         {
@@ -2026,6 +2125,7 @@
           "ids": [
             "jvm-areas",
             "java-classloading",
+            "java-memory",
             "jvm-method-area-metaspace",
             "jvm-platform-classloader-not-ext",
             "jvm-jmm-not-runtime-areas",
@@ -2110,6 +2210,7 @@
             "mq-backpressure-producer",
             "mq-dlq-backlog",
             "mq-consume-idempotent-key",
+            "mq-delete-not-always-idempotent",
             "mq-backlog-expand-queues"
           ]
         },
@@ -2172,6 +2273,7 @@
             "sca-nacos-intro",
             "sca-nacos-register",
             "sca-nacos-config",
+            "config-center-poll-needs-watch",
             "sca-nacos-ephemeral",
             "sca-nacos-shared-config",
             "sca-deregister-shutdown",
@@ -2267,12 +2369,17 @@
           "title": "一致性",
           "ids": [
             "distributed-cap",
+            "base-slogan-not-ban-tx",
             "distributed-consistency-three-words",
             "distributed-xa",
             "distributed-outbox",
             "distributed-lock",
+            "dist-lock-owner-not-mac-pid-tid",
+            "dist-lock-reentrant-not-deadlock-cure",
             "zk-linearizable-not-realtime",
-            "redis-lock-setnx-expire-race"
+            "redis-lock-setnx-expire-race",
+            "redis-lock-getset-wall-clock",
+            "mysql-for-update-not-dist-lease"
           ]
         },
         {
@@ -2294,10 +2401,16 @@
           "ids": [
             "distributed-token-bucket",
             "distributed-seckill",
+            "seckill-js-needs-cache-control",
+            "seckill-client-gate-not-enough",
+            "distributed-mq-not-erase-invariant",
             "distributed-consistent-hash",
             "distributed-bloom",
             "distributed-cache",
-            "distributed-kafka-order"
+            "lru-capacity-not-ttl-expire",
+            "distributed-kafka-order",
+            "dns-lb-not-just-round-robin",
+            "http-redirect-lb-two-hops"
           ]
         },
         {
@@ -2458,7 +2571,64 @@
         "对象比较的是引用身份，不是字段内容",
         "Object.is 与 === 的差别在 NaN 和正负零",
         "effect 依赖应放稳定的原始值，而不是每次新建的对象"
-      ]
+      ],
+      "since": "ES2015"
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
+      "id": "es6-const-binding",
+      "title": "const 锁住的是绑定，对象里的字段仍能改",
+      "prompt": "为什么 const 声明的订单改了金额，运行却没有报错？",
+      "keywords": "const 绑定 Object.freeze 重新赋值",
+      "points": [
+        "const 不能重新赋值，声明时必须有初值",
+        "对象字段仍可通过原绑定修改",
+        "Object.freeze 只冻结当前这一层"
+      ],
+      "since": "ES2015"
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
+      "id": "es6-destructure-copies",
+      "title": "解构取出的是当时的值，缺省才用默认值",
+      "prompt": "为什么从对象里解构出 price 之后，再改对象，变量却不变？",
+      "keywords": "解构 默认值 undefined null 重命名",
+      "points": [
+        "解构放进新绑定的是当时读到的值",
+        "对象字段取出的是引用，原始值不会跟着变",
+        "默认值只在结果为 undefined 时生效"
+      ],
+      "since": "ES2015"
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
+      "id": "es6-default-param-call-time",
+      "title": "默认参数在调用时求值，前面的形参后面可以用",
+      "prompt": "为什么默认参数写成一个数组，每次没传时都是新的？",
+      "keywords": "默认参数 undefined 调用时求值 TDZ",
+      "points": [
+        "默认表达式在每次需要时重新求值",
+        "只有 undefined 会触发默认值",
+        "后面的形参可以读取前面的形参"
+      ],
+      "since": "ES2015"
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
+      "id": "es6-template-expression",
+      "title": "模板字符串会把表达式收成字符串",
+      "prompt": "为什么反引号里放一个对象，页面上出现的是 [object Object]？",
+      "keywords": "模板字符串 ToString 标签模板",
+      "points": [
+        "普通模板把插值收成字符串再拼接",
+        "对象、null、undefined 各有固定的字符串结果",
+        "标签模板拿到原文片段和未拼接的值"
+      ],
+      "since": "ES2015"
     },
     {
       "track": "frontend",
@@ -2471,7 +2641,8 @@
         "let 和 const 是块级作用域",
         "声明前访问 let/const 会进入暂时性死区",
         "var 提升后在赋值前是 undefined"
-      ]
+      ],
+      "since": "ES2015"
     },
     {
       "track": "frontend",
@@ -2497,7 +2668,8 @@
         "class 方法放在构造函数的 prototype 上",
         "实例字段在对象自身，会挡住同名原型属性",
         "instanceof 沿原型链判断，直到 null"
-      ]
+      ],
+      "since": "ES2015"
     },
     {
       "track": "frontend",
@@ -2523,6 +2695,242 @@
         "箭头函数和 bind 函数没有 prototype，不能 new",
         "Function.prototype 是函数，不是普通对象实例",
         "实例链到构造函数的 prototype，不要靠 __proto__ 口诀"
+      ],
+      "since": "ES2015"
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
+      "id": "js-class-extends-super",
+      "title": "extends 接上原型链，构造里先 super 再碰 this",
+      "prompt": "为什么子类构造函数里先写 this.name = x 会直接报错？",
+      "keywords": "class extends super 原型链",
+      "points": [
+        "extends 连接的是原型链，不是粘贴源码",
+        "派生构造必须先 super 再使用 this",
+        "super.method 调的是父类原型方法"
+      ],
+      "since": "ES2015"
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
+      "id": "js-private-field-hash",
+      "title": "# 私有字段只在类声明内可见，不是下划线约定",
+      "prompt": "为什么实例上写 obj.#x 或从外面 obj[\"#x\"] 都读不到？",
+      "keywords": "私有字段 private class TypeScript",
+      "points": [
+        "# 私有只在类体词法范围内可见",
+        "下划线只是约定，运行时可被读写",
+        "TS private 与 # 不是同一层约束"
+      ],
+      "since": "ES2022"
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
+      "id": "es6-rest-spread-position",
+      "title": "剩余参数收在末尾，展开用在调用和字面量里",
+      "prompt": "为什么同样三个点，有时得到一个数组，有时却把数组拆开？",
+      "keywords": "剩余参数 展开 浅拷贝 arguments",
+      "points": [
+        "剩余参数必须放在形参或解构的末尾",
+        "展开发生在调用和字面量里",
+        "对象和数组的展开都只复制一层"
+      ],
+      "since": "ES2015"
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
+      "id": "es6-map-set-keys",
+      "title": "Map 的键保持原值，对象的键会被收成字符串",
+      "prompt": "为什么用两个不同的对象当字典的键，后面的值盖掉了前面的？",
+      "keywords": "Map Set SameValueZero 对象键",
+      "points": [
+        "普通对象的键会被收成字符串或 Symbol",
+        "Map 按引用保存对象键，并保留插入顺序",
+        "Set 用 SameValueZero 去重，NaN 只留一个"
+      ],
+      "since": "ES2015"
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
+      "id": "es6-symbol-key",
+      "title": "Symbol 是不会和字符串键撞名的键",
+      "prompt": "为什么加了一个描述也叫 id 的 Symbol，Object.keys 却看不见它？",
+      "keywords": "Symbol Symbol.for 计算属性 Object.keys",
+      "points": [
+        "每次 Symbol() 都是新值，描述不参与相等",
+        "Symbol 键不会出现在 Object.keys 和 JSON 里",
+        "Symbol.for 按字符串在全局表里复用同一个值"
+      ],
+      "since": "ES2015"
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
+      "id": "js-optional-chaining",
+      "title": "可选链 ?. 只短路属性访问，不吞掉业务错误",
+      "prompt": "为什么写了 user?.profile?.name 之后，接口 500 也看不见了？",
+      "keywords": "可选链 optional chaining nullish 空值合并",
+      "points": [
+        "?. 只在 null/undefined 时短路",
+        "不能用来吞掉 fetch 或业务校验错误",
+        "常与 ?? 搭配，且 ?? 不把 0/false 当空"
+      ],
+      "since": "ES2020"
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
+      "id": "js-proxy-get-set-trap",
+      "title": "Proxy 拦截读写，不是给对象加一层“监听魔法”",
+      "prompt": "为什么用 Proxy 包住对象后，直接改原对象，代理上的 set 陷阱不跑？",
+      "keywords": "Proxy Reflect get set trap 响应式",
+      "points": [
+        "Proxy 返回新对象，不是原地给 target 装钩子",
+        "只有经代理的操作才进陷阱",
+        "用 Reflect 转发默认行为并带上 receiver"
+      ],
+      "since": "ES2015"
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
+      "id": "eventloop",
+      "title": "事件循环与微任务",
+      "prompt": "Promise.then 里的日志，为什么总在当前函数的日志之后、setTimeout 之前？",
+      "keywords": "事件循环 微任务 Promise Scheduler",
+      "points": [
+        "同步代码跑完才清空由此排入的微任务",
+        "微任务清空前，定时器任务不会开始",
+        "过多微任务会推迟浏览器绘制"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
+      "id": "js-microtask-vs-macrotask",
+      "title": "then 是微任务，setTimeout 是后续任务，绘制夹在中间",
+      "prompt": "为什么 Promise.then 里的日志总比 setTimeout(0) 早，有人却说两者都是“异步”？",
+      "keywords": "微任务 宏任务 eventloop Promise setTimeout",
+      "points": [
+        "then/await 续体是微任务",
+        "setTimeout 是后续任务",
+        "绘制在微任务清空之后才有机会"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
+      "id": "promise-chain",
+      "title": "Promise 链与错误传播",
+      "prompt": "catch 后面的 then 还会执行吗？",
+      "keywords": "Promise then catch async error",
+      "points": [
+        "then 和 catch 各自返回新的 Promise",
+        "catch 正常返回会让链回到完成态",
+        "业务失败要先变成拒绝，成功分支才不会误执行"
+      ],
+      "since": "ES2015"
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
+      "id": "js-async-await",
+      "title": "async/await 是 Promise 的顺序写法",
+      "prompt": "用了 await，函数会阻塞整页吗？",
+      "keywords": "async await Promise 事件循环",
+      "points": [
+        "async 函数返回 Promise",
+        "await 让出执行权，不冻住页面",
+        "无依赖的请求不要串成一条 await 链"
+      ],
+      "since": "ES2017"
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
+      "id": "promise-all-and-settled",
+      "title": "Promise.all 一拒绝就全停；要等全部结束用 allSettled",
+      "prompt": "三个并行请求里有一个 500，为什么另外两个的结果也拿不到？",
+      "keywords": "Promise.all Promise.allSettled race finally",
+      "points": [
+        "all 在首个拒绝时整段拒绝",
+        "allSettled 等全部落定并带上每项状态",
+        "并行汇总不要改回串行 await"
+      ],
+      "since": "ES2020"
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
+      "id": "esm",
+      "title": "ES Module 与运行时依赖",
+      "prompt": "import 是在运行时把另一个文件的源码贴进来吗？",
+      "keywords": "ESM import export bundler Vite",
+      "points": [
+        "import 建立的是模块绑定，不是源码粘贴",
+        "依赖图决定加载和分包",
+        "循环依赖时可能读到尚未初始化的绑定"
+      ],
+      "since": "ES2015"
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
+      "id": "es6-for-of-iterable",
+      "title": "for...of 走可迭代协议，for...in 走可枚举的键",
+      "prompt": "为什么 for...in 遍历数组会得到下标，还会带上原型上的名字？",
+      "keywords": "for...of for...in 迭代器 Object.keys",
+      "points": [
+        "for...of 消费迭代器给出的值",
+        "for...in 枚举字符串键，含原型链",
+        "普通对象不能 for...of，除非自己实现迭代器"
+      ],
+      "since": "ES2015"
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
+      "id": "js-iteration-protocol",
+      "title": "for-of 走的是可迭代协议，不是下标从 0 数到 length",
+      "prompt": "为什么有的对象能 for-of，有的却报不是 iterable？",
+      "keywords": "JavaScript iterable iterator Symbol.iterator for-of",
+      "points": [
+        "可迭代对象提供 @@iterator",
+        "for-of 和展开走同一套协议",
+        "普通对象默认不可 for-of"
+      ],
+      "since": "ES2015"
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
+      "id": "js-weakmap-lifetime",
+      "title": "WeakMap 的键随对象一起被回收，不能枚举",
+      "prompt": "把 DOM 节点当 Map 的键缓存数据，节点删了为什么内存还在？",
+      "keywords": "WeakMap 弱引用 垃圾回收 Map DOM 泄漏",
+      "points": [
+        "Map 强引用键，可能挡住回收",
+        "WeakMap 的键可随对象一起消失",
+        "WeakMap 不可遍历，不能当普通字典"
+      ],
+      "since": "ES2015"
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
+      "id": "js-timer-fn-not-string",
+      "title": "定时器第一个参数传函数，不要传代码字符串",
+      "prompt": "为什么旧图还写 setInterval(\"clock()\", 1000)，现在一跑就被规范或打包拦住？",
+      "keywords": "setTimeout setInterval eval CSP clearInterval",
+      "points": [
+        "定时器第一个参数应是函数",
+        "字符串形式会再求值，类似 eval",
+        "clear 必须用同一次调用返回的句柄"
       ]
     },
     {
@@ -2554,110 +2962,6 @@
     {
       "track": "frontend",
       "group": "语言基础",
-      "id": "es6-const-binding",
-      "title": "const 锁住的是绑定，对象里的字段仍能改",
-      "prompt": "为什么 const 声明的订单改了金额，运行却没有报错？",
-      "keywords": "const 绑定 Object.freeze 重新赋值",
-      "points": [
-        "const 不能重新赋值，声明时必须有初值",
-        "对象字段仍可通过原绑定修改",
-        "Object.freeze 只冻结当前这一层"
-      ]
-    },
-    {
-      "track": "frontend",
-      "group": "语言基础",
-      "id": "es6-destructure-copies",
-      "title": "解构取出的是当时的值，缺省才用默认值",
-      "prompt": "为什么从对象里解构出 price 之后，再改对象，变量却不变？",
-      "keywords": "解构 默认值 undefined null 重命名",
-      "points": [
-        "解构放进新绑定的是当时读到的值",
-        "对象字段取出的是引用，原始值不会跟着变",
-        "默认值只在结果为 undefined 时生效"
-      ]
-    },
-    {
-      "track": "frontend",
-      "group": "语言基础",
-      "id": "es6-rest-spread-position",
-      "title": "剩余参数收在末尾，展开用在调用和字面量里",
-      "prompt": "为什么同样三个点，有时得到一个数组，有时却把数组拆开？",
-      "keywords": "剩余参数 展开 浅拷贝 arguments",
-      "points": [
-        "剩余参数必须放在形参或解构的末尾",
-        "展开发生在调用和字面量里",
-        "对象和数组的展开都只复制一层"
-      ]
-    },
-    {
-      "track": "frontend",
-      "group": "语言基础",
-      "id": "es6-default-param-call-time",
-      "title": "默认参数在调用时求值，前面的形参后面可以用",
-      "prompt": "为什么默认参数写成一个数组，每次没传时都是新的？",
-      "keywords": "默认参数 undefined 调用时求值 TDZ",
-      "points": [
-        "默认表达式在每次需要时重新求值",
-        "只有 undefined 会触发默认值",
-        "后面的形参可以读取前面的形参"
-      ]
-    },
-    {
-      "track": "frontend",
-      "group": "语言基础",
-      "id": "es6-template-expression",
-      "title": "模板字符串会把表达式收成字符串",
-      "prompt": "为什么反引号里放一个对象，页面上出现的是 [object Object]？",
-      "keywords": "模板字符串 ToString 标签模板",
-      "points": [
-        "普通模板把插值收成字符串再拼接",
-        "对象、null、undefined 各有固定的字符串结果",
-        "标签模板拿到原文片段和未拼接的值"
-      ]
-    },
-    {
-      "track": "frontend",
-      "group": "语言基础",
-      "id": "es6-map-set-keys",
-      "title": "Map 的键保持原值，对象的键会被收成字符串",
-      "prompt": "为什么用两个不同的对象当字典的键，后面的值盖掉了前面的？",
-      "keywords": "Map Set SameValueZero 对象键",
-      "points": [
-        "普通对象的键会被收成字符串或 Symbol",
-        "Map 按引用保存对象键，并保留插入顺序",
-        "Set 用 SameValueZero 去重，NaN 只留一个"
-      ]
-    },
-    {
-      "track": "frontend",
-      "group": "语言基础",
-      "id": "es6-for-of-iterable",
-      "title": "for...of 走可迭代协议，for...in 走可枚举的键",
-      "prompt": "为什么 for...in 遍历数组会得到下标，还会带上原型上的名字？",
-      "keywords": "for...of for...in 迭代器 Object.keys",
-      "points": [
-        "for...of 消费迭代器给出的值",
-        "for...in 枚举字符串键，含原型链",
-        "普通对象不能 for...of，除非自己实现迭代器"
-      ]
-    },
-    {
-      "track": "frontend",
-      "group": "语言基础",
-      "id": "es6-symbol-key",
-      "title": "Symbol 是不会和字符串键撞名的键",
-      "prompt": "为什么加了一个描述也叫 id 的 Symbol，Object.keys 却看不见它？",
-      "keywords": "Symbol Symbol.for 计算属性 Object.keys",
-      "points": [
-        "每次 Symbol() 都是新值，描述不参与相等",
-        "Symbol 键不会出现在 Object.keys 和 JSON 里",
-        "Symbol.for 按字符串在全局表里复用同一个值"
-      ]
-    },
-    {
-      "track": "frontend",
-      "group": "语言基础",
       "id": "closure",
       "title": "闭包、状态快照与函数组件",
       "prompt": "同一次点击里三次 setCount(count + 1)，为什么经常只加 1？",
@@ -2666,97 +2970,6 @@
         "事件函数看见的是创建它那次渲染的变量",
         "同一快照上的多次 count + 1 排入的是同一个新值",
         "函数式更新按队列里的最新值依次计算"
-      ]
-    },
-    {
-      "track": "frontend",
-      "group": "语言基础",
-      "id": "eventloop",
-      "title": "事件循环与微任务",
-      "prompt": "Promise.then 里的日志，为什么总在当前函数的日志之后、setTimeout 之前？",
-      "keywords": "事件循环 微任务 Promise Scheduler",
-      "points": [
-        "同步代码跑完才清空由此排入的微任务",
-        "微任务清空前，定时器任务不会开始",
-        "过多微任务会推迟浏览器绘制"
-      ]
-    },
-    {
-      "track": "frontend",
-      "group": "语言基础",
-      "id": "promise-chain",
-      "title": "Promise 链与错误传播",
-      "prompt": "catch 后面的 then 还会执行吗？",
-      "keywords": "Promise then catch async error",
-      "points": [
-        "then 和 catch 各自返回新的 Promise",
-        "catch 正常返回会让链回到完成态",
-        "业务失败要先变成拒绝，成功分支才不会误执行"
-      ]
-    },
-    {
-      "track": "frontend",
-      "group": "语言基础",
-      "id": "js-async-await",
-      "title": "async/await 是 Promise 的顺序写法",
-      "prompt": "用了 await，函数会阻塞整页吗？",
-      "keywords": "async await Promise 事件循环",
-      "points": [
-        "async 函数返回 Promise",
-        "await 让出执行权，不冻住页面",
-        "无依赖的请求不要串成一条 await 链"
-      ]
-    },
-    {
-      "track": "frontend",
-      "group": "语言基础",
-      "id": "esm",
-      "title": "ES Module 与运行时依赖",
-      "prompt": "import 是在运行时把另一个文件的源码贴进来吗？",
-      "keywords": "ESM import export bundler Vite",
-      "points": [
-        "import 建立的是模块绑定，不是源码粘贴",
-        "依赖图决定加载和分包",
-        "循环依赖时可能读到尚未初始化的绑定"
-      ]
-    },
-    {
-      "track": "frontend",
-      "group": "语言基础",
-      "id": "js-timer-fn-not-string",
-      "title": "定时器第一个参数传函数，不要传代码字符串",
-      "prompt": "为什么旧图还写 setInterval(\"clock()\", 1000)，现在一跑就被规范或打包拦住？",
-      "keywords": "setTimeout setInterval eval CSP clearInterval",
-      "points": [
-        "定时器第一个参数应是函数",
-        "字符串形式会再求值，类似 eval",
-        "clear 必须用同一次调用返回的句柄"
-      ]
-    },
-    {
-      "track": "frontend",
-      "group": "语言基础",
-      "id": "js-iteration-protocol",
-      "title": "for-of 走的是可迭代协议，不是下标从 0 数到 length",
-      "prompt": "为什么有的对象能 for-of，有的却报不是 iterable？",
-      "keywords": "JavaScript iterable iterator Symbol.iterator for-of",
-      "points": [
-        "可迭代对象提供 @@iterator",
-        "for-of 和展开走同一套协议",
-        "普通对象默认不可 for-of"
-      ]
-    },
-    {
-      "track": "frontend",
-      "group": "语言基础",
-      "id": "js-weakmap-lifetime",
-      "title": "WeakMap 的键随对象一起被回收，不能枚举",
-      "prompt": "把 DOM 节点当 Map 的键缓存数据，节点删了为什么内存还在？",
-      "keywords": "WeakMap 弱引用 垃圾回收 Map DOM 泄漏",
-      "points": [
-        "Map 强引用键，可能挡住回收",
-        "WeakMap 的键可随对象一起消失",
-        "WeakMap 不可遍历，不能当普通字典"
       ]
     },
     {
@@ -2802,27 +3015,29 @@
       "track": "frontend",
       "group": "TypeScript",
       "id": "ts-satisfies",
-      "title": "satisfies 核对形状，但不把字面量放宽成宽类型",
+      "title": "satisfies 核对形状，但不把字面量放宽成宽类型（TS 4.9）",
       "prompt": "给主题对象加 as Theme，为什么会丢掉“这个键一定是这几个颜色”？",
       "keywords": "TypeScript satisfies as 字面量 类型断言",
       "points": [
         "satisfies 检查值是否符合目标类型",
         "字面量的具体键和值类型可以保留",
         "satisfies 不做运行时校验"
-      ]
+      ],
+      "since": "TS 4.9"
     },
     {
       "track": "frontend",
       "group": "TypeScript",
       "id": "ts-module-resolution",
-      "title": "moduleResolution 决定怎么找到 .js，bundler 和 Node 不是同一套",
+      "title": "moduleResolution 决定怎么找到 .js，bundler 和 Node 不是同一套（TS 5.0）",
       "prompt": "本地能编译，CI 里却说找不到模块，常常差在哪一项配置？",
       "keywords": "TypeScript moduleResolution bundler Node exports tsconfig",
       "points": [
         "moduleResolution 决定导入如何落到文件",
         "bundler 和 Node 的查找规则不同",
         "路径别名要和打包器、测试共用"
-      ]
+      ],
+      "since": "TS 5.0 bundler"
     },
     {
       "track": "frontend",
@@ -2835,7 +3050,8 @@
         "react.dev 的类型示例是 TypeScript",
         "Flow 不是现行默认，遗留仓库可以暂留",
         "PropTypes 是运行时检查，不是编译期类型"
-      ]
+      ],
+      "since": "react.dev + TS"
     },
     {
       "track": "frontend",
@@ -2918,32 +3134,6 @@
     {
       "track": "frontend",
       "group": "CSS 与布局",
-      "id": "css-cascade",
-      "title": "层叠、权重与样式覆盖",
-      "prompt": "一个更长的选择器为什么有时仍赢不了另一条规则？",
-      "keywords": "CSS cascade specificity layer 选择器 权重 层叠",
-      "points": [
-        "后来的样式不一定生效，先看来源和是否重要",
-        "同一层里再比选择器权重，权重相同才看书写顺序",
-        "覆盖不生效时，按来源、权重、顺序这三步查"
-      ]
-    },
-    {
-      "track": "frontend",
-      "group": "CSS 与布局",
-      "id": "css-stacking",
-      "title": "层叠上下文与 z-index",
-      "prompt": "子元素 z-index:9999 为什么仍盖不过旁边的弹层？",
-      "keywords": "CSS stacking context z-index transform opacity 弹层",
-      "points": [
-        "z-index 只在所属的层叠上下文里比较",
-        "父元素新建上下文后，子元素的 z-index 出不去",
-        "弹层被挡住时，先找是谁建立了新的层叠上下文"
-      ]
-    },
-    {
-      "track": "frontend",
-      "group": "CSS 与布局",
       "id": "css-position-flow",
       "title": "定位如何脱离或锚定在文档流",
       "prompt": "子元素设 absolute 后，为什么有时相对父级，有时相对整页？",
@@ -2970,6 +3160,32 @@
     {
       "track": "frontend",
       "group": "CSS 与布局",
+      "id": "css-cascade",
+      "title": "层叠、权重与样式覆盖",
+      "prompt": "一个更长的选择器为什么有时仍赢不了另一条规则？",
+      "keywords": "CSS cascade specificity layer 选择器 权重 层叠",
+      "points": [
+        "后来的样式不一定生效，先看来源和是否重要",
+        "同一层里再比选择器权重，权重相同才看书写顺序",
+        "覆盖不生效时，按来源、权重、顺序这三步查"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "CSS 与布局",
+      "id": "css-stacking",
+      "title": "层叠上下文与 z-index",
+      "prompt": "子元素 z-index:9999 为什么仍盖不过旁边的弹层？",
+      "keywords": "CSS stacking context z-index transform opacity 弹层",
+      "points": [
+        "z-index 只在所属的层叠上下文里比较",
+        "父元素新建上下文后，子元素的 z-index 出不去",
+        "弹层被挡住时，先找是谁建立了新的层叠上下文"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "CSS 与布局",
       "id": "css-flex",
       "title": "Flex 项为什么不按 width 收缩",
       "prompt": "两个 width 相同的 Flex 子项，最终宽度为什么可能不同？",
@@ -2978,7 +3194,8 @@
         "flex-basis 是开始分配空间之前的起始尺寸",
         "grow 分多出来的空间，shrink 在空间不够时缩小",
         "需要一项能缩到比内容更窄时，设 min-width 为 0"
-      ]
+      ],
+      "since": "CSS Flexbox"
     },
     {
       "track": "frontend",
@@ -2992,7 +3209,8 @@
         "Flex 在一条主轴上分配空间",
         "Grid 同时定义行和列",
         "两种布局可以嵌套，互不替代"
-      ]
+      ],
+      "since": "CSS Grid"
     },
     {
       "track": "frontend",
@@ -3005,7 +3223,8 @@
         "媒体查询看视口，不看组件所在槽",
         "容器查询按最近容器的宽度改子布局",
         "没有容器祖先时，容器查询不会生效"
-      ]
+      ],
+      "since": "CSS CQ"
     },
     {
       "track": "frontend",
@@ -3018,7 +3237,8 @@
         ":has 让祖先按后代条件匹配",
         "选择器过宽会扩大失效范围",
         "视觉状态不能代替可访问的错误关联"
-      ]
+      ],
+      "since": "Selectors 4"
     },
     {
       "track": "frontend",
@@ -3031,20 +3251,8 @@
         "高宽比让未加载的图也占高度",
         "只设宽度时高度在加载前常是 0",
         "占位不代替压缩和懒加载"
-      ]
-    },
-    {
-      "track": "frontend",
-      "group": "浏览器",
-      "id": "html-form-semantics",
-      "title": "表单语义与可访问输入",
-      "prompt": "输入框旁边放一段文字，就等于有 label 吗？",
-      "keywords": "HTML form label fieldset legend accessibility semantic",
-      "points": [
-        "label 关联到控件后，点击文字才能聚焦输入",
-        "一组相关输入放进 fieldset，并用 legend 说明这组是什么",
-        "能用按钮提交表单时，不要用 div 模拟点击"
-      ]
+      ],
+      "since": "CSS Sizing 4"
     },
     {
       "track": "frontend",
@@ -3070,32 +3278,20 @@
         "showModal 打开模态并锁焦点",
         "背景变为惰性，Esc 触发 cancel",
         "自定义 div 蒙层很容易漏掉焦点循环"
-      ]
+      ],
+      "since": "HTML dialog"
     },
     {
       "track": "frontend",
       "group": "浏览器",
-      "id": "miniprogram-wx-if-not-wxif",
-      "title": "小程序条件渲染是 wx:if，不是 wx-if，也没有 window",
-      "prompt": "为什么把小程序和 Vue 的差别写成“wx-if / 没有 body / getUserInfo 拿 unionId”会过时？",
-      "keywords": "微信小程序 wx:if WXML rpx wx.login",
+      "id": "html-form-semantics",
+      "title": "表单语义与可访问输入",
+      "prompt": "输入框旁边放一段文字，就等于有 label 吗？",
+      "keywords": "HTML form label fieldset legend accessibility semantic",
       "points": [
-        "条件渲染是 wx:if 不是 wx-if",
-        "逻辑层没有 window/document",
-        "用户身份走 wx.login，getUserInfo 登录已废弃"
-      ]
-    },
-    {
-      "track": "frontend",
-      "group": "浏览器",
-      "id": "html5-main-landmark",
-      "title": "没有 hidden 的 main 一页只能有一个",
-      "prompt": "为什么页头、正文、页脚都用 div，读屏的地标列表里却是空的？",
-      "keywords": "HTML main section article nav 地标",
-      "points": [
-        "没有 hidden 的 main 一页只能有一个",
-        "section 要有标题，纯样式容器用 div",
-        "article 里的 header 属于这篇文章"
+        "label 关联到控件后，点击文字才能聚焦输入",
+        "一组相关输入放进 fieldset，并用 legend 说明这组是什么",
+        "能用按钮提交表单时，不要用 div 模拟点击"
       ]
     },
     {
@@ -3109,7 +3305,36 @@
         "校验失败时 submit 事件不会发生",
         "form.submit() 跳过校验和 submit 事件",
         "setCustomValidity 的空字符串才表示没有自定义错误"
-      ]
+      ],
+      "since": "HTML5"
+    },
+    {
+      "track": "frontend",
+      "group": "浏览器",
+      "id": "formdata-multipart-upload",
+      "title": "文件上传用 FormData，不要手写 multipart 边界",
+      "prompt": "为什么 fetch 上传文件时自己拼 Content-Type: multipart/... 反而传坏了？",
+      "keywords": "FormData multipart fetch 文件上传 Content-Type",
+      "points": [
+        "FormData 可携带字段与文件",
+        "fetch 会自动带 multipart boundary",
+        "禁止手写残缺的 multipart Content-Type"
+      ],
+      "since": "HTML5"
+    },
+    {
+      "track": "frontend",
+      "group": "浏览器",
+      "id": "html5-main-landmark",
+      "title": "没有 hidden 的 main 一页只能有一个",
+      "prompt": "为什么页头、正文、页脚都用 div，读屏的地标列表里却是空的？",
+      "keywords": "HTML main section article nav 地标",
+      "points": [
+        "没有 hidden 的 main 一页只能有一个",
+        "section 要有标题，纯样式容器用 div",
+        "article 里的 header 属于这篇文章"
+      ],
+      "since": "HTML5"
     },
     {
       "track": "frontend",
@@ -3122,7 +3347,8 @@
         "带声音的自动播放通常会被策略拒绝",
         "play() 返回 Promise，拒绝时要自己接住",
         "有 src 属性时子级 source 被忽略"
-      ]
+      ],
+      "since": "HTML5"
     },
     {
       "track": "frontend",
@@ -3135,7 +3361,8 @@
         "CSS 尺寸只拉伸位图，不改变缓冲",
         "设置 width 或 height 属性会清空画布",
         "画上的形状不是元素，命中要自己算"
-      ]
+      ],
+      "since": "HTML5"
     },
     {
       "track": "frontend",
@@ -3148,7 +3375,8 @@
         "pushState 不加载文档，也不触发 popstate",
         "popstate 发生在后退和前进",
         "url 必须同源，replaceState 不增加历史长度"
-      ]
+      ],
+      "since": "HTML5"
     },
     {
       "track": "frontend",
@@ -3161,7 +3389,8 @@
         "dataset 的值一律是字符串",
         "data-user-id 映射为 dataset.userId",
         "删除属性用 delete，缺失时读到 undefined"
-      ]
+      ],
+      "since": "HTML5"
     },
     {
       "track": "frontend",
@@ -3174,7 +3403,8 @@
         "picture 按顺序采用第一个匹配的 source",
         "type 或 media 不匹配就跳过",
         "w 描述符按 sizes 的所在位置选文件"
-      ]
+      ],
+      "since": "HTML5"
     },
     {
       "track": "frontend",
@@ -3187,6 +3417,20 @@
         "dragover 里要 preventDefault，drop 才会发生",
         "setData 和 getData 使用同一类型",
         "桌面文件在 drop 的 files 里读取"
+      ],
+      "since": "HTML5"
+    },
+    {
+      "track": "frontend",
+      "group": "浏览器",
+      "id": "miniprogram-wx-if-not-wxif",
+      "title": "小程序条件渲染是 wx:if，不是 wx-if，也没有 window",
+      "prompt": "为什么把小程序和 Vue 的差别写成“wx-if / 没有 body / getUserInfo 拿 unionId”会过时？",
+      "keywords": "微信小程序 wx:if WXML rpx wx.login",
+      "points": [
+        "条件渲染是 wx:if 不是 wx-if",
+        "逻辑层没有 window/document",
+        "用户身份走 wx.login，getUserInfo 登录已废弃"
       ]
     },
     {
@@ -3245,6 +3489,48 @@
     {
       "track": "frontend",
       "group": "浏览器",
+      "id": "browser-storage",
+      "title": "localStorage 与跨标签页状态",
+      "prompt": "同一页面调用 localStorage.setItem 后会收到自己的 storage 事件吗？",
+      "keywords": "localStorage storage event same origin tabs 本地存储",
+      "points": [
+        "localStorage 只属于当前源，不会自动跟着请求发出去",
+        "storage 事件只通知其他标签页，当前页收不到自己的修改",
+        "两个标签页同时改同一项时，后写入的覆盖先写入的"
+      ],
+      "since": "Web Storage"
+    },
+    {
+      "track": "frontend",
+      "group": "浏览器",
+      "id": "session-storage-tab-only",
+      "title": "sessionStorage 跟标签页走，不是跟用户账号走",
+      "prompt": "为什么换一个标签打开同站，刚才 sessionStorage 里的向导进度没了？",
+      "keywords": "sessionStorage localStorage 标签页 存储",
+      "points": [
+        "sessionStorage 按标签页隔离",
+        "localStorage 同源共享并靠 storage 事件",
+        "关标签会丢掉 session，不代表账号退出"
+      ],
+      "since": "Web Storage"
+    },
+    {
+      "track": "frontend",
+      "group": "浏览器",
+      "id": "indexeddb-when-needed",
+      "title": "IndexedDB 给结构化大数据，不是默认缓存层",
+      "prompt": "为什么一上来就用 IndexedDB 存三个开关，最后读写比 localStorage 还难查？",
+      "keywords": "IndexedDB localStorage 离线 缓存",
+      "points": [
+        "IndexedDB 适合结构化大数据与索引",
+        "少量偏好优先 Web Storage",
+        "HTTP/SW 缓存不是 IndexedDB 的别名"
+      ],
+      "since": "IndexedDB"
+    },
+    {
+      "track": "frontend",
+      "group": "浏览器",
       "id": "http-cache",
       "title": "HTTP 缓存与重新验证",
       "prompt": "Cache-Control: no-cache 是“完全不存”吗？",
@@ -3254,6 +3540,33 @@
         "带上 ETag 再请求，内容没变时服务器回 304",
         "HTML 要重新验证，带内容哈希的静态文件可以放久一点"
       ]
+    },
+    {
+      "track": "frontend",
+      "group": "浏览器",
+      "id": "bfcache-pageshow",
+      "title": "后退可能整页从往返缓存里拿出来，脚本不一定重跑",
+      "prompt": "用户点后退，为什么有的页面还是离开前的滚动位置，onLoad 却没再执行？",
+      "keywords": "bfcache pageshow persisted unload 往返缓存",
+      "points": [
+        "往返缓存恢复的是整页快照，不是重新请求文档",
+        "persisted 为真时 load 不会按新加载再走",
+        "恢复后要自己检查过期状态"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "浏览器",
+      "id": "service-worker-stale",
+      "title": "Service Worker 能先给旧缓存，更新代码不等于用户立刻看见",
+      "prompt": "部署了新前端，为什么有人还在用昨天的脚本？",
+      "keywords": "Service Worker cache-first skipWaiting 生命周期",
+      "points": [
+        "cache-first 会先给旧响应",
+        "新 Worker 默认等待旧页面关闭才激活",
+        "接口请求不要默认走静态缓存策略"
+      ],
+      "since": "Service Worker"
     },
     {
       "track": "frontend",
@@ -3284,6 +3597,19 @@
     {
       "track": "frontend",
       "group": "浏览器",
+      "id": "same-origin-script-still-runs",
+      "title": "同源策略拦的是读，不是“外域脚本不能执行”",
+      "prompt": "为什么把同源策略说成“只有百度自己的脚本才会被执行、浏览器拒收外域响应”会错？",
+      "keywords": "同源策略 CORS script src Origin",
+      "points": [
+        "同源看协议、主机和端口",
+        "跨源 script 会执行，权限是当前文档的源",
+        "CORS 常常是响应已回、脚本读不到，不是没发出请求"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "浏览器",
       "id": "html-form-cross-origin-navigate",
       "title": "表单可以跨源提交，CORS 拦的是脚本读响应",
       "prompt": "为什么一道题问“表单可以跨域吗”，用 CORS 的对错去答会偏？",
@@ -3305,59 +3631,8 @@
         "AbortController 取消网络工作",
         "旧响应覆盖新结果的竞态",
         "提交结果时核对请求身份"
-      ]
-    },
-    {
-      "track": "frontend",
-      "group": "浏览器",
-      "id": "browser-storage",
-      "title": "localStorage 与跨标签页状态",
-      "prompt": "同一页面调用 localStorage.setItem 后会收到自己的 storage 事件吗？",
-      "keywords": "localStorage storage event same origin tabs 本地存储",
-      "points": [
-        "localStorage 只属于当前源，不会自动跟着请求发出去",
-        "storage 事件只通知其他标签页，当前页收不到自己的修改",
-        "两个标签页同时改同一项时，后写入的覆盖先写入的"
-      ]
-    },
-    {
-      "track": "frontend",
-      "group": "浏览器",
-      "id": "bfcache-pageshow",
-      "title": "后退可能整页从往返缓存里拿出来，脚本不一定重跑",
-      "prompt": "用户点后退，为什么有的页面还是离开前的滚动位置，onLoad 却没再执行？",
-      "keywords": "bfcache pageshow persisted unload 往返缓存",
-      "points": [
-        "往返缓存恢复的是整页快照，不是重新请求文档",
-        "persisted 为真时 load 不会按新加载再走",
-        "恢复后要自己检查过期状态"
-      ]
-    },
-    {
-      "track": "frontend",
-      "group": "浏览器",
-      "id": "service-worker-stale",
-      "title": "Service Worker 能先给旧缓存，更新代码不等于用户立刻看见",
-      "prompt": "部署了新前端，为什么有人还在用昨天的脚本？",
-      "keywords": "Service Worker cache-first skipWaiting 生命周期",
-      "points": [
-        "cache-first 会先给旧响应",
-        "新 Worker 默认等待旧页面关闭才激活",
-        "接口请求不要默认走静态缓存策略"
-      ]
-    },
-    {
-      "track": "frontend",
-      "group": "浏览器",
-      "id": "same-origin-script-still-runs",
-      "title": "同源策略拦的是读，不是“外域脚本不能执行”",
-      "prompt": "为什么把同源策略说成“只有百度自己的脚本才会被执行、浏览器拒收外域响应”会错？",
-      "keywords": "同源策略 CORS script src Origin",
-      "points": [
-        "同源看协议、主机和端口",
-        "跨源 script 会执行，权限是当前文档的源",
-        "CORS 常常是响应已回、脚本读不到，不是没发出请求"
-      ]
+      ],
+      "since": "Fetch + AbortController"
     },
     {
       "track": "frontend",
@@ -3370,6 +3645,32 @@
         "安全方法与幂等方法",
         "方法语义和实际业务副作用",
         "失败重试与幂等键"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "网络与安全",
+      "id": "http-create-post-not-put",
+      "title": "创建资源默认用 POST，不要把插入背成 PUT",
+      "prompt": "为什么资料把「插入」写成 PUT，又把 REST 收成「只回 JSON」？",
+      "keywords": "HTTP POST PUT REST 创建 幂等 JSON",
+      "points": [
+        "PUT 是对已知 URI 的整份替换",
+        "服务分配 id 的创建常用 POST",
+        "JSON 前后端分离不等于 REST 方法语义"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "网络与安全",
+      "id": "http-content-type-body",
+      "title": "Content-Type 要和请求体格式一致",
+      "prompt": "为什么 body 是 JSON.stringify 的结果，却仍被服务端当成表单解析失败？",
+      "keywords": "Content-Type JSON FormData URLSearchParams fetch",
+      "points": [
+        "Content-Type 必须匹配正文语法",
+        "fetch 不会自动把对象变成 JSON",
+        "multipart 的 boundary 交给 FormData/浏览器"
       ]
     },
     {
@@ -3402,14 +3703,15 @@
       "track": "frontend",
       "group": "网络与安全",
       "id": "api-error-contract",
-      "title": "失败必须是一份契约，不能只靠状态码口头约定",
+      "title": "失败必须是一份契约，不能只靠状态码口头约定（RFC 9457）",
       "prompt": "接口返回 400，前端为什么仍可能把失败当成成功，或把校验错误显示成系统崩溃？",
       "keywords": "HTTP problem+json RFC9457 API 错误契约 幂等",
       "points": [
         "状态码只分大类，业务原因写在稳定字段里",
         "没有到达应用的失败没有 JSON，不能当业务错误解析",
         "幂等冲突和业务冲突要用不同的 type 区分"
-      ]
+      ],
+      "since": "RFC 9457"
     },
     {
       "track": "frontend",
@@ -3422,20 +3724,50 @@
         "HTTP/1.1 核心未把 PATCH 列进那张闭口表",
         "PATCH 由 RFC 5789 定义部分修改",
         "PUT 是替换目标资源，不是 PATCH 的别名"
-      ]
+      ],
+      "since": "RFC 5789"
     },
     {
       "track": "frontend",
       "group": "网络与安全",
       "id": "http-503-unavailable",
-      "title": "503 是暂时不可用，不是“服务器宕机”的同义词",
+      "title": "503 是暂时不可用，不是“服务器宕机”的同义词（RFC 9110）",
       "prompt": "为什么把 5xx 背成“500 内部错误、503 宕机”，以及把 3xx 说成浏览器总会自动跳，会误导排障？",
       "keywords": "HTTP 503 500 Retry-After 302 502",
       "points": [
         "503 表示过载或维护等暂时不可用",
         "连接失败往往没有 5xx 状态码",
         "3xx 跟随行为取决于客户端，不是一律跳转"
-      ]
+      ],
+      "since": "RFC 9110"
+    },
+    {
+      "track": "frontend",
+      "group": "网络与安全",
+      "id": "cookie-set-attributes",
+      "title": "Set-Cookie 的 HttpOnly、Secure、SameSite 各挡什么",
+      "prompt": "为什么前端 document.cookie 读不到登录 Cookie，跨站表单却还能把请求带上？",
+      "keywords": "Set-Cookie HttpOnly Secure SameSite CSRF",
+      "points": [
+        "HttpOnly 禁止 document.cookie 读取",
+        "Secure 限制只在 HTTPS 发送",
+        "SameSite 限制跨站附带，None 必须配 Secure"
+      ],
+      "since": "Cookie SameSite"
+    },
+    {
+      "track": "frontend",
+      "group": "网络与安全",
+      "id": "long-poll-vs-websocket",
+      "title": "长轮询与 WebSocket：谁持连接、谁推消息",
+      "prompt": "为什么“实时通知”有人用 setInterval 拉接口，有人上 WebSocket，还能说成长轮询？",
+      "keywords": "长轮询 WebSocket 短轮询 实时",
+      "points": [
+        "短轮询是定时新请求",
+        "长轮询把 HTTP 请求挂到有事件或超时",
+        "WebSocket 是握手后的双工长连接"
+      ],
+      "since": "RFC 6455"
     },
     {
       "track": "frontend",
@@ -3461,7 +3793,8 @@
         "fetch 由平台提供，返回 Response",
         "4xx 和 5xx 仍是完成的响应",
         "JSON 要再调用 response.json()"
-      ]
+      ],
+      "since": "Node 18+"
     },
     {
       "track": "frontend",
@@ -3513,7 +3846,8 @@
         "HTTP/1.1 默认可在同一连接上连续请求",
         "同域并发连接有上限，超出的请求会排队",
         "缓存命中时不再为该资源建立请求"
-      ]
+      ],
+      "since": "HTTP/1.1+"
     },
     {
       "track": "frontend",
@@ -3553,7 +3887,8 @@
         "HTTP/2 用流在一条连接上并行请求",
         "它去掉的是 HTTP/1 那一层队头阻塞",
         "TCP 丢包仍可能拖住这条连接上的所有流"
-      ]
+      ],
+      "since": "HTTP/2"
     },
     {
       "track": "frontend",
@@ -3592,7 +3927,8 @@
         "HTTPS 是 HTTP over TLS，常见端口 443",
         "TLS 1.3 握手不是固定 9 个包",
         "免费证书普及，明文 HTTP 没有机密性"
-      ]
+      ],
+      "since": "TLS 1.3"
     },
     {
       "track": "frontend",
@@ -3741,14 +4077,15 @@
       "track": "frontend",
       "group": "React",
       "id": "react-setstate-batch",
-      "title": "setState 批处理：别再背 isBatchingUpdates",
+      "title": "setState 批处理：别再背 isBatchingUpdates（React 18）",
       "prompt": "为什么用“合成事件里异步、setTimeout 里同步”加上 isBatchingUpdates 解释 React 19 不够用？",
       "keywords": "React 19 setState 批处理 快照 isBatchingUpdates useState 更新函数",
       "points": [
         "更新先入队，渲染读的是快照",
         "React 18+ 默认批处理不能按旧同步表背",
         "不要用 isBatchingUpdates 解释现代 Hooks"
-      ]
+      ],
+      "since": "React 18"
     },
     {
       "track": "frontend",
@@ -3865,7 +4202,8 @@
         "mixins 因隐式依赖和冲突被淘汰",
         "复用状态逻辑的现行默认是自定义 Hook",
         "HOC 仍可用，但不是 mixins 的唯一或首选替身"
-      ]
+      ],
+      "since": "React 16.8"
     },
     {
       "track": "frontend",
@@ -3891,7 +4229,8 @@
         "React 17+ 委托到根容器，不是必然 document",
         "stopPropagation 与 preventDefault 职责不同",
         "原生停冒泡可能让根上的 React 监听收不到"
-      ]
+      ],
+      "since": "React 17"
     },
     {
       "track": "frontend",
@@ -3949,14 +4288,15 @@
       "track": "frontend",
       "group": "React",
       "id": "react-error-boundary",
-      "title": "错误边界只管渲染，不管点击里的异步",
+      "title": "错误边界只管渲染，不管点击里的异步（React 16）",
       "prompt": "组件出错了，为什么错误边界有时完全看不到？",
       "keywords": "React error boundary componentDidCatch 渲染错误 事件处理",
       "points": [
         "错误边界接住子树渲染和生命周期中的异常",
         "事件处理和异步代码不经过边界",
         "边界自身的渲染错误需要上层边界"
-      ]
+      ],
+      "since": "React 16"
     },
     {
       "track": "frontend",
@@ -3969,7 +4309,8 @@
         "挂载默认讲 createRoot，不再默认 ReactDOM.render",
         "不要背已退出文档的实验钩子名",
         "特性清单必须绑定主版本与官方说明"
-      ]
+      ],
+      "since": "React 19"
     },
     {
       "track": "frontend",
@@ -3982,20 +4323,22 @@
         "新代码默认函数组件加 Hooks",
         "createClass 已移出 react 核心包",
         "函数组件不再等于无状态展示组件"
-      ]
+      ],
+      "since": "React 15.5+"
     },
     {
       "track": "frontend",
       "group": "React 生态",
       "id": "react-router-loader",
-      "title": "路由数据在渲染前装好",
+      "title": "路由数据在渲染前装好（RR 6.4）",
       "prompt": "每个页面都在 useEffect 里请求，和路由的 loader 有什么不同？",
       "keywords": "React Router loader useLoaderData URL 数据路由",
       "points": [
         "loader 在渲染路由元素之前执行",
         "失败走路由的错误元素，而不是空白后再请求",
         "可分享的筛选条件放在 URL"
-      ]
+      ],
+      "since": "RR 6.4+"
     },
     {
       "track": "frontend",
@@ -4034,7 +4377,8 @@
         "声明式入口是 BrowserRouter，负责匹配和导航",
         "数据模式用 createBrowserRouter 才有 loader 和 action",
         "框架模式在数据模式上增加 Vite 插件和路由模块"
-      ]
+      ],
+      "since": "RR 6.4+"
     },
     {
       "track": "frontend",
@@ -4099,7 +4443,8 @@
         "服务端组件在服务端取数并渲染，默认不进浏览器包",
         "事件和本地 state 才需要客户端组件",
         "客户端 loader 不是 React 19 里唯一的数据路径"
-      ]
+      ],
+      "since": "React 19"
     },
     {
       "track": "frontend",
@@ -4177,7 +4522,8 @@
         "ref 的 value 与模板解包",
         "reactive 代理和原对象身份",
         "解构基本类型导致连接丢失"
-      ]
+      ],
+      "since": "Vue 3"
     },
     {
       "track": "frontend",
@@ -4190,7 +4536,8 @@
         "defineProperty 主要作用于已有属性",
         "Proxy 可拦截增删等对象操作，但仍只作用于代理",
         "手写陷阱不等于 Vue 的依赖收集与触发"
-      ]
+      ],
+      "since": "Vue 3"
     },
     {
       "track": "frontend",
@@ -4281,7 +4628,8 @@
         "Options 按选项分桶，Composition 按关注点组织",
         "Options API 没有弃用计划",
         "官方不再推荐 mixin 作为 Vue 3 复用主路径"
-      ]
+      ],
+      "since": "Vue 3"
     },
     {
       "track": "frontend",
@@ -4294,7 +4642,8 @@
         "Vue.extend 和 vue.prototype 不能再当 Vue 3 写法",
         "Teleport 只搬动 DOM，挂载不等于无障碍对话框",
         "setup 里没有 this，全局属性出现在模板和选项式 this 上"
-      ]
+      ],
+      "since": "Vue 3"
     },
     {
       "track": "frontend",
@@ -4307,7 +4656,8 @@
         "虚拟 DOM 是 VNode 对象不是 DocumentFragment",
         "Vue 2 用 defineProperty，Vue 3 主路径是 Proxy",
         "组件 data 必须是工厂函数以免实例共享状态"
-      ]
+      ],
+      "since": "Vue 3"
     },
     {
       "track": "frontend",
@@ -4346,7 +4696,8 @@
         "树摇删除的是未使用代码，主效果是包体",
         "执行更快要看仍在运行的路径与编译优化",
         "Vue 3 具名导出改善可裁剪性，仍受构建与依赖约束"
-      ]
+      ],
+      "since": "Vue 3"
     },
     {
       "track": "frontend",
@@ -4359,7 +4710,8 @@
         "正数补丁标记标出动态更新种类，静态部分靠块跳过",
         "静态提升和事件缓存由编译选项打开，不是框架保底",
         "内联监听和稳定方法引用的缓存条件不同"
-      ]
+      ],
+      "since": "Vue 3"
     },
     {
       "track": "frontend",
@@ -4411,7 +4763,8 @@
         "Pinia 是 Vue 当前推荐的状态库",
         "Vuex 处于维护状态，不是新项目的默认",
         "storeToRefs 才能在解构后保持响应"
-      ]
+      ],
+      "since": "Vue 3 / Pinia"
     },
     {
       "track": "frontend",
@@ -4424,7 +4777,8 @@
         "直接解构 state 会丢掉响应式",
         "storeToRefs 保持和 store 的连接",
         "action 方法可以直接解构"
-      ]
+      ],
+      "since": "Pinia"
     },
     {
       "track": "frontend",
@@ -5060,7 +5414,8 @@
         "0.76 起新架构默认开启",
         "JSI 直接调用 C++ 对象，不必先序列化过桥",
         "界面仍要渲染、提交、挂载，setState 返回不等于已画完"
-      ]
+      ],
+      "since": "RN 0.76+"
     },
     {
       "track": "frontend",
@@ -5112,7 +5467,8 @@
         "Flutter 把像素画在自己的表面上，不是系统控件或 WebView",
         "iOS 只用 Impeller，Android API 29+ 默认 Impeller，否则引擎退回 OpenGL",
         "Web 仍用 Skia 的 canvaskit 和 skwasm"
-      ]
+      ],
+      "since": "Flutter 3.27+"
     },
     {
       "track": "frontend",
@@ -5216,7 +5572,8 @@
         "页面钩子从 @dcloudio/uni-app 导入，写在页面里才按页面执行",
         "onLoad 收一次字符串 query，返回只再走 onShow",
         "子组件用 onPageShow，应用钩子只在 App.vue"
-      ]
+      ],
+      "since": "uni-app"
     },
     {
       "track": "frontend",
@@ -5229,7 +5586,8 @@
         "#ifdef 在编译期删除其他端的源码，产物里没有那段调用",
         "脚本、模板、样式的注释形式不同，宏必须单独成行",
         "WEB 是现行 Web 平台值，VUE3 依赖 manifest 里的 vueVersion"
-      ]
+      ],
+      "since": "uni-app"
     },
     {
       "track": "frontend",
@@ -5242,7 +5600,8 @@
         "React 提交到逻辑层的模拟 DOM，渲染器不是 ReactDOM",
         "界面要等 setData 把序列化结果交到静态模板",
         "选择器查询等 onReady，读的是渲染层节点"
-      ]
+      ],
+      "since": "Taro 3+"
     },
     {
       "track": "frontend",
@@ -5255,7 +5614,8 @@
         "pages 必填且不写后缀，第一项是冷启动首页",
         "跳转用 Taro.navigateTo，参数在 useLoad 里是字符串",
         "返回时走 useDidShow，端差异用编译期的 TARO_ENV"
-      ]
+      ],
+      "since": "Taro 3+"
     },
     {
       "track": "frontend",
@@ -5268,7 +5628,8 @@
         "framework 和 compiler 是两项，Taro 4 的编译器是 webpack5 或 vite",
         "小程序产物仍是 js、模板、样式和 json，Vite 在这里是整包打包",
         "designWidth 官方示例是 750，Vite 开发服务器主要用于 H5"
-      ]
+      ],
+      "since": "Taro 4"
     },
     {
       "track": "frontend",
@@ -5307,7 +5668,8 @@
         "未捕获同步异常和未处理拒绝走不同的进程事件",
         "Node 15 起未处理拒绝默认会使进程退出",
         "每个请求要有自己的错误响应，不能靠进程事件兜底"
-      ]
+      ],
+      "since": "Node 15"
     },
     {
       "track": "frontend",
@@ -5333,7 +5695,8 @@
         "Node 18 起全局 fetch 基于 Undici",
         "服务端必须显式超时和绝对 URL",
         "不会自动带浏览器 Cookie，也不读入站请求"
-      ]
+      ],
+      "since": "Node 18"
     },
     {
       "track": "frontend",
@@ -5489,7 +5852,8 @@
         "现行组件测试按用户能感知的角色查询",
         "Enzyme 绑在实例和内部状态上，函数组件对不上",
         "Jest 仍可用，断言目标不要写成 wrapper.state"
-      ]
+      ],
+      "since": "React 19"
     },
     {
       "track": "frontend",
@@ -5542,7 +5906,8 @@
         "Vite 开发时走原生 ESM，生产构建再打包",
         "代码分割边界是动态 import，按路由和低频模块划分",
         "webpack 是存量构建器，不是新项目的默认起点"
-      ]
+      ],
+      "since": "Vite"
     },
     {
       "track": "frontend",
@@ -5737,7 +6102,8 @@
         "Create React App 已日落，不再作为新项目起点",
         "新的 Vue 3 状态默认用 Pinia，Vuex 只维护旧项目",
         "现行交互体验指标是 INP，不是 FID"
-      ]
+      ],
+      "since": "CRA sunset"
     },
     {
       "track": "java",
@@ -5794,84 +6160,6 @@
     {
       "track": "java",
       "group": "Java 基础",
-      "id": "java-interface-contract",
-      "title": "接口表达能力，抽象类才放共享状态",
-      "prompt": "为了复用三行代码，就该建一个抽象父类吗？",
-      "keywords": "Java interface default method abstract class 单继承",
-      "points": [
-        "一个类可以实现多个接口，只能继承一个类",
-        "default 方法共享行为，不占用父类名额",
-        "抽象类用于真正共享的状态和骨架"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
-      "id": "java-generics",
-      "title": "泛型、类型擦除与运行时",
-      "prompt": "为什么 List<String> 和 List<Integer> 不能用 instanceof 区分？",
-      "keywords": "Java generics erasure List wildcard",
-      "points": [
-        "泛型在编译期检查类型，运行之后类型参数会被擦掉",
-        "擦除之后不能用 instanceof 判断具体的类型参数",
-        "通配符适合安全地读，要写入时再单独加约束"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
-      "id": "java-equals-contract",
-      "title": "equals 和 hashCode 必须一起遵守契约",
-      "prompt": "只重写 equals 不重写 hashCode，HashMap 会怎样？",
-      "keywords": "equals hashCode 契约 HashMap",
-      "points": [
-        "相等的对象必须有相同的 hashCode",
-        "只改 equals 会导致哈希结构找不到",
-        "作为键的字段在放入后保持不变"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
-      "id": "java-string-immutability",
-      "title": "String 不可变，拼接在循环里要换思路",
-      "prompt": "在循环里用 + 拼字符串，为什么又慢又产生大量临时对象？",
-      "keywords": "String 不可变 StringBuilder 拼接",
-      "points": [
-        "String 内容不可改，变更会得到新对象",
-        "循环拼接应使用 StringBuilder",
-        "短拼接可以优先保持可读性"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
-      "id": "java-autoboxing-cache",
-      "title": "装箱拆箱与整数缓存",
-      "prompt": "两个 Integer 都是 127 时 == 为 true，128 时为什么可能为 false？",
-      "keywords": "Integer 装箱 拆箱 缓存 equals",
-      "points": [
-        "== 对包装类型比的是引用",
-        "equals 才比包装后的数值",
-        "整数缓存范围外的装箱不必是同一实例"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
-      "id": "java-calendar-not-singleton",
-      "title": "Calendar.getInstance 每次新建，不是单例",
-      "prompt": "为什么把 Calendar 和 Runtime 一起背成 JDK 里的单例例子会错？",
-      "keywords": "Calendar getInstance Runtime 单例 工厂",
-      "points": [
-        "Calendar.getInstance 每次返回新的可变日历",
-        "Runtime.getRuntime 才接近进程内单例",
-        "不要把装箱缓存或日历工厂写成单例模式"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
       "id": "java-main-launcher",
       "title": "启动入口是 public static void main(String[])",
       "prompt": "为什么“没有 main 也能靠静态初始化块跑起来”和“main 可以终结”不能当现行答案？",
@@ -5880,32 +6168,6 @@
         "启动器调用 public static void main(String[])",
         "其它签名的 main 只是重载，不是入口",
         "静态初始化块不能代替现行启动器"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
-      "id": "java-record-accessor",
-      "title": "record 按分量生成 equals，适合不可变数据，不适合当 JPA 实体",
-      "prompt": "为什么把实体改成 record 之后，懒加载和脏检查都乱了？",
-      "keywords": "Java record equals 不可变 JPA 实体",
-      "points": [
-        "record 按所有分量生成 equals 和取值方法",
-        "默认不可变，适合值对象和响应体",
-        "JPA 实体需要可变与代理，不要用 record 充当"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
-      "id": "java-dcl-volatile-enum",
-      "title": "双重检查单例要 volatile，枚举更不容易写错",
-      "prompt": "为什么手写懒汉双重检查却漏掉 volatile，运行时仍可能看到半初始化实例？",
-      "keywords": "双重检查 volatile 枚举单例 安全发布",
-      "points": [
-        "无 volatile 的 DCL 可能读到半初始化对象",
-        "枚举常量初始化由 JVM 保证线程安全",
-        "单例只保证一份实例，不保证字段并发安全"
       ]
     },
     {
@@ -5924,14 +6186,108 @@
     {
       "track": "java",
       "group": "Java 基础",
-      "id": "java-long-atomic-on-64bit",
-      "title": "64 位 Java 里 long 赋值是原子的，不要一律按两次 32 位写",
-      "prompt": "为什么把“32 位机器上 long 要写两次”推广成所有 JVM 里 long 都可能撕成两半？",
-      "keywords": "JLS 17.7 long double atomic 64-bit volatile",
+      "id": "java-autoboxing-cache",
+      "title": "装箱拆箱与整数缓存",
+      "prompt": "两个 Integer 都是 127 时 == 为 true，128 时为什么可能为 false？",
+      "keywords": "Integer 装箱 拆箱 缓存 equals",
       "points": [
-        "规范允许非 volatile 的 long 写拆成两次 32 位",
-        "64 位 HotSpot 上 long 写通常原子",
-        "可见性仍要同步，不只靠字宽"
+        "== 对包装类型比的是引用",
+        "equals 才比包装后的数值",
+        "整数缓存范围外的装箱不必是同一实例"
+      ],
+      "since": "JDK 5"
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "java-string-immutability",
+      "title": "String 不可变，拼接在循环里要换思路",
+      "prompt": "在循环里用 + 拼字符串，为什么又慢又产生大量临时对象？",
+      "keywords": "String 不可变 StringBuilder 拼接",
+      "points": [
+        "String 内容不可改，变更会得到新对象",
+        "循环拼接应使用 StringBuilder",
+        "短拼接可以优先保持可读性"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "java-string-new-vs-pool",
+      "title": "new String(\"xyz\") 不一定正好两个对象",
+      "prompt": "为什么把 `String s = new String(\"xyz\");` 固定背成“一定创建两个对象”？",
+      "keywords": "String intern pool new String 字面量",
+      "points": [
+        "字面量在池里，new String 另有堆实例",
+        "池命中时不会再为字面量新建",
+        "== 比的是引用，intern 才回到池里那一个"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "java-generics",
+      "title": "泛型、类型擦除与运行时",
+      "prompt": "为什么 List<String> 和 List<Integer> 不能用 instanceof 区分？",
+      "keywords": "Java generics erasure List wildcard",
+      "points": [
+        "泛型在编译期检查类型，运行之后类型参数会被擦掉",
+        "擦除之后不能用 instanceof 判断具体的类型参数",
+        "通配符适合安全地读，要写入时再单独加约束"
+      ],
+      "since": "JDK 5"
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "java-record-accessor",
+      "title": "record 按分量生成 equals，适合不可变数据，不适合当 JPA 实体（JDK 16）",
+      "prompt": "为什么把实体改成 record 之后，懒加载和脏检查都乱了？",
+      "keywords": "Java record equals 不可变 JPA 实体",
+      "points": [
+        "record 按所有分量生成 equals 和取值方法",
+        "默认不可变，适合值对象和响应体",
+        "JPA 实体需要可变与代理，不要用 record 充当"
+      ],
+      "since": "JDK 16"
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "java-equals-contract",
+      "title": "equals 和 hashCode 必须一起遵守契约",
+      "prompt": "只重写 equals 不重写 hashCode，HashMap 会怎样？",
+      "keywords": "equals hashCode 契约 HashMap",
+      "points": [
+        "相等的对象必须有相同的 hashCode",
+        "只改 equals 会导致哈希结构找不到",
+        "作为键的字段在放入后保持不变"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "java-interface-contract",
+      "title": "接口表达能力，抽象类才放共享状态",
+      "prompt": "为了复用三行代码，就该建一个抽象父类吗？",
+      "keywords": "Java interface default method abstract class 单继承",
+      "points": [
+        "一个类可以实现多个接口，只能继承一个类",
+        "default 方法共享行为，不占用父类名额",
+        "抽象类用于真正共享的状态和骨架"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "java-polymorphism-not-only-extends",
+      "title": "多态不必先继承一个类，实现接口也算",
+      "prompt": "为什么把多态背成必须同时满足“继承、重写、父类引用指向子类”三件套？",
+      "keywords": "polymorphism interface override overload dynamic dispatch",
+      "points": [
+        "运行时按实际类型分派方法",
+        "接口引用指向实现类也是多态",
+        "重载在编译期选定，不是这套分派"
       ]
     },
     {
@@ -5963,54 +6319,16 @@
     {
       "track": "java",
       "group": "Java 基础",
-      "id": "java-string-new-vs-pool",
-      "title": "new String(\"xyz\") 不一定正好两个对象",
-      "prompt": "为什么把 `String s = new String(\"xyz\");` 固定背成“一定创建两个对象”？",
-      "keywords": "String intern pool new String 字面量",
+      "id": "java-default-class-wins-conflict",
+      "title": "默认方法不是 C++ 那种类多继承，冲突时类方法优先（JDK 8）",
+      "prompt": "为什么把 Java 8 默认方法背成“终于有多继承了，两个接口同名方法随便用”？",
+      "keywords": "default method diamond class wins JLS 9.4.1",
       "points": [
-        "字面量在池里，new String 另有堆实例",
-        "池命中时不会再为字面量新建",
-        "== 比的是引用，intern 才回到池里那一个"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
-      "id": "jdk-feature-release-six-months",
-      "title": "现行 JDK 功能版大约半年一发，不是三年对三月",
-      "prompt": "为什么把 Oracle JDK 背成“每三年一版、OpenJDK 每三个月一版、所以 Oracle 更稳定”？",
-      "keywords": "OpenJDK LTS six month cadence Oracle JDK",
-      "points": [
-        "功能版本大约每六个月",
-        "LTS 是单独的支持承诺，不是三年发版周期",
-        "不要用 Oracle 对 OpenJDK 的过时对照表"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
-      "id": "java-polymorphism-not-only-extends",
-      "title": "多态不必先继承一个类，实现接口也算",
-      "prompt": "为什么把多态背成必须同时满足“继承、重写、父类引用指向子类”三件套？",
-      "keywords": "polymorphism interface override overload dynamic dispatch",
-      "points": [
-        "运行时按实际类型分派方法",
-        "接口引用指向实现类也是多态",
-        "重载在编译期选定，不是这套分派"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
-      "id": "java-not-every-class-clone-serializable",
-      "title": "不是每个类都要 equals、clone 和 Serializable",
-      "prompt": "为什么把“经典形式”背成每个类都要实现 equals、hashCode、toString、Cloneable、Serializable？",
-      "keywords": "equals Cloneable Serializable finalize Effective Java",
-      "points": [
-        "equals 与 hashCode 只在按值比较时成对覆盖",
-        "Cloneable 不是新代码的拷贝方案",
-        "Serializable 是契约，不是每个类的标配"
-      ]
+        "类仍然只能继承一个类",
+        "无关的默认方法冲突必须自己覆盖",
+        "父类实例方法优先于接口默认方法"
+      ],
+      "since": "JDK 8"
     },
     {
       "track": "java",
@@ -6028,97 +6346,6 @@
     {
       "track": "java",
       "group": "Java 基础",
-      "id": "java-raw-type-skips-checks",
-      "title": "裸类型 List 会跳过泛型检查，不是图省事的写法",
-      "prompt": "为什么把 `List` 和无界 `List<?>` 当成一回事，往 `List<String>` 里 add 整数？",
-      "keywords": "raw type unbounded wildcard erasure ClassCastException",
-      "points": [
-        "裸类型绕过泛型检查",
-        "List<?> 不是 List<Object>",
-        "混入错误类型会在取出时 ClassCastException"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
-      "id": "java-default-class-wins-conflict",
-      "title": "默认方法不是 C++ 那种类多继承，冲突时类方法优先",
-      "prompt": "为什么把 Java 8 默认方法背成“终于有多继承了，两个接口同名方法随便用”？",
-      "keywords": "default method diamond class wins JLS 9.4.1",
-      "points": [
-        "类仍然只能继承一个类",
-        "无关的默认方法冲突必须自己覆盖",
-        "父类实例方法优先于接口默认方法"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
-      "id": "java-class-newinstance-deprecated",
-      "title": "不要再用 Class.newInstance，它只能调无参且已弃用",
-      "prompt": "为什么反射创建对象还写 `clazz.newInstance()`，并当成“随便实例化、不必知道类名”？",
-      "keywords": "Class.newInstance Constructor reflection deprecated",
-      "points": [
-        "反射仍需要类的名字或 Class 对象",
-        "Class.newInstance 已弃用，只调用公共无参构造",
-        "带参用 getDeclaredConstructor().newInstance"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
-      "id": "java-final-not-fifty-percent",
-      "title": "给类加 final 不会让程序快百分之五十",
-      "prompt": "为什么优化清单写“类声明成 final，编译器内联所有方法，性能平均提高 50%”？",
-      "keywords": "final class inlining HotSpot performance myth",
-      "points": [
-        "final 类不能被继承，这是契约不是加速比",
-        "JIT 内联不依赖你把类写成 final",
-        "没有官方的平均快 50% 承诺"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
-      "id": "java-shift-not-times-eight",
-      "title": "2 左移 3 不是“算出 2 乘 8”的正经答案",
-      "prompt": "为什么面试把 `2<<3` 当成“最有效率的 2×8”，生产代码也跟着用移位代替乘除？",
-      "keywords": "shift multiply strength reduction JLS 15.19",
-      "points": [
-        "左移 3 等于乘 8 只是值相等",
-        "常数乘法由 JIT 折减，手写移位不自动更快",
-        "同步应缩小范围，不是整方法一定更快"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
-      "id": "java-stringbuilder-not-buffer",
-      "title": "同一线程拼字符串用 StringBuilder，不要默认换 StringBuffer",
-      "prompt": "为什么导图写“多线程就用 StringBuffer”，局部循环拼接也跟着换？",
-      "keywords": "StringBuilder StringBuffer String synchronized",
-      "points": [
-        "同一线程改缓冲区用 StringBuilder",
-        "StringBuffer 的同步只覆盖单次方法调用",
-        "跨线程先定所有权，不要把 Buffer 当协议"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
-      "id": "java-switch-arrow-no-fall",
-      "title": "冒号分支会贯穿，箭头分支不会",
-      "prompt": "为什么笔试题还在问没写 break 会打印哪几行，有人就把所有 switch 都背成必须 break？",
-      "keywords": "switch fall through break switch expression yield",
-      "points": [
-        "case 标签用冒号时，没有 break 会贯穿",
-        "箭头分支匹配结束就离开，不会落到下一支",
-        "switch 表达式必须穷尽，漏枚举编不过"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
       "id": "java-exceptions",
       "title": "异常边界与资源释放",
       "prompt": "catch 住 Exception 后只打日志并返回成功，调用方会怎样判断？",
@@ -6127,32 +6354,6 @@
         "捕获后必须恢复、转换或继续抛出，不能变成成功",
         "页面看到的是契约里的失败，日志保留原因",
         "资源用 try-with-resources 在两条路径上关闭"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
-      "id": "java-optional",
-      "title": "Optional 的惰性默认值",
-      "prompt": "值已经存在，orElse(expensive()) 还会调用 expensive 吗？",
-      "keywords": "Java Optional orElse orElseGet lazy default 缺值",
-      "points": [
-        "orElse 的参数会马上计算，即使已经有值",
-        "orElseGet 只在没有值的时候才调用函数",
-        "没有值时给出业务上的处理，不要直接 get"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
-      "id": "java-finalize-not-guaranteed",
-      "title": "finalize 不保证会跑，资源用 try-with-resources",
-      "prompt": "为什么 Effective Java 里“避免终结方法、用 try/finally”在现行 JDK 还要再改一刀？",
-      "keywords": "finalize JEP 421 try-with-resources AutoCloseable Cleaner",
-      "points": [
-        "finalize 不保证执行，已被弃用",
-        "资源用 try-with-resources",
-        "返回空集合而不是 null"
       ]
     },
     {
@@ -6180,6 +6381,34 @@
         "没有 catch 会打到未捕获处理器，线程结束",
         "不要把“自动抛出”写成“自动捕获”"
       ]
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "java-optional",
+      "title": "Optional 的惰性默认值（JDK 8）",
+      "prompt": "值已经存在，orElse(expensive()) 还会调用 expensive 吗？",
+      "keywords": "Java Optional orElse orElseGet lazy default 缺值",
+      "points": [
+        "orElse 的参数会马上计算，即使已经有值",
+        "orElseGet 只在没有值的时候才调用函数",
+        "没有值时给出业务上的处理，不要直接 get"
+      ],
+      "since": "JDK 8"
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "java-finalize-not-guaranteed",
+      "title": "finalize 不保证会跑，资源用 try-with-resources",
+      "prompt": "为什么 Effective Java 里“避免终结方法、用 try/finally”在现行 JDK 还要再改一刀？",
+      "keywords": "finalize JEP 421 try-with-resources AutoCloseable Cleaner",
+      "points": [
+        "finalize 不保证执行，已被弃用",
+        "资源用 try-with-resources",
+        "返回空集合而不是 null"
+      ],
+      "since": "JDK 7"
     },
     {
       "track": "java",
@@ -6224,123 +6453,6 @@
     {
       "track": "java",
       "group": "Java 基础",
-      "id": "java-stream",
-      "title": "Stream 懒执行与副作用",
-      "prompt": "只调用 map 却没有终端操作，转换函数会运行吗？",
-      "keywords": "Java Stream lazy intermediate terminal short circuit 懒执行",
-      "points": [
-        "中间操作先排进流水线，遇到终端操作才真正执行",
-        "终端操作才会产出结果，短路时可以提前停",
-        "不要在流水线里改外部变量，执行次数并不固定"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
-      "id": "java-memory",
-      "title": "JVM 内存、对象与可达性",
-      "prompt": "把变量设为 null 之后，对象会马上消失吗？",
-      "keywords": "Java JVM GC roots 内存",
-      "points": [
-        "可达性从 GC Roots 沿引用判断",
-        "不可达不等于立刻被回收",
-        "静态缓存、监听和线程池任务会把对象留在可达链上"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
-      "id": "java-enumeration-not-faster",
-      "title": "Enumeration 并不比 Iterator 快一倍",
-      "prompt": "为什么“Enumeration 速度是 Iterator 的两倍、也更省内存”不能当集合框架答案？",
-      "keywords": "Iterator Enumeration fail-fast Hashtable Deque ConcurrentHashMap",
-      "points": [
-        "没有官方依据说 Enumeration 快一倍",
-        "Iterator 的 fail-fast 不是互斥锁",
-        "Hashtable/Vector 是遗留同步容器，新代码用并发包"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
-      "id": "java-arrays-aslist-fixed",
-      "title": "Arrays.asList 返回固定大小的列表，不是 ArrayList",
-      "prompt": "为什么 asList 之后 add 会失败，也不能把它当成可变 ArrayList？",
-      "keywords": "Arrays.asList ArrayList UnsupportedOperationException 固定大小",
-      "points": [
-        "asList 返回固定大小视图，不支持 add/remove",
-        "set 会写回底层数组",
-        "可变独立副本要 new ArrayList<>(asList(...))"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
-      "id": "hashmap-treeify-need-capacity",
-      "title": "链表变红黑树不只看长度 8，还要桶数组够大",
-      "prompt": "为什么把 HashMap 冲突背成“链表大于 8 就立刻变红黑树”？",
-      "keywords": "HashMap TREEIFY_THRESHOLD MIN_TREEIFY_CAPACITY 红黑树",
-      "points": [
-        "冲突先拉链，相等 key 覆盖",
-        "树化要长度阈值和最小容量 64",
-        "普通 HashMap 不是线程安全结构"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
-      "id": "chm-iterator-weakly-consistent",
-      "title": "ConcurrentHashMap 的迭代器不是整表拷贝的 fail-safe",
-      "prompt": "为什么把 java.util.concurrent 一律说成“迭代时拷贝一份，所以永远不抛 ConcurrentModificationException”？",
-      "keywords": "ConcurrentHashMap weakly consistent fail-fast CopyOnWrite",
-      "points": [
-        "fail-fast 常见于 java.util 集合",
-        "CHM 迭代器弱一致，不是快照拷贝",
-        "CopyOnWrite 才按快照遍历"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
-      "id": "hashmap-initial-16-not-max",
-      "title": "HashMap 默认容量 16，不是最大只能 16",
-      "prompt": "为什么把 HashMap 背成“最大承载量是 16，由 Entry[] 控制”？",
-      "keywords": "HashMap initial capacity 16 MAXIMUM_CAPACITY 装载因子",
-      "points": [
-        "16 是初始容量不是上限",
-        "上限是 2^30，超过阈值 0.75 就翻倍",
-        "第一次 put 才分配桶数组"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
-      "id": "chm-jdk8-not-segment-lock",
-      "title": "JDK 8 起 ConcurrentHashMap 不再靠 16 个 Segment",
-      "prompt": "为什么还把 CHM 背成“把数组切成若干段，每段一把锁”？",
-      "keywords": "ConcurrentHashMap Segment CAS synchronized JDK8",
-      "points": [
-        "JDK 8 去掉默认 Segment",
-        "写入是 CAS 与桶级 synchronized",
-        "迭代器弱一致，size 是估算"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
-      "id": "java-vector-cme-not-because-sync",
-      "title": "Vector 方法同步，并不能解释迭代器的 ConcurrentModificationException",
-      "prompt": "为什么把 Vector 的 fail-fast 说成“因为它是同步的，别的线程一改就会抛异常”？",
-      "keywords": "Vector fail-fast ConcurrentModificationException synchronized ArrayList",
-      "points": [
-        "Vector 的 synchronized 管方法，不管迭代协议",
-        "fail-fast 看 modCount，单线程乱改也会 CME",
-        "并发遍历不要指望 Vector"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
       "id": "java-stack-prefer-deque",
       "title": "栈和队列请用 Deque，不要新写 java.util.Stack",
       "prompt": "为什么一提到栈就 `new Stack()`，还觉得它继承 Vector 是优点？",
@@ -6349,20 +6461,8 @@
         "Stack 继承 Vector，是遗留 API",
         "文档推荐 Deque 做 LIFO",
         "单线程栈用 ArrayDeque，不要图名字"
-      ]
-    },
-    {
-      "track": "java",
-      "group": "Java 基础",
-      "id": "java-foreach-remove-cme",
-      "title": "增强 for 里不能直接 list.remove，要用迭代器",
-      "prompt": "为什么觉得 foreach 就是迭代器，所以循环里 `list.remove(s)` 和 `iter.remove()` 一样？",
-      "keywords": "enhanced for Iterator ConcurrentModificationException removeIf",
-      "points": [
-        "增强 for 使用迭代器，直接 list.remove 会 CME",
-        "Iterator.remove 必须先 next",
-        "按下标循环 remove 会因前移漏元素"
-      ]
+      ],
+      "since": "JDK 6"
     },
     {
       "track": "java",
@@ -6393,15 +6493,153 @@
     {
       "track": "java",
       "group": "Java 基础",
+      "id": "java-arrays-aslist-fixed",
+      "title": "Arrays.asList 返回固定大小的列表，不是 ArrayList",
+      "prompt": "为什么 asList 之后 add 会失败，也不能把它当成可变 ArrayList？",
+      "keywords": "Arrays.asList ArrayList UnsupportedOperationException 固定大小",
+      "points": [
+        "asList 返回固定大小视图，不支持 add/remove",
+        "set 会写回底层数组",
+        "可变独立副本要 new ArrayList<>(asList(...))"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "java-stream",
+      "title": "Stream 懒执行与副作用（JDK 8）",
+      "prompt": "只调用 map 却没有终端操作，转换函数会运行吗？",
+      "keywords": "Java Stream JDK 8 lazy intermediate terminal short circuit 懒执行",
+      "points": [
+        "中间操作先排进流水线，遇到终端操作才真正执行",
+        "终端操作才会产出结果，短路时可以提前停",
+        "不要在流水线里改外部变量，执行次数并不固定"
+      ],
+      "since": "JDK 8"
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "java-foreach-remove-cme",
+      "title": "增强 for 里不能直接 list.remove，要用迭代器",
+      "prompt": "为什么觉得 foreach 就是迭代器，所以循环里 `list.remove(s)` 和 `iter.remove()` 一样？",
+      "keywords": "enhanced for Iterator ConcurrentModificationException removeIf",
+      "points": [
+        "增强 for 使用迭代器，直接 list.remove 会 CME",
+        "Iterator.remove 必须先 next",
+        "按下标循环 remove 会因前移漏元素"
+      ],
+      "since": "JDK 5"
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "hashmap-initial-16-not-max",
+      "title": "HashMap 默认容量 16，不是最大只能 16",
+      "prompt": "为什么把 HashMap 背成“最大承载量是 16，由 Entry[] 控制”？",
+      "keywords": "HashMap initial capacity 16 MAXIMUM_CAPACITY 装载因子",
+      "points": [
+        "16 是初始容量不是上限",
+        "上限是 2^30，超过阈值 0.75 就翻倍",
+        "第一次 put 才分配桶数组"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "hashmap-treeify-need-capacity",
+      "title": "链表变红黑树不只看长度 8，还要桶数组够大",
+      "prompt": "为什么把 HashMap 冲突背成“链表大于 8 就立刻变红黑树”？",
+      "keywords": "HashMap TREEIFY_THRESHOLD MIN_TREEIFY_CAPACITY 红黑树",
+      "points": [
+        "冲突先拉链，相等 key 覆盖",
+        "树化要长度阈值和最小容量 64",
+        "普通 HashMap 不是线程安全结构"
+      ],
+      "since": "JDK 8"
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "chm-jdk8-not-segment-lock",
+      "title": "JDK 8 起 ConcurrentHashMap 不再靠 16 个 Segment",
+      "prompt": "为什么还把 CHM 背成“把数组切成若干段，每段一把锁”？",
+      "keywords": "ConcurrentHashMap Segment CAS synchronized JDK8",
+      "points": [
+        "JDK 8 去掉默认 Segment",
+        "写入是 CAS 与桶级 synchronized",
+        "迭代器弱一致，size 是估算"
+      ],
+      "since": "JDK 8"
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "chm-iterator-weakly-consistent",
+      "title": "ConcurrentHashMap 的迭代器不是整表拷贝的 fail-safe",
+      "prompt": "为什么把 java.util.concurrent 一律说成“迭代时拷贝一份，所以永远不抛 ConcurrentModificationException”？",
+      "keywords": "ConcurrentHashMap weakly consistent fail-fast CopyOnWrite",
+      "points": [
+        "fail-fast 常见于 java.util 集合",
+        "CHM 迭代器弱一致，不是快照拷贝",
+        "CopyOnWrite 才按快照遍历"
+      ],
+      "since": "JDK 8"
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "java-vector-cme-not-because-sync",
+      "title": "Vector 方法同步，并不能解释迭代器的 ConcurrentModificationException",
+      "prompt": "为什么把 Vector 的 fail-fast 说成“因为它是同步的，别的线程一改就会抛异常”？",
+      "keywords": "Vector fail-fast ConcurrentModificationException synchronized ArrayList",
+      "points": [
+        "Vector 的 synchronized 管方法，不管迭代协议",
+        "fail-fast 看 modCount，单线程乱改也会 CME",
+        "并发遍历不要指望 Vector"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "java-enumeration-not-faster",
+      "title": "Enumeration 并不比 Iterator 快一倍",
+      "prompt": "为什么“Enumeration 速度是 Iterator 的两倍、也更省内存”不能当集合框架答案？",
+      "keywords": "Iterator Enumeration fail-fast Hashtable Deque ConcurrentHashMap",
+      "points": [
+        "没有官方依据说 Enumeration 快一倍",
+        "Iterator 的 fail-fast 不是互斥锁",
+        "Hashtable/Vector 是遗留同步容器，新代码用并发包"
+      ],
+      "since": "JDK 5"
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "java-stringbuilder-not-buffer",
+      "title": "同一线程拼字符串用 StringBuilder，不要默认换 StringBuffer",
+      "prompt": "为什么导图写“多线程就用 StringBuffer”，局部循环拼接也跟着换？",
+      "keywords": "StringBuilder StringBuffer String synchronized",
+      "points": [
+        "同一线程改缓冲区用 StringBuilder",
+        "StringBuffer 的同步只覆盖单次方法调用",
+        "跨线程先定所有权，不要把 Buffer 当协议"
+      ],
+      "since": "JDK 5"
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
       "id": "java-time-instant",
-      "title": "Instant 是时间线上的一点，LocalDateTime 没有时区",
+      "title": "Instant 是时间线上的一点，LocalDateTime 没有时区（JDK 8）",
       "prompt": "用 LocalDateTime.now() 存到库里，夏令时切换那天会怎样？",
       "keywords": "java.time Instant LocalDateTime 时区 UTC",
       "points": [
         "Instant 是时间线上的一点，适合存储",
         "LocalDateTime 没有时区，不能确定瞬时",
         "展示时按用户时区格式化，比较用 Instant"
-      ]
+      ],
+      "since": "JDK 8"
     },
     {
       "track": "java",
@@ -6420,14 +6658,15 @@
       "track": "java",
       "group": "Java 基础",
       "id": "java-string-strip-not-trim",
-      "title": "trim 清的不是全部空白，getBytes 必须写字符集",
+      "title": "trim 清的不是全部空白，getBytes 必须写字符集（JDK 11 strip）",
       "prompt": "为什么“trim 去掉首尾空白、getBytes 就能转字节、new String(byte[]) 一定对”会在现行 JDK 里翻车？",
       "keywords": "String trim strip getBytes UTF-8 intern",
       "points": [
         "trim 只去掉 U+0020 及以下，strip 才按 Unicode 空白",
         "无参 getBytes/new String(byte[]) 走默认字符集",
         "intern 对象个数看常量池，不是固定两个"
-      ]
+      ],
+      "since": "JDK 11"
     },
     {
       "track": "java",
@@ -6441,6 +6680,139 @@
         "DOTALL 才让点跨行",
         "MULTILINE 改的是 ^ 和 $，不是点"
       ]
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "java-calendar-not-singleton",
+      "title": "Calendar.getInstance 每次新建，不是单例",
+      "prompt": "为什么把 Calendar 和 Runtime 一起背成 JDK 里的单例例子会错？",
+      "keywords": "Calendar getInstance Runtime 单例 工厂",
+      "points": [
+        "Calendar.getInstance 每次返回新的可变日历",
+        "Runtime.getRuntime 才接近进程内单例",
+        "不要把装箱缓存或日历工厂写成单例模式"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "java-dcl-volatile-enum",
+      "title": "双重检查单例要 volatile，枚举更不容易写错",
+      "prompt": "为什么手写懒汉双重检查却漏掉 volatile，运行时仍可能看到半初始化实例？",
+      "keywords": "双重检查 volatile 枚举单例 安全发布",
+      "points": [
+        "无 volatile 的 DCL 可能读到半初始化对象",
+        "枚举常量初始化由 JVM 保证线程安全",
+        "单例只保证一份实例，不保证字段并发安全"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "java-long-atomic-on-64bit",
+      "title": "64 位 Java 里 long 赋值是原子的，不要一律按两次 32 位写",
+      "prompt": "为什么把“32 位机器上 long 要写两次”推广成所有 JVM 里 long 都可能撕成两半？",
+      "keywords": "JLS 17.7 long double atomic 64-bit volatile",
+      "points": [
+        "规范允许非 volatile 的 long 写拆成两次 32 位",
+        "64 位 HotSpot 上 long 写通常原子",
+        "可见性仍要同步，不只靠字宽"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "jdk-feature-release-six-months",
+      "title": "现行 JDK 功能版大约半年一发，不是三年对三月",
+      "prompt": "为什么把 Oracle JDK 背成“每三年一版、OpenJDK 每三个月一版、所以 Oracle 更稳定”？",
+      "keywords": "OpenJDK LTS six month cadence Oracle JDK",
+      "points": [
+        "功能版本大约每六个月",
+        "LTS 是单独的支持承诺，不是三年发版周期",
+        "不要用 Oracle 对 OpenJDK 的过时对照表"
+      ],
+      "since": "JDK 10+"
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "java-not-every-class-clone-serializable",
+      "title": "不是每个类都要 equals、clone 和 Serializable",
+      "prompt": "为什么把“经典形式”背成每个类都要实现 equals、hashCode、toString、Cloneable、Serializable？",
+      "keywords": "equals Cloneable Serializable finalize Effective Java",
+      "points": [
+        "equals 与 hashCode 只在按值比较时成对覆盖",
+        "Cloneable 不是新代码的拷贝方案",
+        "Serializable 是契约，不是每个类的标配"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "java-raw-type-skips-checks",
+      "title": "裸类型 List 会跳过泛型检查，不是图省事的写法",
+      "prompt": "为什么把 `List` 和无界 `List<?>` 当成一回事，往 `List<String>` 里 add 整数？",
+      "keywords": "raw type unbounded wildcard erasure ClassCastException",
+      "points": [
+        "裸类型绕过泛型检查",
+        "List<?> 不是 List<Object>",
+        "混入错误类型会在取出时 ClassCastException"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "java-class-newinstance-deprecated",
+      "title": "不要再用 Class.newInstance，它只能调无参且已弃用",
+      "prompt": "为什么反射创建对象还写 `clazz.newInstance()`，并当成“随便实例化、不必知道类名”？",
+      "keywords": "Class.newInstance Constructor reflection deprecated",
+      "points": [
+        "反射仍需要类的名字或 Class 对象",
+        "Class.newInstance 已弃用，只调用公共无参构造",
+        "带参用 getDeclaredConstructor().newInstance"
+      ],
+      "since": "JDK 9"
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "java-final-not-fifty-percent",
+      "title": "给类加 final 不会让程序快百分之五十",
+      "prompt": "为什么优化清单写“类声明成 final，编译器内联所有方法，性能平均提高 50%”？",
+      "keywords": "final class inlining HotSpot performance myth",
+      "points": [
+        "final 类不能被继承，这是契约不是加速比",
+        "JIT 内联不依赖你把类写成 final",
+        "没有官方的平均快 50% 承诺"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "java-shift-not-times-eight",
+      "title": "2 左移 3 不是“算出 2 乘 8”的正经答案",
+      "prompt": "为什么面试把 `2<<3` 当成“最有效率的 2×8”，生产代码也跟着用移位代替乘除？",
+      "keywords": "shift multiply strength reduction JLS 15.19",
+      "points": [
+        "左移 3 等于乘 8 只是值相等",
+        "常数乘法由 JIT 折减，手写移位不自动更快",
+        "同步应缩小范围，不是整方法一定更快"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "java-switch-arrow-no-fall",
+      "title": "冒号分支会贯穿，箭头分支不会（JDK 14）",
+      "prompt": "为什么笔试题还在问没写 break 会打印哪几行，有人就把所有 switch 都背成必须 break？",
+      "keywords": "switch fall through break switch expression yield",
+      "points": [
+        "case 标签用冒号时，没有 break 会贯穿",
+        "箭头分支匹配结束就离开，不会落到下一支",
+        "switch 表达式必须穷尽，漏枚举编不过"
+      ],
+      "since": "JDK 14"
     },
     {
       "track": "java",
@@ -6505,7 +6877,8 @@
         "开放定址有线性、二次、双重散列等探测",
         "链地址是槽上的链表或树",
         "AVL 高度差≤1，红黑树最长不超过最短两倍"
-      ]
+      ],
+      "since": "JDK 8 HashMap"
     },
     {
       "track": "java",
@@ -6993,6 +7366,19 @@
     {
       "track": "java",
       "group": "JVM",
+      "id": "java-memory",
+      "title": "JVM 内存、对象与可达性",
+      "prompt": "把变量设为 null 之后，对象会马上消失吗？",
+      "keywords": "Java JVM GC roots 内存",
+      "points": [
+        "可达性从 GC Roots 沿引用判断",
+        "不可达不等于立刻被回收",
+        "静态缓存、监听和线程池任务会把对象留在可达链上"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "JVM",
       "id": "jvm-method-area-metaspace",
       "title": "方法区是规范概念，不是永久代别名",
       "prompt": "为什么还把“方法区 = 永久代，JDK7 后常量池挪走了”当成现行标准答案？",
@@ -7001,7 +7387,8 @@
         "方法区是 JVMS 共享区域，不是固定商品名",
         "HotSpot JDK 8+ 用 Metaspace 承载类元数据",
         "不要把永久代参数当现行默认图"
-      ]
+      ],
+      "since": "JDK 8"
     },
     {
       "track": "java",
@@ -7014,7 +7401,8 @@
         "常见查找仍先委派给父加载器",
         "JDK 9+ 是 Platform ClassLoader 不是 Extension",
         "jhat 已移除，存活判定不是引用计数"
-      ]
+      ],
+      "since": "JDK 9"
     },
     {
       "track": "java",
@@ -7040,7 +7428,8 @@
         "程序计数器不抛 OOM 或栈溢出",
         "栈帧过深才是 SOE",
         "方法区现行实现是元空间，字符串池在堆"
-      ]
+      ],
+      "since": "JDK 8+"
     },
     {
       "track": "java",
@@ -7053,7 +7442,8 @@
         "八操作属于 JDK5 前旧模型",
         "现行规范用 happens-before",
         "JMM 不是堆、栈、方法区那张图"
-      ]
+      ],
+      "since": "JDK 5"
     },
     {
       "track": "java",
@@ -7079,7 +7469,8 @@
         "先确认延迟是否由 GC 暂停引起",
         "G1 是服务器上的通用默认回收器",
         "ZGC 用来缩短停顿，同时要接受内存开销"
-      ]
+      ],
+      "since": "JDK 9"
     },
     {
       "track": "java",
@@ -7132,7 +7523,8 @@
         "JDK 8 起没有永久代",
         "类元数据在 Metaspace，用 MaxMetaspaceSize",
         "HotSpot 年轻代是 Eden 和两个 Survivor"
-      ]
+      ],
+      "since": "JDK 8"
     },
     {
       "track": "java",
@@ -7145,7 +7537,8 @@
         "默认晋升年龄上限是 15 不是 16",
         "年龄达到当前阈值就晋升",
         "Survivor 超过目标会把当前阈值降到 15 以下"
-      ]
+      ],
+      "since": "HotSpot ≤15"
     },
     {
       "track": "java",
@@ -7158,7 +7551,8 @@
         "JDK 8+ 没有永久代",
         "Full GC 主要清堆，不是一块叫 PermGen 的区",
         "Metaspace OOM 和堆 OOM 不是同一块内存"
-      ]
+      ],
+      "since": "JDK 8"
     },
     {
       "track": "java",
@@ -7184,7 +7578,8 @@
         "JDK 9+ 服务器默认 G1",
         "CMS 在 JDK 14 移除",
         "不要把 Java 7 CMS/PermSize 清单当现行参数"
-      ]
+      ],
+      "since": "JDK 9/14"
     },
     {
       "track": "java",
@@ -7263,7 +7658,8 @@
         "一个线程里的先后，另一个线程不一定看得到",
         "解锁之后的加锁，能看见解锁前的写入",
         "volatile 写入，以及线程的启动和结束，也会建立可见性"
-      ]
+      ],
+      "since": "JDK 5"
     },
     {
       "track": "java",
@@ -7289,7 +7685,8 @@
         "显式锁要自己获取，并在 finally 里释放",
         "没有放进 finally 的锁，异常之后会一直被占着",
         "tryLock 只是尝试获取，公平锁也不保证马上轮到你"
-      ]
+      ],
+      "since": "JDK 5"
     },
     {
       "track": "java",
@@ -7334,14 +7731,15 @@
       "track": "java",
       "group": "并发",
       "id": "java-concurrent-map",
-      "title": "ConcurrentHashMap 的复合操作",
+      "title": "ConcurrentHashMap 的复合操作（JDK 8 compute*）",
       "prompt": "先 get，发现没有，再 put，就保证只初始化一次吗？",
       "keywords": "ConcurrentHashMap computeIfAbsent putIfAbsent atomic 复合操作",
       "points": [
         "单次 put 和 get 是线程安全的，先查再改不是",
         "computeIfAbsent 把“没有才计算”收成一次操作",
         "计算函数里不要再改这张表，也不要做慢操作"
-      ]
+      ],
+      "since": "JDK 8 compute*"
     },
     {
       "track": "java",
@@ -7354,7 +7752,8 @@
         "方法和代码块都通过对象监视器互斥",
         "可重入，默认不保证公平唤醒",
         "偏向锁从 JDK 15 起默认关闭，不能当现行口诀"
-      ]
+      ],
+      "since": "JDK 15+"
     },
     {
       "track": "java",
@@ -7438,14 +7837,15 @@
       "track": "java",
       "group": "并发",
       "id": "java-virtual-threads",
-      "title": "虚拟线程解决什么问题",
+      "title": "虚拟线程解决什么问题（JDK 21）",
       "prompt": "虚拟线程会让 CPU 密集型计算本身更快吗？",
       "keywords": "Java 21 virtual threads IO throughput",
       "points": [
         "虚拟线程适合大量正在等待网络或数据库的任务",
         "把 CPU 算满的任务，换成虚拟线程不会变快",
         "连接池和限流按真实资源来设，不按虚拟线程的个数"
-      ]
+      ],
+      "since": "JDK 21"
     },
     {
       "track": "java",
@@ -7477,14 +7877,15 @@
       "track": "java",
       "group": "并发",
       "id": "java-fork-join-pool",
-      "title": "ForkJoin 适合可拆分的计算，不适合堵住工作线程的 IO",
+      "title": "ForkJoin 适合可拆分的计算，不适合堵住工作线程的 IO（JDK 7）",
       "prompt": "在 parallelStream 里调远程接口，为什么有时整个公共池都卡住？",
       "keywords": "ForkJoinPool parallelStream 工作窃取 公共池",
       "points": [
         "ForkJoin 用工作窃取处理可拆分任务",
         "parallelStream 默认使用公共池",
         "不要在公共池里做阻塞 IO"
-      ]
+      ],
+      "since": "JDK 7"
     },
     {
       "track": "java",
@@ -7497,7 +7898,8 @@
         "newFixedThreadPool 使用无界 LinkedBlockingQueue",
         "newCachedThreadPool 最大线程数是 Integer.MAX_VALUE",
         "生产应显式给出队列容量和拒绝策略"
-      ]
+      ],
+      "since": "JDK 5 Executors"
     },
     {
       "track": "java",
@@ -7536,7 +7938,8 @@
         "进程分配资源，线程是运行单位",
         "Java 21 虚拟线程是用户态调度的载体模型",
         "多载体下共享变量仍要同步，不是天然无锁"
-      ]
+      ],
+      "since": "JDK 21"
     },
     {
       "track": "java",
@@ -7580,6 +7983,45 @@
     {
       "track": "java",
       "group": "数据库",
+      "id": "mysql-inner-join-match",
+      "title": "INNER JOIN 只保留两表都匹配的行",
+      "prompt": "为什么 INNER JOIN 之后左边表有的用户消失了？",
+      "keywords": "INNER JOIN LEFT JOIN SQL 联结",
+      "points": [
+        "INNER JOIN 丢弃无匹配行",
+        "LEFT JOIN 保留左表，右表侧可为 NULL",
+        "WHERE 右表条件可能抵消外连接"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-join-ban-not-absolute",
+      "title": "“禁止 JOIN”是团队容量启发式，不是 SQL 真理",
+      "prompt": "为什么资料在高并发规范里写死“禁止使用 JOIN 查询，禁止大表使用子查询”，理由是“会产生临时表”？",
+      "keywords": "MySQL JOIN 临时表 EXPLAIN 规范",
+      "points": [
+        "JOIN 不必然产生临时表",
+        "无索引大表联结才危险",
+        "禁令应落到 EXPLAIN，而不是禁用关键字"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-or-not-must-become-in",
+      "title": "OR 不是“旧版不能走索引、必须改成 IN”",
+      "prompt": "为什么规范写“禁止使用 OR 条件，必须改为 IN”，并说旧版 MySQL 的 OR 不能命中索引？",
+      "keywords": "MySQL OR IN 索引 EXPLAIN",
+      "points": [
+        "同列 OR 与 IN 计划常相近",
+        "跨列 OR 才更需警惕",
+        "用现行 EXPLAIN，不背旧版口诀"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "数据库",
       "id": "mysql-where-having",
       "title": "HAVING 不是带别名的 WHERE",
       "prompt": "为什么“WHERE 用列名能走索引，HAVING 用别名不能走索引、专门写聚集函数”不能当标准答案？",
@@ -7594,6 +8036,19 @@
     {
       "track": "java",
       "group": "数据库",
+      "id": "mysql-group-by-having",
+      "title": "GROUP BY 聚合后，用 HAVING 过滤组，不要塞进 WHERE",
+      "prompt": "为什么 WHERE COUNT(*) > 10 直接语法报错或结果不对？",
+      "keywords": "GROUP BY HAVING COUNT 聚合",
+      "points": [
+        "WHERE 在分组前过滤行",
+        "HAVING 在分组后过滤组",
+        "聚合门槛用 HAVING 或子查询"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "数据库",
       "id": "mysql-union-distinct",
       "title": "UNION 去重，并不保证按字段排序",
       "prompt": "为什么“用 UNION 就会按字段顺序排序，UNION ALL 才不排序”不能当结论？",
@@ -7602,7 +8057,8 @@
         "UNION 默认 DISTINCT 去重",
         "集合结果默认无序",
         "最终排序写在整个 UNION 之后"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -7642,7 +8098,8 @@
         "VARCHAR(M) 的 M 以字符计",
         "LENGTH 与 CHAR_LENGTH 的计量差异",
         "实际字节数和整行上限仍需考虑"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -7657,7 +8114,8 @@
         "超过 255 字节的 VARCHAR 使用 2 字节长度前缀",
         "utf8 在 8.4 仍是 utf8mb3 别名，utf8mb4 按 4 字节计",
         "多减的 1 不是手册给出的长度规则"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -7709,7 +8167,8 @@
         "现行 DATETIME 无小数秒是 5 字节不是 8",
         "TIMESTAMP 按会话时区与 UTC 互转，上限约 2038",
         "DATETIME 存字面值，不随会话时区改写"
-      ]
+      ],
+      "since": "MySQL 5.6.4+"
     },
     {
       "track": "java",
@@ -7722,6 +8181,32 @@
         "FLOAT 是单精度大约 7 位十进制",
         "DOUBLE 大约 15–16 位，不是 18",
         "金额不要用浮点"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-split-not-at-ten-million",
+      "title": "单表一千万行不是必须拆分的定律",
+      "prompt": "为什么拆分原则里写着「单表拆到一千万以内」，计数一到就开工分库？",
+      "keywords": "分库分表 一千万 InnoDB 缓冲池 拆分",
+      "points": [
+        "没有「一千万行必须拆」的服务器限制",
+        "先测热数据、查询形态、复制与备份窗口",
+        "拆分的代价是跨库查询和事务，不是行计数器"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-view-is-stored-query",
+      "title": "视图是存起来的查询，不是默认物化的第二份表",
+      "prompt": "为什么建了视图之后，基表一改，有人以为视图里还是旧快照？",
+      "keywords": "MySQL VIEW 视图 物化 基表",
+      "points": [
+        "普通视图存的是查询定义",
+        "读视图通常展开到基表现算",
+        "快照要单独物化，不能从 CREATE VIEW 自动得到"
       ]
     },
     {
@@ -7813,7 +8298,8 @@
         "InnoDB 自 MySQL 5.6 支持 FULLTEXT",
         "MATCH AGAINST 与普通索引用途不同",
         "分词配置与版本决定实际效果"
-      ]
+      ],
+      "since": "MySQL 5.6+"
     },
     {
       "track": "java",
@@ -7866,7 +8352,8 @@
         "覆盖看 SELECT 列是否都在索引里",
         "没有单独的 covering 索引种类",
         "InnoDB 支持 FULLTEXT"
-      ]
+      ],
+      "since": "MySQL 8+"
     },
     {
       "track": "java",
@@ -7983,7 +8470,8 @@
         "4.0 副本集、4.2 分片支持多文档事务",
         "单文档更新本身就是原子的",
         "事务有时长和体积限制，不是无限关系数据库替代"
-      ]
+      ],
+      "since": "MongoDB 4.0"
     },
     {
       "track": "java",
@@ -8014,6 +8502,19 @@
     {
       "track": "java",
       "group": "数据库",
+      "id": "nosql-label-not-eventual",
+      "title": "NoSQL 是分类标签，不是「最终一致、没有 ACID」",
+      "prompt": "为什么对照表把 NoSQL 写成「最终一致性，而非 ACID」？",
+      "keywords": "NoSQL ACID 最终一致 MongoDB Redis 事务",
+      "points": [
+        "NoSQL 是接口与模型的分类，不是一致性级别",
+        "MongoDB 多文档事务与 Redis 单键原子都存在",
+        "从副本读的延迟要单独约定，SQL 库也一样"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "数据库",
       "id": "mysql-myisam-innodb",
       "title": "MyISAM 与 InnoDB：默认引擎与隐藏行 ID",
       "prompt": "对比 MyISAM 和 InnoDB 时，哪些句子还能用，哪些已经过时？",
@@ -8022,7 +8523,8 @@
         "8.4 默认引擎是 InnoDB",
         "MyISAM 无事务、外键与 MVCC，锁主要是表级",
         "无合适主键时 InnoDB 用 6 字节行 ID 做隐藏聚簇索引"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8035,7 +8537,8 @@
         "默认 16KB 页时内部表空间上限约 64TB",
         "实际大小还受文件系统单文件限制",
         "2GB 不是 MySQL 8.4 InnoDB 的一般上限"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8048,7 +8551,8 @@
         "ROW 是 MySQL 8.4 默认日志格式",
         "STATEMENT、ROW 与 MIXED 的记录粒度",
         "binlog_format 与 log_bin 分别检查"
-      ]
+      ],
+      "since": "MySQL 8.0+"
     },
     {
       "track": "java",
@@ -8088,7 +8592,8 @@
         "Connector/J 默认是客户端预处理",
         "问号只绑定数据值，不绑定表名或列名",
         "会话内结构缓存遇元数据变化会重新准备"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8104,7 +8609,8 @@
         "混部不要套固定的内存百分比",
         "磁盘内部临时表是 InnoDB，key buffer 服务 MyISAM",
         "read_buffer_size 默认 128KB，不能当 InnoDB 通用扫描加速旋钮"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8117,7 +8623,8 @@
         "Query Cache 及参数在 8.0.3 移除",
         "结果缓存与 Buffer Pool 缓存对象不同",
         "优化应从实际执行计划和瓶颈出发"
-      ]
+      ],
+      "since": "MySQL 8.0"
     },
     {
       "track": "java",
@@ -8169,7 +8676,8 @@
         "8.0 起不再用 mysql_install_db",
         "多实例必须分开数据目录、端口、socket 和 server_id",
         "5.6 安装笔记不能当 8.4 步骤"
-      ]
+      ],
+      "since": "MySQL 8.0+"
     },
     {
       "track": "java",
@@ -8182,7 +8690,8 @@
         "5.7 InnoDB 自增计数在内存，重启按 MAX+1",
         "8.0 起写入 redo，重启默认不捡末尾空洞",
         "自增不是连续业务编号"
-      ]
+      ],
+      "since": "MySQL 8.0"
     },
     {
       "track": "java",
@@ -8195,6 +8704,45 @@
         "String 适合整体读写一个值",
         "Hash、Set、Sorted Set 对应字段、去重和按分数排序",
         "Stream 适合追加日志，过期不能代替结构"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "缓存",
+      "id": "redis-hash-field-update",
+      "title": "对象字段用 Hash，整份 JSON 字符串每次都重写",
+      "prompt": "为什么把用户资料存成一个 String 的 JSON，改昵称却要 GET 整份再 SET？",
+      "keywords": "Redis Hash HSET JSON String",
+      "points": [
+        "Hash 可按字段读写",
+        "整份 JSON String 改一字段要整键重写",
+        "一个 Hash 键在 Cluster 里仍在一个槽"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "缓存",
+      "id": "redis-zset-rank-range",
+      "title": "排行榜用 ZSet 的分与范围，不要每次全排序",
+      "prompt": "为什么每次打开排行榜都把全表 ID 拉回应用里 sort？",
+      "keywords": "Redis ZSet 排行榜 ZRANGE ZADD",
+      "points": [
+        "ZSet 按 score 有序",
+        "TopN 与名次用范围/排名命令",
+        "同分再按成员序，成员必须唯一"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "缓存",
+      "id": "redis-hyperloglog-approx",
+      "title": "HyperLogLog 只估基数，不保存每个元素",
+      "prompt": "为什么用 HyperLogLog 统计 UV 之后，却列不出“都有谁访问过”？",
+      "keywords": "HyperLogLog PFCOUNT 基数 UV",
+      "points": [
+        "HLL 估算基数，固定省内存",
+        "无法列出成员",
+        "要精确集合用 Set，不要用 HLL 冒充"
       ]
     },
     {
@@ -8416,7 +8964,8 @@
         "默认可以只开 RDB，重启读 dump.rdb",
         "打开 AOF 后重启优先 AOF，RDB 仍用于快照和复制",
         "AOF 重写可以带 RDB 前缀，不是互斥开关"
-      ]
+      ],
+      "since": "Redis 4+"
     },
     {
       "track": "java",
@@ -8429,7 +8978,8 @@
         "运维入口是 redis-cli --cluster",
         "redis-trib.rb 已不是创建命令",
         "集群从 3.0 进入核心，哈希槽仍是 16384"
-      ]
+      ],
+      "since": "Redis 5"
     },
     {
       "track": "java",
@@ -8460,6 +9010,19 @@
     {
       "track": "java",
       "group": "缓存",
+      "id": "redis-cluster-incr-not-five-steps",
+      "title": "Redis Cluster 不会把 INCR 拆成五台步进发号",
+      "prompt": "为什么资料说开一个五节点集群，把初值设成 1 到 5、步长设成 5，就能并行发号并顺便去掉单点？",
+      "keywords": "Redis Cluster INCR 发号 槽 步长",
+      "points": [
+        "INCR 的原子性只覆盖一个键",
+        "Cluster 把该键放在一个槽、一台主上",
+        "五段步长要独立计数器并钉死客户端，故障转移不重置初值"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "缓存",
       "id": "redis-lua-atomic",
       "title": "多步 Redis 命令要原子时用 Lua，并声明读过的键",
       "prompt": "先 GET 再 SET 判断库存，为什么两个请求还是都减成功了？",
@@ -8474,13 +9037,27 @@
       "track": "java",
       "group": "缓存",
       "id": "redis-stream-vs-pubsub",
-      "title": "要积压和确认用 Stream，Pub/Sub 不记得历史",
+      "title": "要积压和确认用 Stream，Pub/Sub 不记得历史（Redis 5）",
       "prompt": "用 SUBSCRIBE 发下单事件，消费者重启后为什么丢了那段时间的消息？",
       "keywords": "Redis Stream Pub/Sub XREADGROUP XACK",
       "points": [
         "Pub/Sub 只投递给当时在线的订阅者",
         "Stream 可积压、可确认、有消费者组",
         "业务事件不要默认走 Pub/Sub"
+      ],
+      "since": "Redis 5 Stream"
+    },
+    {
+      "track": "java",
+      "group": "缓存",
+      "id": "redis-pubsub-pattern-subscribe",
+      "title": "PSUBSCRIBE 是频道模式匹配，不是给历史消息做通配查询",
+      "prompt": "为什么用 PSUBSCRIBE order.* 仍然收不到消费者离线期间的下单？",
+      "keywords": "Redis PSUBSCRIBE Pub/Sub Stream 模式",
+      "points": [
+        "PSUBSCRIBE 只匹配频道名模式",
+        "仍然无历史、无确认",
+        "业务补单用 Stream，不要用模式订阅冒充"
       ]
     },
     {
@@ -8559,7 +9136,8 @@
         "XmlBeanFactory 的弃用边界",
         "@Required 与构造器注入",
         "XML 配置仍可用但不是旧 API 复活"
-      ]
+      ],
+      "since": "Spring 5.3 docs"
     },
     {
       "track": "java",
@@ -8585,20 +9163,22 @@
         "Boot 3 自动配置清单是 AutoConfiguration.imports",
         "条件注解决定是否生效，不是全量注入",
         "2.7 两个位置都读，Boot 3 不再读 factories 里的这个键"
-      ]
+      ],
+      "since": "Spring Boot 3"
     },
     {
       "track": "java",
       "group": "Spring",
       "id": "tomcat-nio-not-bio-default",
-      "title": "现行 Tomcat HTTP 连接器默认是 NIO，不是 BIO 150 线程那套",
+      "title": "现行 Tomcat HTTP 连接器默认是 NIO，不是 BIO 150 线程那套（8.5+）",
       "prompt": "为什么还把 Connector 默认背成 HTTP/1.1 等于 BIO，并把 maxSpareThreads 当成必须项？",
       "keywords": "Tomcat Connector NIO Http11NioProtocol maxThreads",
       "points": [
         "Tomcat 8.5+ 默认 HTTP 连接器是 NIO",
         "同步请求处理期间仍占一条工作线程",
         "maxThreads 默认 200，maxConnections 默认 8192"
-      ]
+      ],
+      "since": "Tomcat 8.5+"
     },
     {
       "track": "java",
@@ -8611,7 +9191,8 @@
         "XmlBeanFactory 已从现行 Spring 删除",
         "默认单例预实例化，懒加载和 prototype 除外",
         "DI 是 IoC 的注入方式不是另一套容器"
-      ]
+      ],
+      "since": "Spring 5"
     },
     {
       "track": "java",
@@ -8728,7 +9309,8 @@
         "Spring Boot 默认 proxy-target-class=true",
         "有接口也不再默认走 JDK 代理",
         "final、private、static 以及 this 调用仍拦不到"
-      ]
+      ],
+      "since": "Spring Boot"
     },
     {
       "track": "java",
@@ -9066,7 +9648,8 @@
         "JDBC 代理或连接池日志能看到改写后的语句",
         "Boot 3 用 druid-spring-boot-3-starter，StatFilter 要显式打开",
         "生产用慢 SQL 阈值，填参文本不一定能原样执行"
-      ]
+      ],
+      "since": "Spring Boot 3"
     },
     {
       "track": "java",
@@ -9092,7 +9675,8 @@
         "插件类是 PageInterceptor，startPage 仍是调用入口",
         "查询被跳过时要 clearPage，避免线程池串页",
         "它改写 SQL，默认再发一条同步 COUNT"
-      ]
+      ],
+      "since": "PageHelper 6"
     },
     {
       "track": "java",
@@ -9105,7 +9689,8 @@
         "Boot 3 用 spring-boot3-starter，分页要另加 jsqlparser 模块",
         "分页 InnerInterceptor 放在链的最后，不要再叠 PageHelper",
         "逻辑删除只管自动生成的语句，通用层用 IRepository"
-      ]
+      ],
+      "since": "Boot 3 starter"
     },
     {
       "track": "java",
@@ -9263,7 +9848,8 @@
         "JWS 载荷是 Base64url，不是密文",
         "无状态票难单张作废",
         "Redis token 与 JWT 是两套会话"
-      ]
+      ],
+      "since": "RFC 7519"
     },
     {
       "track": "java",
@@ -9328,7 +9914,8 @@
         "load_module 从 1.9.11 起可加载动态模块",
         "发行版常用模块往往已是 .so",
         "不能加载这份二进制从未构建过的任意模块"
-      ]
+      ],
+      "since": "Nginx 1.9.11+"
     },
     {
       "track": "java",
@@ -9367,6 +9954,19 @@
         "正向代理面向客户端访问外网",
         "反向代理面向用户访问入口再转上游",
         "直连目标不是任何一种代理"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Nginx",
+      "id": "cdn-not-just-reverse-proxy-cache",
+      "title": "CDN 和反向代理不都是“原理都是缓存”",
+      "prompt": "为什么资料把 CDN 和反向代理写成同一句“基本原理都是缓存”？",
+      "keywords": "CDN 反向代理 缓存 边缘 源站",
+      "points": [
+        "CDN 在边缘就近，主攻可缓存内容",
+        "反向代理在源站侧，常做 TLS 与选上游",
+        "缓存是可选能力，不能把两层说成同一种东西"
       ]
     },
     {
@@ -9751,6 +10351,19 @@
     {
       "track": "java",
       "group": "消息队列",
+      "id": "mq-delete-not-always-idempotent",
+      "title": "“删除”不总是天然幂等",
+      "prompt": "为什么资料把删除和 SELECT 并列，说删一次和删多次都是把数据删掉？",
+      "keywords": "幂等 删除 软删除 消息重放 库存",
+      "points": [
+        "物理删同一主键终态常可幂等",
+        "软删或带副作用的取消重放可能再改状态",
+        "按业务效果设计键与状态机，不按操作中文名"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "消息队列",
       "id": "mq-backlog-expand-queues",
       "title": "堆积时加消费者，受分区或队列数上限",
       "prompt": "为什么“Consumer 修好了再慢慢消费”和“只加进程不加队列”都消化不了几千万堆积？",
@@ -9837,7 +10450,8 @@
         "KRaft 用内置元数据仲裁替代 ZooKeeper",
         "ISR 描述同步副本，不是 ZK 心跳",
         "acks=all 等到 ISR，不是全部 follower"
-      ]
+      ],
+      "since": "Kafka KRaft"
     },
     {
       "track": "java",
@@ -9876,7 +10490,8 @@
         "分区可以增加，不能按官方接口减少",
         "加分区会改变键的目标分区",
         "消费者个数超过分区会空转"
-      ]
+      ],
+      "since": "Kafka partitions"
     },
     {
       "track": "java",
@@ -10272,6 +10887,19 @@
     {
       "track": "java",
       "group": "Spring Cloud Alibaba",
+      "id": "config-center-poll-needs-watch",
+      "title": "配置中心靠定时盲轮询不够，要用变更通知或长轮询",
+      "prompt": "为什么资料先让客户端开线程轮询配置服务，马上又说用户一大就会有大量无意义轮询？",
+      "keywords": "配置中心 轮询 长轮询 watch Nacos",
+      "points": [
+        "配置读多写少，定时盲拉多半空跑",
+        "变更通知或长轮询驱动拉取",
+        "本地缓存要版本与兜底，分钟延迟是窗口"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Spring Cloud Alibaba",
       "id": "sca-nacos-ephemeral",
       "title": "临时实例靠心跳，保护阈值会把坏地址留下",
       "prompt": "一半实例已经挂了，调用方为什么还在打到它们？",
@@ -10319,7 +10947,8 @@
         "Eureka 默认约 30 秒续约、90 秒摘除",
         "客户端会缓存实例列表",
         "网关和发现都有非 Netflix 的现行选项"
-      ]
+      ],
+      "since": "Eureka defaults"
     },
     {
       "track": "java",
@@ -10385,7 +11014,8 @@
         "Dubbo 已是 Apache 顶级项目",
         "Hessian 是旧默认序列化，不是唯一现状",
         "注册中心和分布式事务都有现行方案，不只有 ZK 和“暂不支持”"
-      ]
+      ],
+      "since": "Dubbo 3.x"
     },
     {
       "track": "java",
@@ -10876,6 +11506,19 @@
     {
       "track": "java",
       "group": "分布式与高并发",
+      "id": "base-slogan-not-ban-tx",
+      "title": "BASE 是工程口号，不是“禁止分布式事务”的定理",
+      "prompt": "为什么资料把 BASE 写成“定理”，并说大型系统不可能用分布式事务、必须靠 BASE？",
+      "keywords": "BASE CAP 最终一致 分布式事务 Outbox",
+      "points": [
+        "BASE 是实践口号不是形式化定理",
+        "放松立刻一致不等于禁止事务",
+        "最终一致仍要收敛条件与对账"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "分布式与高并发",
       "id": "distributed-consistency-three-words",
       "title": "三个「一致」不是同一个承诺",
       "prompt": "为什么把库的约束、分区后的读写视图、过一会儿对账成功，都叫成 CAP 的 C？",
@@ -10928,6 +11571,32 @@
     {
       "track": "java",
       "group": "分布式与高并发",
+      "id": "dist-lock-owner-not-mac-pid-tid",
+      "title": "可重入身份别绑 MAC + 进程号 + 线程号",
+      "prompt": "为什么资料写分布式可重入锁要记录「MAC 地址 + JVM 进程 ID + 线程 ID」和重入次数？",
+      "keywords": "分布式锁 可重入 token MAC 租约",
+      "points": [
+        "可重入要比对锁上的持有者令牌",
+        "MAC/PID/TID 在容器与回收下会撞车",
+        "租约仍由服务端 TTL 或会话管理"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "分布式与高并发",
+      "id": "dist-lock-reentrant-not-deadlock-cure",
+      "title": "可重入只防“自己锁自己”，不是分布式死锁解药",
+      "prompt": "为什么资料把“这把锁要是一把可重入锁”直接括注成“避免死锁”？",
+      "keywords": "可重入 死锁 分布式锁 租约",
+      "points": [
+        "可重入避免同持有者在同锁上自堵",
+        "交叉死锁与忘释放不靠重入计数解决",
+        "分布式锁先互斥、租约与持有者校验"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "分布式与高并发",
       "id": "zk-linearizable-not-realtime",
       "title": "ZooKeeper 的 timeliness 不是最终一致性",
       "prompt": "为什么把 ZooKeeper 保证写成“实时性（最终一致性）”，并把 zkclient 写成自带客户端会错？",
@@ -10949,6 +11618,32 @@
         "SETNX 与 EXPIRE 分开执行会在崩溃时留下死锁键",
         "应用 SET key token NX EX 一次完成",
         "TTL 到期后旧持有者仍可能写，要业务版本校验"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "分布式与高并发",
+      "id": "redis-lock-getset-wall-clock",
+      "title": "用本机墙钟做 Redis 锁过期会偏",
+      "prompt": "为什么资料在 SETNX 之后改用 get/getset，把「当前时间+超时」写进 value，再和本机系统时间比较？",
+      "keywords": "Redis 分布式锁 GETSET 墙钟 SET NX EX NTP",
+      "points": [
+        "过期时间写进 value 再和本机时间比，依赖墙钟",
+        "时钟偏差会导致双持有或误判超时",
+        "应用 SET key token NX EX，由服务端 TTL 计时"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "分布式与高并发",
+      "id": "mysql-for-update-not-dist-lease",
+      "title": "FOR UPDATE 是事务行锁，不是跨机租约",
+      "prompt": "为什么资料把 SELECT … FOR UPDATE 当成分布式锁，还说宕机后数据库会自己释放？",
+      "keywords": "MySQL FOR UPDATE 行锁 连接池 分布式锁 事务",
+      "points": [
+        "FOR UPDATE 锁在当前事务的连接上",
+        "长临界区会占满连接池并扩大锁范围风险",
+        "跨机互斥用租约或短事务约束，不要握锁调远程"
       ]
     },
     {
@@ -11097,6 +11792,45 @@
     {
       "track": "java",
       "group": "分布式与高并发",
+      "id": "seckill-js-needs-cache-control",
+      "title": "开抢控制 JS 不会“自动”躲开 CDN 缓存",
+      "prompt": "为什么资料写「这个 JS 文件是不会被 CDN 系统缓存的」，活动开始后还有人看到未开始？",
+      "keywords": "秒杀 CDN Cache-Control 静态化 开抢",
+      "points": [
+        "控制脚本默认仍可能被 CDN 缓存",
+        "要用响应头或 CDN 规则显式禁止/缩短缓存",
+        "开抢权威在服务端，不在脚本内容"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "分布式与高并发",
+      "id": "seckill-client-gate-not-enough",
+      "title": "禁用按钮和开抢 JS 挡不住改请求的人",
+      "prompt": "为什么资料自己也写：客户端优化只能防住“不是搞计算机的用户”？",
+      "keywords": "秒杀 客户端 信任边界 限流 库存",
+      "points": [
+        "按钮与脚本不是准入控制",
+        "服务端校验开始时间、限流与原子扣减",
+        "客户端优化只削峰，不守库存不变量"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "分布式与高并发",
+      "id": "distributed-mq-not-erase-invariant",
+      "title": "消息解耦不消掉库存不变量",
+      "prompt": "为什么资料写「库存挂了也不影响下单」，有人就只写队列就返回成功？",
+      "keywords": "消息队列 解耦 最终一致 Outbox 库存 超卖",
+      "points": [
+        "入队只推迟库存动作，不删掉卖出上限",
+        "最终一致靠 Outbox、幂等、补偿与对账",
+        "削峰丢请求是限流，不是写队列即售出"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "分布式与高并发",
       "id": "distributed-consistent-hash",
       "title": "一致性哈希与虚拟节点",
       "prompt": "为什么加一台缓存节点后，不应让所有键都重新映射？",
@@ -11136,6 +11870,19 @@
     {
       "track": "java",
       "group": "分布式与高并发",
+      "id": "lru-capacity-not-ttl-expire",
+      "title": "题叫“带过期时间的 LRU”，正文往往只做容量淘汰",
+      "prompt": "为什么资料标题写「设计一个带有过期时间的 LRU 缓存」，后面却只讲 HashMap + 链表把尾巴踢掉？",
+      "keywords": "LRU TTL 过期 容量淘汰 缓存",
+      "points": [
+        "容量 LRU 与 per-entry TTL 是两维",
+        "只画链表满删尾不等于实现了过期",
+        "未满时过期键仍应失效并视为未命中"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "分布式与高并发",
       "id": "distributed-kafka-order",
       "title": "Kafka 顺序：分区内有序",
       "prompt": "想保证同一订单事件的顺序，整个 Topic 只能有一个分区吗？",
@@ -11144,6 +11891,32 @@
         "分区内顺序保证",
         "同一业务键的分区策略",
         "重试和多消费者影响处理顺序"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "分布式与高并发",
+      "id": "dns-lb-not-just-round-robin",
+      "title": "DNS 负载均衡不是“调小 TTL 的简单轮询”就够",
+      "prompt": "为什么资料把 DNS 负载均衡写成简单轮询，并把刷新时间调得很小？",
+      "keywords": "DNS 负载均衡 TTL 健康检查",
+      "points": [
+        "DNS 多记录受解析缓存约束",
+        "TTL 调极小不能保证立刻摘掉死 IP",
+        "实例级健康摘流应在 LB，不是只靠 DNS"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "分布式与高并发",
+      "id": "http-redirect-lb-two-hops",
+      "title": "HTTP 302 负载均衡是两次往返，还会把后端地址交给浏览器",
+      "prompt": "为什么资料一边说 HTTP 重定向负载均衡“比较简单”，一边又说要两次请求、调度机可能成为瓶颈？",
+      "keywords": "HTTP 302 负载均衡 Location 反向代理",
+      "points": [
+        "302/Location 让浏览器再请求一次真实地址",
+        "后端 URL 易暴露，后续可绕过调度机",
+        "主 LB 用反代或云 LB，302 适合迁移"
       ]
     },
     {
@@ -11170,7 +11943,8 @@
         "表自增不是跨库全局唯一",
         "随机 UUID 唯一但写入更碎",
         "时间有序 ID 还要处理时钟和机器号"
-      ]
+      ],
+      "since": "RFC 9562"
     },
     {
       "track": "java",
@@ -11462,14 +12236,15 @@
       "track": "java",
       "group": "工程实践",
       "id": "java-http-timeout",
-      "title": "建连超时管不到整次调用",
+      "title": "建连超时管不到整次调用（Java 11 HttpClient）",
       "prompt": "HttpClient 的连接超时设成 3 秒，这次请求就一定会在 3 秒内结束吗？",
       "keywords": "Java HttpClient connectTimeout HttpRequest timeout 超时",
       "points": [
         "connectTimeout 只限制建立新连接",
         "请求 timeout 限制等到响应的时间",
         "不设请求超时就会一直阻塞"
-      ]
+      ],
+      "since": "Java 11 HttpClient"
     },
     {
       "track": "java",
@@ -11495,7 +12270,8 @@
         "JDBC 提供 DataSource，不是没有池 API",
         "借不到连接应抛 SQLException，不要返回 null",
         "不要用一把锁手写空闲 ArrayList 当池"
-      ]
+      ],
+      "since": "JDBC 2.0"
     },
     {
       "track": "java",
@@ -11508,7 +12284,8 @@
         "优雅停机先停止接受新请求",
         "已接受的请求只等待有限时间",
         "就绪探针要先于进程退出把流量摘掉"
-      ]
+      ],
+      "since": "Spring Boot 2.3+"
     },
     {
       "track": "java",
@@ -11573,7 +12350,8 @@
         "缓存按行移动，常见 64 字节，不是按字段",
         "相邻字段的无锁写入仍可能伪共享",
         "间隔或 Contended 隔开行，不要靠加大堆"
-      ]
+      ],
+      "since": "JEP 142"
     },
     {
       "track": "java",
@@ -11781,7 +12559,8 @@
         "Hystrix 和 Ribbon 不是当前 Spring Cloud 的默认组件",
         "北向网关用 Spring Cloud Gateway，而不是 Zuul 1",
         "Spring Boot 3 使用 jakarta 包，不再使用 javax.servlet 这套前缀"
-      ]
+      ],
+      "since": "Boot 3 / SC 2020+"
     }
   ]
 }

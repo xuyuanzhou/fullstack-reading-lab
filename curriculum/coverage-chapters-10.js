@@ -291,6 +291,7 @@ const COVERAGE_CHAPTERS_10 = [
     points:['async 函数返回 Promise','await 让出执行权，不冻住页面','无依赖的请求不要串成一条 await 链'],
     deep:[
       {title:'让出当前函数',body:'异步函数一定返回以后才完成的结果。等待暂停的是这个函数内部的后续代码，线程还给事件循环，不是把页面冻住。等待后面的代码相当于落在完成回调里。独立请求应一起发出。'},
+      {title:'并行汇总',body:'无依赖请求应 Promise.all 或 allSettled 一起发出，见 promise-all-and-settled。串成 await 链只会把耗时相加。微任务与定时器队列差别见 js-microtask-vs-macrotask。'},
       {title:'怎样自己验证',body:'把一条链式调用改成等待，确认页面上的其他点击仍能响应。再把两个无依赖请求从串行改成一起发出，比较总耗时应从接近相加变成接近较慢的那一次。串行两次的耗时应接近相加，并行时应接近较慢的那一次。'}
     ],
     refs:[['MDN：async function','https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function'],['MDN：await','https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await']]

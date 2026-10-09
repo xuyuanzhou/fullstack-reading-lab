@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-labelledby="title desc">
+  <title id="title">FOR UPDATE 占的是连接，不是跨机租约</title>
+  <desc id="desc">资料把 SELECT … FOR UPDATE 当成分布式锁。它占的是当前事务与连接上的行锁；长业务不提交会撑满连接池，也不能代替跨进程的令牌租约。</desc>
+  <rect width="960" height="400" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">MYSQL</text>
+  <text x="32" y="64" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">行锁跟着事务走，别当跨机分布式锁</text>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <rect x="32" y="96" width="430" height="176" rx="14" fill="#f6ecea" stroke="#a05048"/>
+    <text x="52" y="132" font-size="15" font-weight="600" fill="#6e3530">资料捷径</text>
+    <text x="52" y="164" font-size="14" fill="#2e3330">FOR UPDATE 拿到就算分布式锁</text>
+    <text x="52" y="196" font-size="14" fill="#2e3330">业务跑完再 commit 释放</text>
+    <text x="52" y="228" font-size="14" fill="#5e6661">宕机靠事务回滚「自动解锁」</text>
+    <rect x="496" y="96" width="432" height="176" rx="14" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="516" y="132" font-size="15" font-weight="600" fill="#2e3330">实际边界</text>
+    <text x="516" y="164" font-size="14" fill="#3f6a58">锁在当前连接的事务里</text>
+    <text x="516" y="196" font-size="14" fill="#3f6a58">长临界区占满连接池</text>
+    <text x="516" y="228" font-size="14" fill="#5e6661">跨服务协调用令牌租约或 DB 约束</text>
+    <rect x="32" y="296" width="896" height="72" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="52" y="328" font-size="15" font-weight="600" fill="#2e3330">同库短事务里保护一行可以；跨机长流程不要握着 FOR UPDATE 不放。</text>
+    <text x="52" y="352" font-size="14" fill="#5e6661">见 distributed-lock、mysql-innodb-locking-reads</text>
+  </g>
+</svg>

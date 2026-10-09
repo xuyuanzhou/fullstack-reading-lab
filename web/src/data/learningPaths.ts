@@ -26,17 +26,32 @@ export function spinePlace(lessonId: string): { index: number; step: number; gat
   return { index, step: gate.lessons.findIndex((lesson) => lesson.id === lessonId), gate }
 }
 
-/** Next required lesson inside the same stage. Crossing into the next stage goes back to the path page. */
+/** Next required lesson inside the same stage. A 二选一 pair is one step, so the other lesson is skipped. */
 export function spineNextId(lessonId: string): string | undefined {
   const place = spinePlace(lessonId)
   if (!place) return undefined
-  return place.gate.lessons[place.step + 1]?.id
+  const slots = slotsOf(place.gate.lessons)
+  const at = slots.findIndex((slot) => slot.includes(lessonId))
+  return slots[at + 1]?.[0]
 }
 
 export function spinePrevId(lessonId: string): string | undefined {
   const place = spinePlace(lessonId)
-  if (!place || place.step <= 0) return undefined
-  return place.gate.lessons[place.step - 1]?.id
+  if (!place) return undefined
+  const slots = slotsOf(place.gate.lessons)
+  const at = slots.findIndex((slot) => slot.includes(lessonId))
+  if (at <= 0) return undefined
+  return slots[at - 1]?.[0]
+}
+
+/** First lesson of the first slot that is still unread. Reading either lesson in a pair clears that slot. */
+export function nextInGate(gate: PathGate, doneIds: readonly string[]): string | undefined {
+  const done = new Set(doneIds)
+  for (const slot of slotsOf(gate.lessons)) {
+    if (slot.some((id) => done.has(id))) continue
+    return slot[0]
+  }
+  return undefined
 }
 
 export type PathKind = 'fullstack' | 'architect'
@@ -48,11 +63,23 @@ export type PathLesson = {
   note?: string
 }
 
-/** Alternatives that share a note count as one slot. */
+/** Consecutive lessons that share a note are one slot, kept in reading order. */
 export function slotsOf(lessons: PathLesson[]): string[][] {
-  const alternatives = lessons.filter((lesson) => lesson.note).map((lesson) => lesson.id)
-  const required = lessons.filter((lesson) => !lesson.note).map((lesson) => [lesson.id])
-  return alternatives.length ? [...required, alternatives] : required
+  const slots: string[][] = []
+  let group: string[] = []
+  for (const lesson of lessons) {
+    if (lesson.note) {
+      group.push(lesson.id)
+      continue
+    }
+    if (group.length) {
+      slots.push(group)
+      group = []
+    }
+    slots.push([lesson.id])
+  }
+  if (group.length) slots.push(group)
+  return slots
 }
 
 export type PathGate = {

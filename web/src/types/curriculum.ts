@@ -27,6 +27,8 @@ export type Lesson = {
   origin?: string
   react?: string
   vue?: string
+  /** Introduced-in baseline for teaching (e.g. JDK 8, ES2015). */
+  since?: string
 }
 
 export type OutlineSection = {

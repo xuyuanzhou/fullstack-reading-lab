@@ -194,7 +194,7 @@ window.LESSONS=[
   },
 {
     track:'java',
-    group:'Java 基础',
+    group:'JVM',
     id:'java-memory',
     title:'JVM 内存、对象与可达性',
     prompt:'对象没有变量引用就立刻被回收吗？',

@@ -36,9 +36,9 @@ const COVERAGE_JAVA_29 = [
   },
   {
     track:'java', group:'Spring', id:'tomcat-nio-not-bio-default',
-    title:'现行 Tomcat HTTP 连接器默认是 NIO，不是 BIO 150 线程那套',
+    title:'现行 Tomcat HTTP 连接器默认是 NIO，不是 BIO 150 线程那套（8.5+）',
     prompt:'为什么还把 Connector 默认背成 HTTP/1.1 等于 BIO，并把 maxSpareThreads 当成必须项？',
-    core:'Tomcat 10.1 的 HTTP 连接器文档写明：protocol 的默认值 HTTP/1.1 使用基于 Java NIO 的连接器，实现类是 Http11NioProtocol。BIO 那套 Http11Protocol 从 8.5 起移除，配置里不再有“默认 BlockingIO”，也没有 Tomcat 4/5 的 maxProcessors、旧 BIO 池的 maxSpareThreads。NIO 在这里管的是接受连接、用轮询挂住很多套接字。同步 Servlet 在处理期间仍要一条工作线程，直到这次请求返回。文档写的是：每个非异步请求在处理期间需要一条线程。maxThreads 默认 200，决定同时能处理多少请求。maxConnections 默认 8192，决定同时能挂住多少连接。连接可以多于线程；正在执行的同步请求不能多于 maxThreads。线程不够时，新连接还可以接到 maxConnections，再多则进 acceptCount 的操作系统队列。这和 Netty 里一条 EventLoop 把业务也轮询掉不是同一件事。把 maxThreads 调成个位数，慢请求会把能处理的并发打满，即使连接器名字里有 nio。',
+    core:'Tomcat 10.1 的 HTTP 连接器文档写明：protocol 的默认值 HTTP/1.1 使用基于 Java NIO 的连接器，实现类是 Http11NioProtocol。BIO 那套 Http11Protocol 从 **8.5** 起移除，配置里不再有“默认 BlockingIO”，也没有 Tomcat 4/5 的 maxProcessors、旧 BIO 池的 maxSpareThreads。NIO 在这里管的是接受连接、用轮询挂住很多套接字。同步 Servlet 在处理期间仍要一条工作线程，直到这次请求返回。文档写的是：每个非异步请求在处理期间需要一条线程。maxThreads 默认 200，决定同时能处理多少请求。maxConnections 默认 8192，决定同时能挂住多少连接。连接可以多于线程；正在执行的同步请求不能多于 maxThreads。线程不够时，新连接还可以接到 maxConnections，再多则进 acceptCount 的操作系统队列。这和 Netty 里一条 EventLoop 把业务也轮询掉不是同一件事。把 maxThreads 调成个位数，慢请求会把能处理的并发打满，即使连接器名字里有 nio。',
     why:'按 BIO 默认去找 maxSpareThreads 或 maxProcessors，10.1 的连接器上没有这些字段，还会以为线程数就是最大连接数。把 Netty 的“一条线程很多连接”套过来，把 maxThreads 调得很小，两百个慢请求里只有几条能执行。',
     example:'Spring Boot 内嵌 Tomcat 启动日志里的 ProtocolHandler 是 http-nio-端口。同时挂上远多于 200 的空闲连接可以成功。若有 200 个请求各自在 Servlet 里不返回，第 201 个同步请求会等到有线程空出来，而不是再创建第 201 条工作线程。',
     task:'对照当前 Connector 文档，写出默认协议实现；划掉“默认 BlockingIO”。',

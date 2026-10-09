@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-labelledby="title desc">
+  <title id="title">NoSQL 标签不决定一致性</title>
+  <desc id="desc">先问这一次读写的模型</desc>
+  <rect width="960" height="400" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">DATABASE</text>
+  <text x="32" y="64" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">先问这一次读写的模型</text>
+  <rect x="32" y="96" width="430" height="200" rx="14" fill="#f6ecea" stroke="#a05048"/>
+  <text x="52" y="132" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="15" font-weight="600" fill="#6e3530">对照表的一句话</text>
+  <text x="52" y="168" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">NoSQL = 最终一致</text>
+<text x="52" y="200" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">因此没有 ACID</text>
+<text x="52" y="232" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">读到旧值也正常</text>
+  <rect x="496" y="96" width="432" height="200" rx="14" fill="#e6efe9" stroke="#3f6a58"/>
+  <text x="516" y="132" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="15" font-weight="600" fill="#2e3330">要分开写的三句</text>
+  <text x="516" y="168" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">单键原子看主节点</text>
+<text x="516" y="200" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">多文档事务看版本</text>
+<text x="516" y="232" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">从库延迟单独约定</text>
+  <rect x="32" y="320" width="896" height="52" rx="12" fill="#e6efe9"/>
+  <text x="52" y="352" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="600" fill="#2d4f41">分类标签换不掉你这次要的读、写保证。</text>
+</svg>

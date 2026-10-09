@@ -267,6 +267,10 @@ html[data-theme='dark'] .brand-mark {
   }
 }
 
+.study-mode {
+  margin-top: 8px;
+}
+
 .path-menu.ant-menu {
   flex: 1;
   overflow: auto;
@@ -411,12 +415,20 @@ html[data-theme='dark'] .brand-mark {
 
 .lesson-label {
   display: grid;
-  grid-template-columns: 5px minmax(0, 1fr);
+  grid-template-columns: 5px minmax(0, 1fr) auto;
   column-gap: 6px;
   align-items: start;
   white-space: normal;
   line-height: 1.4;
   font-size: 13px;
+
+  .since-chip {
+    margin-top: 0.15em;
+    font-size: 11px;
+    color: var(--lab-muted);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
 }
 
 .lesson-status {

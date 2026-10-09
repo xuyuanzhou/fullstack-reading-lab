@@ -41,8 +41,10 @@ cd web && npm run export:curriculum && node ../scripts/verify_content.mjs
 ## 后续
 
 - [x] 恢复微前端 frontend-27，导图改 frontend-28
-- [ ] 下一刀导图续抽勿复用已占用的 coverage 文件号
-- [ ] 勿把 Twemproxy 画成现行默认 Cluster
+- [x] Redis / JS 导图 / improve_build 说法级台账；Spark 与路线图维持不适用
+- [x] 四课浏览器抽查通过；Kafka/JVM/数据结构/设计模式导图无新增课
+- [x] 独立大图战役收口（剩余为大数据栈/路线图/软技能）
+- [ ] 下一空闲号 `coverage-java-51.js` / `coverage-frontend-29.js`；勿覆盖 frontend-26/27
 
 ## 给下一模型
 

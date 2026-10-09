@@ -74,9 +74,9 @@ const COVERAGE_FRONTEND_20 = [
   },
   {
     track:'frontend', group:'技术选型', id:'fe-angular-first-party',
-    title:'Angular 的路由、HTTP 和表单用自己的包',
+    title:'Angular 的路由、HTTP 和表单用自己的包（v21）',
     prompt:'为什么新的 Angular 工程还要再装一套 React Query、Redux 和 react-router？',
-    core:'Angular v21 起，新应用默认采用无 Zone 的变更检测，引导配置里不要再用 provideZoneChangeDetection 把它改回去。模板读取的信号更新、markForCheck、组件输入和模板事件会安排检查。信号用 signal、computed 和 effect 描述状态和派生。HttpClient 从 v21 起默认可注入；更早的工程用 provideHttpClient，而不是再引入已不推荐的 HttpClientModule 当现行写法。路由用 provideRouter 和 RouterOutlet。表单是应用主体时用响应式表单，模型放在组件类里。这些包都在 @angular 下。输入钩子何时触发见 angular-ngonchanges-primitives。已有工程可以仍带着 zone.js，那是迁移状态，不是新项目的默认。',
+    core:'**Angular v21** 起，新应用默认采用无 Zone 的变更检测，引导配置里不要再用 provideZoneChangeDetection 把它改回去。模板读取的信号更新、markForCheck、组件输入和模板事件会安排检查。信号用 signal、computed 和 effect 描述状态和派生。HttpClient 从 v21 起默认可注入；更早的工程用 provideHttpClient，而不是再引入已不推荐的 HttpClientModule 当现行写法。路由用 provideRouter 和 RouterOutlet。表单是应用主体时用响应式表单，模型放在组件类里。这些包都在 @angular 下。输入钩子何时触发见 angular-ngonchanges-primitives。已有工程可以仍带着 zone.js，那是迁移状态，不是新项目的默认。',
     why:'把 React 生态的请求缓存和路由再装一份之后，同一次跳转既走 Angular Router 又走另一个 history，列表既在 HttpClient 的流里又在第二份缓存里。取消订阅和刷新列表会对不上。',
     example:'订单 API 放在可注入的服务里，组件订阅 HttpClient 返回的 Observable，或按文档用资源把异步数据接进信号。地址用 routerLink。不要为这个工程添加 @tanstack/react-query 或 react-router-dom。',
     task:'在新工程的依赖里确认路由、HTTP、表单都来自 @angular。若 zone.js 还在，写明这是 v21 之前的工程还是有意覆盖了默认。',

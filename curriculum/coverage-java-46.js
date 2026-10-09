@@ -40,9 +40,9 @@ const COVERAGE_JAVA_46 = [
   },
   {
     track:'java', group:'Java 基础', id:'java-switch-arrow-no-fall',
-    title:'冒号分支会贯穿，箭头分支不会',
+    title:'冒号分支会贯穿，箭头分支不会（JDK 14）',
     prompt:'为什么笔试题还在问没写 break 会打印哪几行，有人就把所有 switch 都背成必须 break？',
-    core:'传统 `switch` 语句里，`case 1:` 匹配之后**没有 `break`（或 `return`）会落到下一支**，`default` 也会被贯穿进来。这是笔试题常见陷阱。Java 14 起的 **switch 表达式**用 `case 1 ->` 或 `yield`：匹配的那一支结束就离开，**不会贯穿**。多个标签写成 `case 1, 2 ->`。表达式必须穷尽，漏掉枚举常量编不过。不要把两种语法合成一句“switch 都要 break”。',
+    core:'传统 `switch` 语句里，`case 1:` 匹配之后**没有 `break`（或 `return`）会落到下一支**，`default` 也会被贯穿进来。这是笔试题常见陷阱。**JDK 14 定稿**的 switch 表达式（JEP 361）用 `case 1 ->` 或 `yield`：匹配的那一支结束就离开，**不会贯穿**。多个标签写成 `case 1, 2 ->`。表达式必须穷尽，漏掉枚举常量编不过。不要把两种语法合成一句“switch 都要 break”。',
     why:'把箭头语法也塞上 break，或者在冒号语法里省掉 break，输出会连到下一支，题目里的 default 也会执行。',
     example:'`switch (n) { case 1: System.out.print("a"); case 2: System.out.print("b"); }` 在 n 为 1 时打印 ab。`switch (n) { case 1 -> "a"; case 2 -> "b"; default -> "z"; }` 在 n 为 1 时只得到 "a"。',
     task:'同一组输入分别用冒号语句和箭头表达式写出输出。划掉“所有 switch 都必须写 break”。',

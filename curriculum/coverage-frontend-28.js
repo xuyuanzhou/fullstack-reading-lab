@@ -1,5 +1,4 @@
-/* Frontend 28: JS BOM mind map + webpack sourcemap table embeds.
-   Kept separate from coverage-frontend-27 (micro-frontend selection/usage). */
+/* JS BOM mind map + webpack sourcemap table embeds. */
 const COVERAGE_FRONTEND_28 = [
   {
     track:'frontend', group:'语言基础', id:'js-timer-fn-not-string',
@@ -16,6 +15,7 @@ const COVERAGE_FRONTEND_28 = [
     points:['定时器第一个参数应是函数','字符串形式会再求值，类似 eval','clear 必须用同一次调用返回的句柄'],
     deep:[
       {title:'和立刻调用的括号',body:'`setTimeout(clock(), 1000)` 会马上执行 clock，把返回值交给定时器，通常也是错的。要延迟执行就传 `clock` 或 `() => clock()`，不要在传参时加一对会立刻调用的括号。'},
+      {title:'和微任务',body:'定时器回调是后续任务，排在当前微任务清空之后，见 eventloop、js-microtask-vs-macrotask。不要用 setTimeout(0) 冒充“等 then 跑完”——then 往往更早。'},
       {title:'怎样自己验证',body:'打开 MDN 的 setInterval，确认推荐函数形式。在开了禁止 eval 的 CSP 页面试字符串形式，应失败或被挡住。再改成函数形式，用返回的 id 清除。'}
     ],
     refs:[['MDN：setInterval','https://developer.mozilla.org/en-US/docs/Web/API/Window/setInterval'],['MDN：setTimeout','https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout']]

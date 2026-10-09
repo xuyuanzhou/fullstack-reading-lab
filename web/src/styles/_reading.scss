@@ -153,6 +153,8 @@
     margin: 0 0 12px;
     padding: 12px 0 0;
     border-top: 1px solid var(--lab-line-soft);
+
+    > div + div { margin-top: 8px; }
   }
 
   .is-read { color: var(--lab-muted); }
@@ -943,6 +945,10 @@
   color: var(--lab-muted);
   font-size: 13px;
 
+  .since-badge {
+    color: var(--lab-ink);
+    font-weight: 600;
+  }
 }
 
 .point-list {

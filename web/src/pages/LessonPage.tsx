@@ -2,7 +2,7 @@ import { Breadcrumb, Button, Collapse, Image, Input, Space, Typography } from 'a
 import { useEffect, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { findLesson, lessonIndex, loadFullLesson, nextLesson } from '@/data/curriculum'
-import { deliverableKey, spineNextId, spinePlace, spinePrevId } from '@/data/learningPaths'
+import { deliverableKey, slotsOf, spineNextId, spinePlace, spinePrevId } from '@/data/learningPaths'
 import { groupKeyForLabel, groupPath, groupTitle, isTrack, lessonPath } from '@/data/routes'
 import { shortTitle, splitProse, structureCore } from '@/data/reading'
 import { REACT_CHAPTERS, VUE_CHAPTERS, reactUrl, vueUrl } from '@/data/meta'
@@ -50,6 +50,8 @@ export function LessonPage() {
   const index = lessonIndex(lesson.track, lesson.id)
   const next = nextLesson(lesson.track, lesson.id)
   const onSpine = spinePlace(lesson.id)
+  const spineSlots = onSpine ? slotsOf(onSpine.gate.lessons) : []
+  const spineSlot = spineSlots.findIndex((slot) => slot.includes(lesson.id))
   const spineNext = findLesson(spineNextId(lesson.id) || '')
   const spinePrev = findLesson(spinePrevId(lesson.id) || '')
   const core = structureCore(lesson.core)
@@ -78,7 +80,7 @@ export function LessonPage() {
               第 {onSpine.index + 1} 关 · {onSpine.gate.learnTitle}
             </Link>
             <span>
-              第 {onSpine.step + 1}/{onSpine.gate.lessons.length} 节
+              第 {spineSlot + 1}/{spineSlots.length} 节
             </span>
             <span>
               交付 {onSpine.gate.outputs.filter((_, outputIndex) => (progress.pathChecks ?? []).includes(deliverableKey(onSpine.gate.id, outputIndex))).length}/{onSpine.gate.outputs.length}
@@ -87,8 +89,10 @@ export function LessonPage() {
               <Link to={lessonPath(spineNext)} onClick={() => progress.remember(spineNext.id)}>
                 下一节 · {shortTitle(spineNext.title)}
               </Link>
-            ) : (
+            ) : progress.done.includes(lesson.id) ? (
               <Link to="/paths?focus=deliver">回主线交交付物</Link>
+            ) : (
+              <span>文末记为已读，再交交付物</span>
             )}
           </p>
           {onSpine.gate.lessons[onSpine.step]?.job ? <p>{onSpine.gate.lessons[onSpine.step].job}</p> : null}
@@ -123,6 +127,7 @@ export function LessonPage() {
           />
         ) : null}
         <div className="meta-line">
+          {lesson.since ? <span className="since-badge" title="引入或定稿版本">自 {lesson.since}</span> : null}
           <span>原创课程</span>
           <span>{references.length} 项依据</span>
         </div>

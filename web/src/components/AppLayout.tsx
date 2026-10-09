@@ -166,6 +166,7 @@ export function AppLayout() {
           aria-hidden
         />
         <span>{shortTitle(lesson.title)}</span>
+        {lesson.since ? <span className="since-chip">{lesson.since}</span> : null}
       </Link>
     ),
   })

@@ -39,6 +39,7 @@ const COVERAGE_FRONTEND_27 = [
     points:['按主缝对照，不要按新旧排序','Federation 管模块共享，single-spa 管生命周期','HTML entry、无界、iframe 各解决更强隔离或整页入口'],
     deep:[
       {title:'可以组合',body:'壳用 single-spa 编排，个别远程用 Federation 加载模块；第三方角落仍 iframe。组合时在架构图上分开标注回滚面。'},
+      {title:'学完还常外查的邻接点',body:'shared 版本冲突症状见 mfe-shared-deps、mfe-mf-host-setup。HTML entry 与 container 元素见 mfe-qiankun-html-entry。独立文档通信见 mfe-iframe-postmessage。选型三问见 mfe-pick-by-constraint。'},
       {title:'怎样自己验证',body:'把「要 shared 单例」和「要独立 document」写成两张卡片，看哪一行同时满足；两行都勾上同一框架时，对照表写错了。'}
     ],
     refs:[['webpack：Module Federation','https://webpack.js.org/concepts/module-federation/'],['qiankun：指南','https://qiankun.umijs.org/guide'],['无界：文档','https://wujie-micro.github.io/doc/']]
@@ -74,6 +75,7 @@ const COVERAGE_FRONTEND_27 = [
     points:['接通标准是 remotes、exposes、import、shared 四项对齐','uniqueName 两端不能碰撞','本地用加键与删键验证加载边界'],
     deep:[
       {title:'动态 remotes',body:'运行时改入口 URL 时仍走容器的 init/get，不要另发明全局变量传组件。'},
+      {title:'shared 版本冲突症状',body:'少配 singleton 时常见双 React、钩子报 Invalid hook call、Context 穿不透。requiredVersion 对不上可能各自打包一份。治理清单见 mfe-shared-deps；契约升级见 mfe-contract-version。'},
       {title:'怎样自己验证',body:'Network 里应出现 remoteEntry；React 模块对象身份两端相同。删 expose 后错误应指向缺失模块。'}
     ],
     refs:[['webpack：ModuleFederationPlugin','https://webpack.js.org/plugins/module-federation-plugin/'],['webpack：Module Federation 概念','https://webpack.js.org/concepts/module-federation/']]
@@ -128,6 +130,7 @@ const COVERAGE_FRONTEND_27 = [
     points:['entry 是子应用 HTML URL','container 必须是 HTMLElement','路由用 registerMicroApps，按需用 loadMicroApp'],
     deep:[
       {title:'v2 与 v3 的入口形态',body:'现行文档以字符串 HTML 入口为准。若你锁在旧版对象形态 entry，以该主版本 API 页为准，升级时单独验收。'},
+      {title:'container 与生命周期',body:'框架因 key 重建拆掉节点后，旧 HTMLElement 引用失效。卸载监听与全局补丁见 mfe-runtime-lifecycle。路由前缀纪律见 mfe-routing-one-history。'},
       {title:'怎样自己验证',body:'把 container 改成字符串选择器，应类型失败或挂载失败。改回元素并匹配 activeRule，子应用 DOM 出现在该节点下。'}
     ],
     refs:[['qiankun：registerMicroApps','https://qiankun.umijs.org/api#registermicroappsapps-lifecycles'],['qiankun：loadMicroApp','https://qiankun.umijs.org/api#loadmicroappapp-configuration'],['qiankun：指南','https://qiankun.umijs.org/guide']]

@@ -13,6 +13,7 @@ const COVERAGE_PATH_02 = [
     points:['事件按捕获、目标、冒泡三段传播','stopPropagation 不停掉同一节点的其他监听器','不冒泡的事件不能用父元素做委托'],
     deep:[
       {title:'捕获、目标与冒泡',body:'一次点击先从 window 走到目标，再原路返回。阶段用 1、2、3 区分。默认监听在冒泡。stopPropagation 只挡住后续节点，同一节点上其余监听仍会运行；立即停止才会连当前节点剩下的监听一起停掉。'},
+      {title:'和默认行为',body:'preventDefault 阻止浏览器默认动作（如提交导航、链接跳转），与 stopPropagation 不同。表单提交前校验见 html5-constraint-before-submit；拖放默认见 html5-drop-prevent-default。'},
       {title:'怎样自己验证',body:'在祖先、按钮和文档上分别注册捕获与冒泡，点一次按钮，按控制台顺序记下三段。再在按钮里分别调用两种 stop，看同一节点上的第二个监听还打不打印。不冒泡的 focus 再点一次，父元素不应有日志。'}
     ],
     refs:[['MDN：eventPhase','https://developer.mozilla.org/en-US/docs/Web/API/Event/eventPhase'],['MDN：stopPropagation','https://developer.mozilla.org/en-US/docs/Web/API/Event/stopPropagation']]
@@ -64,15 +65,16 @@ const COVERAGE_PATH_02 = [
     points:['credentials 默认只在同源发送 Cookie','跨源携带凭证时 Allow-Origin 不能是星号','响应还要显式允许凭证'],
     deep:[
       {title:'跨源凭证的两边',body:'fetch 的凭证默认只在同源发送 Cookie。include 才在跨源请求里附带。服务器还必须返回允许凭证，并且允许的源是具体源，不能是星号。只改前端或只改其中一个响应头，脚本仍然读不到。'},
+      {title:'和 Cookie 属性',body:'浏览器会不会附带，还受 HttpOnly/Secure/SameSite 约束，见 cookie-set-attributes。CORS 允许名单见 cors-credentials-allowlist。'},
       {title:'怎样自己验证',body:'在网络面板做三次：默认凭证、include 加星号源、include 加具体源并允许凭证。记录每次请求头有没有 Cookie，以及脚本能否读到正文。只有第三次两件都成立。'}
     ],
     refs:[['MDN：使用 Fetch','https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch'],['MDN：Access-Control-Allow-Credentials','https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Access-Control-Allow-Credentials']]
   },
   {
     track:'frontend', group:'React', id:'react-error-boundary',
-    title:'错误边界只管渲染，不管点击里的异步',
+    title:'错误边界只管渲染，不管点击里的异步（React 16）',
     prompt:'组件出错了，为什么错误边界有时完全看不到？',
-    core:'React 的错误边界是类组件，用 getDerivedStateFromError 或 componentDidCatch 接住子树在渲染、生命周期和构造函数里抛出的错误。它接不住事件处理函数、异步回调、服务端渲染，也接不住边界自己渲染时抛出的错误。点击里的请求失败要在事件或 Promise 路径上处理。渲染期间读到坏数据，才由边界换成备用界面。',
+    core:'React 的错误边界（**React 16** 起）是类组件，用 getDerivedStateFromError 或 componentDidCatch 接住子树在渲染、生命周期和构造函数里抛出的错误。它接不住事件处理函数、异步回调、服务端渲染，也接不住边界自己渲染时抛出的错误。点击里的请求失败要在事件或 Promise 路径上处理。渲染期间读到坏数据，才由边界换成备用界面。',
     why:'学习者会以为根上套一个错误边界，组件里任何错误都会换成备用界面。按钮点击里的请求失败仍变成未处理拒绝，备用界面没有出现，于是他再往边界里加逻辑，点击路径依旧进不去。抛错发生在渲染期间还是在事件回调里，才分得清边界能不能看见。',
     example:'子组件在渲染时读取空对象的 name，边界接住并显示这段暂时不可用，页面其余部分还在。按钮 onClick 里的 await 失败时，边界不更新，控制台是未处理拒绝。在点击函数里捕获后，界面显示请求失败，边界的备用界面没有被用到。',
     task:'分别在渲染期间、点击回调和 Promise 拒绝里抛错，记录哪一次能被错误边界接住。',

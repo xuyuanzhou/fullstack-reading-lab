@@ -130,6 +130,114 @@
       ]
     ]
   },
+  "es6-const-binding": {
+    "core": "const 要求声明时就赋值，之后不能把这个名字再指向别的值。锁住的是绑定，不是值内部的字段。const order = { amount: 10 } 之后，order.amount = 20 合法，order = {} 会抛 TypeError。要挡住字段修改，得另外用 Object.freeze，而且它只冻当前这一层。块级作用域和声明前不能读，见 `js-scope-tdz`。箭头函数、Promise 和模块各自有课：`js-arrow-has-no-prototype`、`promise-chain`、`esm`。",
+    "why": "把 const 理解成“这份数据不能变”，就会在对象字段被改掉之后去查框架。报错只出现在重新赋值那一行，字段赋值没有报错。",
+    "example": "const order = { amount: 10 }; order.amount = 20; 对象仍是同一个，amount 变成 20。下一行 order = { amount: 30 } 抛 TypeError。Object.freeze(order) 之后再写 amount，严格模式下抛错，非严格模式下静默失败，字段保持 20。",
+    "task": "用 const 声明一个带 amount 的对象。先改 amount，再把名字重新指到新对象。最后 freeze 之后再改一次字段，记下哪一步抛错。",
+    "answer": "改 amount 成功，绑定仍指向原来的对象。重新赋值抛 TypeError。freeze 之后字段不再被改掉。const 管的是这个名字还能不能换目标。",
+    "deep": [
+      {
+        "title": "每一轮循环都是新绑定",
+        "body": "for (const item of list) 里，每一轮的 item 都是新绑定，不能在循环体里给 item 重新赋值，但可以改 item 指向的对象字段。用 var 时闭包会共享同一个绑定，用 const 或 let 时每一轮各看各的值。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "先改字段，确认没有异常且读到新数字。再整份重新赋值，确认 TypeError 指向赋值那一行。freeze 后再改字段，确认值停在冻结前。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：const",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const"
+      ],
+      [
+        "MDN：Object.freeze",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze"
+      ]
+    ]
+  },
+  "es6-destructure-copies": {
+    "core": "解构按名字或位置声明新绑定，放进去的是当时读到的值。数字和字符串放的是值本身，之后改原对象的这个字段，新绑定不变。放进去的若是对象，两边拿的是同一引用，改这个引用上的字段两边都看得见。默认值只在读到的是 undefined 时使用，包括属性缺失和显式传入 undefined。null、0 和空字符串会原样留下。重命名写成 { price: cost }，冒号左边是来源，右边是新名字。对 null 做解构会抛 TypeError。",
+    "why": "改了 order.price 却看见页面上的数字不动，就会去查渲染。变量里留着解构那一刻的 10，对象上已经是 20。反过来把 null 当成“没有”，默认值不生效，后面再读属性就抛错。",
+    "example": "const order = { price: 10, item: { sku: \"A1\" } }; const { price = 1, item } = order; order.price = 20; price 仍是 10。item.sku = \"B2\" 之后，order.item.sku 也是 \"B2\"。{ price = 1 } 对缺失字段得到 1，对 price: null 得到 null，对 price: 0 得到 0。",
+    "task": "解构出 price 和 item。先改原对象的 price，再改 item.sku。另用默认值分别接住缺失、undefined、null 和 0，记下四个结果。",
+    "answer": "price 停在解构时的数字。item.sku 两边一起变，因为取出的是同一个对象。默认值只替换 undefined：缺失和 undefined 用默认值，null 和 0 保留原值。对 null 做解构会抛错。",
+    "deep": [
+      {
+        "title": "重命名和嵌套",
+        "body": "{ price: cost } 不会声明 price。嵌套写成 { item: { sku } }，中间的 item 没有被声明。某一层是 null，解构在这一层抛 TypeError，默认值要写在会变成 undefined 的那一层上。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "解构后改数字字段，局部变量应不变。改取出的对象字段，原对象应跟着变。用四个输入试默认值：缺字段、undefined、null、0。只有前两个用上默认值。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：解构赋值",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment"
+      ],
+      [
+        "MDN：undefined",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined"
+      ]
+    ]
+  },
+  "es6-default-param-call-time": {
+    "core": "默认参数的表达式在这次调用缺少该参数、或传入值是 undefined 时才执行，不是在定义函数时执行一次。所以 function push(item, bucket = []) 每次省略 bucket 都会得到新数组，不会像定义期就造好的那一个数组被各次调用共享。传入 null 不会触发默认值，bucket 就是 null。后面的形参可以读前面的，function area(w, h = w) 合法；前面的形参不能读后面的，那样会落在暂时性死区，见 `js-scope-tdz`。",
+    "why": "以为默认数组是函数创建时的那一个，就会在两次调用之间看见残留元素。其实每次省略参数都会再执行一遍表达式。传入 null 时默认值不跑，接着 push 就抛错。",
+    "example": "function push(item, bucket = []) { bucket.push(item); return bucket; }。push(\"a\") 得到 [\"a\"]，再 push(\"b\") 得到 [\"b\"]，不是 [\"a\",\"b\"]。push(\"c\", undefined) 同样新建数组。push(\"d\", null) 在 null.push 处抛 TypeError。area(3) 得到宽 3、高 3。",
+    "task": "写一个默认参数为新数组的函数，省略参数连续调用两次，看第一次放进的元素还在不在。再分别传入 undefined 和 null。最后让后面的形参使用前面的形参。",
+    "answer": "两次省略参数得到两个数组，第二次没有第一次的元素。undefined 会再求值一次默认表达式。null 留下 null，不会替换成新数组。后面的形参可以读到前面已经传入的值。",
+    "deep": [
+      {
+        "title": "求值发生在调用，不发生在定义",
+        "body": "函数对象创建时并不跑这些表达式。某一次调用若自己传了值，这次的默认表达式被跳过。下一次又省略，表达式再跑，闭包里的计数也会再加一。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "默认参数里放一个会自增的计数，连续省略调用两次，计数应变成 2，两次数组应互不影响。传入 0 或 null 时计数不应增加。让第一个形参的默认值去读第二个形参，应在调用时抛错。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：默认参数",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Default_parameters"
+      ],
+      [
+        "MDN：let 与暂时性死区",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let"
+      ]
+    ]
+  },
+  "es6-template-expression": {
+    "core": "普通模板字符串先求值 ${} 里的表达式，再按 ToString 收成字符串，然后和两边的文本拼成一个字符串。普通对象走 Object.prototype.toString，结果是 [object Object]。数组会按逗号拼成 \"1,2\"。null 变成 \"null\"，undefined 变成 \"undefined\"，都不会留成空。要给人看的字段得自己取出来，例如 ${order.id}。标签模板是另一条路：标签函数收到各段原文和未拼接的值，不会先收成一个字符串。",
+    "why": "把订单对象直接塞进模板，按钮上写着 [object Object]，接口其实是好的。把 undefined 拼进去会得到单词 undefined，而不是空白。",
+    "example": "const order = { id: \"A1\" }; `${order}` 是 \"[object Object]\"。`${order.id}` 是 \"A1\"。`${[1, 2]}` 是 \"1,2\"。`${null}` 是 \"null\"。标签函数 tag`${order}` 的第二个参数是订单对象本身，不是那段 [object Object]。",
+    "task": "用同一个对象分别插进普通模板和标签模板。再插 null、undefined 和一个两元素数组，记下拼出来的字符串。",
+    "answer": "普通模板里对象变成 [object Object]，数组变成用逗号连接的文本，null 和 undefined 变成同名单词。标签函数拿到的是原始值和各段文本，没有先拼接。要显示订单号，应插入 order.id。",
+    "deep": [
+      {
+        "title": "插入 HTML 之前要转义",
+        "body": "模板只负责拼接字符串，不会把 < 变成实体。把用户输入放进 innerHTML 之前，先做 HTML 转义，或改用 textContent。标签模板可以自己决定怎么拼，也不会自动转义。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打印 `${order}`、`${order.id}`、`${null}`、`${undefined}`、`${[1, 2]}`。再写一个标签函数，确认参数里是对象而不是 [object Object]。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：模板字符串",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals"
+      ],
+      [
+        "MDN：Object.prototype.toString",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toString"
+      ]
+    ]
+  },
   "js-scope-tdz": {
     "core": "let 和 const 有块级作用域。从进入作用域到声明语句之前，不能访问这个绑定，这叫暂时性死区。var 是函数作用域，声明会被提升，赋值前读到 undefined。看一段代码能不能访问变量，先问它落在哪个块，再问声明有没有执行到。顺序是进入作用域时绑定已经存在，但块级声明在执行到声明语句前不能读，一读就错。会提升的声明在赋值前读到的是空值。边界是先问这段代码落在哪个块，再问声明有没有执行到。把两种声明的报错当成同一句 undefined，后面的模块初始化错误会对不上。模块顶层的初始化错误若发生在绑定还没执行到声明时，和块里的死区是同一类读取，不是变量不存在。",
     "why": "学习者会把声明前读到的错误和 undefined 当成同一回事。块里用一种声明会抛错，换成另一种却打出 undefined，后面的模块初始化错误也对不上。先看变量落在哪一个块、再看声明有没有执行到，才分得清是死区还是提升后的空值。",
@@ -198,6 +306,10 @@
       {
         "title": "不要用原型保存业务数据",
         "body": "原型上的对象和数组被所有实例共享。把缓存、列表放上去，一个实例 push 会让别的实例看见。每个对象自己的状态放在实例字段。"
+      },
+      {
+        "title": "extends 与私有字段",
+        "body": "子类构造要先 super 再碰 this，见 `js-class-extends-super`。# 私有字段不在原型上共享给外部，见 `js-private-field-hash`。"
       }
     ],
     "references": [
@@ -278,111 +390,57 @@
     "diagram": "diagrams/js-arrow-no-prototype.svg",
     "origin": "本地库「原型链流程图」上的构造函数与原型对象口诀"
   },
-  "js-regex-dot-not-newline": {
-    "core": "多数引擎里 `.` 是元字符，默认不匹配换行；要匹配换行需 `(?s)`、`/s`、Pattern.DOTALL 或 `[^]` 这类写法。匹配字面点用 `\\.`。`\\d` 在 JavaScript 默认是 `[0-9]`；在 Java 开 UNICODE_CHARACTER_CLASS、或 Python 的 Unicode 模式下可以匹配其他数字字符。`[^0-9]` 是否等于“最后一个不是数字”还取决于锚点和量词，有些资料里的 `abc[^0-9]` 只会再吃一个非数字字符。正则嵌在宿主语言里，flag 决定语义。",
-    "why": "把 . 背成任意单个字符，多行日志会在第一处换行停住；把 \\d 背成永远等于 [0-9]，开了 Unicode 时全角数字会判断反。区分信号是点号要 DOTALL 或 s 标志才跨行，\\d 的宽度看 flag。",
-    "example": "JS 默认 `/a.b/` 匹配 `a\\nb` 失败，加上 `s` 才成功。Java `Pattern.compile(\"\\\\d\", UNICODE_CHARACTER_CLASS)` 可能吃到非 ASCII 数字。",
-    "task": "对照所在语言的 flag 列表，写出让 `.` 匹配换行的开关；试一个 `\\d` 与 `[0-9]` 不一致的输入。",
-    "answer": "对照所在语言的 flag 列表，让 . 匹配换行的开关是 JavaScript 的 s、Java 的 Pattern.DOTALL，或内联 (?s)。默认点号不跨行。一个 \\d 与 [0-9] 不一致的输入是非 ASCII 数字：Java 开 UNICODE_CHARACTER_CLASS，或 Python 的 Unicode 模式下 \\d 能吃到，[0-9] 吃不到。字面点要转义。",
+  "js-class-extends-super": {
+    "core": "`class Child extends Parent` 让 `Child.prototype` 的原型指向 `Parent.prototype`，实例查找沿这条链，见 `js-prototype-chain`。派生类的构造函数在使用 `this` 之前必须调用 `super(...)`，以便先完成父类对实例的初始化。`super.method()` 在子类方法里调用父类原型上的方法。静态成员挂在构造函数自身，`super` 在静态方法里指向父类构造函数。不要把 extends 理解成“把父类源码粘进子类”。",
+    "why": "先赋 this 再 super，引擎抛 ReferenceError；或以为 extends 复制了方法，改父类原型却影响所有子类实例。",
+    "example": "`class Animal { constructor(n) { this.n = n; } } class Dog extends Animal { constructor(n) { super(n); this.bark = true; } }`。去掉 super 先写 `this.bark` 会报错。",
+    "task": "写出：实例方法查找走哪条链；构造里 this 与 super 的先后；静态方法里 super 指向谁。",
+    "answer": "实例沿 Child.prototype → Parent.prototype。构造必须先 super 再碰 this。静态里 super 指向父类构造函数。",
     "deep": [
       {
-        "title": "旗标决定点号和数字",
-        "body": "默认的点号在换行处停下，所以多行日志用它会只吃到第一行。要跨行得打开 DOTALL、JavaScript 的 s，或写 (?s)。\\d 在 JavaScript 里默认就是 [0-9]；Java 开了 UNICODE_CHARACTER_CLASS、Python 走 Unicode 模式时，它可以吃到别的数字字符。字面量的点必须转义。"
+        "title": "和箭头方法",
+        "body": "在构造里 `this.handler = () => {}` 是实例自有，不在原型上共享。原型上的方法才能被所有实例共用，见 `js-prototype-chain`。"
       },
       {
         "title": "怎样自己验证",
-        "body": "在所用语言里找出让点号匹配换行的那个 flag，用含换行的 a 换行 b 试一次，默认应失败，打开 flag 后应成功。再拿一个非 ASCII 数字分别交给 \\d 和 [0-9]，只有开了 Unicode 相关开关时两者才分开。"
+        "body": "打印 Object.getPrototypeOf(Dog.prototype) === Animal.prototype。构造里颠倒 super/this 应抛错。"
       }
     ],
     "references": [
       [
-        "MDN：Regular expressions",
-        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions"
+        "MDN：extends",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/extends"
       ],
       [
-        "Pattern.DOTALL",
-        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/regex/Pattern.html#DOTALL"
+        "MDN：super",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/super"
       ]
     ]
   },
-  "js-json-stringify-not-equal": {
-    "core": "JSON 会丢掉 undefined、函数、symbol，NaN 和 Infinity 会变成 null，键顺序取决于枚举顺序，循环引用会抛错。看起来相等的对象可以一个键在前一个在后、或一边有 undefined。对象相等要看同一引用，或按业务字段逐项比，或用支持 NaN 的深比较。class 语法是原型继承的糖，`Object.create` 能做委托，但不能说 class 没意义。`==` 与 `===` 仍见 `js-equality`。",
-    "why": "单测里用 JSON.stringify 当深比较，键顺序一变就误报不相等，一边多了 undefined 又会误报相等。区分信号是 undefined 被丢掉、NaN 变成 null，字符串相同不等于对象相同。",
-    "example": "{a:1, b:undefined} 和 {a:1} 经 stringify 后都只剩下 a，会被当成相等。{a:1, b:1} 和 {b:1, a:1} 人眼字段相同，字符串却可能因为键序不同而不等。",
-    "task": "写出 stringify 会改写的三类值；给一对“人眼相等但 stringify 不相等”的对象。",
-    "answer": "stringify 会改写的三类值是：丢掉 undefined、函数和 symbol；把 NaN 与 Infinity 写成 null；键按枚举顺序输出，所以顺序变了字符串就变。人眼相等但 stringify 可能不等的一对是 {a:1, b:1} 和 {b:1, a:1}。对象是否相等要看同一引用，或按业务字段逐项比。",
+  "js-private-field-hash": {
+    "core": "以 `#` 开头的字段和方法是**硬私有**：只在声明它们的 class 体词法范围内可访问。子类、类外代码、动态字符串键都拿不到。这和 `_x` 下划线约定不同——后者仍是普通公共属性。私有字段必须先在类里声明再赋值；未声明就写 `#x` 会语法错。TypeScript 的 `private` 只在类型检查期约束，编译后仍可能是普通字段，不要和 `#` 混为一谈。",
+    "why": "把 `_secret` 当私有，外部照样读写；或以为 TS private 运行时也挡得住。",
+    "example": "`class Box { #n = 0; inc() { this.#n++; } get() { return this.#n; } }`。`new Box().#n` 语法错。`box._n` 若有人加上则仍是公共的。",
+    "task": "划掉“下划线=私有”。对比 # 字段、_ 约定、TS private 在运行时谁挡得住外部读取。",
+    "answer": "划掉「下划线=私有」。只有 # 在运行时挡外部。下划线挡不住。TS private 默认擦掉后挡不住，除非另开真私有字段。",
     "deep": [
       {
-        "title": "字符串相同不是对象相同",
-        "body": "stringify 会丢掉 undefined、函数和 symbol，把 NaN 和 Infinity 写成 null，键的先后跟枚举顺序走。一边多一个 undefined 字段，字符串可以和没有该字段的对象一样。两个字段相同、键顺序相反的对象，字符串又可能不同。循环引用还会直接抛错。"
+        "title": "和 WeakMap 旧写法",
+        "body": "ES 此前常用 WeakMap 模拟实例私有。# 是语言级方案，调试器可见性以实现为准，但语言规则上外部代码访问不到。"
       },
       {
         "title": "怎样自己验证",
-        "body": "先写出会被改写的三类：undefined、NaN、键顺序。再对 {a:1, b:1} 和 {b:1, a:1} 各 stringify 一次，人眼字段相同但字符串可能不等。相等判断改成同一引用，或按字段逐项比。"
+        "body": "对 # 字段尝试类外读取应失败。给同一类加 _x 公共字段，类外赋值应成功。"
       }
     ],
     "references": [
       [
-        "MDN：JSON.stringify",
-        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify"
+        "MDN：私有类字段",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_properties"
       ],
       [
-        "MDN：Classes",
-        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes"
-      ]
-    ]
-  },
-  "es6-const-binding": {
-    "core": "const 要求声明时就赋值，之后不能把这个名字再指向别的值。锁住的是绑定，不是值内部的字段。const order = { amount: 10 } 之后，order.amount = 20 合法，order = {} 会抛 TypeError。要挡住字段修改，得另外用 Object.freeze，而且它只冻当前这一层。块级作用域和声明前不能读，见 `js-scope-tdz`。箭头函数、Promise 和模块各自有课：`js-arrow-has-no-prototype`、`promise-chain`、`esm`。",
-    "why": "把 const 理解成“这份数据不能变”，就会在对象字段被改掉之后去查框架。报错只出现在重新赋值那一行，字段赋值没有报错。",
-    "example": "const order = { amount: 10 }; order.amount = 20; 对象仍是同一个，amount 变成 20。下一行 order = { amount: 30 } 抛 TypeError。Object.freeze(order) 之后再写 amount，严格模式下抛错，非严格模式下静默失败，字段保持 20。",
-    "task": "用 const 声明一个带 amount 的对象。先改 amount，再把名字重新指到新对象。最后 freeze 之后再改一次字段，记下哪一步抛错。",
-    "answer": "改 amount 成功，绑定仍指向原来的对象。重新赋值抛 TypeError。freeze 之后字段不再被改掉。const 管的是这个名字还能不能换目标。",
-    "deep": [
-      {
-        "title": "每一轮循环都是新绑定",
-        "body": "for (const item of list) 里，每一轮的 item 都是新绑定，不能在循环体里给 item 重新赋值，但可以改 item 指向的对象字段。用 var 时闭包会共享同一个绑定，用 const 或 let 时每一轮各看各的值。"
-      },
-      {
-        "title": "怎样自己验证",
-        "body": "先改字段，确认没有异常且读到新数字。再整份重新赋值，确认 TypeError 指向赋值那一行。freeze 后再改字段，确认值停在冻结前。"
-      }
-    ],
-    "references": [
-      [
-        "MDN：const",
-        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const"
-      ],
-      [
-        "MDN：Object.freeze",
-        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze"
-      ]
-    ]
-  },
-  "es6-destructure-copies": {
-    "core": "解构按名字或位置声明新绑定，放进去的是当时读到的值。数字和字符串放的是值本身，之后改原对象的这个字段，新绑定不变。放进去的若是对象，两边拿的是同一引用，改这个引用上的字段两边都看得见。默认值只在读到的是 undefined 时使用，包括属性缺失和显式传入 undefined。null、0 和空字符串会原样留下。重命名写成 { price: cost }，冒号左边是来源，右边是新名字。对 null 做解构会抛 TypeError。",
-    "why": "改了 order.price 却看见页面上的数字不动，就会去查渲染。变量里留着解构那一刻的 10，对象上已经是 20。反过来把 null 当成“没有”，默认值不生效，后面再读属性就抛错。",
-    "example": "const order = { price: 10, item: { sku: \"A1\" } }; const { price = 1, item } = order; order.price = 20; price 仍是 10。item.sku = \"B2\" 之后，order.item.sku 也是 \"B2\"。{ price = 1 } 对缺失字段得到 1，对 price: null 得到 null，对 price: 0 得到 0。",
-    "task": "解构出 price 和 item。先改原对象的 price，再改 item.sku。另用默认值分别接住缺失、undefined、null 和 0，记下四个结果。",
-    "answer": "price 停在解构时的数字。item.sku 两边一起变，因为取出的是同一个对象。默认值只替换 undefined：缺失和 undefined 用默认值，null 和 0 保留原值。对 null 做解构会抛错。",
-    "deep": [
-      {
-        "title": "重命名和嵌套",
-        "body": "{ price: cost } 不会声明 price。嵌套写成 { item: { sku } }，中间的 item 没有被声明。某一层是 null，解构在这一层抛 TypeError，默认值要写在会变成 undefined 的那一层上。"
-      },
-      {
-        "title": "怎样自己验证",
-        "body": "解构后改数字字段，局部变量应不变。改取出的对象字段，原对象应跟着变。用四个输入试默认值：缺字段、undefined、null、0。只有前两个用上默认值。"
-      }
-    ],
-    "references": [
-      [
-        "MDN：解构赋值",
-        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment"
-      ],
-      [
-        "MDN：undefined",
-        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined"
+        "TypeScript：private",
+        "https://www.typescriptlang.org/docs/handbook/2/classes.html#private"
       ]
     ]
   },
@@ -413,60 +471,6 @@
       ]
     ]
   },
-  "es6-default-param-call-time": {
-    "core": "默认参数的表达式在这次调用缺少该参数、或传入值是 undefined 时才执行，不是在定义函数时执行一次。所以 function push(item, bucket = []) 每次省略 bucket 都会得到新数组，不会像定义期就造好的那一个数组被各次调用共享。传入 null 不会触发默认值，bucket 就是 null。后面的形参可以读前面的，function area(w, h = w) 合法；前面的形参不能读后面的，那样会落在暂时性死区，见 `js-scope-tdz`。",
-    "why": "以为默认数组是函数创建时的那一个，就会在两次调用之间看见残留元素。其实每次省略参数都会再执行一遍表达式。传入 null 时默认值不跑，接着 push 就抛错。",
-    "example": "function push(item, bucket = []) { bucket.push(item); return bucket; }。push(\"a\") 得到 [\"a\"]，再 push(\"b\") 得到 [\"b\"]，不是 [\"a\",\"b\"]。push(\"c\", undefined) 同样新建数组。push(\"d\", null) 在 null.push 处抛 TypeError。area(3) 得到宽 3、高 3。",
-    "task": "写一个默认参数为新数组的函数，省略参数连续调用两次，看第一次放进的元素还在不在。再分别传入 undefined 和 null。最后让后面的形参使用前面的形参。",
-    "answer": "两次省略参数得到两个数组，第二次没有第一次的元素。undefined 会再求值一次默认表达式。null 留下 null，不会替换成新数组。后面的形参可以读到前面已经传入的值。",
-    "deep": [
-      {
-        "title": "求值发生在调用，不发生在定义",
-        "body": "函数对象创建时并不跑这些表达式。某一次调用若自己传了值，这次的默认表达式被跳过。下一次又省略，表达式再跑，闭包里的计数也会再加一。"
-      },
-      {
-        "title": "怎样自己验证",
-        "body": "默认参数里放一个会自增的计数，连续省略调用两次，计数应变成 2，两次数组应互不影响。传入 0 或 null 时计数不应增加。让第一个形参的默认值去读第二个形参，应在调用时抛错。"
-      }
-    ],
-    "references": [
-      [
-        "MDN：默认参数",
-        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Default_parameters"
-      ],
-      [
-        "MDN：let 与暂时性死区",
-        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let"
-      ]
-    ]
-  },
-  "es6-template-expression": {
-    "core": "普通模板字符串先求值 ${} 里的表达式，再按 ToString 收成字符串，然后和两边的文本拼成一个字符串。普通对象走 Object.prototype.toString，结果是 [object Object]。数组会按逗号拼成 \"1,2\"。null 变成 \"null\"，undefined 变成 \"undefined\"，都不会留成空。要给人看的字段得自己取出来，例如 ${order.id}。标签模板是另一条路：标签函数收到各段原文和未拼接的值，不会先收成一个字符串。",
-    "why": "把订单对象直接塞进模板，按钮上写着 [object Object]，接口其实是好的。把 undefined 拼进去会得到单词 undefined，而不是空白。",
-    "example": "const order = { id: \"A1\" }; `${order}` 是 \"[object Object]\"。`${order.id}` 是 \"A1\"。`${[1, 2]}` 是 \"1,2\"。`${null}` 是 \"null\"。标签函数 tag`${order}` 的第二个参数是订单对象本身，不是那段 [object Object]。",
-    "task": "用同一个对象分别插进普通模板和标签模板。再插 null、undefined 和一个两元素数组，记下拼出来的字符串。",
-    "answer": "普通模板里对象变成 [object Object]，数组变成用逗号连接的文本，null 和 undefined 变成同名单词。标签函数拿到的是原始值和各段文本，没有先拼接。要显示订单号，应插入 order.id。",
-    "deep": [
-      {
-        "title": "插入 HTML 之前要转义",
-        "body": "模板只负责拼接字符串，不会把 < 变成实体。把用户输入放进 innerHTML 之前，先做 HTML 转义，或改用 textContent。标签模板可以自己决定怎么拼，也不会自动转义。"
-      },
-      {
-        "title": "怎样自己验证",
-        "body": "打印 `${order}`、`${order.id}`、`${null}`、`${undefined}`、`${[1, 2]}`。再写一个标签函数，确认参数里是对象而不是 [object Object]。"
-      }
-    ],
-    "references": [
-      [
-        "MDN：模板字符串",
-        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals"
-      ],
-      [
-        "MDN：Object.prototype.toString",
-        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toString"
-      ]
-    ]
-  },
   "es6-map-set-keys": {
     "core": "普通对象的键只有字符串和 Symbol。数字、对象这些值被放进键时会先收成字符串，所以 1 和 \"1\" 是同一个键，两个不同对象都会变成 \"[object Object]\"，后写的值盖掉前一个。Map 用 SameValueZero 比较键：对象按引用区分，NaN 等于 NaN，+0 等于 -0，插入顺序会被保留。Set 用同一套相等来去重。JSON.stringify 遇到 Map 或 Set 会得到 \"{}\"，因为它们没有可枚举的自有数据属性。键只为了避免和字符串撞车时用 Map；键必须能被 JSON 保存时，先把键定成字符串。",
     "why": "用对象当普通字典的键，两个订单共享同一个槽，查出来的数量是后写入的那笔。换成 Map 后两笔都在，因为键仍是原来的对象。",
@@ -491,33 +495,6 @@
       [
         "MDN：Set",
         "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set"
-      ]
-    ]
-  },
-  "es6-for-of-iterable": {
-    "core": "for...of 向值索取迭代器，按 next 的 value 逐个给出元素。数组给出元素，Map 给出 [键, 值]，字符串给出一个个码元。for...in 枚举的是可枚举的字符串键，包括原型链上的，数组上因此得到 \"0\"、\"1\" 这种下标字符串。普通对象没有默认迭代器，对它 for...of 会抛 TypeError。要列出对象自己的键，用 Object.keys 或 Object.entries。迭代器协议本身见 `js-iteration-protocol`。",
-    "why": "用 for...in 累加数组，下标字符串被加进总和，或者原型上多出来的枚举属性也进了循环。换成 for...of 之后加的才是元素。",
-    "example": "const list = [10, 20]; for (const n of list) 依次得到 10 和 20。for (const key in list) 依次得到 \"0\" 和 \"1\"。给 Array.prototype 加一个可枚举字段 extra 后，for...in 还会走到 \"extra\"，for...of 仍然只有 10 和 20。for (const x of { a: 1 }) 抛 TypeError。",
-    "task": "对同一个数组分别用 for...of 和 for...in，记下绑定到的是元素还是下标。给 Array.prototype 加一个可枚举属性后再跑两遍。最后对普通对象使用 for...of。",
-    "answer": "for...of 得到 10 和 20。for...in 得到下标字符串，加上原型上的可枚举名字。普通对象的 for...of 抛 TypeError。对象自己的键用 Object.keys。",
-    "deep": [
-      {
-        "title": "每一轮的 const 是新绑定",
-        "body": "for (const n of list) 里闭包抓住的是这一轮的 n。改成 var，循环结束后各个闭包读到的是同一个最终值。这和 const 锁住绑定是同一件事，见 `es6-const-binding`。"
-      },
-      {
-        "title": "怎样自己验证",
-        "body": "数组里放两个数字，两种循环分别打印。再给 Array.prototype 加可枚举属性，只有 for...in 应多打出这个名字。对 { a: 1 } 使用 for...of 应抛 TypeError，Object.keys 应得到 [\"a\"]。测完删掉加在原型上的属性。"
-      }
-    ],
-    "references": [
-      [
-        "MDN：for...of",
-        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of"
-      ],
-      [
-        "MDN：for...in",
-        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...in"
       ]
     ]
   },
@@ -548,33 +525,59 @@
       ]
     ]
   },
-  "closure": {
-    "core": "函数会记住创建它的那一次变量环境。React 函数组件每次渲染都重新执行，得到新的 count 和新的事件函数。已经创建的事件函数仍看见创建它那次渲染的 count。同一次点击里读三次 count，三次都是这一个快照，所以三次 setCount(count + 1) 排进去的是同一个新值。setCount(n => n + 1) 排进去的是计算函数，React 用队列里当时的最新值依次计算，三次才得到加 3。这和 setState 是否“异步”不是一回事：即使更新稍后才画到屏幕上，闭包看见的仍是创建时的变量。在 effect 或定时器里使用渲染里的值，同样看见那一次渲染，除非把值放进依赖并在依赖变化时重建函数。",
-    "why": "学习者会把三次都只加 1 记成状态更新是异步的。下次在事件外或条件更新里仍用这个解释，函数式更新和直接赋值的差别就猜反。同一次点击里变量仍是 0、下一次渲染却已经是队列算完的值，才说明看见的是创建函数时的快照。",
-    "example": "渲染时计数是 0。同一次点击里三次调用按当前计数加 1，队列里三个更新都想写成 1，下一次渲染只显示 1。改成三次函数式更新后，队列依次算得 1、2、3，屏幕变成 3。点击函数里打印的计数在这次调用期间仍是 0。",
-    "task": "从 0 开始，在同一次点击中先 setCount(count + 1)，再 setCount(n => n + 1)，再 setCount(5)。预测下一次渲染的 count，并说明点击函数里的 count 变量现在仍是多少。",
-    "answer": "从 0 开始，同一次点击里先 setCount(count + 1)，排入的是基于快照算好的 1。接着 setCount(n => n + 1)，用队列里前一个结果 1 算出 2。最后 setCount(5) 把结果直接写成 5。下一次渲染是 5。这三次调用期间，点击函数闭包里的 count 变量一直是 0，要等这次函数结束、下一次渲染创建新函数，才会看见 5。",
+  "js-optional-chaining": {
+    "core": "可选链在左侧为 `null` 或 `undefined` 时停止继续访问，整段表达式结果是 `undefined`。它解决的是「中间可能缺一层对象」，不是「任意失败都当成没有」。`obj?.method()` 在 `obj` 为空时不调用；`obj` 存在但 `method` 不是函数时仍会抛错。不要用 `?.` 包住整次 `await fetch`：网络拒绝和 4xx/5xx 仍要按 `promise-chain`、`api-error-contract` 处理。和空值合并 `??` 常一起用：缺层时给默认值，但 `0` 与 `false` 不会被 `??` 换成默认。",
+    "why": "把可选链当成万能防崩溃，业务必填字段缺失也静默变 undefined，页面空白却没有报错。",
+    "example": "`const name = res?.user?.name ?? \"游客\"`。`res` 为 null 时得到游客。`res.user` 存在但 `name` 是空字符串时，得到的是空串，不是游客。`await fetch(...)` 失败仍应进 catch，不要写成 `(await fetch(...))?.ok` 就当成功。",
+    "task": "划掉“凡是点属性都加 ?.”。写出：缺中间对象、对象存在但方法不是函数、fetch 失败，三种情况各会发生什么。",
+    "answer": "划掉「凡是点属性都加 ?.」。缺中间对象时表达式是 undefined。对象在但方法不是函数仍抛 TypeError。fetch 失败是 Promise 拒绝，可选链不代替 catch。",
     "deep": [
       {
-        "title": "怎样自己验证",
-        "body": "在点击函数开头打印 count，连续点两次。第一次打印 0 且屏幕变成 1，第二次打印的才是 1。打印发生在调用时，屏幕更新发生在之后的渲染。"
+        "title": "和 && 短链",
+        "body": "`obj && obj.a && obj.a.b` 会把假值一并短路；`?.` 只认 null/undefined。不要混用两套规则。"
       },
       {
-        "title": "和草稿的关系",
-        "body": "全栈页面里的草稿如果放在 state，提交函数也只能看见创建它那次渲染的草稿。提交时要读这次渲染的值，或用函数式更新基于最新队列计算。"
+        "title": "怎样自己验证",
+        "body": "对 null 对象读深层属性，确认结果是 undefined 且不抛。再给对象一个非函数字段当方法调用，确认仍抛。"
       }
     ],
     "references": [
       [
-        "React：State as a Snapshot",
-        "https://react.dev/learn/state-as-a-snapshot"
+        "MDN：可选链",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining"
       ],
       [
-        "React：Queueing a Series of State Updates",
-        "https://react.dev/learn/queueing-a-series-of-state-updates"
+        "MDN：空值合并",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing"
       ]
+    ]
+  },
+  "js-proxy-get-set-trap": {
+    "core": "`new Proxy(target, handler)` 返回的是**另一对象**。只有通过**代理对象**做的 `get`/`set`/`has`/`deleteProperty` 等操作才会进陷阱。直接改 `target` 的属性，陷阱不跑。陷阱必须按规范返回类型（例如 `set` 要反映是否成功），否则严格模式下抛错。Vue 3 用 Proxy 做响应式，也是拦截对响应式代理的访问，见 `vue-reactivity`、`vue-defineproperty-proxy`。`Reflect.get/set` 常用来把默认行为转发给 target，并带上正确的 receiver。",
+    "why": "把代理和原对象当同一个引用传来传去，日志里的 set 陷阱偶尔不出现，调试以为 Proxy 坏了。",
+    "example": "`const t = { n: 0 }; const p = new Proxy(t, { set(obj, key, val) { console.log(key); obj[key] = val; return true; } }); p.n = 1` 会打印。`t.n = 2` 不打印。把 `p` 交给组件、却把 `t` 存进全局，响应式会丢。",
+    "task": "划掉“Proxy=给原对象装监听”。写出：改代理、改 target，陷阱各是否运行；再写一句 Vue 为什么也要一直拿代理引用。",
+    "answer": "划掉「Proxy=给原对象装监听」。只有经代理的操作进陷阱。直接改 target 不进。响应式必须持有代理引用，不能混回原对象。",
+    "deep": [
+      {
+        "title": "和 defineProperty",
+        "body": "Vue 2 用 defineProperty 重定义已有属性；Proxy 能拦截新属性与更多操作。迁移时不要两套混在同一引用上。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对代理与 target 各赋值一次，确认只有代理触发 set。再把代理与 target 用 === 比较，应为 false。"
+      }
     ],
-    "react": "hooks"
+    "references": [
+      [
+        "MDN：Proxy",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy"
+      ],
+      [
+        "MDN：Reflect",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect"
+      ]
+    ]
   },
   "eventloop": {
     "core": "一段同步 JavaScript 会先跑完。这段里用 Promise.then 或 queueMicrotask 排上的回调是微任务，等这次同步调用栈清空后，在浏览器绘制之前把微任务队列清空。微任务里再排微任务，会继续清空，所以大量微任务会推迟绘制。setTimeout 排的是后续任务，排在当前微任务清空之后。因此顺序是：当前同步代码，然后微任务，然后浏览器才有机会绘制，再往后才是定时器任务。await 后面的代码同样排在微任务里。React 的状态更新会在合适的时机安排渲染，那次渲染仍是 JavaScript 任务，不是“微任务一到就等于像素已经画上”。",
@@ -600,6 +603,33 @@
     ],
     "diagram": "diagrams/eventloop.svg",
     "react": "scheduler"
+  },
+  "js-microtask-vs-macrotask": {
+    "core": "“异步”不是同一队列。`Promise.then` / `queueMicrotask` / `await` 之后进**微任务**；`setTimeout` / 多数 I/O 回调进**后续任务（宏任务）**。一次调用栈清空后先清空微任务，浏览器才可能绘制，再跑定时器，见 `eventloop`。定时器传函数不要传字符串，见 `js-timer-fn-not-string`。不要用 `setTimeout(0)` 冒充“等 DOM 画完”——微任务过多仍会拖绘制。",
+    "why": "把 then 和 setTimeout(0) 当成可互换，UI 更新和日志顺序对不上，还以为是浏览器随机。",
+    "example": "同步打印 1；`Promise.resolve().then(() => console.log(2))`；`setTimeout(() => console.log(3), 0)`。顺序固定是 1、2、3。把大量计算塞进 then，帧会卡在 2 之前。",
+    "task": "写出 1/then/setTimeout(0) 的打印顺序，并标出绘制最早可能插在哪两个之间。",
+    "answer": "顺序 1、then、定时器。绘制最早在微任务清空后、定时器前。两者都叫异步但不是同一队列。",
+    "deep": [
+      {
+        "title": "和 React 调度",
+        "body": "框架可能用微任务整理更新，但真正绘制仍要等浏览器得到机会。不要假设 then 一跑像素已上屏。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "按 example 打日志，确认顺序。再在 then 里死循环微任务，看画面是否迟迟不更新。"
+      }
+    ],
+    "references": [
+      [
+        "HTML：event loop",
+        "https://html.spec.whatwg.org/multipage/webappapis.html#event-loops"
+      ],
+      [
+        "MDN：queueMicrotask",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Window/queueMicrotask"
+      ]
+    ]
   },
   "promise-chain": {
     "core": "每次 then 或 catch 都返回一个新的 Promise，链上的下一环看的是这一环的结果，不是最初那个 Promise。回调返回普通值，新 Promise 完成并带上这个值。回调抛错或返回一个被拒绝的 Promise，新 Promise 拒绝。catch 只有在上游拒绝时运行；它若返回普通值，后面的 then 会收到这个值，链回到完成态。没有接住的拒绝会继续向后，直到有拒绝处理器；若整条链都没有，就成为未处理的拒绝。async 函数里 throw 或拒绝的 await，等价于让这个 async 函数返回的 Promise 拒绝。在写操作里，解析完状态码再 throw，后面的 catch 才能接到业务失败；在 response.ok 为假时仍返回 body，后面的 then 会把失败当成成功值。",
@@ -636,6 +666,10 @@
         "body": "异步函数一定返回以后才完成的结果。等待暂停的是这个函数内部的后续代码，线程还给事件循环，不是把页面冻住。等待后面的代码相当于落在完成回调里。独立请求应一起发出。"
       },
       {
+        "title": "并行汇总",
+        "body": "无依赖请求应 Promise.all 或 allSettled 一起发出，见 `promise-all-and-settled`。串成 await 链只会把耗时相加。微任务与定时器队列差别见 `js-microtask-vs-macrotask`。"
+      },
+      {
         "title": "怎样自己验证",
         "body": "把一条链式调用改成等待，确认页面上的其他点击仍能响应。再把两个无依赖请求从串行改成一起发出，比较总耗时应从接近相加变成接近较慢的那一次。串行两次的耗时应接近相加，并行时应接近较慢的那一次。"
       }
@@ -648,6 +682,33 @@
       [
         "MDN：await",
         "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await"
+      ]
+    ]
+  },
+  "promise-all-and-settled": {
+    "core": "`Promise.all` 在**第一个拒绝**时立刻以该原因拒绝；其余 Promise 仍可能在跑，但 `all` 的结果里拿不到它们的值。全部要成功才继续时用 `all`。需要「每个的成功或失败都记账」时用 `Promise.allSettled`，它总是完成，项里带 `status` 与 `value`/`reason`。`Promise.race` 取最先落定的一个，无论成功失败。`finally` 在完成或拒绝后都会跑，适合关 loading，见 `promise-chain`。无依赖请求用 `all`/`allSettled` 并行，不要串 `await`，见 `js-async-await`。",
+    "why": "误用 all 后，一个接口挂了整页空白，另外两个其实已经返回却被丢掉。",
+    "example": "`Promise.all([loadUser(), loadOrders(), loadAds()])`：广告 500 时整段进 catch，用户和订单即使已完成也不在 then 里。改成 `allSettled` 后三条都有结果，广告失败单独降级。",
+    "task": "划掉“并行就是 all”。写出：三请求必须都成功、三请求要分别展示成败，各用哪个 API。",
+    "answer": "划掉「并行就是 all」。都必须成功用 all。要分别记账用 allSettled。race 只取最快落定的一个。finally 关 loading，不代替 catch。",
+    "deep": [
+      {
+        "title": "和 finally",
+        "body": "all 的 catch 与 finally 都可以关转圈。finally 不接收结果值，也不吞掉拒绝。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "造两个 resolve、一个 reject。all 应进 catch 且 then 无数组。allSettled 的数组长度仍是 3。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：Promise.all",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all"
+      ],
+      [
+        "MDN：Promise.allSettled",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled"
       ]
     ]
   },
@@ -674,34 +735,32 @@
       ]
     ]
   },
-  "js-timer-fn-not-string": {
-    "core": "`setTimeout` / `setInterval` 的第一个参数应是**函数**（或实现了回调约定的对象）。传入字符串时，实现会把这段文本再当脚本求值，行为和 `eval` 一类，作用域难料，也容易撞上 CSP。正确写法是 `setInterval(clock, 1000)` 或 `setInterval(() => clock(), 1000)`。取消要用同一次调用返回的句柄做 `clearInterval` / `clearTimeout`。测试里用假时钟推进，见 `test-fake-timers`。",
-    "why": "照图抄字符串，严格 CSP 下定时器根本不跑；能跑时闭包变量也对不上，调试像「函数没定义」。",
-    "example": "`setInterval(\"clock()\", 1000)` 依赖到点再解析全局名 `clock`。改成 `const id = setInterval(() => clock(), 1000)`，卸载时 `clearInterval(id)`。",
-    "task": "划掉字符串形式的 setInterval。写出传入函数的两种写法，以及 clear 要用什么。",
-    "answer": "划掉「字符串形式的 setInterval」。第一个参数传函数引用或箭头函数。不要传 \"clock()\"。clear 使用同一次调用返回的 id。",
+  "es6-for-of-iterable": {
+    "core": "for...of 向值索取迭代器，按 next 的 value 逐个给出元素。数组给出元素，Map 给出 [键, 值]，字符串给出一个个码元。for...in 枚举的是可枚举的字符串键，包括原型链上的，数组上因此得到 \"0\"、\"1\" 这种下标字符串。普通对象没有默认迭代器，对它 for...of 会抛 TypeError。要列出对象自己的键，用 Object.keys 或 Object.entries。迭代器协议本身见 `js-iteration-protocol`。",
+    "why": "用 for...in 累加数组，下标字符串被加进总和，或者原型上多出来的枚举属性也进了循环。换成 for...of 之后加的才是元素。",
+    "example": "const list = [10, 20]; for (const n of list) 依次得到 10 和 20。for (const key in list) 依次得到 \"0\" 和 \"1\"。给 Array.prototype 加一个可枚举字段 extra 后，for...in 还会走到 \"extra\"，for...of 仍然只有 10 和 20。for (const x of { a: 1 }) 抛 TypeError。",
+    "task": "对同一个数组分别用 for...of 和 for...in，记下绑定到的是元素还是下标。给 Array.prototype 加一个可枚举属性后再跑两遍。最后对普通对象使用 for...of。",
+    "answer": "for...of 得到 10 和 20。for...in 得到下标字符串，加上原型上的可枚举名字。普通对象的 for...of 抛 TypeError。对象自己的键用 Object.keys。",
     "deep": [
       {
-        "title": "和立刻调用的括号",
-        "body": "`setTimeout(clock(), 1000)` 会马上执行 clock，把返回值交给定时器，通常也是错的。要延迟执行就传 `clock` 或 `() => clock()`，不要在传参时加一对会立刻调用的括号。"
+        "title": "每一轮的 const 是新绑定",
+        "body": "for (const n of list) 里闭包抓住的是这一轮的 n。改成 var，循环结束后各个闭包读到的是同一个最终值。这和 const 锁住绑定是同一件事，见 `es6-const-binding`。"
       },
       {
         "title": "怎样自己验证",
-        "body": "打开 MDN 的 setInterval，确认推荐函数形式。在开了禁止 eval 的 CSP 页面试字符串形式，应失败或被挡住。再改成函数形式，用返回的 id 清除。"
+        "body": "数组里放两个数字，两种循环分别打印。再给 Array.prototype 加可枚举属性，只有 for...in 应多打出这个名字。对 { a: 1 } 使用 for...of 应抛 TypeError，Object.keys 应得到 [\"a\"]。测完删掉加在原型上的属性。"
       }
     ],
     "references": [
       [
-        "MDN：setInterval",
-        "https://developer.mozilla.org/en-US/docs/Web/API/Window/setInterval"
+        "MDN：for...of",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of"
       ],
       [
-        "MDN：setTimeout",
-        "https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout"
+        "MDN：for...in",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...in"
       ]
-    ],
-    "diagram": "diagrams/js-timer-fn-not-string.svg",
-    "origin": "本地库 JavaScript 思维导图 BOM 枝里的 setInterval(\"clock()\", 1000)"
+    ]
   },
   "js-iteration-protocol": {
     "core": "可迭代对象要实现 @@iterator 方法，返回一个带 next() 的迭代器。for-of、展开语法、Array.from 都走这套协议。Array 和 Map 自带。普通对象没有默认迭代器，不能 for-of 自己的键，除非写了方法或用 Object.keys。生成器函数返回的就是迭代器。不要用 for-in 去遍历数组下标当协议。",
@@ -756,6 +815,121 @@
         "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet"
       ]
     ]
+  },
+  "js-timer-fn-not-string": {
+    "core": "`setTimeout` / `setInterval` 的第一个参数应是**函数**（或实现了回调约定的对象）。传入字符串时，实现会把这段文本再当脚本求值，行为和 `eval` 一类，作用域难料，也容易撞上 CSP。正确写法是 `setInterval(clock, 1000)` 或 `setInterval(() => clock(), 1000)`。取消要用同一次调用返回的句柄做 `clearInterval` / `clearTimeout`。测试里用假时钟推进，见 `test-fake-timers`。",
+    "why": "照图抄字符串，严格 CSP 下定时器根本不跑；能跑时闭包变量也对不上，调试像「函数没定义」。",
+    "example": "`setInterval(\"clock()\", 1000)` 依赖到点再解析全局名 `clock`。改成 `const id = setInterval(() => clock(), 1000)`，卸载时 `clearInterval(id)`。",
+    "task": "划掉字符串形式的 setInterval。写出传入函数的两种写法，以及 clear 要用什么。",
+    "answer": "划掉「字符串形式的 setInterval」。第一个参数传函数引用或箭头函数。不要传 \"clock()\"。clear 使用同一次调用返回的 id。",
+    "deep": [
+      {
+        "title": "和立刻调用的括号",
+        "body": "`setTimeout(clock(), 1000)` 会马上执行 clock，把返回值交给定时器，通常也是错的。要延迟执行就传 `clock` 或 `() => clock()`，不要在传参时加一对会立刻调用的括号。"
+      },
+      {
+        "title": "和微任务",
+        "body": "定时器回调是后续任务，排在当前微任务清空之后，见 eventloop、js-microtask-vs-macrotask。不要用 setTimeout(0) 冒充“等 then 跑完”——then 往往更早。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开 MDN 的 setInterval，确认推荐函数形式。在开了禁止 eval 的 CSP 页面试字符串形式，应失败或被挡住。再改成函数形式，用返回的 id 清除。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：setInterval",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Window/setInterval"
+      ],
+      [
+        "MDN：setTimeout",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout"
+      ]
+    ],
+    "diagram": "diagrams/js-timer-fn-not-string.svg",
+    "origin": "本地库 JavaScript 思维导图 BOM 枝里的 setInterval(\"clock()\", 1000)"
+  },
+  "js-regex-dot-not-newline": {
+    "core": "多数引擎里 `.` 是元字符，默认不匹配换行；要匹配换行需 `(?s)`、`/s`、Pattern.DOTALL 或 `[^]` 这类写法。匹配字面点用 `\\.`。`\\d` 在 JavaScript 默认是 `[0-9]`；在 Java 开 UNICODE_CHARACTER_CLASS、或 Python 的 Unicode 模式下可以匹配其他数字字符。`[^0-9]` 是否等于“最后一个不是数字”还取决于锚点和量词，有些资料里的 `abc[^0-9]` 只会再吃一个非数字字符。正则嵌在宿主语言里，flag 决定语义。",
+    "why": "把 . 背成任意单个字符，多行日志会在第一处换行停住；把 \\d 背成永远等于 [0-9]，开了 Unicode 时全角数字会判断反。区分信号是点号要 DOTALL 或 s 标志才跨行，\\d 的宽度看 flag。",
+    "example": "JS 默认 `/a.b/` 匹配 `a\\nb` 失败，加上 `s` 才成功。Java `Pattern.compile(\"\\\\d\", UNICODE_CHARACTER_CLASS)` 可能吃到非 ASCII 数字。",
+    "task": "对照所在语言的 flag 列表，写出让 `.` 匹配换行的开关；试一个 `\\d` 与 `[0-9]` 不一致的输入。",
+    "answer": "对照所在语言的 flag 列表，让 . 匹配换行的开关是 JavaScript 的 s、Java 的 Pattern.DOTALL，或内联 (?s)。默认点号不跨行。一个 \\d 与 [0-9] 不一致的输入是非 ASCII 数字：Java 开 UNICODE_CHARACTER_CLASS，或 Python 的 Unicode 模式下 \\d 能吃到，[0-9] 吃不到。字面点要转义。",
+    "deep": [
+      {
+        "title": "旗标决定点号和数字",
+        "body": "默认的点号在换行处停下，所以多行日志用它会只吃到第一行。要跨行得打开 DOTALL、JavaScript 的 s，或写 (?s)。\\d 在 JavaScript 里默认就是 [0-9]；Java 开了 UNICODE_CHARACTER_CLASS、Python 走 Unicode 模式时，它可以吃到别的数字字符。字面量的点必须转义。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "在所用语言里找出让点号匹配换行的那个 flag，用含换行的 a 换行 b 试一次，默认应失败，打开 flag 后应成功。再拿一个非 ASCII 数字分别交给 \\d 和 [0-9]，只有开了 Unicode 相关开关时两者才分开。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：Regular expressions",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions"
+      ],
+      [
+        "Pattern.DOTALL",
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/regex/Pattern.html#DOTALL"
+      ]
+    ]
+  },
+  "js-json-stringify-not-equal": {
+    "core": "JSON 会丢掉 undefined、函数、symbol，NaN 和 Infinity 会变成 null，键顺序取决于枚举顺序，循环引用会抛错。看起来相等的对象可以一个键在前一个在后、或一边有 undefined。对象相等要看同一引用，或按业务字段逐项比，或用支持 NaN 的深比较。class 语法是原型继承的糖，`Object.create` 能做委托，但不能说 class 没意义。`==` 与 `===` 仍见 `js-equality`。",
+    "why": "单测里用 JSON.stringify 当深比较，键顺序一变就误报不相等，一边多了 undefined 又会误报相等。区分信号是 undefined 被丢掉、NaN 变成 null，字符串相同不等于对象相同。",
+    "example": "{a:1, b:undefined} 和 {a:1} 经 stringify 后都只剩下 a，会被当成相等。{a:1, b:1} 和 {b:1, a:1} 人眼字段相同，字符串却可能因为键序不同而不等。",
+    "task": "写出 stringify 会改写的三类值；给一对“人眼相等但 stringify 不相等”的对象。",
+    "answer": "stringify 会改写的三类值是：丢掉 undefined、函数和 symbol；把 NaN 与 Infinity 写成 null；键按枚举顺序输出，所以顺序变了字符串就变。人眼相等但 stringify 可能不等的一对是 {a:1, b:1} 和 {b:1, a:1}。对象是否相等要看同一引用，或按业务字段逐项比。",
+    "deep": [
+      {
+        "title": "字符串相同不是对象相同",
+        "body": "stringify 会丢掉 undefined、函数和 symbol，把 NaN 和 Infinity 写成 null，键的先后跟枚举顺序走。一边多一个 undefined 字段，字符串可以和没有该字段的对象一样。两个字段相同、键顺序相反的对象，字符串又可能不同。循环引用还会直接抛错。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "先写出会被改写的三类：undefined、NaN、键顺序。再对 {a:1, b:1} 和 {b:1, a:1} 各 stringify 一次，人眼字段相同但字符串可能不等。相等判断改成同一引用，或按字段逐项比。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：JSON.stringify",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify"
+      ],
+      [
+        "MDN：Classes",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes"
+      ]
+    ]
+  },
+  "closure": {
+    "core": "函数会记住创建它的那一次变量环境。React 函数组件每次渲染都重新执行，得到新的 count 和新的事件函数。已经创建的事件函数仍看见创建它那次渲染的 count。同一次点击里读三次 count，三次都是这一个快照，所以三次 setCount(count + 1) 排进去的是同一个新值。setCount(n => n + 1) 排进去的是计算函数，React 用队列里当时的最新值依次计算，三次才得到加 3。这和 setState 是否“异步”不是一回事：即使更新稍后才画到屏幕上，闭包看见的仍是创建时的变量。在 effect 或定时器里使用渲染里的值，同样看见那一次渲染，除非把值放进依赖并在依赖变化时重建函数。",
+    "why": "学习者会把三次都只加 1 记成状态更新是异步的。下次在事件外或条件更新里仍用这个解释，函数式更新和直接赋值的差别就猜反。同一次点击里变量仍是 0、下一次渲染却已经是队列算完的值，才说明看见的是创建函数时的快照。",
+    "example": "渲染时计数是 0。同一次点击里三次调用按当前计数加 1，队列里三个更新都想写成 1，下一次渲染只显示 1。改成三次函数式更新后，队列依次算得 1、2、3，屏幕变成 3。点击函数里打印的计数在这次调用期间仍是 0。",
+    "task": "从 0 开始，在同一次点击中先 setCount(count + 1)，再 setCount(n => n + 1)，再 setCount(5)。预测下一次渲染的 count，并说明点击函数里的 count 变量现在仍是多少。",
+    "answer": "从 0 开始，同一次点击里先 setCount(count + 1)，排入的是基于快照算好的 1。接着 setCount(n => n + 1)，用队列里前一个结果 1 算出 2。最后 setCount(5) 把结果直接写成 5。下一次渲染是 5。这三次调用期间，点击函数闭包里的 count 变量一直是 0，要等这次函数结束、下一次渲染创建新函数，才会看见 5。",
+    "deep": [
+      {
+        "title": "怎样自己验证",
+        "body": "在点击函数开头打印 count，连续点两次。第一次打印 0 且屏幕变成 1，第二次打印的才是 1。打印发生在调用时，屏幕更新发生在之后的渲染。"
+      },
+      {
+        "title": "和草稿的关系",
+        "body": "全栈页面里的草稿如果放在 state，提交函数也只能看见创建它那次渲染的草稿。提交时要读这次渲染的值，或用函数式更新基于最新队列计算。"
+      }
+    ],
+    "references": [
+      [
+        "React：State as a Snapshot",
+        "https://react.dev/learn/state-as-a-snapshot"
+      ],
+      [
+        "React：Queueing a Series of State Updates",
+        "https://react.dev/learn/queueing-a-series-of-state-updates"
+      ]
+    ],
+    "react": "hooks"
   },
   "ts-unknown": {
     "core": "any 会绕过许多静态检查；unknown 可接收任意值，但在读取属性或调用前必须缩小类型。JSON 解析结果即使语法正确，也不代表符合业务对象结构。顺序是：入口收 unknown，先判断非 null 对象，再逐个检查必需字段的类型，通过后才收窄成 User。边界是：any 会让后面的属性访问全部跳过检查，风险从边界扩散到所有调用方。JSON.parse 只保证文本合法，不保证有 id，更不保证 id 是字符串。缺少字段和类型不对都要停在 parseUser 里。调用方拿到的要么是 User，要么是错误，不能是一个还可以点出任意属性的值。不要把未知值传进去。",
@@ -835,7 +1009,7 @@
     ]
   },
   "ts-satisfies": {
-    "core": "as 是断言：编译器按目标类型看待这个值，字面量里更窄的信息可能被丢掉。satisfies 先检查值符合约定的类型，再保留字面量上的具体键和字面量类型。顺序是先写对象，再用 satisfies 核对形状，后面的访问仍按具体键检查。边界是它只在编译期，替代不了对外部 JSON 的运行时校验；断言则可能让拼错的键不再报错。对象既要符合约定，又要让后面的代码仍能按具体键自动补全时，用 satisfies。不要为了消掉报错而改成断言，那会把键放宽成宽类型。排障时按这个顺序往下看，边界条件不满足就停在这一步，不要把前后两段并成一个原因。satisfies 只在编译期核对，外部 JSON 仍要另做校验。",
+    "core": "as 是断言：编译器按目标类型看待这个值，字面量里更窄的信息可能被丢掉。`satisfies`（TypeScript 4.9）先检查值符合约定的类型，再保留字面量上的具体键和字面量类型。顺序是先写对象，再用 satisfies 核对形状，后面的访问仍按具体键检查。边界是它只在编译期，替代不了对外部 JSON 的运行时校验；断言则可能让拼错的键不再报错。对象既要符合约定，又要让后面的代码仍能按具体键自动补全时，用 satisfies。不要为了消掉报错而改成断言，那会把键放宽成宽类型。排障时按这个顺序往下看，边界条件不满足就停在这一步，不要把前后两段并成一个原因。satisfies 只在编译期核对，外部 JSON 仍要另做校验。",
     "why": "用 as 把主题断言成宽类型，配色表的键会变成宽的索引，写错键也不再报错。区分信号是 satisfies 之后，拼错的键仍然报错，as 之后可能不报。拼错的键在断言之后可能悄悄通过编译。",
     "example": "const colors = { primary: \"#09f\", danger: \"#f00\" } satisfies Record<string, string>。colors.primary 仍是这个字面量字符串。",
     "task": "分别用 as 和 satisfies 标注同一份配色。看访问拼错的键时，哪一种还能报错。",
@@ -862,7 +1036,7 @@
     ]
   },
   "ts-module-resolution": {
-    "core": "TypeScript 按 moduleResolution 去猜导入路径。node10/node 跟旧 Node 的文件查找走；bundler 更贴近 Vite/webpack：允许扩展名省略、也更认 package.json 的 exports。两边混用会出现“编辑器绿、构建红”。路径别名要和打包器、测试运行器写成同一份。不要用 paths 去映射到不存在的发行文件。改这项之后要清缓存再编。",
+    "core": "TypeScript 按 moduleResolution 去猜导入路径。node10/node 跟旧 Node 的文件查找走；**TS 5.0 的 bundler** 更贴近 Vite/webpack：允许扩展名省略、也更认 package.json 的 exports。两边混用会出现“编辑器绿、构建红”。路径别名要和打包器、测试运行器写成同一份。不要用 paths 去映射到不存在的发行文件。改这项之后要清缓存再编。",
     "why": "把官网示例里的 moduleResolution 原样抄进 Vite 项目，编辑器按 bundler 能解析，CI 按 Node 的文件查找就报找不到模块。区分信号是同一条相对导入，bundler 允许省略扩展名，node/node10 要落到真实文件。",
     "example": "本地 tsconfig 写 moduleResolution 为 bundler，import \"./api\" 能过。流水线改用 Node 那套解析后，同一行报找不到模块；把导入改成带扩展名的真实文件，或让 CI 也用 bundler，报错消失。",
     "task": "打开当前 tsconfig 的 moduleResolution。对照 Vite 或 Node 文档，标出它允许省略的扩展名。",
@@ -1071,57 +1245,6 @@
       ]
     ]
   },
-  "css-cascade": {
-    "core": "浏览器先按来源、重要性和层叠层确定候选规则，再比较同一优先层级内的选择器权重；仍相同时才看作用域距离与出现顺序。选择器“看起来长”不是完整判断依据。顺序是：先看来源、重要性和层叠层，决定哪些声明有资格比较；再在同一优先层级里比选择器权重；仍相同才看作用域距离和源码顺序。边界是：未分层规则可能压过层内权重更高的普通规则，选择器写得更长不能单独决定胜负。important 会抬高优先级，但会让后续覆盖更难，不要用它代替分层。调试时在样式面板里看胜出声明属于哪一层，而不是先把选择器写得更长。同一层里才比权重。层已经不同时，选择器分数没有资格参与这场比较。先看层。",
-    "why": "错把选择器更长当成一定胜出，未分层的普通规则仍可能盖过层内更高权重的声明。样式不生效时继续堆 !important，后面的规则也会被锁死。能分开的信号是：开发者工具里胜出的那条来自哪一层，而不是选择器看起来有多长。",
-    "example": "同一元素两条 color：层内的 #id 规则和层外的 .class 规则。层外那条普通作者样式胜出，尽管它的选择器更弱。把两条放进同一层后，#id 才盖过 .class。再把层去掉，胜负会跟着变。记下胜出的层。",
-    "task": "在开发者工具中为同一元素写两条冲突的 color，分别改变层、选择器和顺序，记录胜出的规则。",
-    "answer": "先比来源、重要性和层叠层，这些不同就不用再比选择器长短。它们相同之后才比权重，#id 通常高于 .class。权重仍相同，才用作用域距离和出现顺序打破平局。更长的选择器如果输在层上，把选择器再写长也不会翻盘。层不同时，不要再比选择器分数。顺序不能倒过来。",
-    "deep": [
-      {
-        "title": "先判断比赛资格",
-        "body": "不同来源、important 声明或层叠层中的规则，不应只拿选择器分数直接比较。"
-      },
-      {
-        "title": "控制复杂度",
-        "body": "用清晰的层级、较低的选择器权重和语义类名，比不断追加覆盖规则更容易维护。"
-      }
-    ],
-    "references": [
-      [
-        "MDN：CSS Cascade",
-        "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Cascade/Introduction"
-      ],
-      [
-        "MDN：Specificity",
-        "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Cascade/Specificity"
-      ]
-    ],
-    "diagram": "diagrams/css-cascade.svg"
-  },
-  "css-stacking": {
-    "core": "层叠上下文会把内部后代作为一个整体参与父上下文的排序。子元素的 z-index 只能在所属上下文内竞争，无法直接越过父上下文与外部兄弟比较。顺序是：先看谁建立了新的层叠上下文，再在那个上下文内部用 z-index 排序，最后把整个上下文当作一个整体去跟外部兄弟比。边界是：opacity、transform 等也可能建立上下文，子元素再大的 z-index 都出不去。数字调到 9999 仍被挡时，要抬容器或换顶层机制，而不是再加一位。transform 或小于 1 的 opacity 也会新建上下文，这时子元素的 z-index 同样出不去。数字再大也出不去。",
-    "why": "错把子元素的 z-index 当成可以跟外部弹层直接比大小，9999 仍盖不过旁边更高的兄弟上下文。弹层被挡时只把数字调大，遮挡不会消失。能分开的信号是：两个元素是不是已经分属不同的层叠上下文。",
-    "example": "A 的 z-index 为 1，B 为 2，都建立了上下文。A 的子元素设成 9999，视觉上仍在 B 下面。把 A 的 z-index 提高到 3 之后，A 和它的子元素一起到了 B 前面。子元素并未单独越过去。",
-    "task": "创建两个定位容器和一个弹层，逐级检查 transform、opacity、position 与 z-index。",
-    "answer": "先找两个元素各自最近的层叠上下文，再比这两个上下文在父级里的顺序。子元素的 9999 只在 A 内部竞争，不能越过 A 去跟 B 比。要盖过 B，应提高 A 的层级，或把弹层放到更高的上下文里，而不是继续加大子元素的数字。先抬上下文，再谈子元素。",
-    "deep": [
-      {
-        "title": "上下文是一扇门",
-        "body": "子元素只在所属上下文里比 z-index。父上下文在外面的顺序已经输了，内部的数字不会被拿出去再比一次。先找最近的上下文，再决定抬哪一层。先改父级，而不是把子元素改成更大的数。"
-      },
-      {
-        "title": "怎样自己验证",
-        "body": "做两个定位容器，z-index 分别是 1 和 2。在较低的容器里放一个 z-index 为 9999 的子元素，确认仍被挡住。再提高容器本身，观察子元素是否一起过来。"
-      }
-    ],
-    "references": [
-      [
-        "MDN：Stacking context",
-        "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Positioned_layout/Stacking_context"
-      ]
-    ]
-  },
   "css-position-flow": {
     "core": "static 是默认文档流。relative 占着原来的位置，偏移只是视觉移动。absolute 相对最近的非 static 祖先定位，找不到就相对初始包含块。fixed 通常相对视口，但祖先有 transform 等时会换成那个包含块。先问“参照谁”，再调 top/left。顺序是先问参照谁：默认流里的相对定位仍占原来的位置，绝对定位找最近的非默认祖先，找不到才相对初始包含块，固定定位通常相对视口。边界是祖先上的变换等会把固定定位的包含块换成那个祖先，这时它不再贴窗口。偏移的百分比也相对这个参照。偏移使用百分比时，计算基准也是这个参照，不是整个窗口，除非参照本身就是视口。",
     "why": "学习者会凭感觉调弹层的偏移，子元素有时贴父级、有时贴整页。给中间那层祖先加上定位后，参照物变了，偏移却还在用原来的数。最近的定位祖先和视口要分开看，才说明先问参照谁，再谈贴在哪一层。",
@@ -1173,6 +1296,57 @@
       [
         "MDN：position",
         "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position"
+      ]
+    ]
+  },
+  "css-cascade": {
+    "core": "浏览器先按来源、重要性和层叠层确定候选规则，再比较同一优先层级内的选择器权重；仍相同时才看作用域距离与出现顺序。选择器“看起来长”不是完整判断依据。顺序是：先看来源、重要性和层叠层，决定哪些声明有资格比较；再在同一优先层级里比选择器权重；仍相同才看作用域距离和源码顺序。边界是：未分层规则可能压过层内权重更高的普通规则，选择器写得更长不能单独决定胜负。important 会抬高优先级，但会让后续覆盖更难，不要用它代替分层。调试时在样式面板里看胜出声明属于哪一层，而不是先把选择器写得更长。同一层里才比权重。层已经不同时，选择器分数没有资格参与这场比较。先看层。",
+    "why": "错把选择器更长当成一定胜出，未分层的普通规则仍可能盖过层内更高权重的声明。样式不生效时继续堆 !important，后面的规则也会被锁死。能分开的信号是：开发者工具里胜出的那条来自哪一层，而不是选择器看起来有多长。",
+    "example": "同一元素两条 color：层内的 #id 规则和层外的 .class 规则。层外那条普通作者样式胜出，尽管它的选择器更弱。把两条放进同一层后，#id 才盖过 .class。再把层去掉，胜负会跟着变。记下胜出的层。",
+    "task": "在开发者工具中为同一元素写两条冲突的 color，分别改变层、选择器和顺序，记录胜出的规则。",
+    "answer": "先比来源、重要性和层叠层，这些不同就不用再比选择器长短。它们相同之后才比权重，#id 通常高于 .class。权重仍相同，才用作用域距离和出现顺序打破平局。更长的选择器如果输在层上，把选择器再写长也不会翻盘。层不同时，不要再比选择器分数。顺序不能倒过来。",
+    "deep": [
+      {
+        "title": "先判断比赛资格",
+        "body": "不同来源、important 声明或层叠层中的规则，不应只拿选择器分数直接比较。"
+      },
+      {
+        "title": "控制复杂度",
+        "body": "用清晰的层级、较低的选择器权重和语义类名，比不断追加覆盖规则更容易维护。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：CSS Cascade",
+        "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Cascade/Introduction"
+      ],
+      [
+        "MDN：Specificity",
+        "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Cascade/Specificity"
+      ]
+    ],
+    "diagram": "diagrams/css-cascade.svg"
+  },
+  "css-stacking": {
+    "core": "层叠上下文会把内部后代作为一个整体参与父上下文的排序。子元素的 z-index 只能在所属上下文内竞争，无法直接越过父上下文与外部兄弟比较。顺序是：先看谁建立了新的层叠上下文，再在那个上下文内部用 z-index 排序，最后把整个上下文当作一个整体去跟外部兄弟比。边界是：opacity、transform 等也可能建立上下文，子元素再大的 z-index 都出不去。数字调到 9999 仍被挡时，要抬容器或换顶层机制，而不是再加一位。transform 或小于 1 的 opacity 也会新建上下文，这时子元素的 z-index 同样出不去。数字再大也出不去。",
+    "why": "错把子元素的 z-index 当成可以跟外部弹层直接比大小，9999 仍盖不过旁边更高的兄弟上下文。弹层被挡时只把数字调大，遮挡不会消失。能分开的信号是：两个元素是不是已经分属不同的层叠上下文。",
+    "example": "A 的 z-index 为 1，B 为 2，都建立了上下文。A 的子元素设成 9999，视觉上仍在 B 下面。把 A 的 z-index 提高到 3 之后，A 和它的子元素一起到了 B 前面。子元素并未单独越过去。",
+    "task": "创建两个定位容器和一个弹层，逐级检查 transform、opacity、position 与 z-index。",
+    "answer": "先找两个元素各自最近的层叠上下文，再比这两个上下文在父级里的顺序。子元素的 9999 只在 A 内部竞争，不能越过 A 去跟 B 比。要盖过 B，应提高 A 的层级，或把弹层放到更高的上下文里，而不是继续加大子元素的数字。先抬上下文，再谈子元素。",
+    "deep": [
+      {
+        "title": "上下文是一扇门",
+        "body": "子元素只在所属上下文里比 z-index。父上下文在外面的顺序已经输了，内部的数字不会被拿出去再比一次。先找最近的上下文，再决定抬哪一层。先改父级，而不是把子元素改成更大的数。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "做两个定位容器，z-index 分别是 1 和 2。在较低的容器里放一个 z-index 为 9999 的子元素，确认仍被挡住。再提高容器本身，观察子元素是否一起过来。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：Stacking context",
+        "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Positioned_layout/Stacking_context"
       ]
     ]
   },
@@ -1311,29 +1485,6 @@
       ]
     ]
   },
-  "html-form-semantics": {
-    "core": "label 与表单控件建立程序可识别的关联；fieldset 和 legend 为一组控件提供名称。原生 button 和表单提交语义还包含键盘与辅助技术行为，不能只靠视觉位置和 click 回调替代。顺序是：先用 label 或包裹把名字绑到控件上，再用 fieldset 和 legend 给一组控件起名，最后把错误信息关联到那个输入。边界是：视觉上摆在旁边不等于程序能认出标签。div 加点击代替不了 button 的提交和键盘行为。占位符不是标签，它在输入后会消失。用键盘走一遍登录：Tab 应进入每个框，读屏应说出名字。说不出名字的那个框，就是还没有关联上 label。",
-    "why": "错把输入框旁边的一段文字当成已经有了 label，读屏报不出这个框的名字，点击文字也不能聚焦。视觉上像有标签，程序上没有关联。能分开的信号是：label 的 for 是否等于输入的 id，或者输入是否包在 label 里面。",
-    "example": "没有 for 和 id 时，点击“邮箱”二字，焦点不进入输入框，读屏只报一个编辑框。加上 label for=\"email\" 和 input id=\"email\" 后，点击文字即聚焦，读屏报出“邮箱”。",
-    "task": "用键盘和读屏检查一个没有 label 的登录表单，再添加 label 与错误提示关联。",
-    "answer": "每个控件用 label 关联，让它有可访问名称。一组相关控件用 fieldset 和 legend 标出组名。错误信息用 aria-describedby 或等价关系和对应输入连上。提交用原生 button，保留键盘提交。旁边的普通文字若没有这层关联，就不算标签。",
-    "deep": [
-      {
-        "title": "名字要写进关联",
-        "body": "可访问名称来自 label 的关联，不来自旁边碰巧摆着的文字。for 和 id 必须一致。一组单选或相关字段再用 legend 说明这组是什么，不要只靠视觉分组。"
-      },
-      {
-        "title": "怎样自己验证",
-        "body": "先用一个没有 label 的登录表单，Tab 并打开读屏，确认名字缺失、点击旁边文字不能聚焦。加上 for 和 id、以及错误信息和输入的关联后，再走一遍，名字和错误都应被读出来。"
-      }
-    ],
-    "references": [
-      [
-        "MDN：How to structure a web form",
-        "https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/How_to_structure_a_web_form"
-      ]
-    ]
-  },
   "dom-event-flow": {
     "core": "一次 DOM 事件先从 window 走到目标（捕获），在目标上触发，再按原路返回（冒泡）。eventPhase 用 1、2、3 区分这三段。监听器默认在冒泡阶段。stopPropagation 阻止事件继续传到别的节点，同一节点上其余监听器仍会运行。stopImmediatePropagation 还会停掉当前节点上尚未运行的监听器。focus、blur 等事件不冒泡，不能靠父元素监听它们来做事件委托。",
     "why": "学习者会以为点在按钮上就只有按钮自己的监听会跑。父元素和文档上的点击也执行了，弹层关闭和列表选中叠在同一次点击里，于是他把两边的监听都删掉。捕获阶段的日志早于目标、冒泡阶段晚于目标，才说明该拦在传播的哪一段。",
@@ -1344,6 +1495,10 @@
       {
         "title": "捕获、目标与冒泡",
         "body": "一次点击先从 window 走到目标，再原路返回。阶段用 1、2、3 区分。默认监听在冒泡。stopPropagation 只挡住后续节点，同一节点上其余监听仍会运行；立即停止才会连当前节点剩下的监听一起停掉。"
+      },
+      {
+        "title": "和默认行为",
+        "body": "preventDefault 阻止浏览器默认动作（如提交导航、链接跳转），与 stopPropagation 不同。表单提交前校验见 `html5-constraint-before-submit`；拖放默认见 `html5-drop-prevent-default`。"
       },
       {
         "title": "怎样自己验证",
@@ -1388,57 +1543,26 @@
       ]
     ]
   },
-  "miniprogram-wx-if-not-wxif": {
-    "core": "WXML 用 `wx:if`、`wx:for`，冒号是指令前缀，不是 `wx-if`。逻辑层跑在 JSCore/V8，没有 DOM、window、document。WXSS 支持 rpx，选择器是子集；本地资源可以用，不是“图片只能外链”。app.json 是全局配置入口；app.js 可以几乎为空，但生命周期和全局数据写在这里。用户唯一标识现行是 wx.login 的 code 换 openid/unionid，getUserInfo 弹窗授权路径已废弃。双绑不是 v-model，要 bindinput 再 setData。",
-    "why": "把条件渲染写成 wx-if，工具里直接不生效；再用 getUserInfo 取 unionId，会走已废弃的授权，审核过不了。区分信号是指令前缀是冒号 wx:if，登录用 wx.login 的 code 去换身份。",
-    "example": "页面写 <view wx:if=\"{{ok}}\"> 才会按条件渲染，写成 wx-if 不会生效。登录调用 wx.login，用返回的 code 换 openid 或 unionid，不要再调 getUserInfo。",
-    "task": "对照官方框架文档，写出条件渲染指令名；划掉 getUserInfo 拿 unionId。",
-    "answer": "对照官方框架文档，条件渲染指令名是 wx:if，冒号是指令前缀，不是 wx-if；列表是 wx:for。划掉 getUserInfo 拿 unionId：用户身份现行是 wx.login 的 code 去换 openid 或 unionid，旧的弹窗授权已经废弃。逻辑层没有 window 和 document。",
+  "html-form-semantics": {
+    "core": "label 与表单控件建立程序可识别的关联；fieldset 和 legend 为一组控件提供名称。原生 button 和表单提交语义还包含键盘与辅助技术行为，不能只靠视觉位置和 click 回调替代。顺序是：先用 label 或包裹把名字绑到控件上，再用 fieldset 和 legend 给一组控件起名，最后把错误信息关联到那个输入。边界是：视觉上摆在旁边不等于程序能认出标签。div 加点击代替不了 button 的提交和键盘行为。占位符不是标签，它在输入后会消失。用键盘走一遍登录：Tab 应进入每个框，读屏应说出名字。说不出名字的那个框，就是还没有关联上 label。",
+    "why": "错把输入框旁边的一段文字当成已经有了 label，读屏报不出这个框的名字，点击文字也不能聚焦。视觉上像有标签，程序上没有关联。能分开的信号是：label 的 for 是否等于输入的 id，或者输入是否包在 label 里面。",
+    "example": "没有 for 和 id 时，点击“邮箱”二字，焦点不进入输入框，读屏只报一个编辑框。加上 label for=\"email\" 和 input id=\"email\" 后，点击文字即聚焦，读屏报出“邮箱”。",
+    "task": "用键盘和读屏检查一个没有 label 的登录表单，再添加 label 与错误提示关联。",
+    "answer": "每个控件用 label 关联，让它有可访问名称。一组相关控件用 fieldset 和 legend 标出组名。错误信息用 aria-describedby 或等价关系和对应输入连上。提交用原生 button，保留键盘提交。旁边的普通文字若没有这层关联，就不算标签。",
     "deep": [
       {
-        "title": "冒号才是指令",
-        "body": "wx:if 和 wx:for 的冒号是 WXML 指令前缀，写成 wx-if 不会被当成条件。逻辑层跑在 JSCore 或 V8 里，没有 window 和 document，不能按浏览器页面去找 body。身份用 wx.login 拿到 code，再换 openid 或 unionid；getUserInfo 那条弹窗授权已经废弃。"
+        "title": "名字要写进关联",
+        "body": "可访问名称来自 label 的关联，不来自旁边碰巧摆着的文字。for 和 id 必须一致。一组单选或相关字段再用 legend 说明这组是什么，不要只靠视觉分组。"
       },
       {
         "title": "怎样自己验证",
-        "body": "对照 WXML 文档写出条件渲染的指令名，应是 wx:if，并把 wx-if 划掉。再打开登录文档，确认身份来自 wx.login 的 code，而不是 getUserInfo 里的 unionId。"
+        "body": "先用一个没有 label 的登录表单，Tab 并打开读屏，确认名字缺失、点击旁边文字不能聚焦。加上 for 和 id、以及错误信息和输入的关联后，再走一遍，名字和错误都应被读出来。"
       }
     ],
     "references": [
       [
-        "微信小程序：WXML",
-        "https://developers.weixin.qq.com/miniprogram/dev/reference/wxml/"
-      ],
-      [
-        "微信小程序：登录",
-        "https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/login.html"
-      ]
-    ]
-  },
-  "html5-main-landmark": {
-    "core": "header、nav、main、article、section、aside、footer 给文档划出区域。没有 hidden 的 main 一页只能有一个，而且不能放进 header、nav、article、aside 或 footer 里面。section 是同一主题的一块，应有自己的标题；只为了样式包一层时用 div。article 是可以单独拿走的一块，例如一篇帖子。写在 article 里的 header 和 footer 属于这篇文章，不属于整页。nav 放主要导航，不是每一组链接都要套。按钮和链接的键盘行为见 `accessibility`，输入框的名字见 `html-form-semantics`，模态层见 `html-dialog-modal`。",
-    "why": "整页都是 div 时，读屏的地标列表是空的，用户只能逐行往下走。反过来一页放两个可见的 main，地标里会出现两个“主内容”，不知道哪一个才是正文。",
-    "example": "登录页用一个 main 包住表单，页头用 header，主导航用 nav。文章页的每篇帖子是 article，文章自己的标题写在它内部的 header 里。侧栏链接如果只是一组相关文章，用 aside，不要再套一个 nav。",
-    "task": "给当前页标出唯一的可见 main。检查它有没有被包进 header、nav 或 article。再把只为了留白的盒子改回 div，给每个 section 补上标题。",
-    "answer": "可见的 main 只有一个，并且不在 header、nav、article、aside、footer 里。section 带有自己的标题。纯样式容器仍是 div。文章内部的 header 只命名这篇文章。",
-    "deep": [
-      {
-        "title": "地标是区域，不是样式名",
-        "body": "这些元素让辅助技术能按区域跳转。给 div 起一个 class 叫 main，样式可以一样，地标列表里仍然没有它。隐藏的 main 可以另有一个，用来切换视图；两个同时可见就不合法。"
-      },
-      {
-        "title": "怎样自己验证",
-        "body": "用读屏或浏览器的无障碍树查看地标。应能看到一个 main。把第二个可见 main 放进页面，地标里会出现两个主内容。把 main 挪进 header，对照规范它不应再待在那里。"
-      }
-    ],
-    "references": [
-      [
-        "MDN：main",
-        "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/main"
-      ],
-      [
-        "HTML：main 元素",
-        "https://html.spec.whatwg.org/multipage/grouping-content.html#the-main-element"
+        "MDN：How to structure a web form",
+        "https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/How_to_structure_a_web_form"
       ]
     ]
   },
@@ -1466,6 +1590,60 @@
       [
         "MDN：HTMLFormElement.submit",
         "https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/submit"
+      ]
+    ]
+  },
+  "formdata-multipart-upload": {
+    "core": "浏览器的 `FormData` 可挂字段与 `File`/`Blob`。交给 `fetch`/`XMLHttpRequest` 时，**不要**手动设 `Content-Type: multipart/form-data`——运行时会带上正确的 boundary。自己写缺了 boundary，服务端解不出各部分。JSON 接口用 `JSON.stringify` + `application/json`；普通表单可用 `URLSearchParams` 或 `application/x-www-form-urlencoded`。选哪种体，见后续 `http-content-type-body`。大文件进度与中止见 `fetch-abort`。",
+    "why": "手写 multipart 头导致服务端收不到文件，却以为是后端 bug。",
+    "example": "`const fd = new FormData(); fd.append(\"file\", fileInput.files[0]); fd.append(\"title\", title); await fetch(\"/upload\", { method: \"POST\", body: fd });`。不要同时 `headers: { \"Content-Type\": \"multipart/form-data\" }`。",
+    "task": "写出 FormData 上传的三步，并划掉手动 multipart Content-Type。",
+    "answer": "划掉「手动 multipart Content-Type」。append 字段与文件，fetch POST body 用 FormData，不要手写 multipart Content-Type。JSON 体走另一套管线。",
+    "deep": [
+      {
+        "title": "和 input type=file",
+        "body": "从 `input.files` 取 FileList，可多文件多次 append 同名键。清空 input 才能再选同一文件触发 change。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "在 Network 面板看请求头是否含 boundary=。手写无 boundary 的 Content-Type 再发一次，对照服务端是否解包失败。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：FormData",
+        "https://developer.mozilla.org/en-US/docs/Web/API/FormData"
+      ],
+      [
+        "MDN：Using FormData objects",
+        "https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest_API/Using_FormData_Objects"
+      ]
+    ]
+  },
+  "html5-main-landmark": {
+    "core": "header、nav、main、article、section、aside、footer 给文档划出区域。没有 hidden 的 main 一页只能有一个，而且不能放进 header、nav、article、aside 或 footer 里面。section 是同一主题的一块，应有自己的标题；只为了样式包一层时用 div。article 是可以单独拿走的一块，例如一篇帖子。写在 article 里的 header 和 footer 属于这篇文章，不属于整页。nav 放主要导航，不是每一组链接都要套。按钮和链接的键盘行为见 `accessibility`，输入框的名字见 `html-form-semantics`，模态层见 `html-dialog-modal`。",
+    "why": "整页都是 div 时，读屏的地标列表是空的，用户只能逐行往下走。反过来一页放两个可见的 main，地标里会出现两个“主内容”，不知道哪一个才是正文。",
+    "example": "登录页用一个 main 包住表单，页头用 header，主导航用 nav。文章页的每篇帖子是 article，文章自己的标题写在它内部的 header 里。侧栏链接如果只是一组相关文章，用 aside，不要再套一个 nav。",
+    "task": "给当前页标出唯一的可见 main。检查它有没有被包进 header、nav 或 article。再把只为了留白的盒子改回 div，给每个 section 补上标题。",
+    "answer": "可见的 main 只有一个，并且不在 header、nav、article、aside、footer 里。section 带有自己的标题。纯样式容器仍是 div。文章内部的 header 只命名这篇文章。",
+    "deep": [
+      {
+        "title": "地标是区域，不是样式名",
+        "body": "这些元素让辅助技术能按区域跳转。给 div 起一个 class 叫 main，样式可以一样，地标列表里仍然没有它。隐藏的 main 可以另有一个，用来切换视图；两个同时可见就不合法。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "用读屏或浏览器的无障碍树查看地标。应能看到一个 main。把第二个可见 main 放进页面，地标里会出现两个主内容。把 main 挪进 header，对照规范它不应再待在那里。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：main",
+        "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/main"
+      ],
+      [
+        "HTML：main 元素",
+        "https://html.spec.whatwg.org/multipage/grouping-content.html#the-main-element"
       ]
     ]
   },
@@ -1631,6 +1809,33 @@
       ]
     ]
   },
+  "miniprogram-wx-if-not-wxif": {
+    "core": "WXML 用 `wx:if`、`wx:for`，冒号是指令前缀，不是 `wx-if`。逻辑层跑在 JSCore/V8，没有 DOM、window、document。WXSS 支持 rpx，选择器是子集；本地资源可以用，不是“图片只能外链”。app.json 是全局配置入口；app.js 可以几乎为空，但生命周期和全局数据写在这里。用户唯一标识现行是 wx.login 的 code 换 openid/unionid，getUserInfo 弹窗授权路径已废弃。双绑不是 v-model，要 bindinput 再 setData。",
+    "why": "把条件渲染写成 wx-if，工具里直接不生效；再用 getUserInfo 取 unionId，会走已废弃的授权，审核过不了。区分信号是指令前缀是冒号 wx:if，登录用 wx.login 的 code 去换身份。",
+    "example": "页面写 <view wx:if=\"{{ok}}\"> 才会按条件渲染，写成 wx-if 不会生效。登录调用 wx.login，用返回的 code 换 openid 或 unionid，不要再调 getUserInfo。",
+    "task": "对照官方框架文档，写出条件渲染指令名；划掉 getUserInfo 拿 unionId。",
+    "answer": "对照官方框架文档，条件渲染指令名是 wx:if，冒号是指令前缀，不是 wx-if；列表是 wx:for。划掉 getUserInfo 拿 unionId：用户身份现行是 wx.login 的 code 去换 openid 或 unionid，旧的弹窗授权已经废弃。逻辑层没有 window 和 document。",
+    "deep": [
+      {
+        "title": "冒号才是指令",
+        "body": "wx:if 和 wx:for 的冒号是 WXML 指令前缀，写成 wx-if 不会被当成条件。逻辑层跑在 JSCore 或 V8 里，没有 window 和 document，不能按浏览器页面去找 body。身份用 wx.login 拿到 code，再换 openid 或 unionid；getUserInfo 那条弹窗授权已经废弃。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对照 WXML 文档写出条件渲染的指令名，应是 wx:if，并把 wx-if 划掉。再打开登录文档，确认身份来自 wx.login 的 code，而不是 getUserInfo 里的 unionId。"
+      }
+    ],
+    "references": [
+      [
+        "微信小程序：WXML",
+        "https://developers.weixin.qq.com/miniprogram/dev/reference/wxml/"
+      ],
+      [
+        "微信小程序：登录",
+        "https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/login.html"
+      ]
+    ]
+  },
   "browser-event-loop-frame": {
     "core": "浏览器尽量按稳定帧把像素画上屏。一帧预算里要容纳脚本、样式计算、布局、绘制和合成。脚本里强制读布局再写样式，会把布局提前插入，掉帧。长任务占满主线程，输入和绘制都要等。优化时先看帧里哪一段最长，而不是只压缩包体积。顺序是一帧预算里要容纳脚本、样式、布局、绘制和合成，浏览器尽量按稳定间隔把像素画上屏。边界是脚本里先读布局再写样式，会把布局提前插入而掉帧；长任务占满主线程时，输入也要等。优化先看哪一段最长，而不是只看包有多大。输入事件若排在长任务后面，用户会觉得点了没反应，这时要看的是主线程而不是资源体积。帧记录里最长的那一段，才是这次该改的层，再录一次才能算数。",
     "why": "学习者会觉得脚本不长，掉帧就只能是包太大。滚动时在处理函数里又读布局又改样式，帧时间里布局突然变长，脚本本身并不长。先看时间线里最长的是脚本、布局还是绘制，才不会只去压缩包体积，资源体积并没有变。",
@@ -1733,6 +1938,91 @@
       ]
     ]
   },
+  "browser-storage": {
+    "core": "localStorage 按源保存数据，storage 事件通知共享该存储区的其他文档，不在执行写入的当前文档触发。它适合少量客户端偏好，不是可靠的跨标签页事务或服务端真相来源。顺序是：当前文档 setItem 后自己更新界面，其他同源文档通过 storage 事件得知新值再更新。边界是：事件不在写入的文档上触发，也不跨源。它适合少量偏好，不能当成跨标签事务或服务器上的真相。两个标签同时写，后一次覆盖前一次，没有合并。隐私模式和容量上限也会让写入直接失败。当前页要在 setItem 的同一函数里改界面。只等 storage 事件，自己这个标签不会刷新。自己改。",
+    "why": "错把 storage 事件当成写入页面自己也会收到，标签 A 更新主题后只等事件，自己的界面不会变。另一个标签却会收到。能分开的信号是：事件出现在别的文档，还是出现在执行 setItem 的这一页。",
+    "example": "同源的标签 A 和 B 都监听 storage。A 执行 setItem(\"theme\",\"dark\")。B 的回调收到新值并改主题，A 的监听函数不执行。A 必须在 setItem 之后自己改界面。",
+    "task": "打开两个同源标签页，记录 A 写入后两个页面的事件与显示状态。",
+    "answer": "B 能收到 storage 事件，事件里有 key 和新值，B 用它刷新主题。A 不会收到自己这次写入的事件，所以 A 要在写入的同一段代码里直接更新自己的状态。两边同时写同一个键时，后写的值留下，storage 不是事务，冲突要另定谁更新。",
+    "deep": [
+      {
+        "title": "事件给别人",
+        "body": "storage 通知的是共享这个源的其他文档。写入者不会收到自己的事件。只在监听里更新界面，当前标签就会停在旧状态。写入函数里要同步改自己的那一份。写入和收事件是两个文档。"
+      },
+      {
+        "title": "和 session / IndexedDB",
+        "body": "跨标签共享用 localStorage。只跟当前标签的向导进度用 sessionStorage，见 `session-storage-tab-only`。结构化大数据与索引用 IndexedDB，见 `indexeddb-when-needed`。不要把三种都当成“浏览器缓存”一个词。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开两个同源标签，两边都给 storage 打日志。在 A 里 setItem，确认只有 B 打印事件，A 的界面要靠写入代码自己更新。再在两个标签同时写同一个键，看最后留下的是哪一次。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：storage event",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Window/storage_event"
+      ],
+      [
+        "MDN：localStorage",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage"
+      ]
+    ]
+  },
+  "session-storage-tab-only": {
+    "core": "`sessionStorage` 按**源 + 顶层浏览上下文（大致是标签页）**隔离：同站新开标签是另一份；刷新通常还在；关标签就没了。`localStorage` 同源标签共享，并通过 `storage` 事件通知**其他**文档，见 `browser-storage`。不要把登录态只放在 sessionStorage 还以为多标签共用。临时向导、一次性令牌适合 session；主题偏好适合 local。服务端会话与 Cookie 另算，见 `cookie-set-attributes`。",
+    "why": "把 sessionStorage 当“登录用户的私有盘”，多标签向导互相看不见，或关标签丢了却以为是被清缓存。",
+    "example": "标签 A 写入 `sessionStorage.setItem(\"wizard\",\"2\")`。标签 B 打开同 URL，读到的是空。A 刷新后仍是 2。关掉 A 再开，2 没了。",
+    "task": "划掉“sessionStorage=当前用户”。写出与 localStorage 在跨标签、刷新、关标签上的三点差别。",
+    "answer": "划掉「sessionStorage=当前用户」。session 不跨标签；刷新常保留；关标签清空。local 同源共享且靠 storage 事件通知别人。都不是服务端真相。",
+    "deep": [
+      {
+        "title": "和复制标签",
+        "body": "有的浏览器复制标签会复制一份 sessionStorage。不要依赖这种行为做安全边界。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "两标签分别读写 session 与 local。确认 session 互不可见，local 可见且 storage 只在另一标签触发。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：sessionStorage",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage"
+      ],
+      [
+        "MDN：Web Storage API",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API"
+      ]
+    ]
+  },
+  "indexeddb-when-needed": {
+    "core": "IndexedDB 是浏览器里的**事务型键值/对象库**，适合离线草稿、大量结构化记录、可索引查询。API 异步且有版本升级迁移。少量字符串偏好用 `localStorage`/`sessionStorage` 更简单，见 `browser-storage`、`session-storage-tab-only`。HTTP 缓存与 Service Worker 缓存是另一条缝，见 `http-cache`、`service-worker-stale`。不要把 IndexedDB 当成「加强版 localStorage」默认上；先问数据量和要不要索引。",
+    "why": "三个布尔开关上了 IDB，还要处理 onupgradeneeded，排障成本远高于收益。",
+    "example": "主题色与侧栏折叠：localStorage。邮件客户端离线存数千封摘要并按时间查：IndexedDB。接口 GET 的短时复用：Cache-Control 或 SW，而不是 IDB 抄一份响应。",
+    "task": "给「三个开关」「离线几千条可查询记录」「GET 响应复用」各选一个存储面。",
+    "answer": "开关用 Web Storage。可查询离线大数据用 IndexedDB。GET 复用优先 HTTP/SW 缓存。",
+    "deep": [
+      {
+        "title": "版本升级",
+        "body": "改 objectStore 结构要走 onupgradeneeded。漏迁徙会让旧库打不开或读到半套字段。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "Application 面板对比 Local/Session/IndexedDB。为少量键试 IDB 的样板代码量，再对比 setItem 两行。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：IndexedDB",
+        "https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API"
+      ],
+      [
+        "MDN：Using IndexedDB",
+        "https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB"
+      ]
+    ]
+  },
   "http-cache": {
     "core": "no-cache 允许保存响应，但再次使用前需要向服务器验证；no-store 表示不应存储。带版本号的静态资源可配置较长的新鲜期，HTML 则常需更及时的验证。顺序是：先看 Cache-Control 决定能不能存、要不要验证，再用 ETag 或 Last-Modified 发条件请求，未变化则 304。边界是：长缓存只适合文件名随内容变化的资源。HTML 若也被长缓存，用户会一直要旧的哈希文件。回滚时必须留得住旧 HTML 所引用的那些文件。哈希文件名变了才是另一份资源，所以脚本可以长缓存。HTML 必须更早验证，否则用户一直要旧的文件名。回滚时旧名字还要能取到。",
     "why": "错把 no-cache 当成完全不存储，就会以为页面旧是因为浏览器没保存响应。实际副本还在，只是用之前没向服务器验证。能分开的信号是：响应头是 no-cache 还是 no-store，以及第二次请求是 304 还是直接命中。",
@@ -1756,6 +2046,60 @@
       ]
     ],
     "diagram": "diagrams/http-cache.svg"
+  },
+  "bfcache-pageshow": {
+    "core": "往返缓存把整页快照留下来，后退时直接恢复，滚动和表单往往还在。顺序是离开页面、快照被保留、后退时 pageshow 触发且 persisted 为真，这时不是重新加载。边界是 load 不会再走一遍。页面若绑了 unload，或占用未关的连接，可能进不了这层缓存，后退就变成普通加载。恢复后要检查登录和数据是否过期，不要假设启动代码一定会再跑。刷新和后退不是同一条路径。沿顺序看，前一步的输出是后一步的输入。边界不满足就停在这一步，不要把失败算到旁边的组件上，也不要几处一起改。改之前先写下这一步单独的预测。只改对得上的那一步。现象对不上就停在这一步，不要把邻接的配置一起改掉。",
+    "why": "把逻辑只放在 load 里，用户点后退时页面从往返缓存恢复，脚本不重跑，屏幕上仍是离开前的过期状态。区分信号是 pageshow 的 persisted 为真，而 load 没有第二次。",
+    "example": "离开结算页再后退。pageshow 里 persisted 为 true，这时应重新校验购物车，而不是等 load。直接刷新时 persisted 为 false，load 会走。若页面占用了未关的连接，可能根本进不了这层缓存，后退就变成重新加载。",
+    "task": "写 pageshow 监听，打印 event.persisted。用后退对比刷新，看 load 是否第二次触发。",
+    "answer": "写 pageshow 并打印 persisted。后退预测 persisted 为真，load 不一定再跑，滚动和表单还在。刷新预测 persisted 为假，load 会再走。所以恢复后要自己检查登录和数据是否过期，不要假设启动代码一定会再执行。",
+    "deep": [
+      {
+        "title": "恢复的是整页快照",
+        "body": "往返缓存留下整页，后退时直接拿出来。滚动和表单往往还在。load 不会再走一遍。页面若绑了 unload 或占着未关的连接，可能进不了这层缓存。边界不满足时就停，不要把这次失败算到下一层头上。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "写 pageshow，打印 persisted。用后退对比刷新：后退应为真且 load 不第二次触发，刷新应为假。恢复后检查购物车或登录是否仍有效。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：bfcache",
+        "https://developer.mozilla.org/en-US/docs/Glossary/bfcache"
+      ],
+      [
+        "web.dev：bfcache",
+        "https://web.dev/articles/bfcache"
+      ]
+    ]
+  },
+  "service-worker-stale": {
+    "core": "Service Worker 可以拦截 fetch，按缓存策略给响应。cache-first 会先给旧文件。新 Worker 安装后，默认等旧页面都关掉才激活。skipWaiting 和客户端刷新要显式做。开发时关掉 SW 或开 Bypass，否则会以为构建坏了。SW 不是浏览器 HTTP 缓存的替代说明，两者叠在一起更难排。只给静态带哈希的资源做缓存，API 默认走网络。",
+    "why": "部署了新前端，有人仍在用昨天的脚本，因为 Service Worker 可以先把旧缓存交出去，新版本还在等待。区分信号是用户仍看旧脚本的那段是 waiting，而不是服务器上没有新包。",
+    "example": "带内容哈希的脚本可以缓存优先。订单接口不要进这层缓存。新的 Worker 安装后常常停在 waiting，要等旧页面关掉才 activated。这时用户看到的仍是旧脚本。发版后提示刷新，才能让新的 Worker 接管。",
+    "task": "对照 Service Worker 生命周期，写出 installing、waiting、activated。标出用户仍看旧脚本的那一段。",
+    "answer": "installing 是在装新的 Worker。waiting 是装好了但还没接管，预测用户仍看旧脚本，这就是那段。activated 之后才由新的 Worker 控制后续页面。API 不要默认缓存优先。更新代码不等于当前已打开的页面立刻换成新脚本。",
+    "deep": [
+      {
+        "title": "等待不是没部署",
+        "body": "新版本可以已经安装，只是旧页面还占着控制权。服务器上的新包是在的。排查却在源站找文件，会错过浏览器里这份旧缓存。接口若也缓存优先，连数据都是旧的。边界不满足时就停，不要把这次失败算到下一层头上。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对照生命周期写出 installing、waiting、activated。标出用户仍看旧脚本的 waiting。更新后不要关旧页，确认界面不变；关掉再开，才应看到新脚本。接口响应不应来自这份缓存。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：Service Worker API",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API"
+      ],
+      [
+        "MDN：Service Worker 生命周期",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers"
+      ]
+    ]
   },
   "cors": {
     "core": "同源策略由浏览器执行。允许跨源读取的 CORS 响应头由服务器返回；某些跨源请求会先发预检请求，服务器要声明允许的方法和请求头。顺序是：浏览器判断是不是简单请求，不是则先发 OPTIONS，服务器允许后再发实际请求，最后检查响应头才把正文交给脚本。边界是：请求到达服务器不等于脚本能读取。带凭据时允许的源不能是星号。前端请求头里写允许源不会改变浏览器的检查。简单请求可以先发出去，没有允许头时脚本仍读不到正文。非简单请求会先 OPTIONS。带凭据时允许的源不能写成星号，否则浏览器同样不把响应交给脚本。预检失败时实际请求不会发出；没有允许头时请求可能已经产生副作用，只是脚本读不到。",
@@ -1804,6 +2148,33 @@
       [
         "Fetch：CORS protocol",
         "https://fetch.spec.whatwg.org/#cors-protocol"
+      ]
+    ]
+  },
+  "same-origin-script-still-runs": {
+    "core": "同源比较的是协议、主机、端口。它限制的是文档如何**读取**另一个源的数据：DOM、Cookie、多数脚本可读的响应体。从 CDN 引入的 `<script src>` 照样会执行，只是它跑在**当前文档的源**里，不能因此读另一个站点的私有接口。CORS 决定跨源 fetch/XHR 的响应能否交给页面脚本；请求常常已经发出，服务器也已处理。资料把“非同源脚本不会执行、响应收不到”说反了。页面之间的 postMessage、以及带 CORS 的响应，是受控的放行，不是关掉 SOP。",
+    "why": "把同源策略理解成外域脚本不会执行，就会觉得页面上插一条别人的 script 是安全的，那条脚本其实跑在当前文档里。区分信号是 CDN 脚本会执行，而跨源 fetch 常常已经有响应，只是页面脚本读不到正文。",
+    "example": "https://app.example 的页面引入 https://cdn.example/lib.js，脚本执行，document.cookie 读到的是 app 的登录态，不是 cdn 的后台。再 fetch https://api.other，网络面板里能看到响应，但没有 CORS 时脚本读 body 抛错，请求本身已经发出。",
+    "task": "对照同源定义，划掉“只有同源脚本才执行”；写出 CORS 拦的是脚本读响应，还是 TCP 发包。",
+    "answer": "对照同源定义，划掉只有同源脚本才执行：外域 script src 会执行，权限属于当前文档的源。CORS 拦的是脚本读取跨源响应，不是拦 TCP 发包。没有允许头时，预测请求可能已经到达服务器，页面只是拿不到正文。CDN 上的脚本预测会执行，并且使用当前页面的源。",
+    "deep": [
+      {
+        "title": "执行和读取不是同一道门",
+        "body": "协议、主机、端口相同才叫同源。script 标签跨源照样下载执行，但跑在引入它的文档里。CORS 决定这段响应能不能交给页面脚本，不表示浏览器没把请求发出去。外域脚本执行后权限仍属于当前页面。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "引入另一主机上的脚本，它应执行并能读当前文档。再对没有 CORS 头的接口发 fetch，网络面板里应能看到响应，脚本读 body 应失败。把只有同源脚本才执行划掉。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：Same-origin policy",
+        "https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy"
+      ],
+      [
+        "MDN：CORS",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS"
       ]
     ]
   },
@@ -1861,114 +2232,6 @@
       ]
     ]
   },
-  "browser-storage": {
-    "core": "localStorage 按源保存数据，storage 事件通知共享该存储区的其他文档，不在执行写入的当前文档触发。它适合少量客户端偏好，不是可靠的跨标签页事务或服务端真相来源。顺序是：当前文档 setItem 后自己更新界面，其他同源文档通过 storage 事件得知新值再更新。边界是：事件不在写入的文档上触发，也不跨源。它适合少量偏好，不能当成跨标签事务或服务器上的真相。两个标签同时写，后一次覆盖前一次，没有合并。隐私模式和容量上限也会让写入直接失败。当前页要在 setItem 的同一函数里改界面。只等 storage 事件，自己这个标签不会刷新。自己改。",
-    "why": "错把 storage 事件当成写入页面自己也会收到，标签 A 更新主题后只等事件，自己的界面不会变。另一个标签却会收到。能分开的信号是：事件出现在别的文档，还是出现在执行 setItem 的这一页。",
-    "example": "同源的标签 A 和 B 都监听 storage。A 执行 setItem(\"theme\",\"dark\")。B 的回调收到新值并改主题，A 的监听函数不执行。A 必须在 setItem 之后自己改界面。",
-    "task": "打开两个同源标签页，记录 A 写入后两个页面的事件与显示状态。",
-    "answer": "B 能收到 storage 事件，事件里有 key 和新值，B 用它刷新主题。A 不会收到自己这次写入的事件，所以 A 要在写入的同一段代码里直接更新自己的状态。两边同时写同一个键时，后写的值留下，storage 不是事务，冲突要另定谁更新。",
-    "deep": [
-      {
-        "title": "事件给别人",
-        "body": "storage 通知的是共享这个源的其他文档。写入者不会收到自己的事件。只在监听里更新界面，当前标签就会停在旧状态。写入函数里要同步改自己的那一份。写入和收事件是两个文档。"
-      },
-      {
-        "title": "怎样自己验证",
-        "body": "打开两个同源标签，两边都给 storage 打日志。在 A 里 setItem，确认只有 B 打印事件，A 的界面要靠写入代码自己更新。再在两个标签同时写同一个键，看最后留下的是哪一次。"
-      }
-    ],
-    "references": [
-      [
-        "MDN：storage event",
-        "https://developer.mozilla.org/en-US/docs/Web/API/Window/storage_event"
-      ],
-      [
-        "MDN：localStorage",
-        "https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage"
-      ]
-    ]
-  },
-  "bfcache-pageshow": {
-    "core": "往返缓存把整页快照留下来，后退时直接恢复，滚动和表单往往还在。顺序是离开页面、快照被保留、后退时 pageshow 触发且 persisted 为真，这时不是重新加载。边界是 load 不会再走一遍。页面若绑了 unload，或占用未关的连接，可能进不了这层缓存，后退就变成普通加载。恢复后要检查登录和数据是否过期，不要假设启动代码一定会再跑。刷新和后退不是同一条路径。沿顺序看，前一步的输出是后一步的输入。边界不满足就停在这一步，不要把失败算到旁边的组件上，也不要几处一起改。改之前先写下这一步单独的预测。只改对得上的那一步。现象对不上就停在这一步，不要把邻接的配置一起改掉。",
-    "why": "把逻辑只放在 load 里，用户点后退时页面从往返缓存恢复，脚本不重跑，屏幕上仍是离开前的过期状态。区分信号是 pageshow 的 persisted 为真，而 load 没有第二次。",
-    "example": "离开结算页再后退。pageshow 里 persisted 为 true，这时应重新校验购物车，而不是等 load。直接刷新时 persisted 为 false，load 会走。若页面占用了未关的连接，可能根本进不了这层缓存，后退就变成重新加载。",
-    "task": "写 pageshow 监听，打印 event.persisted。用后退对比刷新，看 load 是否第二次触发。",
-    "answer": "写 pageshow 并打印 persisted。后退预测 persisted 为真，load 不一定再跑，滚动和表单还在。刷新预测 persisted 为假，load 会再走。所以恢复后要自己检查登录和数据是否过期，不要假设启动代码一定会再执行。",
-    "deep": [
-      {
-        "title": "恢复的是整页快照",
-        "body": "往返缓存留下整页，后退时直接拿出来。滚动和表单往往还在。load 不会再走一遍。页面若绑了 unload 或占着未关的连接，可能进不了这层缓存。边界不满足时就停，不要把这次失败算到下一层头上。"
-      },
-      {
-        "title": "怎样自己验证",
-        "body": "写 pageshow，打印 persisted。用后退对比刷新：后退应为真且 load 不第二次触发，刷新应为假。恢复后检查购物车或登录是否仍有效。"
-      }
-    ],
-    "references": [
-      [
-        "MDN：bfcache",
-        "https://developer.mozilla.org/en-US/docs/Glossary/bfcache"
-      ],
-      [
-        "web.dev：bfcache",
-        "https://web.dev/articles/bfcache"
-      ]
-    ]
-  },
-  "service-worker-stale": {
-    "core": "Service Worker 可以拦截 fetch，按缓存策略给响应。cache-first 会先给旧文件。新 Worker 安装后，默认等旧页面都关掉才激活。skipWaiting 和客户端刷新要显式做。开发时关掉 SW 或开 Bypass，否则会以为构建坏了。SW 不是浏览器 HTTP 缓存的替代说明，两者叠在一起更难排。只给静态带哈希的资源做缓存，API 默认走网络。",
-    "why": "部署了新前端，有人仍在用昨天的脚本，因为 Service Worker 可以先把旧缓存交出去，新版本还在等待。区分信号是用户仍看旧脚本的那段是 waiting，而不是服务器上没有新包。",
-    "example": "带内容哈希的脚本可以缓存优先。订单接口不要进这层缓存。新的 Worker 安装后常常停在 waiting，要等旧页面关掉才 activated。这时用户看到的仍是旧脚本。发版后提示刷新，才能让新的 Worker 接管。",
-    "task": "对照 Service Worker 生命周期，写出 installing、waiting、activated。标出用户仍看旧脚本的那一段。",
-    "answer": "installing 是在装新的 Worker。waiting 是装好了但还没接管，预测用户仍看旧脚本，这就是那段。activated 之后才由新的 Worker 控制后续页面。API 不要默认缓存优先。更新代码不等于当前已打开的页面立刻换成新脚本。",
-    "deep": [
-      {
-        "title": "等待不是没部署",
-        "body": "新版本可以已经安装，只是旧页面还占着控制权。服务器上的新包是在的。排查却在源站找文件，会错过浏览器里这份旧缓存。接口若也缓存优先，连数据都是旧的。边界不满足时就停，不要把这次失败算到下一层头上。"
-      },
-      {
-        "title": "怎样自己验证",
-        "body": "对照生命周期写出 installing、waiting、activated。标出用户仍看旧脚本的 waiting。更新后不要关旧页，确认界面不变；关掉再开，才应看到新脚本。接口响应不应来自这份缓存。"
-      }
-    ],
-    "references": [
-      [
-        "MDN：Service Worker API",
-        "https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API"
-      ],
-      [
-        "MDN：Service Worker 生命周期",
-        "https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers"
-      ]
-    ]
-  },
-  "same-origin-script-still-runs": {
-    "core": "同源比较的是协议、主机、端口。它限制的是文档如何**读取**另一个源的数据：DOM、Cookie、多数脚本可读的响应体。从 CDN 引入的 `<script src>` 照样会执行，只是它跑在**当前文档的源**里，不能因此读另一个站点的私有接口。CORS 决定跨源 fetch/XHR 的响应能否交给页面脚本；请求常常已经发出，服务器也已处理。资料把“非同源脚本不会执行、响应收不到”说反了。页面之间的 postMessage、以及带 CORS 的响应，是受控的放行，不是关掉 SOP。",
-    "why": "把同源策略理解成外域脚本不会执行，就会觉得页面上插一条别人的 script 是安全的，那条脚本其实跑在当前文档里。区分信号是 CDN 脚本会执行，而跨源 fetch 常常已经有响应，只是页面脚本读不到正文。",
-    "example": "https://app.example 的页面引入 https://cdn.example/lib.js，脚本执行，document.cookie 读到的是 app 的登录态，不是 cdn 的后台。再 fetch https://api.other，网络面板里能看到响应，但没有 CORS 时脚本读 body 抛错，请求本身已经发出。",
-    "task": "对照同源定义，划掉“只有同源脚本才执行”；写出 CORS 拦的是脚本读响应，还是 TCP 发包。",
-    "answer": "对照同源定义，划掉只有同源脚本才执行：外域 script src 会执行，权限属于当前文档的源。CORS 拦的是脚本读取跨源响应，不是拦 TCP 发包。没有允许头时，预测请求可能已经到达服务器，页面只是拿不到正文。CDN 上的脚本预测会执行，并且使用当前页面的源。",
-    "deep": [
-      {
-        "title": "执行和读取不是同一道门",
-        "body": "协议、主机、端口相同才叫同源。script 标签跨源照样下载执行，但跑在引入它的文档里。CORS 决定这段响应能不能交给页面脚本，不表示浏览器没把请求发出去。外域脚本执行后权限仍属于当前页面。"
-      },
-      {
-        "title": "怎样自己验证",
-        "body": "引入另一主机上的脚本，它应执行并能读当前文档。再对没有 CORS 头的接口发 fetch，网络面板里应能看到响应，脚本读 body 应失败。把只有同源脚本才执行划掉。"
-      }
-    ],
-    "references": [
-      [
-        "MDN：Same-origin policy",
-        "https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy"
-      ],
-      [
-        "MDN：CORS",
-        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS"
-      ]
-    ]
-  },
   "http-methods": {
     "core": "HTTP 的安全和幂等描述方法的语义约定：安全方法不应请求改变服务器状态；幂等方法重复执行的预期效果与一次执行相同。业务副作用、鉴权、失败窗口和响应内容仍须具体设计。顺序是：先看方法约定的安全与幂等，再看这次业务有没有额外副作用，最后用唯一键把重试收成同一次效果。边界是：幂等说的是预期效果相同，不保证第二次状态码相同。DELETE 可以是幂等的，创建订单的 POST 默认不是。没有业务键时，方法名本身挡不住超时重试。安全方法失败后可以再读。幂等方法重复执行的预期效果与一次相同，但第二次的状态码仍可能不同。创建订单看唯一键和表里的行数，不看这次用的是不是 POST。",
     "why": "错把 POST 当成一定不能重试、DELETE 当成一定可以盲目重试，重复创建会出两张订单，重复删除却可能第二次返回不同状态码。方法名不是重试策略。能分开的信号是：服务器用不用业务键保证效果只发生一次。",
@@ -1981,6 +2244,10 @@
         "body": "安全和幂等是方法的约定，不是某个框架自动加上的锁。查询不应靠它改状态。覆盖更新可以设计成幂等。扣款、下单必须另有业务键，否则 POST 重试就会重复生效。看表里的行数，不要只看方法名。"
       },
       {
+        "title": "创建与正文类型",
+        "body": "服务分配 id 的创建常用 POST，不要默认背成 PUT，见 `http-create-post-not-put`。正文是 JSON、表单还是 multipart，见 `http-content-type-body`、`formdata-multipart-upload`。"
+      },
+      {
         "title": "怎样自己验证",
         "body": "对同一资源连续 DELETE 两次，记录两次状态码和资源是否还在。再对创建订单连续 POST 两次相同正文：没有幂等键时应有两张单，加上唯一键后应只剩一张并返回同一结果。"
       }
@@ -1989,6 +2256,66 @@
       [
         "RFC 9110：HTTP Semantics",
         "https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2"
+      ]
+    ]
+  },
+  "http-create-post-not-put": {
+    "core": "HTTP 里 **PUT** 表示对**已知 URI** 的整份替换，重复提交的预期效果与一次相同；**POST** 常用于在集合下**创建**由服务分配标识的资源，默认不幂等，见 `http-methods`。资料把 CRUD 的「插入」直接写成 PUT，会和「按 id 覆盖更新」搅在一起。客户端若已选定最终 URI（例如按约定的订单号），创建也可以设计成对该 URI 的 PUT；那是显式约定，不是默认口诀。前后端用 JSON 交换、模板改由前端渲染，是分离部署的常见做法，**不等于** REST 规范本身，更不能用来解释「所以只用 GET/POST」。",
+    "why": "面试背「插入用 PUT」，网关或客户端按幂等重试 PUT，却打到会新建行的实现上，或者把 POST 创建当成可覆盖写。另一边把 REST 理解成「接口返回 JSON」，方法语义完全没学。",
+    "example": "`POST /orders` 正文无 id，服务返回 `201` 与 `Location: /orders/9`。对 `/orders/9` 再 `PUT` 整份表示，是覆盖，不是再插入一行。资料若写「插入用 PUT」，新人会对 `/orders` 发 PUT 并期望服务分配 id，和 RFC 里对目标资源的替换语义对不上。",
+    "task": "划掉“插入=PUT、REST=只回 JSON”。分别写出：服务分配 id 的创建、客户端已知最终 URI 的创建，各更贴近哪种方法。",
+    "answer": "划掉「插入=PUT、REST=只回 JSON」。服务分配 id 的创建用 POST 到集合，返回新 URI。客户端已知最终 URI 时，可对该 URI 做 PUT，效果是创建或覆盖且宜幂等。只用 JSON 做前后端分离，不代替方法语义，也不能解释成只用 GET/POST。",
+    "deep": [
+      {
+        "title": "和 PATCH",
+        "body": "只改部分字段用 PATCH，不要用错当成“小 PUT”。覆盖整份表示才是 PUT。状态码与错误体约定见 `api-error-contract`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "读 MDN 的 PUT/POST。对同一新建接口分别用 POST 与误用的 PUT 各打一次，看是分配新 id、覆盖已有资源，还是 405。再确认文档有没有写“客户端可选用的最终 URI”。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：PUT",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/PUT"
+      ],
+      [
+        "MDN：POST",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/POST"
+      ],
+      [
+        "RFC 9110：HTTP Semantics",
+        "https://www.rfc-editor.org/rfc/rfc9110.html"
+      ]
+    ],
+    "diagram": "diagrams/http-create-post-not-put.svg",
+    "origin": "《分布式高并发.pdf》约第 17–18 页 REST 叙述：插入写成 PUT，实践收成只回 JSON"
+  },
+  "http-content-type-body": {
+    "core": "`Content-Type` 声明**正文用哪种语法**。常见三选一要对齐：`application/json` + `JSON.stringify`；`application/x-www-form-urlencoded` + `URLSearchParams`；`multipart/form-data` + `FormData`（且不要手写残缺头，见 `formdata-multipart-upload`）。`fetch` 不会因为你传了对象就自动改头——传普通对象当 body 往往先被错成 `[object Object]`。读响应时再用 `response.json()` / `text()`，与响应头的类型一致。创建用 POST 等方法语义见 `http-methods`、`http-create-post-not-put`。",
+    "why": "头写 form、体是 JSON，或反过来，联调双方各执一词，都说自己“按文档发了”。",
+    "example": "`fetch(url, { method:\"POST\", headers:{ \"Content-Type\":\"application/json\" }, body: JSON.stringify({ a:1 }) })`。换成 FormData 上传时删掉手写 Content-Type。",
+    "task": "给 JSON、urlencoded、带文件的 multipart 各写一对：头（或谁来设头）与 body 构造方式。",
+    "answer": "JSON：application/json + stringify。表单字段：urlencoded + URLSearchParams。带文件：FormData，头交给浏览器带 boundary。",
+    "deep": [
+      {
+        "title": "和 charset",
+        "body": "JSON 常用 utf-8；表单也可能带 charset。乱码先查编码声明，再查是否拿错了解析器。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "在 Network 里同时看 Request Headers 与 Request Payload。故意错配头与体，看服务端 400 信息。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：MIME types",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/MIME_types"
+      ],
+      [
+        "MDN：fetch",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch"
       ]
     ]
   },
@@ -2031,6 +2358,10 @@
         "body": "fetch 的凭证默认只在同源发送 Cookie。include 才在跨源请求里附带。服务器还必须返回允许凭证，并且允许的源是具体源，不能是星号。只改前端或只改其中一个响应头，脚本仍然读不到。"
       },
       {
+        "title": "和 Cookie 属性",
+        "body": "浏览器会不会附带，还受 HttpOnly/Secure/SameSite 约束，见 `cookie-set-attributes`。CORS 允许名单见 `cors-credentials-allowlist`。"
+      },
+      {
         "title": "怎样自己验证",
         "body": "在网络面板做三次：默认凭证、include 加星号源、include 加具体源并允许凭证。记录每次请求头有没有 Cookie，以及脚本能否读到正文。只有第三次两件都成立。"
       }
@@ -2047,7 +2378,7 @@
     ]
   },
   "api-error-contract": {
-    "core": "一次业务请求的成功与失败要写进双方共用的契约。HTTP 状态码区分大类：2xx 表示这次操作按约定完成，4xx 表示调用方要改请求，5xx 表示服务端这次没做成。状态码不够：同一 409 可能是库存不足或幂等键冲突。响应体应有稳定的机器可读类型，例如 RFC 9457 的 application/problem+json：type、title、status、detail，以及业务自己的 code。前端只解析这份结构，不要靠 message 字符串包含中文来分支。网络断开、超时、CORS 失败发生在到达应用之前，没有这份 JSON，必须当成传输失败，不能假装成业务 400。",
+    "core": "一次业务请求的成功与失败要写进双方共用的契约。HTTP 状态码区分大类：2xx 表示这次操作按约定完成，4xx 表示调用方要改请求，5xx 表示服务端这次没做成。状态码不够：同一 409 可能是库存不足或幂等键冲突。响应体应有稳定的机器可读类型，例如 **RFC 9457** 的 application/problem+json：type、title、status、detail，以及业务自己的 code。前端只解析这份结构，不要靠 message 字符串包含中文来分支。网络断开、超时、CORS 失败发生在到达应用之前，没有这份 JSON，必须当成传输失败，不能假装成业务 400。",
     "why": "学习者会以为返回了 400，前端就一定走进失败分支。后端改一句文案后，页面把校验错误显示成系统崩溃，网关超时的 HTML 还被当成下单成功。超时没有正文、因此进不了库存分支，才说明失败要靠状态码和类型，不能靠文案字符串。",
     "example": "POST /orders 库存不足返回 409，body 的 type 指向 inventory-exhausted。幂等键重复且首次已成功，返回 200 和第一次的订单。fetch 抛 TypeError 时页面显示“没送到”，不显示“库存不足”。",
     "task": "列出下单的三种失败：校验字段、库存不足、网关超时。为每一种写下状态码、body 的 type，以及页面上该出现的文案。确认超时没有 body 时不会走进库存分支。",
@@ -2101,7 +2432,7 @@
     ]
   },
   "http-503-unavailable": {
-    "core": "503 Service Unavailable 表示此刻不能处理，常见于过载、维护、依赖熔断，响应可带 Retry-After；进程崩溃更常表现为连接失败或代理 502，而不是一张保证出现的 503。500 是服务器在处理中遇到未抓住的错误。401/403 见既有 `http-status-auth`。3xx 里 Location 引导重定向；浏览器对页面导航会跟，但 fetch 默认对非 301/302/303 等有自己的跟随规则，API 客户端不应假定“拿到 302 就一定换域名打开新页”。301 永久、302 历史里常被当临时，现行语义以 RFC 9110 为准。",
+    "core": "503 Service Unavailable 表示此刻不能处理，常见于过载、维护、依赖熔断，响应可带 Retry-After；进程崩溃更常表现为连接失败或代理 502，而不是一张保证出现的 503。500 是服务器在处理中遇到未抓住的错误。401/403 见既有 `http-status-auth`。3xx 里 Location 引导重定向；浏览器对页面导航会跟，但 fetch 默认对非 301/302/303 等有自己的跟随规则，API 客户端不应假定“拿到 302 就一定换域名打开新页”。301 永久、302 历史里常被当临时，现行语义以 **RFC 9110** 为准。",
     "why": "把 503 背成宕机就去重启机器，过载和维护其实只要限流或等依赖恢复。区分信号是 503 仍有 HTTP 响应，还可以带 Retry-After；进程崩溃常常是连接失败，客户端根本没有状态码。",
     "example": "发布窗口返回 503，头里 Retry-After 为 30，进程仍在听端口。数据库把请求处理到一半抛错，更常是 500。直接把进程杀掉，客户端看到的是连接被拒绝或重置，抓包里没有 503 这一行。此时端口已经不再监听。",
     "task": "对照 RFC 9110 写出 500 与 503 的差别，并说明什么情况下客户端根本拿不到状态码。",
@@ -2124,6 +2455,60 @@
       [
         "MDN：503",
         "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/503"
+      ]
+    ]
+  },
+  "cookie-set-attributes": {
+    "core": "`Set-Cookie` 属性决定浏览器**何时自动附带** Cookie。`HttpOnly`：脚本读不到，降低 XSS 偷票。`Secure`：只在 HTTPS 发送。`SameSite`（Lax/Strict/None）：限制跨站请求是否带上；`None` 必须配 `Secure`。这和「口令怎么存、凭证模式怎么开」是 complementary：`cookie-credential` 讲凭证与 CSRF 面，本课讲属性开关。前端 `credentials` 与 CORS 见 `fetch-credentials`、`cors-credentials-allowlist`。不要把 Token 再抄进 localStorage 抵消 HttpOnly。",
+    "why": "只背“Cookie 自动带”，不设 SameSite，跨站 POST 带着会话打到改密接口。",
+    "example": "登录响应 `Set-Cookie: sid=...; HttpOnly; Secure; SameSite=Lax`。JS 读不到 sid。同站顶栏导航 GET 会带；跨站第三方 POST 默认不带（Lax）。",
+    "task": "写出 HttpOnly、Secure、SameSite=Lax 各防止或限制什么；再写一条误把会话放进 localStorage 的后果。",
+    "answer": "HttpOnly 挡脚本读取。Secure 限 HTTPS。Lax 限制多数跨站带 Cookie。会话进 localStorage 可被 XSS 直接读走。",
+    "deep": [
+      {
+        "title": "和 credentials",
+        "body": "浏览器有 Cookie 不等于 fetch 跨源会带。跨源还要 `credentials:\"include\"` 且 CORS 允许。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "Application 面板看 Cookie 勾选。控制台读 document.cookie。用跨站表单 POST 对照是否带上 sid。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：Set-Cookie",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Set-Cookie"
+      ],
+      [
+        "MDN：SameSite cookies",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Cookies#controlling_third-party_cookies_with_samesite"
+      ]
+    ]
+  },
+  "long-poll-vs-websocket": {
+    "core": "**短轮询**：客户端定时新请求，服务端马上返回。**长轮询**：客户端请求挂着，服务端有事件或超时才返回，然后客户端立刻再挂。**WebSocket**：握手后双工长连接，任一方可推帧。选型看：是否必须服务端随时推、代理是否支持升级、要不要自动重连与心跳。通知量小且基础设施只允 HTTP 时，长轮询常见；高频双向用 WebSocket。它们都不是替代 HTTP 缓存或 SSE 的万能答案。中止挂起的 fetch 见 `fetch-abort`。",
+    "why": "用短轮询硬撑“实时”，空打爆 QPS；或在不支持的反向代理后硬上 WS，握手一直失败。",
+    "example": "客服坐席状态：长轮询 25s 超时返回。行情推送：WebSocket 推增量。角标每分钟变一次：短轮询或 SSE 也够。",
+    "task": "给「偶发通知 / 高频双向 / 仅 HTTP 可用」各选一种机制，并写一句不选另外两种的原因。",
+    "answer": "偶发且仅 HTTP：长轮询。高频双向：WebSocket。极低频：短轮询即可。不要把三种名字混成一种。",
+    "deep": [
+      {
+        "title": "和 SSE",
+        "body": "Server-Sent Events 是服务端到客户端的单向流，仍走 HTTP。只要下行推送时可比 WS 简单。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "在 Network 里区分：反复短请求、单请求 pending 很久、还是 101 Switching Protocols。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：WebSocket",
+        "https://developer.mozilla.org/en-US/docs/Web/API/WebSocket"
+      ],
+      [
+        "MDN：Server-sent events",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events"
       ]
     ]
   },
@@ -2731,7 +3116,7 @@
     "react": "hooks"
   },
   "react-setstate-batch": {
-    "core": "状态更新先进入队列，按渲染快照应用；同一事件里的多次更新可以批处理合并。React 18 起在更多场景默认批处理，不能再把“原生事件 / setTimeout 一定同步刷 DOM”当稳定定律。有些资料里的 isBatchingUpdates、dirtyComponents 属于旧协调器叙事，不适合作为 Hooks 与并发渲染的标准讲解。setter 调用后，当前这次渲染里读到的变量仍是旧快照；要基于前值计算应使用更新函数形式。性能上的“少 render”来自批处理与跳过更新，而不是“setState 天生异步函数”。",
+    "core": "状态更新先进入队列，按渲染快照应用；同一事件里的多次更新可以批处理合并。**React 18** 起在更多场景默认批处理，不能再把“原生事件 / setTimeout 一定同步刷 DOM”当稳定定律。有些资料里的 isBatchingUpdates、dirtyComponents 属于旧协调器叙事，不适合作为 Hooks 与并发渲染的标准讲解。setter 调用后，当前这次渲染里读到的变量仍是旧快照；要基于前值计算应使用更新函数形式。性能上的“少 render”来自批处理与跳过更新，而不是“setState 天生异步函数”。",
     "why": "误以为合成事件里异步、定时器里一定同步。定时器或 Promise 里连续两次自增，仍可能只渲染一次，中间值看不到。区分信号是更新进入队列后按快照应用，而不是 isBatchingUpdates 那个旧开关。",
     "example": "点击处理器里 setCount(c=>c+1) 两次，一次渲染里累加两次。把同样两次更新放到 Promise 回调里，在 React 18+ 仍可能批处理，不能默认假设一定看到中间态。",
     "task": "在 onClick、setTimeout、async 回调里各写两次基于旧值的自增，记录 render 次数与最终值；再用更新函数重写，说明为何不再提 isBatchingUpdates。",
@@ -3170,7 +3555,7 @@
     "react": "architecture"
   },
   "react-error-boundary": {
-    "core": "React 的错误边界是类组件，用 getDerivedStateFromError 或 componentDidCatch 接住子树在渲染、生命周期和构造函数里抛出的错误。它接不住事件处理函数、异步回调、服务端渲染，也接不住边界自己渲染时抛出的错误。点击里的请求失败要在事件或 Promise 路径上处理。渲染期间读到坏数据，才由边界换成备用界面。",
+    "core": "React 的错误边界（**React 16** 起）是类组件，用 getDerivedStateFromError 或 componentDidCatch 接住子树在渲染、生命周期和构造函数里抛出的错误。它接不住事件处理函数、异步回调、服务端渲染，也接不住边界自己渲染时抛出的错误。点击里的请求失败要在事件或 Promise 路径上处理。渲染期间读到坏数据，才由边界换成备用界面。",
     "why": "学习者会以为根上套一个错误边界，组件里任何错误都会换成备用界面。按钮点击里的请求失败仍变成未处理拒绝，备用界面没有出现，于是他再往边界里加逻辑，点击路径依旧进不去。抛错发生在渲染期间还是在事件回调里，才分得清边界能不能看见。",
     "example": "子组件在渲染时读取空对象的 name，边界接住并显示这段暂时不可用，页面其余部分还在。按钮 onClick 里的 await 失败时，边界不更新，控制台是未处理拒绝。在点击函数里捕获后，界面显示请求失败，边界的备用界面没有被用到。",
     "task": "分别在渲染期间、点击回调和 Promise 拒绝里抛错，记录哪一次能被错误边界接住。",
@@ -3253,7 +3638,7 @@
     "react": "components"
   },
   "react-router-loader": {
-    "core": "React Router 的数据路由用 loader 在进入路由、渲染对应元素之前加载数据。组件用 useLoaderData 读取结果，而不是先画出空页面再在 effect 里请求。客户端切换路由时，框架可以在导航完成前知道成功或失败，并用 errorElement 接住 loader 抛出的错误。useEffect 请求发生在提交之后，首屏必然先空再填，取消和过期响应还要自己处理。链接用 Link 或 navigate，这样导航走路由，而不是整页刷新。搜索参数属于 URL，刷新和分享要能还原，不要只放在组件 state 里。",
+    "core": "React Router 的数据路由（**6.4** 起的 loader 模式）在进入路由、渲染对应元素之前加载数据。组件用 useLoaderData 读取结果，而不是先画出空页面再在 effect 里请求。客户端切换路由时，框架可以在导航完成前知道成功或失败，并用 errorElement 接住 loader 抛出的错误。useEffect 请求发生在提交之后，首屏必然先空再填，取消和过期响应还要自己处理。链接用 Link 或 navigate，这样导航走路由，而不是整页刷新。搜索参数属于 URL，刷新和分享要能还原，不要只放在组件 state 里。",
     "why": "学习者会把每个页面的请求都放进 effect，以为和路由装数据只是写法不同。刷新、后退或直接打开带查询串的地址时，筛选条件丢了，错误也要等空白页之后才出现。数据在进入页面之前就失败并进到错误元素，才说明装载发生在渲染之前。",
     "example": "订单详情路由的 loader 按 params.id 请求。失败时抛出带 status 的响应，errorElement 显示没有这张订单。筛选条件写在 ?status=paid，而不是只保存在 useState。",
     "task": "把一个 useEffect 拉详情的页面改成 loader。刷新、点浏览器后退、直接打开带查询串的地址，确认数据条件和错误页面都还在。",
@@ -4879,6 +5264,10 @@
         "body": "壳用 single-spa 编排，个别远程用 Federation 加载模块；第三方角落仍 iframe。组合时在架构图上分开标注回滚面。"
       },
       {
+        "title": "学完还常外查的邻接点",
+        "body": "shared 版本冲突症状见 `mfe-shared-deps`、`mfe-mf-host-setup`。HTML entry 与 container 元素见 `mfe-qiankun-html-entry`。独立文档通信见 `mfe-iframe-postmessage`。选型三问见 `mfe-pick-by-constraint`。"
+      },
+      {
         "title": "怎样自己验证",
         "body": "把「要 shared 单例」和「要独立 document」写成两张卡片，看哪一行同时满足；两行都勾上同一框架时，对照表写错了。"
       }
@@ -4954,6 +5343,10 @@
       {
         "title": "动态 remotes",
         "body": "运行时改入口 URL 时仍走容器的 init/get，不要另发明全局变量传组件。"
+      },
+      {
+        "title": "shared 版本冲突症状",
+        "body": "少配 singleton 时常见双 React、钩子报 Invalid hook call、Context 穿不透。requiredVersion 对不上可能各自打包一份。治理清单见 `mfe-shared-deps`；契约升级见 `mfe-contract-version`。"
       },
       {
         "title": "怎样自己验证",
@@ -5036,6 +5429,10 @@
       {
         "title": "v2 与 v3 的入口形态",
         "body": "现行文档以字符串 HTML 入口为准。若你锁在旧版对象形态 entry，以该主版本 API 页为准，升级时单独验收。"
+      },
+      {
+        "title": "container 与生命周期",
+        "body": "框架因 key 重建拆掉节点后，旧 HTMLElement 引用失效。卸载监听与全局补丁见 `mfe-runtime-lifecycle`。路由前缀纪律见 `mfe-routing-one-history`。"
       },
       {
         "title": "怎样自己验证",

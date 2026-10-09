@@ -13,6 +13,7 @@ const COVERAGE_JAVA_08 = [
     points:['WHERE 不能引用别名和聚集函数','HAVING 筛组，并可引用别名与聚集','无 GROUP BY 且无聚集时 HAVING 并进 WHERE','行级条件应写 WHERE，不要塞进 HAVING'],
     deep:[
       {title:'别名不是走不走索引的原因',body:'走不走索引，看条件能不能在分组前用上索引，不是看写的是列名还是别名。无分组的 HAVING 常常被改写成 WHERE，这时它不再是“只能扫临时结果”。行级条件写回 WHERE，才有机会早过滤。'},
+      {title:'和 GROUP BY 流程',body:'WHERE → GROUP BY → 聚合 → HAVING 的顺序与门槛写法见 mysql-group-by-having。INNER/LEFT 保留谁见 mysql-inner-join-match。'},
       {title:'怎样自己验证',body:'在 8.4 对带索引的表分别 EXPLAIN 三条：WHERE、无分组 HAVING、GROUP BY 后的 HAVING COUNT(*)。对比 type 和 Extra，看第二条是否并进 WHERE，第三条是否仍在分组之后。'},
     ],
     refs:[['MySQL 8.4：SELECT Statement','https://dev.mysql.com/doc/refman/8.4/en/select.html'],['MySQL 8.4：Problems with Column Aliases','https://dev.mysql.com/doc/refman/8.4/en/problems-with-alias.html'],['MySQL 8.4：WHERE Clause Optimization','https://dev.mysql.com/doc/refman/8.4/en/where-optimization.html'],['MySQL 8.4：GROUP BY 处理','https://dev.mysql.com/doc/refman/8.4/en/group-by-handling.html']]

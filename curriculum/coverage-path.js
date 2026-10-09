@@ -149,6 +149,7 @@ const COVERAGE_PATH = [
     points:['String 适合整体读写一个值','Hash、Set、Sorted Set 对应字段、去重和按分数排序','Stream 适合追加日志，过期不能代替结构'],
     deep:[
       {title:'按访问方式选结构',body:'字符串一次读写整个值。哈希只改键下的一个字段。有序集合按分数取一段范围。流只追加，并用上次的游标接着读。过期和持久化不改变这些命令每次要动多少数据。整段重写会盖掉并发改过的其他字段。'},
+      {title:'展开课',body:'Hash 字段更新见 redis-hash-field-update。ZSet 排行与范围见 redis-zset-rank-range。近似 UV 用 HyperLogLog 见 redis-hyperloglog-approx，它列不出成员。'},
       {title:'怎样自己验证',body:'对同一份排行先存成一整段字符串，改一名次要整段重写，看写入长度。再改成按分数写入并取前十名，返回应已按分数排好，且不会把其他成员重新写一遍。前十名的顺序应来自分数而不是写入时刻。'}
     ],
     refs:[['Redis：数据类型','https://redis.io/docs/latest/develop/data-types/']]
@@ -189,9 +190,9 @@ const COVERAGE_PATH = [
   },
   {
     track:'java', group:'工程实践', id:'java-http-timeout',
-    title:'建连超时管不到整次调用',
+    title:'建连超时管不到整次调用（Java 11 HttpClient）',
     prompt:'HttpClient 的连接超时设成 3 秒，这次请求就一定会在 3 秒内结束吗？',
-    core:'Java HttpClient 的 connectTimeout 只限制建立新连接。连接可以复用时，这段超时不起作用。HttpRequest 的 timeout 限制这一次请求等待响应的时间，到点仍未收到响应就抛出 HttpTimeoutException。不设置请求超时时，等待时间没有上限。DNS、从连接池借出、以及响应开始之后的读取，都要单独看对应的超时，不能用一个建连数字代表整条调用。',
+    core:'Java HttpClient（**JDK 11** 起，`java.net.http`）的 connectTimeout 只限制建立新连接。连接可以复用时，这段超时不起作用。HttpRequest 的 timeout 限制这一次请求等待响应的时间，到点仍未收到响应就抛出 HttpTimeoutException。不设置请求超时时，等待时间没有上限。DNS、从连接池借出、以及响应开始之后的读取，都要单独看对应的超时，不能用一个建连数字代表整条调用。',
     why:'学习者会以为连接超时设成 3 秒，整次调用就一定在 3 秒内结束。下游接受连接后一直不写响应，线程仍占着，调用方以为已经设过失败上限。异常是建连失败，还是等待响应超时，才分得清是端口没通，还是响应等待没有单独设限。',
     example:'建连超时和请求超时都是 3 秒。端口拒绝时，约 3 秒内建连失败，请求超时还没开始计。连接成功后对端不返回正文，建连已完成，大约再过 3 秒抛出等待响应超时。若去掉请求超时，第二次会一直阻塞，没有异常。',
     task:'分别让端口拒绝连接，以及连接成功后不返回响应。记录哪一个超时先触发。',

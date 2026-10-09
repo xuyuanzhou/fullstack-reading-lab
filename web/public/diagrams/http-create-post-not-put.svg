@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-labelledby="title desc">
+  <title id="title">创建用 POST，覆盖用 PUT</title>
+  <desc id="desc">把「插入」写成 PUT 会混淆创建与按 URI 整份替换。POST 常用于创建由服务分配标识的资源；PUT 对已知 URI 做幂等覆盖。</desc>
+  <rect width="960" height="400" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">HTTP</text>
+  <text x="32" y="64" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">CRUD 对照方法，不能把插入叫成 PUT</text>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <rect x="32" y="96" width="430" height="176" rx="14" fill="#f6ecea" stroke="#a05048"/>
+    <text x="52" y="132" font-size="15" font-weight="600" fill="#6e3530">资料口误</text>
+    <text x="52" y="164" font-size="14" fill="#2e3330">插入 → PUT</text>
+    <text x="52" y="196" font-size="14" fill="#2e3330">删除 → DELETE（这一句对）</text>
+    <text x="52" y="228" font-size="14" fill="#5e6661">再把 REST 收成「只回 JSON」</text>
+    <rect x="496" y="96" width="432" height="176" rx="14" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="516" y="132" font-size="15" font-weight="600" fill="#2e3330">RFC 语义</text>
+    <text x="516" y="164" font-size="14" fill="#3f6a58">POST：常在集合下创建，URI 由服务定</text>
+    <text x="516" y="196" font-size="14" fill="#3f6a58">PUT：对已知 URI 整份替换，可幂等</text>
+    <text x="516" y="228" font-size="14" fill="#5e6661">前后端分离 ≠ REST 规范本身</text>
+    <rect x="32" y="296" width="896" height="72" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="52" y="328" font-size="15" font-weight="600" fill="#2e3330">客户端已知最终 URI 时，创建也可以设计成 PUT；默认「插入」不要背成 PUT。</text>
+    <text x="52" y="352" font-size="14" fill="#5e6661">幂等与重试见 http-methods</text>
+  </g>
+</svg>

@@ -20,9 +20,9 @@ const COVERAGE_FRONTEND_09 = [
   },
   {
     track:'frontend', group:'React', id:'react-setstate-batch',
-    title:'setState 批处理：别再背 isBatchingUpdates',
+    title:'setState 批处理：别再背 isBatchingUpdates（React 18）',
     prompt:'为什么用“合成事件里异步、setTimeout 里同步”加上 isBatchingUpdates 解释 React 19 不够用？',
-    core:'状态更新先进入队列，按渲染快照应用；同一事件里的多次更新可以批处理合并。React 18 起在更多场景默认批处理，不能再把“原生事件 / setTimeout 一定同步刷 DOM”当稳定定律。资料里的 isBatchingUpdates、dirtyComponents 属于旧协调器叙事，不适合作为 Hooks 与并发渲染的标准讲解。setter 调用后，当前这次渲染里读到的变量仍是旧快照；要基于前值计算应使用更新函数形式。性能上的“少 render”来自批处理与跳过更新，而不是“setState 天生异步函数”。',
+    core:'状态更新先进入队列，按渲染快照应用；同一事件里的多次更新可以批处理合并。**React 18** 起在更多场景默认批处理，不能再把“原生事件 / setTimeout 一定同步刷 DOM”当稳定定律。资料里的 isBatchingUpdates、dirtyComponents 属于旧协调器叙事，不适合作为 Hooks 与并发渲染的标准讲解。setter 调用后，当前这次渲染里读到的变量仍是旧快照；要基于前值计算应使用更新函数形式。性能上的“少 render”来自批处理与跳过更新，而不是“setState 天生异步函数”。',
     why:'误以为合成事件里异步、定时器里一定同步。定时器或 Promise 里连续两次自增，仍可能只渲染一次，中间值看不到。区分信号是更新进入队列后按快照应用，而不是 isBatchingUpdates 那个旧开关。',
     example:'点击处理器里 setCount(c=>c+1) 两次，一次渲染里累加两次。把同样两次更新放到 Promise 回调里，在 React 18+ 仍可能批处理，不能默认假设一定看到中间态。',
     task:'在 onClick、setTimeout、async 回调里各写两次基于旧值的自增，记录 render 次数与最终值；再用更新函数重写，说明为何不再提 isBatchingUpdates。',

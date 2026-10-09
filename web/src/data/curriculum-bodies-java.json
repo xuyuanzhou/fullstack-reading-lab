@@ -107,107 +107,53 @@
       ]
     ]
   },
-  "java-interface-contract": {
-    "core": "接口描述类型能做什么。一个类可以实现多个接口。接口方法可以有 default 实现，那是在不强迫单一父类的前提下共享行为。抽象类可以有构造器和实例字段，适合一小组类型真正共享的状态和不可分开的骨架。只为了放常量或复用几行工具代码而继承，会把无关类型捆进同一棵继承树。Java 是单继承，父类名额要用在真实的 is-a 关系上。调用方依赖接口，测试才能替换实现，而不必继承生产类。",
-    "why": "学习者会为了复用三行工具就建一个抽象父类。父类里一旦放进连接和缓存，子类无法单独测试，也不能再继承别的骨架。工具收成接口上的默认方法后，具体类不再被迫继承它，才说明占用唯一父类的是共享状态，不是三行代码。",
-    "example": "两个支付渠道都实现同一接口，默认方法只做共同的参数检查，测试可以不启动父类里的连接。密钥和连接放在各自的类里。若把这些字段放进抽象父类，子类测试必须带上那份状态，也不能再继承另一个骨架。具体类因此不必再继承那个只提供工具方法的父类。",
-    "task": "找一个只被继承来调用 protected 工具方法的抽象类。把工具收成默认方法或独立对象，确认具体类不再被迫继承它。",
-    "answer": "只为调用受保护工具方法而继承的抽象类，应把工具收成默认方法或独立对象，具体类不再继承它，测试仍能做参数检查。能力用接口，一个类可以实现多个。共享的可变状态才考虑抽象类，不要为了复用代码占用唯一的父类。复用三行代码不应占用这一个类唯一的父类位置。",
+  "java-main-launcher": {
+    "core": "Java 启动器要调用某个类的 public static void main(String[])（或等价的 String...）。缺少这个方法时，现行启动器直接失败，不会把静态初始化块当官方入口。可以声明其它签名的 main 作为重载，但 JVM 不会把它们当启动点。static 不能被实例方法意义上的覆盖，子类同签名 main 是隐藏。synchronized 可以写在 main 上，但没有实际意义。有些资料里的“可以终结 main”没有对应的语言机制，不要发挥成 finalize。Java 模块与自定义启动器另有入口约定，仍不是静态块替代。",
+    "why": "把静态初始化块当成入口，会在现行启动器上得不到那个 main，表现为找不到方法。区分信号是启动器只认 public static void main(String[])，别的 main 只是重载。",
+    "example": "java com.example.App 要求 App 里有 public static void main(String[] args)。另写 public static void main(int n) 不会被启动器调用。",
+    "task": "对照 JLS 启动一节，列出启动器要求的修饰符、返回类型和参数类型；划掉静态块入口和“终结 main”。",
+    "answer": "对照 JLS 启动一节：启动器要求的是 public、static、返回 void、参数是 String 数组的 main。静态初始化块会在类初始化时运行，但不是官方入口，划掉“没有 main 也能靠静态块跑起来”。其他签名的 main 只是重载，不会被当成这次启动。也划掉“main 可以终结”这类不在启动契约里的说法。",
     "deep": [
       {
-        "title": "常量",
-        "body": "把常量堆在接口里再实现它，是旧写法。常量放在最终类或枚举里，需要时静态导入。接口不要变成常量袋。"
-      },
-      {
-        "title": "和 Spring 的关系",
-        "body": "服务依赖接口，容器注入实现。测试提供另一个实现。这不要求实现类继承同一个抽象基类。"
-      }
-    ],
-    "references": [
-      [
-        "Java 教程：接口",
-        "https://docs.oracle.com/javase/tutorial/java/IandI/createinterface.html"
-      ],
-      [
-        "Java 教程：默认方法",
-        "https://docs.oracle.com/javase/tutorial/java/IandI/defaultmethods.html"
-      ]
-    ]
-  },
-  "java-generics": {
-    "core": "Java 泛型主要在编译期提供类型检查；多数类型参数在运行时会被擦除。实际对象的运行时类型不会因为元素类型参数而变成两个不同的 List 类。顺序是：编译器按类型参数检查调用，再擦掉这些参数，运行时只留下原始类型和必要的强制转换。边界是：instanceof 不能带具体类型参数。List<?> 可以安全读取为 Object，但不能写入任意非 null 值，因为真实元素类型可能更窄。反射里看到的也不是 List<String> 这个类。运行时要用类型信息，就另存 Class 对象，不要指望擦除后的 List 还带着 String 或 Integer。通配符能安全读成 Object，写入非 null 会被编译器拒绝。",
-    "why": "错把 List<String> 和 List<Integer> 当成运行时的两个类，instanceof 仍分不开它们，强转也不会按元素类型检查。擦除之后都只是 List。能分开的信号是：报错发生在编译期，还是运行时根本没有这个类型参数。",
-    "example": "List<String> names = new ArrayList<>(); 可以赋给 List<?>。写 names instanceof List<String> 不能通过编译。运行时 names 的类仍是 ArrayList，元素类型参数已经不在。",
-    "task": "解释为什么向 List<?> 直接添加任意非 null 元素会被限制。",
-    "answer": "List<?> 表示元素类型未知，可能是任何引用类型。直接添加非 null 元素时，编译器无法证明这个元素就是那个未知类型，所以拒绝添加。null 是唯一允许的写入，因为任何引用类型都能装下它。读取时可以安全当成 Object，不能当成 String 或 Integer。",
-    "deep": [
-      {
-        "title": "和数组",
-        "body": "数组在运行时知道元素类型，放入错误类型会在那时失败。泛型集合的检查主要在编译期，擦除后运行时不再有那份元素类型。"
+        "title": "重载不会被启动",
+        "body": "参数换成别的类型，或少了 static、public，方法可以存在，启动器却不认。静态块里的代码会在类加载时跑，失败方式和没有 main 不是同一条错误。签名差一个字，启动器就不认。"
       },
       {
         "title": "怎样自己验证",
-        "body": "写 instanceof List<String>，看编译错误。再对 List<?> 调用 add，看编译器允许的只有 null。"
+        "body": "对照 JLS 启动一节，列出修饰符、返回类型和参数类型。写一个参数不同的 main，看启动器是否仍找 String 数组那个。去掉标准 main 后，确认不会改由静态块接管启动。"
       }
     ],
     "references": [
       [
-        "Oracle：Generics and erasure",
-        "https://docs.oracle.com/javase/tutorial/java/generics/erasure.html"
+        "JLS：Execution",
+        "https://docs.oracle.com/javase/specs/jls/se25/html/jls-12.html#jls-12.1.4"
+      ],
+      [
+        "java launcher",
+        "https://docs.oracle.com/en/java/javase/25/docs/specs/man/java.html"
       ]
     ]
   },
-  "java-equals-contract": {
-    "core": "equals 表示业务上是否同一对象。hashCode 必须让相等的对象得到同一哈希值，否则哈希表会把它放进错误的桶，找不到。不相等的对象哈希可以碰撞，只是性能变差。参与比较的字段一旦作为键放进哈希结构，就不要再改。顺序是先按业务定义相等，再让相等的对象得到同一个哈希，然后才放进哈希结构。边界是不相等对象的哈希可以碰撞，只影响性能；只改相等会放错桶，之后怎么比都找不到。参与比较的字段一旦成为键，就不能再改。集合大小在补上哈希后应从 2 变成 1，这是去重成功的信号，不是插入失败。放入后再改字段，用新值去取应为空，只有改之前的值能回到原来的桶。集合大小也要一起记下来。",
-    "why": "学习者会只改相等比较、不改哈希，以为集合去重看的是业务字段。两个按数字相等的键放不进同一个集合，取出来是空的。补上相同哈希后才能去重，放入后再改参与比较的字段又会取不到，才说明相等和哈希必须一起成立。",
-    "example": "两个按数字相等的标识，只改了相等、哈希不同。放进集合后再用另一个相等的标识去取，得到空，集合大小却是 2。补上相同哈希后，第二个被当成已存在，大小为 1，取得时能找到。放入后再把数字改掉，用新数字去取又得到空。",
-    "task": "写一个只改 equals 的键，放进 HashSet 再 get。再补上 hashCode 对比。",
-    "answer": "只改 equals、不改 hashCode：两个业务上相等的键算出不同哈希，HashSet 把它们放进不同的桶。用另一个相等对象去取，会去错桶，得到 null。补上 hashCode，让相等对象得到同一个哈希，才会落到同一桶，再用 equals 确认，取得到。放入之后再改参与 equals 或 hashCode 的字段，键仍留在旧桶里，按新值取也会失败。",
+  "java-pass-by-value": {
+    "core": "方法参数一律复制一份值。基本类型复制的是数值；引用类型复制的是引用，两边指向同一堆对象，所以能改对象字段，但不能让调用方的变量改指向另一个对象。把参数赋成 null 或 new 另一个实例，调用方看不到。这不是引用传递（那种会改变调用方变量本身）。swap 里对调的是方法栈上的两份引用，返回之后调用方的变量指向谁并没有变。能看见的修改只发生在副本和调用方共同指向的那个对象上，例如清空列表里的元素。这和会改写调用方变量本身的引用传递不是同一规则。调用方的那个变量本身不会被改写。",
+    "why": "把对象说成引用传递，于是写 swap 去交换两个变量，方法里的引用对调了，调用方的两个变量仍指向原来的对象。区分信号是 clear 能改到同一份列表，把参数重新赋值却改不到调用方变量。",
+    "example": "调用方持有含 \"a\" 的列表。clear(xs) 里执行 xs.clear()，返回后列表是空的。rebind(xs) 里执行 xs = new ArrayList<>()，返回后调用方仍是原来那份、里面没有被换成新列表。两次传入的都是引用的副本。",
+    "task": "写一个改字段成功、改绑定失败的例子；对照 JLS 说明复制的是什么。",
+    "answer": "改字段的例子是对传入的列表 clear，预测调用方看到空列表。改绑定的例子是把参数赋成新的 ArrayList，预测调用方变量仍指向原列表。对照参数求值：复制的是值，引用类型复制的是那个引用，不是调用方变量本身。swap 两个参数预测叫不动调用方的变量。",
     "deep": [
       {
-        "title": "相等与哈希",
-        "body": "相等表示业务上是不是同一个对象。哈希必须让相等对象得到同一值，否则会放进错误的桶。不相等对象的哈希可以碰撞，只是更慢。作为键的字段放入后不要再改。哈希相同只说明可能在同一个桶，还要相等比较才算找到。"
+        "title": "复制的是引用这个值",
+        "body": "基本类型复制数值，改参数不影响外面。引用类型复制的是地址，所以字段改动两边都看得见。把参数指到新对象或 null，只改了方法里的那一份地址。null 赋值同样只影响方法里的那一份。"
       },
       {
         "title": "怎样自己验证",
-        "body": "写一个只改相等的键，放进集合再用相等的另一个去取，结果应为空。补上相同哈希后再放、再取，应能去重并找到。最后改掉已放入的字段，用新值去取，应又变成空。改掉已放入的字段后，用旧值和新值各取一次，只有旧值应能找到。"
+        "body": "写 clear 和重新赋值两个方法。调用 clear 后原列表应变空。调用重新赋值后，调用方变量应仍指向原来的列表。对照语言规范，传入的是值的副本。两次调用传入的都是引用值的副本。"
       }
     ],
     "references": [
       [
-        "Java SE：Object.equals",
-        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)"
-      ],
-      [
-        "Java SE：Object.hashCode",
-        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#hashCode()"
-      ]
-    ]
-  },
-  "java-string-immutability": {
-    "core": "String 实例不可变。每次 + 都在造新对象。短拼接编译器可能优化；在循环里不断 +，通常会反复复制字符。需要可变缓冲时用 StringBuilder。String 当锁或键时，内容不变是优点，但也意味着改一个字符就要新对象。顺序是短拼接可以直接写，循环里积累大量文本时改用可变缓冲，最后再得到一个不可变结果。边界是少量固定片段不必为了口诀改掉；循环里不断相加通常会反复复制。内容不可变意味着改一个字符就要新对象，这也是它能当键的原因。构建器在循环里追加，最后一次才变成不可变字符串，避免每一轮都复制前面的全部字符。短拼接不必改成构建器，循环里的相加才要换。",
-    "why": "学习者会在循环里用加号拼大量文本，觉得和少量拼接只是写起来一样。一万行日志的耗时和临时对象明显更多，改成可变缓冲后两者都下降。少量固定片段仍可以用加号保持可读，才说明慢的是循环里反复造新串，不是加号本身不能用。",
-    "example": "循环一万次用加号拼日志，耗时更长，分配次数也高。换成可变缓冲拼同一规模，耗时和分配都下降，结果文本一致。只有两三个固定片段时，加号更易读，耗时差别可以忽略。每次加号都在造新对象，循环把这种复制重复了一万次。",
-    "task": "分别用循环 + 和 StringBuilder 拼同一规模字符串，比较耗时和分配。",
-    "answer": "同一规模下，循环加号的耗时和分配高于可变缓冲，因为每次都在造新串并复制已有字符。可变缓冲只在最后得到一个结果。短的固定拼接可以保持加号，可读性更好，编译上也常常不是热点。需要在循环里积累文本时用可变缓冲。当锁或键时，内容不变才是优点。两份结果的文本应相同，差别只在耗时和分配次数。",
-    "deep": [
-      {
-        "title": "不可变与复制",
-        "body": "字符串实例不能在原地改。每次相加都在造新对象。短拼接常常不是问题，循环里不断相加会反复复制已有字符。需要可变缓冲时用专门的构建器，最后再变成不可变结果。当锁或当键时，内容不能原地改，这是不可变带来的好处，也是循环相加变慢的原因。"
-      },
-      {
-        "title": "怎样自己验证",
-        "body": "用循环相加和可变缓冲拼同一万行文本，比较耗时和分配次数。相加那次应更慢、分配更多，两份结果文本应相同。再只拼两三个固定片段，差别应当很小。一万次相加的分配次数应明显高于可变缓冲，两三片段的相加则不应成为热点。"
-      }
-    ],
-    "references": [
-      [
-        "Java SE：String",
-        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html"
-      ],
-      [
-        "Java SE：StringBuilder",
-        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/StringBuilder.html"
+        "JLS：Evaluation of Arguments",
+        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-8.html#jls-8.4.1"
       ]
     ]
   },
@@ -238,62 +184,85 @@
       ]
     ]
   },
-  "java-calendar-not-singleton": {
-    "core": "真正接近“整个 JVM 一份”的是 Runtime.getRuntime()。Calendar.getInstance() 按默认时区和区域设置**每次构造新日历**，里面保存着可变的当前时刻字段；它既不是单例，也不建议在多线程里共用同一实例。资料把单例模式写成“用于 Runtime、Calendar 和其他一些类”，把可变、按调用新建的工厂方法和进程级单例混在一起。Boolean.valueOf 也不是工厂模式的典型产品替换，而是缓存装箱。设计模式题可以举 Runtime、枚举单例、IO 装饰器，不要把 Calendar 塞进单例名单。",
-    "why": "把 Calendar 和 Runtime 一起背成 JDK 单例，会暴露没有读过 getInstance 的返回契约，并发下还会共享同一本可变日历。区分信号是每次调用都返回新实例，真正的单例例子是 Runtime.getRuntime。",
-    "example": "两个线程各自 Calendar.getInstance()，互不影响。若把同一个 Calendar 放进静态字段并并发 setTime，字段会互相覆盖。需要不可变时间点用 Instant。",
-    "task": "打开 Calendar.getInstance 的 JavaDoc，写下它返回的是新实例；对照 Runtime.getRuntime 说明真正的单例例子。",
-    "answer": "打开 Calendar.getInstance 的说明，它返回的是新建的可变日历，不是容器里唯一的那份，所以不能当单例例子。Runtime.getRuntime 才是每次拿回同一个实例。两处对照之后，单例例子改用 Runtime 或枚举，共享日历的写法划掉。",
+  "java-string-immutability": {
+    "core": "String 实例不可变。每次 + 都在造新对象。短拼接编译器可能优化；在循环里不断 +，通常会反复复制字符。需要可变缓冲时用 StringBuilder。String 当锁或键时，内容不变是优点，但也意味着改一个字符就要新对象。顺序是短拼接可以直接写，循环里积累大量文本时改用可变缓冲，最后再得到一个不可变结果。边界是少量固定片段不必为了口诀改掉；循环里不断相加通常会反复复制。内容不可变意味着改一个字符就要新对象，这也是它能当键的原因。构建器在循环里追加，最后一次才变成不可变字符串，避免每一轮都复制前面的全部字符。短拼接不必改成构建器，循环里的相加才要换。",
+    "why": "学习者会在循环里用加号拼大量文本，觉得和少量拼接只是写起来一样。一万行日志的耗时和临时对象明显更多，改成可变缓冲后两者都下降。少量固定片段仍可以用加号保持可读，才说明慢的是循环里反复造新串，不是加号本身不能用。",
+    "example": "循环一万次用加号拼日志，耗时更长，分配次数也高。换成可变缓冲拼同一规模，耗时和分配都下降，结果文本一致。只有两三个固定片段时，加号更易读，耗时差别可以忽略。每次加号都在造新对象，循环把这种复制重复了一万次。",
+    "task": "分别用循环 + 和 StringBuilder 拼同一规模字符串，比较耗时和分配。",
+    "answer": "同一规模下，循环加号的耗时和分配高于可变缓冲，因为每次都在造新串并复制已有字符。可变缓冲只在最后得到一个结果。短的固定拼接可以保持加号，可读性更好，编译上也常常不是热点。需要在循环里积累文本时用可变缓冲。当锁或键时，内容不变才是优点。两份结果的文本应相同，差别只在耗时和分配次数。",
     "deep": [
       {
-        "title": "可变日历不能共享",
-        "body": "Calendar 的字段可以被 set 改掉。若误当成单例交给多个线程，一次设置会改掉别人正在读的日期。每次需要日历就新建，或改用不可变的时间类型。不要把可变对象放进单例。"
+        "title": "不可变与复制",
+        "body": "字符串实例不能在原地改。每次相加都在造新对象。短拼接常常不是问题，循环里不断相加会反复复制已有字符。需要可变缓冲时用专门的构建器，最后再变成不可变结果。当锁或当键时，内容不能原地改，这是不可变带来的好处，也是循环相加变慢的原因。"
       },
       {
         "title": "怎样自己验证",
-        "body": "连续调用两次 Calendar.getInstance，用 == 比较，应是两个对象。再对 Runtime.getRuntime 做同样比较，两次应是同一个。共享日历再 set 一次，看另一个引用是否被改掉。"
+        "body": "用循环相加和可变缓冲拼同一万行文本，比较耗时和分配次数。相加那次应更慢、分配更多，两份结果文本应相同。再只拼两三个固定片段，差别应当很小。一万次相加的分配次数应明显高于可变缓冲，两三片段的相加则不应成为热点。"
       }
     ],
     "references": [
       [
-        "Calendar.getInstance",
-        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Calendar.html#getInstance()"
+        "Java SE：String",
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html"
       ],
       [
-        "Runtime.getRuntime",
-        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Runtime.html#getRuntime()"
+        "Java SE：StringBuilder",
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/StringBuilder.html"
       ]
     ]
   },
-  "java-main-launcher": {
-    "core": "Java 启动器要调用某个类的 public static void main(String[])（或等价的 String...）。缺少这个方法时，现行启动器直接失败，不会把静态初始化块当官方入口。可以声明其它签名的 main 作为重载，但 JVM 不会把它们当启动点。static 不能被实例方法意义上的覆盖，子类同签名 main 是隐藏。synchronized 可以写在 main 上，但没有实际意义。有些资料里的“可以终结 main”没有对应的语言机制，不要发挥成 finalize。Java 模块与自定义启动器另有入口约定，仍不是静态块替代。",
-    "why": "把静态初始化块当成入口，会在现行启动器上得不到那个 main，表现为找不到方法。区分信号是启动器只认 public static void main(String[])，别的 main 只是重载。",
-    "example": "java com.example.App 要求 App 里有 public static void main(String[] args)。另写 public static void main(int n) 不会被启动器调用。",
-    "task": "对照 JLS 启动一节，列出启动器要求的修饰符、返回类型和参数类型；划掉静态块入口和“终结 main”。",
-    "answer": "对照 JLS 启动一节：启动器要求的是 public、static、返回 void、参数是 String 数组的 main。静态初始化块会在类初始化时运行，但不是官方入口，划掉“没有 main 也能靠静态块跑起来”。其他签名的 main 只是重载，不会被当成这次启动。也划掉“main 可以终结”这类不在启动契约里的说法。",
+  "java-string-new-vs-pool": {
+    "core": "字符串字面量 \"xyz\" 由 JLS 放进字符串池，同一个类里再次出现这个字面量，用的是池中已经有的那一个。new String(\"xyz\") 一定会再构造一个新的 String 对象，它和池里的那个内容相同，但不是同一个引用。这一行新造出来的，是这个堆上的 String。池里的 \"xyz\" 可能在这行之前、类加载碰到字面量时就已经建好了，那时就不是“执行这行代码新建了两个”。若池里还没有，字面量进池是一件事，new 再复制出一个实例是另一件事，仍然不要把题目背成永远正好两个。构造函数的文档写明：除非需要一份显式拷贝，否则不必这么写，因为字符串是不可变的。比较是不是同一个对象用 ==，new 出来的和字面量比较应是 false，对 new 出来的调用 intern() 才回到池里那一个。",
+    "why": "按“永远两个”去对运行结果，池里已经有 \"xyz\" 时，这行只多出一个实例，对象计数对不上。接着会用 == 比较两段内容相同的字符串，把“内容相等”和“同一个引用”看成一件事。",
+    "example": "先执行 String pooled = \"xyz\"，池里已经有它。再 String created = new String(\"xyz\")。pooled == created 是 false，created.equals(pooled) 是 true，pooled == created.intern() 是 true。日常写 \"xyz\" 即可，不要为了进池而 new 一次再 intern。",
+    "task": "写出字面量进池和 new 出堆实例的差别；划掉“一定两个对象”。",
+    "answer": "字面量进入字符串池，相同字面量复用池中的引用。new String(\"xyz\") 额外构造一个新的 String，和池里的不是同一个对象。划掉“一定两个对象”：池里已经有这个字面量时，这一行新增加的是那一个堆实例。不需要拷贝时直接用字面量。用 == 判断是不是同一个引用，用 equals 判断内容。",
     "deep": [
       {
-        "title": "重载不会被启动",
-        "body": "参数换成别的类型，或少了 static、public，方法可以存在，启动器却不认。静态块里的代码会在类加载时跑，失败方式和没有 main 不是同一条错误。签名差一个字，启动器就不认。"
+        "title": "要数的是这一行新造了谁",
+        "body": "“两个对象”把字面量进池和构造函数混成了同一次执行。进池发生在字面量被解析、池里还没有它的时候，可能早于这一行。构造函数每次调用都新造一个 String，这一条才稳定。所以计数之前先问池里有没有，而不是背一个固定的 2。"
       },
       {
         "title": "怎样自己验证",
-        "body": "对照 JLS 启动一节，列出修饰符、返回类型和参数类型。写一个参数不同的 main，看启动器是否仍找 String 数组那个。去掉标准 main 后，确认不会改由静态块接管启动。"
+        "body": "先把 \"xyz\" 赋给一个变量，再 new String(\"xyz\") 赋给另一个。用 == 比较二者，应是 false；用 equals 应是 true。再比较第一个变量和第二个变量的 intern()，应是 true。在此之前不要假设这一行的字节码新分配了两个 String。"
       }
     ],
     "references": [
       [
-        "JLS：Execution",
-        "https://docs.oracle.com/javase/specs/jls/se25/html/jls-12.html#jls-12.1.4"
+        "JLS 3.10.5 String Literals",
+        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-3.html#jls-3.10.5"
       ],
       [
-        "java launcher",
-        "https://docs.oracle.com/en/java/javase/25/docs/specs/man/java.html"
+        "String(String)",
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html#%3Cinit%3E(java.lang.String)"
+      ]
+    ]
+  },
+  "java-generics": {
+    "core": "Java 泛型主要在编译期提供类型检查；多数类型参数在运行时会被擦除。实际对象的运行时类型不会因为元素类型参数而变成两个不同的 List 类。顺序是：编译器按类型参数检查调用，再擦掉这些参数，运行时只留下原始类型和必要的强制转换。边界是：instanceof 不能带具体类型参数。List<?> 可以安全读取为 Object，但不能写入任意非 null 值，因为真实元素类型可能更窄。反射里看到的也不是 List<String> 这个类。运行时要用类型信息，就另存 Class 对象，不要指望擦除后的 List 还带着 String 或 Integer。通配符能安全读成 Object，写入非 null 会被编译器拒绝。",
+    "why": "错把 List<String> 和 List<Integer> 当成运行时的两个类，instanceof 仍分不开它们，强转也不会按元素类型检查。擦除之后都只是 List。能分开的信号是：报错发生在编译期，还是运行时根本没有这个类型参数。",
+    "example": "List<String> names = new ArrayList<>(); 可以赋给 List<?>。写 names instanceof List<String> 不能通过编译。运行时 names 的类仍是 ArrayList，元素类型参数已经不在。",
+    "task": "解释为什么向 List<?> 直接添加任意非 null 元素会被限制。",
+    "answer": "List<?> 表示元素类型未知，可能是任何引用类型。直接添加非 null 元素时，编译器无法证明这个元素就是那个未知类型，所以拒绝添加。null 是唯一允许的写入，因为任何引用类型都能装下它。读取时可以安全当成 Object，不能当成 String 或 Integer。",
+    "deep": [
+      {
+        "title": "和数组",
+        "body": "数组在运行时知道元素类型，放入错误类型会在那时失败。泛型集合的检查主要在编译期，擦除后运行时不再有那份元素类型。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "写 instanceof List<String>，看编译错误。再对 List<?> 调用 add，看编译器允许的只有 null。"
+      }
+    ],
+    "references": [
+      [
+        "Oracle：Generics and erasure",
+        "https://docs.oracle.com/javase/tutorial/java/generics/erasure.html"
       ]
     ]
   },
   "java-record-accessor": {
-    "core": "record 声明分量后，编译器生成 final 字段、取值方法、按全部分量的 equals/hashCode/toString。它默认不可变，适合作为 API 返回、Map 键、模式匹配的数据载体。JPA 实体需要可变字段、无参构造、代理子类，和 record 的约束冲突。不要把 record 当“更短的 Lombok 实体”。分量名称就是取值方法名，没有 JavaBean 的 get 前缀也可以，但和部分框架的属性解析要核对。",
+    "core": "record（JDK 16 定稿，JEP 395）声明分量后，编译器生成 final 字段、取值方法、按全部分量的 equals/hashCode/toString。它默认不可变，适合作为 API 返回、Map 键、模式匹配的数据载体。JPA 实体需要可变字段、无参构造、代理子类，和 record 的约束冲突。不要把 record 当“更短的 Lombok 实体”。分量名称就是取值方法名，没有 JavaBean 的 get 前缀也可以，但和部分框架的属性解析要核对。",
     "why": "把订单实体改成 record 图省事，Hibernate 要无参构造和可写字段，代理也做不出来，懒加载和脏检查对不上。区分信号是两个 Money(100,\"CNY\") 按分量相等，而订单实体仍必须是可被代理的 class。",
     "example": "public record Money(long cents, String currency) {}。new Money(100,\"CNY\") 与另一个同分量实例 equals 为 true，取值方法就是 cents() 而不是 getCents()。把 OrderEntity 改成 record 后，会话无法按可写字段做脏检查，也不能生成所需的代理子类。",
     "task": "写一个 record 看生成的 equals。再列出 JPA 实体需要、record 默认没有的三项能力。",
@@ -319,80 +288,74 @@
       ]
     ]
   },
-  "java-dcl-volatile-enum": {
-    "core": "new Singleton() 不是一个原子发布：可能先把引用写进 instance，再跑构造器。另一个线程在外层读到非 null 就返回，可能看见默认字段。把 instance 标成 volatile 才能建立安全发布。双重检查锁能用，但容易漏修饰符。Effective Java 推荐枚举单例：JVM 保证枚举常量初始化的线程安全，还能挡住部分反射和反序列化套路。饿汉静态字段也简单。不要把双重检查当唯一标准答案。",
-    "why": "手写双重检查却漏掉 volatile，另一个线程可能读到已经非空、构造还没写完的实例，字段仍是默认值。区分信号是同一段交错里，引用先被看见；枚举常量由类初始化发布，不必自己再加这把锁。",
-    "example": "线程 1 执行 new Singleton()，引用已写入 instance，构造器里的 name 还是 null。线程 2 在外层看见非 null 就返回，接着调用 name 出现空指针。把 instance 标成 volatile 后，线程 2 不会看见这次半初始化。改用枚举常量则不必再写这套检查。",
-    "task": "画出无 volatile 的 DCL 下“引用先于构造完成可见”的交错；对照枚举初始化写一句为什么不必自己加锁。",
-    "answer": "无 volatile 的双重检查下，预测交错是引用先对外可见、构造尚未完成，读到的字段还是默认值。对照枚举初始化：常量由类初始化安全发布，JVM 保证这一步的线程安全，所以不必自己再加锁。单例仍不保护业务字段的并发写。漏掉 volatile 时，预测能看见默认字段。",
+  "java-equals-contract": {
+    "core": "equals 表示业务上是否同一对象。hashCode 必须让相等的对象得到同一哈希值，否则哈希表会把它放进错误的桶，找不到。不相等的对象哈希可以碰撞，只是性能变差。参与比较的字段一旦作为键放进哈希结构，就不要再改。顺序是先按业务定义相等，再让相等的对象得到同一个哈希，然后才放进哈希结构。边界是不相等对象的哈希可以碰撞，只影响性能；只改相等会放错桶，之后怎么比都找不到。参与比较的字段一旦成为键，就不能再改。集合大小在补上哈希后应从 2 变成 1，这是去重成功的信号，不是插入失败。放入后再改字段，用新值去取应为空，只有改之前的值能回到原来的桶。集合大小也要一起记下来。",
+    "why": "学习者会只改相等比较、不改哈希，以为集合去重看的是业务字段。两个按数字相等的键放不进同一个集合，取出来是空的。补上相同哈希后才能去重，放入后再改参与比较的字段又会取不到，才说明相等和哈希必须一起成立。",
+    "example": "两个按数字相等的标识，只改了相等、哈希不同。放进集合后再用另一个相等的标识去取，得到空，集合大小却是 2。补上相同哈希后，第二个被当成已存在，大小为 1，取得时能找到。放入后再把数字改掉，用新数字去取又得到空。",
+    "task": "写一个只改 equals 的键，放进 HashSet 再 get。再补上 hashCode 对比。",
+    "answer": "只改 equals、不改 hashCode：两个业务上相等的键算出不同哈希，HashSet 把它们放进不同的桶。用另一个相等对象去取，会去错桶，得到 null。补上 hashCode，让相等对象得到同一个哈希，才会落到同一桶，再用 equals 确认，取得到。放入之后再改参与 equals 或 hashCode 的字段，键仍留在旧桶里，按新值取也会失败。",
     "deep": [
       {
-        "title": "引用可见不等于构造完成",
-        "body": "new 可能先把引用放进静态字段，再跑完构造器。外层读到非 null 就返回，会看到默认字段。volatile 建立安全发布。枚举常量走类初始化，不必手写这套双重检查。"
+        "title": "相等与哈希",
+        "body": "相等表示业务上是不是同一个对象。哈希必须让相等对象得到同一值，否则会放进错误的桶。不相等对象的哈希可以碰撞，只是更慢。作为键的字段放入后不要再改。哈希相同只说明可能在同一个桶，还要相等比较才算找到。"
       },
       {
         "title": "怎样自己验证",
-        "body": "画出无线程安全发布时，引用先被看见、字段仍是默认值的交错。再对照枚举常量的初始化，写明它由类初始化发布，因此不必自己加锁。若仍写双重检查，字段必须是 volatile。"
+        "body": "写一个只改相等的键，放进集合再用相等的另一个去取，结果应为空。补上相同哈希后再放、再取，应能去重并找到。最后改掉已放入的字段，用新值去取，应又变成空。改掉已放入的字段后，用旧值和新值各取一次，只有旧值应能找到。"
       }
     ],
     "references": [
       [
-        "JLS：volatile",
-        "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.4.5"
+        "Java SE：Object.equals",
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)"
       ],
       [
-        "Enum types",
-        "https://docs.oracle.com/javase/tutorial/java/javaOO/enum.html"
+        "Java SE：Object.hashCode",
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#hashCode()"
       ]
     ]
   },
-  "java-pass-by-value": {
-    "core": "方法参数一律复制一份值。基本类型复制的是数值；引用类型复制的是引用，两边指向同一堆对象，所以能改对象字段，但不能让调用方的变量改指向另一个对象。把参数赋成 null 或 new 另一个实例，调用方看不到。这不是引用传递（那种会改变调用方变量本身）。swap 里对调的是方法栈上的两份引用，返回之后调用方的变量指向谁并没有变。能看见的修改只发生在副本和调用方共同指向的那个对象上，例如清空列表里的元素。这和会改写调用方变量本身的引用传递不是同一规则。调用方的那个变量本身不会被改写。",
-    "why": "把对象说成引用传递，于是写 swap 去交换两个变量，方法里的引用对调了，调用方的两个变量仍指向原来的对象。区分信号是 clear 能改到同一份列表，把参数重新赋值却改不到调用方变量。",
-    "example": "调用方持有含 \"a\" 的列表。clear(xs) 里执行 xs.clear()，返回后列表是空的。rebind(xs) 里执行 xs = new ArrayList<>()，返回后调用方仍是原来那份、里面没有被换成新列表。两次传入的都是引用的副本。",
-    "task": "写一个改字段成功、改绑定失败的例子；对照 JLS 说明复制的是什么。",
-    "answer": "改字段的例子是对传入的列表 clear，预测调用方看到空列表。改绑定的例子是把参数赋成新的 ArrayList，预测调用方变量仍指向原列表。对照参数求值：复制的是值，引用类型复制的是那个引用，不是调用方变量本身。swap 两个参数预测叫不动调用方的变量。",
+  "java-interface-contract": {
+    "core": "接口描述类型能做什么。一个类可以实现多个接口。接口方法可以有 default 实现，那是在不强迫单一父类的前提下共享行为。抽象类可以有构造器和实例字段，适合一小组类型真正共享的状态和不可分开的骨架。只为了放常量或复用几行工具代码而继承，会把无关类型捆进同一棵继承树。Java 是单继承，父类名额要用在真实的 is-a 关系上。调用方依赖接口，测试才能替换实现，而不必继承生产类。",
+    "why": "学习者会为了复用三行工具就建一个抽象父类。父类里一旦放进连接和缓存，子类无法单独测试，也不能再继承别的骨架。工具收成接口上的默认方法后，具体类不再被迫继承它，才说明占用唯一父类的是共享状态，不是三行代码。",
+    "example": "两个支付渠道都实现同一接口，默认方法只做共同的参数检查，测试可以不启动父类里的连接。密钥和连接放在各自的类里。若把这些字段放进抽象父类，子类测试必须带上那份状态，也不能再继承另一个骨架。具体类因此不必再继承那个只提供工具方法的父类。",
+    "task": "找一个只被继承来调用 protected 工具方法的抽象类。把工具收成默认方法或独立对象，确认具体类不再被迫继承它。",
+    "answer": "只为调用受保护工具方法而继承的抽象类，应把工具收成默认方法或独立对象，具体类不再继承它，测试仍能做参数检查。能力用接口，一个类可以实现多个。共享的可变状态才考虑抽象类，不要为了复用代码占用唯一的父类。复用三行代码不应占用这一个类唯一的父类位置。",
     "deep": [
       {
-        "title": "复制的是引用这个值",
-        "body": "基本类型复制数值，改参数不影响外面。引用类型复制的是地址，所以字段改动两边都看得见。把参数指到新对象或 null，只改了方法里的那一份地址。null 赋值同样只影响方法里的那一份。"
+        "title": "常量",
+        "body": "把常量堆在接口里再实现它，是旧写法。常量放在最终类或枚举里，需要时静态导入。接口不要变成常量袋。"
       },
       {
-        "title": "怎样自己验证",
-        "body": "写 clear 和重新赋值两个方法。调用 clear 后原列表应变空。调用重新赋值后，调用方变量应仍指向原来的列表。对照语言规范，传入的是值的副本。两次调用传入的都是引用值的副本。"
+        "title": "和 Spring 的关系",
+        "body": "服务依赖接口，容器注入实现。测试提供另一个实现。这不要求实现类继承同一个抽象基类。"
       }
     ],
     "references": [
       [
-        "JLS：Evaluation of Arguments",
-        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-8.html#jls-8.4.1"
+        "Java 教程：接口",
+        "https://docs.oracle.com/javase/tutorial/java/IandI/createinterface.html"
+      ],
+      [
+        "Java 教程：默认方法",
+        "https://docs.oracle.com/javase/tutorial/java/IandI/defaultmethods.html"
       ]
     ]
   },
-  "java-long-atomic-on-64bit": {
-    "core": "JLS 17.7 允许实现把一次非 volatile 的 long 或 double 写入拆成两次 32 位写。别的线程可能看见一次写入的高 32 位和另一次写入的低 32 位拼在一起，这个值两边都没写过。同一节规定：volatile 的 long 和 double 读写始终是原子的。这是规范留的口子，主要用来描述 32 位实现。现行 64 位 HotSpot 对 long 和 double 的单次读写就是一次原子存储，不会把两个合法值撕成第三个数。原子只保证你看见的是某一次完整写入，不保证你看得见最新的那一次。没有 happens-before 时，另一个线程可以一直看见旧值。跨线程要立刻看见新值，用 volatile、锁，或并发包里的原子类型。int 的单次读写按规范就是原子的，但 i++ 这种读改写不是一次写。",
-    "why": "在 64 位 HotSpot 上用“long 被撕成两半”解释一个从没写入过的数，实验复现不出来，真正的旧值看不见会被漏掉。反过来，在仍可能拆开写的实现上只靠“我们是 64 位”去掉 volatile，规范并不保证。",
-    "example": "64 位 HotSpot 上两个线程无同步地写 0L 和 -1L。读到的应是这两个值之一，不应是只改了一半比特的第三个数。若读线程在写入之后仍一直打印 0L，缺的是可见性，把字段改成 volatile long 后应能看见 -1L。",
-    "task": "对照 JLS 17.7，写出 long 写在何种实现上可能非原子；说明 64 位服务该怎么同步。",
-    "answer": "JLS 17.7 允许实现把非 volatile 的 long 或 double 拆成两次 32 位写，这不是 64 位 HotSpot 的现行写法。64 位 HotSpot 上单次写是原子的，读到的应是某个线程完整写入过的值。跨线程仍要 volatile 或锁建立 happens-before，否则可以一直看见旧值。volatile long 在规范里本身就要求原子。i++ 不是单次写。",
-    "deep": [
-      {
-        "title": "撕裂和看不见新值留下的数不一样",
-        "body": "撕裂会造出从未存储过的比特组合，例如两个写入分别是全 0 和全 1，读到既不是 0 也不是 -1。64 位 HotSpot 上不应出现这种值。一直读到 0，说明写入没有对这个读建立可见性，数值本身仍是某一次完整写。修可见性用 volatile 或锁。不要为了第一种现象在 64 位服务里改算法，也不要因为第二种现象没出现就去掉同步。"
-      },
-      {
-        "title": "怎样自己验证",
-        "body": "java -version 应显示 64-Bit。起两个线程，一个反复把 long 字段写成 0L 和 -1L，另一个读取。读到的数应只有这两个。去掉 volatile 时，读线程可以在写入发生后仍停留在旧值上。加上 volatile 后，应能看到新值，且仍然不会出现第三个数。"
-      }
-    ],
+  "java-polymorphism-not-only-extends": {
+    "core": "运行时按对象的实际类型选方法，这才是包含多态。`List list = new ArrayList()` 走的是接口，没有类继承也能多态。重载是编译期按参数选型，不是这套运行时分派。抽象类和接口都可以当静态类型。资料写“做梦都要背三个必要条件”，会把只实现接口的代码判成“没有多态”。默认方法见 `java-interface-contract`。",
+    "why": "按三件套去改代码，会凭空加一个抽象父类，只为了让引用类型“看起来像继承”。",
+    "example": "`Runnable r = () -> {}` 和 `new Thread(r)` 是接口多态。`print(int)` / `print(String)` 是重载，编译期就定了。",
+    "task": "划掉“必须先 extends 一个类”；写出接口引用为什么也是多态。",
+    "answer": "划掉「必须先 extends 一个类」。接口实现也是多态。三件套把接口方案开除了。重载不是运行时多态。",
     "references": [
       [
-        "JLS 17.7 Non-Atomic Treatment of double and long",
-        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-17.html#jls-17.7"
+        "JLS 15.12 Method Invocation",
+        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-15.html#jls-15.12"
       ],
       [
-        "JLS 17.4 Memory Model",
-        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-17.html#jls-17.4"
+        "Java Tutorial：Polymorphism",
+        "https://docs.oracle.com/javase/tutorial/java/IandI/polymorphism.html"
       ]
     ]
   },
@@ -450,81 +413,20 @@
       ]
     ]
   },
-  "java-string-new-vs-pool": {
-    "core": "字符串字面量 \"xyz\" 由 JLS 放进字符串池，同一个类里再次出现这个字面量，用的是池中已经有的那一个。new String(\"xyz\") 一定会再构造一个新的 String 对象，它和池里的那个内容相同，但不是同一个引用。这一行新造出来的，是这个堆上的 String。池里的 \"xyz\" 可能在这行之前、类加载碰到字面量时就已经建好了，那时就不是“执行这行代码新建了两个”。若池里还没有，字面量进池是一件事，new 再复制出一个实例是另一件事，仍然不要把题目背成永远正好两个。构造函数的文档写明：除非需要一份显式拷贝，否则不必这么写，因为字符串是不可变的。比较是不是同一个对象用 ==，new 出来的和字面量比较应是 false，对 new 出来的调用 intern() 才回到池里那一个。",
-    "why": "按“永远两个”去对运行结果，池里已经有 \"xyz\" 时，这行只多出一个实例，对象计数对不上。接着会用 == 比较两段内容相同的字符串，把“内容相等”和“同一个引用”看成一件事。",
-    "example": "先执行 String pooled = \"xyz\"，池里已经有它。再 String created = new String(\"xyz\")。pooled == created 是 false，created.equals(pooled) 是 true，pooled == created.intern() 是 true。日常写 \"xyz\" 即可，不要为了进池而 new 一次再 intern。",
-    "task": "写出字面量进池和 new 出堆实例的差别；划掉“一定两个对象”。",
-    "answer": "字面量进入字符串池，相同字面量复用池中的引用。new String(\"xyz\") 额外构造一个新的 String，和池里的不是同一个对象。划掉“一定两个对象”：池里已经有这个字面量时，这一行新增加的是那一个堆实例。不需要拷贝时直接用字面量。用 == 判断是不是同一个引用，用 equals 判断内容。",
-    "deep": [
-      {
-        "title": "要数的是这一行新造了谁",
-        "body": "“两个对象”把字面量进池和构造函数混成了同一次执行。进池发生在字面量被解析、池里还没有它的时候，可能早于这一行。构造函数每次调用都新造一个 String，这一条才稳定。所以计数之前先问池里有没有，而不是背一个固定的 2。"
-      },
-      {
-        "title": "怎样自己验证",
-        "body": "先把 \"xyz\" 赋给一个变量，再 new String(\"xyz\") 赋给另一个。用 == 比较二者，应是 false；用 equals 应是 true。再比较第一个变量和第二个变量的 intern()，应是 true。在此之前不要假设这一行的字节码新分配了两个 String。"
-      }
-    ],
+  "java-default-class-wins-conflict": {
+    "core": "类仍然只能 `extends` 一个类。默认方法是接口上的行为，见 `java-interface-contract`。两个接口声明了同一签名的默认方法，实现类或子接口必须自己覆盖，或写成 abstract。父类已有同名实例方法时，用父类的，不用接口默认方法。更具体的子接口覆盖祖先接口。没有字段、没有构造器冲突，这不是 C++ 多继承。",
+    "why": "按“随便用两个默认实现”去编译，会卡在 unrelated defaults；按类多继承去加字段，接口上也加不上。",
+    "example": "`class C extends Super implements A` 且 Super 和 A 都有 `say()`，调用的是 Super。`interface C extends A,B` 两边都有默认 `say()` 则必须在 C 里覆盖，可写 `A.super.say()`。",
+    "task": "划掉“Java 8=类多继承”；写出同名默认方法冲突时谁赢。",
+    "answer": "划掉「Java 8=类多继承」。仍是单继承类。默认方法冲突要自己覆盖。类里的方法压过接口默认方法。",
     "references": [
       [
-        "JLS 3.10.5 String Literals",
-        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-3.html#jls-3.10.5"
+        "Java Tutorial：Default Methods",
+        "https://docs.oracle.com/javase/tutorial/java/IandI/defaultmethods.html"
       ],
       [
-        "String(String)",
-        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html#%3Cinit%3E(java.lang.String)"
-      ]
-    ]
-  },
-  "jdk-feature-release-six-months": {
-    "core": "从 JDK 10 起，OpenJDK 功能版本大约 **每六个月** 发一版（3 月和 9 月）。Oracle JDK 与这个节奏对齐，另有长期支持版（11/17/21/25）。不存在“Oracle 三年、OpenJDK 三月”这套对照。构建可以选 Eclipse Temurin、Oracle、Amazon Corretto 等发行，API 以对应 OpenJDK 版本为准。Jakarta EE 已从 Java EE 改名，见有些资料里 2018 年那句是对的，但版本号不要再写 J2EE。",
-    "why": "按三年发布去规划升级窗口，会错过半年一次的功能版和真正的 LTS。",
-    "example": "2024–2026 的功能线是 22、23、24、25。生产锁 21 或 25 LTS，而不是等“下一个三年大版本”。",
-    "task": "划掉“Oracle 三年 / OpenJDK 三月”；写出当前 LTS 和功能版节奏。",
-    "answer": "划掉「Oracle 三年 / OpenJDK 三月」。功能版大约半年一次。LTS 隔几年一个。Oracle JDK 不按三年发版。",
-    "references": [
-      [
-        "JEP 322：Time-Based Release Versioning",
-        "https://openjdk.org/jeps/322"
-      ],
-      [
-        "Oracle JDK 发布说明",
-        "https://www.oracle.com/java/technologies/java-se-support-roadmap.html"
-      ]
-    ]
-  },
-  "java-polymorphism-not-only-extends": {
-    "core": "运行时按对象的实际类型选方法，这才是包含多态。`List list = new ArrayList()` 走的是接口，没有类继承也能多态。重载是编译期按参数选型，不是这套运行时分派。抽象类和接口都可以当静态类型。资料写“做梦都要背三个必要条件”，会把只实现接口的代码判成“没有多态”。默认方法见 `java-interface-contract`。",
-    "why": "按三件套去改代码，会凭空加一个抽象父类，只为了让引用类型“看起来像继承”。",
-    "example": "`Runnable r = () -> {}` 和 `new Thread(r)` 是接口多态。`print(int)` / `print(String)` 是重载，编译期就定了。",
-    "task": "划掉“必须先 extends 一个类”；写出接口引用为什么也是多态。",
-    "answer": "划掉「必须先 extends 一个类」。接口实现也是多态。三件套把接口方案开除了。重载不是运行时多态。",
-    "references": [
-      [
-        "JLS 15.12 Method Invocation",
-        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-15.html#jls-15.12"
-      ],
-      [
-        "Java Tutorial：Polymorphism",
-        "https://docs.oracle.com/javase/tutorial/java/IandI/polymorphism.html"
-      ]
-    ]
-  },
-  "java-not-every-class-clone-serializable": {
-    "core": "`equals`/`hashCode` 只在该类会按值比较或当 Map 键时才成对覆盖，见 `java-equals-contract`。`toString` 便于排障，不是契约。`Cloneable` 是弱类型标记，`clone` 默认浅拷贝、易碎，新代码更常用拷贝构造或工厂。`Serializable` 是长期二进制契约，默认机制脆弱，不要给每个 DTO 盖章。清理资源用 try-with-resources，不要靠 `finalize` 和已删除的 `runFinalizersOnExit`。",
-    "why": "每个实体都 Cloneable 加 Serializable，拷贝时改到共享可变字段，序列化一升级就坏。",
-    "example": "不可变的值对象可以写 equals。Servlet、Spring Bean、一次性请求体不要 `implements Cloneable, Serializable`。",
-    "task": "划掉“每个类五件套”；写出什么时候才覆盖 equals，什么时候不要序列化。",
-    "answer": "划掉「每个类五件套」。按需 equals。不要默认 Cloneable。Serializable 是承诺，不是装饰。finalize 不是析构。",
-    "references": [
-      [
-        "Cloneable",
-        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Cloneable.html"
-      ],
-      [
-        "Serializable",
-        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/Serializable.html"
+        "JLS 9.4.1 Inheritance and Overriding",
+        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-9.html#jls-9.4.1"
       ]
     ]
   },
@@ -544,149 +446,6 @@
         "https://docs.oracle.com/javase/tutorial/java/IandI/super.html"
       ]
     ]
-  },
-  "java-raw-type-skips-checks": {
-    "core": "擦除之后运行时集合不带着参数类型，见 `java-generics`。编译器对裸类型几乎放弃检查，`void add(List list, Object o)` 能把 `Integer` 塞进 `List<String>`，取出时 `ClassCastException`。`List<?>` 是未知具体类型，通常不能 `add` 除 null 以外的元素。`List<Object>` 才表示什么对象都能放。新代码不要用裸类型。",
-    "why": "工具方法收裸 `List`，调用方以为还是 `List<String>`，下一个 get 才炸。",
-    "example": "`List<String> list = new ArrayList<>(); add(list, 10); String s = list.get(0);` 编译过、运行转型失败。",
-    "task": "划掉“List 和 List<?> 一样”；写出裸类型、无界通配、List<Object> 各能干什么。",
-    "answer": "划掉「List 和 List<?> 一样」。裸类型跳过检查。List<?> 基本不能 add。要装任意对象用 List<Object>。",
-    "references": [
-      [
-        "JLS 4.8 Raw Types",
-        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-4.html#jls-4.8"
-      ],
-      [
-        "Java Tutorial：Type Erasure",
-        "https://docs.oracle.com/javase/tutorial/java/generics/erasure.html"
-      ]
-    ]
-  },
-  "java-default-class-wins-conflict": {
-    "core": "类仍然只能 `extends` 一个类。默认方法是接口上的行为，见 `java-interface-contract`。两个接口声明了同一签名的默认方法，实现类或子接口必须自己覆盖，或写成 abstract。父类已有同名实例方法时，用父类的，不用接口默认方法。更具体的子接口覆盖祖先接口。没有字段、没有构造器冲突，这不是 C++ 多继承。",
-    "why": "按“随便用两个默认实现”去编译，会卡在 unrelated defaults；按类多继承去加字段，接口上也加不上。",
-    "example": "`class C extends Super implements A` 且 Super 和 A 都有 `say()`，调用的是 Super。`interface C extends A,B` 两边都有默认 `say()` 则必须在 C 里覆盖，可写 `A.super.say()`。",
-    "task": "划掉“Java 8=类多继承”；写出同名默认方法冲突时谁赢。",
-    "answer": "划掉「Java 8=类多继承」。仍是单继承类。默认方法冲突要自己覆盖。类里的方法压过接口默认方法。",
-    "references": [
-      [
-        "Java Tutorial：Default Methods",
-        "https://docs.oracle.com/javase/tutorial/java/IandI/defaultmethods.html"
-      ],
-      [
-        "JLS 9.4.1 Inheritance and Overriding",
-        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-9.html#jls-9.4.1"
-      ]
-    ]
-  },
-  "java-class-newinstance-deprecated": {
-    "core": "`Class.forName` 仍然要全限定名。`Class.newInstance` 只能走公共无参构造，把受检异常包成 `InstantiationException`/`IllegalAccessException`，Java 9 起弃用。应 `getDeclaredConstructor(参数类型).newInstance(实参)`，无参也要先拿到 `Constructor`。模块和封装下还可能要 `setAccessible`。实体框架要无参构造，见 `java-ctor-implicit-super-noarg`，那是框架约定，不是反射 API 的推荐写法。",
-    "why": "类只有带参构造时 `newInstance` 直接失败，还以为反射能绕过构造器。",
-    "example": "`String.class.getConstructor(byte[].class, String.class).newInstance(bytes, \"UTF-8\")`。不要 `String.class.newInstance()`。",
-    "task": "划掉 Class.newInstance；写出带参构造的反射调用顺序。",
-    "answer": "划掉「Class.newInstance」。forName 仍要类名。用 Constructor.newInstance。Class.newInstance 已弃用且只走无参。",
-    "references": [
-      [
-        "Class.newInstance",
-        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html#newInstance()"
-      ],
-      [
-        "Constructor.newInstance",
-        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/reflect/Constructor.html#newInstance(java.lang.Object...)"
-      ]
-    ]
-  },
-  "java-final-not-fifty-percent": {
-    "core": "`final` 类不能被继承，这是语言规则，见 `java-string-immutability`。HotSpot 本来就能对单态调用做内联，不要求类或方法写 final。没有任何规范承诺“平均快 50%”。该 final 的是 API 契约（不可变、禁止子类），不是当加速开关。过期对象赋 `null` 也不会立刻 GC，见 `java-memory`。`clone()` 代替 `new` 更不是现行工厂，见 `java-not-every-class-clone-serializable`。",
-    "why": "把业务基类改成 final 只为冲 50%，子类测试立刻编不过，基准测试也看不出那一半。",
-    "example": "`String` 是 final 因为契约，不是因为它“快一半”。给 `OrderService` 加 final，JIT 日志里内联情况和加之前可以一样。",
-    "task": "划掉“final 类=快 50%”；写出 final 真正禁止的是什么。",
-    "answer": "划掉「final 类=快 50%」。final 禁止继承。内联是 JIT 的事。没有五成加速的规范。不要靠赋 null 催 GC。",
-    "references": [
-      [
-        "JLS 8.1.1.2 final Classes",
-        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-8.html#jls-8.1.1.2"
-      ],
-      [
-        "HotSpot 内联",
-        "https://wiki.openjdk.org/display/HotSpot/PerformanceTechniques"
-      ]
-    ]
-  },
-  "java-shift-not-times-eight": {
-    "core": "`2 << 3` 的值确实是 16，这是移位语义，见 JLS 15.19。HotSpot 会把乘 8 这种常数乘法自己强度折减，手写移位几乎赢不到可测的时间，还更难读。负数、溢出、对 long 与 int 的位移距离都容易写错。优先写 `2 * 8` 或直接 `16`。同步范围应尽量小，不要听“尽量用方法同步代替代码块同步”，见 `java-synchronized-monitor`。",
-    "why": "为了口算题把业务里的 `price * 8` 改成 `price << 3`，负数价格和代码评审一起炸。",
-    "example": "`Math.round(11.5)` 是 12，`Math.round(-11.5)` 是 -11，这才是该记的。容量对齐写成有名字的常数，而不是一串 `<<`。",
-    "task": "划掉“移位一定比乘法快”；写出何时才用移位（位图、对齐掩码）。",
-    "answer": "划掉「移位一定比乘法快」。乘除写乘除。JIT 会折减常数。移位留给位运算。方法级 synchronized 不是更快。",
-    "references": [
-      [
-        "JLS 15.19 Shift Operators",
-        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-15.html#jls-15.19"
-      ],
-      [
-        "JLS 15.17 Multiplicative Operators",
-        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-15.html#jls-15.17"
-      ]
-    ]
-  },
-  "java-stringbuilder-not-buffer": {
-    "core": "`String` 不可变，见 `java-string-immutability`。同一线程里反复改缓冲区，用 `StringBuilder`。编译器把相邻字面量和 `+` 也收成 Builder。`StringBuffer` 的公开修改方法带 `synchronized`，只保证**这一次方法调用**互斥，并不给出跨线程谁先写、何时可见的协议。多个线程共享一块可变缓冲，仍要另定所有权或改成不可变 `String` 传递。不要把“出现过线程”写成默认 Buffer。",
-    "why": "循环里 `new StringBuffer()` 只为口诀，单线程热路径白加锁。共享 Buffer 却只靠方法同步，拼接顺序和对端读到半截字符的问题还在。",
-    "example": "方法内 `StringBuilder out = new StringBuilder(); for (var part : parts) out.append(part); return out.toString();` 不要换成 Buffer。两个线程往同一块 Buffer append，同步挡不住交错字符。",
-    "task": "划掉“有线程就用 StringBuffer”。分别写出局部拼接和跨线程共享各自该用什么。",
-    "answer": "划掉「有线程就用 StringBuffer」。局部拼接用 StringBuilder，最后得到 String。跨线程不要共享可变缓冲当协议；要共享就先定谁写完、用不可变结果传递。StringBuffer 的 synchronized 只锁单次调用。",
-    "deep": [
-      {
-        "title": "不可变结果仍然是 String",
-        "body": "Builder 和 Buffer 都是拼完再 `toString`。池和字面量那一套只作用于 String，见 `java-string-new-vs-pool`。不要为了进池先 new StringBuffer。"
-      },
-      {
-        "title": "怎样自己验证",
-        "body": "打开两个类的 JavaDoc：Builder 写明非同步，Buffer 写明线程安全指方法同步。把局部循环从 Buffer 改成 Builder，行为应相同。两个线程共享一块 Buffer 时，观察交错 append，说明还缺协议。"
-      }
-    ],
-    "references": [
-      [
-        "StringBuilder",
-        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/StringBuilder.html"
-      ],
-      [
-        "StringBuffer",
-        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/StringBuffer.html"
-      ]
-    ],
-    "diagram": "diagrams/java-stringbuilder-buffer.svg",
-    "origin": "本地库 Java 基础导图把 StringBuffer 标成多线程默认"
-  },
-  "java-switch-arrow-no-fall": {
-    "core": "传统 `switch` 语句里，`case 1:` 匹配之后**没有 `break`（或 `return`）会落到下一支**，`default` 也会被贯穿进来。这是笔试题常见陷阱。Java 14 起的 **switch 表达式**用 `case 1 ->` 或 `yield`：匹配的那一支结束就离开，**不会贯穿**。多个标签写成 `case 1, 2 ->`。表达式必须穷尽，漏掉枚举常量编不过。不要把两种语法合成一句“switch 都要 break”。",
-    "why": "把箭头语法也塞上 break，或者在冒号语法里省掉 break，输出会连到下一支，题目里的 default 也会执行。",
-    "example": "`switch (n) { case 1: System.out.print(\"a\"); case 2: System.out.print(\"b\"); }` 在 n 为 1 时打印 ab。`switch (n) { case 1 -> \"a\"; case 2 -> \"b\"; default -> \"z\"; }` 在 n 为 1 时只得到 \"a\"。",
-    "task": "同一组输入分别用冒号语句和箭头表达式写出输出。划掉“所有 switch 都必须写 break”。",
-    "answer": "划掉「所有 switch 都必须写 break」。冒号分支没有 break 会贯穿。箭头分支只跑匹配的那一支。新代码优先箭头或显式 yield。笔试题若给的是 case 1: 仍按贯穿算。",
-    "deep": [
-      {
-        "title": "穷尽不是装饰",
-        "body": "对枚举做表达式时，每个常量都要有支，或写 default。加新枚举常量时，漏支会在编译期暴露。语句版的 switch 没有这层保护，漏掉只是走进 default 或什么都不做。"
-      },
-      {
-        "title": "怎样自己验证",
-        "body": "写一个 n=1 的冒号 switch，中间那支不写 break，确认打印了后面的分支。同一输入改成箭头表达式，确认只得到这一支。再拿一个枚举，删掉其中一支，确认表达式编不过。"
-      }
-    ],
-    "references": [
-      [
-        "JLS：switch",
-        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-14.html#jls-14.11"
-      ],
-      [
-        "Java 语言：switch 表达式",
-        "https://docs.oracle.com/en/java/javase/21/language/switch-expressions.html"
-      ]
-    ],
-    "diagram": "diagrams/java-switch-arrow.svg",
-    "origin": "本地库笔试题照片里的 switch 贯穿题，对照现行 switch 表达式"
   },
   "java-exceptions": {
     "core": "异常是失败信号，用来决定这次用例是否继续。捕获之后只有几条路：修好并继续、转成调用方能理解的业务失败、补偿已经做的事、或者继续抛出。捕获后既不抛也不改返回值，调用方会认为成功。在写接口里，这意味着事务可能已经因为异常回滚，HTTP 却返回 200。捕获时要保留原因，日志里带上请求标识，返回给页面的是契约里的 type，不是堆栈。资源在离开作用域时关闭，try-with-resources 会在正常和异常两条路上都调用 close。不要用异常代替正常的分支，例如“找不到”如果是预期结果，可以返回空或可选值；一旦选择用异常表示业务拒绝，整条链都要把它当成失败，直到变成问题详情。",
@@ -711,8 +470,52 @@
       ]
     ]
   },
+  "java-unchecked-not-must-catch": {
+    "core": "Throwable 分成 Error 与 Exception。RuntimeException 及其子类是未检查异常，编译器不要求必须 catch 或声明 throws。IOException 一类检查异常才必须处理。Error 描述 JVM 内部错误和资源耗尽，应用代码通常不要捕捉后假装恢复。资料把 RuntimeException 写成必须捕获，把检查异常说成“一般是外部错误必须 catch”，两条都反了。业务失败用异常类型表达，不要一律 catch Exception。",
+    "why": "把 RuntimeException 当成必须 try/catch，空指针会被包住后假装没事；把检查异常当成都可以不声明，漏了 IOException 又编译不过。区分信号是未检查异常编译器不强制，Error 更不该当业务分支。",
+    "example": "Integer.parseInt 抛出的 NumberFormatException 可以不写 catch。Files.readAllBytes 的 IOException 必须处理或在方法上声明。OutOfMemoryError 不要收进来当业务分支恢复。",
+    "task": "对照 JLS 异常分类，划掉“RuntimeException 必须 catch”；写出 Error 为什么不该当业务分支。",
+    "answer": "对照 JLS 的异常分类，划掉“RuntimeException 必须 catch”：它和子类是未检查异常，编译器不要求捕获或声明 throws。必须处理或声明的是 IOException 一类检查异常。Error 不该当业务分支，因为它表示 JVM 内部错误或资源耗尽，捕捉后假装恢复会掩盖进程已经不行。",
+    "deep": [
+      {
+        "title": "编译器只强迫检查异常",
+        "body": "RuntimeException 及其子类不用写 catch，也不用 throws，空指针包一层只会把故障藏起来。IOException 这类检查异常漏了处理，编译直接不过。Error 表示虚拟机或资源已经不行，收进业务分支再假装恢复，调用方会以为这次失败可以重试成功。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对照语言规范里的异常分类，把“RuntimeException 必须 catch”划掉。写一个 parseInt，确认不捕获也能编译；写一个读文件的方法，确认 IOException 不处理就编不过。Error 留在分类说明里，不要放进业务 catch 清单。"
+      }
+    ],
+    "references": [
+      [
+        "JLS：Kinds of Exceptions",
+        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-11.html#jls-11.1.1"
+      ],
+      [
+        "Throwable",
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html"
+      ]
+    ]
+  },
+  "java-runtime-ex-not-auto-caught": {
+    "core": "未检查异常编译器不强制 catch，见 `java-unchecked-not-must-catch`。运行时若真抛出且一路没有 catch，线程会走到未捕获异常处理器，默认打印堆栈，该线程结束，**不是**被虚拟机默默吃掉。Error 同样不会变成“应用不该处理所以已经处理了”。空指针、除零、类转换失败要改逻辑，不要指望 JVM 当 catch 块。",
+    "why": "按“自动捕获”去省略边界检查，线上线程静默死掉还以为异常已经消化。",
+    "example": "主线程 `1/0` 没有 try，进程带着 ArithmeticException 退出。线程池任务抛 NPE，该任务失败，池还在，默认会打堆栈。",
+    "task": "划掉“RuntimeException 会被 JVM 自动捕获”；写出没有 catch 时线程会怎样。",
+    "answer": "划掉「RuntimeException 会被 JVM 自动捕获」。没有 catch 时异常沿栈往上走，线程按未捕获处理器结束。JVM 不会当 catch 用。",
+    "references": [
+      [
+        "Thread.UncaughtExceptionHandler",
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Thread.UncaughtExceptionHandler.html"
+      ],
+      [
+        "JLS 11 Exceptions",
+        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-11.html"
+      ]
+    ]
+  },
   "java-optional": {
-    "core": "orElse 的参数在调用前就求值，哪怕 Optional 有值；orElseGet 接收 Supplier，只在缺值时调用。Optional 旨在明确返回值可能缺失，不应靠 get() 把空值风险换成另一种异常。顺序是：先看 Optional 里有没有值；orElse 在这一步之前就已经把参数算出来了；orElseGet 把计算包进 Supplier，缺值时才调用。边界是：默认值若会访问数据库或改状态，必须用 orElseGet。有值时多跑一次不是优化问题，而是错误的副作用。get 在空值上抛异常，只是把缺失换成了另一条失败路径。给 expensive 加计数器。有值走 orElse，计数应增加；有值走 orElseGet，计数应不变。空值两种都应增加。",
+    "core": "Optional（JDK 8 起）里，orElse 的参数在调用前就求值，哪怕 Optional 有值；orElseGet 接收 Supplier，只在缺值时调用。Optional 旨在明确返回值可能缺失，不应靠 get() 把空值风险换成另一种异常。顺序是：先看 Optional 里有没有值；orElse 在这一步之前就已经把参数算出来了；orElseGet 把计算包进 Supplier，缺值时才调用。边界是：默认值若会访问数据库或改状态，必须用 orElseGet。有值时多跑一次不是优化问题，而是错误的副作用。get 在空值上抛异常，只是把缺失换成了另一条失败路径。给 expensive 加计数器。有值走 orElse，计数应增加；有值走 orElseGet，计数应不变。空值两种都应增加。",
     "why": "错把 orElse 的参数当成缺值时才计算，值已经存在时 expensive 仍会先执行，多打一次数据库或带上副作用。默认值的成本发生在不需要它的时候。能分开的信号是：传入的是已经算好的结果，还是一个 Supplier。",
     "example": "Optional.of(1).orElse(expensive()) 仍把计数器加一。Optional.of(1).orElseGet(() -> expensive()) 计数器不变。Optional.empty() 时两种都会调用，计数器都加一。",
     "task": "给 expensive() 加计数器，分别测有值和空值时的 orElse、orElseGet。",
@@ -758,50 +561,6 @@
       [
         "AutoCloseable",
         "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/AutoCloseable.html"
-      ]
-    ]
-  },
-  "java-unchecked-not-must-catch": {
-    "core": "Throwable 分成 Error 与 Exception。RuntimeException 及其子类是未检查异常，编译器不要求必须 catch 或声明 throws。IOException 一类检查异常才必须处理。Error 描述 JVM 内部错误和资源耗尽，应用代码通常不要捕捉后假装恢复。资料把 RuntimeException 写成必须捕获，把检查异常说成“一般是外部错误必须 catch”，两条都反了。业务失败用异常类型表达，不要一律 catch Exception。",
-    "why": "把 RuntimeException 当成必须 try/catch，空指针会被包住后假装没事；把检查异常当成都可以不声明，漏了 IOException 又编译不过。区分信号是未检查异常编译器不强制，Error 更不该当业务分支。",
-    "example": "Integer.parseInt 抛出的 NumberFormatException 可以不写 catch。Files.readAllBytes 的 IOException 必须处理或在方法上声明。OutOfMemoryError 不要收进来当业务分支恢复。",
-    "task": "对照 JLS 异常分类，划掉“RuntimeException 必须 catch”；写出 Error 为什么不该当业务分支。",
-    "answer": "对照 JLS 的异常分类，划掉“RuntimeException 必须 catch”：它和子类是未检查异常，编译器不要求捕获或声明 throws。必须处理或声明的是 IOException 一类检查异常。Error 不该当业务分支，因为它表示 JVM 内部错误或资源耗尽，捕捉后假装恢复会掩盖进程已经不行。",
-    "deep": [
-      {
-        "title": "编译器只强迫检查异常",
-        "body": "RuntimeException 及其子类不用写 catch，也不用 throws，空指针包一层只会把故障藏起来。IOException 这类检查异常漏了处理，编译直接不过。Error 表示虚拟机或资源已经不行，收进业务分支再假装恢复，调用方会以为这次失败可以重试成功。"
-      },
-      {
-        "title": "怎样自己验证",
-        "body": "对照语言规范里的异常分类，把“RuntimeException 必须 catch”划掉。写一个 parseInt，确认不捕获也能编译；写一个读文件的方法，确认 IOException 不处理就编不过。Error 留在分类说明里，不要放进业务 catch 清单。"
-      }
-    ],
-    "references": [
-      [
-        "JLS：Kinds of Exceptions",
-        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-11.html#jls-11.1.1"
-      ],
-      [
-        "Throwable",
-        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Throwable.html"
-      ]
-    ]
-  },
-  "java-runtime-ex-not-auto-caught": {
-    "core": "未检查异常编译器不强制 catch，见 `java-unchecked-not-must-catch`。运行时若真抛出且一路没有 catch，线程会走到未捕获异常处理器，默认打印堆栈，该线程结束，**不是**被虚拟机默默吃掉。Error 同样不会变成“应用不该处理所以已经处理了”。空指针、除零、类转换失败要改逻辑，不要指望 JVM 当 catch 块。",
-    "why": "按“自动捕获”去省略边界检查，线上线程静默死掉还以为异常已经消化。",
-    "example": "主线程 `1/0` 没有 try，进程带着 ArithmeticException 退出。线程池任务抛 NPE，该任务失败，池还在，默认会打堆栈。",
-    "task": "划掉“RuntimeException 会被 JVM 自动捕获”；写出没有 catch 时线程会怎样。",
-    "answer": "划掉「RuntimeException 会被 JVM 自动捕获」。没有 catch 时异常沿栈往上走，线程按未捕获处理器结束。JVM 不会当 catch 用。",
-    "references": [
-      [
-        "Thread.UncaughtExceptionHandler",
-        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Thread.UncaughtExceptionHandler.html"
-      ],
-      [
-        "JLS 11 Exceptions",
-        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-11.html"
       ]
     ]
   },
@@ -888,221 +647,6 @@
       ]
     ]
   },
-  "java-stream": {
-    "core": "Java Stream 的中间操作形成延迟执行的流水线，通常在终端操作启动后才按需要处理元素。实现可进行优化；不要依赖中间操作中的副作用一定运行或运行固定次数。顺序是：中间操作先串成流水线，终端操作才开始拉元素，每个元素按需经过前面的步骤。边界是：没有终端操作，map 里的函数不会运行。短路终端可能只处理前缀。并行流和实现优化还会改变副作用的次数和线程。要用 map 的返回值，不要用它去改外部变量。把日志打在 map 里只能观察拉动了多少元素，不能驱动业务。终端操作缺席时，这段日志一次都不会出现。findFirst 只拉动需要的前缀，后面的 map 可以一次都不执行。",
-    "why": "错把 map 当成调用时就遍历，没有终端操作时转换函数一次都不跑，副作用也没发生。加上 findFirst 后又会以为每个元素都经过了 map。能分开的信号是：流水线有没有终端操作，以及它会不会短路。",
-    "example": "list 含 1、2、3。只调用 stream().map(x -> { log(x); return x * 2; })，日志不出现。接上 collect 后，1、2、3 都打印。把终端改成 findFirst，往往只打印 1。",
-    "task": "给 Stream 加 filter、map、findFirst 和日志，观察哪些元素真正经过各步。",
-    "answer": "filter、map 都是中间操作，在 findFirst 这种终端操作启动前不会为了副作用跑完整表。findFirst 短路，找到第一个符合的元素就可以停，后面的元素可能不经过 map。因此日志里出现的只是需要的前缀，不是整份列表。不要把中间操作写成必然会执行固定次数。",
-    "deep": [
-      {
-        "title": "拉的时候才算",
-        "body": "中间操作只是描述。终端操作才拉动流水线。短路让拉动提前停。副作用若写在 map 或 peek 里，次数会随短路、并行和实现变化，不能当成业务步骤。次数不稳定，就不要拿它做计数。"
-      },
-      {
-        "title": "怎样自己验证",
-        "body": "给 map 加日志，先不接终端操作，确认没有日志。再接 collect，确认每个元素都出现。换成 findFirst 或 limit，确认后面的元素不再打印。最后不要依赖这些日志去改外部计数器。"
-      }
-    ],
-    "references": [
-      [
-        "Oracle：Stream",
-        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Stream.html"
-      ]
-    ]
-  },
-  "java-memory": {
-    "core": "Java 里对象是否还能被使用，看它是否从 GC Roots 可达。常见的根包括正在执行的线程栈上的局部变量，以及类的静态字段。从这些根沿着字段引用能到达的对象都还活着。没有任何根能到达时，对象成为可回收垃圾。垃圾回收器在自己的时机运行，不保证引用一断就立刻回收，也没有“马上调用析构释放业务资源”这回事。文件、连接和锁要用明确的 close 或 try-with-resources。看起来像泄漏，通常是还有一条忘了的可达链：静态 Map、未取消的监听、线程池队列里的任务、缓存没有上限。把某个字段设为 null，只有在没有别的根仍指着它时，才使它变得不可达。",
-    "why": "学习者会以为把变量设成空，对象马上就从堆里消失。请求已经返回，静态缓存里的订单仍让堆一直涨，他却再把局部变量清空。从缓存移除该键之后转储里才找不到这条引用链，才说明回收看的是还有没有根，不是方法是否返回。",
-    "example": "静态映射按订单号保存订单和其中的字节数组。请求方法返回后，局部变量没了，但这条链仍从静态字段可达，堆转储里点“谁引用了我”能走到这个静态字段。从映射移除该键并且没有别的根之后，同一条链消失，之后才可能被回收。",
-    "task": "画一条链：静态缓存、订单、其中的字节数组。请求方法已经返回。说清字节数组为什么还在，以及哪一步之后它才不可达。",
-    "answer": "请求方法已经返回，局部变量消失，但静态缓存仍指着订单，订单又指着字节数组，所以字节数组还在。从缓存移除该订单并且没有其他根之后，它们才不可达。即便不可达，消失的时刻仍由收集器决定，不是移除的下一行就立刻没了。方法返回本身不会把静态字段上的订单变成垃圾。",
-    "deep": [
-      {
-        "title": "和连接池的关系",
-        "body": "连接应还回池里，而不是指望连接对象被回收时关闭。回收时机不确定，池也会因为连接仍被任务引用而借不出来。"
-      },
-      {
-        "title": "怎样自己验证",
-        "body": "用堆转储看订单对象的“谁引用了我”，一直点到静态字段或线程。看不到根，才是真正不可达。"
-      }
-    ],
-    "references": [
-      [
-        "Oracle：GC Roots",
-        "https://docs.oracle.com/en/java/javase/21/gctuning/other-considerations.html"
-      ]
-    ]
-  },
-  "java-enumeration-not-faster": {
-    "core": "Iterator 是集合框架的遍历协议，允许 fail-fast 检测并发结构修改，并提供 remove。Enumeration 是遗留接口，主要出现在 Vector、Hashtable、Properties。官方文档从未给出“快一倍、更省内存”的保证；Hashtable/Vector 的同步反而可能更慢。资料把最初集合写成 HashTable（正确类名 Hashtable），把双端队列接口写成 Dequeue（应为 Deque）。需要并发 Map 时用 ConcurrentHashMap，不要推荐 Hashtable。Iterator 也不会“阻止其它线程修改集合”——fail-fast 只是尽量抛 ConcurrentModificationException，不是锁。",
-    "why": "背“Enumeration 比 Iterator 快一倍、也更省内存”，改造时会舍不得丢掉遗留接口，也会把 fail-fast 理解成互斥锁。区分信号是 JavaDoc 没有这句速度承诺，fail-fast 只是检测并发修改。",
-    "example": "新代码用 List.iterator() 或 for-each。读 Properties 仍可能碰到 elements()，不要据此比较性能。多线程共享 Map 用 ConcurrentHashMap。",
-    "task": "对照 Iterator 与 Enumeration 的 JavaDoc，划掉两倍速度；改正 Hashtable/Deque 拼写；写一句 fail-fast 不是锁。",
-    "answer": "对照 Iterator 和 Enumeration 的说明，划掉“快一倍、更省内存”，没有官方的速度倍数。遍历用 Iterator。Enumeration 是遗留 API。Hashtable 的拼写和“用它做并发”都要改正，现行并发不要靠它。fail-fast 会在迭代中发现结构被改，抛出异常，它不是锁。",
-    "deep": [
-      {
-        "title": "fail-fast 不是互斥",
-        "body": "迭代器发现集合在迭代期间被改了，就尽快失败。这不能阻止两个线程同时改集合，只是让你看见已经坏了。要互斥仍得用并发集合或加锁。两倍速度的说法不在文档里。文档里没有倍数。"
-      },
-      {
-        "title": "怎样自己验证",
-        "body": "对照两份 JavaDoc，划掉两倍速度。在迭代中删除元素，看 fail-fast 抛出的是并发修改，而不是等待锁。再把有些资料里的 Hashtable、Deque 拼写改正，确认没有“更快”的句子。"
-      }
-    ],
-    "references": [
-      [
-        "Iterator",
-        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Iterator.html"
-      ],
-      [
-        "Enumeration",
-        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Enumeration.html"
-      ]
-    ]
-  },
-  "java-arrays-aslist-fixed": {
-    "core": "Arrays.asList 返回的是 Arrays 自己的私有 ArrayList，和 java.util.ArrayList 不是一个类。它只是包装原数组：set 可以改对应下标并写回数组；add/remove 会抛 UnsupportedOperationException。长度跟原数组走，不是“final 数组所以一切只读”——元素对象若可变，从列表里看到的也会变。要独立可变副本，用 new ArrayList<>(Arrays.asList(...))。List.sort 与 Collections.sort 都可排序可变 List。Vector 同步但不是现行并发首选。ArrayList 空构造先是空数组，第一次 add 扩到默认容量 10，不要背成“JDK7 之后永远容量 0”。",
-    "why": "把 asList 的结果当成可增删的 ArrayList，add 会在运行时抛异常，set 还会写回原来的数组，别的持有者一起被改。区分信号是它的长度固定，类型也不是 java.util.ArrayList。",
-    "example": "String[] ids = {\"a\",\"b\"}; List<String> view = Arrays.asList(ids); view.set(0,\"x\") 会改 ids[0]；view.add(\"y\") 失败。",
-    "task": "写一段 asList 后 set、add、再包一层 java.util.ArrayList 的实验，记录哪一步改原数组、哪一步抛异常。",
-    "answer": "asList 之后 set 会成功，并改掉底层数组里对应位置，所以它不是只读视图。接着 add 或 remove 会抛出不支持的操作，因为大小固定。若要增删，把元素拷进 new java.util.ArrayList 再改，这份新列表不再写回原数组。",
-    "deep": [
-      {
-        "title": "视图和拷贝不是一份",
-        "body": "asList 没有把元素复制出来，只是给数组包了一层列表。要一份能增删、且不改原数组的列表，必须再构造一个真正的 ArrayList。只改包装类型的名字解决不了固定长度。"
-      },
-      {
-        "title": "怎样自己验证",
-        "body": "对 asList 的结果先 set，打印原数组应被改掉；再 add，应抛异常。包进 java.util.ArrayList 之后再 add，应成功，并且原数组长度不变。"
-      }
-    ],
-    "references": [
-      [
-        "Arrays.asList",
-        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Arrays.html#asList(T...)"
-      ],
-      [
-        "ArrayList",
-        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ArrayList.html"
-      ]
-    ]
-  },
-  "hashmap-treeify-need-capacity": {
-    "core": "哈希到同一个桶时，HashMap 先把节点串成链表。key 的哈希相同且 equals 也相同，是覆盖原来的值，不会再挂一个节点。TREEIFY_THRESHOLD 这个常量是 8。注释的意思是：向一个已经至少有这么多节点的桶再插入时，才尝试树化。对应的代码在这次插入使链表变成 9 个节点时调用 treeifyBin。真正换成红黑树还有第二个条件：表容量达到 MIN_TREEIFY_CAPACITY，也就是 64。容量还是默认的 16 或扩到 32 时，treeifyBin 里做的是 resize，把数组加大，节点仍是链表。容量是 2 的幂，扩容才能把一条长链表拆开；小表先拆开，比在 16 个桶上建树便宜。节点后来变少时，可以按 UNTREEIFY_THRESHOLD（6）退回链表，不是一旦树化就永远是树。这张表仍然不能并发修改结构。",
-    "why": "在 new HashMap 的默认容量里等红黑树，调试器里一直是普通节点。第 9 个互相冲突的键放进去时确实会进 treeifyBin，但当时数组长度小于 64，走的是扩容。把“大于 8”当成唯一条件，会在小表上找一个还没发生的树。",
-    "example": "写一组 hashCode 都返回 1、equals 按各自编号区分的键，放进默认的 HashMap。前 8 个在同一个桶上组成链表。第 9 个插入时调用 treeifyBin，table 从 16 扩大，类名仍是 Node。继续插入，直到表容量不小于 64 且这个桶再次满足长度，桶上的类名才变成 TreeNode。",
-    "task": "对照 HashMap 源码常量，写出树化的两个条件；划掉“大于 8 立刻变树”。",
-    "answer": "两个条件都要有。常量 TREEIFY_THRESHOLD 是 8，源码在链表变成 9 个节点的那次插入调用 treeifyBin。表容量还要达到 MIN_TREEIFY_CAPACITY 64，才会真正变成红黑树。划掉“大于 8 立刻变树”：容量不够时这个方法里执行的是扩容。equals 相同的键是覆盖，不是再挂一个节点。",
-    "deep": [
-      {
-        "title": "6 是退回链表的阈值，不是树化的另一半",
-        "body": "UNTREEIFY_THRESHOLD 等于 6。扩容把一棵树拆开、或者删除之后节点太少时，桶可以变回链表。它不参与“这次插入要不要树化”的判断。树化只看这次长度有没有跨过 8 这个常量，以及数组是不是已经不小于 64。"
-      },
-      {
-        "title": "怎样自己验证",
-        "body": "在 HashMap.treeifyBin 上下断点。用 hashCode 固定、equals 互不相等的键连续 put 进 new HashMap<>()。第一次断住时看 table.length，应小于 64，并且方法走 resize。等到 table.length 不小于 64 再次进入，这个桶的节点类名应为 TreeNode。容量还是 16 时不应出现红黑树。"
-      }
-    ],
-    "references": [
-      [
-        "OpenJDK HashMap",
-        "https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/HashMap.java"
-      ],
-      [
-        "JEP 180：HashMap collisions",
-        "https://openjdk.org/jeps/180"
-      ]
-    ]
-  },
-  "chm-iterator-weakly-consistent": {
-    "core": "三种迭代不要合成一句。ArrayList 这类 java.util 集合的迭代器是 fail-fast：同一个线程在遍历时改了结构，经常抛 ConcurrentModificationException。这是用来暴露误用的检测，不是跨线程的同步手段，别的线程并发修改时也不保证一定抛。CopyOnWriteArrayList 才在每次写入时复制底层数组。它的迭代器拿着创建那一刻的数组，所以一定看不到遍历开始之后的 add，也不会抛 ConcurrentModificationException。ConcurrentHashMap 的迭代器是弱一致，文档的意思是：不抛 ConcurrentModificationException，会遍历迭代器创建时已经存在的元素，之后的更新可能看得到，但不保证看得到。它不会为了这次遍历去复制整张表。按“迭代就拷贝一份”去估内存，估到的是 CopyOnWrite 的写入代价，不是 ConcurrentHashMap。",
-    "why": "把并发集合都说成遍历时复制整表，会按 map 的大小再留一份内存，也会以为遍历期间一定看不见新 put 的键。真正在写入时复制的是 CopyOnWriteArrayList。ConcurrentHashMap 上新键时有时无，才和文档里的 weakly consistent 对得上。",
-    "example": "ConcurrentHashMap 里先放键 1，开始迭代后再 put 键 2。这次循环不抛 ConcurrentModificationException，键 2 可能出现，也可能不出现。CopyOnWriteArrayList 先放 1，拿到迭代器后再 add 2，这次循环只有 1。ArrayList 在同一个线程里先拿到迭代器再 add，通常抛 ConcurrentModificationException。",
-    "task": "对照 ConcurrentHashMap 文档，写出迭代器语义；区分 CopyOnWrite 快照。",
-    "answer": "ConcurrentHashMap 的迭代器是弱一致：不抛 ConcurrentModificationException，不保证是一份冻结快照，可能看到迭代开始之后的部分更新。CopyOnWriteArrayList 在写入时复制数组，迭代器看到的是开始时那一份，不含后来的 add。ArrayList 的 fail-fast 是同一个线程在遍历中改结构时常用的检测，不是整张表的并发快照。",
-    "deep": [
-      {
-        "title": "复制发生在写入，不是发生在遍历 ConcurrentHashMap",
-        "body": "CopyOnWrite 的名字指每次 add 或 set 都换一份新数组，迭代器一直指着旧的那份，所以内存峰值跟在写入后面。ConcurrentHashMap 的迭代器和更新一起进行，不为遍历再分配一张同等大小的表。需要“开始这一瞬之后谁也不能改我看见的内容”时，自己复制一份，或改用按快照迭代的集合。"
-      },
-      {
-        "title": "怎样自己验证",
-        "body": "ArrayList 在同一个线程里拿到迭代器再 add，应抛 ConcurrentModificationException。ConcurrentHashMap 先放键 1，迭代开始后 put 键 2，不应抛这个异常，并且键 2 不保证出现。CopyOnWriteArrayList 在拿到迭代器之后 add 2，这次循环应只有原来的元素。三次结果对不上时，不要把三种集合记成同一句“并发就拷贝”。"
-      }
-    ],
-    "references": [
-      [
-        "ConcurrentHashMap",
-        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/ConcurrentHashMap.html"
-      ],
-      [
-        "CopyOnWriteArrayList",
-        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CopyOnWriteArrayList.html"
-      ]
-    ]
-  },
-  "hashmap-initial-16-not-max": {
-    "core": "DEFAULT_INITIAL_CAPACITY 是 16，这是默认的初始容量，不是最多能放 16 个键。MAXIMUM_CAPACITY 是 1 << 30，也就是 2 的 30 次方。new HashMap<>() 刚创建时内部的表还是空的，第一次 put 才按 16 分配桶数组。默认装载因子是 0.75，所以这 16 个桶的阈值是 12。size 超过 12 就扩容为两倍再把键重新摆放。第 13 个键放进去时会从 16 扩到 32。之后仍按同样的规则翻倍，直到不能再超过最大容量。能放多少键受堆内存限制，不是受 16 限制。同一条桶上的链表何时变成树，是容量至少 64 的那一课，这里只记容量本身会变。",
-    "why": "按“最多 16 个键”去估缓存，第十二个键之后表已经扩到 32，程序仍能继续放。真正把进程打满的是堆，不是这个初始数字。反过来，如果按 16 预留一块永远不扩的数组，会和 HashMap 的实际行为对不上。",
-    "example": "空的 new HashMap<>() 还没有桶数组。放入第 1 个键后，表长是 16。放入第 12 个键时仍是 16。放入第 13 个键时 size 超过阈值 12，表长变成 32。继续放入不会停在 16。",
-    "task": "写出 DEFAULT_INITIAL_CAPACITY 与 MAXIMUM_CAPACITY；划掉“最大承载 16”。",
-    "answer": "DEFAULT_INITIAL_CAPACITY 是 16，只是默认初始容量。MAXIMUM_CAPACITY 是 1 << 30。划掉“最大承载 16”。第一次放入才按 16 建表，装载因子 0.75 使阈值成为 12，第 13 个键会扩到 32。之后还可以继续翻倍，上限是这个最大容量，实际还受内存限制。",
-    "deep": [
-      {
-        "title": "阈值看的是 size，不是桶的个数",
-        "body": "容量是桶数组的长度，必须是 2 的幂。阈值大约是容量乘 0.75。size 是已经放入的键数。扩容比较的是 size 和阈值，不是“某个桶里有多少个节点”。桶很长是树化那一课的条件，容量不够 64 时先扩容，两件事都说明 16 不是终点。"
-      },
-      {
-        "title": "怎样自己验证",
-        "body": "用反射读 HashMap 的 table 字段。new HashMap<>() 时它应是 null。put 第 1 个键后长度应为 16，put 到第 12 个仍为 16，第 13 个之后应为 32。源码里的 MAXIMUM_CAPACITY 应是 1 << 30。不要把第 16 个键当成放不进去的那一个。"
-      }
-    ],
-    "references": [
-      [
-        "HashMap",
-        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/HashMap.html"
-      ],
-      [
-        "OpenJDK HashMap",
-        "https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/HashMap.java"
-      ]
-    ]
-  },
-  "chm-jdk8-not-segment-lock": {
-    "core": "JDK 7 确实用 Segment。JDK 8 起是数组 + 链表/红黑树，写入用 CAS 和桶头 synchronized，没有默认 16 段。容量、树化阈值仍要看，见 `hashmap-treeify-need-capacity`。迭代器弱一致，不是 fail-safe 拷贝，见 `chm-iterator-weakly-consistent`。size 在并发下是估算，不要当精确柜台。",
-    "why": "按分段锁去调 `concurrencyLevel`，在 JDK 8+ 上几乎没那个旋钮了。",
-    "example": "JDK 21 源码里没有 `Segment` 类当默认结构。冲突严重时是桶级锁，不是 16 把大锁。",
-    "task": "写出 JDK 7 与 8 的锁粒度；划掉“CHM=16 段锁”。",
-    "answer": "划掉「CHM=16 段锁」。8 起是 CAS 加桶锁。不要再背 Segment。迭代器弱一致。",
-    "references": [
-      [
-        "ConcurrentHashMap",
-        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/ConcurrentHashMap.html"
-      ],
-      [
-        "JEP 180：Map contention",
-        "https://openjdk.org/jeps/180"
-      ]
-    ]
-  },
-  "java-vector-cme-not-because-sync": {
-    "core": "Vector 的公开方法大多加了 `synchronized`，同一把实例锁。迭代器仍是 fail-fast：靠 `modCount`，结构被改过（含本线程在迭代外 `add`/`remove`）就可能抛 `ConcurrentModificationException`。ArrayList 不同步，迭代器一样 fail-fast。同步不能当互斥遍历协议，见 `java-enumeration-not-faster`。并发结构修改用并发集合，CHM 迭代器还是弱一致，见 `chm-iterator-weakly-consistent`。",
-    "why": "以为换成 Vector 迭代就线程安全，生产里仍 CME，还会在单线程里被自己的 add 打脸。",
-    "example": "单线程对 Vector 做 for-each，循环里 `list.add(x)` 同样可以 CME。Hashtable 的 Enumeration 反而不走这套 fail-fast。",
-    "task": "写出 CME 看的是结构修改计数，不是“类声明了同步”。",
-    "answer": "Vector 同步的是方法。迭代器 fail-fast 和 ArrayList 同一类机制。要并发遍历换并发集合。",
-    "references": [
-      [
-        "Vector",
-        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Vector.html"
-      ],
-      [
-        "ConcurrentModificationException",
-        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ConcurrentModificationException.html"
-      ]
-    ]
-  },
   "java-stack-prefer-deque": {
     "core": "`Stack` 继承 `Vector`，五个方法凑 LIFO，锁粒度和容量都跟着动态数组走。文档写明更完整、一致的 LIFO 在 `Deque`，实现优先 `ArrayDeque`。队列同样不要默认 `LinkedList` 当唯一答案，两端操作用 `Deque`。`Stack` 仍存在是兼容，不是新代码首选。并发场景另看阻塞队列，见 `java-linked-blocking-unbounded`。",
     "why": "用 Stack 当栈，会把 Vector 的同步和扩容成本带进单线程热路径。",
@@ -1117,23 +661,6 @@
       [
         "ArrayDeque",
         "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ArrayDeque.html"
-      ]
-    ]
-  },
-  "java-foreach-remove-cme": {
-    "core": "增强 for 在 `Iterable` 上会拿到迭代器并反复 `next()`。循环体里直接改集合结构，fail-fast 迭代器会抛 `ConcurrentModificationException`，见 `java-vector-cme-not-because-sync`。正确做法是 `Iterator.remove()`，且必须先 `next()`。按下标 `remove(i)` 会让后面元素前移，漏删。`removeIf` 或收集后再删也行。并发结构不要用 `ArrayList` 硬撑。",
-    "why": "foreach 里删“a”看似成功，多元素或继续迭代就 CME，线上当偶发。",
-    "example": "`for (String s : list) { if (s.equals(\"a\")) list.remove(s); }` 会 CME。`iter.next(); iter.remove();` 才合法。",
-    "task": "写出 foreach 底层仍会 next；划掉“增强 for 里可以随便 remove”。",
-    "answer": "划掉「增强 for 里可以随便 remove」。增强 for 不能直接改结构。用 Iterator.remove 或 removeIf。按下标删会错位。",
-    "references": [
-      [
-        "JLS 14.14.2 The enhanced for statement",
-        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-14.html#jls-14.14.2"
-      ],
-      [
-        "Iterator.remove",
-        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Iterator.html#remove()"
       ]
     ]
   },
@@ -1187,8 +714,246 @@
     "diagram": "diagrams/java-collection-collections.svg",
     "origin": "本地库「8张图解java」里 Collection 与 Collections 并排的图"
   },
+  "java-arrays-aslist-fixed": {
+    "core": "Arrays.asList 返回的是 Arrays 自己的私有 ArrayList，和 java.util.ArrayList 不是一个类。它只是包装原数组：set 可以改对应下标并写回数组；add/remove 会抛 UnsupportedOperationException。长度跟原数组走，不是“final 数组所以一切只读”——元素对象若可变，从列表里看到的也会变。要独立可变副本，用 new ArrayList<>(Arrays.asList(...))。List.sort 与 Collections.sort 都可排序可变 List。Vector 同步但不是现行并发首选。ArrayList 空构造先是空数组，第一次 add 扩到默认容量 10，不要背成“JDK7 之后永远容量 0”。",
+    "why": "把 asList 的结果当成可增删的 ArrayList，add 会在运行时抛异常，set 还会写回原来的数组，别的持有者一起被改。区分信号是它的长度固定，类型也不是 java.util.ArrayList。",
+    "example": "String[] ids = {\"a\",\"b\"}; List<String> view = Arrays.asList(ids); view.set(0,\"x\") 会改 ids[0]；view.add(\"y\") 失败。",
+    "task": "写一段 asList 后 set、add、再包一层 java.util.ArrayList 的实验，记录哪一步改原数组、哪一步抛异常。",
+    "answer": "asList 之后 set 会成功，并改掉底层数组里对应位置，所以它不是只读视图。接着 add 或 remove 会抛出不支持的操作，因为大小固定。若要增删，把元素拷进 new java.util.ArrayList 再改，这份新列表不再写回原数组。",
+    "deep": [
+      {
+        "title": "视图和拷贝不是一份",
+        "body": "asList 没有把元素复制出来，只是给数组包了一层列表。要一份能增删、且不改原数组的列表，必须再构造一个真正的 ArrayList。只改包装类型的名字解决不了固定长度。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对 asList 的结果先 set，打印原数组应被改掉；再 add，应抛异常。包进 java.util.ArrayList 之后再 add，应成功，并且原数组长度不变。"
+      }
+    ],
+    "references": [
+      [
+        "Arrays.asList",
+        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Arrays.html#asList(T...)"
+      ],
+      [
+        "ArrayList",
+        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ArrayList.html"
+      ]
+    ]
+  },
+  "java-stream": {
+    "core": "Java Stream（JDK 8 起，`java.util.stream`）的中间操作形成延迟执行的流水线，通常在终端操作启动后才按需要处理元素。实现可进行优化；不要依赖中间操作中的副作用一定运行或运行固定次数。顺序是：中间操作先串成流水线，终端操作才开始拉元素，每个元素按需经过前面的步骤。边界是：没有终端操作，map 里的函数不会运行。短路终端可能只处理前缀。并行流和实现优化还会改变副作用的次数和线程。要用 map 的返回值，不要用它去改外部变量。把日志打在 map 里只能观察拉动了多少元素，不能驱动业务。终端操作缺席时，这段日志一次都不会出现。findFirst 只拉动需要的前缀，后面的 map 可以一次都不执行。",
+    "why": "错把 map 当成调用时就遍历，没有终端操作时转换函数一次都不跑，副作用也没发生。加上 findFirst 后又会以为每个元素都经过了 map。能分开的信号是：流水线有没有终端操作，以及它会不会短路。",
+    "example": "list 含 1、2、3。只调用 stream().map(x -> { log(x); return x * 2; })，日志不出现。接上 collect 后，1、2、3 都打印。把终端改成 findFirst，往往只打印 1。",
+    "task": "给 Stream 加 filter、map、findFirst 和日志，观察哪些元素真正经过各步。",
+    "answer": "filter、map 都是中间操作，在 findFirst 这种终端操作启动前不会为了副作用跑完整表。findFirst 短路，找到第一个符合的元素就可以停，后面的元素可能不经过 map。因此日志里出现的只是需要的前缀，不是整份列表。不要把中间操作写成必然会执行固定次数。",
+    "deep": [
+      {
+        "title": "拉的时候才算",
+        "body": "中间操作只是描述。终端操作才拉动流水线。短路让拉动提前停。副作用若写在 map 或 peek 里，次数会随短路、并行和实现变化，不能当成业务步骤。次数不稳定，就不要拿它做计数。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "给 map 加日志，先不接终端操作，确认没有日志。再接 collect，确认每个元素都出现。换成 findFirst 或 limit，确认后面的元素不再打印。最后不要依赖这些日志去改外部计数器。"
+      }
+    ],
+    "references": [
+      [
+        "Oracle：Stream",
+        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Stream.html"
+      ]
+    ]
+  },
+  "java-foreach-remove-cme": {
+    "core": "增强 for 在 `Iterable` 上会拿到迭代器并反复 `next()`。循环体里直接改集合结构，fail-fast 迭代器会抛 `ConcurrentModificationException`，见 `java-vector-cme-not-because-sync`。正确做法是 `Iterator.remove()`，且必须先 `next()`。按下标 `remove(i)` 会让后面元素前移，漏删。`removeIf` 或收集后再删也行。并发结构不要用 `ArrayList` 硬撑。",
+    "why": "foreach 里删“a”看似成功，多元素或继续迭代就 CME，线上当偶发。",
+    "example": "`for (String s : list) { if (s.equals(\"a\")) list.remove(s); }` 会 CME。`iter.next(); iter.remove();` 才合法。",
+    "task": "写出 foreach 底层仍会 next；划掉“增强 for 里可以随便 remove”。",
+    "answer": "划掉「增强 for 里可以随便 remove」。增强 for 不能直接改结构。用 Iterator.remove 或 removeIf。按下标删会错位。",
+    "references": [
+      [
+        "JLS 14.14.2 The enhanced for statement",
+        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-14.html#jls-14.14.2"
+      ],
+      [
+        "Iterator.remove",
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Iterator.html#remove()"
+      ]
+    ]
+  },
+  "hashmap-initial-16-not-max": {
+    "core": "DEFAULT_INITIAL_CAPACITY 是 16，这是默认的初始容量，不是最多能放 16 个键。MAXIMUM_CAPACITY 是 1 << 30，也就是 2 的 30 次方。new HashMap<>() 刚创建时内部的表还是空的，第一次 put 才按 16 分配桶数组。默认装载因子是 0.75，所以这 16 个桶的阈值是 12。size 超过 12 就扩容为两倍再把键重新摆放。第 13 个键放进去时会从 16 扩到 32。之后仍按同样的规则翻倍，直到不能再超过最大容量。能放多少键受堆内存限制，不是受 16 限制。同一条桶上的链表何时变成树，是容量至少 64 的那一课，这里只记容量本身会变。",
+    "why": "按“最多 16 个键”去估缓存，第十二个键之后表已经扩到 32，程序仍能继续放。真正把进程打满的是堆，不是这个初始数字。反过来，如果按 16 预留一块永远不扩的数组，会和 HashMap 的实际行为对不上。",
+    "example": "空的 new HashMap<>() 还没有桶数组。放入第 1 个键后，表长是 16。放入第 12 个键时仍是 16。放入第 13 个键时 size 超过阈值 12，表长变成 32。继续放入不会停在 16。",
+    "task": "写出 DEFAULT_INITIAL_CAPACITY 与 MAXIMUM_CAPACITY；划掉“最大承载 16”。",
+    "answer": "DEFAULT_INITIAL_CAPACITY 是 16，只是默认初始容量。MAXIMUM_CAPACITY 是 1 << 30。划掉“最大承载 16”。第一次放入才按 16 建表，装载因子 0.75 使阈值成为 12，第 13 个键会扩到 32。之后还可以继续翻倍，上限是这个最大容量，实际还受内存限制。",
+    "deep": [
+      {
+        "title": "阈值看的是 size，不是桶的个数",
+        "body": "容量是桶数组的长度，必须是 2 的幂。阈值大约是容量乘 0.75。size 是已经放入的键数。扩容比较的是 size 和阈值，不是“某个桶里有多少个节点”。桶很长是树化那一课的条件，容量不够 64 时先扩容，两件事都说明 16 不是终点。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "用反射读 HashMap 的 table 字段。new HashMap<>() 时它应是 null。put 第 1 个键后长度应为 16，put 到第 12 个仍为 16，第 13 个之后应为 32。源码里的 MAXIMUM_CAPACITY 应是 1 << 30。不要把第 16 个键当成放不进去的那一个。"
+      }
+    ],
+    "references": [
+      [
+        "HashMap",
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/HashMap.html"
+      ],
+      [
+        "OpenJDK HashMap",
+        "https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/HashMap.java"
+      ]
+    ]
+  },
+  "hashmap-treeify-need-capacity": {
+    "core": "哈希到同一个桶时，HashMap 先把节点串成链表。key 的哈希相同且 equals 也相同，是覆盖原来的值，不会再挂一个节点。TREEIFY_THRESHOLD 这个常量是 8。注释的意思是：向一个已经至少有这么多节点的桶再插入时，才尝试树化。对应的代码在这次插入使链表变成 9 个节点时调用 treeifyBin。真正换成红黑树还有第二个条件：表容量达到 MIN_TREEIFY_CAPACITY，也就是 64。容量还是默认的 16 或扩到 32 时，treeifyBin 里做的是 resize，把数组加大，节点仍是链表。容量是 2 的幂，扩容才能把一条长链表拆开；小表先拆开，比在 16 个桶上建树便宜。节点后来变少时，可以按 UNTREEIFY_THRESHOLD（6）退回链表，不是一旦树化就永远是树。这张表仍然不能并发修改结构。",
+    "why": "在 new HashMap 的默认容量里等红黑树，调试器里一直是普通节点。第 9 个互相冲突的键放进去时确实会进 treeifyBin，但当时数组长度小于 64，走的是扩容。把“大于 8”当成唯一条件，会在小表上找一个还没发生的树。",
+    "example": "写一组 hashCode 都返回 1、equals 按各自编号区分的键，放进默认的 HashMap。前 8 个在同一个桶上组成链表。第 9 个插入时调用 treeifyBin，table 从 16 扩大，类名仍是 Node。继续插入，直到表容量不小于 64 且这个桶再次满足长度，桶上的类名才变成 TreeNode。",
+    "task": "对照 HashMap 源码常量，写出树化的两个条件；划掉“大于 8 立刻变树”。",
+    "answer": "两个条件都要有。常量 TREEIFY_THRESHOLD 是 8，源码在链表变成 9 个节点的那次插入调用 treeifyBin。表容量还要达到 MIN_TREEIFY_CAPACITY 64，才会真正变成红黑树。划掉“大于 8 立刻变树”：容量不够时这个方法里执行的是扩容。equals 相同的键是覆盖，不是再挂一个节点。",
+    "deep": [
+      {
+        "title": "6 是退回链表的阈值，不是树化的另一半",
+        "body": "UNTREEIFY_THRESHOLD 等于 6。扩容把一棵树拆开、或者删除之后节点太少时，桶可以变回链表。它不参与“这次插入要不要树化”的判断。树化只看这次长度有没有跨过 8 这个常量，以及数组是不是已经不小于 64。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "在 HashMap.treeifyBin 上下断点。用 hashCode 固定、equals 互不相等的键连续 put 进 new HashMap<>()。第一次断住时看 table.length，应小于 64，并且方法走 resize。等到 table.length 不小于 64 再次进入，这个桶的节点类名应为 TreeNode。容量还是 16 时不应出现红黑树。"
+      }
+    ],
+    "references": [
+      [
+        "OpenJDK HashMap",
+        "https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/HashMap.java"
+      ],
+      [
+        "JEP 180：HashMap collisions",
+        "https://openjdk.org/jeps/180"
+      ]
+    ]
+  },
+  "chm-jdk8-not-segment-lock": {
+    "core": "JDK 7 确实用 Segment。JDK 8 起是数组 + 链表/红黑树，写入用 CAS 和桶头 synchronized，没有默认 16 段。容量、树化阈值仍要看，见 `hashmap-treeify-need-capacity`。迭代器弱一致，不是 fail-safe 拷贝，见 `chm-iterator-weakly-consistent`。size 在并发下是估算，不要当精确柜台。",
+    "why": "按分段锁去调 `concurrencyLevel`，在 JDK 8+ 上几乎没那个旋钮了。",
+    "example": "JDK 21 源码里没有 `Segment` 类当默认结构。冲突严重时是桶级锁，不是 16 把大锁。",
+    "task": "写出 JDK 7 与 8 的锁粒度；划掉“CHM=16 段锁”。",
+    "answer": "划掉「CHM=16 段锁」。8 起是 CAS 加桶锁。不要再背 Segment。迭代器弱一致。",
+    "references": [
+      [
+        "ConcurrentHashMap",
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/ConcurrentHashMap.html"
+      ],
+      [
+        "JEP 180：Map contention",
+        "https://openjdk.org/jeps/180"
+      ]
+    ]
+  },
+  "chm-iterator-weakly-consistent": {
+    "core": "三种迭代不要合成一句。ArrayList 这类 java.util 集合的迭代器是 fail-fast：同一个线程在遍历时改了结构，经常抛 ConcurrentModificationException。这是用来暴露误用的检测，不是跨线程的同步手段，别的线程并发修改时也不保证一定抛。CopyOnWriteArrayList 才在每次写入时复制底层数组。它的迭代器拿着创建那一刻的数组，所以一定看不到遍历开始之后的 add，也不会抛 ConcurrentModificationException。ConcurrentHashMap 的迭代器是弱一致，文档的意思是：不抛 ConcurrentModificationException，会遍历迭代器创建时已经存在的元素，之后的更新可能看得到，但不保证看得到。它不会为了这次遍历去复制整张表。按“迭代就拷贝一份”去估内存，估到的是 CopyOnWrite 的写入代价，不是 ConcurrentHashMap。",
+    "why": "把并发集合都说成遍历时复制整表，会按 map 的大小再留一份内存，也会以为遍历期间一定看不见新 put 的键。真正在写入时复制的是 CopyOnWriteArrayList。ConcurrentHashMap 上新键时有时无，才和文档里的 weakly consistent 对得上。",
+    "example": "ConcurrentHashMap 里先放键 1，开始迭代后再 put 键 2。这次循环不抛 ConcurrentModificationException，键 2 可能出现，也可能不出现。CopyOnWriteArrayList 先放 1，拿到迭代器后再 add 2，这次循环只有 1。ArrayList 在同一个线程里先拿到迭代器再 add，通常抛 ConcurrentModificationException。",
+    "task": "对照 ConcurrentHashMap 文档，写出迭代器语义；区分 CopyOnWrite 快照。",
+    "answer": "ConcurrentHashMap 的迭代器是弱一致：不抛 ConcurrentModificationException，不保证是一份冻结快照，可能看到迭代开始之后的部分更新。CopyOnWriteArrayList 在写入时复制数组，迭代器看到的是开始时那一份，不含后来的 add。ArrayList 的 fail-fast 是同一个线程在遍历中改结构时常用的检测，不是整张表的并发快照。",
+    "deep": [
+      {
+        "title": "复制发生在写入，不是发生在遍历 ConcurrentHashMap",
+        "body": "CopyOnWrite 的名字指每次 add 或 set 都换一份新数组，迭代器一直指着旧的那份，所以内存峰值跟在写入后面。ConcurrentHashMap 的迭代器和更新一起进行，不为遍历再分配一张同等大小的表。需要“开始这一瞬之后谁也不能改我看见的内容”时，自己复制一份，或改用按快照迭代的集合。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "ArrayList 在同一个线程里拿到迭代器再 add，应抛 ConcurrentModificationException。ConcurrentHashMap 先放键 1，迭代开始后 put 键 2，不应抛这个异常，并且键 2 不保证出现。CopyOnWriteArrayList 在拿到迭代器之后 add 2，这次循环应只有原来的元素。三次结果对不上时，不要把三种集合记成同一句“并发就拷贝”。"
+      }
+    ],
+    "references": [
+      [
+        "ConcurrentHashMap",
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/ConcurrentHashMap.html"
+      ],
+      [
+        "CopyOnWriteArrayList",
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/CopyOnWriteArrayList.html"
+      ]
+    ]
+  },
+  "java-vector-cme-not-because-sync": {
+    "core": "Vector 的公开方法大多加了 `synchronized`，同一把实例锁。迭代器仍是 fail-fast：靠 `modCount`，结构被改过（含本线程在迭代外 `add`/`remove`）就可能抛 `ConcurrentModificationException`。ArrayList 不同步，迭代器一样 fail-fast。同步不能当互斥遍历协议，见 `java-enumeration-not-faster`。并发结构修改用并发集合，CHM 迭代器还是弱一致，见 `chm-iterator-weakly-consistent`。",
+    "why": "以为换成 Vector 迭代就线程安全，生产里仍 CME，还会在单线程里被自己的 add 打脸。",
+    "example": "单线程对 Vector 做 for-each，循环里 `list.add(x)` 同样可以 CME。Hashtable 的 Enumeration 反而不走这套 fail-fast。",
+    "task": "写出 CME 看的是结构修改计数，不是“类声明了同步”。",
+    "answer": "Vector 同步的是方法。迭代器 fail-fast 和 ArrayList 同一类机制。要并发遍历换并发集合。",
+    "references": [
+      [
+        "Vector",
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Vector.html"
+      ],
+      [
+        "ConcurrentModificationException",
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ConcurrentModificationException.html"
+      ]
+    ]
+  },
+  "java-enumeration-not-faster": {
+    "core": "Iterator 是集合框架的遍历协议，允许 fail-fast 检测并发结构修改，并提供 remove。Enumeration 是遗留接口，主要出现在 Vector、Hashtable、Properties。官方文档从未给出“快一倍、更省内存”的保证；Hashtable/Vector 的同步反而可能更慢。资料把最初集合写成 HashTable（正确类名 Hashtable），把双端队列接口写成 Dequeue（应为 Deque）。需要并发 Map 时用 ConcurrentHashMap，不要推荐 Hashtable。Iterator 也不会“阻止其它线程修改集合”——fail-fast 只是尽量抛 ConcurrentModificationException，不是锁。",
+    "why": "背“Enumeration 比 Iterator 快一倍、也更省内存”，改造时会舍不得丢掉遗留接口，也会把 fail-fast 理解成互斥锁。区分信号是 JavaDoc 没有这句速度承诺，fail-fast 只是检测并发修改。",
+    "example": "新代码用 List.iterator() 或 for-each。读 Properties 仍可能碰到 elements()，不要据此比较性能。多线程共享 Map 用 ConcurrentHashMap。",
+    "task": "对照 Iterator 与 Enumeration 的 JavaDoc，划掉两倍速度；改正 Hashtable/Deque 拼写；写一句 fail-fast 不是锁。",
+    "answer": "对照 Iterator 和 Enumeration 的说明，划掉“快一倍、更省内存”，没有官方的速度倍数。遍历用 Iterator。Enumeration 是遗留 API。Hashtable 的拼写和“用它做并发”都要改正，现行并发不要靠它。fail-fast 会在迭代中发现结构被改，抛出异常，它不是锁。",
+    "deep": [
+      {
+        "title": "fail-fast 不是互斥",
+        "body": "迭代器发现集合在迭代期间被改了，就尽快失败。这不能阻止两个线程同时改集合，只是让你看见已经坏了。要互斥仍得用并发集合或加锁。两倍速度的说法不在文档里。文档里没有倍数。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对照两份 JavaDoc，划掉两倍速度。在迭代中删除元素，看 fail-fast 抛出的是并发修改，而不是等待锁。再把有些资料里的 Hashtable、Deque 拼写改正，确认没有“更快”的句子。"
+      }
+    ],
+    "references": [
+      [
+        "Iterator",
+        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Iterator.html"
+      ],
+      [
+        "Enumeration",
+        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Enumeration.html"
+      ]
+    ]
+  },
+  "java-stringbuilder-not-buffer": {
+    "core": "`String` 不可变，见 `java-string-immutability`。同一线程里反复改缓冲区，用 `StringBuilder`。编译器把相邻字面量和 `+` 也收成 Builder。`StringBuffer` 的公开修改方法带 `synchronized`，只保证**这一次方法调用**互斥，并不给出跨线程谁先写、何时可见的协议。多个线程共享一块可变缓冲，仍要另定所有权或改成不可变 `String` 传递。不要把“出现过线程”写成默认 Buffer。",
+    "why": "循环里 `new StringBuffer()` 只为口诀，单线程热路径白加锁。共享 Buffer 却只靠方法同步，拼接顺序和对端读到半截字符的问题还在。",
+    "example": "方法内 `StringBuilder out = new StringBuilder(); for (var part : parts) out.append(part); return out.toString();` 不要换成 Buffer。两个线程往同一块 Buffer append，同步挡不住交错字符。",
+    "task": "划掉“有线程就用 StringBuffer”。分别写出局部拼接和跨线程共享各自该用什么。",
+    "answer": "划掉「有线程就用 StringBuffer」。局部拼接用 StringBuilder，最后得到 String。跨线程不要共享可变缓冲当协议；要共享就先定谁写完、用不可变结果传递。StringBuffer 的 synchronized 只锁单次调用。",
+    "deep": [
+      {
+        "title": "不可变结果仍然是 String",
+        "body": "Builder 和 Buffer 都是拼完再 `toString`。池和字面量那一套只作用于 String，见 `java-string-new-vs-pool`。不要为了进池先 new StringBuffer。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开两个类的 JavaDoc：Builder 写明非同步，Buffer 写明线程安全指方法同步。把局部循环从 Buffer 改成 Builder，行为应相同。两个线程共享一块 Buffer 时，观察交错 append，说明还缺协议。"
+      }
+    ],
+    "references": [
+      [
+        "StringBuilder",
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/StringBuilder.html"
+      ],
+      [
+        "StringBuffer",
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/StringBuffer.html"
+      ]
+    ],
+    "diagram": "diagrams/java-stringbuilder-buffer.svg",
+    "origin": "本地库 Java 基础导图把 StringBuffer 标成多线程默认"
+  },
   "java-time-instant": {
-    "core": "Instant 表示 UTC 时间线上的一个点，适合存库和跨机比较。LocalDateTime 只有日期和钟面时间，没有时区，不能确定是哪一个瞬时。ZonedDateTime / OffsetDateTime 才带区。展示给用户时，用存下来的 Instant 按用户时区格式化。now() 若不指定时钟和区，测试和跨机都会漂。比较先后用 Instant，不要用去掉时区的本地时间相减。",
+    "core": "`java.time.Instant`（JDK 8 起）表示 UTC 时间线上的一个点，适合存库和跨机比较。LocalDateTime 只有日期和钟面时间，没有时区，不能确定是哪一个瞬时。ZonedDateTime / OffsetDateTime 才带区。展示给用户时，用存下来的 Instant 按用户时区格式化。now() 若不指定时钟和区，测试和跨机都会漂。比较先后用 Instant，不要用去掉时区的本地时间相减。",
     "why": "把没有时区的钟面时间当绝对时刻存进库，夏令时或跨时区对账会错一小时甚至错一天。区分信号是库存的是时间线上的一点，展示时才放进时区。看走眼时会把旁边那一层一起改掉，真正的差别要能单独指出来。",
     "example": "下单时间存绝对时刻。页面用上海时区格式化给用户看。不要把“2026-03-08 02:30”这种没有区的字符串当唯一真相。两台机器打印本地日期时间，即使表示同一瞬间，钟面也可能不同，不能拿来比先后。把输入、输出和失败时留下的那一行同时记下来，不要只看最后没有报错。",
     "task": "分别打印 Instant.now 和 LocalDateTime.now。解释为什么后者不能当跨机顺序。",
@@ -1284,6 +1049,218 @@
         "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/regex/Pattern.html#DOTALL"
       ]
     ]
+  },
+  "java-calendar-not-singleton": {
+    "core": "真正接近“整个 JVM 一份”的是 Runtime.getRuntime()。Calendar.getInstance() 按默认时区和区域设置**每次构造新日历**，里面保存着可变的当前时刻字段；它既不是单例，也不建议在多线程里共用同一实例。资料把单例模式写成“用于 Runtime、Calendar 和其他一些类”，把可变、按调用新建的工厂方法和进程级单例混在一起。Boolean.valueOf 也不是工厂模式的典型产品替换，而是缓存装箱。设计模式题可以举 Runtime、枚举单例、IO 装饰器，不要把 Calendar 塞进单例名单。",
+    "why": "把 Calendar 和 Runtime 一起背成 JDK 单例，会暴露没有读过 getInstance 的返回契约，并发下还会共享同一本可变日历。区分信号是每次调用都返回新实例，真正的单例例子是 Runtime.getRuntime。",
+    "example": "两个线程各自 Calendar.getInstance()，互不影响。若把同一个 Calendar 放进静态字段并并发 setTime，字段会互相覆盖。需要不可变时间点用 Instant。",
+    "task": "打开 Calendar.getInstance 的 JavaDoc，写下它返回的是新实例；对照 Runtime.getRuntime 说明真正的单例例子。",
+    "answer": "打开 Calendar.getInstance 的说明，它返回的是新建的可变日历，不是容器里唯一的那份，所以不能当单例例子。Runtime.getRuntime 才是每次拿回同一个实例。两处对照之后，单例例子改用 Runtime 或枚举，共享日历的写法划掉。",
+    "deep": [
+      {
+        "title": "可变日历不能共享",
+        "body": "Calendar 的字段可以被 set 改掉。若误当成单例交给多个线程，一次设置会改掉别人正在读的日期。每次需要日历就新建，或改用不可变的时间类型。不要把可变对象放进单例。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "连续调用两次 Calendar.getInstance，用 == 比较，应是两个对象。再对 Runtime.getRuntime 做同样比较，两次应是同一个。共享日历再 set 一次，看另一个引用是否被改掉。"
+      }
+    ],
+    "references": [
+      [
+        "Calendar.getInstance",
+        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Calendar.html#getInstance()"
+      ],
+      [
+        "Runtime.getRuntime",
+        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Runtime.html#getRuntime()"
+      ]
+    ]
+  },
+  "java-dcl-volatile-enum": {
+    "core": "new Singleton() 不是一个原子发布：可能先把引用写进 instance，再跑构造器。另一个线程在外层读到非 null 就返回，可能看见默认字段。把 instance 标成 volatile 才能建立安全发布。双重检查锁能用，但容易漏修饰符。Effective Java 推荐枚举单例：JVM 保证枚举常量初始化的线程安全，还能挡住部分反射和反序列化套路。饿汉静态字段也简单。不要把双重检查当唯一标准答案。",
+    "why": "手写双重检查却漏掉 volatile，另一个线程可能读到已经非空、构造还没写完的实例，字段仍是默认值。区分信号是同一段交错里，引用先被看见；枚举常量由类初始化发布，不必自己再加这把锁。",
+    "example": "线程 1 执行 new Singleton()，引用已写入 instance，构造器里的 name 还是 null。线程 2 在外层看见非 null 就返回，接着调用 name 出现空指针。把 instance 标成 volatile 后，线程 2 不会看见这次半初始化。改用枚举常量则不必再写这套检查。",
+    "task": "画出无 volatile 的 DCL 下“引用先于构造完成可见”的交错；对照枚举初始化写一句为什么不必自己加锁。",
+    "answer": "无 volatile 的双重检查下，预测交错是引用先对外可见、构造尚未完成，读到的字段还是默认值。对照枚举初始化：常量由类初始化安全发布，JVM 保证这一步的线程安全，所以不必自己再加锁。单例仍不保护业务字段的并发写。漏掉 volatile 时，预测能看见默认字段。",
+    "deep": [
+      {
+        "title": "引用可见不等于构造完成",
+        "body": "new 可能先把引用放进静态字段，再跑完构造器。外层读到非 null 就返回，会看到默认字段。volatile 建立安全发布。枚举常量走类初始化，不必手写这套双重检查。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "画出无线程安全发布时，引用先被看见、字段仍是默认值的交错。再对照枚举常量的初始化，写明它由类初始化发布，因此不必自己加锁。若仍写双重检查，字段必须是 volatile。"
+      }
+    ],
+    "references": [
+      [
+        "JLS：volatile",
+        "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.4.5"
+      ],
+      [
+        "Enum types",
+        "https://docs.oracle.com/javase/tutorial/java/javaOO/enum.html"
+      ]
+    ]
+  },
+  "java-long-atomic-on-64bit": {
+    "core": "JLS 17.7 允许实现把一次非 volatile 的 long 或 double 写入拆成两次 32 位写。别的线程可能看见一次写入的高 32 位和另一次写入的低 32 位拼在一起，这个值两边都没写过。同一节规定：volatile 的 long 和 double 读写始终是原子的。这是规范留的口子，主要用来描述 32 位实现。现行 64 位 HotSpot 对 long 和 double 的单次读写就是一次原子存储，不会把两个合法值撕成第三个数。原子只保证你看见的是某一次完整写入，不保证你看得见最新的那一次。没有 happens-before 时，另一个线程可以一直看见旧值。跨线程要立刻看见新值，用 volatile、锁，或并发包里的原子类型。int 的单次读写按规范就是原子的，但 i++ 这种读改写不是一次写。",
+    "why": "在 64 位 HotSpot 上用“long 被撕成两半”解释一个从没写入过的数，实验复现不出来，真正的旧值看不见会被漏掉。反过来，在仍可能拆开写的实现上只靠“我们是 64 位”去掉 volatile，规范并不保证。",
+    "example": "64 位 HotSpot 上两个线程无同步地写 0L 和 -1L。读到的应是这两个值之一，不应是只改了一半比特的第三个数。若读线程在写入之后仍一直打印 0L，缺的是可见性，把字段改成 volatile long 后应能看见 -1L。",
+    "task": "对照 JLS 17.7，写出 long 写在何种实现上可能非原子；说明 64 位服务该怎么同步。",
+    "answer": "JLS 17.7 允许实现把非 volatile 的 long 或 double 拆成两次 32 位写，这不是 64 位 HotSpot 的现行写法。64 位 HotSpot 上单次写是原子的，读到的应是某个线程完整写入过的值。跨线程仍要 volatile 或锁建立 happens-before，否则可以一直看见旧值。volatile long 在规范里本身就要求原子。i++ 不是单次写。",
+    "deep": [
+      {
+        "title": "撕裂和看不见新值留下的数不一样",
+        "body": "撕裂会造出从未存储过的比特组合，例如两个写入分别是全 0 和全 1，读到既不是 0 也不是 -1。64 位 HotSpot 上不应出现这种值。一直读到 0，说明写入没有对这个读建立可见性，数值本身仍是某一次完整写。修可见性用 volatile 或锁。不要为了第一种现象在 64 位服务里改算法，也不要因为第二种现象没出现就去掉同步。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "java -version 应显示 64-Bit。起两个线程，一个反复把 long 字段写成 0L 和 -1L，另一个读取。读到的数应只有这两个。去掉 volatile 时，读线程可以在写入发生后仍停留在旧值上。加上 volatile 后，应能看到新值，且仍然不会出现第三个数。"
+      }
+    ],
+    "references": [
+      [
+        "JLS 17.7 Non-Atomic Treatment of double and long",
+        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-17.html#jls-17.7"
+      ],
+      [
+        "JLS 17.4 Memory Model",
+        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-17.html#jls-17.4"
+      ]
+    ]
+  },
+  "jdk-feature-release-six-months": {
+    "core": "从 JDK 10 起，OpenJDK 功能版本大约 **每六个月** 发一版（3 月和 9 月）。Oracle JDK 与这个节奏对齐，另有长期支持版（11/17/21/25）。不存在“Oracle 三年、OpenJDK 三月”这套对照。构建可以选 Eclipse Temurin、Oracle、Amazon Corretto 等发行，API 以对应 OpenJDK 版本为准。Jakarta EE 已从 Java EE 改名，见有些资料里 2018 年那句是对的，但版本号不要再写 J2EE。",
+    "why": "按三年发布去规划升级窗口，会错过半年一次的功能版和真正的 LTS。",
+    "example": "2024–2026 的功能线是 22、23、24、25。生产锁 21 或 25 LTS，而不是等“下一个三年大版本”。",
+    "task": "划掉“Oracle 三年 / OpenJDK 三月”；写出当前 LTS 和功能版节奏。",
+    "answer": "划掉「Oracle 三年 / OpenJDK 三月」。功能版大约半年一次。LTS 隔几年一个。Oracle JDK 不按三年发版。",
+    "references": [
+      [
+        "JEP 322：Time-Based Release Versioning",
+        "https://openjdk.org/jeps/322"
+      ],
+      [
+        "Oracle JDK 发布说明",
+        "https://www.oracle.com/java/technologies/java-se-support-roadmap.html"
+      ]
+    ]
+  },
+  "java-not-every-class-clone-serializable": {
+    "core": "`equals`/`hashCode` 只在该类会按值比较或当 Map 键时才成对覆盖，见 `java-equals-contract`。`toString` 便于排障，不是契约。`Cloneable` 是弱类型标记，`clone` 默认浅拷贝、易碎，新代码更常用拷贝构造或工厂。`Serializable` 是长期二进制契约，默认机制脆弱，不要给每个 DTO 盖章。清理资源用 try-with-resources，不要靠 `finalize` 和已删除的 `runFinalizersOnExit`。",
+    "why": "每个实体都 Cloneable 加 Serializable，拷贝时改到共享可变字段，序列化一升级就坏。",
+    "example": "不可变的值对象可以写 equals。Servlet、Spring Bean、一次性请求体不要 `implements Cloneable, Serializable`。",
+    "task": "划掉“每个类五件套”；写出什么时候才覆盖 equals，什么时候不要序列化。",
+    "answer": "划掉「每个类五件套」。按需 equals。不要默认 Cloneable。Serializable 是承诺，不是装饰。finalize 不是析构。",
+    "references": [
+      [
+        "Cloneable",
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Cloneable.html"
+      ],
+      [
+        "Serializable",
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/Serializable.html"
+      ]
+    ]
+  },
+  "java-raw-type-skips-checks": {
+    "core": "擦除之后运行时集合不带着参数类型，见 `java-generics`。编译器对裸类型几乎放弃检查，`void add(List list, Object o)` 能把 `Integer` 塞进 `List<String>`，取出时 `ClassCastException`。`List<?>` 是未知具体类型，通常不能 `add` 除 null 以外的元素。`List<Object>` 才表示什么对象都能放。新代码不要用裸类型。",
+    "why": "工具方法收裸 `List`，调用方以为还是 `List<String>`，下一个 get 才炸。",
+    "example": "`List<String> list = new ArrayList<>(); add(list, 10); String s = list.get(0);` 编译过、运行转型失败。",
+    "task": "划掉“List 和 List<?> 一样”；写出裸类型、无界通配、List<Object> 各能干什么。",
+    "answer": "划掉「List 和 List<?> 一样」。裸类型跳过检查。List<?> 基本不能 add。要装任意对象用 List<Object>。",
+    "references": [
+      [
+        "JLS 4.8 Raw Types",
+        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-4.html#jls-4.8"
+      ],
+      [
+        "Java Tutorial：Type Erasure",
+        "https://docs.oracle.com/javase/tutorial/java/generics/erasure.html"
+      ]
+    ]
+  },
+  "java-class-newinstance-deprecated": {
+    "core": "`Class.forName` 仍然要全限定名。`Class.newInstance` 只能走公共无参构造，把受检异常包成 `InstantiationException`/`IllegalAccessException`，Java 9 起弃用。应 `getDeclaredConstructor(参数类型).newInstance(实参)`，无参也要先拿到 `Constructor`。模块和封装下还可能要 `setAccessible`。实体框架要无参构造，见 `java-ctor-implicit-super-noarg`，那是框架约定，不是反射 API 的推荐写法。",
+    "why": "类只有带参构造时 `newInstance` 直接失败，还以为反射能绕过构造器。",
+    "example": "`String.class.getConstructor(byte[].class, String.class).newInstance(bytes, \"UTF-8\")`。不要 `String.class.newInstance()`。",
+    "task": "划掉 Class.newInstance；写出带参构造的反射调用顺序。",
+    "answer": "划掉「Class.newInstance」。forName 仍要类名。用 Constructor.newInstance。Class.newInstance 已弃用且只走无参。",
+    "references": [
+      [
+        "Class.newInstance",
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Class.html#newInstance()"
+      ],
+      [
+        "Constructor.newInstance",
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/reflect/Constructor.html#newInstance(java.lang.Object...)"
+      ]
+    ]
+  },
+  "java-final-not-fifty-percent": {
+    "core": "`final` 类不能被继承，这是语言规则，见 `java-string-immutability`。HotSpot 本来就能对单态调用做内联，不要求类或方法写 final。没有任何规范承诺“平均快 50%”。该 final 的是 API 契约（不可变、禁止子类），不是当加速开关。过期对象赋 `null` 也不会立刻 GC，见 `java-memory`。`clone()` 代替 `new` 更不是现行工厂，见 `java-not-every-class-clone-serializable`。",
+    "why": "把业务基类改成 final 只为冲 50%，子类测试立刻编不过，基准测试也看不出那一半。",
+    "example": "`String` 是 final 因为契约，不是因为它“快一半”。给 `OrderService` 加 final，JIT 日志里内联情况和加之前可以一样。",
+    "task": "划掉“final 类=快 50%”；写出 final 真正禁止的是什么。",
+    "answer": "划掉「final 类=快 50%」。final 禁止继承。内联是 JIT 的事。没有五成加速的规范。不要靠赋 null 催 GC。",
+    "references": [
+      [
+        "JLS 8.1.1.2 final Classes",
+        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-8.html#jls-8.1.1.2"
+      ],
+      [
+        "HotSpot 内联",
+        "https://wiki.openjdk.org/display/HotSpot/PerformanceTechniques"
+      ]
+    ]
+  },
+  "java-shift-not-times-eight": {
+    "core": "`2 << 3` 的值确实是 16，这是移位语义，见 JLS 15.19。HotSpot 会把乘 8 这种常数乘法自己强度折减，手写移位几乎赢不到可测的时间，还更难读。负数、溢出、对 long 与 int 的位移距离都容易写错。优先写 `2 * 8` 或直接 `16`。同步范围应尽量小，不要听“尽量用方法同步代替代码块同步”，见 `java-synchronized-monitor`。",
+    "why": "为了口算题把业务里的 `price * 8` 改成 `price << 3`，负数价格和代码评审一起炸。",
+    "example": "`Math.round(11.5)` 是 12，`Math.round(-11.5)` 是 -11，这才是该记的。容量对齐写成有名字的常数，而不是一串 `<<`。",
+    "task": "划掉“移位一定比乘法快”；写出何时才用移位（位图、对齐掩码）。",
+    "answer": "划掉「移位一定比乘法快」。乘除写乘除。JIT 会折减常数。移位留给位运算。方法级 synchronized 不是更快。",
+    "references": [
+      [
+        "JLS 15.19 Shift Operators",
+        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-15.html#jls-15.19"
+      ],
+      [
+        "JLS 15.17 Multiplicative Operators",
+        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-15.html#jls-15.17"
+      ]
+    ]
+  },
+  "java-switch-arrow-no-fall": {
+    "core": "传统 `switch` 语句里，`case 1:` 匹配之后**没有 `break`（或 `return`）会落到下一支**，`default` 也会被贯穿进来。这是笔试题常见陷阱。**JDK 14 定稿**的 switch 表达式（JEP 361）用 `case 1 ->` 或 `yield`：匹配的那一支结束就离开，**不会贯穿**。多个标签写成 `case 1, 2 ->`。表达式必须穷尽，漏掉枚举常量编不过。不要把两种语法合成一句“switch 都要 break”。",
+    "why": "把箭头语法也塞上 break，或者在冒号语法里省掉 break，输出会连到下一支，题目里的 default 也会执行。",
+    "example": "`switch (n) { case 1: System.out.print(\"a\"); case 2: System.out.print(\"b\"); }` 在 n 为 1 时打印 ab。`switch (n) { case 1 -> \"a\"; case 2 -> \"b\"; default -> \"z\"; }` 在 n 为 1 时只得到 \"a\"。",
+    "task": "同一组输入分别用冒号语句和箭头表达式写出输出。划掉“所有 switch 都必须写 break”。",
+    "answer": "划掉「所有 switch 都必须写 break」。冒号分支没有 break 会贯穿。箭头分支只跑匹配的那一支。新代码优先箭头或显式 yield。笔试题若给的是 case 1: 仍按贯穿算。",
+    "deep": [
+      {
+        "title": "穷尽不是装饰",
+        "body": "对枚举做表达式时，每个常量都要有支，或写 default。加新枚举常量时，漏支会在编译期暴露。语句版的 switch 没有这层保护，漏掉只是走进 default 或什么都不做。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "写一个 n=1 的冒号 switch，中间那支不写 break，确认打印了后面的分支。同一输入改成箭头表达式，确认只得到这一支。再拿一个枚举，删掉其中一支，确认表达式编不过。"
+      }
+    ],
+    "references": [
+      [
+        "JLS：switch",
+        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-14.html#jls-14.11"
+      ],
+      [
+        "Java 语言：switch 表达式",
+        "https://docs.oracle.com/en/java/javase/21/language/switch-expressions.html"
+      ]
+    ],
+    "diagram": "diagrams/java-switch-arrow.svg",
+    "origin": "本地库笔试题照片里的 switch 贯穿题，对照现行 switch 表达式"
   },
   "complexity": {
     "core": "大 O 描述增长趋势的上界，不包含常数、内存访问和输入规模。实际选择还要看数据量、分布、空间开销与基准测量。顺序是：先证明结果正确，包括稳定性这类要求，再写出时间和额外空间如何随 n 增长，最后用目标规模测量。边界是：阶只在 n 足够大时主导。小数组上常数和缓存更重要，二次算法可以更快。最坏分布和平均分布也不同，不能把某一个 n 上的测量写成对所有输入都成立。大 O 丢掉常数，只在规模足够大时主导。小数组上要测量。稳定性等正确性要求先满足，再比较增长阶和额外空间。某一次的秒数不能写成对所有输入都成立。空间上的额外数组也要算进选择，不能只比时间阶。再测一次。",
@@ -2414,6 +2391,29 @@
     ],
     "diagram": "diagrams/jvm-class-identity.svg"
   },
+  "java-memory": {
+    "core": "Java 里对象是否还能被使用，看它是否从 GC Roots 可达。常见的根包括正在执行的线程栈上的局部变量，以及类的静态字段。从这些根沿着字段引用能到达的对象都还活着。没有任何根能到达时，对象成为可回收垃圾。垃圾回收器在自己的时机运行，不保证引用一断就立刻回收，也没有“马上调用析构释放业务资源”这回事。文件、连接和锁要用明确的 close 或 try-with-resources。看起来像泄漏，通常是还有一条忘了的可达链：静态 Map、未取消的监听、线程池队列里的任务、缓存没有上限。把某个字段设为 null，只有在没有别的根仍指着它时，才使它变得不可达。",
+    "why": "学习者会以为把变量设成空，对象马上就从堆里消失。请求已经返回，静态缓存里的订单仍让堆一直涨，他却再把局部变量清空。从缓存移除该键之后转储里才找不到这条引用链，才说明回收看的是还有没有根，不是方法是否返回。",
+    "example": "静态映射按订单号保存订单和其中的字节数组。请求方法返回后，局部变量没了，但这条链仍从静态字段可达，堆转储里点“谁引用了我”能走到这个静态字段。从映射移除该键并且没有别的根之后，同一条链消失，之后才可能被回收。",
+    "task": "画一条链：静态缓存、订单、其中的字节数组。请求方法已经返回。说清字节数组为什么还在，以及哪一步之后它才不可达。",
+    "answer": "请求方法已经返回，局部变量消失，但静态缓存仍指着订单，订单又指着字节数组，所以字节数组还在。从缓存移除该订单并且没有其他根之后，它们才不可达。即便不可达，消失的时刻仍由收集器决定，不是移除的下一行就立刻没了。方法返回本身不会把静态字段上的订单变成垃圾。",
+    "deep": [
+      {
+        "title": "和连接池的关系",
+        "body": "连接应还回池里，而不是指望连接对象被回收时关闭。回收时机不确定，池也会因为连接仍被任务引用而借不出来。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "用堆转储看订单对象的“谁引用了我”，一直点到静态字段或线程。看不到根，才是真正不可达。"
+      }
+    ],
+    "references": [
+      [
+        "Oracle：GC Roots",
+        "https://docs.oracle.com/en/java/javase/21/gctuning/other-considerations.html"
+      ]
+    ]
+  },
   "jvm-method-area-metaspace": {
     "core": "JVMS 规定方法区由所有线程共享，存放每个类的结构信息等；它不要求必须叫永久代，也不固定某块堆内区域。HotSpot 曾用永久代实现方法区相关存储，但从 JDK 8 起类元数据转到 Metaspace（本地内存），调参与 OOM 文案都变为 Metaspace。有些资料里“JDK7 之后运行时常量池移出永久代”混进了字符串常量池迁堆等历史步骤，不能代替“现行默认实现是 Metaspace”这一判断。方法区是否回收、何时回收由实现决定；递归导致的溢出更常见于栈，不能写成方法区一调用就 OOME 的通式。",
     "why": "继续按永久代背参数，会在 JDK 8 及以后找错区域、改错旗标，类元数据打满时对不上日志。区分信号是 OOM 文案写 Metaspace 还是 Java heap space。文案已经换成 Metaspace。",
@@ -3067,7 +3067,7 @@
     ]
   },
   "java-concurrent-map": {
-    "core": "即使用线程安全 Map，两次独立操作之间也可能被其他线程插入。需要单个原子复合操作，如 putIfAbsent 或 ConcurrentHashMap.computeIfAbsent；映射函数应保持简短且避免递归修改同一 Map。顺序是：需要“缺席才计算并放入”时调用一次复合方法，让映射表在这个键上串行完成检查和插入。边界是：两次独立的 get 与 put 之间，别的线程可以插入。映射函数里再调用同一个 Map 的更新可能死锁或重入。函数返回 null 通常表示不放入，已经产生的副作用不会自动撤销。线程安全的单个方法不会把你外面的一段业务事务变原子。再统计创建次数。",
+    "core": "即使用线程安全 Map，两次独立操作之间也可能被其他线程插入。需要单个原子复合操作，如 putIfAbsent 或 ConcurrentHashMap.computeIfAbsent（**JDK 8** 起的 compute 族）；映射函数应保持简短且避免递归修改同一 Map。顺序是：需要“缺席才计算并放入”时调用一次复合方法，让映射表在这个键上串行完成检查和插入。边界是：两次独立的 get 与 put 之间，别的线程可以插入。映射函数里再调用同一个 Map 的更新可能死锁或重入。函数返回 null 通常表示不放入，已经产生的副作用不会自动撤销。线程安全的单个方法不会把你外面的一段业务事务变原子。再统计创建次数。",
     "why": "错把线程安全的 get 和 put 当成合在一起也安全，两个线程都看到缺键，就会各创建一次昂贵对象并互相覆盖。容器安全不等于业务复合操作安全。能分开的信号是：创建函数是不是放进了单次原子方法里。",
     "example": "两个线程同时对同一键 get，都得到 null，然后都 new 一个连接并 put。创建函数跑了两次，Map 里只留下后放入的那一个，前一个连接被丢掉。改成 computeIfAbsent 后，这个键只创建一次。",
     "task": "并发运行两个初始化任务，统计创建函数调用次数并检查最终值。",
@@ -3255,7 +3255,7 @@
     ]
   },
   "java-virtual-threads": {
-    "core": "虚拟线程让大量等待 I/O 的任务以较低线程资源成本并发执行；它不会加速单个 CPU 任务。下游连接池、数据库和限流边界仍然存在。顺序是：任务遇到阻塞等待时挂起虚拟线程，平台线程去干别的；计算时仍占用载体线程直到算完。边界是：适合大量互相独立的阻塞 I/O。CPU 密集任务不会更快，还可能因为调度更碎而更慢。连接池、锁里面做长时间 I/O，仍会把下游或载体钉住。限流要按下游容量设，不按虚拟线程个数设。等待 I/O 时虚拟线程可以让出载体；纯计算仍占着核直到算完。连接池和外部限流不会因为线程变轻而变多，这两个上限要单独设置。在重量级锁里做长时间阻塞 I/O，还可能把载体线程钉住。",
+    "core": "虚拟线程（JDK 21 定稿，JEP 444）让大量等待 I/O 的任务以较低线程资源成本并发执行；它不会加速单个 CPU 任务。下游连接池、数据库和限流边界仍然存在。顺序是：任务遇到阻塞等待时挂起虚拟线程，平台线程去干别的；计算时仍占用载体线程直到算完。边界是：适合大量互相独立的阻塞 I/O。CPU 密集任务不会更快，还可能因为调度更碎而更慢。连接池、锁里面做长时间 I/O，仍会把下游或载体钉住。限流要按下游容量设，不按虚拟线程个数设。等待 I/O 时虚拟线程可以让出载体；纯计算仍占着核直到算完。连接池和外部限流不会因为线程变轻而变多，这两个上限要单独设置。在重量级锁里做长时间阻塞 I/O，还可能把载体线程钉住。",
     "why": "错把虚拟线程当成让 CPU 计算本身变快，密集循环的耗时仍由核数决定，1000 个虚拟线程不会变成 1000 核。下游连接池也会先满。能分开的信号是：任务时间主要花在等待 I/O，还是花在占着 CPU 算。",
     "example": "1000 个各自等待数据库的阻塞调用，虚拟线程可以同时挂起等待，瓶颈转到连接池大小。1000 个纯计算任务仍把 CPU 打满，完成时间不因换成虚拟线程而下降。把数据库连接池上限降到 20 后，多出来的虚拟线程堵在取连接，而不是继续提高吞吐。",
     "task": "比较 1000 个等待数据库的请求与 1000 个密集计算任务的瓶颈。",
@@ -3328,7 +3328,7 @@
     ]
   },
   "java-fork-join-pool": {
-    "core": "ForkJoinPool 用工作窃取处理可以拆开再合并的任务。parallelStream 默认走公共池，池大小和 CPU 相关。任务里如果阻塞等 IO，工作线程就被占住，别的计算也排队。阻塞式 IO 用普通线程池或异步客户端，把 ForkJoin 留给 CPU 计算。公共池还被 JVM 自己的一些任务共用，不要在里面做长时间阻塞。需要独立隔离时，自建 ForkJoinPool 再提交，不要默认挤公共池。",
+    "core": "ForkJoinPool（**JDK 7**）用工作窃取处理可以拆开再合并的任务。parallelStream 默认走公共池，池大小和 CPU 相关。任务里如果阻塞等 IO，工作线程就被占住，别的计算也排队。阻塞式 IO 用普通线程池或异步客户端，把 ForkJoin 留给 CPU 计算。公共池还被 JVM 自己的一些任务共用，不要在里面做长时间阻塞。需要独立隔离时，自建 ForkJoinPool 再提交，不要默认挤公共池。",
     "why": "在 parallelStream 里调远程接口，下游一慢，公共池里的工作线程都堵在网络上，同进程其他并行计算一起停。区分信号是纯计算能铺开，阻塞 sleep 或 HTTP 会把池占死。",
     "example": "对集合 parallelStream 去调库存 HTTP。下游变慢后，公共池的工作线程都停在网络读，别的 parallelStream 也排不上。同样的集合若只做 CPU 计算，线程会忙在计算上，而不是全部等 I/O。阻塞任务应离开公共池。",
     "task": "对比 CPU 计算和阻塞 sleep 两种任务在 parallelStream 下的耗时。写出哪一种不该用公共池。",
@@ -3529,6 +3529,99 @@
       ]
     ]
   },
+  "mysql-inner-join-match": {
+    "core": "`INNER JOIN` 只输出**联结条件为真**的行组合。左表有、右表无匹配的行不会出现。需要保留左表全部行时用 `LEFT JOIN`，再对右表列看 NULL；`WHERE` 里写右表列 `= ?` 会把外连接打回内连接效果，见 `sql-outer-join-where`。`CROSS JOIN` 是笛卡尔积，通常要显式过滤。先写清“没匹配时还要不要左表行”，再选 INNER 还是 OUTER。",
+    "why": "用户表 INNER JOIN 订单后，“从未下单的用户”从结果里蒸发，报表人数对不上。",
+    "example": "`SELECT u.id FROM users u INNER JOIN orders o ON u.id=o.user_id` 只有下过单的用户。要全部用户加下单数，用 LEFT JOIN + COUNT。",
+    "task": "划掉“JOIN 就是把表拼一起”。写出：只要双方都有、要保留左表无匹配，各用哪种 JOIN。",
+    "answer": "划掉「JOIN 就是把表拼一起」。只要匹配行用 INNER。保留左表无匹配用 LEFT。WHERE 过滤右表列可能把 LEFT 变成实质 INNER。",
+    "deep": [
+      {
+        "title": "和 ON vs WHERE",
+        "body": "过滤联结条件优先写在 ON。WHERE 在联结之后过滤，对外连接更易踩坑。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "造一个无订单用户，INNER 结果应无他；LEFT 应有他且订单列为 NULL。"
+      }
+    ],
+    "references": [
+      [
+        "MySQL：JOIN",
+        "https://dev.mysql.com/doc/refman/8.4/en/join.html"
+      ],
+      [
+        "MySQL：外连接",
+        "https://dev.mysql.com/doc/refman/8.4/en/outer-join-simplification.html"
+      ]
+    ]
+  },
+  "mysql-join-ban-not-absolute": {
+    "core": "JOIN **可以**产生临时表或文件排序，但不是必然；有合适索引时，优化器常用嵌套循环按索引探查，小表/维度表联结很常见，见 MySQL `JOIN` 文档与 `EXPLAIN`。资料把“解放数据库 CPU、计算上移服务层”收成**绝对禁令**，会逼人把本可一次索引联结的查询拆成 N+1 次往返，应用层更慢、更易不一致。大表对大表无约束的笛卡尔式联结、或把过滤推后，才真正危险。规范应写成：热点路径避免无索引的多表联结与相关子查询；用 `EXPLAIN`/`EXPLAIN ANALYZE` 证明，而不是禁止关键字 `JOIN`。视图与计算上移见 `mysql-view-is-stored-query`；外键取舍见 `mysql-fk-redundancy`。",
+    "why": "规范背成“代码里不准出现 JOIN”，订单详情改成先查单再循环查明细，数据库 QPS 和延迟一起升。",
+    "example": "`orders o JOIN order_items i ON i.order_id=o.id WHERE o.id=?`，`order_id` 有索引：EXPLAIN 多为 ref/eq_ref，不必为了禁令拆成两次查询。两张亿级表按无索引列 JOIN 且无足够过滤，才应改模型或预聚合。",
+    "task": "划掉“JOIN=一定临时表=禁止”。写出：何时 JOIN 可接受；要用什么证明该不该拆到应用层。",
+    "answer": "划掉「JOIN 一律禁止」。有索引、过滤足够的小结果联结可接受。用 EXPLAIN 看是否索引探查、是否危险的 temporary/filesort。无证据时不要把联结拆成 N+1。",
+    "deep": [
+      {
+        "title": "和子查询",
+        "body": "相关子查询可能反复执行；半连接/改写后的 IN/EXISTS 有时与 JOIN 等价。同样用计划说话，不要只禁语法外形。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对有索引的订单+明细 JOIN 做 EXPLAIN，记录 type/rows。再改成应用层两次查询循环，比延迟与语句数。"
+      }
+    ],
+    "references": [
+      [
+        "MySQL：JOIN",
+        "https://dev.mysql.com/doc/refman/8.4/en/join.html"
+      ],
+      [
+        "MySQL：EXPLAIN",
+        "https://dev.mysql.com/doc/refman/8.4/en/explain.html"
+      ],
+      [
+        "MySQL：子查询优化",
+        "https://dev.mysql.com/doc/refman/8.4/en/subquery-optimization.html"
+      ]
+    ],
+    "diagram": "diagrams/mysql-join-ban-not-absolute.svg",
+    "origin": "《分布式高并发.pdf》约第 105 页：禁止使用 JOIN、禁止大表子查询"
+  },
+  "mysql-or-not-must-become-in": {
+    "core": "同一列上的 `a=1 OR a=2` 与 `a IN (1,2)` 在现行优化器里常常落到相似计划；**不同列**上的 `col1=? OR col2=?` 才更常触发 index merge 或更差路径，需要看版本与统计信息。资料把“旧版 OR 不能命中索引”写成永久禁令，并要求一律改 IN，会误伤合法语义（跨列 OR、与 AND 混用），也忽略了 5.x/8.x 已能对多项等值做更好的处理。正确做法：对热点 SQL 看 `EXPLAIN`；能写成 IN 且语义相同就写 IN 以提高可读性；跨列 OR 考虑改写、联合索引或拆查询。不要用“OR 耗 CPU”代替计划。邻接的隐式转换与函数挡索引见既有规范课与 `mysql-where-having`。",
+    "why": "把 `status=1 OR status=2` 强行改成别的怪写法，或禁止一切 OR，评审只抓关键字，线上慢查询其实是跨列 OR 无索引。",
+    "example": "`WHERE shop_id=9 AND status IN (1,2)` 与 `status=1 OR status=2`（同列）在 8.4 上 EXPLAIN 都可能是 range/IN。`WHERE user_id=? OR order_no=?` 跨列，可能 index merge 或全表，应保证两侧有索引并比较拆成 UNION。",
+    "task": "划掉“OR 永远不能走索引、必须改 IN”。区分：同列多值；跨列 OR。各写一句怎么验证。",
+    "answer": "划掉「OR 必须改 IN」。同列多值 IN 更易读，计划常相近。跨列 OR 看 EXPLAIN，必要时 UNION 或补索引。禁令不能代替现行优化器证据。",
+    "deep": [
+      {
+        "title": "和“禁止小数存货币”",
+        "body": "同份规范还有“禁止小数存货币”。若把 DECIMAL 也禁掉就错了；金额应 DECIMAL 或整数分，不要 FLOAT，见已有浮点精度课。关键字禁令要拆开看对象。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "同一列写 OR 与 IN 各 EXPLAIN 一次，对比 type/rows。再写跨列 OR，看是否出现 index merge 或全表，再试 UNION。"
+      }
+    ],
+    "references": [
+      [
+        "MySQL：OR 与索引合并",
+        "https://dev.mysql.com/doc/refman/8.4/en/index-merge-optimization.html"
+      ],
+      [
+        "MySQL：IN",
+        "https://dev.mysql.com/doc/refman/8.4/en/comparison-operators.html#operator_in"
+      ],
+      [
+        "MySQL：EXPLAIN",
+        "https://dev.mysql.com/doc/refman/8.4/en/explain.html"
+      ]
+    ],
+    "diagram": "diagrams/mysql-or-not-must-become-in.svg",
+    "origin": "《分布式高并发.pdf》约第 105 页：禁止 OR，必须改为 IN"
+  },
   "mysql-where-having": {
     "core": "WHERE 在分组前筛选行，不能引用 SELECT 列表别名，也不能引用 COUNT、SUM 一类聚集函数；标准 SQL 这样规定，是因为写 WHERE 时这些结果列往往还没算出来。HAVING 在分组之后筛选组，可以写聚集表达式，MySQL 还允许它引用 SELECT 列表别名、分组列，以及外层子查询列。手册对带分组的 HAVING 写明：接近最后才应用，LIMIT 在它之后，并且没有这一层优化。没有 GROUP BY、也没有聚集函数时，优化器会把 HAVING 并进 WHERE，这时它不再是“只能扫临时结果”。因此不要把本该过滤单行的条件写成 HAVING col > 0；应写回 WHERE，才有机会用上索引与早期过滤。HAVING 的典型用途是 COUNT(*) > 1 或 MAX(salary) > 10 这类组条件，不是“凡是别名都放 HAVING”，也不是“HAVING 只能写聚集函数”。",
     "why": "把行级过滤塞进 HAVING，会丢掉 WHERE 侧的索引与下推；把“能写别名”记成 HAVING 的唯一语法，又会漏掉聚集条件和无 GROUP BY 时的合并行为。",
@@ -3539,6 +3632,10 @@
       {
         "title": "别名不是走不走索引的原因",
         "body": "走不走索引，看条件能不能在分组前用上索引，不是看写的是列名还是别名。无分组的 HAVING 常常被改写成 WHERE，这时它不再是“只能扫临时结果”。行级条件写回 WHERE，才有机会早过滤。"
+      },
+      {
+        "title": "和 GROUP BY 流程",
+        "body": "WHERE → GROUP BY → 聚合 → HAVING 的顺序与门槛写法见 `mysql-group-by-having`。INNER/LEFT 保留谁见 `mysql-inner-join-match`。"
       },
       {
         "title": "怎样自己验证",
@@ -3561,6 +3658,33 @@
       [
         "MySQL 8.4：GROUP BY 处理",
         "https://dev.mysql.com/doc/refman/8.4/en/group-by-handling.html"
+      ]
+    ]
+  },
+  "mysql-group-by-having": {
+    "core": "`WHERE` 在**分组前**过滤行；`GROUP BY` 把行收成组并算 `COUNT/SUM/...`；`HAVING` 在**分组后**过滤组。对聚合结果设门槛必须用 HAVING（或子查询）。`SELECT` 列表里非聚合列在 ONLY_FULL_GROUP_BY 下必须出现在 GROUP BY。和 `mysql-where-having` 的易混点衔接：WHERE 不能引用分组后的聚合别名。",
+    "why": "把“订单数大于 10 的用户”写成 WHERE COUNT，数据库拒绝或算错，改成先取出再在应用过滤。",
+    "example": "`SELECT user_id, COUNT(*) c FROM orders GROUP BY user_id HAVING c > 10`。先 WHERE status='paid' 再 GROUP，付费订单再计数。",
+    "task": "写出：只统计已支付、只要订单数>10 的用户，WHERE 与 HAVING 各放哪一句。",
+    "answer": "支付条件进 WHERE。COUNT>10 进 HAVING。聚合门槛不能指望 WHERE。",
+    "deep": [
+      {
+        "title": "和 ONLY_FULL_GROUP_BY",
+        "body": "选了未分组、未聚合的列会报错。要么写入 GROUP BY，要么用聚合函数。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对比 WHERE 与 HAVING 位置错误时的报错信息；修正后组数应变少。"
+      }
+    ],
+    "references": [
+      [
+        "MySQL：GROUP BY",
+        "https://dev.mysql.com/doc/refman/8.4/en/group-by-modifiers.html"
+      ],
+      [
+        "MySQL：HAVING",
+        "https://dev.mysql.com/doc/refman/8.4/en/select.html"
       ]
     ]
   },
@@ -3843,6 +3967,62 @@
       [
         "IEEE 754",
         "https://en.wikipedia.org/wiki/IEEE_754"
+      ]
+    ]
+  },
+  "mysql-split-not-at-ten-million": {
+    "core": "InnoDB 没有「一千万行必须拆表」这条服务器限制。行能不能扛住，看行宽、二级索引、缓冲池能否装下热数据、锁与复制延迟、备份和 DDL 窗口，而不是一个整数。点查走主键、热数据集中时，远超过一千万行仍可能只打到少量页。反过来，宽行、大量二级索引或全表扫描，不到这个数也会把缓冲池打满。拆分引入跨库连接、分页和分布式事务，见 `distributed-one-db-first`。原则里「尽量不拆、先进化」比这条整数更接近决策顺序。",
+    "why": "按行数切库之后，分页和事务先坏掉，缓冲池命中率却几乎没变，因为热数据本来就放得下。",
+    "example": "订单点查 `WHERE id=?`，热的是近 30 天，缓冲池能装下这些页。表里有两千万历史行也不构成拆分理由。若 `EXPLAIN` 显示大范围扫描、复制延迟随写入上升、备份超过维护窗，再谈按时间或按键拆，并写明跨库查询怎么做。",
+    "task": "划掉“到一千万必须拆”。列出要先测量的三项：热数据与缓冲池、慢查询形态、复制或备份窗口。",
+    "answer": "划掉「到一千万必须拆」。行数本身不是拆分开关。先看热页是否进得了缓冲池、查询是点查还是大扫描、复制延迟和备份是否已经超窗。这三项都健康时，保留单表。拆分后再处理跨库分页与事务。",
+    "deep": [
+      {
+        "title": "和 UUID 主键",
+        "body": "随机主键让插入落在叶子中间，页分裂在行数不大时就会出现，见 `mysql-uuid-not-clustered-pk`。那是键的分布问题，不是「到了一千万」。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "看 `information_schema` 或表统计里的行数，同时看缓冲池命中与慢查询。行数过千万但点查仍走主键、命中率健康，就不应按这条口诀拆。"
+      }
+    ],
+    "references": [
+      [
+        "MySQL：InnoDB 限制",
+        "https://dev.mysql.com/doc/refman/8.4/en/innodb-limits.html"
+      ],
+      [
+        "MySQL：缓冲池",
+        "https://dev.mysql.com/doc/refman/8.4/en/innodb-buffer-pool.html"
+      ]
+    ],
+    "diagram": "diagrams/mysql-split-not-ten-million.svg",
+    "origin": "《分布式高并发.pdf》约第 68 页：拆分原则写单表数据到一千万以内"
+  },
+  "mysql-view-is-stored-query": {
+    "core": "普通 **VIEW** 存的是**查询定义**。读视图时，优化器通常把视图展开成对基表（或其它视图）的查询再执行，所以基表提交后的新数据，下次读视图一般就能看见。它不是默认落盘的第二份数据副本。**物化**（把结果存成表或临时结果）是另一条能力，要单独建表、缓存层或特定引擎特性，不能从“建了 VIEW”自动推出。视图可简化权限与复杂连接的入口，但复杂视图、可更新视图有限制，写入往往仍应落基表。不要把视图当成自动刷新的报表库。",
+    "why": "把视图当快照表，基表更新后还去“刷新视图”，或以为删基表行视图里还在。",
+    "example": "`CREATE VIEW v_paid AS SELECT * FROM orders WHERE status='paid'`。插入新的 paid 订单后 `SELECT * FROM v_paid` 能看到。没有单独的“刷新视图”步骤。若需要昨日冻结报表，应写入报表表或导出文件，而不是指望普通 VIEW。",
+    "task": "划掉“视图=自动存好的结果表”。写出：普通 VIEW 存的是什么；要冻结快照应怎么做。",
+    "answer": "划掉「视图=自动存好的结果表」。普通 VIEW 存查询定义，读时对基表现算。冻结快照要物化表、导出或专用方案。不要默认当第二份表。",
+    "deep": [
+      {
+        "title": "可更新视图",
+        "body": "简单视图有时可 INSERT/UPDATE，带聚合、DISTINCT、多表等常不可更新。以手册与 EXPLAIN 为准，写路径优先基表。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "建视图后改基表一行，再查视图应见新值。SHOW CREATE VIEW 应看到 SELECT 文本而不是一份数据转储。"
+      }
+    ],
+    "references": [
+      [
+        "MySQL：视图",
+        "https://dev.mysql.com/doc/refman/8.4/en/views.html"
+      ],
+      [
+        "MySQL：可更新视图",
+        "https://dev.mysql.com/doc/refman/8.4/en/view-updatability.html"
       ]
     ]
   },
@@ -4424,6 +4604,39 @@
       ]
     ]
   },
+  "nosql-label-not-eventual": {
+    "core": "NoSQL 只表示「这一类系统不把 SQL 当唯一接口」，里面有键值、文档、列族、图，**一致性模型各不相同**。MongoDB 从 4.0 起可以在副本集上做多文档事务，见 `mongo-multi-doc-txn`。Redis 对单个键的命令在主节点上原子完成；从副本读才可能看到复制延迟。Cassandra 一类可以按请求选择一致性级别，不能把「最终一致」写成全部 NoSQL 的定义。反过来，MySQL 主从之间的读也会暂时分叉，见 `mysql-replica-lag`。ACID 里的 C 是约束不被事务弄破，和 CAP 的 C 也不是同一个词，见 `distributed-cap`、`mysql-acid-c-is-consistency`。",
+    "why": "面试背成「上了 NoSQL 就不要事务、读到旧值也正常」，该用多文档事务的扣款被拆成两次裸写；该接受副本延迟的报表却被要求每次都线性一致。",
+    "example": "订单与库存两条文档要一起成功：在 MongoDB 副本集里开事务，而不是说「文档库所以最终一致」。Redis 上 `INCR` 库存在主节点是原子的。报表允许读从库时，要写明能接受多少复制延迟，这和选了 MySQL 还是 MongoDB 无关。",
+    "task": "划掉“NoSQL=最终一致且没有 ACID”。给键值单键、文档多文档、主从只读各写一句：一致性由什么决定。",
+    "answer": "划掉「NoSQL=最终一致且没有 ACID」。标签不决定一致性。单键命令看该键在主上的原子性。多文档是否进一个事务看产品与版本（MongoDB 副本集事务）。从副本读要单独写能接受的延迟。MySQL 从库同样可以暂时落后。",
+    "deep": [
+      {
+        "title": "和 BASE 口诀",
+        "body": "BASE 描述的是有些系统用放松「立刻一致」换吞吐，它不是禁令，也不是一种可执行算法。能不能开事务，以你锁定的数据库版本文档为准。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开 MongoDB 事务文档，确认副本集上的多文档事务。再对 Redis 主节点执行 INCR，从节点在复制完成前读，观察是否可能落后。两条都成立时，对照表那一行就不能当定义。"
+      }
+    ],
+    "references": [
+      [
+        "MongoDB：事务",
+        "https://www.mongodb.com/docs/manual/core/transactions/"
+      ],
+      [
+        "Redis：INCR",
+        "https://redis.io/docs/latest/commands/incr/"
+      ],
+      [
+        "Redis：复制",
+        "https://redis.io/docs/latest/operate/oss_and_stack/management/replication/"
+      ]
+    ],
+    "diagram": "diagrams/nosql-label-not-consistency.svg",
+    "origin": "《分布式高并发.pdf》约第 57 页：把 NoSQL 概括为最终一致性而非 ACID"
+  },
   "mysql-myisam-innodb": {
     "core": "MySQL 8.4 默认存储引擎是 InnoDB。MyISAM 不支持事务、外键和 MVCC，锁粒度是表级，并在特定条件下支持并发插入；InnoDB 支持事务、外键、行级锁与多版本读。若表没有 PRIMARY KEY，也没有合适的全部 NOT NULL 唯一索引，InnoDB 会生成隐藏聚簇索引，行 ID 为 6 字节——这句与手册一致。不能再说 InnoDB 不支持全文索引；也不能把“MyISAM 查询一定更快”写成通则。MyISAM 表的数据与索引文件扩展名仍是 .MYD/.MYI，表定义在数据字典中；InnoDB 表空间上限与文件布局以表空间文档为准，而不是笼统的 2GB。",
     "why": "用过时对比表答题，会在默认 InnoDB 上推荐无事务引擎，或重复“InnoDB 没有全文”。信号是建表不写引擎时 SHOW ENGINES 与默认值都指向 InnoDB。默认引擎已经不是那张旧表。",
@@ -4832,6 +5045,10 @@
         "body": "字符串一次读写整个值。哈希只改键下的一个字段。有序集合按分数取一段范围。流只追加，并用上次的游标接着读。过期和持久化不改变这些命令每次要动多少数据。整段重写会盖掉并发改过的其他字段。"
       },
       {
+        "title": "展开课",
+        "body": "Hash 字段更新见 `redis-hash-field-update`。ZSet 排行与范围见 `redis-zset-rank-range`。近似 UV 用 HyperLogLog 见 `redis-hyperloglog-approx`，它列不出成员。"
+      },
+      {
         "title": "怎样自己验证",
         "body": "对同一份排行先存成一整段字符串，改一名次要整段重写，看写入长度。再改成按分数写入并取前十名，返回应已按分数排好，且不会把其他成员重新写一遍。前十名的顺序应来自分数而不是写入时刻。"
       }
@@ -4840,6 +5057,87 @@
       [
         "Redis：数据类型",
         "https://redis.io/docs/latest/develop/data-types/"
+      ]
+    ]
+  },
+  "redis-hash-field-update": {
+    "core": "Redis **Hash** 把多个字段放在一个键下，`HSET`/`HGET` 可改单个字段，不必重写整份文档。适合「同一对象、字段常局部更新」。整份快照、要一次性替换时，String + JSON 也可以，但改一个字段成本是整键读写。字段极多、要二级索引时，Hash 不是关系数据库。类型总览见 `redis-data-types`。集群上一个 Hash 键仍落在一个槽，见 `redis-cluster-incr-not-five-steps`。",
+    "why": "全量 JSON 在 String 里，资料页只改头像也整键重写，并发下还容易互相覆盖。",
+    "example": "`HSET user:9 name Alice avatar a.png`。只改名：`HSET user:9 name Bob`。用 String 存 JSON 则要读出、改字段、再 SET 整串。",
+    "task": "划掉“对象只能 JSON String”。写出局部改字段与整份替换各更贴近哪种结构。",
+    "answer": "划掉「对象只能 JSON String」。局部字段更新用 Hash。整份替换可用 String。Hash 仍是一个键一个槽，不是表。",
+    "deep": [
+      {
+        "title": "和 Pipeline",
+        "body": "多个 HGET 可用 pipeline 少 RTT，见 `redis-pipeline`。不要把 N 次网络往返当成 Hash 的错。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对同一逻辑对象分别用 Hash 与 String 改一个字段，对比命令次数与并发覆盖。"
+      }
+    ],
+    "references": [
+      [
+        "Redis：Hash",
+        "https://redis.io/docs/latest/develop/data-types/hashes/"
+      ],
+      [
+        "Redis：HSET",
+        "https://redis.io/docs/latest/commands/hset/"
+      ]
+    ]
+  },
+  "redis-zset-rank-range": {
+    "core": "**Sorted Set** 每个成员带一个分（score），Redis 按分维护顺序。`ZADD` 写入或更新分，`ZRANGE`/`ZREVRANGE` 取一段，`ZRANK`/`ZREVRANK` 查名次。适合排行榜、延时队列（分用时间戳）。成员唯一；同分时按成员字典序。不要用 List 手动保持有序却忽略并发插入。大 Key 与热 key 见 `redis-big-hot-key`。",
+    "why": "应用侧全量排序，流量一大 CPU 和带宽先炸，Redis 其实已经能按分切一段。",
+    "example": "`ZADD board 100 u1 250 u2`。前三名：`ZREVRANGE board 0 2 WITHSCORES`。某人涨分再 ZADD 同一成员即可。",
+    "task": "写出写入比分、取 TopN、查某人名次各用哪类命令；划掉“拉回 Java sort”。",
+    "answer": "划掉「拉回 Java sort」。ZADD 写分。ZREVRANGE 取 TopN。ZREVRANK 查名次。不要每次全量拉回应用排序。",
+    "deep": [
+      {
+        "title": "和延时任务",
+        "body": "分用执行时间戳，定时 ZRANGEBYSCORE 取出到期成员。仍要处理重复消费。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "插入多成员后改一个分，确认范围结果顺序变化，无需应用 sort。"
+      }
+    ],
+    "references": [
+      [
+        "Redis：Sorted sets",
+        "https://redis.io/docs/latest/develop/data-types/sorted-sets/"
+      ],
+      [
+        "Redis：ZRANGE",
+        "https://redis.io/docs/latest/commands/zrange/"
+      ]
+    ]
+  },
+  "redis-hyperloglog-approx": {
+    "core": "HyperLogLog（`PFADD`/`PFCOUNT`）用固定小内存**估算**不重复个数，有标准误差，**不能**取出成员列表，也不能精确去重导出。要精确集合用 Set；要排行用 ZSet。UV 估算、巨大基数且能接受误差时用 HLL。合并多个 HLL 用 `PFMERGE`。类型总览见 `redis-data-types`。",
+    "why": "产品要“导出今日访客名单”，存的却是 HLL，最后只能道歉重采。",
+    "example": "`PFADD uv:2026-10-09 userA userB`。`PFCOUNT` 约等于不重复人数。无法 SMEMBERS。要名单应 `SADD` 或落库。",
+    "task": "划掉“HLL=省内存的 Set”。写出：要近似 UV、要成员列表，各用什么。",
+    "answer": "划掉「HLL=省内存的 Set」。近似 UV 用 HyperLogLog。要成员或精确集合用 Set（或数据库）。HLL 列不出都有谁。",
+    "deep": [
+      {
+        "title": "误差",
+        "body": "官方说明有标准误差量级。对账金额、库存件数不要用 HLL。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "PFADD 少量已知成员，PFCOUNT 接近个数但 SMEMBERS 类命令不存在于该结构。"
+      }
+    ],
+    "references": [
+      [
+        "Redis：HyperLogLog",
+        "https://redis.io/docs/latest/develop/data-types/probabilistic/hyperloglogs/"
+      ],
+      [
+        "Redis：PFCOUNT",
+        "https://redis.io/docs/latest/commands/pfcount/"
       ]
     ]
   },
@@ -5366,6 +5664,39 @@
     "diagram": "diagrams/redis-save-bgsave.svg",
     "origin": "本地库 Redis 思维导图把 SAVE 与 BGSAVE 并列为两种产生 RDB 的方式"
   },
+  "redis-cluster-incr-not-five-steps": {
+    "core": "`INCR` 作用在**一个键**上，原子性也只覆盖这一键。Cluster 按槽把键放到**一个主节点**；同名键不会在五台上各计各的。故障转移把这个键的值交给新主，计数接着涨，不会自动变成五段互不重叠的序列。有些资料里的「五台初值 1、2、3、4、5，步长都是 5」是**五份独立计数器**，调用方必须钉死自己用哪一份。那是分开的实例或分开的键，不是「连上 Cluster 就自动分号」。全局号还要持久化，进程重启不能从初值再走一遍。单库自增与雪花的边界见 `distributed-unique-id`、`mysql-uuid-not-clustered-pk`。",
+    "why": "应用随便连集群里任意节点并对同一个键 INCR，五台其实只有一台在加。若每台各记各的、又没有固定步长和钉死的客户端，合并后号会撞。故障转移之后有人把计数器清回初值，已经发出的号会再出现。",
+    "example": "键 `id:order` 落在槽 9000 的主节点。五个应用都 `INCR id:order`，QPS 仍打在这一槽。要五段号，应是五个键或五台独立 Redis，每段写明起点与步长，客户端按实例固定取号，并把当前值落盘。主从切换后读到的应是切换前的计数值，而不是 1。",
+    "task": "划掉“Cluster=五台步进发号”。写出：同一个键的 INCR 落在几台主上；五段互不重叠的号要由谁钉死。",
+    "answer": "划掉「Cluster=五台步进发号」。同一个键只落在一台主上，故障转移继续这份计数。五段步长是五份独立计数器，客户端要钉死用哪一份，并持久化当前值。连上 Cluster 不会自动把一个 INCR 拆成五段。",
+    "deep": [
+      {
+        "title": "和代理取模",
+        "body": "Twemproxy 一类代理也不是 Cluster 协议，见 `redis-proxy-hash-not-cluster`。发号若走代理，仍要问清键落在哪一台，以及宕机后计数是否还在。"
+      },
+      {
+        "title": "和全局发号",
+        "body": "分库自增与雪花边界见 `distributed-unique-id`、`mysql-uuid-not-clustered-pk`。不要把 Cluster 上的单个 INCR 键当成五段步进发号器。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对同一个键连续 INCR，用 `CLUSTER KEYSLOT` 与 `CLUSTER NODES` 看哈希槽。再在另一节点对同一键 INCR，值应连续，而不是各从 1、2、3 起步。"
+      }
+    ],
+    "references": [
+      [
+        "Redis：INCR",
+        "https://redis.io/docs/latest/commands/incr/"
+      ],
+      [
+        "Redis：集群规范",
+        "https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/"
+      ]
+    ],
+    "diagram": "diagrams/redis-cluster-incr-one-slot.svg",
+    "origin": "《分布式高并发.pdf》约第 196 页：用 Redis 集群按 1..5 初值与步长 5 发全局 ID"
+  },
   "redis-lua-atomic": {
     "core": "每个 Redis 命令自己原子，两个命令之间别人能插进来。EVAL 把脚本放在服务端一次跑完，中间不会插入别的命令。脚本里要用到的键放 KEYS，参数放 ARGV，方便集群把脚本送到正确节点。脚本应短、可重入、不要在里面做随机长时间循环。持久化与复制按脚本整体效果走。能用单条命令（INCR、SET NX）就不要上脚本。",
     "why": "客户端先 GET 再 SET 减库存，两条命令之间另一个请求插进来，两边都读到大于 0，秒杀超卖。区分信号是同一库存键，GET+SET 并发会减成负数，EVAL 里读完再 DECR 则只有一个请求成功。",
@@ -5394,7 +5725,7 @@
     ]
   },
   "redis-stream-vs-pubsub": {
-    "core": "Pub/Sub 是当时在线的订阅者才收得到，不持久、不确认、没积压。Stream 把条目追加到列表，有 ID，消费者组用 XREADGROUP 领取，XACK 确认。离线期间的消息还在，直到修剪。它仍不是 Kafka 那种多分区日志的全集，但比 Pub/Sub 适合“至少处理一次”。只做瞬时通知（踢人、刷缓存）才用 Pub/Sub。",
+    "core": "Pub/Sub 是当时在线的订阅者才收得到，不持久、不确认、没积压。**Redis 5** 起的 Stream 把条目追加到列表，有 ID，消费者组用 XREADGROUP 领取，XACK 确认。离线期间的消息还在，直到修剪。它仍不是 Kafka 那种多分区日志的全集，但比 Pub/Sub 适合“至少处理一次”。只做瞬时通知（踢人、刷缓存）才用 Pub/Sub。",
     "why": "用 SUBSCRIBE 接下单事件，消费者重启的那段时间没有人在线上，消息不会被补发，表现为丢单。区分信号是 Pub/Sub 没有积压和确认，Stream 用 XADD 留下的条目在重启后仍能被消费者组 XREADGROUP 领走。",
     "example": "下单执行 XADD orders * user 1 amount 9 后消费者进程退出。重启后用消费者组 cg1 执行 XREADGROUP，仍能领到这条，处理完 XACK。同一时段用 PUBLISH 发出的踢人通知，离线的订阅者收不到，也没有 ID 可补。",
     "task": "列出 Pub/Sub 和 Stream 在持久化、确认、积压上的差别。给下单和“踢下线”各选一种。",
@@ -5403,6 +5734,10 @@
       {
         "title": "频道不记得刚才那条",
         "body": "SUBSCRIBE 当时不在线，重启后没有历史可补。Stream 的条目留到修剪为止，消费者组用 XACK 表示处理过。只做踢人或刷缓存，才用 Pub/Sub。"
+      },
+      {
+        "title": "模式订阅",
+        "body": "PSUBSCRIBE 只按频道名 glob 匹配，仍无历史，见 `redis-pubsub-pattern-subscribe`。不要把 P* 当成可翻历史的查询。"
       },
       {
         "title": "怎样自己验证",
@@ -5417,6 +5752,33 @@
       [
         "Redis：Pub/Sub",
         "https://redis.io/docs/latest/develop/pubsub/"
+      ]
+    ]
+  },
+  "redis-pubsub-pattern-subscribe": {
+    "core": "`SUBSCRIBE` / `PSUBSCRIBE` 仍然是 **Pub/Sub**：只把**此后**发布的消息推给**当时在线**的订阅者。`PSUBSCRIBE` 只是用 glob 模式匹配**频道名**，不改变“无持久、无积压、无确认”。离线补历史、至少处理一次，仍要 Stream 或外部消息系统，见 `redis-stream-vs-pubsub`。模式订阅会收到名字匹配的多个频道，流量可能比单频道更大，要按前缀设计频道名，避免误匹配。",
+    "why": "以为 PSUBSCRIBE 像 SQL 的 LIKE 能翻历史，重启消费者后补单失败。",
+    "example": "在线时 `PSUBSCRIBE order.*` 能收到 `PUBLISH order.created ...`。进程挂掉期间的发布，重启后的订阅者拿不到。改成 `XADD orders * ...` + 消费者组才能补。",
+    "task": "划掉“P* = 能查历史”。写出 PSUBSCRIBE 多出来的能力，以及和 Stream 在持久上的差别。",
+    "answer": "划掉「P* = 能查历史」。P* 只多了频道名模式匹配。仍不持久、不积压。要历史与确认用 Stream。",
+    "deep": [
+      {
+        "title": "和键空间通知",
+        "body": "键事件通知也是 Pub/Sub 通道，同样不保证离线补发。过期监听不能当可靠工作队列。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "PSUBSCRIBE 后 PUBLISH 应收到。停订阅再 PUBLISH，重启订阅后不应出现那条。对照 XADD 离线仍可 XREADGROUP。"
+      }
+    ],
+    "references": [
+      [
+        "Redis：Pub/Sub",
+        "https://redis.io/docs/latest/develop/pubsub/"
+      ],
+      [
+        "Redis：PSUBSCRIBE",
+        "https://redis.io/docs/latest/commands/psubscribe/"
       ]
     ]
   },
@@ -5629,7 +5991,7 @@
     ]
   },
   "tomcat-nio-not-bio-default": {
-    "core": "Tomcat 10.1 的 HTTP 连接器文档写明：protocol 的默认值 HTTP/1.1 使用基于 Java NIO 的连接器，实现类是 Http11NioProtocol。BIO 那套 Http11Protocol 从 8.5 起移除，配置里不再有“默认 BlockingIO”，也没有 Tomcat 4/5 的 maxProcessors、旧 BIO 池的 maxSpareThreads。NIO 在这里管的是接受连接、用轮询挂住很多套接字。同步 Servlet 在处理期间仍要一条工作线程，直到这次请求返回。文档写的是：每个非异步请求在处理期间需要一条线程。maxThreads 默认 200，决定同时能处理多少请求。maxConnections 默认 8192，决定同时能挂住多少连接。连接可以多于线程；正在执行的同步请求不能多于 maxThreads。线程不够时，新连接还可以接到 maxConnections，再多则进 acceptCount 的操作系统队列。这和 Netty 里一条 EventLoop 把业务也轮询掉不是同一件事。把 maxThreads 调成个位数，慢请求会把能处理的并发打满，即使连接器名字里有 nio。",
+    "core": "Tomcat 10.1 的 HTTP 连接器文档写明：protocol 的默认值 HTTP/1.1 使用基于 Java NIO 的连接器，实现类是 Http11NioProtocol。BIO 那套 Http11Protocol 从 **8.5** 起移除，配置里不再有“默认 BlockingIO”，也没有 Tomcat 4/5 的 maxProcessors、旧 BIO 池的 maxSpareThreads。NIO 在这里管的是接受连接、用轮询挂住很多套接字。同步 Servlet 在处理期间仍要一条工作线程，直到这次请求返回。文档写的是：每个非异步请求在处理期间需要一条线程。maxThreads 默认 200，决定同时能处理多少请求。maxConnections 默认 8192，决定同时能挂住多少连接。连接可以多于线程；正在执行的同步请求不能多于 maxThreads。线程不够时，新连接还可以接到 maxConnections，再多则进 acceptCount 的操作系统队列。这和 Netty 里一条 EventLoop 把业务也轮询掉不是同一件事。把 maxThreads 调成个位数，慢请求会把能处理的并发打满，即使连接器名字里有 nio。",
     "why": "按 BIO 默认去找 maxSpareThreads 或 maxProcessors，10.1 的连接器上没有这些字段，还会以为线程数就是最大连接数。把 Netty 的“一条线程很多连接”套过来，把 maxThreads 调得很小，两百个慢请求里只有几条能执行。",
     "example": "Spring Boot 内嵌 Tomcat 启动日志里的 ProtocolHandler 是 http-nio-端口。同时挂上远多于 200 的空闲连接可以成功。若有 200 个请求各自在 Servlet 里不返回，第 201 个同步请求会等到有线程空出来，而不是再创建第 201 条工作线程。",
     "task": "对照当前 Connector 文档，写出默认协议实现；划掉“默认 BlockingIO”。",
@@ -7202,6 +7564,39 @@
       ]
     ]
   },
+  "cdn-not-just-reverse-proxy-cache": {
+    "core": "两者**都可以**缓存可缓存响应，但站位不同。**CDN** 把副本放到靠近用户的边缘，减少跨网延迟，主要服务静态与可缓存内容；动态写、鉴权、个性化默认仍回源。**反向代理**部署在源站一侧，常见职责是 TLS 终结、选上游、限流、压缩，缓存只是可选模块，见 `mw-proxy-lb-gateway`、`nginx-proxy-timeout`。一句“都是缓存”会漏掉：边缘分布解决不了源站选实例；源站代理也替代不了就近节点。秒杀静态页上 CDN、动态下单回源，正是分层，而不是两种名字的同一种缓存。",
+    "why": "只在机房反向代理上开了 proxy_cache，就以为全国延迟和 CDN 一样；或者把下单 API 也丢给 CDN，命中旧页或错误缓存。",
+    "example": "商品详情 HTML/CSS 走 CDN 边缘。下单 POST 到源站域名，经 Nginx 反代到应用，不经过 CDN 缓存键。反代可以做 HTTPS 与 upstream，即使关闭 proxy_cache 仍有价值。",
+    "task": "划掉“CDN=反代=缓存”。写出：就近分发、源站选上游，各更贴近哪一层。",
+    "answer": "划掉「CDN=反代=缓存」。就近分发是 CDN。源站 TLS、选上游、限流是反向代理。缓存是两者可选能力，不是共同定义。动态写默认回源。",
+    "deep": [
+      {
+        "title": "和秒杀页",
+        "body": "活动页静态资源可上 CDN；开抢标记若放在“声称不被 CDN 缓存”的 JS 里，仍要靠 Cache-Control/URL 版本，不能只靠口头约定。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对静态资源 dig/curl 看是否命中边缘 POP；对 POST 下单确认不经 CDN 缓存。关掉 Nginx proxy_cache 后，反代选上游与 TLS 应仍工作。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：CDN",
+        "https://developer.mozilla.org/en-US/docs/Glossary/CDN"
+      ],
+      [
+        "Nginx：proxy_cache",
+        "https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_cache"
+      ],
+      [
+        "Nginx：反向代理",
+        "https://nginx.org/en/docs/http/ngx_http_proxy_module.html"
+      ]
+    ],
+    "diagram": "diagrams/cdn-not-just-reverse-proxy-cache.svg",
+    "origin": "《分布式高并发.pdf》约第 13 页：CDN 和反向代理的基本原理都是缓存"
+  },
   "nginx-static-cache-headers": {
     "core": "Nginx 可以不经 Java，直接返回静态文件。缓存是否敢久留，靠响应头。带内容哈希的文件名变化等于新地址，可以长期缓存。HTML 入口经常要重新验证，否则用户一直拿旧入口去找已经删掉的旧脚本。gzip 或压缩在传输层减小体积，不代替缓存策略。静态和反代写在不同 location，避免 API 也被当成文件。顺序是静态文件由这里直接返回，缓存多久靠响应头而不是靠文件在不在磁盘。带内容哈希的文件名变了就是新地址，可以久留。边界是入口页若被标成长期缓存，用户会一直用旧入口去找已删除的脚本。压缩只减小体积，不代替这个策略。改完入口后若只有强制刷新能看见新页面，说明正常请求还在用旧的那份入口。",
     "why": "学习者会把入口页也标成和带哈希的脚本一样长缓存。脚本文件名变了，浏览器仍拿着旧入口去找已经删掉的旧脚本。入口页短缓存或每次验证、哈希脚本可以久留，强制刷新和普通打开结果不同，才说明缓存头要按文件种类分开。",
@@ -7994,6 +8389,35 @@
         "https://kafka.apache.org/documentation/#semantics"
       ]
     ]
+  },
+  "mq-delete-not-always-idempotent": {
+    "core": "对**同一主键做物理 DELETE**，第二次往往只是“行已不在”，资源终态相同，HTTP DELETE 也常按这个语义设计，见 `http-methods`。资料据此写成「删除操作也是幂等的」，会把**业务上的删除**一并带偏：软删除把 `deleted=1` 再写一遍还可能再改时间戳；“删除订单行”若实现成库存加回，重放会加两次；关户若再触发一次清算通知，副作用会重复。消息重放场景要问的是**这次处理会不会第二次改变业务状态**，不是字典里有没有“删除”两个字。可靠做法仍是业务键、状态机或唯一约束，见 `mq-consume-idempotent-key`、`distributed-idempotent-key`。",
+    "why": "消费者把“取消订单”当成天然幂等 DELETE，重放后库存被加回两次，对账才发现。",
+    "example": "`DELETE FROM cart WHERE id=9` 执行两次，表里仍无该行，可视为终态幂等。`UPDATE orders SET status='cancelled'` 若每次还 `stock=stock+1`，重放会超发库存。应写成：仅当 status 从 paid 转到 cancelled 时加回一次，或取消号唯一。",
+    "task": "划掉“凡删除都天然幂等”。给物理删行、软删、取消并归还库存各标：终态是否天然相同，要不要业务键。",
+    "answer": "划掉「凡删除都天然幂等」。物理删同一主键，终态常相同。软删与带归还/通知的取消，重放可能再改状态，要状态机或业务键。不要因为操作名叫删除就跳过幂等设计。",
+    "deep": [
+      {
+        "title": "和 HTTP DELETE",
+        "body": "规范里对同一资源重复 DELETE，预期是资源不在；第二次状态码可以是 404。业务 API 若把 DELETE 映射成“退款+加库存”，规范帮不上忙，仍要幂等键。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对同一取消消息投两次：若库存加回两次，说明没幂等。改成“仅从可取消状态转入取消态时加回”，第二次影响行数应为 0。"
+      }
+    ],
+    "references": [
+      [
+        "微服务：幂等消费者",
+        "https://microservices.io/patterns/communication-style/idempotent-consumer.html"
+      ],
+      [
+        "MDN：DELETE",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/DELETE"
+      ]
+    ],
+    "diagram": "diagrams/mq-delete-not-always-idempotent.svg",
+    "origin": "《分布式高并发.pdf》约第 32 页：删除操作也是幂等的"
   },
   "mq-backlog-expand-queues": {
     "core": "先修好不消费的原因，避免继续写坏数据。并行度通常受 Kafka 分区数或 RocketMQ 队列数限制，消费者多于分区/队列会空转。应急可以扩分区/队列，或把旧 topic 的消息转发到队列更多的临时 topic，再拉起成倍消费者；追上后再缩回。新消息若不能丢，要评估是否暂停生产或另开通道。死信和重试见 `mq-dlq-backlog`。这是运维应急，不是日常靠堆积当缓冲。",
@@ -9126,6 +9550,39 @@
         "https://docs.spring.io/spring-cloud-commons/reference/spring-cloud-commons/application-context-services.html"
       ]
     ]
+  },
+  "config-center-poll-needs-watch": {
+    "core": "配置是**读多写少**：多数时刻版本未变，固定间隔全量/全键拉取只会打满配置服务与缓存。资料后半承认这一点，并提到改配置后用 MQ / ZooKeeper **通知**清本地缓存、Diamond 一类推拉结合——这才是可用形态。本地缓存仍需要：**版本号或 checksum**、失败回退、以及推送丢失时的兜底拉取。把「改完 Redis 里缓存一分钟再生效」当成产品特性，其实是在承认**一致性窗口**；关键开关（限流阈值、开关）应推送或短长轮询，而不是默认等满一分钟。现成实现见 `sca-nacos-config`：订阅 dataId，服务端推变更，客户端再拉。",
+    "why": "上线限流开关，一万实例每 5 秒扫一遍配置接口，配置集群先被自己人打满；有的实例还要再等本地缓存分钟级才看见新值。",
+    "example": "简版：每个应用进程每 10 秒 GET `/config/all`。配置一天改两次，其余请求全是空跑。改为：写入配置中心后发变更事件（或 Nacos/ZK watch）；客户端只在通知后拉该 dataId，并带版本；另设较长周期的兜底对账。限流阈值从推送到生效可缩到秒级，而不是固定等 Redis 一分钟。",
+    "task": "划掉“本地缓存 + 定时轮询 = 配置中心性能方案”。写出推送/长轮询要解决什么，本地缓存还要保留哪两样。",
+    "answer": "划掉「本地缓存 + 定时轮询 = 配置中心性能方案」。盲轮询在读多写下浪费带宽与配置集群。用变更通知或长轮询驱动拉取；本地缓存保留版本与失败兜底。分钟级“自动生效”是一致性窗口，关键配置应主动推。",
+    "deep": [
+      {
+        "title": "和 Nacos",
+        "body": "Nacos 配置是 dataId + group + namespace；客户端订阅后由服务端推变更再拉内容，见 `sca-nacos-config`。不要自建“每进程扫全表”代替订阅。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "压一千个客户端每 5 秒拉全量，看配置服务 QPS。改成只在版本变更时拉，空闲 QPS 应接近心跳。改一关键开关后，确认不是固定等满本地/Redis 一分钟。"
+      }
+    ],
+    "references": [
+      [
+        "Nacos：配置管理",
+        "https://nacos.io/docs/latest/guide/user/configuration/"
+      ],
+      [
+        "Spring Cloud Alibaba：Nacos Config",
+        "https://github.com/alibaba/spring-cloud-alibaba/wiki/Nacos-config"
+      ],
+      [
+        "Apache ZooKeeper：Watches",
+        "https://zookeeper.apache.org/doc/current/zookeeperProgrammers.html#ch_zkWatches"
+      ]
+    ],
+    "diagram": "diagrams/config-center-poll-needs-watch.svg",
+    "origin": "《分布式高并发.pdf》约第 202–205 页：配置中心 localcache 轮询与推送改进"
   },
   "sca-nacos-ephemeral": {
     "core": "Nacos 里常见的是临时实例：客户端和服务器保持连接并报心跳，心跳断了才从健康列表拿掉。持久实例不会因为心跳停止自动消失，适合不能常驻心跳的客户端，业务服务一般不要用。消费方手里还有一份名单缓存，摘除不会瞬间传遍。另外还有保护阈值：当健康实例占比掉到阈值以下，Nacos 会把不健康实例也返回，避免名单空了谁都调不到。阈值保护的是“至少有地址可调”，不是“地址一定活着”。所以实例挂了仍被打到，可能是心跳还没超时、缓存还没刷新，也可能是保护阈值故意把坏地址留在名单里。",
@@ -10375,6 +10832,39 @@
     "diagram": "diagrams/cap-partition.svg",
     "origin": "《分布式高并发.pdf》第 19 页的 CAP 讨论"
   },
+  "base-slogan-not-ban-tx": {
+    "core": "**BASE**（Basically Available / Soft state / Eventually consistent）是对一类互联网实践的概括口号，**不是**像 Gilbert–Lynch 那样对 CAP 的形式化定理。它说的是：有些读写路径可以接受短暂不一致与中间态，以换吞吐与分区下的继续服务，见 `distributed-cap`、`distributed-consistency-three-words`。资料写成“不可能采用分布式事务……BASE 就是办法”，会把口号收成禁令。库存扣减、支付记账仍常用**本地事务**、约束更新、Outbox，必要时 XA/Saga，见 `distributed-xa`、`distributed-outbox`、`distributed-mq-not-erase-invariant`。软状态指同步过程中允许中间态，不是“错多久都行”；最终一致要约定收敛条件与对账，不是放下不管。",
+    "why": "架构评审听见“我们是 BASE 系统”就删掉订单库事务，超卖和对账缺口一起出现。",
+    "example": "详情页缓存、粉丝数展示可以最终一致。下单扣库存仍在同一库事务里条件更新，或 Outbox 后异步扣并幂等对账。不会因为背了 BASE 三个字母就关掉事务。",
+    "task": "划掉“BASE=定理且禁止分布式/本地事务”。写出：口号允许放松什么；哪些路径仍要事务或不变量。",
+    "answer": "划掉「BASE=定理且禁事务」。口号允许部分路径放松立刻一致与接受中间态。钱货不变量、唯一约束、Outbox 仍要事务或同等强度。最终一致要有收敛与对账，不是放弃正确性。",
+    "deep": [
+      {
+        "title": "和 CAP 贴标签",
+        "body": "同页把库分成 CA/CP/AP 也过粗，见 `distributed-cap`。BASE 不能用来给产品盖永久 AP 章。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "列三条接口：详情缓存、扣库存、跨库转账。标哪些可最终一致、哪些必须本地事务或 Saga/对账。背 BASE 不应删掉扣库存的事务。"
+      }
+    ],
+    "references": [
+      [
+        "Gilbert–Lynch：CAP",
+        "https://www.cs.princeton.edu/courses/archive/spr22/cos418/papers/cap.pdf"
+      ],
+      [
+        "微服务：事务性 Outbox",
+        "https://microservices.io/patterns/data/transactional-outbox.html"
+      ],
+      [
+        "MySQL：XA",
+        "https://dev.mysql.com/doc/refman/8.4/en/xa.html"
+      ]
+    ],
+    "diagram": "diagrams/base-slogan-not-ban-tx.svg",
+    "origin": "《分布式高并发.pdf》约第 19–20 页：BASE 定理与不可能用分布式事务"
+  },
   "distributed-consistency-three-words": {
     "core": "「一致」在三处各说一件事。ACID 的 C 是这一次事务提交时，库声明的约束仍然成立，见 `mysql-acid-c-is-consistency`。CAP 的 C 是网络分区已经发生时，读写还能不能对着同一份最新结果，见 `distributed-cap`。最终一致是两边先各自提交，允许中间分开，再靠重试、幂等和对账收敛。把三个词合成一句，就会用分区策略去修余额为负，或用对账成功去证明分区时读到的就是刚写入的那一行。比较方案时先写出这次承诺的是约束、最新视图，还是过一会儿对得上。",
     "why": "库存分区时一侧继续写，恢复后用“最终会一致”带过，超卖已经发生。约束失败时去改复制确认级别，余额为负仍然能提交。",
@@ -10480,6 +10970,72 @@
     ],
     "origin": "《分布式高并发.pdf》的分布式锁相关章节"
   },
+  "dist-lock-owner-not-mac-pid-tid": {
+    "core": "可重入需要知道**还是不是同一个持有者**，并维护重入计数；身份应是**锁服务端存下的随机令牌**（UUID 等），释放与重入都比对令牌，见 `distributed-lock`、`redis-lock-setnx-expire-race`。资料用 MAC + PID + TID 拼身份，在云与容器里会翻车：MAC 可虚拟、可漂移、可撞车；PID/TID 会回收复用；多网卡、无 MAC 的命名空间更对不上。进程崩溃后旧身份若被新人拼出相同串，可能误当成“自己重入”而不真正互斥。数据库方案里写“主机信息 + 线程信息即可再分配锁”，是同一类错误。正确做法：占锁时写入唯一 token（可附 count），同 token 才允许 count+1；租约仍由服务端 TTL/会话管，不要靠墙钟，见 `redis-lock-getset-wall-clock`。",
+    "why": "两台容器克隆出相同 MAC，或 PID 回收后新进程拼出旧串，第二次“重入”其实是另一个进程进了临界区。",
+    "example": "实例 A 写入 `owner=aa:bb:cc:dd:ee:ff|1234|42`，count=1。A 崩溃。新进程拿到同一 PID 位置与相似网卡配置，拼出相同 owner，被当成重入，count 再加，互斥失效。改成 `SET lock:order:9 <uuid> NX EX 30`，value 带 count；只有持有该 uuid 的客户端才能 INCR count 或续租，别人只能等租约过期。",
+    "task": "划掉“MAC+PID+TID=可靠持有者”。写出应用存什么当 owner，重入时比什么。",
+    "answer": "划掉「MAC+PID+TID=可靠持有者」。占锁写入随机 token（可附重入计数）；重入与释放都比对同一 token。租约用服务端 TTL/会话。容器与 PID 回收会让硬件/OS 身份撞车。",
+    "deep": [
+      {
+        "title": "和 Redisson 可重入",
+        "body": "客户端库常见做法是 value 里带 UUID 与线程级计数，并用看门狗续租；身份仍是随机 UUID，不是网卡地址。细节以所用库文档为准，不要手写 MAC 拼接。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "故意让两进程使用相同伪造 owner 串做“重入”，应能破坏互斥。改成随机 token 后，第二进程在 TTL 内不能当成重入成功。"
+      }
+    ],
+    "references": [
+      [
+        "Redis：分布式锁",
+        "https://redis.io/docs/latest/develop/clients/patterns/distributed-locks/"
+      ],
+      [
+        "Redis：SET",
+        "https://redis.io/docs/latest/commands/set/"
+      ],
+      [
+        "Apache Curator：InterProcessMutex",
+        "https://curator.apache.org/docs/recipes-shared-reentrant-lock"
+      ]
+    ],
+    "diagram": "diagrams/dist-lock-owner-not-mac-pid-tid.svg",
+    "origin": "《分布式高并发.pdf》约第 202 页：分布式可重入锁记录 MAC+进程+线程"
+  },
+  "dist-lock-reentrant-not-deadlock-cure": {
+    "core": "**可重入**的含义是：同一持有者再次获取同一把锁时增加计数，而不是阻塞在自己已持有的锁上——这避免的是**同锁自死锁**，见单机 `java-reentrant-lock`。它**不**消除：A 持 lock1 等 lock2、B 持 lock2 等 lock1 的交叉死锁；也不消除忘释放、无过期、网络分区下的双持有。资料需求列表把可重入写成“避免死锁”，会让人以为开了重入计数就不用租约、顺序加锁和超时。分布式锁首先要**互斥 + 可过期/可恢复 + 持有者校验**；是否可重入是额外语义，按调用栈是否会重入同一锁键来决定，见 `distributed-lock`、`dist-lock-owner-not-mac-pid-tid`。",
+    "why": "业务开了重入计数，两个服务仍按相反顺序抢两把锁，线上卡死；复盘时有人说“不是已经可重入防死锁了吗”。",
+    "example": "线程 T 持有 `lock:order` 再调会再次抢同一 key 的方法：可重入则 count 从 1 到 2，不会自堵。服务 A 持 `lock:a` 等 `lock:b`，B 持 `lock:b` 等 `lock:a`：双方都可重入也解不开，需要统一加锁顺序、超时放弃或减小锁粒度。",
+    "task": "划掉“可重入=避免死锁”。各写一句：可重入解决什么；交叉死锁还要靠什么。",
+    "answer": "划掉「可重入=避免死锁」。可重入只避免同一持有者在同一锁上把自己堵死。交叉死锁靠加锁顺序、超时、更小临界区；忘释放靠租约与持有者校验。",
+    "deep": [
+      {
+        "title": "和公平/阻塞",
+        "body": "资料并列写阻塞锁、公平锁“按需考虑”是对的。可重入同样是按需：调用不会重入同一 key 时，强行可重入只增加协议复杂度。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "同线程两次获取同一 Redis 锁键：无重入协议时第二次应失败或阻塞；有 token+count 时应成功。两进程反向双锁并省略超时，应仍能卡住。"
+      }
+    ],
+    "references": [
+      [
+        "Oracle：ReentrantLock",
+        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/locks/ReentrantLock.html"
+      ],
+      [
+        "Redis：分布式锁",
+        "https://redis.io/docs/latest/develop/clients/patterns/distributed-locks/"
+      ],
+      [
+        "Apache Curator：InterProcessMutex",
+        "https://curator.apache.org/docs/recipes-shared-reentrant-lock"
+      ]
+    ],
+    "diagram": "diagrams/dist-lock-reentrant-not-deadlock-cure.svg",
+    "origin": "《分布式高并发.pdf》约第 199 页：可重入锁（避免死锁）"
+  },
   "zk-linearizable-not-realtime": {
     "core": "ZooKeeper 对更新提供线性一致（经 ZAB 过半提交）。官方保证列表是顺序一致性、原子性、单一系统映像、可靠性，以及 **timeliness**：客户端视图在有界时间内跟上，否则会话会断、去连更新的成员。这不是 BASE 里的最终一致性。任意 follower 都可以处理读，因此普通读可能略旧；要线性一致读需要 sync 或连 leader。写请求也不是“同时发给所有机器再投票”，而是交给 leader 提议。官方 Java 客户端在 Apache ZooKeeper 工件里；zkclient 是第三方封装，Curator 才是 Apache 推荐的高层库。每个 znode 约 1MB 上限（jute.maxbuffer）方向成立。",
     "why": "把 ZooKeeper 的 timeliness 写成最终一致性，会和“偏 CP”的结论对不上，也会把 zkclient 当成自带客户端。区分信号是写走 leader 且线性一致，未 sync 的读仍可能看到旧值。",
@@ -10533,6 +11089,80 @@
         "https://redis.io/docs/latest/commands/setnx/"
       ]
     ]
+  },
+  "redis-lock-getset-wall-clock": {
+    "core": "这种写法把**过期判定交给各客户端的系统时钟**。机器 A 比 B 快几秒，B 会以为锁已超时并 `GETSET` 抢走；A 仍按自己的表认为锁有效，两边同时进临界区。时钟回拨或 NTP 跳跃同样会让「未到期」和「已到期」对不上。现行做法是 `SET key token NX EX seconds`（或 `PX`），**TTL 由 Redis 服务端倒数**，释放时比对 token 再删，见 `redis-lock-setnx-expire-race`、`distributed-lock`。有些资料里的 getset 链并不能修好 SETNX+EXPIRE 的崩溃窗口，只是换了一种更容易被时钟打穿的协议。",
+    "why": "两台机器时钟差几秒，库存扣减被跑了两次，日志里两边都「合法拿到了锁」。排障却去查业务代码，不查 NTP。",
+    "example": "实例 A 写入 value=`nowA+30s`。实例 B 的时钟快 10 秒，读到 value 后判定已过期，`GETSET` 成功。A 仍在跑，B 也进了同一订单号的临界区。改成 `SET lock:order:9 <uuid> NX EX 30` 后，过期只看 Redis 的 TTL；释放用脚本确认 uuid 再 `DEL`。",
+    "task": "划掉“getset+本机时间=更稳的锁”。写出：过期应由谁计时；两台时钟不一致时旧写法会发生什么。",
+    "answer": "划掉「getset+本机时间=更稳的锁」。过期应由 Redis 服务端的 TTL 计时，用 SET NX EX 加唯一 token。旧写法用各机系统时间比较，时钟一偏会双持有或误判未过期。getset 链修不好 SETNX 与 EXPIRE 之间的崩溃窗口。",
+    "deep": [
+      {
+        "title": "和 Redlock",
+        "body": "多节点算法另有争议与前提，见 Redis 文档分布式锁章节。单实例锁先把 NX+EX 与 token 释放做对，再讨论多主。"
+      },
+      {
+        "title": "邻接点",
+        "body": "SETNX 与 EXPIRE 分开的崩溃窗口见 `redis-lock-setnx-expire-race`。租约与临界区见 `distributed-lock`。不要用墙钟 value 代替服务端 TTL。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "两台客户端故意把系统时间拨开几十秒，按资料步骤抢同一锁，应能出现双持有。改成 SET NX EX 后，在 TTL 内第二台应拿不到；拨时钟不应改变 Redis 上的剩余 TTL。"
+      }
+    ],
+    "references": [
+      [
+        "Redis：分布式锁",
+        "https://redis.io/docs/latest/develop/clients/patterns/distributed-locks/"
+      ],
+      [
+        "Redis：SET",
+        "https://redis.io/docs/latest/commands/set/"
+      ],
+      [
+        "Redis：GETSET",
+        "https://redis.io/docs/latest/commands/getset/"
+      ]
+    ],
+    "diagram": "diagrams/redis-lock-getset-clock.svg",
+    "origin": "《分布式高并发.pdf》约第 201 页：setnx/get/getset 与本机时间比较的锁"
+  },
+  "mysql-for-update-not-dist-lease": {
+    "core": "`SELECT … FOR UPDATE` 在**当前事务**里锁住行（InnoDB 在能走索引时尽量行锁），提交或回滚后锁才没。它回答的是「这条连接上的这段事务谁改这行」，不是「集群里哪个进程持有跨机租约」。资料说的「宕机后数据库释放」来自连接断开、事务回滚，这点对。但把远程调用、发消息、等人脸识别都塞进这段未提交事务，连接一直占着，池子会被撑满；优化器若没用上索引还可能锁更大范围。跨服务互斥应靠短事务里的约束更新、Outbox，或 Redis/ZK 令牌租约，见 `distributed-lock`、`distributed-one-db-first`。同库、短临界区保护一行可以；不要把 FOR UPDATE 握到业务走完才当「分布式锁」。",
+    "why": "下单接口 FOR UPDATE 住库存行后去调支付，支付一慢，别的下单全堵在等锁，连接池告警，却以为自己在做标准分布式锁。",
+    "example": "事务里 `SELECT * FROM stock WHERE sku=? FOR UPDATE`，本地把库存减 1 后立刻 `COMMIT`，这是同库短保护。若在持锁期间 HTTP 调支付网关再回来提交，持锁时间变成网络 RTT，连接数随并发线性涨。改成条件更新 `UPDATE stock SET qty=qty-1 WHERE sku=? AND qty>=1`，或短事务扣减后再异步支付，连接立刻归还。",
+    "task": "划掉“FOR UPDATE=分布式锁”。写出：它锁在什么对象上；长业务握锁时先坏的是什么。",
+    "answer": "划掉「FOR UPDATE=分布式锁」。它锁在当前事务与连接触及的行（或更糟，更大范围）上。长业务不提交会占满连接、拖住别的事务。跨机租约用令牌+TTL 或业务约束；同库短事务里保护一行才合适。宕机回滚能放行锁，不能证明握锁做远程调用是对的。",
+    "deep": [
+      {
+        "title": "和锁定读文档",
+        "body": "InnoDB 锁定读是为事务内一致性读改服务的。秒杀库存的权威扣减可以是带条件的 UPDATE，见 `distributed-seckill`，不必把整段用户旅程放进一个 FOR UPDATE。"
+      },
+      {
+        "title": "邻接点",
+        "body": "同库优先与短事务见 `distributed-one-db-first`。跨服务互斥用租约见 `distributed-lock`。DNS 入口摘流见 `dns-lb-not-just-round-robin`，与行锁不是一层。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "开两个会话：A FOR UPDATE 一行不提交，B 更新同一行应等待。看 A 占用连接不归还。A 在持锁时 sleep 模拟远程调用，连接池活跃数应上升。改成短 UPDATE 后立即提交，活跃连接应回落。"
+      }
+    ],
+    "references": [
+      [
+        "MySQL：锁定读",
+        "https://dev.mysql.com/doc/refman/8.4/en/innodb-locking-reads.html"
+      ],
+      [
+        "MySQL：InnoDB 锁",
+        "https://dev.mysql.com/doc/refman/8.4/en/innodb-locking.html"
+      ],
+      [
+        "Redis：分布式锁",
+        "https://redis.io/docs/latest/develop/clients/patterns/distributed-locks/"
+      ]
+    ],
+    "diagram": "diagrams/mysql-for-update-not-lease.svg",
+    "origin": "《分布式高并发.pdf》约第 200 页：用数据库排他锁 / FOR UPDATE 做分布式锁"
   },
   "distributed-one-db-first": {
     "core": "一次本地事务能一起提交、一起回滚的，是最便宜的一致性。订单和明细的合计等于明细之和，应留在同一个聚合、同一个库，见 `ddd-aggregate-transaction-boundary`。拆成两个服务之后，每个库只保证自己那一段，中间的空窗要用全局事务、消息或对账来补，锁和补偿都是后来的成本。拆开的信号应是独立扩缩、独立发布或明确的团队边界，不是先准备一个全局事务注解。库存若必须和下单同时成功，先问这两张表能不能还在一个库里。秒杀那种成功订单数不能超过可售库存，权威扣减仍要落在一次原子更新上，见 `distributed-seckill`。",
@@ -10839,6 +11469,97 @@
     "diagram": "diagrams/seckill-flow.svg",
     "origin": "《分布式高并发.pdf》的秒杀设计相关章节"
   },
+  "seckill-js-needs-cache-control": {
+    "core": "静态大页上 CDN 没问题，见 `cdn-not-just-reverse-proxy-cache`。开抢标记、动态下单 URL 若放在单独 JS 里，**CDN 默认仍可能按扩展名或路径缓存**。资料说的“不会被缓存、一直打回源”，只有配了响应头（如 `Cache-Control: no-store` / 很短的 `max-age`）、CDN 对该路径的不缓存规则，或每次变更换查询串/文件名时才成立。文件“很小”只影响带宽，不改变缓存策略。即便控制脚本每次回源，**开抢是否允许仍以服务端校验为准**，见 `seckill-client-gate-not-enough`、`distributed-seckill`。",
+    "why": "活动已开，边缘还吐着十分钟前的 `started:false`。用户以为系统坏了，其实是控制 JS 被当成普通静态资源缓存了。",
+    "example": "`/seckill/gate.js` 返回 `{\"open\":false}` 且未设 Cache-Control，CDN 缓存 5 分钟。后台改成 open 后，未过期节点仍返回 false。加上 `Cache-Control: no-store` 并在 CDN 规则里对该路径禁用缓存后，新请求回源。下单接口仍校验活动开始时间，不信任脚本内容。",
+    "task": "划掉“控制 JS 天生不被 CDN 缓存”。写出要使边缘不缓存，响应或规则上至少要有哪一类措施；权威开抢判断放在哪。",
+    "answer": "划掉「控制 JS 天生不被 CDN 缓存」。要有 Cache-Control（或等价 CDN 不缓存规则）或版本化 URL。权威开抢判断在服务端接口与库存扣减，不在浏览器里的脚本。文件小不能代替缓存头。",
+    "deep": [
+      {
+        "title": "和整页静态化",
+        "body": "HTML/CSS/图片适合长缓存。门闩接口更适合短缓存或 no-store。不要把整站“都上 CDN”当成一种缓存策略。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "curl -I 看控制 JS 的 Cache-Control。在 CDN 缓存命中时改后台标记，未到期节点应仍旧；加 no-store 后应回源见新值。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：Cache-Control",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cache-Control"
+      ],
+      [
+        "MDN：CDN",
+        "https://developer.mozilla.org/en-US/docs/Glossary/CDN"
+      ]
+    ],
+    "diagram": "diagrams/seckill-js-needs-cache-control.svg",
+    "origin": "《分布式高并发.pdf》约第 51 页：防止提前下单的 JS 不会被 CDN 缓存"
+  },
+  "seckill-client-gate-not-enough": {
+    "core": "Disable 下单按钮、用 JS 藏开始时间与下单 URL，只能减少误点与普通刷新，**不能**当作准入控制。会抓包的人可以直接打下单 API，或改本地时间/脚本。服务端必须校验：活动是否已开始、用户与商品维度限流、资格与**原子扣库存**，见 `distributed-seckill`。资料第 52 页写的「不能信任客户端的任何操作」是对的；第 49 页只讲 Disable 按钮而不接服务端校验，会留下缺口。客户端静态化与限流是削峰，不是正确性边界。",
+    "why": "按钮灰着，脚本里还是 `open:false`，有人提前打通下单接口，库存被写穿，活动正式开始时已经没货。",
+    "example": "页面按钮 disabled 到整点。攻击者在开始前 POST `/order` 带商品 id。若接口只认“来了请求就扣”，会超卖。接口先查活动开始时间与库存条件更新，未开始或影响行数不是 1 则拒绝；按钮状态只影响普通人。",
+    "task": "划掉“禁用按钮=不能提前下单”。列出服务端至少要校验的三件事。",
+    "answer": "划掉「禁用按钮=不能提前下单」。活动是否已开始；用户/商品限流或资格；原子扣库存（或同等强度）。客户端门闩只减噪音，不构成安全边界。",
+    "deep": [
+      {
+        "title": "和隐藏 URL",
+        "body": "把下单地址藏在开始后才下发的 JS 里，只能提高一点发现成本。URL 一旦泄露或被猜到，仍靠服务端。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "活动未开始时直接调下单 API，应被拒绝。开始后合法请求扣减影响行数为 1。只改前端按钮状态，不应改变接口结论。"
+      }
+    ],
+    "references": [
+      [
+        "OWASP：客户端存储与信任",
+        "https://cheatsheetseries.owasp.org/cheatsheets/HTML5_Security_Cheat_Sheet.html"
+      ],
+      [
+        "MySQL：UPDATE",
+        "https://dev.mysql.com/doc/refman/8.4/en/update.html"
+      ]
+    ],
+    "diagram": "diagrams/seckill-client-gate-not-enough.svg",
+    "origin": "《分布式高并发.pdf》约第 49–52 页：Disable 按钮与不能信任客户端"
+  },
+  "distributed-mq-not-erase-invariant": {
+    "core": "把订单写进消息队列，只是把库存扣减**推迟**到消费者，并没有删掉「成功订单数不能超过可售库存」这条不变量。有些资料里「库存暂时不可用也不影响下单」说的是调用时机解耦，不是业务上可以永久缺库存。用户已看到下单成功时，权威扣减仍必须发生一次，失败要补偿或对账，见 `distributed-outbox`、`distributed-seckill`、`distributed-reconcile-last`。全部改成消息也不会消灭一致性问题，见 `arch-sync-vs-async`。队列长度削峰可以丢掉超额请求，那是限流，不是「写进队列就等于卖出成功」。",
+    "why": "照资料只写库+入队就返回成功，库存消费失败或积压时，页面上的成功单已经超过库存。事后才发现超卖，却以为解耦已经解决了分布式事务。",
+    "example": "订单服务落单并投递 `OrderCreated`，接口返回 200。库存消费者宕机一小时，消息堆积。可售库存 10，成功单已到 30。对账按订单号找回多卖的单，而不是改一个总数。若秒杀必须当场知库存够不够，校验仍应同步，不能只靠事后消息。",
+    "task": "划掉“解耦=可以不管库存”。写出：入队返回成功时，库存侧还必须具备哪三样机制，才谈得上最终一致。",
+    "answer": "划掉「解耦=可以不管库存」。入队只推迟扣减。还要：业务与事件同事务发出（Outbox）、消费幂等与失败补偿、对账把差额落到订单号。没有这三样，成功单可以多于库存。削峰丢弃超额请求是限流，不是写进队列就等于卖出。",
+    "deep": [
+      {
+        "title": "和用户当场失败",
+        "body": "库存够不够若必须在下单页可见，应同步校验或本地原子扣减。消息适合「已发生事实」的传播，不适合把「是否允许卖」也推迟到用户离开之后。"
+      },
+      {
+        "title": "邻接点",
+        "body": "Outbox 与对账见 `distributed-outbox`、`distributed-reconcile-last`。消费幂等键见 `distributed-idempotent-key`、`mq-consume-idempotent-key`。削峰限流见 `distributed-token-bucket`，不是写队列即售出。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "造一次：落单入队后停掉库存消费者。看成功单是否继续增加、库存是否不动。恢复消费后核对订单与扣减是否一对一；对不上的单号应出现在对账差额里。"
+      }
+    ],
+    "references": [
+      [
+        "微服务：事务性 Outbox",
+        "https://microservices.io/patterns/data/transactional-outbox.html"
+      ],
+      [
+        "微服务：Saga",
+        "https://microservices.io/patterns/data/saga.html"
+      ]
+    ],
+    "diagram": "diagrams/distributed-mq-not-erase.svg",
+    "origin": "《分布式高并发.pdf》约第 27 页：库存不可用也不影响下单的解耦叙述"
+  },
   "distributed-consistent-hash": {
     "core": "一致性哈希把键和节点映射到同一环上，键顺时针落到目标节点。节点增减通常只影响环上的一部分键；虚拟节点可改善节点分布不均，但无法自动解决热点键。顺序是把键和节点映射到同一环，键顺时针找到目标节点。节点增减时，通常只有相邻一段键改变归属。边界是分布不均可以靠虚拟节点改善，单键热点不会因此消失；副本、故障转移和迁移时的一致性还要另外设计。对节点数取模会让几乎所有键改道，环上的迁移则局限在一段。虚拟节点增加的是元数据，不增加对单键热点的拆分。热点仍要靠复制或限流，而不是再加节点。加上第四个节点后，六个键里应有一批完全不动，只有新弧上的键改变归属，热键不会被拆开。",
     "why": "学习者会在加一台缓存节点后让所有键按新的节点数重算。命中率突然全掉，迁移量远大于新节点旁边的那一段。环上只有一段键改到新节点、原来的热键却仍可能整段落在它身上，才说明受影响的是区间，不是所有键，热点也不会自动消失。",
@@ -10920,6 +11641,39 @@
     ],
     "origin": "《分布式高并发.pdf》第 25 页的缓存失效方案"
   },
+  "lru-capacity-not-ttl-expire": {
+    "core": "**容量 LRU**回答：位置满了踢最久未用。**TTL/绝对过期**回答：这条记录到点失效，即使容量还没满。两者可以叠在同一实现里，但不是同一机制。资料标题带“过期时间”，正文却停在 O(1) 的 get/set + 链表头插、满则删尾——这是容量维，没有 per-entry deadline，也没有到期懒删/定时扫。面试若只画链表，答不出：未满时过期键是否还应命中、过期与 LRU 谁先踢、写时带 `expireAt` 还是读时校验。生产缓存常见是容量策略（近似 LRU/LFU）与 TTL 并行，见 `redis-eviction-policy-menu`、`distributed-cache`；Redis 的 `volatile-lru` 更是“先限定在带 TTL 的键里再近似 LRU”，说明两维正交。",
+    "why": "实现只做链表 LRU，上线后键永不过期，活动价在容量未满时一直命中旧值；标题里的“过期”从没落地。",
+    "example": "`set(k,v)` 只移到链表头；满了删尾。没有 `expireAt`。键 A 写入后 10 分钟业务要求失效，但缓存只装了 100 条、当前 40 条，A 会一直命中。补上：节点带 `deadline`；`get` 若已过期则删并返回未命中；容量满时仍按 LRU 踢未过期的尾节点。",
+    "task": "划掉“讲完链表 LRU = 答完带过期的 LRU”。分别用一句话定义容量淘汰与 TTL 失效；写出未满容量时过期键应怎样。",
+    "answer": "划掉「讲完链表 LRU = 答完带过期」。容量满踢最久未用；TTL 到点失效即使未满。未满时过期键在 get/扫时删除并视为未命中。两维都要设计，标题有过期就不能只画链表。",
+    "deep": [
+      {
+        "title": "和 Redis 政策名",
+        "body": "allkeys-lru 在满内存时近似 LRU；键的 TTL 由 EXPIRE 另管。volatile-lru 只在带 TTL 的集合里挑牺牲品。不要把政策名里的 lru 当成“已经有过期语义”。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "写一个容量 2 的 LRU：插入 3 个键应踢最旧。再给键设 1 秒 TTL，容量未满等待后 get 应未命中。若只实现链表，第二步会失败。"
+      }
+    ],
+    "references": [
+      [
+        "Redis：Eviction",
+        "https://redis.io/docs/latest/develop/reference/eviction/"
+      ],
+      [
+        "Redis：EXPIRE",
+        "https://redis.io/docs/latest/commands/expire/"
+      ],
+      [
+        "MDN：HTTP Caching",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Caching"
+      ]
+    ],
+    "diagram": "diagrams/lru-capacity-not-ttl-expire.svg",
+    "origin": "《分布式高并发.pdf》约第 197–198 页：带有过期时间的 LRU 缓存"
+  },
   "distributed-kafka-order": {
     "core": "Kafka 为每个分区维护有序日志；消费者在该分区内按偏移量读取。将同一业务键稳定映射到同一分区，可以在保留多个分区的同时维护该键的日志顺序。跨分区没有全局顺序保证。顺序是生产者先按业务键选择分区，分区内按偏移量追加，消费者再按这个偏移量处理。边界是跨分区没有全局顺序；消费端若把同一分区无约束地并行，或失败后跳过消息，日志顺序也不等于副作用的执行顺序。分区数变化还会改变键落到哪。四个分区同时在跑时，不同订单可以并行，但同一订单的失败必须挡住它自己的后续事件，不能靠主题只有一个分区来代替。位点提交也不能跑在副作用完成之前。分区数从四改成别的数字后，要用同一订单号再投三条，确认它们是否还在同一分区。",
     "why": "学习者会以为同一订单要有序，整个主题就只能有一个分区。四个分区被收成一个后吞吐先掉，消费者重试仍可能让取消跑在支付前面。同一订单的三条进了同一分区、失败时后续事件被挡住，才说明有序的范围是分区和消费，不是整个主题。",
@@ -10948,6 +11702,75 @@
     ],
     "diagram": "diagrams/kafka-order.svg",
     "origin": "《分布式高并发.pdf》第 33 页的消息顺序建议"
+  },
+  "dns-lb-not-just-round-robin": {
+    "core": "DNS 可以把一名多址解析到多台，**解析器与多层缓存**决定客户端实际拿到哪条记录；不是业务进程里可控的 round-robin 负载均衡器。TTL 调极小会增加 DNS 查询流量，也不能立刻让全球缓存都忘掉已下线的 IP，见资料易夸大的“调小就及时且随机”。真正按实例健康摘流，要在反向代理 / 云 LB / 客户端负载均衡上做，见 `nginx-upstream-passive`、`mw-proxy-lb-gateway`。地理 DNS 是另一能力，也不等于感知应用健康。",
+    "why": "只靠 DNS 轮询下线一台机器，用户仍打到缓存里的死 IP；把 TTL 调到几秒，解析流量先爆。",
+    "example": "双 A 记录指向两台 Web。一台宕机后，仍有客户端因缓存打到坏地址。摘流应在健康检查的负载均衡上做；DNS 更适合粗粒度容灾与就近接入。",
+    "task": "划掉“DNS=可控轮询+调小 TTL 就实时”。写出 DNS 做得到与做不到的各一句。",
+    "answer": "划掉「DNS=可控轮询+调小 TTL 就实时」。DNS 能多名多址与粗粒度调度。做不到可靠感知实例健康与立即全局失效。精细摘流交给 LB。TTL 极小有流量代价。",
+    "deep": [
+      {
+        "title": "和反向代理",
+        "body": "反向代理在 HTTP 层选上游，能做主动/被动健康检查。DNS 在更外层，两者职责不同。"
+      },
+      {
+        "title": "TTL 与查询量",
+        "body": "把 TTL 拧到几秒会放大 DNS 查询，仍不能保证全球瞬时忘掉死 IP。秒级摘除放在 LB，不要只靠拧 TTL。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "dig 同一名字多次，观察是否总变。宕一台后看客户端是否仍解析到它，对照 LB 健康检查是否已摘除。"
+      }
+    ],
+    "references": [
+      [
+        "RFC 1035：DNS",
+        "https://www.rfc-editor.org/rfc/rfc1035"
+      ],
+      [
+        "Nginx：负载均衡",
+        "https://nginx.org/en/docs/http/load_balancing.html"
+      ],
+      [
+        "Cloudflare：DNS TTL",
+        "https://developers.cloudflare.com/dns/manage-dns-records/reference/ttl/"
+      ]
+    ],
+    "origin": "《分布式高并发.pdf》约第 92 页：DNS 负载均衡与调小刷新时间"
+  },
+  "http-redirect-lb-two-hops": {
+    "core": "调度机收到请求后算出一台真实 Web，用 **302/307 + Location** 把**那台机的 URL** 写回浏览器，浏览器再发起第二次请求。这与反向代理不同：反代终结在 VIP，上游地址不暴露给客户端，见 `mw-proxy-lb-gateway`、`cdn-not-just-reverse-proxy-cache`。资料对“两次请求、调度机吞吐成瓶颈、302 对搜索不友好”的缺点是对的；容易漏掉的是：**第二次及以后的访问可能直打后端**，收藏夹、静态资源引用、接口回调都会绕过调度机，健康摘流与会话粘滞更难统一。生产流量入口优先 DNS/反代/云 LB，见 `dns-lb-not-just-round-robin`；HTTP 重定向更适合显式迁移（换域名、HTTPS 升级），不宜当主 LB。",
+    "why": "活动入口用 302 分到十台应用。用户收藏了 Location 里的内网 IP，调度机下线那台后，收藏夹仍打死机器；搜索引擎还把跳转当成作弊信号。",
+    "example": "浏览器 GET `https://lb.example/`，调度返回 `302 Location: https://app3.internal:8080/home`。第二次请求直达 app3。把 app3 从池中摘掉后，收藏该 URL 的用户仍打 app3。改成反代：客户端始终访问 `https://lb.example/`，上游列表只在代理配置里，摘流立即生效。",
+    "task": "划掉“302 分流=简单好用的主 LB”。对比反代：客户端看到几跳、后端地址是否暴露、后续请求还过不过调度机。",
+    "answer": "划掉「302 分流=简单好用的主 LB」。302 LB 至少两跳，Location 常把真实主机交给浏览器，后续可能绕过调度。反代让客户端只看见 VIP，上游不暴露。主入口用反代/云 LB；302 留给明确的迁移跳转。",
+    "deep": [
+      {
+        "title": "和 SEO、方法语义",
+        "body": "资料提 302 可能被搜索引擎判作弊。永久迁域应用 301/308；临时用 302/307。API 客户端对重定向跟随规则与页面导航不同，见 `http-503-unavailable` 邻接说明。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "curl -v 跟一条 302：看 Location 是否内网主机。收藏该 URL 后再下线该上游，请求应仍打到死地址。同一入口改反代后，客户端 URL 不变，摘流只改上游列表。"
+      }
+    ],
+    "references": [
+      [
+        "RFC 9110：重定向",
+        "https://www.rfc-editor.org/rfc/rfc9110.html#name-redirection-3xx"
+      ],
+      [
+        "Nginx：负载均衡",
+        "https://nginx.org/en/docs/http/load_balancing.html"
+      ],
+      [
+        "MDN：302",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/302"
+      ]
+    ],
+    "diagram": "diagrams/http-redirect-lb-two-hops.svg",
+    "origin": "《分布式高并发.pdf》约第 93 页：http 重定向协议实现负载均衡"
   },
   "distributed-clock-skew": {
     "core": "每台机器的时钟会快会慢，NTP 回拨会让时间突然倒退。用墙上时钟比较谁后写会弄反。顺序要用因果线索：版本号、逻辑时钟，或存储自己的递增，而不是两台机器各自的毫秒。边界是租约超时若完全相信本地时间，锁可能提前或延后释放。展示给用户的时间用绝对时刻存下来再格式化，但不要拿它当分布式互斥的依据。三件事要分开：给人看的时间、谁后写、锁什么时候失效。沿顺序看，前一步的输出是后一步的输入。边界不满足就停在这一步，不要把失败算到旁边的组件上，也不要几处一起改。改之前先写下这一步单独的预测。只改对得上的那一步。现象对不上就停在这一步，不要把邻接的配置一起改掉。再核对一次现象。",
@@ -11601,7 +12424,7 @@
     ]
   },
   "java-http-timeout": {
-    "core": "Java HttpClient 的 connectTimeout 只限制建立新连接。连接可以复用时，这段超时不起作用。HttpRequest 的 timeout 限制这一次请求等待响应的时间，到点仍未收到响应就抛出 HttpTimeoutException。不设置请求超时时，等待时间没有上限。DNS、从连接池借出、以及响应开始之后的读取，都要单独看对应的超时，不能用一个建连数字代表整条调用。",
+    "core": "Java HttpClient（**JDK 11** 起，`java.net.http`）的 connectTimeout 只限制建立新连接。连接可以复用时，这段超时不起作用。HttpRequest 的 timeout 限制这一次请求等待响应的时间，到点仍未收到响应就抛出 HttpTimeoutException。不设置请求超时时，等待时间没有上限。DNS、从连接池借出、以及响应开始之后的读取，都要单独看对应的超时，不能用一个建连数字代表整条调用。",
     "why": "学习者会以为连接超时设成 3 秒，整次调用就一定在 3 秒内结束。下游接受连接后一直不写响应，线程仍占着，调用方以为已经设过失败上限。异常是建连失败，还是等待响应超时，才分得清是端口没通，还是响应等待没有单独设限。",
     "example": "建连超时和请求超时都是 3 秒。端口拒绝时，约 3 秒内建连失败，请求超时还没开始计。连接成功后对端不返回正文，建连已完成，大约再过 3 秒抛出等待响应超时。若去掉请求超时，第二次会一直阻塞，没有异常。",
     "task": "分别让端口拒绝连接，以及连接成功后不返回响应。记录哪一个超时先触发。",

@@ -7,6 +7,7 @@ export type LessonSummary = Pick<
   'track' | 'group' | 'id' | 'title' | 'prompt' | 'keywords' | 'points'
 > & {
   promptAnswer?: string
+  since?: string
 }
 
 type CurriculumIndex = Omit<Curriculum, 'lessons'> & {
