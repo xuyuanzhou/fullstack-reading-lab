@@ -348,6 +348,15 @@
         "mfe-when-to-split",
         "mfe-not-for-everything",
         "mfe-composition-models",
+        "mfe-pick-by-constraint",
+        "mfe-compare-matrix",
+        "mfe-pick-one-path",
+        "mfe-mf-host-setup",
+        "mfe-vite-federation",
+        "mfe-singlespa-register",
+        "mfe-qiankun-html-entry",
+        "mfe-wujie-startapp",
+        "mfe-iframe-postmessage",
         "mfe-module-federation",
         "mfe-shared-deps",
         "mfe-runtime-lifecycle",
@@ -1238,6 +1247,25 @@
             "mfe-when-to-split",
             "mfe-not-for-everything",
             "mfe-composition-models"
+          ]
+        },
+        {
+          "title": "选型",
+          "ids": [
+            "mfe-pick-by-constraint",
+            "mfe-compare-matrix",
+            "mfe-pick-one-path"
+          ]
+        },
+        {
+          "title": "方案",
+          "ids": [
+            "mfe-mf-host-setup",
+            "mfe-vite-federation",
+            "mfe-singlespa-register",
+            "mfe-qiankun-html-entry",
+            "mfe-wujie-startapp",
+            "mfe-iframe-postmessage"
           ]
         },
         {
@@ -4637,6 +4665,128 @@
         "构建时、运行时、服务端组合的失败点不同",
         "能不能壳不发版就上线，决定选哪一种",
         "iframe 是强隔离运行时，不是 Module Federation 的替身名词"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "微前端",
+      "id": "mfe-pick-by-constraint",
+      "title": "选型先写三问：隔离、异构、谁决定挂载",
+      "prompt": "为什么「公司都在用 qiankun」仍然选不出该上 Module Federation 还是 iframe？",
+      "keywords": "微前端选型 隔离 异构 挂载",
+      "points": [
+        "先写隔离、异构、挂载三问，再写框架名",
+        "同栈同发版时优先 Federation 或 single-spa 一类",
+        "强隔离或不跟路由的挂载另选 iframe / 手动加载"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "微前端",
+      "id": "mfe-compare-matrix",
+      "title": "对照表：按约束选组合方式，不要按星数",
+      "prompt": "Module Federation、single-spa、qiankun、无界、iframe 是不是越新越好？",
+      "promptAnswer": "不是。它们解决的缝不同：模块共享、生命周期编排、HTML 入口、原生隔离、独立文档。按三问对照，不是按发布时间。",
+      "keywords": "微前端对照 Module Federation qiankun 无界 iframe",
+      "points": [
+        "按主缝对照，不要按新旧排序",
+        "Federation 管模块共享，single-spa 管生命周期",
+        "HTML entry、无界、iframe 各解决更强隔离或整页入口"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "微前端",
+      "id": "mfe-pick-one-path",
+      "title": "选定一条路径后，写出这次不做的清单",
+      "prompt": "对照表填完了，为什么仓库里还会同时出现 qiankun 和 Module Federation 两套壳？",
+      "keywords": "微前端选型 主路径 不做清单",
+      "points": [
+        "选型结束要有唯一主路径",
+        "不做清单与例外范围要写下来",
+        "第二种容器只能作为带边界的例外"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "微前端",
+      "id": "mfe-mf-host-setup",
+      "title": "Module Federation 落地：host、remote 与 shared 清单",
+      "prompt": "只知道有 ModuleFederationPlugin，怎样判断这一次已经接通而不是「配了个空壳」？",
+      "keywords": "Module Federation host remote exposes shared",
+      "points": [
+        "接通标准是 remotes、exposes、import、shared 四项对齐",
+        "uniqueName 两端不能碰撞",
+        "本地用加键与删键验证加载边界"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "微前端",
+      "id": "mfe-vite-federation",
+      "title": "Vite 或 Rspack 上的 Federation：换打包器，不换 host/remote 语义",
+      "prompt": "从 webpack 换到 Vite 之后，是不是就不能做 Module Federation 了？",
+      "promptAnswer": "不是。换的是插件与构建入口，host 消费 remote、exposes、shared 的语义仍在。以你正在用的插件文档为准。",
+      "keywords": "Vite Rspack Module Federation 插件",
+      "points": [
+        "换打包器不取消 host/remote/shared",
+        "以锁定版本的插件文档为准",
+        "Vite 不能单独当作必须改用 HTML entry 的理由"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "微前端",
+      "id": "mfe-singlespa-register",
+      "title": "single-spa：registerApplication 与 start 之后才会挂载",
+      "prompt": "注册了子应用却一直不出现，是不是 activeWhen 写错了就够解释？",
+      "promptAnswer": "不是。还要检查是否调用了 start，以及 app 加载函数是否返回带 bootstrap/mount/unmount 的应用。",
+      "keywords": "single-spa registerApplication activeWhen start",
+      "points": [
+        "registerApplication 之后要 start",
+        "activeWhen 可为前缀、函数或数组",
+        "子应用必须导出三段生命周期"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "微前端",
+      "id": "mfe-qiankun-html-entry",
+      "title": "qiankun：HTML entry，路由登记与手动 loadMicroApp",
+      "prompt": "子应用已经能单独打开，为什么挂到 qiankun 主应用后白屏，控制台却在抱怨 container？",
+      "keywords": "qiankun HTML entry registerMicroApps loadMicroApp container",
+      "points": [
+        "entry 是子应用 HTML URL",
+        "container 必须是 HTMLElement",
+        "路由用 registerMicroApps，按需用 loadMicroApp"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "微前端",
+      "id": "mfe-wujie-startapp",
+      "title": "无界：startApp 用 WebComponent 容器加 iframe 沙箱",
+      "prompt": "已经上了 qiankun，为什么还要再了解无界？两者是不是同一个沙箱？",
+      "promptAnswer": "不是。无界用 Web Component 做样式容器、用 iframe 跑子应用脚本，和 qiankun 的 HTML entry 沙箱不是同一套实现。",
+      "keywords": "无界 wujie startApp WebComponent iframe",
+      "points": [
+        "startApp 需要唯一 name、url、容器 el",
+        "隔离模型是 WebComponent + iframe",
+        "与 qiankun HTML entry 不是同一沙箱"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "微前端",
+      "id": "mfe-iframe-postmessage",
+      "title": "iframe：独立文档嵌入，契约走 postMessage",
+      "prompt": "把第三方后台塞进 iframe 之后，直接读 iframe.contentWindow.user 可以吗？",
+      "promptAnswer": "不可以。跨源读窗体会被浏览器拦住。状态交接用 postMessage，并校验 event.origin。",
+      "keywords": "iframe postMessage origin 微前端",
+      "points": [
+        "iframe 是独立文档，样式默认隔离",
+        "跨源通信用 postMessage 并校验 origin",
+        "直读跨源 contentWindow 不是可选捷径"
       ]
     },
     {

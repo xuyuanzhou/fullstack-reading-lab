@@ -43,6 +43,7 @@ export const publishedSources = [
   'coverage-frontend-24.js',
   'coverage-frontend-25.js',
   'coverage-frontend-26.js',
+  'coverage-frontend-27.js',
   'coverage-java-10.js',
   'coverage-java-11.js',
   'coverage-java-12.js',
@@ -262,6 +263,8 @@ export const OUTLINE = {
     ],
     微前端: [
       { title: '边界', ids: ['mfe-when-to-split', 'mfe-not-for-everything', 'mfe-composition-models'] },
+      { title: '选型', ids: ['mfe-pick-by-constraint', 'mfe-compare-matrix', 'mfe-pick-one-path'] },
+      { title: '方案', ids: ['mfe-mf-host-setup', 'mfe-vite-federation', 'mfe-singlespa-register', 'mfe-qiankun-html-entry', 'mfe-wujie-startapp', 'mfe-iframe-postmessage'] },
       { title: '集成', ids: ['mfe-module-federation', 'mfe-shared-deps', 'mfe-runtime-lifecycle'] },
       { title: '运行时', ids: ['mfe-routing-one-history', 'mfe-style-isolation', 'mfe-shared-auth'] },
       { title: '交付', ids: ['mfe-independent-deploy', 'mfe-perf-cost', 'mfe-contract-version'] },

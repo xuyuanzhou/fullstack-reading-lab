@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-labelledby="title desc">
+  <title id="title">qiankun：HTML entry 两条挂载路</title>
+  <desc id="desc">路由用 registerMicroApps；按需用 loadMicroApp。container 必须是元素。</desc>
+  <defs><filter id="soft" x="-6%" y="-8%" width="112%" height="124%"><feDropShadow dx="0" dy="1" stdDeviation="1.4" flood-color="#28302a" flood-opacity="0.07"/></filter></defs>
+  <rect width="960" height="400" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="28" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">qiankun</text>
+  <text x="32" y="56" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">HTML entry，两条挂载路</text>
+  <rect x="32" y="88" width="896" height="56" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+  <text x="52" y="124" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="15" font-weight="600" fill="#2d4f41">entry = 子应用 index.html 的 URL（跨源要 CORS）</text>
+  <rect x="32" y="168" width="430" height="150" rx="14" fill="#fafaf8" stroke="#d9ddd8" filter="url(#soft)"/>
+  <text x="52" y="204" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2e3330">registerMicroApps</text>
+  <text x="52" y="240" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">activeRule + start</text>
+  <text x="52" y="272" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">URL 决定挂与卸</text>
+  <rect x="498" y="168" width="430" height="150" rx="14" fill="#fafaf8" stroke="#d9ddd8" filter="url(#soft)"/>
+  <text x="518" y="204" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2e3330">loadMicroApp</text>
+  <text x="518" y="240" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">弹层 / 页签 / 按需</text>
+  <text x="518" y="272" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">用完调用 unmount</text>
+  <rect x="32" y="340" width="896" height="40" rx="12" fill="#e6efe9"/>
+  <text x="52" y="366" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="600" fill="#2d4f41">container 传 HTMLElement，不要传选择器字符串。</text>
+</svg>
