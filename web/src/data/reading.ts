@@ -38,13 +38,55 @@ export function shortTitle(title: string): string {
   const dropped = trimmed.replace(/[，,](?:不是|不再|而不是|不等于|不要|并非|不由|不必|不能|不会).+$/u, '')
 
   const productThenExplain = dropped.match(
-    /^([A-Za-z][A-Za-z0-9.+#]*(?:[ \-][A-Za-z][A-Za-z0-9.+#]*){1,3})\s*[：:]/u,
+    /^([A-Za-z][A-Za-z0-9.+#]*(?:[ -][A-Za-z][A-Za-z0-9.+#]*){1,3})\s*[：:]/u,
   )
   if (productThenExplain) return productThenExplain[1]
 
   // First clause before Chinese/English colon or Chinese comma — keep 、 lists intact.
   const clause = dropped.split(/[：:，,]/u)[0]?.trim() || dropped
   return softTrim(clause)
+}
+
+export type FencedBlock =
+  | { kind: 'prose'; text: string }
+  | { kind: 'code'; lang: string; text: string }
+
+/**
+ * Split markdown-style fenced code from surrounding prose.
+ * Used by lesson example/answer so courses can ship real snippets.
+ */
+export function splitFencedBlocks(source: string): FencedBlock[] {
+  if (!source) return []
+  const lines = source.replace(/\r\n/g, '\n').split('\n')
+  const blocks: FencedBlock[] = []
+  let prose: string[] = []
+  const flushProse = () => {
+    const text = prose.join('\n').trim()
+    if (text) blocks.push({ kind: 'prose', text })
+    prose = []
+  }
+  let index = 0
+  while (index < lines.length) {
+    const fence = lines[index].match(/^(`{3,})(.*)$/)
+    if (fence) {
+      flushProse()
+      const closer = fence[1]
+      const lang = fence[2].trim().split(/\s+/)[0] || ''
+      const body: string[] = []
+      index += 1
+      while (index < lines.length && lines[index] !== closer) {
+        body.push(lines[index])
+        index += 1
+      }
+      blocks.push({ kind: 'code', lang, text: body.join('\n') })
+      if (index < lines.length) index += 1
+      continue
+    }
+    prose.push(lines[index])
+    index += 1
+  }
+  flushProse()
+  return blocks.length ? blocks : [{ kind: 'prose', text: source }]
 }
 
 /** Break a wall of text into short paragraphs a beginner can scan. */

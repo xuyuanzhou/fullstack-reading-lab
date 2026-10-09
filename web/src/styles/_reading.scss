@@ -1197,8 +1197,55 @@
   border-radius: 10px;
   padding: 16px 18px;
   line-height: 1.7;
-  white-space: pre-wrap;
   font-size: var(--lab-text-body);
+
+  .rich-blocks {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  p {
+    margin: 0;
+    white-space: pre-wrap;
+  }
+}
+
+.rich-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  > p {
+    margin: 0;
+  }
+}
+
+.lesson-code {
+  margin: 0;
+  padding: 12px 14px;
+  overflow: auto;
+  border: 1px solid var(--lab-line);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--lab-ink) 6%, var(--lab-panel));
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9em;
+  line-height: 1.55;
+  white-space: pre;
+
+  code {
+    font-family: inherit;
+  }
+
+  &[data-lang]::before {
+    content: attr(data-lang);
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.72em;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--lab-muted);
+  }
 }
 
 .ref-list {

@@ -11,6 +11,7 @@
 
 | 日期 | 状态 | 标题 |
 | --- | --- | --- |
+| 2026-10-09 | 已完成 | [学习课例子支持代码块（12 课试点）](2026-10-09-lesson-example-code-blocks.md) |
 | 2026-10-09 | 已完成 | [D8 续抽：NOT NULL 默认值与 TEXT 禁令（2 课）](2026-10-09-d8-notnull-text.md) |
 | 2026-10-09 | 已完成 | [W3CSchool 第五轮：SW 策略 / Cookie 前缀 / 窗口函数 / GEO（4 课）](2026-10-09-w3cschool-round5-sw-cookie-window-geo.md) |
 | 2026-10-09 | 已完成 | [W3CSchool 第四轮：async generator / SSE / 触发器（3 课）](2026-10-09-w3cschool-round4-async-sse-trigger.md) |

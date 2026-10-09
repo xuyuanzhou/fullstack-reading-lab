@@ -65,16 +65,53 @@ function replaceOralRefs(text, prevId) {
   return next;
 }
 
+/** Keep ``` fences intact so lesson code samples are not rewritten. */
+function mapOutsideFences(text, mapProse) {
+  const lines = text.replace(/\r\n/g, '\n').split('\n');
+  const out = [];
+  let prose = [];
+  const flushProse = () => {
+    if (!prose.length) return;
+    out.push(mapProse(prose.join('\n')));
+    prose = [];
+  };
+  let index = 0;
+  while (index < lines.length) {
+    const fence = lines[index].match(/^(`{3,})(.*)$/);
+    if (fence) {
+      flushProse();
+      const closer = fence[1];
+      out.push(lines[index]);
+      index += 1;
+      while (index < lines.length && lines[index] !== closer) {
+        out.push(lines[index]);
+        index += 1;
+      }
+      if (index < lines.length) {
+        out.push(lines[index]);
+        index += 1;
+      }
+      continue;
+    }
+    prose.push(lines[index]);
+    index += 1;
+  }
+  flushProse();
+  return out.join('\n');
+}
+
 export function polishText(text, knownIds, lessonId = '', prevId = null) {
   if (typeof text !== 'string' || !text) return text;
-  let next = text;
-  next = replaceOralRefs(next, prevId);
-  next = backtickSeeRefs(next, knownIds);
-  next = backtickThatLesson(next, knownIds);
-  next = next.replace(/变化点/g, '允许变的那一块');
-  next = next.replace(/关进/g, '放进');
-  next = replaceSlots(next, lessonId);
-  return next;
+  return mapOutsideFences(text, (chunk) => {
+    let next = chunk;
+    next = replaceOralRefs(next, prevId);
+    next = backtickSeeRefs(next, knownIds);
+    next = backtickThatLesson(next, knownIds);
+    next = next.replace(/变化点/g, '允许变的那一块');
+    next = next.replace(/关进/g, '放进');
+    next = replaceSlots(next, lessonId);
+    return next;
+  });
 }
 
 function polishValue(value, knownIds, lessonId, prevId) {

@@ -128,6 +128,7 @@ export const publishedSources = [
   'coverage-core-16.js',
   'coverage-ops-17.js',
   'answer-walkthrough.js',
+  'example-code-blocks.js',
 ];
 
 export const GROUP_ORDER = {

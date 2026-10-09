@@ -8,6 +8,7 @@ import { shortTitle, splitProse, structureCore } from '@/data/reading'
 import { REACT_CHAPTERS, VUE_CHAPTERS, reactUrl, vueUrl } from '@/data/meta'
 import { useProgress } from '@/state/progress'
 import { LessonOutline } from '@/components/LessonOutline'
+import { RichBlocks } from '@/components/RichBlocks'
 import { RichProse } from '@/components/RichProse'
 import type { Lesson } from '@/types/curriculum'
 
@@ -238,7 +239,7 @@ export function LessonPage() {
         <span className="section-index">05</span>
         <h2>例子</h2>
         <div className="example-box">
-          <RichProse text={lesson.example || ''} as="span" />
+          <RichBlocks text={lesson.example || ''} />
         </div>
       </section>
 
@@ -266,7 +267,7 @@ export function LessonPage() {
             {
               key: 'answer',
               label: '先自己回答，再看参考答案',
-              children: <p className="body">{lesson.answer}</p>,
+              children: <RichBlocks text={lesson.answer || ''} className="body" />,
             },
           ]}
         />

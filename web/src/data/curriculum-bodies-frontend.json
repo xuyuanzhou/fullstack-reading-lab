@@ -110,7 +110,7 @@
   "js-equality": {
     "core": "=== 比较的是值的严格相等。数字、字符串、布尔值比的是值。对象、数组和函数比的是引用身份，内容相同但是两次创建的，就不相等。NaN === NaN 为 false，+0 === -0 为 true。Object.is 和 === 的差别只在这两个边界：Object.is(NaN, NaN) 为 true，Object.is(+0, -0) 为 false。React 比较依赖和部分记忆时用的是 Object.is。因此每次渲染都新写的对象字面量，内容即使没变，身份也变了，依赖它的 effect 会再次执行，memo 的浅比较也会失败。需要按内容比较时，在渲染之外保持同一个引用，或比较原始字段，而不是靠 === 递归比较未知结构。",
     "why": "学习者会以为两个看起来一样的对象，依赖数组也会当成没变。服务器每次给一个新对象后，详情效果每次渲染都重新请求，父组件一次无关更新也会把请求再打一遍。改成依赖标识后，外层对象重造时效果不再跑，才说明比较的是身份不是内容。",
-    "example": "const a = {id:1}; const b = {id:1}; a === b 为 false。把 id 放进依赖，1 === 1 为 true，effect 不会因为外层对象重造而重跑。",
+    "example": "同一结构、两次创建：\n\n```js\nconst a = { id: 1 }\nconst b = { id: 1 }\na === b          // false：比的是引用\na.id === b.id    // true：比的是原始值\nObject.is(NaN, NaN) // true\nObject.is(+0, -0)   // false\n```\n\n把 id 放进依赖时，1 === 1 为 true，effect 不会因为外层对象重造而重跑。",
     "task": "预测 Object.is(NaN, NaN)、Object.is(+0, -0)、{} === {}。再说明详情请求的 effect 应该依赖订单 id 还是依赖整份订单对象。",
     "answer": "NaN 与 NaN 的比较结果为真，正零与负零为假，两个分别写出来的空对象为假。详情请求的效果应依赖订单标识这种原始值，同一标识不会因为外层重新渲染而变化。依赖整份订单对象时，每次新对象都是新身份，效果会反复请求。父组件重渲染造出的新对象，不应再次触发这次详情请求。",
     "deep": [
@@ -133,7 +133,7 @@
   "es6-const-binding": {
     "core": "const 要求声明时就赋值，之后不能把这个名字再指向别的值。锁住的是绑定，不是值内部的字段。const order = { amount: 10 } 之后，order.amount = 20 合法，order = {} 会抛 TypeError。要挡住字段修改，得另外用 Object.freeze，而且它只冻当前这一层。块级作用域和声明前不能读，见 `js-scope-tdz`。箭头函数、Promise 和模块各自有课：`js-arrow-has-no-prototype`、`promise-chain`、`esm`。",
     "why": "把 const 理解成“这份数据不能变”，就会在对象字段被改掉之后去查框架。报错只出现在重新赋值那一行，字段赋值没有报错。",
-    "example": "const order = { amount: 10 }; order.amount = 20; 对象仍是同一个，amount 变成 20。下一行 order = { amount: 30 } 抛 TypeError。Object.freeze(order) 之后再写 amount，严格模式下抛错，非严格模式下静默失败，字段保持 20。",
+    "example": "const 锁的是绑定，不是对象内容：\n\n```js\nconst order = { amount: 10 }\norder.amount = 20          // 可以：仍是同一个对象\n// order = { amount: 30 }  // TypeError：不能换绑定\nObject.freeze(order)\n// order.amount = 40      // 严格模式抛错\n```",
     "task": "用 const 声明一个带 amount 的对象。先改 amount，再把名字重新指到新对象。最后 freeze 之后再改一次字段，记下哪一步抛错。",
     "answer": "改 amount 成功，绑定仍指向原来的对象。重新赋值抛 TypeError。freeze 之后字段不再被改掉。const 管的是这个名字还能不能换目标。",
     "deep": [
@@ -268,7 +268,7 @@
   "js-this-callsite": {
     "core": "普通函数的 this 是这次调用的接收者，不是函数写在哪个对象里面。obj.fn() 的接收者是 obj。const fn = obj.fn 之后再 fn()，调用点没有接收者；在模块和类这类严格模式代码里，this 是 undefined，读 this.id 会抛错。call、apply 和 bind 显式指定接收者。箭头函数没有自己的 this，它使用定义时所在作用域的 this，call 也改不了。React 函数组件没有实例，不要在里面找 this.state。DOM 的 addEventListener 若传入普通函数，调用时 this 是该元素；传入箭头函数则不是。",
     "why": "学习者会把拆出来调用后的 undefined 当成框架把状态弄丢了。回调和定时器里一读 this.id 就抛错，他却去查组件有没有卸载。同一次方法用对象调用能拿到名字、拆成变量就抛错，才说明原因是这次调用没有接收者。",
-    "example": "const user = { name: \"Ada\", hi() { return this.name; } }; user.hi() 得到 Ada。const hi = user.hi; hi() 在严格模式下抛错。改成 hi: () => this 则箭头函数根本看不到 user。",
+    "example": "this 看调用方式，不看函数写在哪：\n\n```js\nconst user = {\n  name: \"Ada\",\n  hi() { return this.name },\n}\nuser.hi()                 // \"Ada\"\nconst hi = user.hi\nhi()                      // 严格模式：TypeError\n```",
     "task": "分别用对象调用、拆成变量调用、bind 之后调用，以及箭头函数，记录四次 this。再在按钮的 addEventListener 里对比普通函数和箭头函数。",
     "answer": "对象调用时 this 是该对象，能读到名字。拆成变量再调用，严格模式下 this 是 undefined，读属性会抛错。bind 之后再调用，this 固定为绑定时的对象。箭头函数四次里都看不到该对象，因为它用的是定义处的外层 this。按钮上普通函数的 this 是元素，箭头函数则不是。",
     "deep": [
@@ -582,7 +582,7 @@
   "eventloop": {
     "core": "一段同步 JavaScript 会先跑完。这段里用 Promise.then 或 queueMicrotask 排上的回调是微任务，等这次同步调用栈清空后，在浏览器绘制之前把微任务队列清空。微任务里再排微任务，会继续清空，所以大量微任务会推迟绘制。setTimeout 排的是后续任务，排在当前微任务清空之后。因此顺序是：当前同步代码，然后微任务，然后浏览器才有机会绘制，再往后才是定时器任务。await 后面的代码同样排在微任务里。React 的状态更新会在合适的时机安排渲染，那次渲染仍是 JavaScript 任务，不是“微任务一到就等于像素已经画上”。",
     "why": "学习者会分不清微任务和绘制，把 then 里的大量计算当成不会卡住下一帧。点击后的画面迟迟不更新，定时器里的日志却还没出现。同步日志先于 then、then 先于定时器、绘制夹在微任务清空和定时器之间，才说明卡住的是清空微任务的这一段。",
-    "example": "同步打印 1，排一个微任务打印 3，排一个定时器打印 4，再同步打印 2。观察到的顺序是 1、2、3、4。若在微任务里再排一个微任务，它会排在 4 之前。画面最早在 3 之后、4 之前才有机会更新。绘制不会插在 1 和 2 之间。",
+    "example": "在控制台或点击回调里跑这段，记下打印顺序：\n\n```js\nconsole.log(1)\nPromise.resolve().then(() => console.log(3))\nsetTimeout(() => console.log(4), 0)\nconsole.log(2)\n```\n\n观察到的顺序是 1、2、3、4。若在微任务里再排一个微任务，它会排在 4 之前。画面最早在 3 之后、4 之前才有机会更新。绘制不会插在 1 和 2 之间。",
     "task": "在点击函数里同步打印 A，then 里打印 B，setTimeout 0 打印 C，然后在 then 里再 queueMicrotask 打印 D。写出顺序，并说明绘制最早可能出现在哪两个日志之间。",
     "answer": "顺序是 A、B、D、C。点击函数里的同步日志 A 先完成。then 排入的 B 是微任务，在同步代码之后、定时器之前执行。B 里面再排的 queueMicrotask D 仍是微任务，会在清空微任务时接着跑，所以 D 在 C 之前。setTimeout 的 C 是后续任务。浏览器最早可能绘制的时机在 D 之后、C 之前：微任务不清空，绘制不会插进来。",
     "deep": [
@@ -634,7 +634,7 @@
   "promise-chain": {
     "core": "每次 then 或 catch 都返回一个新的 Promise，链上的下一环看的是这一环的结果，不是最初那个 Promise。回调返回普通值，新 Promise 完成并带上这个值。回调抛错或返回一个被拒绝的 Promise，新 Promise 拒绝。catch 只有在上游拒绝时运行；它若返回普通值，后面的 then 会收到这个值，链回到完成态。没有接住的拒绝会继续向后，直到有拒绝处理器；若整条链都没有，就成为未处理的拒绝。async 函数里 throw 或拒绝的 await，等价于让这个 async 函数返回的 Promise 拒绝。在写操作里，解析完状态码再 throw，后面的 catch 才能接到业务失败；在 response.ok 为假时仍返回 body，后面的 then 会把失败当成成功值。",
     "why": "学习者会把 catch 写成只打印，以为失败已经处理完。打印之后函数正常返回，后面的 then 把失败当成成功值，页面继续跳到成功。成功分支没有执行、最近的 catch 执行了，才说明拒绝停在抛出的地方，而不是停在打印语句。",
-    "example": "Promise.resolve().then(() => { throw new Error(\"x\"); }).catch(() => 2).then((v) => v) 的结果是完成态的 2。若 catch 里再次 throw，后面的 then 不会接到 2，拒绝继续传递。",
+    "example": "catch 正常返回会把链拉回完成态：\n\n```js\nPromise.resolve()\n  .then(() => { throw new Error(\"x\") })\n  .catch(() => 2)\n  .then((v) => v) // 完成态，值为 2\n```\n\n若 catch 里再次 throw，后面的 then 接不到 2，拒绝继续向后传。",
     "task": "写出 fetch 后先判断 response.ok、不 ok 就 throw、再 json、最后 catch 的链。预测 409 时成功分支的 then 会不会执行。",
     "answer": "409 时 fetch 本身是完成的，不会自动进 catch。先判断 response.ok，不 ok 就 throw，成功分支的 then 不会执行，最近的 catch 执行。catch 里若再 throw，拒绝继续向后；若返回普通值，它后面的 then 会接到这个值，链回到完成态。断网则是 fetch 自己拒绝，没有 JSON，不能和 409 共用一个空 catch。",
     "deep": [
@@ -968,7 +968,7 @@
   "closure": {
     "core": "函数会记住创建它的那一次变量环境。React 函数组件每次渲染都重新执行，得到新的 count 和新的事件函数。已经创建的事件函数仍看见创建它那次渲染的 count。同一次点击里读三次 count，三次都是这一个快照，所以三次 setCount(count + 1) 排进去的是同一个新值。setCount(n => n + 1) 排进去的是计算函数，React 用队列里当时的最新值依次计算，三次才得到加 3。这和 setState 是否“异步”不是一回事：即使更新稍后才画到屏幕上，闭包看见的仍是创建时的变量。在 effect 或定时器里使用渲染里的值，同样看见那一次渲染，除非把值放进依赖并在依赖变化时重建函数。",
     "why": "学习者会把三次都只加 1 记成状态更新是异步的。下次在事件外或条件更新里仍用这个解释，函数式更新和直接赋值的差别就猜反。同一次点击里变量仍是 0、下一次渲染却已经是队列算完的值，才说明看见的是创建函数时的快照。",
-    "example": "渲染时计数是 0。同一次点击里三次调用按当前计数加 1，队列里三个更新都想写成 1，下一次渲染只显示 1。改成三次函数式更新后，队列依次算得 1、2、3，屏幕变成 3。点击函数里打印的计数在这次调用期间仍是 0。",
+    "example": "同一次点击里三次更新，闭包里的 count 不会中途变：\n\n```js\n// 渲染时 count === 0\nfunction onClick() {\n  setCount(count + 1)      // 排入 1\n  setCount(n => n + 1)     // 用队列结果：2\n  setCount(5)              // 写成 5\n  // 此处 count 仍是 0\n}\n```\n\n下一次渲染才是 5。打印发生在调用时，屏幕更新发生在之后的渲染。",
     "task": "从 0 开始，在同一次点击中先 setCount(count + 1)，再 setCount(n => n + 1)，再 setCount(5)。预测下一次渲染的 count，并说明点击函数里的 count 变量现在仍是多少。",
     "answer": "从 0 开始，同一次点击里先 setCount(count + 1)，排入的是基于快照算好的 1。接着 setCount(n => n + 1)，用队列里前一个结果 1 算出 2。最后 setCount(5) 把结果直接写成 5。下一次渲染是 5。这三次调用期间，点击函数闭包里的 count 变量一直是 0，要等这次函数结束、下一次渲染创建新函数，才会看见 5。",
     "deep": [
@@ -1364,7 +1364,7 @@
   "css-cascade": {
     "core": "浏览器先按来源、重要性和层叠层确定候选规则，再比较同一优先层级内的选择器权重；仍相同时才看作用域距离与出现顺序。选择器“看起来长”不是完整判断依据。顺序是：先看来源、重要性和层叠层，决定哪些声明有资格比较；再在同一优先层级里比选择器权重；仍相同才看作用域距离和源码顺序。边界是：未分层规则可能压过层内权重更高的普通规则，选择器写得更长不能单独决定胜负。important 会抬高优先级，但会让后续覆盖更难，不要用它代替分层。调试时在样式面板里看胜出声明属于哪一层，而不是先把选择器写得更长。同一层里才比权重。层已经不同时，选择器分数没有资格参与这场比较。先看层。",
     "why": "错把选择器更长当成一定胜出，未分层的普通规则仍可能盖过层内更高权重的声明。样式不生效时继续堆 !important，后面的规则也会被锁死。能分开的信号是：开发者工具里胜出的那条来自哪一层，而不是选择器看起来有多长。",
-    "example": "同一元素两条 color：层内的 #id 规则和层外的 .class 规则。层外那条普通作者样式胜出，尽管它的选择器更弱。把两条放进同一层后，#id 才盖过 .class。再把层去掉，胜负会跟着变。记下胜出的层。",
+    "example": "同一元素两条 color，先比层再比选择器：\n\n```css\n@layer base { #title { color: blue; } }\n.title { color: red; } /* 未分层，可能压过层内 #id */\n```\n\n层外那条普通作者样式可以胜出，尽管选择器更弱。把两条放进同一层后，#id 才盖过 .class。在样式面板里记下胜出的层。",
     "task": "在开发者工具中为同一元素写两条冲突的 color，分别改变层、选择器和顺序，记录胜出的规则。",
     "answer": "先比来源、重要性和层叠层，这些不同就不用再比选择器长短。它们相同之后才比权重，#id 通常高于 .class。权重仍相同，才用作用域距离和出现顺序打破平局。更长的选择器如果输在层上，把选择器再写长也不会翻盘。层不同时，不要再比选择器分数。顺序不能倒过来。",
     "deep": [
@@ -1957,7 +1957,7 @@
   "layout": {
     "core": "写入样式可能使布局信息失效，紧接着读取几何尺寸可能迫使浏览器提前计算布局。频繁交错会重复这项工作。顺序是：写样式或改 DOM 把布局标脏，随后读 offsetWidth 或 getBoundingClientRect 时浏览器必须先算完才能回答。边界是：只读不写，或先把读做完再集中写，不会每一轮都强制布局。React 提交 DOM 之后的测量若立刻读布局，也会落在这段浏览器工作里，Profiler 的组件时间看不出它。先把需要的尺寸读完，再集中改样式，中间不要交错。React 提交之后立刻测量，也会落在这段浏览器工作里，组件 Profiler 看不到这串 Layout。",
     "why": "错把输入卡顿都记成组件重渲染，就会只加 memo，循环里的强制布局仍在。React Profiler 看不到浏览器反复计算布局的时间。能分开的信号是：性能记录里脚本旁边有没有一串 Layout。",
-    "example": "100 个节点，每轮设置 width 再读 offsetWidth，性能记录里出现一串 Layout。改成先读完所有 offsetWidth 再写 width，这串收成一次布局。读 getBoundingClientRect 也会触发同一次强制布局。",
+    "example": "交错读写会逼出多次 Layout：\n\n```js\n// 差：每轮写完立刻读\nnodes.forEach((el) => {\n  el.style.width = \"100px\"\n  void el.offsetWidth\n})\n\n// 好：先读完再写\nconst widths = nodes.map((el) => el.offsetWidth)\nnodes.forEach((el, i) => { el.style.width = widths[i] + \"px\" })\n```\n\n在 Performance 里对比紫色 Layout 的次数，不要只凭页面“感觉还行”。",
     "task": "用 Performance 面板找出脚本附近的 Layout 记录，并改变读写顺序再比较。",
     "answer": "交错读写时，Performance 里脚本旁边会出现重复的 Layout，因为每次读几何值前都要把刚弄脏的布局算完。改成先批量读、再批量写之后，重复的 Layout 应明显减少，总时长下降。结论以这次记录为准，不凭页面感觉说已经优化了。以记录里的次数为准。",
     "deep": [
@@ -3292,7 +3292,7 @@
   "state-queue": {
     "core": "一次渲染里的 count 是快照，事件函数全程看见的都是这个数，调用 setCount 不会中途改变它。每次 setCount 是往队列里放一个更新：直接传值，就是“写成这个值”；传函数，就是“用队列里当时的前一个结果来算”。React 在下一次渲染前按顺序应用队列。从 0 开始，setCount(5) 把结果定为 5，后面的 setCount(n => n + 1) 在 5 上加，得到 6。若三次都是 setCount(count + 1)，三次都基于快照 0 算出 1，队列里后一个直接值覆盖前一个，结果是 1。当前函数里的 count 变量仍然是 0。需要基于最新结果累加时用函数式更新。需要忽略中间结果、直接写成某个值时传值，并注意它会覆盖队列里它前面的结果。",
     "why": "学习者会按调用顺序心算变量本身在变，连续更新就少加或多加。步进器和乐观更新的下一次渲染对不上打印出来的变量。变量在三次调用期间一直是旧值、下一次渲染却是队列算完的结果，才说明更新进的是队列而不是当前这个变量。",
-    "example": "计数为 0 时，同一次事件里三次函数式加 1，下一次渲染是 3。这三次调用期间打印出来的变量仍是 0，不会在中途变成 1 或 2。若中间插入一次直接写成固定值，后面的函数式更新从那个固定值接着算，而不是从 0 再算。",
+    "example": "队列按写入顺序算，不是按闭包里的旧变量：\n\n```js\n// 当前 count === 2\nsetCount(n => n + 1)  // → 3\nsetCount(10)          // → 10\nsetCount(n => n * 2)  // → 20\n```\n\n这三次调用期间函数里的 count 仍是 2；下一次渲染才是 20。",
     "task": "从 2 开始，依次 setCount(n => n + 1)、setCount(10)、setCount(n => n * 2)。预测下一次渲染的值，以及这三次调用期间变量 count 的值。",
     "answer": "从 2 开始。setCount(n => n + 1) 在队列里得到 3。setCount(10) 把结果写成 10，盖过前面的 3。setCount(n => n * 2) 用 10 算出 20。下一次渲染是 20。这三次调用期间，函数里的 count 变量一直是 2，setCount 不会中途改它。",
     "deep": [

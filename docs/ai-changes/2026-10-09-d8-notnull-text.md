@@ -31,7 +31,7 @@
 node scripts/export-curriculum.mjs && node scripts/verify_content.mjs
 ```
 
-- 结果：见交接头数字（导出后填写）。
+- 结果：773 课（前端 275 / Java 498），2326 知识点（含并行侧其它课）。
 
 ## 后续
 
