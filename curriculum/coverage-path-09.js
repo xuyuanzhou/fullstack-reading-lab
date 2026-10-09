@@ -101,7 +101,8 @@ const COVERAGE_PATH_09 = [
     points:['未命中时读数据库并回填缓存','写数据库成功后再删除缓存','缓存不会自动跟随数据库更新'],
     deep:[
       {title:'空值',body:'数据库里没有的 id 也可以短暂缓存空结果，避免穿透。空结果的过期要短，不然新插入的行会被空缓存挡住。'},
-      {title:'和一致性课',body:'先删缓存再写库，或写库后删失败，都会出现旧值窗口。步骤对了，仍要看那一课的并发窗口。'}
+      {title:'和一致性课',body:'先删缓存再写库，或写库后删失败，都会出现旧值窗口。步骤对了，仍要看那一课的并发窗口。'},
+      {title:'客户端缓存',body:'进程内再囤一份 Redis 读结果时，同样要失效路径，见 redis-client-side-cache-invalidate。'}
     ],
     refs:[['Azure：Cache-Aside','https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside'],['Redis：缓存介绍','https://redis.io/docs/latest/develop/use/patterns/']]
   },

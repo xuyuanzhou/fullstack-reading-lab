@@ -233,6 +233,9 @@ const COVERAGE_CORE_16 = [
     answer:'只允许同源脚本之后，插入外源脚本会被拒绝，控制台有策略报告，脚本不执行。评论转义仍然要留着，尖括号应显示成文本而不是节点。不要用通配符把脚本来源放空，那会把这条限制掏空。开发时可以先用只报告的模式看有没有误伤，但评论编码不能省，通配符也会把限制掏空。',
     deep:[
       {title:'白名单管的是脚本从哪加载',body:'script-src 决定浏览器肯执行哪些来源的脚本。外源地址不在名单里就拒绝加载。已经作为 HTML 解析出来的节点，不会因为这条策略变回纯文本。评论仍要在输出时编码，策略只是另一层限制。'},
+      {title:'Report-Only',body:'只报告不拦截的是 Content-Security-Policy-Report-Only，见 csp-report-only-not-enforce。有报告不等于已挡住。'},
+      {title:'Trusted Types',body:'危险汇点还可要求可信类型，见 trusted-types-sink-guard。能力开关见 permissions-policy-feature-gate。'},
+      {title:'和 SRI',body:'脚本来源靠 CSP；CDN 字节是否被篡改靠 integrity，见 sri-integrity-not-csp。两层不要互相替代。'},
       {title:'怎样自己验证',body:'加上只允许同源脚本的策略，再插入一条外源脚本，看控制台的拒绝报告并且脚本不执行。同时提交带尖括号的评论，确认页面上仍是转义后的文本，而不是新的元素。两条都要通过，才算策略和转义同时在。'},
     ],
     keywords:'CSP Content-Security-Policy script-src XSS nonce',

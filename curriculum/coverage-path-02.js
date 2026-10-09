@@ -186,6 +186,7 @@ const COVERAGE_PATH_02 = [
     points:['异步复制在提交之后才把事件应用到从库','从库延迟期间读不到刚提交的行','延迟秒数是估计，不能代替复制位点'],
     deep:[
       {title:'异步复制的可见性',body:'主库提交并写入二进制日志之后，从库才去拉取并应用。应用完成前，从库上没有这笔提交。延迟秒数是估计，日志还在中继或时钟不同时，它可以是 0 而数据仍未跟上。读自己的写入要读主库或对准位点。'},
+      {title:'和读写分离架构',body:'把写主读从当成强一致扩展，见 rw-split-not-strong-consistency。'},
       {title:'怎样自己验证',body:'暂停从库的应用线程，向主库插入一行，分别查询主库、从库和延迟估计。主库有行、从库没有，才恢复应用。再次查询从库，行应在位点追上之后出现。恢复应用前从库行数应保持为 0。'}
     ],
     refs:[['MySQL 8.4 手册镜像：复制实现','https://docs.oracle.com/cd/E17952_01/mysql-8.4-en/replication-implementation.html'],['MySQL 8.4 手册镜像：复制延迟排错','https://docs.oracle.com/cd/E17952_01/mysql-8.4-en/replication-problems.html']]

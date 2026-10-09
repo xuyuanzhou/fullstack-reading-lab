@@ -29,7 +29,7 @@ const COVERAGE_JAVA_57 = [
     keywords:'Redis PSUBSCRIBE Pub/Sub Stream 模式',
     points:['PSUBSCRIBE 只匹配频道名模式','仍然无历史、无确认','业务补单用 Stream，不要用模式订阅冒充'],
     deep:[
-      {title:'和键空间通知',body:'键事件通知也是 Pub/Sub 通道，同样不保证离线补发。过期监听不能当可靠工作队列。'},
+      {title:'和键空间通知',body:'键事件通知也是 Pub/Sub 通道，同样不保证离线补发。过期监听不能当可靠工作队列，见 redis-keyspace-notify-not-queue。'},
       {title:'怎样自己验证',body:'PSUBSCRIBE 后 PUBLISH 应收到。停订阅再 PUBLISH，重启订阅后不应出现那条。对照 XADD 离线仍可 XREADGROUP。'}
     ],
     refs:[['Redis：Pub/Sub','https://redis.io/docs/latest/develop/pubsub/'],['Redis：PSUBSCRIBE','https://redis.io/docs/latest/commands/psubscribe/']]

@@ -2,9 +2,9 @@
 const COVERAGE_FRONTEND_11 = [
   {
     track:'frontend', group:'React 生态', id:'react-router-element-api',
-    title:'现行 React Router：Routes + element，不是 Switch + component',
+    title:'现行 React Router：Routes + element，不是 Switch + component（RR 6）',
     prompt:'为什么把 Switch、Route 的 component={About}、Redirect、activeClassName 当作现行默认 API 会过时？',
-    core:'资料大量示例来自 React Router v5 及更早：用 Switch 包一层、Route 用 component 或 render、重定向写 Redirect、NavLink 用 activeClassName。现行声明式用法以 Routes / Route 的 element 为主；重定向常用 Navigate；NavLink 的活跃样式通过 className / style 的函数参数根据 isActive 计算。hash 与 history 两种客户端路由思想仍成立，但不要把旧组件名当 2024+ 新项目的默认菜单。数据路由、loader 等能力见既有 `react-router-loader`，本课只纠正路由声明与链接 API 的版本漂移。',
+    core:'资料大量示例来自 React Router v5 及更早：用 Switch 包一层、Route 用 component 或 render、重定向写 Redirect、NavLink 用 activeClassName。**React Router 6** 起声明式用法以 Routes / Route 的 `element` 为主；重定向常用 Navigate；NavLink 的活跃样式通过 className / style 的函数参数根据 isActive 计算。hash 与 history 两种客户端路由思想仍成立，但不要把旧组件名当新项目的默认菜单。数据路由、loader 等能力见既有 `react-router-loader`，本课只纠正路由声明与链接 API 的版本漂移。',
     why:'误以为 Switch 和 component 属性仍是现行默认写法。新项目里对不上文档示例，活跃样式也读不到旧的类名属性。区分信号是路由用 element 放元素，重定向用 Navigate，活跃类名由函数拿到 isActive。',
     example:'旧：<Switch><Route path="/about" component={About} /></Switch>。新：<Routes><Route path="/about" element={<About />} /></Routes>。跳转：<Navigate to="/" replace />。NavLink：className={({isActive}) => isActive ? "active" : undefined}。',
     task:'把资料里一段 Switch/component/Redirect 配置改写成 Routes/element/Navigate，并核对官方 Routing 文档中的 NavLink 函数式 className。',

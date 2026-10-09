@@ -169,6 +169,10 @@ const COVERAGE_LESSONS = [
         body:'跨标签共享用 localStorage。只跟当前标签的向导进度用 sessionStorage，见 session-storage-tab-only。结构化大数据与索引用 IndexedDB，见 indexeddb-when-needed。不要把三种都当成“浏览器缓存”一个词。'
       },
       {
+        title:'登出清本地',
+        body:'响应可用 Clear-Site-Data 清 Cookie/storage，那只是浏览器侧，见 clear-site-data-not-full-logout。服务端会话仍要作废。'
+      },
+      {
         title:'怎样自己验证',
         body:'打开两个同源标签，两边都给 storage 打日志。在 A 里 setItem，确认只有 B 打印事件，A 的界面要靠写入代码自己更新。再在两个标签同时写同一个键，看最后留下的是哪一次。'
       }

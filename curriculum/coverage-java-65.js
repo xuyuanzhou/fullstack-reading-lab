@@ -30,6 +30,7 @@ const COVERAGE_JAVA_65 = [
     points:['GEO 基于 ZSet/geohash，服务附近点查询','不是完整 GIS / 多边形引擎','BITFIELD 是位域命令，与 GEO 无关'],
     deep:[
       {title:'和 ZSet',body:'GEO 成员可与 ZSet 命令部分互通，但不要绕过 GEO API 随便改分值，容易破坏 geohash 编码。排行场景仍用普通 ZSet，见 redis-zset-rank-range。'},
+      {title:'和 MySQL SPATIAL',body:'库内几何列与空间索引是另一层，也不是完整 GIS，见 mysql-spatial-index-not-full-gis。'},
       {title:'怎样自己验证',body:'GEOADD 两点后 GEOSEARCH 应按距离返回。对照：同一需求若要多边形包含，应在空间库验证，而不是只调 GEO。'}
     ],
     refs:[['Redis：Geo indexes','https://redis.io/docs/latest/develop/data-types/geospatial/'],['Redis：GEOADD','https://redis.io/docs/latest/commands/geoadd/'],['Redis：BITFIELD','https://redis.io/docs/latest/commands/bitfield/']]

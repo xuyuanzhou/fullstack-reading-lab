@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-labelledby="title desc">
+  <title id="title">主键宜顺不唯自增</title>
+  <desc id="desc">隐藏行 ID 更糟。</desc>
+  <rect width="960" height="400" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">SQL / 主键</text>
+  <text x="32" y="64" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">必须有主键≠必须 AUTO_INCREMENT</text>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <rect x="32" y="96" width="430" height="176" rx="14" fill="#f6ecea" stroke="#a05048"/>
+    <text x="52" y="132" font-size="15" font-weight="600" fill="#6e3530">收窄</text>
+    <text x="52" y="164" font-size="14" fill="#2e3330">只能自增</text>
+    <text x="52" y="196" font-size="14" fill="#2e3330">雪花双键拧巴</text>
+    <text x="52" y="228" font-size="14" fill="#5e6661">乱序 UUID 不察</text>
+    <rect x="496" y="96" width="432" height="176" rx="14" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="516" y="132" font-size="15" font-weight="600" fill="#2e3330">原则</text>
+    <text x="516" y="164" font-size="14" fill="#3f6a58">短稳定顺序</text>
+    <text x="516" y="196" font-size="14" fill="#3f6a58">代理键常见</text>
+    <text x="516" y="228" font-size="14" fill="#5e6661">乱序慎聚簇</text>
+    <rect x="32" y="296" width="896" height="72" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="52" y="328" font-size="15" font-weight="600" fill="#2e3330">隐藏行 ID 更糟。</text>
+    <text x="52" y="352" font-size="14" fill="#5e6661">对照 UUID 课</text>
+  </g>
+</svg>

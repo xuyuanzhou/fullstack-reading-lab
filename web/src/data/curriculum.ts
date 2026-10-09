@@ -115,3 +115,13 @@ export const totals = {
   frontend: lessonsFor('frontend').length,
   java: lessonsFor('java').length,
 }
+
+/**
+ * Side-nav / lesson chips: only show introduction-boundary labels
+ * (year, RFC/JEP, HTTP/TLS, ES6). Soft product baselines stay in data
+ * but are not painted as「自 …」.
+ */
+export function isVersionSince(since?: string): boolean {
+  if (!since || since.trim().length < 2) return false
+  return /\d|RFC\b|JEP\b|HTTP\/|TLS\b|ES6\b/i.test(since)
+}

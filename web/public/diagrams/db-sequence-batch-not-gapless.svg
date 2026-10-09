@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-labelledby="title desc">
+  <title id="title">批量取号会断号，不是免费连续</title>
+  <desc id="desc">省往返用批量；要连续别批量。分布式不等于无缺口。</desc>
+  <rect width="960" height="400" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">发号 / sequence</text>
+  <text x="32" y="64" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">乐观锁取号可分布式，批量会留下缺口</text>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <rect x="32" y="96" width="430" height="176" rx="14" fill="#f6ecea" stroke="#a05048"/>
+    <text x="52" y="132" font-size="15" font-weight="600" fill="#6e3530">资料写法</text>
+    <text x="52" y="164" font-size="14" fill="#2e3330">sequence 表+乐观锁</text>
+    <text x="52" y="196" font-size="14" fill="#2e3330">一次取五百更省</text>
+    <text x="52" y="228" font-size="14" fill="#5e6661">仍说有序连续</text>
+    <rect x="496" y="96" width="432" height="176" rx="14" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="516" y="132" font-size="15" font-weight="600" fill="#2e3330">要分清</text>
+    <text x="516" y="164" font-size="14" fill="#3f6a58">CAS 更新有热点</text>
+    <text x="516" y="196" font-size="14" fill="#3f6a58">批量缓存会跳号</text>
+    <text x="516" y="228" font-size="14" fill="#5e6661">进程崩溃浪费段</text>
+    <rect x="32" y="296" width="896" height="72" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="52" y="328" font-size="15" font-weight="600" fill="#2e3330">省往返用批量；要连续别批量。分布式不等于无缺口。</text>
+    <text x="52" y="352" font-size="14" fill="#5e6661">对照雪花与 Redis 发号课</text>
+  </g>
+</svg>

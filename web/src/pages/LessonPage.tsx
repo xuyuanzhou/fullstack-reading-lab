@@ -1,7 +1,7 @@
 import { Breadcrumb, Button, Collapse, Image, Input, Space, Typography } from 'antd'
 import { useEffect, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
-import { findLesson, lessonIndex, loadFullLesson, nextLesson } from '@/data/curriculum'
+import { findLesson, isVersionSince, lessonIndex, loadFullLesson, nextLesson } from '@/data/curriculum'
 import { deliverableKey, slotsOf, spineNextId, spinePlace, spinePrevId } from '@/data/learningPaths'
 import { groupKeyForLabel, groupPath, groupTitle, isTrack, lessonPath } from '@/data/routes'
 import { shortTitle, splitProse, structureCore } from '@/data/reading'
@@ -128,7 +128,11 @@ export function LessonPage() {
           />
         ) : null}
         <div className="meta-line">
-          {lesson.since ? <span className="since-badge" title="引入或定稿版本">自 {lesson.since}</span> : null}
+          {isVersionSince(lesson.since) ? (
+            <span className="since-badge" title="引入或定稿版本">
+              自 {lesson.since}
+            </span>
+          ) : null}
           <span>原创课程</span>
           <span>{references.length} 项依据</span>
         </div>

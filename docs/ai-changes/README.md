@@ -11,7 +11,46 @@
 
 | 日期 | 状态 | 标题 |
 | --- | --- | --- |
+| 2026-10-09 | 已完成 | [提交并发布本机待交的课源与选型课改写](2026-10-09-publish-batch.md) |
+| 2026-10-09 | 已完成 | [D8 续抽：秒杀 MQ≠控库阀门；虚拟节点 32≠定律（2 课）](2026-10-09-d8-seckill-mq-vnode.md) |
+| 2026-10-09 | 已完成 | [把选型课的开头问句写成能直接读的话](2026-10-09-fe-pick-prompt.md) |
+| 2026-10-09 | 已完成 | [把选型课的框架对照收成一张表](2026-10-09-fe-pick-compare-table.md) |
+| 2026-10-09 | 已完成 | [学习课例子代码块第十五批（润色错配模板围栏，32 课）](2026-10-09-lesson-example-code-batch15.md) |
+| 2026-10-09 | 已完成 | [写明 Astro 与 Nuxt、Next 的分工，以及岛上混用的边界](2026-10-09-fe-pick-astro-compare.md) |
+| 2026-10-09 | 已完成 | [学习课例子代码块第十四批（选型 / 微前端 / Flutter / Java 收尾，+68）](2026-10-09-lesson-example-code-batch14.md) |
+| 2026-10-09 | 已完成 | [W3CSchool 第十二轮：Fenced Frames / ARA / invisible / HELLO（4 课）](2026-10-09-w3cschool-round12-fenced-ara-invisible-hello.md) |
+| 2026-10-09 | 已完成 | [D8 续抽：漏桶/ZK 奇数 + Xmx/缓存竞态（4 课）](2026-10-09-d8-leaky-zk-xmx-cache.md) |
+| 2026-10-09 | 已完成 | [补上 Astro 从页面到浏览器的整条路径](2026-10-09-fe-pick-astro-flow.md) |
+| 2026-10-09 | 已完成 | [学习课例子代码块第十三批（JS / 网络 / 生态 / 测试，+48）](2026-10-09-lesson-example-code-batch13.md) |
+| 2026-10-09 | 已完成 | [写出查看源代码时岛的实际标签](2026-10-09-fe-pick-island-html.md) |
+| 2026-10-09 | 已完成 | [写明 client:load 怎么把岛的脚本挂上](2026-10-09-fe-pick-client-load.md) |
+| 2026-10-09 | 已完成 | [W3CSchool 第十一轮：Document-Policy / PNA / CHECK / WAIT（4 课）](2026-10-09-w3cschool-round11-docpolicy-pna-check-wait.md) |
+| 2026-10-09 | 已完成 | [D8 续抽：线程池公式与读写分离（2 课）](2026-10-09-d8-threadpool-rw-split.md) |
+| 2026-10-09 | 已完成 | [学习课例子代码块第十二批（浏览器 / 工程 / Vue / 全栈主线，+43）](2026-10-09-lesson-example-code-batch12.md) |
+| 2026-10-09 | 已完成 | [选型课写明第一屏 HTML 与岛屿架构](2026-10-09-fe-pick-html-islands.md) |
+| 2026-10-09 | 已完成 | [学习课例子代码块第十一批（微前端 / CSS / React / 架构，+41）](2026-10-09-lesson-example-code-batch11.md) |
+| 2026-10-09 | 已完成 | [学习课例子代码块第十批（MySQL / 并发 / 分布式 / 缓存，+39）](2026-10-09-lesson-example-code-batch10.md) |
+| 2026-10-09 | 已完成 | [D8 续抽：Jenkins≠CI；唯一插入+cron≠租约（2 课）](2026-10-09-d8-jenkins-insert-lease.md) |
+| 2026-10-09 | 已完成 | [学习课例子代码块清零（可代码化课 +317）](2026-10-09-lesson-example-code-complete.md) |
+| 2026-10-09 | 已完成 | [学习课例子代码块第九批（分布式 / Spring / MySQL，+36）](2026-10-09-lesson-example-code-batch9.md) |
+| 2026-10-09 | 已完成 | [学习课例子代码块第八批（SCA / JVM / Netty / 模式，+39）](2026-10-09-lesson-example-code-batch8.md) |
+| 2026-10-09 | 已完成 | [W3CSchool 第十轮：Reporting/NEL / CORP / 生成列 / ACL（4 课）](2026-10-09-w3cschool-round10-reporting-corp-generated-acl.md) |
+| 2026-10-09 | 已完成 | [学习课例子代码块第七批（JVM / K8s / Docker / SCA，+32）](2026-10-09-lesson-example-code-batch7.md) |
+| 2026-10-09 | 已完成 | [W3CSchool 第九轮：SRI / Clear-Site-Data / SPATIAL / Functions（4 课）](2026-10-09-w3cschool-round9-sri-clearsite-spatial-functions.md) |
+| 2026-10-09 | 已完成 | [D8 续抽：UUID 形态与多主自增分段（2 课）](2026-10-09-d8-uuid-autoinc-step.md) |
+| 2026-10-09 | 已完成 | [恢复 since 全量基线 + 例子代码第六批](2026-10-09-since-restore-example-batch6.md) |
+| 2026-10-09 | 已完成 | [W3CSchool 第八轮：COOP/COEP / Referrer / JSON / 客户端缓存（4 课）](2026-10-09-w3cschool-round8-coop-referrer-json-csc.md) |
+| 2026-10-09 | 已完成 | [学习课例子代码块第五批（+25）](2026-10-09-lesson-example-code-batch5.md) |
+| 2026-10-09 | 已完成 | [D8 续抽：Docker Registry 与 sequence 批量断号（2 课）](2026-10-09-d8-registry-sequence-batch.md) |
+| 2026-10-09 | 已完成 | [学习课例子代码块第四批（+26）](2026-10-09-lesson-example-code-batch4.md) |
+| 2026-10-09 | 已完成 | [D8 连做 20 轮：java-71～90（40 课）](2026-10-09-d8-twenty-rounds-71-90.md) |
+| 2026-10-09 | 已完成 | [学习课例子代码块第三批（+25）](2026-10-09-lesson-example-code-batch3.md) |
+| 2026-10-09 | 已完成 | [since 侧栏只展示引入界标签](2026-10-09-since-chip-version-only.md) |
+| 2026-10-09 | 已完成 | [D8 续抽：隐式转换与 WHERE 列上函数（2 课）](2026-10-09-d8-implicit-where-func.md) |
+| 2026-10-09 | 已完成 | [W3CSchool 第七轮：Trusted Types / Permissions-Policy / 临时表 / Keyspace（4 课）](2026-10-09-w3cschool-round7-tt-pp-temptable-keyspace.md) |
 | 2026-10-09 | 已完成 | [基础课标注引入版本（since）](2026-10-09-lesson-since-versions.md) |
+| 2026-10-09 | 已完成 | [D8 续抽：ENUM 禁令与索引个数 5（2 课）](2026-10-09-d8-enum-index-five.md) |
+| 2026-10-09 | 已完成 | [W3CSchool 第六轮：CSP Report-Only / CORS Max-Age / CTE / XTRIM（4 课）](2026-10-09-w3cschool-round6-csp-cors-cte-xtrim.md) |
 | 2026-10-09 | 已完成 | [学习课例子代码块第二批（+25）](2026-10-09-lesson-example-code-batch2.md) |
 | 2026-10-09 | 已完成 | [学习课例子支持代码块（12 课试点）](2026-10-09-lesson-example-code-blocks.md) |
 | 2026-10-09 | 已完成 | [D8 续抽：NOT NULL 默认值与 TEXT 禁令（2 课）](2026-10-09-d8-notnull-text.md) |

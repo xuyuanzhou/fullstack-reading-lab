@@ -37,8 +37,8 @@ node scripts/export-curriculum.mjs && node scripts/verify_content.mjs
 ## 后续
 
 - [x] 本批四课落盘并进索引
-- [ ] 下一空闲号先 ls：`coverage-java-67.js` / `coverage-frontend-35.js`
-- [ ] CROSSWALK 其余缺口继续扫
+- [x] 下一轮见 `2026-10-09-w3cschool-round6-csp-cors-cte-xtrim.md`（frontend-35 / java-67）
+- [ ] CROSSWALK 其余缺口继续扫（Trusted Types / Permissions-Policy / 临时表 vs CTE…）
 
 ## 给下一模型
 

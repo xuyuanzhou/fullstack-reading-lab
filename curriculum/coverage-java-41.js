@@ -15,9 +15,9 @@ const COVERAGE_JAVA_41 = [
   },
   {
     track:'java', group:'并发', id:'java-thread-six-states',
-    title:'Thread.State 有六个值，不是运行就绪挂起结束',
+    title:'Thread.State 有六个值，不是运行就绪挂起结束（JDK 5）',
     prompt:'为什么还把 Java 线程背成“运行、就绪、挂起、结束”四种状态？',
-    core:'`Thread.getState()` 返回 `NEW`、`RUNNABLE`、`BLOCKED`、`WAITING`、`TIMED_WAITING`、`TERMINATED`。RUNNABLE 包含可运行和正在占用 CPU，没有单独的“就绪”。没有 API 叫挂起；`suspend`/`stop` 已废弃且危险。等待分无限等（`wait`/`join`/`park`）和限时等（`sleep`/`wait(timeout)`），见 `java-wait-sleep`。创建线程不只有继承 Thread 和实现 Runnable，还有 `Executor`、`Callable`、虚拟线程，见 `java-executor`、`java-virtual-threads`。启动仍是 `start()` 不是 `run()`，见 `java-thread-start-run`。',
+    core:'`Thread.getState()`（**JDK 5** 起的 `Thread.State`）返回 `NEW`、`RUNNABLE`、`BLOCKED`、`WAITING`、`TIMED_WAITING`、`TERMINATED`。RUNNABLE 包含可运行和正在占用 CPU，没有单独的“就绪”。没有 API 叫挂起；`suspend`/`stop` 已废弃且危险。等待分无限等（`wait`/`join`/`park`）和限时等（`sleep`/`wait(timeout)`），见 `java-wait-sleep`。创建线程不只有继承 Thread 和实现 Runnable，还有 `Executor`、`Callable`、虚拟线程，见 `java-executor`、`java-virtual-threads`。启动仍是 `start()` 不是 `run()`，见 `java-thread-start-run`。',
     why:'按四态去读 `jstack`，会对不上 BLOCKED 和 TIMED_WAITING，还会去调已经废弃的 suspend。',
     example:'`Thread.sleep(1000)` 是 TIMED_WAITING。抢不到 `synchronized` 是 BLOCKED。`Object.wait()` 无超时是 WAITING。',
     task:'对照 Thread.State 枚举划掉四态口诀；写出 sleep 和抢锁分别是哪一个。',

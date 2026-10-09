@@ -63,10 +63,10 @@ const COVERAGE_FRONTEND_26 = [
   },
   {
     track:'frontend', group:'微前端', id:'mfe-module-federation',
-    title:'Module Federation：host 消费 remote，暴露的是模块不是整站复制',
+    title:'Module Federation：host 消费 remote，暴露的是模块不是整站复制（Webpack 5）',
     prompt:'配了 ModuleFederationPlugin 之后，是不是子应用的所有页面都会自动挂到主应用？',
     promptAnswer:'不是。只有 exposes 声明并被 host 的 remotes 引用的模块才会在运行时加载。没有声明的路由不会自动出现。',
-    core:'Webpack 5 的 Module Federation 让多个独立构建在运行时共享模块。remote 用 exposes 声明可被加载的模块路径，并产出 remoteEntry。host 在 remotes 里写明容器名与入口 URL，再按约定的模块名异步导入。两边都可以声明 shared，把 React 这类必须单例的库放进共享作用域；singleton 为 true 时作用域里只保留一个实例，见 mfe-shared-deps。每个构建需要唯一的 output.uniqueName，同名会在运行时碰撞。Federation 不负责你的业务路由表，也不自动挂载子应用的全部页面；路由与卸载见 mfe-routing-one-history、mfe-runtime-lifecycle。Rspack 等实现沿用同一套 host/remote/shared 语义，核对时以你正在用的打包器文档为准。',
+    core:'**Webpack 5** 的 Module Federation 让多个独立构建在运行时共享模块。remote 用 exposes 声明可被加载的模块路径，并产出 remoteEntry。host 在 remotes 里写明容器名与入口 URL，再按约定的模块名异步导入。两边都可以声明 shared，把 React 这类必须单例的库放进共享作用域；singleton 为 true 时作用域里只保留一个实例，见 mfe-shared-deps。每个构建需要唯一的 output.uniqueName，同名会在运行时碰撞。Federation 不负责你的业务路由表，也不自动挂载子应用的全部页面；路由与卸载见 mfe-routing-one-history、mfe-runtime-lifecycle。Rspack 等实现沿用同一套 host/remote/shared 语义，核对时以你正在用的打包器文档为准。',
     why:'以为插件一配，子应用菜单就出现在壳上。实际 exposes 只暴露了 Button，host 从未 import，用户路径上什么都没有。',
     example:'remote 的 exposes 写 ./OrderList → src/OrderList.jsx，filename 为 remoteEntry.js。host 的 remotes 写 orders@https://cdn.example/orders/remoteEntry.js，页面里 import("orders/OrderList")。未写入 exposes 的结算页不会被加载。',
     task:'写出 host 的 remote 名与 URL、remote 的一个 expose 键、以及 host 里对应的 import 字符串。缺任何一项就标「还没接通」。',

@@ -31,6 +31,7 @@ const COVERAGE_FRONTEND_30 = [
     deep:[
       {title:'和 credentials',body:'浏览器有 Cookie 不等于 fetch 跨源会带。跨源还要 `credentials:\"include\"` 且 CORS 允许。'},
       {title:'前缀与分区',body:'__Host-/__Secure- 与 Partitioned 进一步限制谁能种、第三方如何隔离，见 cookie-prefix-partitioned。'},
+      {title:'和 Referrer',body:'Referrer-Policy 管带多少来源 URL，不替代 SameSite/CSRF，见 referrer-policy-leak-bound。'},
       {title:'怎样自己验证',body:'Application 面板看 Cookie 勾选。控制台读 document.cookie。用跨站表单 POST 对照是否带上 sid。'}
     ],
     refs:[['MDN：Set-Cookie','https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Set-Cookie'],['MDN：SameSite cookies','https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Cookies#controlling_third-party_cookies_with_samesite']]

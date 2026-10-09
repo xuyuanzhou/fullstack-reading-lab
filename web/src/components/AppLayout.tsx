@@ -11,7 +11,7 @@ import {
 import { Alert, Badge, Button, Drawer, Layout, Menu, Typography, theme } from 'antd'
 import { Suspense, useEffect, useMemo, useState } from 'react'
 import { Link, matchPath, Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { findLesson, lessonsFor, lessonsInGroup, outlineFor, prefetchTrackBodies } from '@/data/curriculum'
+import { findLesson, isVersionSince, lessonsFor, lessonsInGroup, outlineFor, prefetchTrackBodies } from '@/data/curriculum'
 import { TRACK_LABEL } from '@/data/meta'
 import { shortTitle } from '@/data/reading'
 import { courseGroups, groupLabel, groupPath, isTrack, lessonPath, resumePath } from '@/data/routes'
@@ -166,7 +166,7 @@ export function AppLayout() {
           aria-hidden
         />
         <span>{shortTitle(lesson.title)}</span>
-        {lesson.since ? <span className="since-chip">{lesson.since}</span> : null}
+        {isVersionSince(lesson.since) ? <span className="since-chip">{lesson.since}</span> : null}
       </Link>
     ),
   })

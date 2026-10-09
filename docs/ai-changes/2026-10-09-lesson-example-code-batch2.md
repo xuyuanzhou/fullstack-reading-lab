@@ -36,7 +36,7 @@ cd web && npm run export:curriculum
 
 ## 后续
 
-- [ ] 下一刀优先：TypeScript 判别联合 / never、React Query invalidate、Vue computed、更多 Java 集合与并发
+- [x] 第三批 +25：见 [2026-10-09-lesson-example-code-batch3.md](2026-10-09-lesson-example-code-batch3.md)（合计 62）
 - [ ] 纯场景叙述课可跳过
 
 ## 给下一模型

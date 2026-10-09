@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-labelledby="title desc">
+  <title id="title">隐式转换会挡索引，但对齐类型即可</title>
+  <desc id="desc">VARCHAR 手机号与数字字面量比较可能扫表；两边类型对齐后索引可用。禁令对象是错类型比较，不是一切转换。</desc>
+  <rect width="960" height="400" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">SQL / 类型</text>
+  <text x="32" y="64" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">错的是比较两边类型，不是“转换”二字</text>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <rect x="32" y="96" width="430" height="176" rx="14" fill="#f6ecea" stroke="#a05048"/>
+    <text x="52" y="132" font-size="15" font-weight="600" fill="#6e3530">资料例子</text>
+    <text x="52" y="164" font-size="14" fill="#2e3330">phone VARCHAR，WHERE phone=138…</text>
+    <text x="52" y="196" font-size="14" fill="#2e3330">列被转成数，索引难用</text>
+    <text x="52" y="228" font-size="14" fill="#5e6661">线上踩过不止一次</text>
+    <rect x="496" y="96" width="432" height="176" rx="14" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="516" y="132" font-size="15" font-weight="600" fill="#2e3330">对齐写法</text>
+    <text x="516" y="164" font-size="14" fill="#3f6a58">phone='138…' 或绑定同类型</text>
+    <text x="516" y="196" font-size="14" fill="#3f6a58">CAST 放在常量侧更安全</text>
+    <text x="516" y="228" font-size="14" fill="#5e6661">用 EXPLAIN 看 key</text>
+    <rect x="32" y="296" width="896" height="72" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="52" y="328" font-size="15" font-weight="600" fill="#2e3330">“禁止隐式转换”应落实为：谓词两侧类型与列定义一致。</text>
+    <text x="52" y="352" font-size="14" fill="#5e6661">不是禁止 CAST，更不是背口诀代替计划</text>
+  </g>
+</svg>

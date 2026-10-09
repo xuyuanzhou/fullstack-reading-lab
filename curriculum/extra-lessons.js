@@ -115,6 +115,14 @@ window.LESSONS.push(
         body:'没有允许头时，请求仍可能到达服务器并产生副作用，只是脚本读不到响应。预检失败则实际请求不会发出。这两类要在 Network 里分开看，不能都当成接口没写。看响应头，不要看请求上自己加的允许源。'
       },
       {
+        title:'预检缓存',
+        body:'Access-Control-Max-Age 只让浏览器少打 OPTIONS，不是跨域永久放行，见 cors-preflight-max-age。'
+      },
+      {
+        title:'和 COOP/COEP',
+        body:'要 crossOriginIsolated 时另配 COOP/COEP，见 coop-coep-cross-origin-isolated。那不是普通 CORS 放行。'
+      },
+      {
         title:'怎样自己验证',
         body:'在 Network 里筛选 OPTIONS。有预检时先看它的状态和允许的方法、头，再看后面的实际请求。没有预检时，直接看实际响应是否允许当前源。再试着把允许头写到请求上，确认仍然失败。'
       }

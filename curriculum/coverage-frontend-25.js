@@ -55,9 +55,9 @@ const COVERAGE_FRONTEND_25 = [
   },
   {
     track:'frontend', group:'技术选型', id:'fe-svelte-load-not-store',
-    title:'SvelteKit 的页面数据从 load 返回，不要在 load 里写全局状态',
+    title:'SvelteKit 的页面数据从 load 返回，不要在 load 里写全局状态（SvelteKit）',
     prompt:'为什么 load 里已经取到订单，组件里的全局 store 在服务端却串到别人的请求？',
-    core:'SvelteKit 在渲染 +page.svelte 之前运行 load。和页面同目录的 +page.js 在服务端和浏览器都会跑；必须碰数据库或私密环境变量时用 +page.server.js，只在服务端跑。返回值作为 data 传给页面。文档要求 load 保持纯粹：不要在里面给全局 store 赋值。需要在树里别处读取时，用 data 往下传，或读 $app/state 里只读的 page.data。现行文档不再把页面数据写成要订阅的 $page store。筛选这类应出现在地址上的值，放进查询参数，load 从 url 读取。客户端还要继续改的共享状态，才用 runes 写在 .svelte.js 里，并且不要去保存同一份 GET 列表。',
+    core:'**SvelteKit** 在渲染 +page.svelte 之前运行 `load`。和页面同目录的 +page.js 在服务端和浏览器都会跑；必须碰数据库或私密环境变量时用 +page.server.js，只在服务端跑。返回值作为 data 传给页面。文档要求 load 保持纯粹：不要在里面给全局 store 赋值。需要在树里别处读取时，用 data 往下传，或读 $app/state 里只读的 page.data。现行文档不再把页面数据写成要订阅的 $page store。筛选这类应出现在地址上的值，放进查询参数，load 从 url 读取。客户端还要继续改的共享状态，才用 runes 写在 .svelte.js 里，并且不要去保存同一份 GET 列表。',
     why:'在 load 里写入模块级 store，服务端的那一次赋值会留到下一次请求。A 用户的订单出现在 B 的 HTML 里。开发者会去查接口，其实是把请求作用域的数据放进了进程里的全局变量。',
     example:'src/routes/orders/+page.server.js 导出 load，用 url.searchParams 读 status，返回 { orders }。+page.svelte 里 let { data } = $props()，表格读 data.orders。不要在 load 里调用 orders.set(list)。登录后仍要在多页显示的用户名，才放到用 runes 声明的共享模块，里面没有这份订单数组。',
     task:'把订单列表的赋值从 load 里的 store 改成 return。页面只读 data。用两个状态筛选打开页面，确认 HTML 里的第一行属于该次查询参数。',

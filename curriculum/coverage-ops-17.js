@@ -116,6 +116,8 @@ const COVERAGE_OPS_17 = [
     deep:[
       {title:'两条命令中间有缝',body:'每条 Redis 命令自己是原子的，GET 和 SET 之间别人仍能插进来。EVAL 在服务端把这段连续跑完。键必须放进 KEYS，能用 INCR 或 SET NX 一条命令完成时不必写脚本。'},
       {title:'和 MULTI',body:'无分支批量写可用 MULTI/WATCH；读改一体用 Lua。对照见 redis-multi-vs-lua-pick、redis-transaction。'},
+      {title:'和 Functions',body:'Redis 7 起可把例程注册进函数库再 FCALL，不是每次 EVAL 贴源码，见 redis-functions-not-just-eval。'},
+      {title:'和 ACL',body:'谁能 EVAL/FCALL、能碰哪些键，用 ACL 按用户裁，见 redis-acl-not-just-requirepass。单 requirepass 通常权限过大。'},
       {title:'怎样自己验证',body:'对照 EVAL 写下 KEYS 放键、ARGV 放参数。库存为 1 时并发 GET+SET，预测两笔都成功。改成脚本里判断再 DECR，同样并发应只有一笔返回成功。'},
     ],
     refs:[['Redis：EVAL','https://redis.io/docs/latest/commands/eval/'],['Redis：Lua programming','https://redis.io/docs/latest/develop/programmability/eval-intro/']]
@@ -134,6 +136,7 @@ const COVERAGE_OPS_17 = [
     deep:[
       {title:'频道不记得刚才那条',body:'SUBSCRIBE 当时不在线，重启后没有历史可补。Stream 的条目留到修剪为止，消费者组用 XACK 表示处理过。只做踢人或刷缓存，才用 Pub/Sub。'},
       {title:'模式订阅',body:'PSUBSCRIBE 只按频道名 glob 匹配，仍无历史，见 redis-pubsub-pattern-subscribe。不要把 P* 当成可翻历史的查询。'},
+      {title:'要修剪',body:'条目不会自己消失，用 MAXLEN/XTRIM，见 redis-stream-xtrim-bound。'},
       {title:'怎样自己验证',body:'先 XADD 一条下单再停掉消费者，重启后 XREADGROUP 应仍能领到并 XACK。同样停掉订阅者期间 PUBLISH 一条踢人消息，重启后的订阅者应拿不到那一条。'},
     ],
     refs:[['Redis：Streams','https://redis.io/docs/latest/develop/data-types/streams/'],['Redis：Pub/Sub','https://redis.io/docs/latest/develop/pubsub/']]

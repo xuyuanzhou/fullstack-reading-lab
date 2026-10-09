@@ -4,30 +4,32 @@
 | --- | --- |
 | 日期 | 2026-10-09 |
 | 状态 | 已完成 |
-| 关联 | 基础章教学审查后续；用户要求如 Stream → JDK 8 |
+| 关联 | 基础章教学审查后续；用户要求如 Stream → JDK 8；后要求全量补完 |
 | 作者类型 | AI |
 | 作者工具 | Cursor |
 
 ## 背景
 
-基础章重组后，读者仍难从侧栏看出「这是哪一版引入的 API」。需要在目录与课页标清引入/定稿版本，且只写官方基线，不编造知识点。
+基础章重组后，读者仍难从侧栏看出「这是哪一版引入的 API」。需要在目录与课页标清引入/定稿版本或技术基线。用户后续要求把公开课 `since` **补满**（当时口头说 773，现公开课为 781）。
 
 ## 决策
 
 - 采用：可选字段 `since`（如 `JDK 8`、`ES2015`）；集中表 `LESSON_SINCE` 在 `scripts/curriculum.mjs` 注入；课页显示「自 …」，侧栏显示 chip。
-- 关键课在标题/核心句补版本（Stream、Optional、record、java.time、默认方法、switch 箭头、strip、虚拟线程、satisfies、React 18 批处理），与已有「JDK 8 起 CHM…」风格一致。
-- 不采用：不为「一直存在」的语言规则硬贴版本（如 `this`、值传递）；不把 JDK 18 默认 UTF-8 当成「字符集课」的 since。
+- 关键课在标题/核心句补版本（Stream、Optional、record、java.time、默认方法、switch 箭头、strip、虚拟线程、satisfies、React 18 批处理）。
+- **全量覆盖（本轮）**：凡无明确「引入界」年份的课，用**产品/技术基线**标签（如 `MySQL 8.4`、`Redis`、`Java`、`GoF`、`distributed`），与表内既有软标签（`Spring`、`Vue`、`TanStack Query`）一致；**不编造**具体 JDK/ES 年份。
+- 刻意不做：把 `Thread.start` 标成 JDK 21；把「一直存在」的规则伪造成某个小版本号。
 
 ## 改动清单
 
 | 路径 | 变更 |
 | --- | --- |
-| `scripts/curriculum.mjs` | `LESSON_SINCE`（基础 + 并发/JVM/React/Vue/Node/Spring/数据；第六轮至 273 条） |
+| `scripts/curriculum.mjs` | `LESSON_SINCE` 全量 **781** 条（引入界 + 章节/前缀基线） |
 | `scripts/export-curriculum.mjs` | index 导出 `since` |
 | `web/src/types/curriculum.ts` 等 | 类型与摘要含 `since` |
 | `LessonPage` / `AppLayout` / SCSS | 展示徽章与 chip |
-| 若干 coverage / extra | 标题或核心点明版本 |
-| `legacy/index.html` | 补载 `example-code-blocks.js`（与 `publishedSources` 对齐） |
+| 若干 coverage | 关键课标题/核心点明版本 |
+| `legacy/index.html` | 与 `publishedSources` 对齐 |
+| `README.md` / `docs/核对交接.md` | 课数与 since 全量同步 |
 
 ## 验证
 
@@ -35,22 +37,18 @@
 cd web && npm run export:curriculum && node ../scripts/verify_content.mjs
 ```
 
-- 结果：773 课；`LESSON_SINCE` **273** 条。样例：`java-stream → JDK 8`、`react-memo-when → React 16.6`、`fe-sveltekit-runes → Svelte 5`、`redis-list-quicklist-listpack → Redis 3.2/7`。
+- 结果：781 课；每课均有 `since`（`LESSON_SINCE` 781 条）。样例：`java-stream → JDK 8`、`react-router-element-api → RR 6`、`mysql-null-comparison → MySQL 8.4`、`java-pass-by-value → Java`、`java-thread-start-run → Java threads`（非 JDK 21）。
 
 ## 后续
 
-- [x] 并发虚拟线程 JDK 21、Spring Boot 3、React/Vue/Node/Kafka 等继续补进表
-- [x] 再扫一轮：RFC / TLS / RR loader / TS bundler / MySQL 8.4 手册基线 / HttpClient 等
-- [x] 第三轮：MySQL 8.0 自增/初始化、Mongo 4.0 事务、Redis 5 Stream、Tomcat NIO、ForkJoin、CHM compute*
-- [x] 第四轮：CompletableFuture、Suspense、Angular v21、MySQL 并行复制、Hermes、JUnit 5、Kafka lag.time、TanStack Query / RTK 等
-- [x] 第五轮：Vue create-vue 槽位、SC CircuitBreaker、TPE/Lock/CAS、TS unknown/模板字面量、Kafka/Rabbit/RocketMQ 模型、Playwright/MSW、CWV/INP 等
-- [x] 第六轮：React memo/Context/gDSFP/Fiber、Svelte 5 runes、Vue 3 Proxy 叙事、动态 import ES2020、DCL volatile JDK 5、Redis quicklist/listpack、RestController Spring 4；并补 `legacy/index.html` 对 `example-code-blocks.js` 的脚本序
-- [ ] 课文仅顺带提到版本、主题并非「引入界」的课不要硬贴（如 `Thread.start` 勿标 JDK 21；MySQL 课仅手册链接写 8.4 也不要一律贴）
-- [ ] 勿把预览版年份当定稿（record 写 JDK 16，不写 14 preview）
+- [x] 引入界轮次（JDK/ES/React/Vue/RR/MF 等）
+- [x] 全量基线补完（曾 781；现公开课 831，见恢复记录）
+- [x] 收紧语义：侧栏/课页只展示带数字或 RFC/JEP/HTTP/TLS/ES6 的 chip（见 [2026-10-09-since-chip-version-only.md](2026-10-09-since-chip-version-only.md)）
+- [x] `curriculum.mjs` 恢复后基线丢失 → 已重补（见 [2026-10-09-since-restore-example-batch6.md](2026-10-09-since-restore-example-batch6.md)）
+- [ ] 新课入库时同步写 `since`（引入界优先，否则章节基线）
 
 ## 给下一模型
 
 1. 先读：本文与 `LESSON_SINCE`
-2. 新课若有明确引入版：在源课写 `since`，或补进 `LESSON_SINCE`
-3. 禁区：勿臆造版本号；对照 JEP / MDN / Oracle API「Since」栏
-4. 导出后若 verify 报 legacy 脚本序：按 `publishedSources` 同步 `legacy/index.html`
+2. 新课：有明确引入版写具体版本；否则用同章基线，**勿编造年份**
+3. 禁区：`Thread.start` ≠ JDK 21；`bloom` 勿因含 loom 误标；导出后同步 README 课数

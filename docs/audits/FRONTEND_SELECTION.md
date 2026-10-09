@@ -4,7 +4,7 @@
 
 | 课程 | 说法 |
 | --- | --- |
-| `fe-pick-by-surface` | 后台、要进 HTML 的内容、小程序、手机 App 各是一个目标端 |
+| `fe-pick-by-surface` | 后台、要进 HTML 的内容、小程序、手机 App 各是一个目标端。第一屏 HTML 是「查看网页源代码」里的那份；岛屿是内容页上标了 client:load 的那几块 |
 | `fe-ui-update-model` | React 提交更新，Vue 用代理，Angular 新应用用信号，Svelte 用 runes |
 | `fe-react-framework-first` | 新项目用文档列出的 Next.js 或 React Router 框架模式 |
 | `fe-vue-official-slots` | 新项目用 Vite、Vue Router、Pinia；要首屏 HTML 时用 Nuxt |

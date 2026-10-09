@@ -4,20 +4,34 @@ const COVERAGE_FRONTEND_20 = [
   {
     track:'frontend', group:'技术选型', id:'fe-pick-by-surface',
     title:'先定目标端，再决定留哪一个框架',
-    prompt:'为什么「公司都在用 React」还是选不出该新建 Nuxt、小程序还是原生 App？',
-    core:'选型先定这次交到哪一端：浏览器里的后台或工具页、要在「查看网页源码」里就有正文的内容页、微信小程序，还是手机 App。再写下第一屏 HTML 里要不要有正文，以及团队已经会调试哪一种界面更新方式。浏览器后台可以做成纯客户端应用，首屏允许先是空壳。文章、商品页要在源码里就有正文，用会在服务端取数的框架（如 Nuxt、Next），或用 Astro 把静态 HTML 和少量可交互组件分开。微信小程序要单独登记页面并交出该端模板，见 `uniapp-pages-json-entry`、`taro-pages-in-app-config`。没有 DOM 的手机界面分两支：自己画像素、两端外观一致时用 Flutter，见 `flutter-widget-not-html`；要系统原生控件时用 React Native，见 `rn-view-not-div`。四个目标端可以是四个产品；同一个页面不要同时承诺四种运行时。谁负责画这一帧，见 `cross-four-who-paints`。',
-    why:'先按热度选定框架，再发现正文不在 HTML 里、小程序没有页面登记、手机上还在找 div。目标端写在前面时，框架只是该端的实现，换一句需求才会换框架。',
-    example:'后台表格：浏览器应用，首屏可以是壳。帮助中心文章：源码里要有正文。客服入口只上微信：单独的小程序工程。已有 App 里要系统列表：React Native 的 View 和 FlatList，见 `rn-flatlist-window`。两端按钮必须长得一样、由引擎来画：Flutter。四句需求各留一个工程，不把四个脚手架装进同一个 package.json。',
+    prompt:'公司已经在用 React。为什么这句还是决定不了：这次要新建的是浏览器里的内容站、微信小程序，还是手机 App？',
+    promptAnswer:'React 只说明界面用什么来更新。内容站、微信小程序、手机 App 是人从哪里打开，这是另一件事。Nuxt 是 Vue 的内容站框架，并不是从「用 React」推出来的。先写下打开方式，再从后面的职责表里留一个框架名。',
+    core:'选型先定这次交到哪一端：浏览器里的后台或工具页、要在「查看网页源码」里就有正文的内容页、微信小程序，还是手机 App。再写下第一屏 HTML 里要不要有正文，以及团队已经会调试哪一种界面更新方式。第一屏 HTML 是浏览器菜单「查看网页源代码」里的那份，脚本还没把数据请求回来。正文是人要读的段落、标题和价格。浏览器后台可以做成纯客户端应用，首屏允许先是空壳。文章、商品页要在源码里就有正文，用会在服务端取数的框架（如 Nuxt、Next），或用 Astro 的岛屿架构：整页先是这份静态 HTML，只有标了 client:load 的组件才把脚本送到浏览器。微信小程序要单独登记页面并交出该端模板，见 `uniapp-pages-json-entry`、`taro-pages-in-app-config`。没有 DOM 的手机界面分两支：自己画像素、两端外观一致时用 Flutter，见 `flutter-widget-not-html`；要系统原生控件时用 React Native，见 `rn-view-not-div`。四个目标端可以是四个产品；同一个页面不要同时承诺四种运行时。谁负责画这一帧，见 `cross-four-who-paints`。',
+    why:'「公司都在用 React」只确定了界面库。人从浏览器、微信还是手机 App 打开，这句话没有写。Nuxt 是 Vue 的内容站，也不是从 React 推出来的。先按热度选定框架，再发现正文不在 HTML 里、小程序没有页面登记、手机上还在找 div。目标端写在前面时，框架只是该端的实现，换一句需求才会换框架。',
+    example:'后台表格：浏览器应用，首屏可以是壳。帮助中心文章《如何退款》的第一屏要能在源码里读到正文。客服入口只上微信：单独的小程序工程。已有 App 里要系统列表：React Native 的 View 和 FlatList，见 `rn-flatlist-window`。两端按钮必须长得一样、由引擎来画：Flutter。四句需求各留一个工程，不把四个脚手架装进同一个 package.json。',
     task:'给手上的功能写四格：谁打开、首屏 HTML 要不要正文、有没有小程序页面、有没有原生视图。每一格只留一个框架名，空着的格写「这次不做」。',
     answer:'四格示例：谁打开写成浏览器后台，框架留 Vue 或 React 客户端应用；小程序和原生两格写「这次不做」。首屏 HTML 要正文时换成 Nuxt、Next 或 Astro。有小程序页面时留 uni-app 或 Taro，浏览器格写这次不做。有原生视图时留 React Native 或 Flutter。每一格只一个名字。',
-    keywords:'前端选型 目标端 SSR 小程序 React Native Astro',
+    keywords:'前端选型 目标端 第一屏 HTML 岛屿架构 小程序 React Native Astro',
     diagram:'diagrams/fe-pick-surface.svg',
-    points:['先写打开方式和首屏里有没有正文','内容页用服务端 HTML 或少量可交互组件，后台可以是客户端应用','小程序和原生界面各自一个运行时'],
-    deep:[
-      {title:'静态页里的可交互组件和整页应用',body:'Astro 先给出静态 HTML，只把标成可交互的组件送去客户端执行。整页都是登录后的表格和表单时，路由、数据和权限是一整棵应用，用该 UI 模型自己的应用框架，而不是把每个按钮都单独拆成一块客户端代码。'},
-      {title:'怎样自己验证',body:'打开页面源码。正文已经在 HTML 里，才算内容页交到了浏览器。源码只有空壳、数据在浏览器请求回来，就是客户端应用。再看仓库是不是还夹着第二套小程序或原生工程。'}
+    map:[
+      {title:'内容页正文',body:'写进第一屏 HTML。Nuxt、Next、Astro 都能做'},
+      {title:'Nuxt',body:'整页交给 Vue，数据用 useAsyncData'},
+      {title:'Next',body:'整页交给 React，从文档列出的框架起'},
+      {title:'Astro',body:'整页是 HTML，只有标了 client: 的岛带脚本'},
+      {title:'Svelte',body:'整页交给 SvelteKit'},
+      {title:'Angular',body:'路由、HTTP、表单用自己的包'},
+      {title:'登录后的表格',body:'一整棵应用，首屏可以是空壳'},
+      {title:'两种界面框架同页',body:'只放在 .astro。新岛留一种，旧组件标保留'}
     ],
-    refs:[['Astro：岛屿架构','https://docs.astro.build/en/concepts/islands/'],['React：创建应用','https://react.dev/learn/creating-a-react-app']]
+    points:['先写打开方式，并写明第一屏 HTML 里有没有正文','内容页在 Nuxt、Next、Astro 里按谁管整页留一个；新岛只留一种界面更新模型','小程序和原生界面各自一个运行时'],
+    deep:[
+      {title:'第一屏 HTML 里的正文',body:'第一屏 HTML 是浏览器菜单「查看网页源代码」里的那份文字。页面刚交到浏览器，脚本还没把数据请求回来。开发者工具里后来插入的节点，要等脚本跑完才出现。\n\n正文是人要读的内容：文章段落、商品标题和价格。按钮、空的 div，以及「加载中」这三个字，留在交互那一格。文章和商品页写下「要」。登录后的后台表格写下「不要」，首屏可以是空壳。'},
+      {title:'Astro 这一页怎么交出去',body:'页面在 src/pages/ 的 .astro 里。上方 --- 在产出 HTML 的那一侧运行，浏览器不执行。默认构建时预渲染。某一页要每次请求再算，就装上适配器，并写 export const prerender = false。整站大多按请求算时，配置改成 output: \'server\'。\n\n--- 下面的标题和段落进入第一屏。没有 client: 的组件只留下 HTML。写上 client:load 后，查看网页源代码里这一处是 astro-island：client=\"load\" 表示页面一加载就取 component-url，renderer-url 是框架运行时，标签里面是已经画好的搜索框，末尾有 astro:end。xxxx 是这次构建的文件名，旁边还可能有 uid、opts、before-hydration-url。\n\n浏览器先显示这整份 HTML。脚本挂上搜索框之后，输入才有反应。再打开另一篇，是再要一份 HTML。岛上的脚本只管自己这块。'},
+      {title:'表上的名字各留一个',body:'上表按谁管整页来留。Nuxt 见 `fe-vue-official-slots`，Next 见 `fe-react-framework-first`，服务端组件和客户端组件的边界见 `react-rsc-vs-client`。Svelte 见 `fe-sveltekit-runes`，Angular 见 `fe-angular-first-party`。\n\n2026 年 Nuxt、Next、Astro 都还在发版。State of JavaScript 2025 里，元框架用过的人最多的是 Next.js，满意度最高的是 Astro。留名字时看上表，不看这份排名。'},
+      {title:'混用停在 .astro',body:'同一个 .astro 可以同时放 React、Preact、Vue、Svelte、Solid、Alpine，官方包是 @astrojs/react、@astrojs/vue、@astrojs/svelte、@astrojs/solid-js、@astrojs/preact、@astrojs/alpinejs。按文件后缀选择渲染器。React 和 Preact 都是 JSX 时，要在集成配置里分开。两座 Vue 岛只下载一份 Vue。一座 Vue 再加一座 React，两份运行时都下载。\n\n.vue 里不能 import .jsx，.jsx 里不能 import .astro。.astro 组件不能写 client:。新岛只留一种更新模型，见 `fe-ui-update-model`。已有的另一种写成「旧组件保留」。小程序和手机 App 不写进这个文件。'},
+      {title:'怎样自己验证',body:'打开页面源码。正文已经在 HTML 里，搜索框在 astro-island 里且带 client=\"load\"，才算内容页按 Astro 交到了浏览器。同一页有 .vue 和 .jsx 时，记录里写明哪一种是这次的模型。源码只有空壳，就是客户端应用。再看仓库里有没有第二套小程序或原生工程。'}
+    ],
+    refs:[['Astro：服务端先产出 HTML','https://docs.astro.build/en/concepts/why-astro/'],['Astro：默认预渲染','https://docs.astro.build/en/guides/on-demand-rendering/'],['Astro：岛屿架构','https://docs.astro.build/en/concepts/islands/'],['Astro：client:load','https://docs.astro.build/en/reference/directives-reference/#clientload'],['Astro：混用界面框架','https://docs.astro.build/en/guides/framework-components/#mixing-frameworks'],['State of JavaScript 2025：元框架','https://2025.stateofjs.com/en-US/libraries/meta-frameworks'],['React：创建应用','https://react.dev/learn/creating-a-react-app']]
   },
   {
     track:'frontend', group:'技术选型', id:'fe-ui-update-model',

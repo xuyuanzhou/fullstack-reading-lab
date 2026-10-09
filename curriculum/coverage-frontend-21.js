@@ -38,9 +38,9 @@ const COVERAGE_FRONTEND_21 = [
   },
   {
     track:'frontend', group:'React 生态', id:'rr-redirect-before-render',
-    title:'未登录时在 loader 里抛出重定向',
+    title:'未登录时在 loader 里抛出重定向（RR 6.4+）',
     prompt:'为什么未登录打开订单页，会先闪一下订单骨架，再进登录页？',
-    core:'redirect 只在数据模式和框架模式。它返回一个带 Location 的响应，默认状态码是 302。文档示例在 loader 里写 throw redirect("/login")。这次导航在渲染对应组件之前就转走，订单组件不会为这次未登录的导航执行。声明式模式没有 redirect，也没有 loader。把登录检查放进订单组件的 useEffect，再调用 navigate，组件函数已经执行过，骨架会先画出来。',
+    core:'`redirect`（**React Router 6.4+** 数据/框架模式）返回一个带 Location 的响应，默认状态码是 302。文档示例在 loader 里写 `throw redirect("/login")`。这次导航在渲染对应组件之前就转走，订单组件不会为这次未登录的导航执行。声明式模式没有 redirect，也没有 loader。把登录检查放进订单组件的 useEffect，再调用 navigate，组件函数已经执行过，骨架会先画出来。',
     why:'开发者在订单组件挂载后才发现没有会话，然后跳登录。慢机器上骨架和空表会闪一下。他去加一个 loading 布尔值盖住闪动，检查仍然发生在渲染之后。',
     example:'orders 的 loader 里：if (!isLoggedIn(request)) throw redirect("/login")。未登录直接打开 /orders 时，浏览器到登录页，Orders 函数不被调用。把同一判断挪进 Orders 的 useEffect，函数会先执行，再离开。',
     task:'未登录时打开 /orders。在 Orders 第一行打日志。确认 loader 抛出 redirect 时没有这条日志，并且停在登录页。再改成 effect 里导航，看日志是否出现。',

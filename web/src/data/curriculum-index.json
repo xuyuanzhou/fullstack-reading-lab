@@ -143,6 +143,7 @@
         "sw-cache-strategy-pick",
         "cors",
         "cors-credentials-allowlist",
+        "cors-preflight-max-age",
         "same-origin-script-still-runs",
         "html-form-cross-origin-navigate",
         "fetch-abort"
@@ -183,7 +184,20 @@
         "csrf-boundary",
         "xss",
         "client-env-public",
-        "csp-script-src"
+        "csp-script-src",
+        "csp-report-only-not-enforce",
+        "trusted-types-sink-guard",
+        "permissions-policy-feature-gate",
+        "document-policy-not-permissions-policy",
+        "coop-coep-cross-origin-isolated",
+        "referrer-policy-leak-bound",
+        "sri-integrity-not-csp",
+        "clear-site-data-not-full-logout",
+        "reporting-nel-not-csp-enforce",
+        "corp-embed-gate-not-cors",
+        "pna-private-network-access",
+        "fenced-frame-embed-boundary",
+        "attribution-reporting-not-cookie"
       ],
       "TypeScript": [
         "ts-unknown",
@@ -494,6 +508,7 @@
         "jvm-pc-no-oom",
         "jmm-not-eight-memory-ops",
         "java-heap-not-cpp-manual",
+        "jvm-xmx-not-container-limit",
         "jvm-gc-choice",
         "java-gc",
         "jvm-oom-signals",
@@ -532,7 +547,8 @@
         "java-linked-blocking-unbounded",
         "java-tpe-execute-order",
         "java-loom-not-absent-coroutine",
-        "java-threads-not-linear-speedup"
+        "java-threads-not-linear-speedup",
+        "thread-pool-formula-not-law"
       ],
       "消息队列": [
         "mq-why-decouple",
@@ -592,6 +608,7 @@
       "数据库": [
         "mysql-null-comparison",
         "mysql-not-null-default-not-absolute",
+        "mysql-check-enforced-not-parsed-only",
         "sql-outer-join-where",
         "mysql-inner-join-match",
         "mysql-join-ban-not-absolute",
@@ -612,9 +629,31 @@
         "mysql-float-ieee-not-8-digits",
         "mysql-money-decimal-not-ban",
         "mysql-split-not-at-ten-million",
+        "mysql-json-not-document-db",
         "mysql-view-is-stored-query",
         "mysql-procedure-not-auto-txn",
         "mysql-trigger-side-effect-hidden",
+        "mysql-cte-named-subquery",
+        "mysql-enum-ban-not-absolute",
+        "mysql-temp-table-vs-cte",
+        "mysql-utf8-alias-not-utf8mb4",
+        "mysql-fk-ban-not-absolute",
+        "mysql-phone-varchar-length-not-twenty",
+        "mysql-insert-must-name-columns",
+        "mysql-innodb-default-not-ban-others",
+        "mysql-db-not-blob-store",
+        "mysql-instance-table-count-not-500",
+        "mysql-column-count-thirty-not-law",
+        "mysql-db-features-ban-not-absolute",
+        "mysql-ddl-merge-heuristic",
+        "mysql-catch-sql-exception-not-enough",
+        "mysql-pk-autoinc-not-only-choice",
+        "mysql-subquery-ban-not-absolute",
+        "mysql-scalability-not-hopeless",
+        "db-proxy-layer-not-only-choice",
+        "hot-cold-ratio-not-fixed-one-to-four",
+        "business-split-db-not-only-path",
+        "rw-split-not-strong-consistency",
         "table-design-from-facts",
         "table-row-one-grain",
         "table-constraint-holds-rule",
@@ -622,11 +661,25 @@
         "mysql-index-kinds",
         "mysql-explain-analyze",
         "mysql-innodb-fulltext",
+        "mysql-spatial-index-not-full-gis",
         "mysql-innodb-index-lock",
         "mysql-unique-change-buffer",
         "mysql-prefix-index-and-cost",
         "mysql-covering-not-index-kind",
         "mysql-innodb-no-user-hash",
+        "mysql-index-count-five-not-law",
+        "mysql-implicit-convert-breaks-index",
+        "mysql-where-func-blocks-index",
+        "mysql-generated-column-not-where-wrap",
+        "mysql-negative-predicate-not-always-scan",
+        "mysql-leading-percent-like-heuristic",
+        "mysql-low-selectivity-index-heuristic",
+        "mysql-composite-selectivity-order-heuristic",
+        "mysql-count-star-innodb-not-always-scan",
+        "mysql-extend-index-before-new",
+        "mysql-and-order-optimizer-reorders",
+        "mysql-right-fuzzy-like-can-use-index",
+        "mysql-invisible-index-not-drop",
         "mysql-slow-sql-locate",
         "mysql-slow-sql-optimize",
         "mysql-mvcc",
@@ -715,6 +768,10 @@
         "redis-geo-on-zset-not-gis",
         "redis-hyperloglog-approx",
         "cache-aside-steps",
+        "cache-db-double-write-race",
+        "redis-client-side-cache-invalidate",
+        "redis-wait-replicas-not-durability",
+        "redis-hello-resp3-not-just-version",
         "redis-big-hot-key",
         "redis-expire",
         "redis-eviction-policy-menu",
@@ -723,6 +780,7 @@
         "cache-local-vs-distributed",
         "redis-string-max-512mb",
         "redis-list-quicklist-listpack",
+        "lru-needs-hash-and-list",
         "redis-persistence",
         "redis-transaction",
         "redis-single-thread",
@@ -736,9 +794,14 @@
         "redis-save-blocks-bgsave",
         "redis-cluster-incr-not-five-steps",
         "redis-lua-atomic",
+        "redis-functions-not-just-eval",
+        "redis-acl-not-just-requirepass",
         "redis-multi-vs-lua-pick",
         "redis-stream-vs-pubsub",
-        "redis-pubsub-pattern-subscribe"
+        "redis-pubsub-pattern-subscribe",
+        "redis-stream-xtrim-bound",
+        "redis-keyspace-notify-not-queue",
+        "redis-pubsub-not-reliable-queue"
       ],
       "Nginx": [
         "nginx-request-phases",
@@ -915,9 +978,14 @@
         "dist-lock-owner-not-mac-pid-tid",
         "dist-lock-reentrant-not-deadlock-cure",
         "zk-linearizable-not-realtime",
+        "zk-odd-count-not-quorum-law",
         "redis-lock-setnx-expire-race",
         "redis-lock-getset-wall-clock",
         "mysql-for-update-not-dist-lease",
+        "db-insert-unique-cron-not-lease",
+        "cap-label-not-product-tattoo",
+        "sync-replication-not-only-durability",
+        "snowflake-params-need-capacity-math",
         "distributed-one-db-first",
         "distributed-tx-not-cover-rpc",
         "distributed-xid-must-travel",
@@ -928,28 +996,46 @@
         "distributed-read-your-writes",
         "distributed-reconcile-last",
         "distributed-token-bucket",
+        "leaky-bucket-not-no-critical-edge",
         "distributed-seckill",
         "seckill-js-needs-cache-control",
         "seckill-client-gate-not-enough",
+        "seckill-mq-not-only-db-valve",
         "distributed-mq-not-erase-invariant",
         "distributed-consistent-hash",
+        "consistent-hash-vnode-count-not-law",
         "distributed-bloom",
         "distributed-cache",
         "lru-capacity-not-ttl-expire",
         "distributed-kafka-order",
         "dns-lb-not-just-round-robin",
         "http-redirect-lb-two-hops",
+        "microservices-not-just-soa-relabel",
+        "split-vs-cluster-not-interchangeable",
+        "service-extract-not-only-connection-math",
+        "select-not-always-business-idempotent",
+        "hash-skew-not-only-virtual-nodes",
+        "message-order-not-always-required",
         "distributed-clock-skew",
         "distributed-unique-id",
         "distributed-bulkhead",
-        "mysql-uuid-not-clustered-pk"
+        "mysql-uuid-not-clustered-pk",
+        "uuid-not-only-random-string",
+        "db-sequence-batch-not-gapless",
+        "db-autoinc-offset-step-needs-ops"
       ],
       "交付与运行": [
         "gha-workflow-in-dot-github",
         "gha-job-needs-success",
         "gha-artifact-between-jobs",
+        "jenkins-not-only-ci-tool",
         "docker-layer-cache-copy",
         "compose-service-name-dns",
+        "container-shares-host-kernel",
+        "docker-image-template-not-container",
+        "vm-vs-container-isolation-tradeoff",
+        "one-container-one-service-heuristic",
+        "docker-registry-not-just-repo-bucket",
         "kubeadm-cni-before-coredns",
         "kubeadm-control-plane-taint",
         "k8s-pod-share-localhost",
@@ -1191,6 +1277,7 @@
           "ids": [
             "cors",
             "cors-credentials-allowlist",
+            "cors-preflight-max-age",
             "same-origin-script-still-runs",
             "html-form-cross-origin-navigate",
             "fetch-abort"
@@ -1489,7 +1576,20 @@
           "ids": [
             "xss",
             "client-env-public",
-            "csp-script-src"
+            "csp-script-src",
+            "csp-report-only-not-enforce",
+            "trusted-types-sink-guard",
+            "permissions-policy-feature-gate",
+            "document-policy-not-permissions-policy",
+            "coop-coep-cross-origin-isolated",
+            "referrer-policy-leak-bound",
+            "sri-integrity-not-csp",
+            "clear-site-data-not-full-logout",
+            "reporting-nel-not-csp-enforce",
+            "corp-embed-gate-not-cors",
+            "pna-private-network-access",
+            "fenced-frame-embed-boundary",
+            "attribution-reporting-not-cookie"
           ]
         }
       ],
@@ -1877,6 +1977,10 @@
             "redis-geo-on-zset-not-gis",
             "redis-hyperloglog-approx",
             "cache-aside-steps",
+            "cache-db-double-write-race",
+            "redis-client-side-cache-invalidate",
+            "redis-wait-replicas-not-durability",
+            "redis-hello-resp3-not-just-version",
             "redis-big-hot-key",
             "redis-expire",
             "redis-eviction-policy-menu",
@@ -1884,7 +1988,8 @@
             "redis-fifo-not-maxmemory",
             "cache-local-vs-distributed",
             "redis-string-max-512mb",
-            "redis-list-quicklist-listpack"
+            "redis-list-quicklist-listpack",
+            "lru-needs-hash-and-list"
           ]
         },
         {
@@ -1908,9 +2013,14 @@
           "title": "脚本",
           "ids": [
             "redis-lua-atomic",
+            "redis-functions-not-just-eval",
+            "redis-acl-not-just-requirepass",
             "redis-multi-vs-lua-pick",
             "redis-stream-vs-pubsub",
-            "redis-pubsub-pattern-subscribe"
+            "redis-pubsub-pattern-subscribe",
+            "redis-stream-xtrim-bound",
+            "redis-keyspace-notify-not-queue",
+            "redis-pubsub-not-reliable-queue"
           ]
         }
       ],
@@ -2024,6 +2134,7 @@
           "ids": [
             "mysql-null-comparison",
             "mysql-not-null-default-not-absolute",
+            "mysql-check-enforced-not-parsed-only",
             "sql-outer-join-where",
             "mysql-inner-join-match",
             "mysql-join-ban-not-absolute",
@@ -2044,9 +2155,31 @@
             "mysql-float-ieee-not-8-digits",
             "mysql-money-decimal-not-ban",
             "mysql-split-not-at-ten-million",
+            "mysql-json-not-document-db",
             "mysql-view-is-stored-query",
             "mysql-procedure-not-auto-txn",
-            "mysql-trigger-side-effect-hidden"
+            "mysql-trigger-side-effect-hidden",
+            "mysql-cte-named-subquery",
+            "mysql-enum-ban-not-absolute",
+            "mysql-temp-table-vs-cte",
+            "mysql-utf8-alias-not-utf8mb4",
+            "mysql-fk-ban-not-absolute",
+            "mysql-phone-varchar-length-not-twenty",
+            "mysql-insert-must-name-columns",
+            "mysql-innodb-default-not-ban-others",
+            "mysql-db-not-blob-store",
+            "mysql-instance-table-count-not-500",
+            "mysql-column-count-thirty-not-law",
+            "mysql-db-features-ban-not-absolute",
+            "mysql-ddl-merge-heuristic",
+            "mysql-catch-sql-exception-not-enough",
+            "mysql-pk-autoinc-not-only-choice",
+            "mysql-subquery-ban-not-absolute",
+            "mysql-scalability-not-hopeless",
+            "db-proxy-layer-not-only-choice",
+            "hot-cold-ratio-not-fixed-one-to-four",
+            "business-split-db-not-only-path",
+            "rw-split-not-strong-consistency"
           ]
         },
         {
@@ -2064,11 +2197,25 @@
             "mysql-index-kinds",
             "mysql-explain-analyze",
             "mysql-innodb-fulltext",
+            "mysql-spatial-index-not-full-gis",
             "mysql-innodb-index-lock",
             "mysql-unique-change-buffer",
             "mysql-prefix-index-and-cost",
             "mysql-covering-not-index-kind",
-            "mysql-innodb-no-user-hash"
+            "mysql-innodb-no-user-hash",
+            "mysql-index-count-five-not-law",
+            "mysql-implicit-convert-breaks-index",
+            "mysql-where-func-blocks-index",
+            "mysql-generated-column-not-where-wrap",
+            "mysql-negative-predicate-not-always-scan",
+            "mysql-leading-percent-like-heuristic",
+            "mysql-low-selectivity-index-heuristic",
+            "mysql-composite-selectivity-order-heuristic",
+            "mysql-count-star-innodb-not-always-scan",
+            "mysql-extend-index-before-new",
+            "mysql-and-order-optimizer-reorders",
+            "mysql-right-fuzzy-like-can-use-index",
+            "mysql-invisible-index-not-drop"
           ]
         },
         {
@@ -2145,7 +2292,8 @@
             "java-linked-blocking-unbounded",
             "java-tpe-execute-order",
             "java-loom-not-absent-coroutine",
-            "java-threads-not-linear-speedup"
+            "java-threads-not-linear-speedup",
+            "thread-pool-formula-not-law"
           ]
         }
       ],
@@ -2161,7 +2309,8 @@
             "jvm-jmm-not-runtime-areas",
             "jvm-pc-no-oom",
             "jmm-not-eight-memory-ops",
-            "java-heap-not-cpp-manual"
+            "java-heap-not-cpp-manual",
+            "jvm-xmx-not-container-limit"
           ]
         },
         {
@@ -2407,9 +2556,14 @@
             "dist-lock-owner-not-mac-pid-tid",
             "dist-lock-reentrant-not-deadlock-cure",
             "zk-linearizable-not-realtime",
+            "zk-odd-count-not-quorum-law",
             "redis-lock-setnx-expire-race",
             "redis-lock-getset-wall-clock",
-            "mysql-for-update-not-dist-lease"
+            "mysql-for-update-not-dist-lease",
+            "db-insert-unique-cron-not-lease",
+            "cap-label-not-product-tattoo",
+            "sync-replication-not-only-durability",
+            "snowflake-params-need-capacity-math"
           ]
         },
         {
@@ -2430,17 +2584,26 @@
           "title": "流量",
           "ids": [
             "distributed-token-bucket",
+            "leaky-bucket-not-no-critical-edge",
             "distributed-seckill",
             "seckill-js-needs-cache-control",
             "seckill-client-gate-not-enough",
+            "seckill-mq-not-only-db-valve",
             "distributed-mq-not-erase-invariant",
             "distributed-consistent-hash",
+            "consistent-hash-vnode-count-not-law",
             "distributed-bloom",
             "distributed-cache",
             "lru-capacity-not-ttl-expire",
             "distributed-kafka-order",
             "dns-lb-not-just-round-robin",
-            "http-redirect-lb-two-hops"
+            "http-redirect-lb-two-hops",
+            "microservices-not-just-soa-relabel",
+            "split-vs-cluster-not-interchangeable",
+            "service-extract-not-only-connection-math",
+            "select-not-always-business-idempotent",
+            "hash-skew-not-only-virtual-nodes",
+            "message-order-not-always-required"
           ]
         },
         {
@@ -2449,7 +2612,10 @@
             "distributed-clock-skew",
             "distributed-unique-id",
             "distributed-bulkhead",
-            "mysql-uuid-not-clustered-pk"
+            "mysql-uuid-not-clustered-pk",
+            "uuid-not-only-random-string",
+            "db-sequence-batch-not-gapless",
+            "db-autoinc-offset-step-needs-ops"
           ]
         }
       ],
@@ -2459,14 +2625,20 @@
           "ids": [
             "gha-workflow-in-dot-github",
             "gha-job-needs-success",
-            "gha-artifact-between-jobs"
+            "gha-artifact-between-jobs",
+            "jenkins-not-only-ci-tool"
           ]
         },
         {
           "title": "镜像",
           "ids": [
             "docker-layer-cache-copy",
-            "compose-service-name-dns"
+            "compose-service-name-dns",
+            "container-shares-host-kernel",
+            "docker-image-template-not-container",
+            "vm-vs-container-isolation-tradeoff",
+            "one-container-one-service-heuristic",
+            "docker-registry-not-just-repo-bucket"
           ]
         },
         {
@@ -2549,7 +2721,8 @@
         "契约是前后端约定好的 HTTP 接口形状与失败类型",
         "同一业务要在页面、契约、服务、数据四层对齐",
         "交互状态、失败类型、事务和唯一约束各有归属"
-      ]
+      ],
+      "since": "path"
     },
     {
       "track": "frontend",
@@ -2562,7 +2735,8 @@
         "路由标识、服务器状态、草稿和请求过程是四种数据",
         "服务器状态以成功响应为准，本地不要另造一份列表",
         "过期响应不能写进已经换掉的页面"
-      ]
+      ],
+      "since": "path"
     },
     {
       "track": "frontend",
@@ -2575,7 +2749,8 @@
         "4xx 和 5xx 不会让 fetch 抛错，要先看状态码",
         "业务失败按 type 显示，传输失败没有 JSON",
         "重试同一写操作时带原来的幂等键"
-      ]
+      ],
+      "since": "path"
     },
     {
       "track": "frontend",
@@ -2588,7 +2763,8 @@
         "功能完成的标准包含失败、刷新和重试，不只是成功路径",
         "失败文案来自契约的 type，登录态要能说清存放位置",
         "答不出时回到对应的一课，而不是换组件库"
-      ]
+      ],
+      "since": "path"
     },
     {
       "track": "frontend",
@@ -2685,7 +2861,8 @@
         "普通函数的 this 是本次调用的接收者",
         "拆开再调用时严格模式下 this 为 undefined",
         "箭头函数使用外层 this，不能被 call 改写"
-      ]
+      ],
+      "since": "JavaScript"
     },
     {
       "track": "frontend",
@@ -2712,7 +2889,8 @@
         "原始值不是对象，属性访问才会临时装箱",
         "null 不是空对象，typeof 的 object 是历史包袱",
         "没有原型的对象用 Object.create(null)，日常不要读 __proto__"
-      ]
+      ],
+      "since": "JavaScript"
     },
     {
       "track": "frontend",
@@ -2837,7 +3015,8 @@
         "同步代码跑完才清空由此排入的微任务",
         "微任务清空前，定时器任务不会开始",
         "过多微任务会推迟浏览器绘制"
-      ]
+      ],
+      "since": "JavaScript"
     },
     {
       "track": "frontend",
@@ -2850,7 +3029,8 @@
         "then/await 续体是微任务",
         "setTimeout 是后续任务",
         "绘制在微任务清空之后才有机会"
-      ]
+      ],
+      "since": "JavaScript"
     },
     {
       "track": "frontend",
@@ -2989,7 +3169,8 @@
         "定时器第一个参数应是函数",
         "字符串形式会再求值，类似 eval",
         "clear 必须用同一次调用返回的句柄"
-      ]
+      ],
+      "since": "JavaScript"
     },
     {
       "track": "frontend",
@@ -3002,7 +3183,8 @@
         "默认点号不匹配换行，要开 DOTALL 或等价 flag",
         "\\\\d 在 Unicode 模式下可能宽于 [0-9]",
         "字面元字符必须转义"
-      ]
+      ],
+      "since": "JavaScript"
     },
     {
       "track": "frontend",
@@ -3015,7 +3197,8 @@
         "stringify 丢 undefined、改写 NaN、依赖键序",
         "对象相等不是字符串相等",
         "class 是原型语法糖，不是没用"
-      ]
+      ],
+      "since": "JavaScript"
     },
     {
       "track": "frontend",
@@ -3028,7 +3211,8 @@
         "事件函数看见的是创建它那次渲染的变量",
         "同一快照上的多次 count + 1 排入的是同一个新值",
         "函数式更新按队列里的最新值依次计算"
-      ]
+      ],
+      "since": "JavaScript"
     },
     {
       "track": "frontend",
@@ -3055,7 +3239,8 @@
         "const 锁的是变量绑定，不是对象内部",
         "readonly 在类型层面拒绝修改属性",
         "运行时冻结要靠 Object.freeze"
-      ]
+      ],
+      "since": "TypeScript"
     },
     {
       "track": "frontend",
@@ -3068,7 +3253,8 @@
         "interface 适合对象形状且可合并",
         "type 适合联合、交叉和别名",
         "按能否说清形状选择，而不是固定口径"
-      ]
+      ],
+      "since": "TypeScript"
     },
     {
       "track": "frontend",
@@ -3123,7 +3309,8 @@
         "用同一个字面量字段区分联合类型的每一种",
         "进入某个分支后，只能访问这一种上有的字段",
         "新增一种没处理时，赋给 never 会让编译失败"
-      ]
+      ],
+      "since": "TypeScript"
     },
     {
       "track": "frontend",
@@ -3136,7 +3323,8 @@
         "类型参数把输入和输出的类型关系留住",
         "约束只写这个函数真正要用到的能力",
         "数组可能为空，返回值要处理没有元素的情况"
-      ]
+      ],
+      "since": "TypeScript"
     },
     {
       "track": "frontend",
@@ -3149,7 +3337,8 @@
         "能不能赋值，看有没有需要的字段，不看类型名字",
         "变量多出来的字段，仍可赋给要求更少的类型",
         "直接写出的对象字面量，多写或写错字段会更早报错"
-      ]
+      ],
+      "since": "TypeScript"
     },
     {
       "track": "frontend",
@@ -3190,7 +3379,8 @@
         "content-box 的 width 只含内容",
         "border-box 把 padding 和 border 算进 width",
         "margin 不进入 width 或 height"
-      ]
+      ],
+      "since": "CSS"
     },
     {
       "track": "frontend",
@@ -3203,7 +3393,8 @@
         "relative 仍占据文档流中的位置",
         "absolute 相对最近的定位祖先",
         "fixed 的包含块可能被 transform 改写"
-      ]
+      ],
+      "since": "CSS"
     },
     {
       "track": "frontend",
@@ -3216,7 +3407,8 @@
         "绝对定位和固定定位参照包含块",
         "transform 等属性会让 fixed 脱离视口",
         "偏移的百分比相对包含块计算"
-      ]
+      ],
+      "since": "CSS"
     },
     {
       "track": "frontend",
@@ -3229,7 +3421,8 @@
         "后来的样式不一定生效，先看来源和是否重要",
         "同一层里再比选择器权重，权重相同才看书写顺序",
         "覆盖不生效时，按来源、权重、顺序这三步查"
-      ]
+      ],
+      "since": "CSS"
     },
     {
       "track": "frontend",
@@ -3242,7 +3435,8 @@
         "z-index 只在所属的层叠上下文里比较",
         "父元素新建上下文后，子元素的 z-index 出不去",
         "弹层被挡住时，先找是谁建立了新的层叠上下文"
-      ]
+      ],
+      "since": "CSS"
     },
     {
       "track": "frontend",
@@ -3326,7 +3520,8 @@
         "事件按捕获、目标、冒泡三段传播",
         "stopPropagation 不停掉同一节点的其他监听器",
         "不冒泡的事件不能用父元素做委托"
-      ]
+      ],
+      "since": "browser"
     },
     {
       "track": "frontend",
@@ -3353,7 +3548,8 @@
         "label 关联到控件后，点击文字才能聚焦输入",
         "一组相关输入放进 fieldset，并用 legend 说明这组是什么",
         "能用按钮提交表单时，不要用 div 模拟点击"
-      ]
+      ],
+      "since": "HTML5"
     },
     {
       "track": "frontend",
@@ -3492,7 +3688,8 @@
         "条件渲染是 wx:if 不是 wx-if",
         "逻辑层没有 window/document",
         "用户身份走 wx.login，getUserInfo 登录已废弃"
-      ]
+      ],
+      "since": "browser"
     },
     {
       "track": "frontend",
@@ -3505,7 +3702,8 @@
         "一帧要容纳脚本、样式、布局和绘制",
         "强制布局会插队进帧预算",
         "先定位帧里最贵的一段再优化"
-      ]
+      ],
+      "since": "browser"
     },
     {
       "track": "frontend",
@@ -3519,7 +3717,8 @@
         "setState 返回只表示更新已排队",
         "React 渲染和提交之后，浏览器才布局和绘制",
         "卡顿要按渲染、DOM 和绘制三层分别取证"
-      ]
+      ],
+      "since": "browser"
     },
     {
       "track": "frontend",
@@ -3532,7 +3731,8 @@
         "读尺寸和改样式交错时，浏览器会提前做布局",
         "先把要读的尺寸读完，再一起改样式",
         "卡顿时在 Performance 里看 Layout，不只看脚本时间"
-      ]
+      ],
+      "since": "browser"
     },
     {
       "track": "frontend",
@@ -3545,7 +3745,8 @@
         "首屏图片马上加载，屏幕外的图片再懒加载",
         "写上宽高，图片到达前不会把下面的内容顶下去",
         "用瀑布图看是否加载太早，用布局位移看是否没留空"
-      ]
+      ],
+      "since": "browser"
     },
     {
       "track": "frontend",
@@ -3600,7 +3801,8 @@
         "no-store 表示不要留下响应，no-cache 表示用之前先问服务器",
         "带上 ETag 再请求，内容没变时服务器回 304",
         "HTML 要重新验证，带内容哈希的静态文件可以放久一点"
-      ]
+      ],
+      "since": "HTTP caching"
     },
     {
       "track": "frontend",
@@ -3613,7 +3815,8 @@
         "往返缓存恢复的是整页快照，不是重新请求文档",
         "persisted 为真时 load 不会按新加载再走",
         "恢复后要自己检查过期状态"
-      ]
+      ],
+      "since": "bfcache"
     },
     {
       "track": "frontend",
@@ -3654,7 +3857,8 @@
         "同源策略限制脚本读取另一源的响应",
         "允许读取的响应头由服务端给出",
         "带凭证的跨源请求要单独通过预检，不能用通配来源"
-      ]
+      ],
+      "since": "CORS"
     },
     {
       "track": "frontend",
@@ -3667,7 +3871,22 @@
         "带凭据时允许源不能是星号",
         "不要把请求 Origin 无校验回写",
         "JSONP 只适用于可公开的 GET"
-      ]
+      ],
+      "since": "CORS"
+    },
+    {
+      "track": "frontend",
+      "group": "浏览器",
+      "id": "cors-preflight-max-age",
+      "title": "Access-Control-Max-Age 只缓存预检结果，不是跨域通行证",
+      "prompt": "为什么加了 Access-Control-Max-Age=86400 之后，有人以为以后都不用再配 CORS？",
+      "keywords": "CORS preflight Max-Age OPTIONS",
+      "points": [
+        "Max-Age 缓存的是预检结果",
+        "实际响应仍要 CORS 允许头",
+        "不替代凭据与源白名单规则"
+      ],
+      "since": "CORS Max-Age"
     },
     {
       "track": "frontend",
@@ -3680,7 +3899,8 @@
         "同源看协议、主机和端口",
         "跨源 script 会执行，权限是当前文档的源",
         "CORS 常常是响应已回、脚本读不到，不是没发出请求"
-      ]
+      ],
+      "since": "same-origin"
     },
     {
       "track": "frontend",
@@ -3693,7 +3913,8 @@
         "表单提交可以跨源导航",
         "CORS 针对脚本读响应",
         "HTTP/1.1 持久连接不是多路复用"
-      ]
+      ],
+      "since": "HTML forms"
     },
     {
       "track": "frontend",
@@ -3720,7 +3941,8 @@
         "安全方法与幂等方法",
         "方法语义和实际业务副作用",
         "失败重试与幂等键"
-      ]
+      ],
+      "since": "HTTP"
     },
     {
       "track": "frontend",
@@ -3733,7 +3955,8 @@
         "PUT 是对已知 URI 的整份替换",
         "服务分配 id 的创建常用 POST",
         "JSON 前后端分离不等于 REST 方法语义"
-      ]
+      ],
+      "since": "HTTP"
     },
     {
       "track": "frontend",
@@ -3746,7 +3969,8 @@
         "Content-Type 必须匹配正文语法",
         "fetch 不会自动把对象变成 JSON",
         "multipart 的 boundary 交给 FormData/浏览器"
-      ]
+      ],
+      "since": "HTTP"
     },
     {
       "track": "frontend",
@@ -3759,7 +3983,8 @@
         "401 表示需要或拒绝了认证",
         "403 表示已理解请求但拒绝授权",
         "失败不要伪装成 200"
-      ]
+      ],
+      "since": "HTTP"
     },
     {
       "track": "frontend",
@@ -3772,7 +3997,8 @@
         "credentials 默认只在同源发送 Cookie",
         "跨源携带凭证时 Allow-Origin 不能是星号",
         "响应还要显式允许凭证"
-      ]
+      ],
+      "since": "Fetch credentials"
     },
     {
       "track": "frontend",
@@ -3883,7 +4109,8 @@
         "Ajax 指后台请求并局部更新页面",
         "XMLHttpRequest 是最初的浏览器接口",
         "fetch 和 Axios 都能完成同一种页面行为"
-      ]
+      ],
+      "since": "HTTP"
     },
     {
       "track": "frontend",
@@ -3938,7 +4165,8 @@
         "非 2xx 默认拒绝，响应留在 error.response",
         "业务正文在响应包装的 data",
         "浏览器默认走 XMLHttpRequest 适配器"
-      ]
+      ],
+      "since": "HTTP"
     },
     {
       "track": "frontend",
@@ -3951,7 +4179,8 @@
         "create 的默认值只对这个实例生效",
         "timeout 到点以 ECONNABORTED 拒绝",
         "登录头放在请求拦截器，不散落在每次调用"
-      ]
+      ],
+      "since": "HTTP"
     },
     {
       "track": "frontend",
@@ -3978,7 +4207,8 @@
         "Accept-Encoding 内容协商",
         "Content-Encoding 响应编码",
         "Vary 与缓存表示区分"
-      ]
+      ],
+      "since": "HTTP"
     },
     {
       "track": "frontend",
@@ -4020,7 +4250,8 @@
         "HTTPS 要加密并且核对主机名",
         "点过“继续”的自签等于放弃核对",
         "页面里的明文请求仍会漏出内容"
-      ]
+      ],
+      "since": "HTTP"
     },
     {
       "track": "frontend",
@@ -4033,7 +4264,8 @@
         "TCP 是传输层协议",
         "三次握手建立 TCP 连接，不是 HTTP 语义",
         "OSI 七层与教学五层不要混成 HTTP 的别名"
-      ]
+      ],
+      "since": "HTTP"
     },
     {
       "track": "frontend",
@@ -4060,7 +4292,8 @@
         "TCP 不保留 send 的边界，应用要自己分帧",
         "分隔符会被正文里的同样字节切断，定长只适用于固定大小",
         "UDP 保留数据报边界，但不保证送达和顺序"
-      ]
+      ],
+      "since": "HTTP"
     },
     {
       "track": "frontend",
@@ -4073,7 +4306,8 @@
         "HTTP 默认 80，HTTPS 默认 443",
         "三次握手属于 TCP 不是 HTTP",
         "TLS 发生在 TCP 连接建立之后"
-      ]
+      ],
+      "since": "HTTP"
     },
     {
       "track": "frontend",
@@ -4086,7 +4320,8 @@
         "可靠是校验、序号、ACK、重传，不是物理永不丢",
         "连接失败时应用仍看到错误",
         "UDP 无这套重传，丢了就是丢了"
-      ]
+      ],
+      "since": "HTTP"
     },
     {
       "track": "frontend",
@@ -4099,7 +4334,8 @@
         "Cookie 按属性自动附在匹配的请求上",
         "HttpOnly 阻止脚本读取该 Cookie",
         "localStorage 不自动发送，同源脚本可以读取"
-      ]
+      ],
+      "since": "Cookie"
     },
     {
       "track": "frontend",
@@ -4112,7 +4348,8 @@
         "浏览器会话默认用 HttpOnly Cookie，由浏览器自动携带",
         "JS 能读到的 JWT 可被 XSS 抄走并重放",
         "对象授权仍按服务端身份检查，不看前端是否“已登录”"
-      ]
+      ],
+      "since": "session / JWT"
     },
     {
       "track": "frontend",
@@ -4125,7 +4362,8 @@
         "CORS 限制脚本读取跨源响应",
         "浏览器仍可能自动带上符合规则的 Cookie",
         "改状态的接口不能只靠 CORS 白名单"
-      ]
+      ],
+      "since": "CSRF"
     },
     {
       "track": "frontend",
@@ -4138,7 +4376,8 @@
         "HTML 上下文的注入风险",
         "textContent 与 innerHTML",
         "输出编码、净化和 CSP 的职责"
-      ]
+      ],
+      "since": "XSS"
     },
     {
       "track": "frontend",
@@ -4165,7 +4404,190 @@
         "CSP 限制允许加载的脚本源",
         "它不能代替 HTML 转义",
         "不要用通配符把策略放空"
-      ]
+      ],
+      "since": "CSP"
+    },
+    {
+      "track": "frontend",
+      "group": "安全",
+      "id": "csp-report-only-not-enforce",
+      "title": "Report-Only 只上报违例，不会替你拦住脚本",
+      "prompt": "为什么上了 Content-Security-Policy-Report-Only 之后，外源脚本还能执行？",
+      "keywords": "CSP Report-Only Content-Security-Policy XSS",
+      "points": [
+        "Report-Only 不拦截，只报告",
+        "强制 CSP 才挡住未允许资源",
+        "观察与强制可以并存，不能只留观察"
+      ],
+      "since": "CSP Report-Only"
+    },
+    {
+      "track": "frontend",
+      "group": "安全",
+      "id": "trusted-types-sink-guard",
+      "title": "Trusted Types 卡住危险汇点，不是替你洗掉评论 HTML",
+      "prompt": "为什么开了 require-trusted-types-for script 之后，innerHTML 赋普通字符串会抛错，有人却以为评论可以不转义了？",
+      "keywords": "Trusted Types DOM XSS innerHTML CSP",
+      "points": [
+        "Trusted Types 要求危险汇点用可信类型",
+        "不自动净化用户 HTML",
+        "策略透传等于未启用"
+      ],
+      "since": "Trusted Types"
+    },
+    {
+      "track": "frontend",
+      "group": "安全",
+      "id": "permissions-policy-feature-gate",
+      "title": "Permissions-Policy 关的是浏览器能力，不是脚本来源白名单",
+      "prompt": "为什么配了 Permissions-Policy: camera=() 之后，第三方脚本还在跑，只是 getUserMedia 失败？",
+      "keywords": "Permissions-Policy Feature-Policy CSP 摄像头",
+      "points": [
+        "Permissions-Policy 开关强大浏览器 API",
+        "不替代 CSP 的脚本来源控制",
+        "嵌入上下文会叠加更严的策略"
+      ],
+      "since": "Permissions-Policy"
+    },
+    {
+      "track": "frontend",
+      "group": "安全",
+      "id": "document-policy-not-permissions-policy",
+      "title": "Document-Policy 管文档行为预算，不是 Permissions-Policy 换皮",
+      "prompt": "为什么已经配了 Permissions-Policy 关掉摄像头，安全评审还要你再谈 Document-Policy？",
+      "keywords": "Document-Policy Permissions-Policy 文档策略",
+      "points": [
+        "Document-Policy 管文档行为约束",
+        "Permissions-Policy 管能力来源",
+        "二者叠层不互相替代"
+      ],
+      "since": "Document-Policy"
+    },
+    {
+      "track": "frontend",
+      "group": "安全",
+      "id": "coop-coep-cross-origin-isolated",
+      "title": "COOP/COEP 换来 crossOriginIsolated，不是普通 CORS 换皮",
+      "prompt": "为什么只配了 CORS，SharedArrayBuffer 仍不可用，控制台却提 cross-origin isolated？",
+      "keywords": "COOP COEP crossOriginIsolated SharedArrayBuffer CORP",
+      "points": [
+        "crossOriginIsolated 常靠 COOP+COEP",
+        "不等于普通 CORS 放行",
+        "COEP 会挡住未许可的跨源嵌入"
+      ],
+      "since": "COOP/COEP"
+    },
+    {
+      "track": "frontend",
+      "group": "安全",
+      "id": "referrer-policy-leak-bound",
+      "title": "Referrer-Policy 管带多少来源信息，不是防 CSRF 的主闸",
+      "prompt": "为什么设了 Referrer-Policy: no-referrer 之后，跨站表单带 Cookie 改数据仍然可能成功？",
+      "keywords": "Referrer-Policy Referer CSRF 隐私",
+      "points": [
+        "Referrer-Policy 控制 Referer 携带量",
+        "不替代 SameSite/CSRF 防护",
+        "机密不要只放在 URL 查询串"
+      ],
+      "since": "Referrer-Policy"
+    },
+    {
+      "track": "frontend",
+      "group": "安全",
+      "id": "sri-integrity-not-csp",
+      "title": "SRI 校验这一份资源字节，不是 CSP 脚本来源白名单的换皮",
+      "prompt": "为什么 CDN 脚本加了 integrity，CSP 的 script-src 仍可能拒绝加载？",
+      "keywords": "SRI integrity CSP CDN sha384",
+      "points": [
+        "SRI 校验子资源字节摘要",
+        "不替代 CSP 的脚本来源控制",
+        "发版改文件必须同步更新 integrity"
+      ],
+      "since": "SRI"
+    },
+    {
+      "track": "frontend",
+      "group": "安全",
+      "id": "clear-site-data-not-full-logout",
+      "title": "Clear-Site-Data 清浏览器存的数据，不是服务端会话注销本身",
+      "prompt": "为什么响应头带了 Clear-Site-Data: \"cookies\"，服务端 session 表里的行还在，换设备仍可能登着？",
+      "keywords": "Clear-Site-Data 登出 Cookie storage",
+      "points": [
+        "Clear-Site-Data 清浏览器侧存储",
+        "不代替服务端作废会话",
+        "多设备登出要服务端令牌策略"
+      ],
+      "since": "Clear-Site-Data"
+    },
+    {
+      "track": "frontend",
+      "group": "安全",
+      "id": "reporting-nel-not-csp-enforce",
+      "title": "Reporting / NEL 是遥测管道，不是又一道强制 CSP",
+      "prompt": "为什么配了 Report-To 和 NEL 之后，外源脚本和失败的请求仍然发生，安全同学却说“已经接上报”？",
+      "keywords": "Reporting-API NEL Report-To CSP 遥测",
+      "points": [
+        "Reporting/NEL 负责上报不是拦截",
+        "可与 Report-Only CSP 共用端点",
+        "强制防护仍靠 CSP 等控制面"
+      ],
+      "since": "Reporting/NEL"
+    },
+    {
+      "track": "frontend",
+      "group": "安全",
+      "id": "corp-embed-gate-not-cors",
+      "title": "CORP 管别人能不能嵌你的资源，不是 CORS 读响应的换皮",
+      "prompt": "为什么静态资源加了 Access-Control-Allow-Origin: *，在 COEP 页面里仍加载失败，提示 CORP？",
+      "keywords": "CORP COEP CORS cross-origin embed",
+      "points": [
+        "CORP 限制谁能嵌入本资源",
+        "不等于 CORS 读响应放行",
+        "COEP 常依赖正确的 CORP"
+      ],
+      "since": "CORP"
+    },
+    {
+      "track": "frontend",
+      "group": "安全",
+      "id": "pna-private-network-access",
+      "title": "公网站点访问内网要过 Private Network Access，不是普通 CORS 放行就够",
+      "prompt": "为什么公网前端 fetch 到 192.168.x / localhost 时，浏览器报 Private Network Access，而你已经配了 Access-Control-Allow-Origin？",
+      "keywords": "PNA Private-Network-Access CORS RFC1918",
+      "points": [
+        "公网→内网有额外门闩",
+        "普通 CORS 放行不够",
+        "不要让公网页直打管理口"
+      ],
+      "since": "Private Network Access"
+    },
+    {
+      "track": "frontend",
+      "group": "安全",
+      "id": "fenced-frame-embed-boundary",
+      "title": "Fenced Frame 是更严的嵌入边界，不是 iframe 换皮",
+      "prompt": "为什么广告文档说要用 fencedframe，你却以为改个标签名、照旧同 document 通信就行？",
+      "keywords": "fencedframe Fenced Frames iframe 隐私",
+      "points": [
+        "Fenced Frame 强化嵌入隔离",
+        "不是 iframe 标签换皮",
+        "微前端通信仍常看 iframe 方案"
+      ],
+      "since": "Fenced Frames"
+    },
+    {
+      "track": "frontend",
+      "group": "安全",
+      "id": "attribution-reporting-not-cookie",
+      "title": "Attribution Reporting 是浏览器归因 API，不是第三方 Cookie 换皮",
+      "prompt": "为什么隐私沙盒说用 Attribution Reporting 做转化归因，运营却还在问“Cookie 没了怎么打通用户”？",
+      "keywords": "Attribution-Reporting 隐私沙盒 归因 Cookie",
+      "points": [
+        "ARA 是浏览器归因报告",
+        "不是 Cookie 换皮追踪",
+        "精度与隐私预算要一起谈"
+      ],
+      "since": "Attribution Reporting"
     },
     {
       "track": "frontend",
@@ -4220,7 +4642,8 @@
         "受控输入的显示值只来自 state，onChange 必须把它写回去",
         "非受控输入的值在 DOM 里，提交时再读",
         "服务器响应不要覆盖尚未提交的草稿"
-      ]
+      ],
+      "since": "React"
     },
     {
       "track": "frontend",
@@ -4233,7 +4656,8 @@
         "key 和类型一起决定组件状态跟谁走",
         "业务标识适合当 key，行号会在重排后张冠李戴",
         "每次渲染变化的 key 会丢掉该项的状态"
-      ]
+      ],
+      "since": "React"
     },
     {
       "track": "frontend",
@@ -4274,7 +4698,8 @@
         "最近 Provider 的值",
         "Context 更新与消费者重渲染",
         "按变化频率划分 Provider"
-      ]
+      ],
+      "since": "React"
     },
     {
       "track": "frontend",
@@ -4301,7 +4726,8 @@
         "useState 初始值只在挂载使用一次",
         "可派生的值应在渲染中计算，避免 Effect 同步",
         "重置内部状态优先用 key 换身份"
-      ]
+      ],
+      "since": "React"
     },
     {
       "track": "frontend",
@@ -4342,7 +4768,8 @@
         "原生事件与 React 合成事件",
         "根容器事件委派及特殊路径",
         "停止传播与阻止默认行为"
-      ]
+      ],
+      "since": "React"
     },
     {
       "track": "frontend",
@@ -4397,7 +4824,8 @@
         "元素树是 UI 的对象描述，便于声明式更新与跨环境",
         "协调后按需改 DOM，结果相同可不碰 DOM",
         "小更新或海量首次插入时，直接 DOM 仍可能更快"
-      ]
+      ],
+      "since": "React"
     },
     {
       "track": "frontend",
@@ -4473,14 +4901,15 @@
       "track": "frontend",
       "group": "React 生态",
       "id": "react-router-element-api",
-      "title": "现行 React Router：Routes + element，不是 Switch + component",
+      "title": "现行 React Router：Routes + element，不是 Switch + component（RR 6）",
       "prompt": "为什么把 Switch、Route 的 component={About}、Redirect、activeClassName 当作现行默认 API 会过时？",
       "keywords": "React Router Routes Route element Navigate Switch component NavLink",
       "points": [
         "Routes + element 是现行声明式默认",
         "Navigate 替代常见 Redirect 写法",
         "NavLink 用函数式 className/style 表达活跃态"
-      ]
+      ],
+      "since": "RR 6"
     },
     {
       "track": "frontend",
@@ -4493,7 +4922,8 @@
         "loader/action 抛错交给最近的 errorElement",
         "缺了就会继续往上冒，可能崩到根",
         "路由错误常发生在渲染前的加载阶段"
-      ]
+      ],
+      "since": "RR 6"
     },
     {
       "track": "frontend",
@@ -4520,20 +4950,22 @@
         "子路由的地址包含父级路径",
         "子页面通过父组件里的 Outlet 渲染",
         "索引路由占用父级地址，并且不能再有子路由"
-      ]
+      ],
+      "since": "RR 6"
     },
     {
       "track": "frontend",
       "group": "React 生态",
       "id": "rr-redirect-before-render",
-      "title": "未登录时在 loader 里抛出重定向",
+      "title": "未登录时在 loader 里抛出重定向（RR 6.4+）",
       "prompt": "为什么未登录打开订单页，会先闪一下订单骨架，再进登录页？",
       "keywords": "React Router redirect loader 302 登录",
       "points": [
         "redirect 只存在于数据模式和框架模式",
         "文档示例在 loader 里 throw redirect",
         "默认状态码是 302，组件不会为这次导航执行"
-      ]
+      ],
+      "since": "RR 6"
     },
     {
       "track": "frontend",
@@ -4546,7 +4978,8 @@
         "能算出来的值不要再存一份",
         "主题和当前账号用 Context，服务端列表用 Query",
         "Redux 用于多处共享且更新逻辑复杂的客户端状态"
-      ]
+      ],
+      "since": "React"
     },
     {
       "track": "frontend",
@@ -4559,7 +4992,8 @@
         "一屏的共享列表用 reducer 描述怎么改",
         "列表和 dispatch 分成两个 Context 往下传",
         "行内编辑开关留在该行的 state"
-      ]
+      ],
+      "since": "React"
     },
     {
       "track": "frontend",
@@ -4586,7 +5020,8 @@
         "Query 缓存服务器结果并提供状态",
         "HTTP 写在 queryFn 里的 fetch 或 Axios",
         "同一 QueryClient 才共享这一份缓存"
-      ]
+      ],
+      "since": "TanStack Query"
     },
     {
       "track": "frontend",
@@ -4599,7 +5034,8 @@
         "fetch 要在 queryFn 里把非成功状态抛出",
         "signal 传给 fetch 或 Axios 才能取消",
         "浏览器默认再重试 3 次，404 应关掉"
-      ]
+      ],
+      "since": "TanStack Query"
     },
     {
       "track": "frontend",
@@ -4626,7 +5062,8 @@
         "查询键决定哪一份服务器状态",
         "失效会让相关查询重新变脏并重拉",
         "手工改缓存要能回滚，否则会和服务器分叉"
-      ]
+      ],
+      "since": "TanStack Query"
     },
     {
       "track": "frontend",
@@ -4681,7 +5118,8 @@
         "Proxy target 必须是对象，null 不能做代理目标",
         "null 防护的布尔条件与可复现实验",
         "手写 get/set 代理与 Vue 响应式系统的边界"
-      ]
+      ],
+      "since": "Vue"
     },
     {
       "track": "frontend",
@@ -4694,7 +5132,8 @@
         "raw 与 proxy 身份不同，变更路径不同",
         "数组方法通过代理可触发追踪，原始写入不会",
         "能从代理读到新值不等于原始写入触发更新"
-      ]
+      ],
+      "since": "Vue"
     },
     {
       "track": "frontend",
@@ -4707,7 +5146,8 @@
         "computed 的依赖缓存",
         "watch 处理外部副作用",
         "避免派生状态重复存储"
-      ]
+      ],
+      "since": "Vue"
     },
     {
       "track": "frontend",
@@ -4818,7 +5258,8 @@
         "树摇需要 ESM、生产构建和无副作用条件",
         "__VUE_OPTIONS_API__ 默认 true，关闭后才可能移除相关运行时",
         "依赖若仍用 Options API 则不能随意裁掉"
-      ]
+      ],
+      "since": "Vue"
     },
     {
       "track": "frontend",
@@ -4859,7 +5300,8 @@
         "同一路由组件在参数变化时可能被复用",
         "setup 不会因此自动再执行",
         "用 watch 路由参数或用路径作为 key 重新加载"
-      ]
+      ],
+      "since": "Vue"
     },
     {
       "track": "frontend",
@@ -4872,7 +5314,8 @@
         "守卫在导航确认前运行，组件还没挂载",
         "挂载后再跳会先渲染一帧",
         "守卫必须明确放行、取消或改到新位置一次"
-      ]
+      ],
+      "since": "Vue"
     },
     {
       "track": "frontend",
@@ -4885,7 +5328,8 @@
         "换页滚动由 scrollBehavior 约定",
         "后退常用 savedPosition 恢复",
         "异步渲染完再滚时要返回延迟结果"
-      ]
+      ],
+      "since": "Vue"
     },
     {
       "track": "frontend",
@@ -4926,7 +5370,8 @@
         "keep-alive 留下实例，走停用/激活而不是销毁",
         "滚动和局部状态会随实例留下",
         "不该缓存的页面不要包进去"
-      ]
+      ],
+      "since": "Vue"
     },
     {
       "track": "frontend",
@@ -4947,13 +5392,15 @@
       "group": "技术选型",
       "id": "fe-pick-by-surface",
       "title": "先定目标端，再决定留哪一个框架",
-      "prompt": "为什么「公司都在用 React」还是选不出该新建 Nuxt、小程序还是原生 App？",
-      "keywords": "前端选型 目标端 SSR 小程序 React Native Astro",
+      "prompt": "公司已经在用 React。为什么这句还是决定不了：这次要新建的是浏览器里的内容站、微信小程序，还是手机 App？",
+      "promptAnswer": "React 只说明界面用什么来更新。内容站、微信小程序、手机 App 是人从哪里打开，这是另一件事。Nuxt 是 Vue 的内容站框架，并不是从「用 React」推出来的。先写下打开方式，再从后面的职责表里留一个框架名。",
+      "keywords": "前端选型 目标端 第一屏 HTML 岛屿架构 小程序 React Native Astro",
       "points": [
-        "先写打开方式和首屏里有没有正文",
-        "内容页用服务端 HTML 或少量可交互组件，后台可以是客户端应用",
+        "先写打开方式，并写明第一屏 HTML 里有没有正文",
+        "内容页在 Nuxt、Next、Astro 里按谁管整页留一个；新岛只留一种界面更新模型",
         "小程序和原生界面各自一个运行时"
-      ]
+      ],
+      "since": "framework pick"
     },
     {
       "track": "frontend",
@@ -4966,7 +5413,8 @@
         "React 的下一次画面来自你提交的更新",
         "Vue 用代理通知，Angular 新应用用信号安排检查",
         "Svelte 5 用编译期 runes 标出依赖，四种写法不进同一个组件"
-      ]
+      ],
+      "since": "framework models"
     },
     {
       "track": "frontend",
@@ -4979,7 +5427,8 @@
         "新项目用文档列出的 Next.js 或 React Router 框架模式",
         "Vite 从零组装要自己选定路由和数据获取",
         "Create React App 已日落，不再作为创建命令"
-      ]
+      ],
+      "since": "react.dev"
     },
     {
       "track": "frontend",
@@ -5048,7 +5497,8 @@
         "路由只留框架自带或单独一个路由库",
         "服务端缓存用 Query 或加载器，不再复制进 store",
         "客户端全局状态和样式各自一条路径"
-      ]
+      ],
+      "since": "framework pick"
     },
     {
       "track": "frontend",
@@ -5082,14 +5532,15 @@
       "track": "frontend",
       "group": "技术选型",
       "id": "fe-svelte-load-not-store",
-      "title": "SvelteKit 的页面数据从 load 返回，不要在 load 里写全局状态",
+      "title": "SvelteKit 的页面数据从 load 返回，不要在 load 里写全局状态（SvelteKit）",
       "prompt": "为什么 load 里已经取到订单，组件里的全局 store 在服务端却串到别人的请求？",
       "keywords": "SvelteKit load page.data $app/state 查询参数",
       "points": [
         "load 的返回值通过 data 进页面，渲染前已经有",
         "不要在 load 里写入全局 store",
         "筛选放进 URL，从 load 的 url 读取"
-      ]
+      ],
+      "since": "SvelteKit"
     },
     {
       "track": "frontend",
@@ -5102,7 +5553,8 @@
         "浏览器、小程序、自绘和系统视图是不同运行时",
         "小程序工程只留 uni-app 或 Taro",
         "Flutter 自己画像素，React Native 使用平台视图"
-      ]
+      ],
+      "since": "framework pick"
     },
     {
       "track": "frontend",
@@ -5115,7 +5567,8 @@
         "React Native 核心包不带导航，要另选一个库",
         "Expo 新项目默认用 Expo Router 做文件路由",
         "不要同时再挂一套独立的 React Navigation 当地址主人"
-      ]
+      ],
+      "since": "Expo Router"
     },
     {
       "track": "frontend",
@@ -5128,7 +5581,8 @@
         "深链用 go_router 的 context.go，不要只靠命名路由再压栈",
         "当前页的瞬时值用 setState",
         "跨页状态从文档列出的做法里只留一种"
-      ]
+      ],
+      "since": "Flutter"
     },
     {
       "track": "frontend",
@@ -5155,7 +5609,8 @@
         "微前端先问独立发版，不是先问目录怎么切",
         "同一小队同一次发版不必拆成多个前端应用",
         "多应用边界不等于在同一组件里混多套状态库"
-      ]
+      ],
+      "since": "micro-frontend"
     },
     {
       "track": "frontend",
@@ -5169,7 +5624,8 @@
         "行数大不等于必须微前端",
         "同仓同发优先模块边界和懒加载",
         "微前端买的是独立发布，不是目录美感"
-      ]
+      ],
+      "since": "micro-frontend"
     },
     {
       "track": "frontend",
@@ -5183,7 +5639,8 @@
         "构建时、运行时、服务端组合的失败点不同",
         "能不能壳不发版就上线，决定选哪一种",
         "iframe 是强隔离运行时，不是 Module Federation 的替身名词"
-      ]
+      ],
+      "since": "micro-frontend"
     },
     {
       "track": "frontend",
@@ -5196,7 +5653,8 @@
         "先写隔离、异构、挂载三问，再写框架名",
         "同栈同发版时优先 Federation 或 single-spa 一类",
         "强隔离或不跟路由的挂载另选 iframe / 手动加载"
-      ]
+      ],
+      "since": "micro-frontend"
     },
     {
       "track": "frontend",
@@ -5210,7 +5668,8 @@
         "按主缝对照，不要按新旧排序",
         "Federation 管模块共享，single-spa 管生命周期",
         "HTML entry、无界、iframe 各解决更强隔离或整页入口"
-      ]
+      ],
+      "since": "micro-frontend"
     },
     {
       "track": "frontend",
@@ -5223,7 +5682,8 @@
         "选型结束要有唯一主路径",
         "不做清单与例外范围要写下来",
         "第二种容器只能作为带边界的例外"
-      ]
+      ],
+      "since": "micro-frontend"
     },
     {
       "track": "frontend",
@@ -5236,7 +5696,8 @@
         "接通标准是 remotes、exposes、import、shared 四项对齐",
         "uniqueName 两端不能碰撞",
         "本地用加键与删键验证加载边界"
-      ]
+      ],
+      "since": "micro-frontend"
     },
     {
       "track": "frontend",
@@ -5250,7 +5711,8 @@
         "换打包器不取消 host/remote/shared",
         "以锁定版本的插件文档为准",
         "Vite 不能单独当作必须改用 HTML entry 的理由"
-      ]
+      ],
+      "since": "micro-frontend"
     },
     {
       "track": "frontend",
@@ -5264,7 +5726,8 @@
         "registerApplication 之后要 start",
         "activeWhen 可为前缀、函数或数组",
         "子应用必须导出三段生命周期"
-      ]
+      ],
+      "since": "single-spa"
     },
     {
       "track": "frontend",
@@ -5277,7 +5740,8 @@
         "entry 是子应用 HTML URL",
         "container 必须是 HTMLElement",
         "路由用 registerMicroApps，按需用 loadMicroApp"
-      ]
+      ],
+      "since": "qiankun"
     },
     {
       "track": "frontend",
@@ -5291,7 +5755,8 @@
         "startApp 需要唯一 name、url、容器 el",
         "隔离模型是 WebComponent + iframe",
         "与 qiankun HTML entry 不是同一沙箱"
-      ]
+      ],
+      "since": "无界"
     },
     {
       "track": "frontend",
@@ -5305,13 +5770,14 @@
         "iframe 是独立文档，样式默认隔离",
         "跨源通信用 postMessage 并校验 origin",
         "直读跨源 contentWindow 不是可选捷径"
-      ]
+      ],
+      "since": "iframe"
     },
     {
       "track": "frontend",
       "group": "微前端",
       "id": "mfe-module-federation",
-      "title": "Module Federation：host 消费 remote，暴露的是模块不是整站复制",
+      "title": "Module Federation：host 消费 remote，暴露的是模块不是整站复制（Webpack 5）",
       "prompt": "配了 ModuleFederationPlugin 之后，是不是子应用的所有页面都会自动挂到主应用？",
       "promptAnswer": "不是。只有 exposes 声明并被 host 的 remotes 引用的模块才会在运行时加载。没有声明的路由不会自动出现。",
       "keywords": "Module Federation host remote exposes remoteEntry",
@@ -5319,7 +5785,8 @@
         "remote 只暴露 exposes 里的模块",
         "host 通过 remotes 与异步 import 消费",
         "shared 的 singleton 要双方约定，uniqueName 必须唯一"
-      ]
+      ],
+      "since": "micro-frontend"
     },
     {
       "track": "frontend",
@@ -5333,7 +5800,8 @@
         "shared 不会因为 package.json 同名就自动单例",
         "React 等带内部状态的库必须约定 singleton",
         "版本对不上时要失败可见，不要静默双实例"
-      ]
+      ],
+      "since": "micro-frontend"
     },
     {
       "track": "frontend",
@@ -5347,7 +5815,8 @@
         "运行时子应用要有挂载和卸载",
         "Federation 加载模块不等于自动管理生命周期",
         "离开后监听与定时器必须显式释放"
-      ]
+      ],
+      "since": "micro-frontend"
     },
     {
       "track": "frontend",
@@ -5360,7 +5829,8 @@
         "一页一条 history，壳拥有顶层前缀",
         "子应用用 basename 只消化自己的一段",
         "服务器回退与路由前缀要一起配"
-      ]
+      ],
+      "since": "micro-frontend"
     },
     {
       "track": "frontend",
@@ -5374,7 +5844,8 @@
         "全局类名在同一文档会串",
         "隔离强度从命名、Shadow 到 iframe 递增",
         "组件库版本与主题变量要统一来源"
-      ]
+      ],
+      "since": "micro-frontend"
     },
     {
       "track": "frontend",
@@ -5387,7 +5858,8 @@
         "跨应用身份要有明确通道与所有权",
         "不要用长期 window 全局变量传 token",
         "壳的登录态不替代后端对象级鉴权"
-      ]
+      ],
+      "since": "micro-frontend"
     },
     {
       "track": "frontend",
@@ -5400,7 +5872,8 @@
         "运行时入口要用不可变产物加指针",
         "回滚是拨指针，不是覆盖同一文件",
         "壳要有子应用加载失败的降级"
-      ]
+      ],
+      "since": "micro-frontend"
     },
     {
       "track": "frontend",
@@ -5414,7 +5887,8 @@
         "按路由加载当前子应用，不要首屏拉齐",
         "重复框架先查 shared",
         "用同一路径对比拆分前后的字节与 LCP"
-      ]
+      ],
+      "since": "micro-frontend"
     },
     {
       "track": "frontend",
@@ -5427,7 +5901,8 @@
         "导出名、路由前缀、shared 范围都是契约",
         "破坏性变更要双轨或同窗口",
         "失败要能定位到哪个 remote 的哪个导出"
-      ]
+      ],
+      "since": "micro-frontend"
     },
     {
       "track": "frontend",
@@ -5440,7 +5915,8 @@
         "View 和 Text 对应原生视图，不是 HTML 元素",
         "子视图用 Yoga 的 Flexbox 排列，不手写安卓布局类",
         "嵌网页用 WebView，不能用 View 代替"
-      ]
+      ],
+      "since": "React Native"
     },
     {
       "track": "frontend",
@@ -5453,7 +5929,8 @@
         "文本节点不能直接放在 View 下，会抛异常",
         "嵌套 Text 才继承外层 Text 的 fontFamily",
         "不能靠根 View 给整棵子树设默认字体"
-      ]
+      ],
+      "since": "React Native"
     },
     {
       "track": "frontend",
@@ -5466,7 +5943,8 @@
         "flexDirection 默认是 column 不是 row，View 默认就是 flex 容器",
         "flexShrink 默认是 0 不是 1",
         "flex 只接受一个数字，不是三段缩写"
-      ]
+      ],
+      "since": "React Native"
     },
     {
       "track": "frontend",
@@ -5479,7 +5957,8 @@
         "按压处理函数写在 Pressable 的 onPress，按下是 onPressIn",
         "子节点里的文字仍然放在 Text 中",
         "View 的 onClick 不是原生按压"
-      ]
+      ],
+      "since": "React Native"
     },
     {
       "track": "frontend",
@@ -5492,7 +5971,8 @@
         "长列表用 FlatList，而不是 ScrollView 一次 map 全部",
         "FlatList 只挂当前渲染窗口里的行，滑出后行组件卸载",
         "要保留的内容放进条目数据，keyExtractor 用稳定 id"
-      ]
+      ],
+      "since": "React Native"
     },
     {
       "track": "frontend",
@@ -5505,7 +5985,8 @@
         "网络图和 data 图必须手动指定宽高",
         "只写 uri 不会像网页图片那样自己撑开",
         "onLoad 成功不等于已经占住布局矩形"
-      ]
+      ],
+      "since": "React Native"
     },
     {
       "track": "frontend",
@@ -5518,7 +5999,8 @@
         "窗口尺寸会随旋转、分屏或折叠变化",
         "不要把第一次读到的宽高存进模块常量",
         "useWindowDimensions 会在尺寸或字体缩放变化时更新"
-      ]
+      ],
+      "since": "React Native"
     },
     {
       "track": "frontend",
@@ -5531,7 +6013,8 @@
         "整份实现不同时用 .ios.js 和 .android.js，导入不写后缀",
         "一个数值不同才用 Platform.OS 或 Platform.select",
         "和网页共用时用 .native.js，不是再把 iOS 和 Android 拆开"
-      ]
+      ],
+      "since": "React Native"
     },
     {
       "track": "frontend",
@@ -5572,7 +6055,8 @@
         "已经在该路由上时 navigate 不会再压栈，也不会换 params",
         "push 每次都新增一条路由",
         "这套 API 属于 React Navigation，不是 react-native 包"
-      ]
+      ],
+      "since": "React Native"
     },
     {
       "track": "frontend",
@@ -5599,7 +6083,8 @@
         "build 返回的 Widget 是配置，状态在 Element 上",
         "布局和绘制发生在 RenderObject，文字用 Text",
         "没有 div、className、document，也没有全局 CSS 继承"
-      ]
+      ],
+      "since": "Flutter"
     },
     {
       "track": "frontend",
@@ -5626,7 +6111,8 @@
         "约束向下传，尺寸向上报，位置由父级设置",
         "Column 里未限制的 ListView 会收到无界高度并报错",
         "Expanded 分到的是有限剩余高度，溢出则是尺寸超出最大约束"
-      ]
+      ],
+      "since": "Flutter"
     },
     {
       "track": "frontend",
@@ -5639,7 +6125,8 @@
         "setState 同步执行回调，并把这个 State 标脏",
         "build 在随后的帧，只改字段不会安排这次 build",
         "const Widget 可以在父级重建时被跳过"
-      ]
+      ],
+      "since": "Flutter"
     },
     {
       "track": "frontend",
@@ -5652,7 +6139,8 @@
         "大多数应用不推荐只用命名路由接深链",
         "context.go 按路径把栈配成声明的那组屏幕",
         "命名路由收到深链会再 push 一页，且没有浏览器前进"
-      ]
+      ],
+      "since": "Flutter"
     },
     {
       "track": "frontend",
@@ -5665,7 +6153,8 @@
         "React Native 画的是平台视图，Flutter 画的是自己的表面",
         "Taro 的小程序像素要等 setData，uni-app 改的是 Vue 数据",
         "uni-app x 的 Android 把 uts 编成 Kotlin，不是 Widget 或 View"
-      ]
+      ],
+      "since": "cross-end"
     },
     {
       "track": "frontend",
@@ -5678,7 +6167,8 @@
         "小程序主场用 uni-app 或 Taro，页面先登记，第一项是冷启动页",
         "像素要一致的 App 用 Flutter 自绘，系统控件用 React Native",
         "返回刷新分别查 onShow、useDidShow 加 setData、setState、以及原生视图那次提交"
-      ]
+      ],
+      "since": "cross-end"
     },
     {
       "track": "frontend",
@@ -5691,7 +6181,8 @@
         "uni-app 新项目用 Vue 3 的 vue 页面，uni-app x 用 uvue 和 uts",
         "uts 在 Web 和小程序编成 JS，Android 编成 Kotlin，iOS 编成 Swift，鸿蒙 Next 编成 ArkTS",
         "Android 没有内置 JS 引擎，旧 vue 页面不能直接混进 uni-app x"
-      ]
+      ],
+      "since": "uni-app"
     },
     {
       "track": "frontend",
@@ -5788,7 +6279,8 @@
         "打不开先看两边的页面数组，第一项是冷启动页",
         "返回不刷新时 uni-app 看 onShow，Taro 看 useDidShow 以及 setData",
         "编成 Android 的 Kotlin 是 uni-app x 的 uts，不和 Taro 的 React 树混用"
-      ]
+      ],
+      "since": "Taro"
     },
     {
       "track": "frontend",
@@ -5801,7 +6293,8 @@
         "http 处理器负责状态码、响应头和正文",
         "浏览器会话用 Set-Cookie，而不是 JSON 里的 token",
         "请求体要限额；错误要回到这一次响应"
-      ]
+      ],
+      "since": "Node.js"
     },
     {
       "track": "frontend",
@@ -5828,7 +6321,8 @@
         "emit 同步执行监听器",
         "on 与 once 的生命周期",
         "error 事件的特殊处理"
-      ]
+      ],
+      "since": "Node.js"
     },
     {
       "track": "frontend",
@@ -5855,7 +6349,8 @@
         "server.close 拒绝新连接，不立刻杀掉旧请求",
         "keep-alive 会拖住 close 回调，要有超时",
         "退出顺序：流量、健康检查、依赖、进程"
-      ]
+      ],
+      "since": "Node.js"
     },
     {
       "track": "frontend",
@@ -5868,7 +6363,8 @@
         "next tick 队列与微任务队列",
         "CJS 和 ESM 的上下文差异",
         "递归调度导致事件循环饥饿"
-      ]
+      ],
+      "since": "Node.js"
     },
     {
       "track": "frontend",
@@ -5881,7 +6377,8 @@
         "事件循环按定时器、poll、check 等阶段推进",
         "setImmediate 在 check 阶段，timeout 在定时器阶段",
         "nextTick 和微任务会插入阶段之间"
-      ]
+      ],
+      "since": "Node.js"
     },
     {
       "track": "frontend",
@@ -5894,7 +6391,8 @@
         "部分 fs、dns、crypto 使用 libuv 线程池",
         "线程池耗尽时异步调用会排队",
         "死循环阻塞的是事件循环线程本身"
-      ]
+      ],
+      "since": "Node.js"
     },
     {
       "track": "frontend",
@@ -5949,7 +6447,8 @@
         "用户可观察的行为契约",
         "单元、组件和端到端层级",
         "失败与恢复场景"
-      ]
+      ],
+      "since": "frontend test"
     },
     {
       "track": "frontend",
@@ -5976,7 +6475,8 @@
         "mock 用来替换网络、时钟等外部边界",
         "被测函数自己的计算和分支要真实执行",
         "断言屏幕或返回值，而不是内部调用次数"
-      ]
+      ],
+      "since": "frontend test"
     },
     {
       "track": "frontend",
@@ -5989,7 +6489,8 @@
         "假时钟立刻推进定时器，不必真睡",
         "要和测试库的异步工具配在一起用",
         "用完恢复真时钟"
-      ]
+      ],
+      "since": "frontend test"
     },
     {
       "track": "frontend",
@@ -6031,7 +6532,8 @@
         "契约锁定路径、状态码和失败 type",
         "前端 mock 不能代替这份契约",
         "端到端只覆盖一条真实用户路径，字段问题应在契约层失败"
-      ]
+      ],
+      "since": "frontend test"
     },
     {
       "track": "frontend",
@@ -6086,7 +6588,8 @@
         "模块依赖图传播改动",
         "缓存键与构建环境",
         "增量与全量构建对比"
-      ]
+      ],
+      "since": "frontend eng"
     },
     {
       "track": "frontend",
@@ -6099,7 +6602,8 @@
         "水合挂在已有 HTML 上，不是再造一棵不同的树",
         "首次服务端标记和客户端标记必须一致",
         "浏览器专有数据放到水合完成之后"
-      ]
+      ],
+      "since": "frontend eng"
     },
     {
       "track": "frontend",
@@ -6112,7 +6616,8 @@
         "SSR 是先输出 HTML 快照再水合，不是取消客户端包",
         "一份 HTML 不保证带齐数据，也不等于更少 HTTP",
         "水合时服务端与客户端首次输出必须一致"
-      ]
+      ],
+      "since": "React"
     },
     {
       "track": "frontend",
@@ -6139,7 +6644,8 @@
         "eval 系 source map 为重建速度服务",
         "官方表上它们不标给生产",
         "生产公开 map 等于公开源码，应用 hidden 或私有通道"
-      ]
+      ],
+      "since": "Webpack"
     },
     {
       "track": "frontend",
@@ -6180,7 +6686,8 @@
         "React Profiler 定位组件耗时",
         "memo 的适用条件",
         "区分 JavaScript、DOM 与浏览器布局成本"
-      ]
+      ],
+      "since": "frontend eng"
     },
     {
       "track": "frontend",
@@ -6193,7 +6700,8 @@
         "原生语义元素",
         "键盘焦点与激活",
         "读屏可理解的交互"
-      ]
+      ],
+      "since": "frontend eng"
     },
     {
       "track": "frontend",
@@ -6206,7 +6714,8 @@
         "先记录等待首字节、长任务和布局各占多少",
         "耗时不在组件渲染时，加 memo 移不动这段时间",
         "实验室分数不能代替这一次时间线"
-      ]
+      ],
+      "since": "framework pick"
     },
     {
       "track": "frontend",
@@ -6219,7 +6728,8 @@
         "一次只改证据指向的那一层",
         "复测用同一块时间，不换指标",
         "另外两层应保持原记录的量级"
-      ]
+      ],
+      "since": "framework pick"
     },
     {
       "track": "frontend",
@@ -6246,7 +6756,8 @@
         "构建成功不证明类型和测试通过",
         "合并前要跑类型检查和测试",
         "至少守住一条用户能走完的路径"
-      ]
+      ],
+      "since": "frontend eng"
     },
     {
       "track": "frontend",
@@ -6273,7 +6784,8 @@
         "写请求分成校验、用例、持久化和响应",
         "事务边界在用例上，不在控制器里拼 SQL",
         "响应只含契约字段，不直接返回持久化实体"
-      ]
+      ],
+      "since": "path"
     },
     {
       "track": "java",
@@ -6286,7 +6798,8 @@
         "成功指不变量已提交，不是方法返回了",
         "并发修改靠条件更新、锁或唯一约束，不靠先查再改",
         "缓存和外部副作用不在这次提交的保护里"
-      ]
+      ],
+      "since": "path"
     },
     {
       "track": "java",
@@ -6299,7 +6812,8 @@
         "读接口返回契约字段，不直接序列化实体",
         "关联数据用明确的查询，避免序列化时额外查询",
         "要立刻看见的写入去读提交所在的库"
-      ]
+      ],
+      "since": "path"
     },
     {
       "track": "java",
@@ -6312,7 +6826,8 @@
         "独立交付是一条页面到数据库的竖切，不是两个示例",
         "五种失败都要能指出拒绝它的那一层",
         "中间件和框架是在保护这条路径"
-      ]
+      ],
+      "since": "path"
     },
     {
       "track": "java",
@@ -6325,7 +6840,8 @@
         "启动器调用 public static void main(String[])",
         "其它签名的 main 只是重载，不是入口",
         "静态初始化块不能代替现行启动器"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -6338,7 +6854,8 @@
         "参数传递复制的是值",
         "引用的副本仍指向同一对象",
         "给参数重新赋值不影响调用方变量"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -6365,7 +6882,8 @@
         "String 内容不可改，变更会得到新对象",
         "循环拼接应使用 StringBuilder",
         "短拼接可以优先保持可读性"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -6378,7 +6896,8 @@
         "字面量在池里，new String 另有堆实例",
         "池命中时不会再为字面量新建",
         "== 比的是引用，intern 才回到池里那一个"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -6419,7 +6938,8 @@
         "相等的对象必须有相同的 hashCode",
         "只改 equals 会导致哈希结构找不到",
         "作为键的字段在放入后保持不变"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -6432,7 +6952,8 @@
         "一个类可以实现多个接口，只能继承一个类",
         "default 方法共享行为，不占用父类名额",
         "抽象类用于真正共享的状态和骨架"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -6445,7 +6966,8 @@
         "运行时按实际类型分派方法",
         "接口引用指向实现类也是多态",
         "重载在编译期选定，不是这套分派"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -6458,7 +6980,8 @@
         "protected 对本包和跨包子类可见",
         "跨包时要通过子类类型访问父类成员",
         "无修饰符不是 friendly 关键字，只限本包"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -6471,7 +6994,8 @@
         "匿名类有且只有一个超类型：类或接口",
         "new 父类就是继承，new 接口就是实现",
         "没有名字，所以写不出 extends 关键字"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -6498,7 +7022,8 @@
         "未写 this/super 时插入的是无参 super()",
         "父类只有带参构造时子类必须显式调用",
         "接口没有实例构造器，抽象类可以有"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -6511,7 +7036,8 @@
         "捕获后必须恢复、转换或继续抛出，不能变成成功",
         "页面看到的是契约里的失败，日志保留原因",
         "资源用 try-with-resources 在两条路径上关闭"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -6524,7 +7050,8 @@
         "RuntimeException 是未检查异常，不必必须 catch",
         "IOException 等检查异常必须处理或声明",
         "Error 表示严重故障，不要当普通业务分支"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -6537,7 +7064,8 @@
         "未检查异常仍会抛，只是编译器不强制 catch",
         "没有 catch 会打到未捕获处理器，线程结束",
         "不要把“自动抛出”写成“自动捕获”"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -6578,7 +7106,8 @@
         "Cloneable 是空标记，不含 clone 方法",
         "Object.clone 是 protected，默认浅拷贝",
         "CloneNotSupportedException 是检查异常，不是 RuntimeException"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -6591,7 +7120,8 @@
         "hashCode 选择桶，equals 确认键",
         "相等对象必须有相同的 hashCode",
         "参与哈希的字段在放入后不能改"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -6605,7 +7135,8 @@
         "ArrayList 按下落是常数时间",
         "中间插入 ArrayList 要搬元素",
         "LinkedList 按下落要先走到目标节点"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -6632,7 +7163,8 @@
         "HashSet/HashMap 不保证迭代顺序",
         "要排序用 Tree，要插入序用 Linked",
         "Set 去重靠 equals/hashCode，不是先排序"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -6645,7 +7177,8 @@
         "Collection 是 List/Set/Queue 的根接口",
         "Collections 只有静态方法，不是容器",
         "Arrays 也是工具类，asList 不是 java.util.ArrayList"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -6658,7 +7191,8 @@
         "asList 返回固定大小视图，不支持 add/remove",
         "set 会写回底层数组",
         "可变独立副本要 new ArrayList<>(asList(...))"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -6699,7 +7233,8 @@
         "16 是初始容量不是上限",
         "上限是 2^30，超过阈值 0.75 就翻倍",
         "第一次 put 才分配桶数组"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -6754,7 +7289,8 @@
         "Vector 的 synchronized 管方法，不管迭代协议",
         "fail-fast 看 modCount，单线程乱改也会 CME",
         "并发遍历不要指望 Vector"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -6809,7 +7345,8 @@
         "无参解码走默认字符集，随环境而变",
         "文件和 HTTP 都要写明字符集",
         "编码与解码必须使用同一套"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -6836,7 +7373,8 @@
         ". 默认不匹配换行",
         "DOTALL 才让点跨行",
         "MULTILINE 改的是 ^ 和 $，不是点"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -6849,7 +7387,8 @@
         "Calendar.getInstance 每次返回新的可变日历",
         "Runtime.getRuntime 才接近进程内单例",
         "不要把装箱缓存或日历工厂写成单例模式"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -6876,7 +7415,8 @@
         "规范允许非 volatile 的 long 写拆成两次 32 位",
         "64 位 HotSpot 上 long 写通常原子",
         "可见性仍要同步，不只靠字宽"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -6903,7 +7443,8 @@
         "equals 与 hashCode 只在按值比较时成对覆盖",
         "Cloneable 不是新代码的拷贝方案",
         "Serializable 是契约，不是每个类的标配"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -6916,7 +7457,8 @@
         "裸类型绕过泛型检查",
         "List<?> 不是 List<Object>",
         "混入错误类型会在取出时 ClassCastException"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -6943,7 +7485,8 @@
         "final 类不能被继承，这是契约不是加速比",
         "JIT 内联不依赖你把类写成 final",
         "没有官方的平均快 50% 承诺"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -6956,7 +7499,8 @@
         "左移 3 等于乘 8 只是值相等",
         "常数乘法由 JIT 折减，手写移位不自动更快",
         "同步应缩小范围，不是整方法一定更快"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -6983,7 +7527,8 @@
         "复杂度说的是输入变大时步骤怎么涨，不是某一次的毫秒数",
         "除了时间，还要看额外占用了多少内存",
         "数据量很小的时候，增长阶更低的算法不一定更快"
-      ]
+      ],
+      "since": "algorithms"
     },
     {
       "track": "java",
@@ -6996,7 +7541,8 @@
         "反复查找适合先建成哈希表",
         "平均查找接近常数时间，整体接近线性",
         "空间大约随输入增长，很小的输入不必上哈希表"
-      ]
+      ],
+      "since": "algorithms"
     },
     {
       "track": "java",
@@ -7009,7 +7555,8 @@
         "二分要求数组按同一套规则已经排好序",
         "每次收缩前先写清哪一侧还可能有答案",
         "找不到时返回的是插入点编码，不是固定的 -1"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -7022,7 +7569,8 @@
         "稳定排序保留相等元素的原相对位置",
         "对象 sort 稳定，int[] 等不稳定",
         "多关键字优先写在一个比较器里"
-      ]
+      ],
+      "since": "algorithms"
     },
     {
       "track": "java",
@@ -7049,7 +7597,8 @@
         "平均和最好常见 O(n log n)，不是 O(n)",
         "最坏可退化成 O(n²)",
         "对象排序在 JDK 里常用 TimSort"
-      ]
+      ],
+      "since": "algorithms"
     },
     {
       "track": "java",
@@ -7062,7 +7611,8 @@
         "左右指针依赖数组有序",
         "和偏大移右端，和偏小移左端",
         "需要原下标且数组无序时，用哈希表"
-      ]
+      ],
+      "since": "algorithms"
     },
     {
       "track": "java",
@@ -7075,7 +7625,8 @@
         "前序先处理根，适合复制和打印结构",
         "二叉搜索树的中序结果是有序的",
         "后序先处理孩子，适合释放和汇总子树"
-      ]
+      ],
+      "since": "algorithms"
     },
     {
       "track": "java",
@@ -7088,7 +7639,8 @@
         "队列按离起点的层数向外扩展",
         "访问过的点要做标记，避免绕回去",
         "每条边代价相同时，第一次走到终点就是最少步数"
-      ]
+      ],
+      "since": "algorithms"
     },
     {
       "track": "java",
@@ -7101,7 +7653,8 @@
         "堆顶是比较规则下的最小项，不是先放进去的那项",
         "取走最小项用 poll，直接遍历看不到排序结果",
         "谁更优先，写在比较器里"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -7114,7 +7667,8 @@
         "窗口表示一段连续区间",
         "右进左出维护和或最值",
         "不连续的子序列不能套窗口"
-      ]
+      ],
+      "since": "algorithms"
     },
     {
       "track": "java",
@@ -7127,7 +7681,8 @@
         "拓扑序只存在于有向无环图",
         "Kahn 用入度为 0 的队列推进",
         "拿不齐全部点就说明有环"
-      ]
+      ],
+      "since": "algorithms"
     },
     {
       "track": "java",
@@ -7140,7 +7695,8 @@
         "二十三种按创建、结构、行为三族列出",
         "这一课只列名单，不代替后面的深入课",
         "先对上族和名字，再打开对应那一课"
-      ]
+      ],
+      "since": "GoF"
     },
     {
       "track": "java",
@@ -7153,7 +7709,8 @@
         "挑选名字之前先定创建、结构或行为",
         "工厂结束在交出产品，策略开始在产品已经在手里",
         "两个类都建上通常是族还没问"
-      ]
+      ],
+      "since": "GoF"
     },
     {
       "track": "java",
@@ -7166,7 +7723,8 @@
         "七个未单独立课的名字也要写得出允许变的那一块",
         "Runnable 和 Iterator 是命令与迭代器在标准库里的同形",
         "凑齐二十三不是先加一层类的理由"
-      ]
+      ],
+      "since": "GoF"
     },
     {
       "track": "java",
@@ -7179,7 +7737,8 @@
         "模式命名的是允许替换的那一块",
         "类名带 Factory 不能代替方法里的分支",
         "先对上允许变的那一块，再打开对应的那一课"
-      ]
+      ],
+      "since": "GoF"
     },
     {
       "track": "java",
@@ -7192,7 +7751,8 @@
         "工厂方法替换的是创建哪一个产品",
         "创建方法里继续按类型分支就还没分开",
         "必须成套、不能混搭时才让一个创建者同时给出这一套"
-      ]
+      ],
+      "since": "GoF"
     },
     {
       "track": "java",
@@ -7205,7 +7765,8 @@
         "可选部件留在建造过程，build 才交出成品",
         "工厂方法一次调用就返回成品",
         "缺必填项应在 build 失败，而不是先交出半成品"
-      ]
+      ],
+      "since": "GoF"
     },
     {
       "track": "java",
@@ -7218,7 +7779,8 @@
         "单例要同时有唯一实例和固定入口",
         "先写范围：进程一份和容器一份不是同一种承诺",
         "一份实例不保证字段的并发安全"
-      ]
+      ],
+      "since": "GoF"
     },
     {
       "track": "java",
@@ -7231,7 +7793,8 @@
         "适配器把别的形状收成你要的接口",
         "调用方不出现第三方的方法名",
         "同一接口上叠加行为仍是装饰器"
-      ]
+      ],
+      "since": "GoF"
     },
     {
       "track": "java",
@@ -7244,7 +7807,8 @@
         "装饰器与被包装对象是同一个接口",
         "能力用套一层来组合，而不是用子类乘起来",
         "包装后换成另一个接口的是适配器"
-      ]
+      ],
+      "since": "GoF"
     },
     {
       "track": "java",
@@ -7257,7 +7821,8 @@
         "代理和装饰器都是同一接口再包一层",
         "装饰器每次都把动作转给目标",
         "代理可以拒绝或推迟，目标方法不一定运行"
-      ]
+      ],
+      "since": "GoF"
     },
     {
       "track": "java",
@@ -7270,7 +7835,8 @@
         "外观把固定顺序收成一次调用",
         "调用方不再持有这些子系统",
         "它不替换算法，也不改别人的方法形状"
-      ]
+      ],
+      "since": "GoF"
     },
     {
       "track": "java",
@@ -7283,7 +7849,8 @@
         "桥接拆开两个独立变化的维度",
         "新增一边时，另一边的类不跟着复制",
         "事后补一个形状不合的类型，那是适配器"
-      ]
+      ],
+      "since": "GoF"
     },
     {
       "track": "java",
@@ -7296,7 +7863,8 @@
         "叶子和容器实现同一接口",
         "容器把操作转给子节点再汇总",
         "只包一个对象并加行为，那是装饰器"
-      ]
+      ],
+      "since": "GoF"
     },
     {
       "track": "java",
@@ -7309,7 +7877,8 @@
         "享元共享的是不变的内部状态",
         "每次不同的数据由调用时传入",
         "整个对象只有一份，那是单例"
-      ]
+      ],
+      "since": "GoF"
     },
     {
       "track": "java",
@@ -7322,7 +7891,8 @@
         "策略替换的是算法对象",
         "调用方的方法名保持不变",
         "步骤顺序也要变时就不是策略"
-      ]
+      ],
+      "since": "GoF"
     },
     {
       "track": "java",
@@ -7335,7 +7905,8 @@
         "模板固定的是步骤顺序",
         "子类或回调只替换一步的正文",
         "顺序本身要变时改用策略"
-      ]
+      ],
+      "since": "GoF"
     },
     {
       "track": "java",
@@ -7348,7 +7919,8 @@
         "响应者自己登记，主体不逐个点名",
         "主体的返回值不是各方结果的拼接",
         "通知不等于已经改到别的线程执行"
-      ]
+      ],
+      "since": "GoF"
     },
     {
       "track": "java",
@@ -7361,7 +7933,8 @@
         "链上的一环可以不把请求交给下一个",
         "不往后传时，后面的处理者和目标都不运行",
         "每一环都无条件转发，就没有使用责任链的停"
-      ]
+      ],
+      "since": "GoF"
     },
     {
       "track": "java",
@@ -7374,7 +7947,8 @@
         "当前状态决定动作能不能做，以及下一步是谁",
         "对外方法不再按状态字符串分支",
         "外部选定且动作之后不替换，那是策略"
-      ]
+      ],
+      "since": "GoF"
     },
     {
       "track": "java",
@@ -7387,7 +7961,8 @@
         "Comparator 是传给 sort 的比较策略",
         "同一列表可以带不同的比较器",
         "元素的 compareTo 只表示一种自然顺序"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -7400,7 +7975,8 @@
         "缓冲流的类型仍是 InputStream",
         "关闭外层时会关闭被包住的流",
         "能力靠再包一层组合，不靠子类起名"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -7413,7 +7989,8 @@
         "JDK 动态代理生成的是接口的实现",
         "调用接口方法会进入 invoke",
         "具体类不能放进接口数组"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -7426,7 +8003,8 @@
         "不可修改列表是原列表的视图",
         "改原列表，视图读到的内容跟着变",
         "视图上的修改会抛 UnsupportedOperationException"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -7439,7 +8017,8 @@
         "Runnable 把一次工作收成对象",
         "Executor.execute 不包含业务步骤",
         "任务数据跟工作对象走，不写进池的字段"
-      ]
+      ],
+      "since": "Java"
     },
     {
       "track": "java",
@@ -7452,7 +8031,8 @@
         "同名 getBean 得到的是产品",
         "工厂实例要在名字前加 &",
         "默认会把产品当作单例缓存"
-      ]
+      ],
+      "since": "Spring"
     },
     {
       "track": "java",
@@ -7465,7 +8045,8 @@
         "监听器登记后由 publishEvent 通知",
         "默认在发布方线程里跑完才返回",
         "@Async 才把这个监听器换到别的线程"
-      ]
+      ],
+      "since": "Spring"
     },
     {
       "track": "java",
@@ -7478,7 +8059,8 @@
         "回调提供 SQL 和结果抽取",
         "模板把 SQLException 转成 DataAccessException",
         "服务方法不必声明 SQLException"
-      ]
+      ],
+      "since": "Spring"
     },
     {
       "track": "java",
@@ -7491,7 +8073,8 @@
         "构造器参数列出这个类要的协作者",
         "方法里 getBean 把缺失推迟到调用时",
         "按名字索取时编译器看不到类型"
-      ]
+      ],
+      "since": "Spring"
     },
     {
       "track": "java",
@@ -7505,7 +8088,8 @@
         "程序计数器记录的是虚拟机指令，不是 CPU 寄存器",
         "每个线程有自己的栈，一次调用对应一个栈帧",
         "堆和方法区由线程共享，具体怎么放看虚拟机实现"
-      ]
+      ],
+      "since": "JVM"
     },
     {
       "track": "java",
@@ -7519,7 +8103,8 @@
         "类的身份是类名加上定义它的加载器",
         "查找时通常先问父加载器，再问自己",
         "两个加载器各加载同名类时，不能互相强制转换"
-      ]
+      ],
+      "since": "JVM"
     },
     {
       "track": "java",
@@ -7532,7 +8117,8 @@
         "可达性从 GC Roots 沿引用判断",
         "不可达不等于立刻被回收",
         "静态缓存、监听和线程池任务会把对象留在可达链上"
-      ]
+      ],
+      "since": "JVM"
     },
     {
       "track": "java",
@@ -7573,7 +8159,8 @@
         "运行时数据区是 pc、栈、堆、方法区",
         "JMM 是可见性与重排序的抽象",
         "工作内存不是第三块堆"
-      ]
+      ],
+      "since": "JVM"
     },
     {
       "track": "java",
@@ -7614,7 +8201,22 @@
         "Java 没有 C++ 式 delete 释放堆对象",
         "对象通常在堆，引用在栈帧",
         "逃逸分析可以不给每个 new 留堆块"
-      ]
+      ],
+      "since": "JVM"
+    },
+    {
+      "track": "java",
+      "group": "JVM",
+      "id": "jvm-xmx-not-container-limit",
+      "title": "-Xmx 是堆上限，不是容器内存限额的同义词",
+      "prompt": "为什么资料写给 JVM 配 -Xmx=宿主机的 80% 就安全，容器却被 OOMKilled？",
+      "keywords": "Xmx cgroup OOMKill 容器 JVM",
+      "points": [
+        "Xmx 只限堆",
+        "容器还有 cgroup 总上限",
+        "非堆与原生内存要留白"
+      ],
+      "since": "JVM ergonomics"
     },
     {
       "track": "java",
@@ -7641,7 +8243,8 @@
         "回收器在吞吐、停顿和内存占用之间取舍",
         "分配很快时回收会变勤，单次停顿仍可能很短",
         "先把接口延迟和 GC 暂停对上时间，再谈调参"
-      ]
+      ],
+      "since": "JVM"
     },
     {
       "track": "java",
@@ -7655,7 +8258,8 @@
         "Java heap space 表示堆里的对象装不下",
         "Metaspace 与 Direct buffer memory 不是堆",
         "StackOverflowError 是调用栈过深，加大堆无效"
-      ]
+      ],
+      "since": "JVM"
     },
     {
       "track": "java",
@@ -7668,7 +8272,8 @@
         "强引用可达则不会因 GC 丢掉",
         "软引用适合内存敏感缓存，不保证消掉一切 OOM",
         "弱引用不保活，也不等于立刻释放"
-      ]
+      ],
+      "since": "JVM"
     },
     {
       "track": "java",
@@ -7751,7 +8356,8 @@
         "需要全局停顿时，线程先到达安全点",
         "失控循环可能拖长到达安全点的时间",
         "要把等到齐的时间和停顿内的工作分开"
-      ]
+      ],
+      "since": "JVM"
     },
     {
       "track": "java",
@@ -7764,7 +8370,8 @@
         "字节码先解释执行，热点再编译",
         "测稳定性能要先预热",
         "编译假设失效时可能去优化"
-      ]
+      ],
+      "since": "JVM"
     },
     {
       "track": "java",
@@ -7777,7 +8384,8 @@
         "线程转储解释阻塞和死锁",
         "堆转储解释对象保留和泄漏",
         "不要用堆转储去查超时原因"
-      ]
+      ],
+      "since": "JVM"
     },
     {
       "track": "java",
@@ -7791,7 +8399,8 @@
         "直接调用 run 只是普通方法，仍在当前线程里执行",
         "start 才会安排另一个线程去执行",
         "虚拟线程和平台线程的创建方式不同，要看 JDK 版本"
-      ]
+      ],
+      "since": "Java threads"
     },
     {
       "track": "java",
@@ -7804,7 +8413,8 @@
         "volatile 保证可见性和有序性，不保证读改写的原子性",
         "单个计数用原子类，多步不变量用锁或事务",
         "锁要在 finally 中释放"
-      ]
+      ],
+      "since": "JDK concurrency"
     },
     {
       "track": "java",
@@ -7831,7 +8441,8 @@
         "interrupt 只是请对方停下来，不会强行杀掉线程",
         "捕获 InterruptedException 时，中断标记会被清掉",
         "自己不处理时，要把中断继续传出去"
-      ]
+      ],
+      "since": "JDK concurrency"
     },
     {
       "track": "java",
@@ -7872,7 +8483,8 @@
         "wait 必须持有监视器，等待时释放",
         "sleep 不释放已持有的监视器",
         "显式锁的等待用 Condition，不是 Object.wait"
-      ]
+      ],
+      "since": "JDK concurrency"
     },
     {
       "track": "java",
@@ -7969,20 +8581,22 @@
         "同一对象上的同步方法互斥",
         "未同步方法不经过监视器",
         "不同实例的 this 不是一把锁"
-      ]
+      ],
+      "since": "JDK concurrency"
     },
     {
       "track": "java",
       "group": "并发",
       "id": "java-thread-six-states",
-      "title": "Thread.State 有六个值，不是运行就绪挂起结束",
+      "title": "Thread.State 有六个值，不是运行就绪挂起结束（JDK 5）",
       "prompt": "为什么还把 Java 线程背成“运行、就绪、挂起、结束”四种状态？",
       "keywords": "Thread.State NEW RUNNABLE BLOCKED WAITING TIMED_WAITING TERMINATED",
       "points": [
         "枚举是六个值，没有单独的就绪或挂起",
         "sleep 是 TIMED_WAITING，抢锁是 BLOCKED",
         "stop/suspend 已废弃，不要当状态机"
-      ]
+      ],
+      "since": "JDK concurrency"
     },
     {
       "track": "java",
@@ -7995,7 +8609,8 @@
         "线程池要同时定线程数、队列长度和拒绝时怎么办",
         "队列不设上限时，任务堆在内存里，延迟跟着涨",
         "池子保护不了数据库，连接数和超时要另外设"
-      ]
+      ],
+      "since": "JDK concurrency"
     },
     {
       "track": "java",
@@ -8036,7 +8651,8 @@
         "ThreadLocal 的值跟着线程，不跟着请求",
         "线程池复用线程，必须在 finally 里 remove",
         "能显式传参就不要靠 ThreadLocal"
-      ]
+      ],
+      "since": "JDK concurrency"
     },
     {
       "track": "java",
@@ -8077,7 +8693,8 @@
         "无参 LinkedBlockingQueue 容量接近无界",
         "ArrayBlockingQueue 必须指定容量",
         "put 满时阻塞，offer 满时返回 false"
-      ]
+      ],
+      "since": "JDK concurrency"
     },
     {
       "track": "java",
@@ -8118,7 +8735,22 @@
         "加速比受串行部分限制",
         "共享锁和 IO 会抵消线程数",
         "创建和切换本身有成本"
-      ]
+      ],
+      "since": "JDK concurrency"
+    },
+    {
+      "track": "java",
+      "group": "并发",
+      "id": "thread-pool-formula-not-law",
+      "title": "“线程数 = CPU×2”是启发式，不是容量定律",
+      "prompt": "为什么资料给线程池大小写成 CPU 核数的两倍就完事，上线后延迟和拒绝策略一起炸？",
+      "keywords": "线程池 大小 CPU 启发式",
+      "points": [
+        "核数倍数只是起点",
+        "区分 CPU 与阻塞任务",
+        "队列与拒绝策略要一起设计"
+      ],
+      "since": "Java concurrency"
     },
     {
       "track": "java",
@@ -8131,7 +8763,8 @@
         "NULL 表示未知，和空字符串不同",
         "WHERE 的等号保留不了 NULL 行",
         "COUNT(列) 跳过 NULL，COUNT(*) 计入行"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8144,7 +8777,22 @@
         "必填用 NOT NULL 挡脏写",
         "可选未知应允许 NULL",
         "魔法默认值会伪造已知"
-      ]
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-check-enforced-not-parsed-only",
+      "title": "CHECK 约束在现行 MySQL 会强制，不是“写了等于没写”",
+      "prompt": "为什么老资料说 MySQL 的 CHECK 只解析不执行，新人却在 8.0 上撞上约束失败？",
+      "keywords": "MySQL CHECK 约束 8.0.16",
+      "points": [
+        "旧“只解析”说法已过时",
+        "8.0.16+ 会强制 CHECK",
+        "校验≠查询加速"
+      ],
+      "since": "MySQL 8.0.16"
     },
     {
       "track": "java",
@@ -8157,7 +8805,8 @@
         "左连接会用 NULL 补上没有匹配的右表",
         "WHERE 里的比较会丢掉这些 NULL 行",
         "右表条件放在 ON，才留得住左表"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8170,7 +8819,8 @@
         "INNER JOIN 丢弃无匹配行",
         "LEFT JOIN 保留左表，右表侧可为 NULL",
         "WHERE 右表条件可能抵消外连接"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8183,7 +8833,8 @@
         "JOIN 不必然产生临时表",
         "无索引大表联结才危险",
         "禁令应落到 EXPLAIN，而不是禁用关键字"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8196,7 +8847,8 @@
         "同列 OR 与 IN 计划常相近",
         "跨列 OR 才更需警惕",
         "用现行 EXPLAIN，不背旧版口诀"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8210,7 +8862,8 @@
         "HAVING 筛组，并可引用别名与聚集",
         "无 GROUP BY 且无聚集时 HAVING 并进 WHERE",
         "行级条件应写 WHERE，不要塞进 HAVING"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8223,7 +8876,8 @@
         "WHERE 在分组前过滤行",
         "HAVING 在分组后过滤组",
         "聚合门槛用 HAVING 或子查询"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8264,7 +8918,8 @@
         "2NF 禁止非主属性对候选键的部分依赖",
         "加主键不能自动满足第二范式",
         "反规范化要单独规定冗余如何一致"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8278,7 +8933,8 @@
         "Using index 要求列都来自同一索引",
         "显式列同样要解析数据字典",
         "列改名后客户端的列名或位置仍要更新"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8291,7 +8947,8 @@
         "TEXT 适合真正的长内容",
         "危险是热点查询拖出大列",
         "拆列表字段，不要禁用类型名"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8334,7 +8991,8 @@
         "默认页大小常见 16KB，但可以配置",
         "长列可能已在溢出页，列表未必读到",
         "拆表换行宽，也换来 JOIN 与多表更新"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8347,7 +9005,8 @@
         "外键提供引擎级引用检查，也有写入与 DDL 成本",
         "应用层校验覆盖不了所有写入路径",
         "冗余计数必须有更新与对账规则"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8388,7 +9047,8 @@
         "FLOAT 是单精度大约 7 位十进制",
         "DOUBLE 大约 15–16 位，不是 18",
         "金额不要用浮点"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8401,7 +9061,8 @@
         "禁的是浮点不是定点 DECIMAL",
         "金额用 DECIMAL 或整数分",
         "钱对不上来自二进制表示误差"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8414,7 +9075,22 @@
         "没有「一千万行必须拆」的服务器限制",
         "先测热数据、查询形态、复制与备份窗口",
         "拆分的代价是跨库查询和事务，不是行计数器"
-      ]
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-json-not-document-db",
+      "title": "MySQL JSON 类型仍是关系行上的一列，不是文档库换皮",
+      "prompt": "为什么加了 JSON 列、会用 JSON_EXTRACT，还不能说“我们已经是 Mongo 那套文档库”？",
+      "keywords": "MySQL JSON JSON_EXTRACT 文档库 InnoDB",
+      "points": [
+        "JSON 是关系表上的列类型",
+        "JSON 函数≠文档数据库产品",
+        "事务与表模型仍是 SQL/InnoDB"
+      ],
+      "since": "MySQL JSON"
     },
     {
       "track": "java",
@@ -8427,7 +9103,8 @@
         "普通视图存的是查询定义",
         "读视图通常展开到基表现算",
         "快照要单独物化，不能从 CREATE VIEW 自动得到"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8440,7 +9117,8 @@
         "存储过程是例程，不是事务包装器",
         "默认不自动全部回滚",
         "事务边界仍靠显式事务或会话设置"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8453,7 +9131,302 @@
         "触发器在 DML 时自动执行，源码侧常不可见",
         "通常与语句同事务，但排障成本高",
         "禁止触发器是团队启发式，不是语法禁令"
-      ]
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-cte-named-subquery",
+      "title": "WITH（CTE）是可复用的命名结果，不是自动物化加速器",
+      "prompt": "为什么把子查询改成 WITH 之后，有人以为一定更快，EXPLAIN 却差不多？",
+      "keywords": "MySQL CTE WITH RECURSIVE 子查询",
+      "points": [
+        "CTE 是命名查询步骤，便于复用",
+        "不保证物化或更快",
+        "递归 CTE 必须可终止"
+      ],
+      "since": "MySQL 8.0"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-enum-ban-not-absolute",
+      "title": "“禁止 ENUM 改 TINYINT”是运维启发式，不是类型真理",
+      "prompt": "为什么规范写“禁止使用 ENUM，可使用 TINYINT 代替”，并强调 ENUM 内部其实是整数？",
+      "keywords": "MySQL ENUM TINYINT DDL 字典表",
+      "points": [
+        "ENUM 内部是整数下标加映射",
+        "新增成员常要 DDL，大表成本高",
+        "禁令是启发式；TINYINT 要有字典含义"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-temp-table-vs-cte",
+      "title": "TEMPORARY TABLE 能跨语句复用，CTE 只活在这一条语句里",
+      "prompt": "为什么有人把 WITH 结果当成会话级临时表，下一条 SELECT 却找不到？",
+      "keywords": "MySQL TEMPORARY TABLE CTE WITH 会话",
+      "points": [
+        "TEMPORARY TABLE 会话内跨语句可见",
+        "CTE 只在本条语句内有效",
+        "内部临时表≠显式临时表≠CTE"
+      ],
+      "since": "MySQL"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-utf8-alias-not-utf8mb4",
+      "title": "“必须 UTF8”在 8.x 应对齐 utf8mb4",
+      "prompt": "为什么规范写“必须使用 UTF8 字符集”，并说万国码、省空间、无乱码？",
+      "keywords": "MySQL utf8mb4 utf8mb3 字符集",
+      "points": [
+        "utf8 历史别名常是 utf8mb3",
+        "现行推荐 utf8mb4",
+        "库表连接列要字符集一致"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-fk-ban-not-absolute",
+      "title": "“禁止外键”是并发启发式，不是完整性过时",
+      "prompt": "为什么规范写死禁止外键，理由是耦合、拖垮 update/delete、易死锁？",
+      "keywords": "MySQL 外键 完整性 对账 锁",
+      "points": [
+        "外键有写入与锁成本",
+        "禁令是启发式不是完整性过时",
+        "去掉外键必须补校验与对账"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-phone-varchar-length-not-twenty",
+      "title": "“手机号必须 varchar(20)”把长度钉死了",
+      "prompt": "为什么规范写必须用 varchar(20) 存手机号，并举区号、不做数学、可模糊查？",
+      "keywords": "MySQL 手机号 VARCHAR E.164",
+      "points": [
+        "电话别用数值类型",
+        "20 不是国际硬上限",
+        "规范化与显示要分开"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-insert-must-name-columns",
+      "title": "INSERT 不写列名会在加列时悄悄错位",
+      "prompt": "为什么规范禁止 INSERT INTO t VALUES(...)，要求必须写出列清单？",
+      "keywords": "MySQL INSERT 列清单 模式演进",
+      "points": [
+        "VALUES 依赖列序",
+        "加列会导致静默错位",
+        "应用代码应写列名"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-innodb-default-not-ban-others",
+      "title": "“必须 InnoDB”是默认选型，不是引擎清零",
+      "prompt": "为什么规范写必须使用 InnoDB，并列举事务、行锁、缓存页？",
+      "keywords": "InnoDB 默认引擎 MySQL",
+      "points": [
+        "8.x 默认 InnoDB",
+        "业务表优先事务引擎",
+        "其它引擎是例外需论证"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-db-not-blob-store",
+      "title": "“禁止存大文件”禁的是把库当网盘",
+      "prompt": "为什么规范禁止在数据库存大文件或大照片，并说存 URI？",
+      "keywords": "对象存储 BLOB URI 备份",
+      "points": [
+        "库不适合当网盘",
+        "URI+对象存储是常路",
+        "短二进制另议"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-instance-table-count-not-500",
+      "title": "“单实例表数必须<500”是容量启发式",
+      "prompt": "为什么规范写单实例表数目必须小于 500？",
+      "keywords": "MySQL 元数据 表数量 治理",
+      "points": [
+        "500 是治理红线不是上限",
+        "表过多伤元数据运维",
+        "模型与拆分比改数字重要"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-column-count-thirty-not-law",
+      "title": "“单表列数必须<30”不是行格式定律",
+      "prompt": "为什么规范写单表列数目必须小于 30？",
+      "keywords": "宽表 列数 垂直拆分",
+      "points": [
+        "30 是审查阈值",
+        "宽表风险在投影与疏稀",
+        "拆分比背数字重要"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-db-features-ban-not-absolute",
+      "title": "“禁止存储过程/视图/触发器/Event”是算力上移策略",
+      "prompt": "为什么规范一把禁止存储过程、视图、触发器、Event，理由是解放数据库 CPU？",
+      "keywords": "视图 触发器 Event 存储过程 扩展性",
+      "points": [
+        "算力上移是默认策略",
+        "四种对象风险不同",
+        "例外要拥有者与观测"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-ddl-merge-heuristic",
+      "title": "“同表 DDL 必须合并一条”是锁窗口策略",
+      "prompt": "为什么规范要求同表增删字段、索引合并一条 DDL 执行？",
+      "keywords": "DDL 在线变更 元数据锁",
+      "points": [
+        "合并为缩短变更窗口",
+        "不是语法强制",
+        "在线工具与算法优先"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-catch-sql-exception-not-enough",
+      "title": "“必须捕获 SQL 异常”不够，还要可重试语义",
+      "prompt": "为什么规范写应用程序必须捕获 SQL 异常并有相应处理？",
+      "keywords": "SQLException 死锁 幂等 重试",
+      "points": [
+        "捕获是底线不是完成",
+        "按错误类决策",
+        "事务与幂等更关键"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-pk-autoinc-not-only-choice",
+      "title": "“表必须有自增主键”把主键策略收窄了",
+      "prompt": "为什么规范写表必须有主键并举例自增主键，强调插入性能与避免页分裂？",
+      "keywords": "主键 自增 聚簇索引 雪花",
+      "points": [
+        "InnoDB 需要聚簇键",
+        "宜短宜稳宜顺",
+        "自增常见但非唯一"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-subquery-ban-not-absolute",
+      "title": "“禁止大表子查询”要看改写与物化",
+      "prompt": "为什么规范在禁 JOIN 同时禁止大表使用子查询，理由是临时表？",
+      "keywords": "子查询 半连接 物化 EXPLAIN",
+      "points": [
+        "拙劣子查询会物化放大",
+        "优化器常可半连接改写",
+        "计划优于口诀"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-scalability-not-hopeless",
+      "title": "“MySQL 扩展性差”不能当 NoSQL 唯一理由",
+      "prompt": "为什么资料在 NoSQL 动机里强调关系数据库扩展性差、需要复杂技术？",
+      "keywords": "扩展性 副本 分片 NoSQL",
+      "points": [
+        "单机有边界但可扩展",
+        "NoSQL 也有代价",
+        "按访问模型选"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "db-proxy-layer-not-only-choice",
+      "title": "“中间代理层统一数据源”不是分库唯一解",
+      "prompt": "为什么资料在分库手段里写通过中间代理层统一管理所有数据源、对应用透明？",
+      "keywords": "分库 代理 读写分离",
+      "points": [
+        "代理可降连接与集中路由",
+        "不是唯一分片形态",
+        "跨片复杂度仍在"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "hot-cold-ratio-not-fixed-one-to-four",
+      "title": "“冷热数据比约 1:4”不是通用定律",
+      "prompt": "为什么资料在历史存取场景写冷热比例约为 1:4？",
+      "keywords": "冷热分层 归档 生命周期",
+      "points": [
+        "比例随业务变",
+        "用访问统计校准",
+        "分层策略重于数字"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "business-split-db-not-only-path",
+      "title": "“常用拆分是业务分库”不是分片终点",
+      "prompt": "为什么资料写常用数据库拆分手段是业务分库，把不同业务部署到不同物理服务器？",
+      "keywords": "业务分库 水平分片 边界",
+      "points": [
+        "业务分库清边界",
+        "热点再水平拆",
+        "过碎引入分布式事务"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "rw-split-not-strong-consistency",
+      "title": "读写分离摊的是读负载，不是强一致读自己的写",
+      "prompt": "为什么资料画了“写主库、读从库”就说扩展完成，用户改完资料刷新却看到旧值？",
+      "keywords": "读写分离 复制延迟 read-your-writes",
+      "points": [
+        "读写分离摊读负载",
+        "副本可能落后于主",
+        "读己之写要额外策略"
+      ],
+      "since": "MySQL replication"
     },
     {
       "track": "java",
@@ -8466,7 +9439,8 @@
         "先写提交后必须成立的事实",
         "每种事实决定一种行",
         "界面状态和当前标价不是已提交的事实"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8479,7 +9453,8 @@
         "一行只表示一种东西",
         "重复的商品列不是明细表",
         "自增主键不改变粒度"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8492,7 +9467,8 @@
         "先查再插挡不住同时到来的两次写入",
         "唯一约束让第二笔在引擎里失败",
         "应用判断不是唯一的写入者"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8505,7 +9481,8 @@
         "有索引只说明存在这条路径，优化器按成本选择",
         "组合索引从左列开始匹配",
         "用 EXPLAIN ANALYZE 核对估计行数，而不是再加一条重复索引"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8518,7 +9495,8 @@
         "索引种类包括全文与空间，算法因引擎而异",
         "主键约束不等于聚簇索引选择的全部规则",
         "InnoDB 主要用 B-tree 组织，不能排除其他索引类型"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8531,7 +9509,8 @@
         "EXPLAIN 是优化器估计",
         "ANALYZE 会实际执行",
         "估计与实际行数差异"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8550,6 +9529,20 @@
     {
       "track": "java",
       "group": "数据库",
+      "id": "mysql-spatial-index-not-full-gis",
+      "title": "MySQL SPATIAL 索引能加速几何谓词，不是完整 GIS 引擎",
+      "prompt": "为什么建了 SPATIAL INDEX、会用 MBRContains，测绘围栏和投影换算仍对不齐？",
+      "keywords": "MySQL SPATIAL GEOMETRY ST_Contains R-tree GIS",
+      "points": [
+        "SPATIAL 索引服务几何类型与空间谓词",
+        "不是完整 GIS / 测绘引擎",
+        "与 Redis GEO、普通 B-tree 经纬度是不同层"
+      ],
+      "since": "MySQL SPATIAL"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
       "id": "mysql-innodb-index-lock",
       "title": "InnoDB 行锁加在索引记录上，不是“没索引就变表锁”",
       "prompt": "没有二级索引的 UPDATE 会不会让 InnoDB 改用表锁？",
@@ -8559,7 +9552,8 @@
         "行锁加在索引记录和间隙上",
         "无用户索引时仍用聚簇或隐藏索引加锁",
         "扫描导致的大范围锁不是改用表锁"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8572,7 +9566,8 @@
         "唯一索引查询少探下一条，收益通常很小",
         "唯一性检查会挡住多数 change buffer 写入合并",
         "写多读少时普通二级索引可能更合适"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8585,7 +9580,8 @@
         "索引减少扫描但增加写维护和空间",
         "TEXT/BLOB 常用前缀索引，前缀太短会没选择性",
         "组合索引列顺序要匹配等值、范围和排序"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8612,7 +9608,190 @@
         "InnoDB 用户索引是 B+ 树",
         "Hash 索引属于 MEMORY/NDB 等，不是 InnoDB DDL",
         "自适应哈希是内部结构，不是第二种业务索引"
-      ]
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-index-count-five-not-law",
+      "title": "“单表索引≤5、组合列≤5”不是引擎定律",
+      "prompt": "为什么规范写死单表索引控制在 5 个以内、单索引字段数不允许超过 5 个？",
+      "keywords": "MySQL 索引 选择性 EXPLAIN 组合索引",
+      "points": [
+        "5 是团队启发式不是引擎上限",
+        "加索引看计划与选择性",
+        "低区分度与错最左前缀才是常见废索引"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-implicit-convert-breaks-index",
+      "title": "“禁止隐式转换”针对的是错类型比较挡索引",
+      "prompt": "为什么规范写“禁止使用属性隐式转换”，并用 phone=13800000000 解释全表扫描？",
+      "keywords": "MySQL 隐式转换 索引 类型 手机号",
+      "points": [
+        "错类型比较常让列被转换从而挡索引",
+        "对齐字面量/绑定类型是正解",
+        "CAST 放常量侧不等于犯规"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-where-func-blocks-index",
+      "title": "WHERE 里函数包住索引列，不是“SQL 里不许出现函数”",
+      "prompt": "为什么规范禁止在 WHERE 条件的属性上使用函数或表达式，并举 from_unixtime(day) 的例子？",
+      "keywords": "MySQL sargable 函数 索引 WHERE",
+      "points": [
+        "函数包住索引列常挡范围扫描",
+        "计算应尽量留在常量侧",
+        "函数索引是例外需显式设计"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-generated-column-not-where-wrap",
+      "title": "生成列 / 函数索引是显式建模，不是 WHERE 里乱包函数的许可证",
+      "prompt": "为什么规范禁止 WHERE 对索引列套函数，有人却说“MySQL 8 有函数索引，所以 DATE(created_at) 随便写”？",
+      "keywords": "MySQL 生成列 函数索引 sargable",
+      "points": [
+        "生成列/函数索引是显式建模",
+        "不自动拯救 WHERE 列上函数",
+        "高频表达式才值得建并核对计划"
+      ],
+      "since": "MySQL 8"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-negative-predicate-not-always-scan",
+      "title": "“负向查询一定全表扫”不是现行定律",
+      "prompt": "为什么规范把 NOT、!=、<>、NOT IN、NOT LIKE 一律说成会导致全表扫描？",
+      "keywords": "MySQL NOT IN 选择性 EXPLAIN",
+      "points": [
+        "负向常慢但不是定律",
+        "选择性与计划说了算",
+        "NOT IN 与 NULL 语义独立"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-leading-percent-like-heuristic",
+      "title": "“禁止 % 开头模糊查”说的是 B+ 树最左匹配",
+      "prompt": "为什么规范禁止 % 开头的模糊查询，并说一定全表扫描？",
+      "keywords": "MySQL LIKE 前缀 全文 索引",
+      "points": [
+        "前导 % 难用 B+ 最左",
+        "尾随 % 常可范围",
+        "尾缀需求换引擎或冗余列"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-low-selectivity-index-heuristic",
+      "title": "“禁止低区分度/热更新列建索引”是成本提示",
+      "prompt": "为什么规范禁止在更新频繁、区分度不高的属性上建索引，并举性别例子？",
+      "keywords": "选择性 写放大 组合索引",
+      "points": [
+        "低区分度单独索引常废",
+        "写放大是真实成本",
+        "组合位置与计划说了算"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-composite-selectivity-order-heuristic",
+      "title": "“区分度高的列必须在前”要服从查询形态",
+      "prompt": "为什么规范写建立组合索引必须把区分度高的字段放在前面？",
+      "keywords": "组合索引 最左前缀 区分度",
+      "points": [
+        "列序先服从查询",
+        "区分度是微调不是唯一规则",
+        "范围条件截断后续列"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-count-star-innodb-not-always-scan",
+      "title": "“InnoDB 的 count(*) 一定扫全表”说满了",
+      "prompt": "为什么资料对比 MyISAM/InnoDB 时写 InnoDB 的 count(*) 要扫全表，MyISAM 直接读计数器？",
+      "keywords": "COUNT InnoDB MVCC 汇总表",
+      "points": [
+        "MVCC 使表级计数器不简单",
+        "有 WHERE 看索引",
+        "精确总数可用汇总"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-extend-index-before-new",
+      "title": "“尽量扩展索引、不要新建”是维护启发式",
+      "prompt": "为什么索引原则写：尽量扩展索引，不要新建索引？",
+      "keywords": "索引维护 最左前缀 写放大",
+      "points": [
+        "扩展常省写放大",
+        "无关路径应新建",
+        "宽索引也会废"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-and-order-optimizer-reorders",
+      "title": "“AND 条件可乱序”靠的是优化器，不是不用管列序",
+      "prompt": "为什么索引原则写 and 之间可以乱序，优化器会调成索引能识别的形式？",
+      "keywords": "优化器 最左前缀 AND",
+      "points": [
+        "等值 AND 常可重排",
+        "索引物理序仍重要",
+        "范围/OR/函数不靠乱序拯救"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-right-fuzzy-like-can-use-index",
+      "title": "右模糊（前缀%）常常可走索引，不是“模糊都扫表”",
+      "prompt": "为什么同一页既禁 % 开头，又写右模糊 321% 会使用索引？",
+      "keywords": "LIKE 前缀匹配 索引",
+      "points": [
+        "前缀匹配可走 B+ 范围",
+        "前导 % 另案",
+        "选择性仍可能放弃索引"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-invisible-index-not-drop",
+      "title": "不可见索引是先对优化器隐藏，不是已经删掉的索引",
+      "prompt": "为什么有人把索引改成 INVISIBLE 就以为等于 DROP INDEX，过一周却发现磁盘和写入成本还在？",
+      "keywords": "MySQL invisible index 不可见索引",
+      "points": [
+        "INVISIBLE 仍维护仍占空间",
+        "用来试验去掉索引的影响",
+        "真删才 DROP"
+      ],
+      "since": "MySQL 8"
     },
     {
       "track": "java",
@@ -8625,7 +9804,8 @@
         "用累计耗时排序，不只看单次最慢",
         "摘要表同时给出次数、检查行数和返回行数",
         "定位之后才做 EXPLAIN"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8638,7 +9818,8 @@
         "优化目标是检查行数和耗时一起下降",
         "索引名出现在计划里不等于只扫了返回的那些行",
         "改完必须再测一次，而不是停在建索引成功"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8651,7 +9832,8 @@
         "普通 SELECT 的一致性读不加更新所需的锁",
         "两个事务可以同时看见同一版本",
         "扣减用条件更新或锁定读，放在同一个事务里"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8664,7 +9846,8 @@
         "资料两列表格是直觉不是表结构",
         "历史版本主要在 undo 链",
         "快照读与锁定读规则不同"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8677,7 +9860,8 @@
         "隔离级别与可见性",
         "业务不变量不能只靠隔离级别",
         "唯一约束与冲突重试"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8690,7 +9874,8 @@
         "InnoDB 默认 REPEATABLE READ",
         "普通一致性读与锁定读用不同策略",
         "幻读控制不能只归因于 MVCC 一句话"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8703,7 +9888,8 @@
         "交叉加锁形成等待环",
         "死锁回滚整笔事务",
         "有界重试与统一加锁顺序"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8716,7 +9902,8 @@
         "冲突条件是主键或唯一索引",
         "受影响行数区分插入、更新与未改值",
         "多唯一索引与 VALUES() 旧写法都有陷阱"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8743,7 +9930,8 @@
         "磁盘文档是 BSON 不是 JSON 文本",
         "use 只切换名字，第一次写入才建库",
         "WiredTiger 缓存 ≠ 全部数据只在内存"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8756,7 +9944,8 @@
         "C 是 Consistency 不是 Correspondence",
         "隔离有级别，InnoDB 默认 RR 加 MVCC",
         "不同行可以同时提交，隔离不是单线程"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8769,7 +9958,8 @@
         "NoSQL 是接口与模型的分类，不是一致性级别",
         "MongoDB 多文档事务与 Redis 单键原子都存在",
         "从副本读的延迟要单独约定，SQL 库也一样"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8824,7 +10014,8 @@
         "源写 binary log，副本经 dump/I/O/applier 应用",
         "中继日志是 relay log，不是 replay log",
         "默认异步，另有 GTID 与半同步等选项"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8837,7 +10028,8 @@
         "异步复制在提交之后才把事件应用到从库",
         "从库延迟期间读不到刚提交的行",
         "延迟秒数是估计，不能代替复制位点"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8910,7 +10102,8 @@
         "redo 服务持久性与崩溃恢复",
         "undo 服务回滚和 MVCC",
         "binlog 用于复制和时间点恢复，不只是主从"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8923,7 +10116,8 @@
         "checksum 按索引切块后主从用同一批行计算",
         "缺主键或唯一键时切块危险",
         "sync 改的是数据且应经主库复制，先备份"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -8964,7 +10158,8 @@
         "String 适合整体读写一个值",
         "Hash、Set、Sorted Set 对应字段、去重和按分数排序",
         "Stream 适合追加日志，过期不能代替结构"
-      ]
+      ],
+      "since": "Redis"
     },
     {
       "track": "java",
@@ -8977,7 +10172,8 @@
         "Hash 可按字段读写",
         "整份 JSON String 改一字段要整键重写",
         "一个 Hash 键在 Cluster 里仍在一个槽"
-      ]
+      ],
+      "since": "Redis"
     },
     {
       "track": "java",
@@ -8990,7 +10186,8 @@
         "ZSet 按 score 有序",
         "TopN 与名次用范围/排名命令",
         "同分再按成员序，成员必须唯一"
-      ]
+      ],
+      "since": "Redis"
     },
     {
       "track": "java",
@@ -9031,7 +10228,64 @@
         "未命中时读数据库并回填缓存",
         "写数据库成功后再删除缓存",
         "缓存不会自动跟随数据库更新"
-      ]
+      ],
+      "since": "Redis"
+    },
+    {
+      "track": "java",
+      "group": "缓存",
+      "id": "cache-db-double-write-race",
+      "title": "先写库再删缓存仍可能读到旧值，双写要谈竞态",
+      "prompt": "为什么资料把 Cache Aside 写成“更新数据库后删除缓存”就结束，线上仍偶发读到旧数据？",
+      "keywords": "Cache Aside 双写 竞态 删缓存",
+      "points": [
+        "写库删缓存仍有竞态窗口",
+        "并发回填会写回旧值",
+        "要版本/双删/变更流等策略"
+      ],
+      "since": "Redis Cache Aside"
+    },
+    {
+      "track": "java",
+      "group": "缓存",
+      "id": "redis-client-side-cache-invalidate",
+      "title": "客户端缓存省的是往返，失效路径不能省",
+      "prompt": "为什么进程内再囤一份 Redis 读结果之后，库已更新、页面却长时间仍是旧值？",
+      "keywords": "Redis 客户端缓存 tracking RESP3 失效",
+      "points": [
+        "客户端缓存是多出来的副本",
+        "键变更必须有失效或短 TTL",
+        "tracking 仍要处理断线窗口"
+      ],
+      "since": "Redis 6 CSC"
+    },
+    {
+      "track": "java",
+      "group": "缓存",
+      "id": "redis-wait-replicas-not-durability",
+      "title": "WAIT 等的是副本确认，不是把 AOF/RDB 耐久承诺一次性买齐",
+      "prompt": "为什么写完关键命令后调用 WAIT 1，磁盘挂了或主库掉电，面试还说“已经 WAIT 了应该不丢”？",
+      "keywords": "Redis WAIT 复制 持久化 AOF",
+      "points": [
+        "WAIT 等副本复制确认",
+        "不代替 AOF/RDB 落盘",
+        "超时与成功要分开处理"
+      ],
+      "since": "Redis WAIT"
+    },
+    {
+      "track": "java",
+      "group": "缓存",
+      "id": "redis-hello-resp3-not-just-version",
+      "title": "HELLO/RESP3 换的是协议能力面，不是“版本号好看一点”",
+      "prompt": "为什么资料写 Redis 6 支持 RESP3，团队却只把客户端库升了大版本，客户端缓存失效仍不稳定？",
+      "keywords": "Redis HELLO RESP3 tracking",
+      "points": [
+        "RESP3 要协议协商",
+        "能力面含更富类型与 tracking",
+        "代理/客户端都要匹配"
+      ],
+      "since": "Redis 6 RESP3"
     },
     {
       "track": "java",
@@ -9044,7 +10298,8 @@
         "大 key 是单个值过大，拖慢网络和删除",
         "热 key 是请求打在一个键上，打满其所在分片",
         "加分片不会自动把同一个键拆开"
-      ]
+      ],
+      "since": "Redis"
     },
     {
       "track": "java",
@@ -9057,7 +10312,8 @@
         "TTL 同时到期的回源峰值",
         "热键失效与请求合并",
         "空值缓存的误判与时效"
-      ]
+      ],
+      "since": "Redis"
     },
     {
       "track": "java",
@@ -9070,7 +10326,8 @@
         "maxmemory-policy 决定满内存时怎么删",
         "LRU/LFU 是近似抽样，不是唯一算法",
         "volatile-* 只从带过期时间的键里挑"
-      ]
+      ],
+      "since": "Redis"
     },
     {
       "track": "java",
@@ -9083,7 +10340,8 @@
         "穿透是缓存和库都没有，要挡非法键",
         "击穿是单个热 key 失效后的并发回源",
         "雪崩是同时失效或缓存整体不可用"
-      ]
+      ],
+      "since": "Redis"
     },
     {
       "track": "java",
@@ -9096,7 +10354,8 @@
         "FIFO 是通用置换思路，不是 Redis 政策名",
         "Redis 淘汰名是 allkeys/volatile 加 lru lfu random ttl",
         "LRU/LFU 在 Redis 里是近似抽样"
-      ]
+      ],
+      "since": "Redis"
     },
     {
       "track": "java",
@@ -9109,7 +10368,8 @@
         "进程内缓存无网络、不跨节点",
         "Redis/Memcached 是独立服务，可共享",
         "本机 Redis 仍是远程协议，不是 Caffeine"
-      ]
+      ],
+      "since": "Redis"
     },
     {
       "track": "java",
@@ -9122,7 +10382,8 @@
         "STRING 上限 512MB 不是 1GB",
         "淘汰策略包含 LFU 等，不是旧六项",
         "官方集群是 hash slot，Codis 不是现行默认"
-      ]
+      ],
+      "since": "Redis"
     },
     {
       "track": "java",
@@ -9141,6 +10402,20 @@
     {
       "track": "java",
       "group": "缓存",
+      "id": "lru-needs-hash-and-list",
+      "title": "LRU 口诀要同时有哈希与链表",
+      "prompt": "为什么资料写 LRU 利用链表和 HashMap：尾部最近最久未访问？",
+      "keywords": "LRU HashMap 链表",
+      "points": [
+        "哈希定位要分清",
+        "链表维护次序",
+        "容量与 TTL 分开"
+      ],
+      "since": "Redis"
+    },
+    {
+      "track": "java",
+      "group": "缓存",
       "id": "redis-persistence",
       "title": "Redis 持久化与数据丢失窗口",
       "prompt": "打开 AOF 后，Redis 每次写成功都意味着磁盘绝不会丢数据吗？",
@@ -9149,7 +10424,8 @@
         "RDB 快照与 AOF 日志",
         "fsync 策略决定丢失窗口",
         "缓存与权威数据的恢复目标"
-      ]
+      ],
+      "since": "Redis"
     },
     {
       "track": "java",
@@ -9176,7 +10452,8 @@
         "命令在单线程里排队执行",
         "遍历全部键或巨大的值会堵住其他命令",
         "生产用 SCAN 分批，禁用 KEYS"
-      ]
+      ],
+      "since": "Redis"
     },
     {
       "track": "java",
@@ -9189,7 +10466,8 @@
         "哨兵提供主从故障切换，不拆分数据",
         "集群按槽把键放到不同节点",
         "热 key 在集群里仍可能打满单个槽"
-      ]
+      ],
+      "since": "Redis"
     },
     {
       "track": "java",
@@ -9230,7 +10508,8 @@
         "全量传 RDB，增量传 Redis 写命令，不是 binlog",
         "部分重同步取决于复制 ID 和偏移是否还在积压里",
         "主从复制默认异步，和集群分槽不是同一条链路"
-      ]
+      ],
+      "since": "Redis"
     },
     {
       "track": "java",
@@ -9271,7 +10550,8 @@
         "代理取模后面是多台互不知晓的 Redis",
         "Cluster 用 16384 槽和客户端重定向",
         "加减节点时取模几乎整表搬家，槽迁移只动受影响的键"
-      ]
+      ],
+      "since": "Redis"
     },
     {
       "track": "java",
@@ -9284,7 +10564,8 @@
         "SAVE 在服务线程写完快照，期间不接命令",
         "BGSAVE fork 子进程，父进程继续服务",
         "配置里的 save 规则触发的是 BGSAVE"
-      ]
+      ],
+      "since": "Redis"
     },
     {
       "track": "java",
@@ -9317,6 +10598,34 @@
     {
       "track": "java",
       "group": "缓存",
+      "id": "redis-functions-not-just-eval",
+      "title": "Redis Functions 是注册后的库，不是每次 EVAL 贴脚本的同义词",
+      "prompt": "为什么资料说 Redis 7 有 Functions，团队却仍把整段 Lua 每次 EVAL 送上服务器？",
+      "keywords": "Redis Functions FCALL EVAL Lua Redis 7",
+      "points": [
+        "Functions 注册后 FCALL，可持久",
+        "EVAL 是按次脚本，不是同一产物",
+        "原子与键声明约束仍然在"
+      ],
+      "since": "Redis 7 Functions"
+    },
+    {
+      "track": "java",
+      "group": "缓存",
+      "id": "redis-acl-not-just-requirepass",
+      "title": "Redis ACL 按用户裁命令与键，不是只设一个 requirepass",
+      "prompt": "为什么只配了 requirepass，应用账号仍能 FLUSHALL、也能读到别的业务前缀？",
+      "keywords": "Redis ACL requirepass 最小权限",
+      "points": [
+        "requirepass 多是整库大门",
+        "ACL 按用户裁命令与键模式",
+        "业务账号应避开危险命令与无关键"
+      ],
+      "since": "Redis 6 ACL"
+    },
+    {
+      "track": "java",
+      "group": "缓存",
       "id": "redis-multi-vs-lua-pick",
       "title": "MULTI 排队与 Lua 脚本：原子缝不同，都不是 SQL 回滚",
       "prompt": "为什么 WATCH+MULTI 老是 EXEC 失败，有人建议改成 Lua，有人又说 MULTI 就够了？",
@@ -9325,7 +10634,8 @@
         "MULTI 保证批内不插队，不保证 SQL 回滚",
         "Lua 适合服务端读改一体的短脚本",
         "跨库一致性不在这两层解决"
-      ]
+      ],
+      "since": "Redis"
     },
     {
       "track": "java",
@@ -9352,7 +10662,50 @@
         "PSUBSCRIBE 只匹配频道名模式",
         "仍然无历史、无确认",
         "业务补单用 Stream，不要用模式订阅冒充"
-      ]
+      ],
+      "since": "Redis"
+    },
+    {
+      "track": "java",
+      "group": "缓存",
+      "id": "redis-stream-xtrim-bound",
+      "title": "Stream 要 XTRIM / MAXLEN，否则积压会把内存吃光",
+      "prompt": "为什么上了 Stream 做下单事件，几个月后 Redis 内存涨到报警，消息却还在？",
+      "keywords": "Redis Stream XTRIM MAXLEN 积压",
+      "points": [
+        "Stream 默认不自动删旧条目",
+        "用 MAXLEN/XTRIM 限制长度",
+        "近似修剪省开销，条数可能略超"
+      ],
+      "since": "Redis 5 Stream"
+    },
+    {
+      "track": "java",
+      "group": "缓存",
+      "id": "redis-keyspace-notify-not-queue",
+      "title": "键空间通知是 Pub/Sub 信号，不是可靠工作队列",
+      "prompt": "为什么用过期键通知做“订单超时关单”，消费者一重启就漏关？",
+      "keywords": "Redis 键空间通知 Pub/Sub 过期 队列",
+      "points": [
+        "键空间通知基于 Pub/Sub",
+        "离线期间事件不补发",
+        "超时关单不要只靠过期通知"
+      ],
+      "since": "Redis Keyspace"
+    },
+    {
+      "track": "java",
+      "group": "缓存",
+      "id": "redis-pubsub-not-reliable-queue",
+      "title": "Pub/Sub 的时间依赖说明它不是可靠队列",
+      "prompt": "为什么资料写发布订阅有时间依赖：必须先订阅再发布，订阅者还得保持运行？",
+      "keywords": "Redis Pub/Sub Stream 可靠投递",
+      "points": [
+        "晚订阅丢失历史",
+        "不是任务队列",
+        "可靠投递换 Stream/MQ"
+      ],
+      "since": "Redis"
     },
     {
       "track": "java",
@@ -9407,7 +10760,8 @@
         "默认常为 singleton，但存在多种内建作用域",
         "Web 作用域含 request/session/application/websocket",
         "global-session 属旧 Portlet 语境，不宜当通用五项"
-      ]
+      ],
+      "since": "Spring"
     },
     {
       "track": "java",
@@ -9420,7 +10774,8 @@
         "配置来源及覆盖顺序",
         "profile 对配置的影响",
         "运行时追踪最终属性值"
-      ]
+      ],
+      "since": "Spring"
     },
     {
       "track": "java",
@@ -9503,7 +10858,8 @@
         "过滤器在 DispatcherServlet 之外",
         "拦截器在控制器前后",
         "控制器通知接不住过滤器里的异常"
-      ]
+      ],
+      "since": "Spring"
     },
     {
       "track": "java",
@@ -9516,7 +10872,8 @@
         "异常解析器把控制器异常变成 HTTP 响应",
         "业务冲突和未知故障要分处理器，body 形状保持问题详情",
         "过滤器阶段的失败也必须输出同一契约，不能落到 HTML 错误页"
-      ]
+      ],
+      "since": "Spring"
     },
     {
       "track": "java",
@@ -9529,7 +10886,8 @@
         "Filter 在 Servlet 前后工作，不限于 Spring MVC",
         "Interceptor 只处理 DispatcherServlet 映射到的 Handler",
         "更早的 Filter 改过的请求，Interceptor 看到的是改完的结果"
-      ]
+      ],
+      "since": "Spring"
     },
     {
       "track": "java",
@@ -9570,7 +10928,8 @@
         "Controller 默认单例共享实例",
         "请求状态不要放实例字段",
         "不要用 synchronized 解决串请求"
-      ]
+      ],
+      "since": "Spring"
     },
     {
       "track": "java",
@@ -9583,7 +10942,8 @@
         "Spring AOP 默认是运行时代理，不是改源码",
         "接口实现常用 JDK 代理，类代理常用 CGLIB",
         "final 类或方法无法按子类方式代理"
-      ]
+      ],
+      "since": "Spring"
     },
     {
       "track": "java",
@@ -9596,7 +10956,8 @@
         "代理只拦截从外部进入的调用",
         "this.方法() 不会再次套上切面",
         "要独立事务或权限时，拆 Bean 或走注入的代理"
-      ]
+      ],
+      "since": "Spring"
     },
     {
       "track": "java",
@@ -9679,7 +11040,8 @@
         "持久化上下文按 id 管理实体，flush 时写出变更",
         "延迟关联在访问时发 SQL，会话关闭后再访问会失败",
         "列表循环访问关联是 N+1，要用这次用例的查询一次取齐"
-      ]
+      ],
+      "since": "JPA"
     },
     {
       "track": "java",
@@ -9706,7 +11068,8 @@
         "OSIV 让视图也能触发 SQL，事务边界变糊",
         "懒加载异常说明取数边界和用例不匹配",
         "服务层按用例取完再关闭会话"
-      ]
+      ],
+      "since": "JPA"
     },
     {
       "track": "java",
@@ -9719,7 +11082,8 @@
         "托管实体改字段后，flush 会发出 UPDATE",
         "对托管实例再 save 通常不会多一次写入",
         "游离实体的修改要重新进入上下文才会写库"
-      ]
+      ],
+      "since": "JPA"
     },
     {
       "track": "java",
@@ -9732,7 +11096,8 @@
         "更新必须带上读到的版本号",
         "版本不匹配表示有人先写过，这次应失败",
         "乐观锁不代替极热点上的短悲观锁"
-      ]
+      ],
+      "since": "JPA"
     },
     {
       "track": "java",
@@ -9745,7 +11110,8 @@
         "cascade 跟随父实体的 persist、merge、remove",
         "orphanRemoval 删除被移出集合的子实体",
         "不要对共享实体使用 cascade remove"
-      ]
+      ],
+      "since": "JPA"
     },
     {
       "track": "java",
@@ -9758,7 +11124,8 @@
         "Page 通常额外查总条数",
         "Slice 只取本页，用多取一行判断下一页",
         "界面不展示总页数就不要付 COUNT 的成本"
-      ]
+      ],
+      "since": "JPA"
     },
     {
       "track": "java",
@@ -9785,7 +11152,8 @@
         "EAGER 影响所有查询，不适合只在详情需要的关联",
         "实体图声明这一次要 fetch 的路径",
         "列表和详情用不同的图，而不是改映射默认值"
-      ]
+      ],
+      "since": "JPA"
     },
     {
       "track": "java",
@@ -9798,7 +11166,8 @@
         "Mapper 方法对应明确的 SQL",
         "MyBatis 没有 JPA 那种脏检查会话",
         "复杂 SQL 用 MyBatis，实体状态机用 JPA"
-      ]
+      ],
+      "since": "MyBatis"
     },
     {
       "track": "java",
@@ -9811,7 +11180,8 @@
         "#{} 的预编译参数语义",
         "${} 文本替换的注入边界",
         "动态排序字段白名单"
-      ]
+      ],
+      "since": "MyBatis"
     },
     {
       "track": "java",
@@ -9824,7 +11194,8 @@
         "ResultMap 把列对应到字段",
         "一对多用 collection 折叠多行",
         "别名不一致时字段会静默为空"
-      ]
+      ],
+      "since": "MyBatis"
     },
     {
       "track": "java",
@@ -9837,7 +11208,8 @@
         "动态标签决定 SQL 结构如何变化",
         "条件值继续用占位符",
         "列名和排序方向必须白名单映射"
-      ]
+      ],
+      "since": "MyBatis"
     },
     {
       "track": "java",
@@ -9850,7 +11222,8 @@
         "TypeHandler 连接 Java 类型和 JDBC 类型",
         "读写两侧都要处理，包括空值",
         "不要用方言函数代替所有类型转换"
-      ]
+      ],
+      "since": "MyBatis"
     },
     {
       "track": "java",
@@ -9877,7 +11250,8 @@
         "一级缓存默认存在，范围是当前 SqlSession",
         "Spring 里会话常随事务结束而关闭",
         "二级缓存要显式开启，不要默认当成全局缓存"
-      ]
+      ],
+      "since": "MyBatis"
     },
     {
       "track": "java",
@@ -9904,7 +11278,8 @@
         "插件拦截 Executor 或 StatementHandler 这一层",
         "拦截签名写错就不会生效",
         "插件里不要再打开新的 SqlSession 查同一条链"
-      ]
+      ],
+      "since": "MyBatis"
     },
     {
       "track": "java",
@@ -9917,7 +11292,8 @@
         "RowBounds 默认在结果集上 skip/limit",
         "大结果仍会打到驱动和内存",
         "物理分页要写 SQL 或用插件改写"
-      ]
+      ],
+      "since": "MyBatis"
     },
     {
       "track": "java",
@@ -9944,7 +11320,8 @@
         "DEBUG 打印带问号的语句和单独的参数行",
         "logger 名是 Mapper 全名、namespace 或某一条语句",
         "不写 logImpl 时走 SLF4J，LOG4J 已弃用"
-      ]
+      ],
+      "since": "MyBatis"
     },
     {
       "track": "java",
@@ -9971,7 +11348,8 @@
         "断点打在带 BoundSql 的 Executor.query 或 update",
         "用 statement id 过滤，BoundSql 是改写后的语句",
         "Mapper 接口没有方法体，XML 不能单步"
-      ]
+      ],
+      "since": "MyBatis"
     },
     {
       "track": "java",
@@ -10012,7 +11390,8 @@
         "分页插件类和 Boot 3 starter 要按现行文档写",
         "Spring 事务里换不了已取出的连接，@DSTransactional 不是 XA",
         "生成器只在开发时用，运行中的 SQL 要看改写之后"
-      ]
+      ],
+      "since": "MyBatis"
     },
     {
       "track": "java",
@@ -10025,7 +11404,8 @@
         "过滤链在控制器之前建立安全上下文",
         "未配置的路径不能默认放行",
         "对象级归属不在链上按 id 猜测，而在服务里检查"
-      ]
+      ],
+      "since": "Spring Security"
     },
     {
       "track": "java",
@@ -10038,7 +11418,8 @@
         "认证确定身份，授权确定能否操作",
         "已认证用户仍可能权限不足",
         "过滤器链上的规则不能只靠控制器判空代替"
-      ]
+      ],
+      "since": "Spring Security"
     },
     {
       "track": "java",
@@ -10051,7 +11432,8 @@
         "登录只证明身份，不证明能访问这条数据",
         "角色不能代替对具体资源的检查",
         "资源标识来自客户端时仍由服务端核对拥有者"
-      ]
+      ],
+      "since": "authz"
     },
     {
       "track": "java",
@@ -10064,7 +11446,8 @@
         "资源服务器校验 Bearer，不负责表单登录",
         "要核对签发者、受众和过期",
         "令牌有效仍要做对象级权限"
-      ]
+      ],
+      "since": "Spring Security OAuth2"
     },
     {
       "track": "java",
@@ -10077,7 +11460,8 @@
         "先密钥登录，关掉密码和 root 密登",
         "用 sshd 限次或 Fail2ban，不要 grep lastb 日期",
         "iptables 与 firewalld 不要混用"
-      ]
+      ],
+      "since": "sshd"
     },
     {
       "track": "java",
@@ -10090,7 +11474,8 @@
         "口令用带盐的自适应慢哈希保存",
         "盐让相同口令不会得到相同结果",
         "SHA-256 这类快哈希不能单独保存口令"
-      ]
+      ],
+      "since": "password hashing"
     },
     {
       "track": "java",
@@ -10104,7 +11489,8 @@
         "CSRF 利用浏览器自动携带的 Cookie",
         "前后端分离不能单独作为关闭 CSRF 的理由",
         "Bearer 头不会被浏览器跨站自动带上"
-      ]
+      ],
+      "since": "Spring Security"
     },
     {
       "track": "java",
@@ -10118,7 +11504,8 @@
         "CORS 只约束浏览器的跨源读写",
         "非浏览器客户端不受 CORS 保护",
         "带 Cookie 时不能随意反射 Origin"
-      ]
+      ],
+      "since": "Spring"
     },
     {
       "track": "java",
@@ -10131,7 +11518,8 @@
         "随环境变化的值放在运行时配置",
         "同一构建产物用不同环境的注入来区分",
         "口令不进入仓库、镜像层和前端包"
-      ]
+      ],
+      "since": "security"
     },
     {
       "track": "java",
@@ -10144,7 +11532,8 @@
         "默认过滤器链可能创建 Session",
         "无状态 API 每次从令牌重建认证",
         "浏览器表单登录不要硬套同一条无状态链"
-      ]
+      ],
+      "since": "Spring"
     },
     {
       "track": "java",
@@ -10171,7 +11560,8 @@
         "先匹配 server，再匹配 location",
         "不同 location 写法优先级不同",
         "没被选中的段里的 proxy_pass 不会执行"
-      ]
+      ],
+      "since": "Nginx"
     },
     {
       "track": "java",
@@ -10198,7 +11588,8 @@
         "proxy_connect_timeout 只限制建立到上游的连接",
         "proxy_read_timeout 限制两次读取之间的等待",
         "被动失败摘除不等于主动健康检查"
-      ]
+      ],
+      "since": "Nginx"
     },
     {
       "track": "java",
@@ -10211,7 +11602,8 @@
         "gunzip 解压带 gzip 编码的响应",
         "服务对象是不支持 gzip 的客户端",
         "不要把它当成压缩请求到 upstream"
-      ]
+      ],
+      "since": "Nginx"
     },
     {
       "track": "java",
@@ -10238,7 +11630,8 @@
         "上游看到的 Host 由 proxy_set_header 决定",
         "$host 是浏览器带来的名字，$proxy_host 是 upstream 地址",
         "还要传 X-Forwarded-Proto，否则重定向会错方案"
-      ]
+      ],
+      "since": "Nginx"
     },
     {
       "track": "java",
@@ -10251,7 +11644,8 @@
         "默认 round-robin，可用 weight",
         "ip_hash 按客户端地址粘滞，NAT 下不可靠",
         "轮询本身不等于低可靠，摘除靠健康检查"
-      ]
+      ],
+      "since": "Nginx"
     },
     {
       "track": "java",
@@ -10264,7 +11658,8 @@
         "正向代理面向客户端访问外网",
         "反向代理面向用户访问入口再转上游",
         "直连目标不是任何一种代理"
-      ]
+      ],
+      "since": "Nginx"
     },
     {
       "track": "java",
@@ -10277,7 +11672,8 @@
         "CDN 在边缘就近，主攻可缓存内容",
         "反向代理在源站侧，常做 TLS 与选上游",
         "缓存是可选能力，不能把两层说成同一种东西"
-      ]
+      ],
+      "since": "Nginx"
     },
     {
       "track": "java",
@@ -10290,7 +11686,8 @@
         "静态文件可以不经过应用进程",
         "哈希文件名才能安全地长缓存",
         "HTML 入口需要可重新验证的策略"
-      ]
+      ],
+      "since": "Nginx"
     },
     {
       "track": "java",
@@ -10317,7 +11714,8 @@
         "请求体缓冲决定大文件先落在 Nginx 还是边转边给上游",
         "响应缓冲让上游连接更快释放",
         "上传和普通 API 不要共用同一套 body 上限"
-      ]
+      ],
+      "since": "Nginx"
     },
     {
       "track": "java",
@@ -10330,7 +11728,8 @@
         "应用限流用 limit_req，不是 iptables 循环",
         "每次 --reload 会冲击正常连接",
         "tail 固定行数会漏日志"
-      ]
+      ],
+      "since": "Nginx"
     },
     {
       "track": "java",
@@ -10344,7 +11743,8 @@
         "反向代理把请求转到上游",
         "负载均衡在多个实例中选择",
         "网关处理接口级鉴权、限流和路由"
-      ]
+      ],
+      "since": "gateway"
     },
     {
       "track": "java",
@@ -10357,7 +11757,8 @@
         "谓词决定请求命中哪条路由",
         "过滤器只在命中后执行",
         "全局过滤和路由过滤的顺序要写清"
-      ]
+      ],
+      "since": "gateway"
     },
     {
       "track": "java",
@@ -10370,7 +11771,8 @@
         "网关按谓词选路由，并在过滤器里处理边缘逻辑",
         "发现服务提供实例，网关负责把请求代理过去",
         "对象级授权仍在拥有该数据的服务里"
-      ]
+      ],
+      "since": "gateway"
     },
     {
       "track": "java",
@@ -10383,7 +11785,8 @@
         "网关重试会把同一请求再打到后端",
         "GET 可以对有限的失败码重试",
         "POST 默认不要自动重试，除非服务端幂等"
-      ]
+      ],
+      "since": "gateway"
     },
     {
       "track": "java",
@@ -10396,7 +11799,8 @@
         "网关超时断开后，上游事务可能仍在提交",
         "超时应从外到内递减",
         "写接口用幂等消化假失败后的重试"
-      ]
+      ],
+      "since": "gateway"
     },
     {
       "track": "java",
@@ -10410,7 +11814,8 @@
         "网关适合校验令牌和统一入口",
         "改某一行仍要在拥有数据的服务里核对",
         "内部调用被绕过时，只靠网关等于没有授权"
-      ]
+      ],
+      "since": "gateway"
     },
     {
       "track": "java",
@@ -10423,7 +11828,8 @@
         "改请求体必须先读完整段流",
         "缓冲不适合大文件和 multipart",
         "读取一次之后，后面不能再当原始流去读"
-      ]
+      ],
+      "since": "gateway"
     },
     {
       "track": "java",
@@ -10478,7 +11884,8 @@
         "ByteBuf 可能占用堆外直接内存",
         "用完必须在正常和异常路径释放",
         "堆占用低也能被直接内存打爆"
-      ]
+      ],
+      "since": "Netty"
     },
     {
       "track": "java",
@@ -10491,7 +11898,8 @@
         "BIO 阻塞模型才是连接占用线程",
         "NIO Selector 一条线程可盯多个 Channel",
         "Netty EventLoop 是 Reactor 不是一请求一线程"
-      ]
+      ],
+      "since": "Netty"
     },
     {
       "track": "java",
@@ -10504,7 +11912,8 @@
         "LT 有数据就持续通知，ET 只在状态沿上通知",
         "ET 必须循环读到 EAGAIN",
         "半包留在内核里不会自己再敲门"
-      ]
+      ],
+      "since": "Netty"
     },
     {
       "track": "java",
@@ -10517,7 +11926,8 @@
         "TCP 不会马上报告对端断电",
         "读空闲可关闭连接，写空闲可发心跳",
         "心跳必须轻量，不能在心跳里访问数据库"
-      ]
+      ],
+      "since": "Netty"
     },
     {
       "track": "java",
@@ -10530,7 +11940,8 @@
         "带累积缓冲的帧解码器不能在连接间共享",
         "无状态 handler 才可以 @Sharable",
         "共享解码器会把不同连接的半包拼在一起"
-      ]
+      ],
+      "since": "Netty"
     },
     {
       "track": "java",
@@ -10543,7 +11954,8 @@
         "write 进入待发送缓冲，不是对端已收到",
         "超过高水位后 Channel 不可写，应停写",
         "可写状态变化时再恢复，避免无界缓冲"
-      ]
+      ],
+      "since": "Netty"
     },
     {
       "track": "java",
@@ -10556,7 +11968,8 @@
         "一次 read 不等于一条消息",
         "用长度字段或分隔符拆帧",
         "睡眠不能代替协议边界"
-      ]
+      ],
+      "since": "Netty"
     },
     {
       "track": "java",
@@ -10569,7 +11982,8 @@
         "不要把整个文件读进堆再发送",
         "FileRegion 按区间把文件交给系统发送",
         "需要改字节内容时才走用户态缓冲"
-      ]
+      ],
+      "since": "Netty"
     },
     {
       "track": "java",
@@ -10582,7 +11996,8 @@
         "消息把业务事实与下游处理拆到不同时间",
         "生产者不依赖消费者此刻在线",
         "异步要求明确成功语义、幂等和失败可见性"
-      ]
+      ],
+      "since": "messaging"
     },
     {
       "track": "java",
@@ -10595,7 +12010,8 @@
         "至多一次可能丢，至少一次可能重",
         "恰好一次是配置与边界下的端到端努力，不是业务魔法",
         "业务副作用只执行一次要靠幂等键"
-      ]
+      ],
+      "since": "messaging"
     },
     {
       "track": "java",
@@ -10608,7 +12024,8 @@
         "先比较存储与路由模型，再比较产品名词",
         "Kafka/Pulsar 偏可重放流，RabbitMQ 偏路由任务，RocketMQ 偏业务延迟与事务",
         "ActiveMQ 承接 JMS 遗留；一种负载只保留一个产品"
-      ]
+      ],
+      "since": "messaging"
     },
     {
       "track": "java",
@@ -10621,7 +12038,8 @@
         "Kafka 是可重放的分区日志",
         "RabbitMQ 用交换器把消息路由进队列",
         "RocketMQ 提供队列、延迟和事务消息，一种负载只选一种"
-      ]
+      ],
+      "since": "messaging"
     },
     {
       "track": "java",
@@ -10634,7 +12052,8 @@
         "积压是生产持续快于消费",
         "消费者数不能超过可分摊的分区或队列",
         "生产限速与磁盘容量是消费扩容的前提"
-      ]
+      ],
+      "since": "messaging"
     },
     {
       "track": "java",
@@ -10647,7 +12066,8 @@
         "再试无意义的消息必须离开主队列进入死信",
         "积压看深度和最早消息的年龄，不只看消费者是否存活",
         "重试仍按业务键幂等，不能靠“多试几次就会不重复”"
-      ]
+      ],
+      "since": "messaging"
     },
     {
       "track": "java",
@@ -10660,7 +12080,8 @@
         "至少一次投递必须用业务键做幂等",
         "SET NX 与写库之间仍有崩溃窗口",
         "SET 可同时 NX 和 EX，SETNX 不能设过期的说法过时"
-      ]
+      ],
+      "since": "messaging"
     },
     {
       "track": "java",
@@ -10673,7 +12094,8 @@
         "物理删同一主键终态常可幂等",
         "软删或带副作用的取消重放可能再改状态",
         "按业务效果设计键与状态机，不按操作中文名"
-      ]
+      ],
+      "since": "messaging"
     },
     {
       "track": "java",
@@ -10686,7 +12108,8 @@
         "先修复不消费，再谈追赶",
         "消费者并行度受分区或队列数限制",
         "应急用更宽的临时主题或扩分区，追上再缩容"
-      ]
+      ],
+      "since": "messaging"
     },
     {
       "track": "java",
@@ -10713,7 +12136,8 @@
         "acks=1 只等领导者本地日志",
         "acks=all 等所有同步副本",
         "生产者确认不等于消费端只处理一次"
-      ]
+      ],
+      "since": "Kafka"
     },
     {
       "track": "java",
@@ -10726,7 +12150,8 @@
         "ISR 是能跟上领导者的同步副本集合",
         "acks=all 等待 ISR，不是等待所有 Broker",
         "高水位以内的数据才对消费者安全可读"
-      ]
+      ],
+      "since": "Kafka"
     },
     {
       "track": "java",
@@ -10739,7 +12164,8 @@
         "poll 后的当前位置",
         "故障恢复使用已提交位置",
         "提交时序与重复/丢失窗口"
-      ]
+      ],
+      "since": "Kafka"
     },
     {
       "track": "java",
@@ -10752,7 +12178,8 @@
         "成员变化触发分区重分配",
         "再平衡期间可能暂停消费",
         "撤销分区前未提交位点会导致接管方重读"
-      ]
+      ],
+      "since": "Kafka"
     },
     {
       "track": "java",
@@ -10779,7 +12206,8 @@
         "生产者按分区攒批，有 linger.ms 和 batch.size",
         "不要求用 Scala 运维",
         "广播靠消费者组，不是“不支持批量”"
-      ]
+      ],
+      "since": "Kafka"
     },
     {
       "track": "java",
@@ -10834,7 +12262,8 @@
         "生产者发布到交换器而不是直接写入业务队列",
         "direct、fanout、topic 决定绑定如何匹配",
         "默认交换器把路由键当作队列名，无法路由的消息可能被丢弃"
-      ]
+      ],
+      "since": "AMQP / RabbitMQ"
     },
     {
       "track": "java",
@@ -10847,7 +12276,8 @@
         "自动确认与手动确认",
         "业务成功后再 ack",
         "重投与消费幂等"
-      ]
+      ],
+      "since": "AMQP / RabbitMQ"
     },
     {
       "track": "java",
@@ -10860,7 +12290,8 @@
         "集群共享元数据，不自动复制每个队列的消息",
         "经典镜像或仲裁队列才提供节点间冗余",
         "网络分区与脑裂需要明确的处理策略"
-      ]
+      ],
+      "since": "AMQP / RabbitMQ"
     },
     {
       "track": "java",
@@ -10873,7 +12304,8 @@
         "队列可配置最大条数和字节，不是只受内存约束",
         "publisher confirm 确认路由/落盘，不是业务幂等",
         "Broker 没有 inner-msg-id 这种生产去重原语"
-      ]
+      ],
+      "since": "AMQP / RabbitMQ"
     },
     {
       "track": "java",
@@ -10900,7 +12332,8 @@
         "主题下面的队列才是顺序和并行单位",
         "同一消费组共同分担队列，不同组各自全量消费",
         "标签用于过滤，不能代替固定队列来保证顺序"
-      ]
+      ],
+      "since": "RocketMQ"
     },
     {
       "track": "java",
@@ -10913,7 +12346,8 @@
         "同步刷盘等到落盘，异步刷盘有崩溃丢失窗口",
         "主从同步复制与异步复制决定跨节点耐久",
         "发送成功状态必须对照当前存储配置解读"
-      ]
+      ],
+      "since": "RocketMQ"
     },
     {
       "track": "java",
@@ -10926,7 +12360,8 @@
         "消息持久化在磁盘并按保留时间删除，不是无限内存队列",
         "消费失败会重投，不保证恰好一次",
         "定时消息只有固定 level，不是任意时间精度"
-      ]
+      ],
+      "since": "RocketMQ"
     },
     {
       "track": "java",
@@ -11037,7 +12472,8 @@
         "text 与 keyword 的用途",
         "索引时和查询时分词",
         "分析器不一致导致漏匹配"
-      ]
+      ],
+      "since": "Elasticsearch"
     },
     {
       "track": "java",
@@ -11050,7 +12486,8 @@
         "查询上下文计算相关性分数",
         "过滤上下文只判断是否匹配",
         "精确条件放过滤，避免干扰排序"
-      ]
+      ],
+      "since": "Elasticsearch"
     },
     {
       "track": "java",
@@ -11105,7 +12542,8 @@
         "字段类型在写入时按当时映射固定",
         "改类型通常要新索引并 reindex",
         "用别名切换，避免应用改索引名"
-      ]
+      ],
+      "since": "Elasticsearch"
     },
     {
       "track": "java",
@@ -11132,7 +12570,8 @@
         "routing 决定文档落在哪一个分片",
         "读写必须使用同一个 routing 值",
         "routing 一变，旧文档不会跟着搬家"
-      ]
+      ],
+      "since": "Elasticsearch"
     },
     {
       "track": "java",
@@ -11160,7 +12599,8 @@
         "Nacos 同时有实例名单和配置文本，但是两套数据",
         "Sentinel 决定本进程的资源是否放行",
         "Seata、RocketMQ、OSS、SchedulerX 和短信各管提交、事件、文件、定时和触达"
-      ]
+      ],
+      "since": "SCA"
     },
     {
       "track": "java",
@@ -11173,7 +12613,8 @@
         "失败要对应到请求经过的那一跳",
         "连不上、被限流、两库不一致、消息重复是四类不同问题",
         "同步链路上不要塞文件、定时和短信"
-      ]
+      ],
+      "since": "SCA"
     },
     {
       "track": "java",
@@ -11200,7 +12641,8 @@
         "注册中心保存服务名和实例，不直接转发请求",
         "临时实例靠心跳维持，停掉后应离开健康列表",
         "选择实例的是 LoadBalancer，不是已经退出的 Ribbon"
-      ]
+      ],
+      "since": "Nacos"
     },
     {
       "track": "java",
@@ -11213,7 +12655,8 @@
         "一份配置由 namespace、group 和 dataId 定位",
         "刷新只影响重新绑定或可刷新作用域的 Bean",
         "构造时复制进普通字段的值不会跟着变"
-      ]
+      ],
+      "since": "Nacos"
     },
     {
       "track": "java",
@@ -11240,7 +12683,8 @@
         "临时实例心跳停止后才离开健康列表",
         "保护阈值会在健康实例过少时仍返回不健康地址",
         "消费方缓存让摘除不会立刻传到每一个调用"
-      ]
+      ],
+      "since": "Nacos"
     },
     {
       "track": "java",
@@ -11267,7 +12711,8 @@
         "调用方按名单和缓存找地址，死进程仍可能被打到",
         "停机前应先注销实例，再排空请求",
         "Spring 优雅停机不代替从注册中心摘除"
-      ]
+      ],
+      "since": "SCA"
     },
     {
       "track": "java",
@@ -11294,7 +12739,8 @@
         "Feign 发出 HTTP，不负责保存实例名单",
         "连接超时和读取超时是客户端配置",
         "写接口的自动重试必须有幂等键"
-      ]
+      ],
+      "since": "Dubbo"
     },
     {
       "track": "java",
@@ -11308,7 +12754,8 @@
         "Nacos 和 Sentinel 同时支持 HTTP 与 Dubbo",
         "对外契约和浏览器走 HTTP",
         "Dubbo 适合内网 Java 之间的同步调用，不是默认必选项"
-      ]
+      ],
+      "since": "Dubbo"
     },
     {
       "track": "java",
@@ -11363,7 +12810,8 @@
         "消费者本地缓存已订阅的地址",
         "注册中心全挂后不能发现新服务",
         "负载均衡在客户端，默认随机"
-      ]
+      ],
+      "since": "Dubbo"
     },
     {
       "track": "java",
@@ -11390,7 +12838,8 @@
         "Feign 是 HTTP 客户端不是负载均衡器",
         "选实例是 LoadBalancer（或旧 Ribbon）",
         "Zuul/Gateway 主职是路由不是跨域"
-      ]
+      ],
+      "since": "Spring"
     },
     {
       "track": "java",
@@ -11404,7 +12853,8 @@
         "资源是被统计和被规则检查的单位",
         "流控、熔断、系统保护、来源和热点参数是不同规则",
         "内存中的规则重启后消失，需要推到外部规则源"
-      ]
+      ],
+      "since": "Sentinel"
     },
     {
       "track": "java",
@@ -11417,7 +12867,8 @@
         "流控按配额拒绝进入资源的请求",
         "熔断在下游异常或过慢时暂停继续调用",
         "规则拦截不是下游超时，不能立刻重试"
-      ]
+      ],
+      "since": "Sentinel"
     },
     {
       "track": "java",
@@ -11430,7 +12881,8 @@
         "熔断关闭时请求进入资源，打开时直接拦截",
         "半开会放少量探测，成功才恢复关闭",
         "熔断依据慢调用或异常，不是单纯的 QPS 计数"
-      ]
+      ],
+      "since": "Sentinel"
     },
     {
       "track": "java",
@@ -11443,7 +12895,8 @@
         "规则拦截走 blockHandler，不是业务 fallback",
         "业务方法抛出的异常才走 fallback",
         "拦截处理禁止再次调用被限流的方法"
-      ]
+      ],
+      "since": "Sentinel"
     },
     {
       "track": "java",
@@ -11456,7 +12909,8 @@
         "直接模式统计本资源，关联模式看另一个资源的量",
         "链路模式按入口计数，内部调用可以分开",
         "预热和匀速排队改变流量怎么进入，不只改阈值"
-      ]
+      ],
+      "since": "Sentinel"
     },
     {
       "track": "java",
@@ -11483,7 +12937,8 @@
         "全局事务由发起方、协调器和各数据库分支组成",
         "XID 必须随调用传到下游，分支才能登记到同一笔事务",
         "AT、TCC、Saga 和 XA 用不同方式完成提交与回滚"
-      ]
+      ],
+      "since": "Seata"
     },
     {
       "track": "java",
@@ -11496,7 +12951,8 @@
         "AT 用 undo log 回滚它接管的 SQL",
         "数据库以外的调用不会被 undo 撤销",
         "全局事务保持短，外部副作用用补偿或提交后的消息"
-      ]
+      ],
+      "since": "Seata"
     },
     {
       "track": "java",
@@ -11509,7 +12965,8 @@
         "取消先于尝试到达时必须空回滚成功",
         "空回滚之后到达的尝试要拒绝，避免悬挂",
         "确认和取消都必须可重复执行"
-      ]
+      ],
+      "since": "Seata"
     },
     {
       "track": "java",
@@ -11522,7 +12979,8 @@
         "AT 用全局锁避免并发改同一行",
         "全局锁在全局事务结束前一直占着，短于本地行锁不够",
         "锁冲突时先缩短全局事务，不要只加超时"
-      ]
+      ],
+      "since": "Seata"
     },
     {
       "track": "java",
@@ -11535,7 +12993,8 @@
         "主题下的队列是并行单位，消费组决定如何分摊消息",
         "投递至少一次，消费必须按业务键幂等",
         "定时消息推迟投递，事务消息把本地事务和发送绑在一起"
-      ]
+      ],
+      "since": "SCA"
     },
     {
       "track": "java",
@@ -11548,7 +13007,8 @@
         "Bucket 和对象键定位文件，数据库只保存这个位置",
         "私有对象用带过期时间的签名地址访问",
         "上传不受数据库回滚影响，失败时要单独删除或改顺序"
-      ]
+      ],
+      "since": "SCA"
     },
     {
       "track": "java",
@@ -11561,7 +13021,8 @@
         "本地定时器会在每个应用副本上各执行一次",
         "任务时间在调度平台上，worker 执行被分配的任务",
         "网格任务把大量子任务分给多个 worker，处理器要承受重复执行"
-      ]
+      ],
+      "since": "SCA"
     },
     {
       "track": "java",
@@ -11575,7 +13036,8 @@
         "发送由签名、已审核模板、手机号和变量组成",
         "接口成功表示平台受理，送达要以状态报告为准",
         "重试必须按业务键去重，数据库回滚不会收回短信"
-      ]
+      ],
+      "since": "SCA"
     },
     {
       "track": "java",
@@ -11588,7 +13050,8 @@
         "演进按瓶颈分级，不按时髦名词跳级",
         "模块化单体先清边界再谈拆进程",
         "微服务换来自治，也换来网络与多库成本"
-      ]
+      ],
+      "since": "system design"
     },
     {
       "track": "java",
@@ -11601,7 +13064,8 @@
         "单体共享进程与库，事务与排障简单",
         "痛点是发布耦合与整包扩容",
         "模块化单体先固化边界，再考虑拆进程"
-      ]
+      ],
+      "since": "system design"
     },
     {
       "track": "java",
@@ -11614,7 +13078,8 @@
         "可拆模块有独立 API、表与测试",
         "跨模块禁止直连对方表与内部类",
         "循环依赖和共享实体是拆分红灯"
-      ]
+      ],
+      "since": "system design"
     },
     {
       "track": "java",
@@ -11627,7 +13092,8 @@
         "水平扩展依赖无状态应用与外置会话",
         "库瓶颈加副本可能更差",
         "拆服务前先确认瓶颈不在共享数据"
-      ]
+      ],
+      "since": "system design"
     },
     {
       "track": "java",
@@ -11640,7 +13106,8 @@
         "边界是业务能力与数据归属，不是技术分层",
         "独立部署后本地事务升级为同步或异步协作",
         "网关与中间件是支撑，不能代替领域边界"
-      ]
+      ],
+      "since": "system design"
     },
     {
       "track": "java",
@@ -11653,7 +13120,8 @@
         "同步路径只保留用户必须当场知道的结果",
         "订单成立后的副作用走异步并幂等",
         "跨服务用补偿与对账，不共享对方库表"
-      ]
+      ],
+      "since": "system design"
     },
     {
       "track": "java",
@@ -11667,7 +13135,8 @@
         "同步适合当场要失败可见的路径",
         "异步适合已发生事实的传播与削峰",
         "编排与协同是流程风格，都要幂等和补偿"
-      ]
+      ],
+      "since": "system design"
     },
     {
       "track": "java",
@@ -11680,7 +13149,8 @@
         "超时、重试和再投都会把同一次业务再送进来",
         "幂等键加唯一约束才能挡住同时到达的两次插入",
         "冲突后返回第一次的结果，而不是再执行一次业务"
-      ]
+      ],
+      "since": "system design"
     },
     {
       "track": "java",
@@ -11693,7 +13163,8 @@
         "缓存失效的并发窗口",
         "数据陈旧的业务容忍度",
         "库存与详情的不同一致性要求"
-      ]
+      ],
+      "since": "system design"
     },
     {
       "track": "java",
@@ -11706,7 +13177,8 @@
         "至少一次交付允许重复",
         "消费幂等的业务键",
         "去重记录与状态修改的事务边界"
-      ]
+      ],
+      "since": "system design"
     },
     {
       "track": "java",
@@ -11719,7 +13191,8 @@
         "到达速率与并发容量",
         "队列边界与拒绝策略",
         "超载时的反馈与退避"
-      ]
+      ],
+      "since": "system design"
     },
     {
       "track": "java",
@@ -11732,7 +13205,8 @@
         "大 OFFSET 仍要先产生被丢弃的行",
         "排序键续页的代价不随页码线性变大",
         "翻页排序必须稳定且唯一"
-      ]
+      ],
+      "since": "MySQL 8.4"
     },
     {
       "track": "java",
@@ -11746,7 +13220,8 @@
         "SLI 是用户可感知的测量",
         "SLO 是目标，不是 100%",
         "错误预算用来权衡发版和稳定性"
-      ]
+      ],
+      "since": "system design"
     },
     {
       "track": "java",
@@ -11759,7 +13234,8 @@
         "延迟 = 排队 + 处理",
         "池满之后等待时间会主导尾延迟",
         "超时和拒绝要作用在入口，避免无效堆积"
-      ]
+      ],
+      "since": "system design"
     },
     {
       "track": "java",
@@ -11773,7 +13249,8 @@
         "先写一条路径的读写量、时限和权威数据",
         "一种失败要写到用户看见什么",
         "中间件出现在这些句子之后"
-      ]
+      ],
+      "since": "system design"
     },
     {
       "track": "java",
@@ -11786,7 +13263,8 @@
         "同名可以是两个上下文里的两件模型",
         "上下文内用同一套词",
         "跨上下文传递标识和事实，不并成一张谁都改的表"
-      ]
+      ],
+      "since": "system design"
     },
     {
       "track": "java",
@@ -11799,7 +13277,8 @@
         "聚合是一次事务要一起守住的不变量",
         "别的聚合只留标识，不放进这次保存",
         "明细上的成交价是抄下来的事实，不是去改商品标价"
-      ]
+      ],
+      "since": "system design"
     },
     {
       "track": "java",
@@ -11812,7 +13291,8 @@
         "实体靠标识延续，属性可以变",
         "值对象靠属性相等，替换而不是改共享身份",
         "成交价属于这笔明细，不和别的订单共享一行"
-      ]
+      ],
+      "since": "system design"
     },
     {
       "track": "java",
@@ -11825,7 +13305,8 @@
         "按聚合根取出并保存整个聚合",
         "绕过根去改明细，根上的规则不会执行",
         "别的模块调用对方的应用服务，不写对方的表"
-      ]
+      ],
+      "since": "system design"
     },
     {
       "track": "java",
@@ -11838,7 +13319,8 @@
         "先定义网络分区",
         "分区期间的一致性与可用性取舍",
         "CAP 不能代替正常运行时设计"
-      ]
+      ],
+      "since": "distributed"
     },
     {
       "track": "java",
@@ -11851,7 +13333,8 @@
         "BASE 是实践口号不是形式化定理",
         "放松立刻一致不等于禁止事务",
         "最终一致仍要收敛条件与对账"
-      ]
+      ],
+      "since": "distributed"
     },
     {
       "track": "java",
@@ -11864,7 +13347,8 @@
         "ACID 的 C 是提交时约束成立",
         "CAP 的 C 是分区后能不能对着同一份最新结果",
         "最终一致允许中间分开，靠重试和对账收敛"
-      ]
+      ],
+      "since": "distributed"
     },
     {
       "track": "java",
@@ -11877,7 +13361,8 @@
         "准备与提交两个阶段",
         "协调者和参与者故障",
         "阻塞成本与替代方案边界"
-      ]
+      ],
+      "since": "distributed"
     },
     {
       "track": "java",
@@ -11890,7 +13375,8 @@
         "业务状态与事件同事务写入",
         "异步发布与重试",
         "消费者仍需幂等"
-      ]
+      ],
+      "since": "distributed"
     },
     {
       "track": "java",
@@ -11903,7 +13389,8 @@
         "租约过期与所有权",
         "续租及故障时序",
         "fencing token 保护共享资源"
-      ]
+      ],
+      "since": "distributed"
     },
     {
       "track": "java",
@@ -11916,7 +13403,8 @@
         "可重入要比对锁上的持有者令牌",
         "MAC/PID/TID 在容器与回收下会撞车",
         "租约仍由服务端 TTL 或会话管理"
-      ]
+      ],
+      "since": "distributed"
     },
     {
       "track": "java",
@@ -11929,7 +13417,8 @@
         "可重入避免同持有者在同锁上自堵",
         "交叉死锁与忘释放不靠重入计数解决",
         "分布式锁先互斥、租约与持有者校验"
-      ]
+      ],
+      "since": "distributed"
     },
     {
       "track": "java",
@@ -11942,7 +13431,22 @@
         "更新经 ZAB 线性提交，不是最终一致",
         "普通读可走任意节点，线性读要 sync",
         "zkclient 不是官方自带，Curator 是 Apache 高层库"
-      ]
+      ],
+      "since": "distributed"
+    },
+    {
+      "track": "java",
+      "group": "分布式与高并发",
+      "id": "zk-odd-count-not-quorum-law",
+      "title": "“半数存活所以要奇数台”把法定人数推错了",
+      "prompt": "为什么资料写 ZooKeeper 半数以上机器存活集群才可用，并因此得出“适合装在奇数台机器上”？",
+      "keywords": "ZooKeeper quorum 奇数 2f+1",
+      "points": [
+        "可用要过半法定人数",
+        "偶数集群也有 quorum",
+        "奇数是性价比习惯"
+      ],
+      "since": "ZooKeeper"
     },
     {
       "track": "java",
@@ -11955,7 +13459,8 @@
         "SETNX 与 EXPIRE 分开执行会在崩溃时留下死锁键",
         "应用 SET key token NX EX 一次完成",
         "TTL 到期后旧持有者仍可能写，要业务版本校验"
-      ]
+      ],
+      "since": "Redis"
     },
     {
       "track": "java",
@@ -11968,7 +13473,8 @@
         "过期时间写进 value 再和本机时间比，依赖墙钟",
         "时钟偏差会导致双持有或误判超时",
         "应用 SET key token NX EX，由服务端 TTL 计时"
-      ]
+      ],
+      "since": "Redis"
     },
     {
       "track": "java",
@@ -11981,7 +13487,64 @@
         "FOR UPDATE 锁在当前事务的连接上",
         "长临界区会占满连接池并扩大锁范围风险",
         "跨机互斥用租约或短事务约束，不要握锁调远程"
-      ]
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "分布式与高并发",
+      "id": "db-insert-unique-cron-not-lease",
+      "title": "唯一插入加定时清表，补不上真正的锁租约",
+      "prompt": "为什么资料用主键/唯一冲突当分布式锁，又用「定时任务扫超时行」补失效时间，还用 while 重插补阻塞？",
+      "keywords": "分布式锁 唯一索引 租约 cron",
+      "points": [
+        "唯一插入只演示互斥",
+        "定时清表不是服务端租约",
+        "忙等重插会打爆库"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "分布式与高并发",
+      "id": "cap-label-not-product-tattoo",
+      "title": "“Redis/Mongo=CP、网站=AP”这种纹身不可靠",
+      "prompt": "为什么资料在 CAP 处直接写 CA=Oracle、AP=大多数网站、CP=Redis/Mongodb？",
+      "keywords": "CAP Redis Mongo 标签",
+      "points": [
+        "先定义分区与 C",
+        "部署改变取舍",
+        "产品名不能纹身"
+      ],
+      "since": "distributed"
+    },
+    {
+      "track": "java",
+      "group": "分布式与高并发",
+      "id": "sync-replication-not-only-durability",
+      "title": "“要可靠就必须同步复制”忽略了半同步与丢失窗口",
+      "prompt": "为什么资料写要想保证，一方面要同步复制，不能异步？",
+      "keywords": "复制 RPO 半同步",
+      "points": [
+        "异步有丢失窗口",
+        "同步有延迟代价",
+        "用 RPO 选型"
+      ],
+      "since": "distributed"
+    },
+    {
+      "track": "java",
+      "group": "分布式与高并发",
+      "id": "snowflake-params-need-capacity-math",
+      "title": "“雪花可按需改”先要做容量算术",
+      "prompt": "为什么资料写 snowflake 可按项目修改，并估数据中心与机器数？",
+      "keywords": "雪花 ID 位分配 时钟",
+      "points": [
+        "可定制但要算术",
+        "序列与节点位互斥",
+        "时钟回拨要有策略"
+      ],
+      "since": "distributed"
     },
     {
       "track": "java",
@@ -11994,7 +13557,8 @@
         "一次本地提交是最便宜的一起成功",
         "拆服务之前先问不变量能不能还在一个库",
         "全局事务是拆开之后的补洞，不是拆分的前提"
-      ]
+      ],
+      "since": "distributed"
     },
     {
       "track": "java",
@@ -12007,7 +13571,8 @@
         "声明式事务占的是本库连接，不是远程调用",
         "对面已经提交的写入，本地回滚收不回来",
         "远程调用放在本地提交之后，再用幂等和补偿"
-      ]
+      ],
+      "since": "distributed"
     },
     {
       "track": "java",
@@ -12020,7 +13585,8 @@
         "同一笔全局事务靠同一个 XID 认出分支",
         "编号必须出现在这一次 RPC 上",
         "下游看不到编号时，回滚只发生在入口这一边"
-      ]
+      ],
+      "since": "Seata"
     },
     {
       "track": "java",
@@ -12033,7 +13599,8 @@
         "AT 第一阶段会提交本地事务并留下 undo",
         "全局结束前别人可以读到这次写入",
         "这不是 XA 的准备态，也不是跨服务串行化"
-      ]
+      ],
+      "since": "Seata"
     },
     {
       "track": "java",
@@ -12046,7 +13613,8 @@
         "补偿是已经提交之后的一次新写入",
         "它不是 undo，也不是 XA 回滚",
         "补偿失败要重试或对账，不会自动再撤一次"
-      ]
+      ],
+      "since": "Seata"
     },
     {
       "track": "java",
@@ -12059,7 +13627,8 @@
         "编排把当前步骤放在一个地方",
         "协同让各方听事件自己推进，卡点分散",
         "选驱动之前先问失败时打开哪一份记录"
-      ]
+      ],
+      "since": "Seata"
     },
     {
       "track": "java",
@@ -12072,7 +13641,8 @@
         "跨服务投递是至少一次，不是恰好一次",
         "同一业务键的副作用只留下一次写入",
         "去重和这次更新必须在同一个本地提交里"
-      ]
+      ],
+      "since": "distributed"
     },
     {
       "track": "java",
@@ -12085,7 +13655,8 @@
         "写已提交不等于下一次读能看见",
         "用户立刻要看的读应对着刚写的那一份",
         "列表投影可以落后，但不能把落后显示成失败"
-      ]
+      ],
+      "since": "distributed"
     },
     {
       "track": "java",
@@ -12098,7 +13669,8 @@
         "最终一致在重试停住时不会自己收敛",
         "对账按不变量比对两侧权威，差额落到业务键",
         "对账任务必须幂等，不能只改一个总数"
-      ]
+      ],
+      "since": "distributed"
     },
     {
       "track": "java",
@@ -12111,7 +13683,22 @@
         "令牌补充速率",
         "桶容量与短时突发",
         "限速不等于限制并发"
-      ]
+      ],
+      "since": "distributed"
+    },
+    {
+      "track": "java",
+      "group": "分布式与高并发",
+      "id": "leaky-bucket-not-no-critical-edge",
+      "title": "漏桶整形出口速率，并不“天生消灭临界问题”",
+      "prompt": "为什么资料对比固定窗口计数器的临界突发后，写漏桶“天生不会出现临界问题”，还能保证接口常速处理？",
+      "keywords": "漏桶 令牌桶 限流 临界",
+      "points": [
+        "漏桶约束出水速率",
+        "满桶仍会溢出或排队",
+        "突发与速率要分开选型"
+      ],
+      "since": "distributed"
     },
     {
       "track": "java",
@@ -12124,7 +13711,8 @@
         "库存不变量与原子扣减",
         "限流、排队和资格校验",
         "支付失败后的补偿与对账"
-      ]
+      ],
+      "since": "distributed"
     },
     {
       "track": "java",
@@ -12137,7 +13725,8 @@
         "控制脚本默认仍可能被 CDN 缓存",
         "要用响应头或 CDN 规则显式禁止/缩短缓存",
         "开抢权威在服务端，不在脚本内容"
-      ]
+      ],
+      "since": "distributed"
     },
     {
       "track": "java",
@@ -12150,7 +13739,22 @@
         "按钮与脚本不是准入控制",
         "服务端校验开始时间、限流与原子扣减",
         "客户端优化只削峰，不守库存不变量"
-      ]
+      ],
+      "since": "distributed"
+    },
+    {
+      "track": "java",
+      "group": "分布式与高并发",
+      "id": "seckill-mq-not-only-db-valve",
+      "title": "“MQ 排队顶住就能控住数据库”把削峰说满了",
+      "prompt": "为什么资料在秒杀流程里写：压力最大在 MQ，只要排队服务顶住，后面下单与扣库存压力都能靠调节消费者数量自己控制？",
+      "keywords": "秒杀 MQ 削峰 消费者 积压",
+      "points": [
+        "MQ 削峰成立但不能说满",
+        "消费者数不是自由旋钮",
+        "积压会反噬存储与可用性"
+      ],
+      "since": "distributed"
     },
     {
       "track": "java",
@@ -12163,7 +13767,8 @@
         "入队只推迟库存动作，不删掉卖出上限",
         "最终一致靠 Outbox、幂等、补偿与对账",
         "削峰丢请求是限流，不是写队列即售出"
-      ]
+      ],
+      "since": "distributed"
     },
     {
       "track": "java",
@@ -12176,7 +13781,22 @@
         "哈希环与顺时针映射",
         "节点变化时的键迁移",
         "虚拟节点不能消除单键热点"
-      ]
+      ],
+      "since": "distributed"
+    },
+    {
+      "track": "java",
+      "group": "分布式与高并发",
+      "id": "consistent-hash-vnode-count-not-law",
+      "title": "“虚拟节点设成 32”是经验起点，不是均匀定律",
+      "prompt": "为什么资料写一致性哈希通常把虚拟节点数设为 32 甚至更大，就认为很少的服务节点也能相对均匀？",
+      "keywords": "一致性哈希 虚拟节点 倾斜",
+      "points": [
+        "虚拟节点减轻节点弧长不均",
+        "固定 32 只是经验起点",
+        "单键热点要另治"
+      ],
+      "since": "distributed"
     },
     {
       "track": "java",
@@ -12189,7 +13809,8 @@
         "位数组与多次哈希",
         "可能误判存在",
         "不能单独保证数据库正确性"
-      ]
+      ],
+      "since": "distributed"
     },
     {
       "track": "java",
@@ -12202,7 +13823,8 @@
         "雪崩：大量键集中失效",
         "击穿：热点键回源",
         "穿透：不存在数据的反复请求"
-      ]
+      ],
+      "since": "distributed"
     },
     {
       "track": "java",
@@ -12215,7 +13837,8 @@
         "容量 LRU 与 per-entry TTL 是两维",
         "只画链表满删尾不等于实现了过期",
         "未满时过期键仍应失效并视为未命中"
-      ]
+      ],
+      "since": "distributed"
     },
     {
       "track": "java",
@@ -12228,7 +13851,8 @@
         "分区内顺序保证",
         "同一业务键的分区策略",
         "重试和多消费者影响处理顺序"
-      ]
+      ],
+      "since": "distributed"
     },
     {
       "track": "java",
@@ -12241,7 +13865,8 @@
         "DNS 多记录受解析缓存约束",
         "TTL 调极小不能保证立刻摘掉死 IP",
         "实例级健康摘流应在 LB，不是只靠 DNS"
-      ]
+      ],
+      "since": "distributed"
     },
     {
       "track": "java",
@@ -12254,7 +13879,92 @@
         "302/Location 让浏览器再请求一次真实地址",
         "后端 URL 易暴露，后续可绕过调度机",
         "主 LB 用反代或云 LB，302 适合迁移"
-      ]
+      ],
+      "since": "HTTP"
+    },
+    {
+      "track": "java",
+      "group": "分布式与高并发",
+      "id": "microservices-not-just-soa-relabel",
+      "title": "“微服务本质还是 SOA”抹掉了关键差别",
+      "prompt": "为什么资料写微服务从本质意义上看还是 SOA，只是不绑定技术、靠 REST 拼起来？",
+      "keywords": "微服务 SOA Fowler 独立部署",
+      "points": [
+        "谱系相关不等于定义等同",
+        "独立部署与数据所有权是分叉",
+        "REST/多语言不是充分条件"
+      ],
+      "since": "distributed"
+    },
+    {
+      "track": "java",
+      "group": "分布式与高并发",
+      "id": "split-vs-cluster-not-interchangeable",
+      "title": "拆分与集群不是同一句话的两种说法",
+      "prompt": "为什么资料把拆分和集群并列：前者不同模块 RPC，后者相同模块分流？",
+      "keywords": "拆分 集群 副本 RPC",
+      "points": [
+        "拆分是异质边界",
+        "集群是同质副本",
+        "常组合但不可替代"
+      ],
+      "since": "distributed"
+    },
+    {
+      "track": "java",
+      "group": "分布式与高并发",
+      "id": "service-extract-not-only-connection-math",
+      "title": "“连接数是服务器规模平方”推不出必然微服务",
+      "prompt": "为什么资料用所有应用连所有库导致连接数平方，论证要抽出共用业务服务？",
+      "keywords": "连接池 代理 服务拆分",
+      "points": [
+        "连接平方是动机不是证明",
+        "池化与代理可先治",
+        "拆分要有边界收益"
+      ],
+      "since": "distributed"
+    },
+    {
+      "track": "java",
+      "group": "分布式与高并发",
+      "id": "select-not-always-business-idempotent",
+      "title": "“SELECT 天然幂等”不等于业务读可随便重试",
+      "prompt": "为什么资料在消息幂等处写 select 是天然幂等操作？",
+      "keywords": "幂等 SELECT 消息消费",
+      "points": [
+        "SQL 层与业务层幂等不同",
+        "读也可能有副作用",
+        "写路径仍要键"
+      ],
+      "since": "distributed"
+    },
+    {
+      "track": "java",
+      "group": "分布式与高并发",
+      "id": "hash-skew-not-only-virtual-nodes",
+      "title": "“数据分配不一定均匀”不只靠虚拟节点收尾",
+      "prompt": "为什么资料在哈希分片处反复提到数据分配不一定均匀？",
+      "keywords": "倾斜 热点键 一致性哈希",
+      "points": [
+        "分布倾斜≠单键热点",
+        "虚拟节点管节点分布",
+        "热点键要另治"
+      ],
+      "since": "distributed"
+    },
+    {
+      "track": "java",
+      "group": "分布式与高并发",
+      "id": "message-order-not-always-required",
+      "title": "“必须竭尽全力保证严格有序”要先问要不要",
+      "prompt": "为什么资料在消息顺序处问：一定要使出所有力气保证严格有序吗？",
+      "keywords": "消息顺序 分区 吞吐",
+      "points": [
+        "全局有序极贵",
+        "业务键有序常见",
+        "可乱序则补偿"
+      ],
+      "since": "distributed"
     },
     {
       "track": "java",
@@ -12267,7 +13977,8 @@
         "本机毫秒时间不能当全局先后",
         "租约和后写覆盖会被回拨打乱",
         "跨节点用版本或逻辑顺序，展示再用 UTC"
-      ]
+      ],
+      "since": "distributed"
     },
     {
       "track": "java",
@@ -12294,7 +14005,8 @@
         "不同下游使用分开的并发配额",
         "舱满应失败，而不是无限排队",
         "隔离限制占用，限流限制速率，两者不同"
-      ]
+      ],
+      "since": "distributed"
     },
     {
       "track": "java",
@@ -12307,7 +14019,50 @@
         "聚簇索引按主键顺序存行，随机键造成页分裂",
         "把 UUID 改成二进制只减小宽度，不改变随机插入",
         "Snowflake 的 41 位毫秒约 69 年，回拨时要拒绝或等待"
-      ]
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "分布式与高并发",
+      "id": "uuid-not-only-random-string",
+      "title": "“UUID 无序、只能字符串”说的是常见用法，不是规格",
+      "prompt": "为什么资料把 UUID 优点写成全球唯一、性能好，缺点写成没有排序、往往字符串存储、空间大？",
+      "keywords": "UUID v7 RFC9562 BINARY 有序",
+      "points": [
+        "常见痛点来自随机 v4 与宽字符串",
+        "v7 可带时间有序",
+        "可用十六字节二进制存储"
+      ],
+      "since": "RFC 9562"
+    },
+    {
+      "track": "java",
+      "group": "分布式与高并发",
+      "id": "db-sequence-batch-not-gapless",
+      "title": "sequence 表批量取号省的是往返，不是“又连续又省库”",
+      "prompt": "为什么资料用 sequence 表 + 乐观锁发号，又写一次取 500 个缓存到本机可以减压，同时仍强调有序连续？",
+      "keywords": "sequence 乐观锁 号段 断号",
+      "points": [
+        "乐观锁发号有热点行成本",
+        "批量预取会跳号",
+        "连续与吞吐要二选一偏置"
+      ],
+      "since": "distributed"
+    },
+    {
+      "track": "java",
+      "group": "分布式与高并发",
+      "id": "db-autoinc-offset-step-needs-ops",
+      "title": "多主“起点不同、步长相同”是人工分段，不是自动集群发号",
+      "prompt": "为什么资料写多个 Master 设不同起始数字、相同步长，就能有效生成集群唯一 ID 并降低负载？",
+      "keywords": "AUTO_INCREMENT offset increment 多主",
+      "points": [
+        "offset/increment 是运维分段",
+        "扩缩主数要重算契约",
+        "不代替复制与冲突设计"
+      ],
+      "since": "MySQL AUTO_INCREMENT"
     },
     {
       "track": "java",
@@ -12320,7 +14075,8 @@
         "工作流文件必须放在 .github/workflows",
         "on 匹配这次事件才开跑",
         "这次运行读的是该提交里的 YAML"
-      ]
+      ],
+      "since": "ops"
     },
     {
       "track": "java",
@@ -12333,7 +14089,8 @@
         "needs 指定必须先成功的 job",
         "被需要的 job 失败时，依赖方默认跳过",
         "always() 或 failure() 才会在失败后仍继续"
-      ]
+      ],
+      "since": "ops"
     },
     {
       "track": "java",
@@ -12346,7 +14103,22 @@
         "每个 job 使用自己的 runner 工作区",
         "用 upload-artifact 和 download-artifact 传文件",
         "下载前要 needs 那个成功的 job"
-      ]
+      ],
+      "since": "ops"
+    },
+    {
+      "track": "java",
+      "group": "交付与运行",
+      "id": "jenkins-not-only-ci-tool",
+      "title": "Jenkins 是一种持续集成工具，不是 CI 的同义词",
+      "prompt": "为什么资料在「持续集成、持续发布」专节里，把好处写成「使用 Jenkins 等持续集成工具」就能把构建从手动变成自动？",
+      "keywords": "CI Jenkins 持续集成 流水线",
+      "points": [
+        "CI 是实践不是产品名",
+        "Jenkins 只是工具之一",
+        "流水线目标跨工具共通"
+      ],
+      "since": "ops"
     },
     {
       "track": "java",
@@ -12359,7 +14131,8 @@
         "一条指令一层，失效后后面的层都重做",
         "COPY 的源文件变了，这一层失效",
         "不要把整份源码 COPY 放在安装工具之前"
-      ]
+      ],
+      "since": "ops"
     },
     {
       "track": "java",
@@ -12372,7 +14145,78 @@
         "默认网络上用服务名做 DNS",
         "容器之间使用容器端口",
         "主机端口只给网络外面的客户端"
-      ]
+      ],
+      "since": "ops"
+    },
+    {
+      "track": "java",
+      "group": "交付与运行",
+      "id": "container-shares-host-kernel",
+      "title": "“容器没有自己的内核”仍要谈隔离边界",
+      "prompt": "为什么资料写容器内没有自己的内核、不进行硬件虚拟，因此更轻？",
+      "keywords": "容器 内核 命名空间 隔离",
+      "points": [
+        "共享宿主机内核",
+        "轻量与攻击面并存",
+        "加固与强隔离选项"
+      ],
+      "since": "ops"
+    },
+    {
+      "track": "java",
+      "group": "交付与运行",
+      "id": "docker-image-template-not-container",
+      "title": "镜像是模板，容器才是运行实例",
+      "prompt": "为什么资料写 Docker 镜像是只读模板，一个镜像可创建很多容器？",
+      "keywords": "Docker 镜像 容器 卷",
+      "points": [
+        "镜像只读可多实例",
+        "容器有可写层",
+        "持久化用卷"
+      ],
+      "since": "ops"
+    },
+    {
+      "track": "java",
+      "group": "交付与运行",
+      "id": "vm-vs-container-isolation-tradeoff",
+      "title": "虚拟机与容器是隔离/密度权衡，不是新旧替罪",
+      "prompt": "为什么资料把虚拟机说成带环境安装、容器说成进程隔离？",
+      "keywords": "虚拟机 容器 隔离 密度",
+      "points": [
+        "隔离与密度权衡",
+        "不是全面取代",
+        "按威胁模型选"
+      ],
+      "since": "ops"
+    },
+    {
+      "track": "java",
+      "group": "交付与运行",
+      "id": "one-container-one-service-heuristic",
+      "title": "“一个容器一种服务”是可运维启发式",
+      "prompt": "为什么资料写一个容器运行一种服务，需要时再创建实例？",
+      "keywords": "容器 sidecar 十二要素",
+      "points": [
+        "主服务一容器便于运维",
+        "sidecar 合法",
+        "禁止巨石多主服务"
+      ],
+      "since": "ops"
+    },
+    {
+      "track": "java",
+      "group": "交付与运行",
+      "id": "docker-registry-not-just-repo-bucket",
+      "title": "“仓储放镜像”要拆成 Registry 与 Repository",
+      "prompt": "为什么资料把仓库说成集中存放镜像的场所，又提醒 Repository 与 Registry 有区别，总结里却常混称仓储？",
+      "keywords": "Docker Registry Repository tag Harbor",
+      "points": [
+        "Registry 是托管服务端点",
+        "Repository 是镜像名空间",
+        "tag 或 digest 才钉死构建"
+      ],
+      "since": "ops"
     },
     {
       "track": "java",
@@ -12385,7 +14229,8 @@
         "kubeadm init 之后要部署 CNI",
         "没有 Pod 网络时 CoreDNS 不会 Running",
         "一个集群只装一份 Pod 网络，然后再 join"
-      ]
+      ],
+      "since": "ops"
     },
     {
       "track": "java",
@@ -12398,7 +14243,8 @@
         "控制面默认带 NoSchedule 污点",
         "单机学习集群需要去掉该污点",
         "控制面组件在污点存在时仍在工作"
-      ]
+      ],
+      "since": "ops"
     },
     {
       "track": "java",
@@ -12411,7 +14257,8 @@
         "Pod 内容器共用 IP 和端口空间",
         "只有同一 Pod 内可以用 localhost",
         "不同 Pod 不能靠对方的 localhost"
-      ]
+      ],
+      "since": "ops"
     },
     {
       "track": "java",
@@ -12424,7 +14271,8 @@
         "业务进程用 Deployment 管理 Pod",
         "Deployment 通过 ReplicaSet 维持副本数",
         "不要直接管理它名下的 ReplicaSet"
-      ]
+      ],
+      "since": "ops"
     },
     {
       "track": "java",
@@ -12437,7 +14285,8 @@
         "Pod IP 会随销毁变化，不要写进配置",
         "ClusterIP 是默认的稳定虚拟地址",
         "port 进 Service，targetPort 进容器"
-      ]
+      ],
+      "since": "ops"
     },
     {
       "track": "java",
@@ -12450,7 +14299,8 @@
         "Ingress 只声明 HTTP 规则，不自己监听",
         "没有 Ingress 控制器时创建对象无效",
         "非 HTTP 流量用 NodePort 或 LoadBalancer"
-      ]
+      ],
+      "since": "ops"
     },
     {
       "track": "java",
@@ -12477,7 +14327,8 @@
         "一个测试只断言一种行为",
         "名称写成条件和结果",
         "端到端流程不要塞进每个单元测试"
-      ]
+      ],
+      "since": "frontend test"
     },
     {
       "track": "java",
@@ -12490,7 +14341,8 @@
         "断言返回值、异常和之后能读到的状态",
         "私有字段属于实现，不属于契约",
         "异常要断言类型和关键信息"
-      ]
+      ],
+      "since": "frontend test"
     },
     {
       "track": "java",
@@ -12517,20 +14369,22 @@
         "测试事务结束时常回滚，避免脏库",
         "回滚看不到提交后的回调和跨连接可见性",
         "要证明提交，就得真正提交再查"
-      ]
+      ],
+      "since": "Spring"
     },
     {
       "track": "java",
       "group": "测试",
       "id": "testcontainers-real-db",
-      "title": "真实数据库的测试要隔离，不要拿生产库当夹具",
+      "title": "真实数据库的测试要隔离，不要拿生产库当夹具（Testcontainers）",
       "prompt": "切片测试过了，换到 PostgreSQL 就失败，缺的是哪一层证明？",
       "keywords": "Testcontainers PostgreSQL 集成测试 方言",
       "points": [
         "内存库证明不了生产方言和约束",
         "容器测试适合少量真实引擎假设",
         "不是每个测试都要启动数据库"
-      ]
+      ],
+      "since": "Testcontainers"
     },
     {
       "track": "java",
@@ -12543,7 +14397,8 @@
         "测试默认复用缓存的应用上下文",
         "DirtiesContext 会强制下一例重建容器",
         "清数据不要用重建容器代替"
-      ]
+      ],
+      "since": "Spring"
     },
     {
       "track": "java",
@@ -12556,7 +14411,8 @@
         "同一请求用同一个 trace id 穿过网关和服务",
         "span 分开记录网关、应用、连接池和 SQL",
         "日志必须带上 trace id，才能从投诉跳到那一次调用"
-      ]
+      ],
+      "since": "OpenTelemetry"
     },
     {
       "track": "java",
@@ -12569,7 +14425,8 @@
         "Trace 描述一次操作穿过的路径和耗时",
         "Metric 是可聚合的趋势和告警数据",
         "日志记录事件，并用 trace 标识和链路关联"
-      ]
+      ],
+      "since": "OpenTelemetry"
     },
     {
       "track": "java",
@@ -12596,7 +14453,8 @@
         "connectionTimeout 是等待池中连接的时间",
         "查询超时要另设在语句或套接字上",
         "调大借连接等待不会取消已借出的慢查询"
-      ]
+      ],
+      "since": "HikariCP"
     },
     {
       "track": "java",
@@ -12637,7 +14495,8 @@
         "相关 id 让一次请求的日志能搜到一起",
         "从入口放入 MDC 并传给下游",
         "id 不要用个人身份信息"
-      ]
+      ],
+      "since": "correlation id"
     },
     {
       "track": "java",
@@ -12650,7 +14509,8 @@
         "被动：Server 连 agent 拉数",
         "主动：agent 向 Server 推数",
         "大规模用主动检查或 Proxy，不是全网被动轮询"
-      ]
+      ],
+      "since": "engineering"
     },
     {
       "track": "java",
@@ -12663,7 +14523,8 @@
         "负载升高不一定是 CPU 在算",
         "IO 等待高且 CPU 空闲时先看磁盘",
         "重启前留下利用率、排队和错误"
-      ]
+      ],
+      "since": "engineering"
     },
     {
       "track": "java",
@@ -12676,7 +14537,8 @@
         "先有最慢的那一跳，再选旋钮",
         "堆只影响回收，不缩短全表扫描",
         "复测仍看原来的跨度和百分位"
-      ]
+      ],
+      "since": "engineering"
     },
     {
       "track": "java",
@@ -12703,7 +14565,8 @@
         "L1 L2 L3 是硬件缓存，没有 JVM 参数可改容量",
         "-Xmx 限制的是主存里的堆",
         "热点字段进缓存行，不等于堆容量等于缓存容量"
-      ]
+      ],
+      "since": "engineering"
     },
     {
       "track": "java",
@@ -12716,7 +14579,8 @@
         "量化业务规模与约束",
         "先设计正确的最小路径",
         "根据瓶颈逐步演进"
-      ]
+      ],
+      "since": "interview frame"
     },
     {
       "track": "java",
@@ -12729,7 +14593,8 @@
         "构建阶段与运行阶段分离",
         "复制产物而非全部源码",
         "镜像体积与内容核验"
-      ]
+      ],
+      "since": "engineering"
     },
     {
       "track": "java",
@@ -12742,7 +14607,8 @@
         "startup 保护慢启动",
         "readiness 决定接流量",
         "liveness 决定是否重启"
-      ]
+      ],
+      "since": "engineering"
     },
     {
       "track": "java",
@@ -12755,7 +14621,8 @@
         "超过 memory limit 会被内核杀掉",
         "JVM 堆必须按容器限制估算",
         "request 管调度，limit 管能不能继续活"
-      ]
+      ],
+      "since": "engineering"
     },
     {
       "track": "java",
@@ -12768,7 +14635,8 @@
         "镜像层和 Git 都会留下明文",
         "密钥在部署时注入，不烤进镜像",
         "泄露后要轮换，删掉提交不够"
-      ]
+      ],
+      "since": "engineering"
     },
     {
       "track": "java",
@@ -12781,7 +14649,8 @@
         "starter-web 默认内嵌 Tomcat，不是没有 HTTP 服务器",
         "DevTools 用双类加载器做快速重启",
         "生产打包默认禁用 DevTools"
-      ]
+      ],
+      "since": "Spring"
     },
     {
       "track": "java",
@@ -12794,7 +14663,8 @@
         "2.23 起 restore 还原、switch 切分支",
         "checkout 旧命令仍在，但职责混杂",
         "add -A 与 add . 范围不同"
-      ]
+      ],
+      "since": "engineering"
     },
     {
       "track": "java",
@@ -12807,7 +14677,8 @@
         "大内核锁已经从主线移除",
         "中断上下文不能用会睡眠的锁",
         "2.6 起内核可抢占，不是绝对占着 CPU"
-      ]
+      ],
+      "since": "engineering"
     },
     {
       "track": "java",
@@ -12820,7 +14691,8 @@
         "kubelet 通过 CRI 对接运行时，不绑定 Docker",
         "1.24 起移除内置 dockershim",
         "控制面组件在工作，只是常不跑业务 Pod"
-      ]
+      ],
+      "since": "engineering"
     },
     {
       "track": "java",
@@ -12833,7 +14705,8 @@
         "root 是 uid 0，root 组不是完整特权",
         "usermod -G 会覆盖附加组，追加用 -aG",
         "清日志不要从 / 配 rm -rf"
-      ]
+      ],
+      "since": "engineering"
     },
     {
       "track": "java",
@@ -12846,7 +14719,8 @@
         "子进程只保留调用 fork 的线程",
         "其他线程的锁可能留在子进程里",
         "多线程里 fork 之后应尽快 exec"
-      ]
+      ],
+      "since": "engineering"
     },
     {
       "track": "java",
@@ -12859,7 +14733,8 @@
         "默认可能把容器 uid 0 映射成宿主机 0",
         "user namespace / rootless 会改映射",
         "还靠 dropped capabilities 和 seccomp"
-      ]
+      ],
+      "since": "engineering"
     },
     {
       "track": "java",
@@ -12872,7 +14747,8 @@
         "v3 默认 gRPC，不是 v2 的 HTTP JSON",
         "K8s 用 v3",
         "etcd 适合小而一致的数据，不是高 QPS 缓存"
-      ]
+      ],
+      "since": "engineering"
     },
     {
       "track": "java",
@@ -12885,7 +14761,8 @@
         "默认分支名可配置，常为 main",
         "HEAD 指向当前分支，不绑定名字 master",
         "origin 是远程名，不是分支名"
-      ]
+      ],
+      "since": "engineering"
     },
     {
       "track": "java",

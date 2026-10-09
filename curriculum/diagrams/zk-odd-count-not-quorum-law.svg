@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-labelledby="title desc">
+  <title id="title">奇数台不是 quorum 定律</title>
+  <desc id="desc">过半法定人数偶数也成立；2f+1 是性价比习惯。</desc>
+  <rect width="960" height="400" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">ZooKeeper</text>
+  <text x="32" y="64" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">“过半所以必须奇数”推错了</text>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <rect x="32" y="96" width="430" height="176" rx="14" fill="#f6ecea" stroke="#a05048"/>
+    <text x="52" y="132" font-size="15" font-weight="600" fill="#6e3530">资料口吻</text>
+    <text x="52" y="164" font-size="14" fill="#2e3330">半数以上才可用</text>
+    <text x="52" y="196" font-size="14" fill="#2e3330">因此必须奇数台</text>
+    <text x="52" y="228" font-size="14" fill="#5e6661">偶数非法</text>
+    <rect x="496" y="96" width="432" height="176" rx="14" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="516" y="132" font-size="15" font-weight="600" fill="#2e3330">纠正</text>
+    <text x="516" y="164" font-size="14" fill="#3f6a58">quorum = 过半</text>
+    <text x="516" y="196" font-size="14" fill="#3f6a58">4 台过半也是 3</text>
+    <text x="516" y="228" font-size="14" fill="#5e6661">2f+1 更省机器</text>
+    <rect x="32" y="296" width="896" height="72" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="52" y="328" font-size="15" font-weight="600" fill="#2e3330">奇数是部署习惯，不是协议禁偶。</text>
+    <text x="52" y="352" font-size="14" fill="#5e6661">对照 zk-linearizable-not-realtime</text>
+  </g>
+</svg>

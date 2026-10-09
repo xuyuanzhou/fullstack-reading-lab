@@ -35,6 +35,21 @@
 | Cookie / SameSite | `cookie-set-attributes`、`cookie-credential`、`fetch-credentials` |
 | Cookie 前缀 / Partitioned | `cookie-prefix-partitioned` |
 | CORS | `cors`、`cors-credentials-allowlist` |
+| CORS 预检 Max-Age | `cors-preflight-max-age` |
+| CSP script-src | `csp-script-src` |
+| CSP Report-Only | `csp-report-only-not-enforce` |
+| Trusted Types | `trusted-types-sink-guard` |
+| Permissions-Policy | `permissions-policy-feature-gate` |
+| COOP / COEP / isolated | `coop-coep-cross-origin-isolated` |
+| Referrer-Policy | `referrer-policy-leak-bound` |
+| SRI / integrity | `sri-integrity-not-csp` |
+| Clear-Site-Data | `clear-site-data-not-full-logout` |
+| Reporting / NEL | `reporting-nel-not-csp-enforce` |
+| CORP | `corp-embed-gate-not-cors` |
+| Document-Policy | `document-policy-not-permissions-policy` |
+| Private Network Access | `pna-private-network-access` |
+| Fenced Frames | `fenced-frame-embed-boundary` |
+| Attribution Reporting | `attribution-reporting-not-cookie` |
 | 长轮询 / WebSocket | `long-poll-vs-websocket` |
 | SSE 单向推送 | `sse-one-way-http-stream` |
 | 中止请求 | `fetch-abort` |
@@ -49,11 +64,25 @@
 | ZSet 排行 | `redis-zset-rank-range` |
 | HyperLogLog | `redis-hyperloglog-approx` |
 | Stream vs Pub/Sub | `redis-stream-vs-pubsub` |
+| Stream XTRIM / MAXLEN | `redis-stream-xtrim-bound` |
 | PSUBSCRIBE 模式 | `redis-pubsub-pattern-subscribe` |
+| 键空间通知≠队列 | `redis-keyspace-notify-not-queue` |
+| 客户端缓存需失效 | `redis-client-side-cache-invalidate` |
+| Redis Functions≠EVAL | `redis-functions-not-just-eval` |
+| Redis ACL≠requirepass | `redis-acl-not-just-requirepass` |
+| WAIT≠落盘耐久 | `redis-wait-replicas-not-durability` |
+| HELLO/RESP3≠自动能力 | `redis-hello-resp3-not-just-version` |
 | INNER JOIN | `mysql-inner-join-match` |
 | 外连接 WHERE 陷阱 | `sql-outer-join-where` |
 | GROUP BY / HAVING | `mysql-where-having`、`mysql-group-by-having` |
 | 窗口函数保留行 | `mysql-window-keeps-rows` |
+| CTE WITH | `mysql-cte-named-subquery` |
+| 临时表 vs CTE | `mysql-temp-table-vs-cte` |
+| JSON≠文档库 | `mysql-json-not-document-db` |
+| SPATIAL≠完整 GIS | `mysql-spatial-index-not-full-gis` |
+| 生成列/函数索引≠WHERE 包函数 | `mysql-generated-column-not-where-wrap` |
+| CHECK 8.0.16+ 强制 | `mysql-check-enforced-not-parsed-only` |
+| 不可见索引≠已删除 | `mysql-invisible-index-not-drop` |
 | VIEW 机制 | `mysql-view-is-stored-query` |
 | 存储过程≠自动事务 | `mysql-procedure-not-auto-txn` |
 | 触发器副作用 | `mysql-trigger-side-effect-hidden` |
@@ -89,4 +118,36 @@
 
 已补：SW 策略选型、Cookie 前缀/Partitioned、窗口函数行数、GEO≠GIS（BITFIELD 仅在 deep 区分）。
 
-下一轮可继续扫：CSP report-only 边界、CORS preflight 缓存、MySQL CTE 机制、Redis Stream 修剪策略加厚（有则只交叉）。
+## 第六轮（2026-10-09）
+
+已补：CSP Report-Only、CORS 预检 Max-Age、CTE、Stream XTRIM。
+
+## 第七轮（2026-10-09）
+
+已补：Trusted Types、Permissions-Policy、临时表 vs CTE、Keyspace 通知≠队列。
+
+## 第八轮（2026-10-09）
+
+已补：COOP/COEP 与 crossOriginIsolated、Referrer-Policy、MySQL JSON≠文档库、Redis 客户端缓存需失效。
+
+## 第九轮（2026-10-09）
+
+已补：SRI、Clear-Site-Data、MySQL SPATIAL≠完整 GIS、Redis Functions≠EVAL。
+
+## 第十轮（2026-10-09）
+
+已补：Reporting/NEL≠强制 CSP、CORP≠CORS、生成列/函数索引≠WHERE 包函数、Redis ACL≠requirepass。
+
+下一轮可继续扫：Document-Policy、Private Network Access、MySQL CHECK 约束边界、Redis 6+ client-side caching 深化有则只交叉；先 ls 空闲号。
+
+## 第十一轮（2026-10-09）
+
+已补：Document-Policy≠Permissions-Policy、PNA、MySQL CHECK 强制起点、Redis WAIT≠落盘。
+
+下一轮可继续扫：Fenced Frames、Attribution Reporting、MySQL invisible index、Redis HELLO/RESP3 选型有则只交叉；先 ls 空闲号。
+
+## 第十二轮（2026-10-09）
+
+已补：Fenced Frames、Attribution Reporting、MySQL invisible index、Redis HELLO/RESP3。
+
+下一轮可继续扫：Storage Access API、FedCM、MySQL histogram、Redis Sharded Pub/Sub 有则只交叉；先 ls 空闲号。
