@@ -601,6 +601,7 @@
         "schema-migration",
         "mysql-datetime-vs-timestamp",
         "mysql-float-ieee-not-8-digits",
+        "mysql-money-decimal-not-ban",
         "mysql-split-not-at-ten-million",
         "mysql-view-is-stored-query",
         "table-design-from-facts",
@@ -618,6 +619,7 @@
         "mysql-slow-sql-locate",
         "mysql-slow-sql-optimize",
         "mysql-mvcc",
+        "mysql-mvcc-not-two-version-columns",
         "mysql-isolation",
         "mysql-isolation-levels",
         "mysql-deadlock",
@@ -2016,6 +2018,7 @@
             "schema-migration",
             "mysql-datetime-vs-timestamp",
             "mysql-float-ieee-not-8-digits",
+            "mysql-money-decimal-not-ban",
             "mysql-split-not-at-ten-million",
             "mysql-view-is-stored-query"
           ]
@@ -2053,6 +2056,7 @@
           "title": "事务",
           "ids": [
             "mysql-mvcc",
+            "mysql-mvcc-not-two-version-columns",
             "mysql-isolation",
             "mysql-isolation-levels",
             "mysql-deadlock",
@@ -6195,6 +6199,7 @@
           "body": "在网络面板看方法、Content-Type 和请求正文是否为 JSON 文本。把超时改成 100 毫秒打慢接口，控制台应在约 100 毫秒后出现拒绝。对 204 去掉 json() 后，成功分支应能结束。"
         }
       ],
+      "since": "AbortSignal.timeout",
       "points": [
         "非 GET 要显式写 method",
         "JSON 正文是字符串并声明 Content-Type",
@@ -6382,6 +6387,7 @@
           "body": "先下载前半段，再请求剩余区间。对照 206 时文件能拼完整。把服务器文件换成另一份内容后用同一偏移续传，确认客户端拒绝追加并改为整份重下。换过内容后再续传，文件应被整份替换。"
         }
       ],
+      "since": "RFC 9110 Range",
       "points": [
         "Range 与 206 部分响应",
         "Content-Range 校验区间",
@@ -6837,6 +6843,7 @@
           "body": "构建后在产物里搜索一个带前缀变量的值，应能看到明文。再搜索一个没有前缀的变量值，客户端文件里不应出现。口令只留在服务端进程环境中。口令字符串只应出现在服务端环境，不应出现在下载下来的脚本中。"
         }
       ],
+      "since": "Vite env",
       "points": [
         "只有 VITE_ 前缀会进入客户端代码",
         "这些值在构建时被写进可下载的脚本",
@@ -7094,6 +7101,7 @@
           "body": "在响应处理里打印 id，并用开发者工具把其中一个请求设成慢速。切换两条记录，看打印顺序和屏幕上的标题是否属于地址栏里的 id。"
         }
       ],
+      "since": "React 16.8",
       "points": [
         "effect 在提交后和外部系统同步，并在依赖变化时先清理",
         "切换资源标识时要忽略或取消上一次请求",
@@ -7133,6 +7141,7 @@
         }
       ],
       "keywords": "React useEffect useLayoutEffect 绘制 paint SSR 副作用",
+      "since": "React 16.8",
       "points": [
         "layout effect 面向绘制前的 DOM 测量与同步修改",
         "useEffect 适合绘制后的普通副作用",
@@ -7540,9 +7549,9 @@
       "track": "frontend",
       "group": "React",
       "id": "suspense",
-      "title": "Suspense 的等待与重试",
+      "title": "Suspense 的等待与重试（React 16+）",
       "prompt": "Suspense 是任意异步请求的通用 loading 开关吗？",
-      "core": "Suspense 处理支持 Suspense 的渲染资源在渲染时挂起的情况，边界可显示 fallback 并在资源就绪后重试。普通 useEffect 内发起请求不会自动触发该边界。顺序是：渲染读到会挂起的资源时中断，显示 fallback，资源就绪后再从该边界重试。边界是：挂起必须发生在渲染期间。effect、事件处理器里的 Promise 不会自动变成 fallback。代码分割用 lazy 可以挂起；手写数据请求要自己管理加载、失败和过期响应。fallback 只接得住渲染期间的挂起。effect 里的 Promise 已经错过渲染，加载态必须写进自己的 state，失败和过期响应也要自己处理。",
+      "core": "Suspense（**React 16** 起用于代码分割等待；数据挂起另有支持路径）处理支持 Suspense 的渲染资源在渲染时挂起的情况，边界可显示 fallback 并在资源就绪后重试。普通 useEffect 内发起请求不会自动触发该边界。顺序是：渲染读到会挂起的资源时中断，显示 fallback，资源就绪后再从该边界重试。边界是：挂起必须发生在渲染期间。effect、事件处理器里的 Promise 不会自动变成 fallback。代码分割用 lazy 可以挂起；手写数据请求要自己管理加载、失败和过期响应。fallback 只接得住渲染期间的挂起。effect 里的 Promise 已经错过渲染，加载态必须写进自己的 state，失败和过期响应也要自己处理。",
       "why": "错把 Suspense 当成任意请求的 loading 开关，useEffect 里的 fetch 失败或等待时 fallback 并不出现。界面要自己画加载态。能分开的信号是：这个资源在渲染期间抛出挂起，还是在 effect 里自己 setLoading。",
       "example": "const Editor = lazy(() => import(\"./Editor\"))，外面包 Suspense。代码还在加载时看见 fallback。同一页用 effect 请求详情，fallback 不会因此出现。",
       "task": "分别用 lazy 与 Effect 请求构造例子，观察 fallback 何时出现。",
@@ -7559,6 +7568,7 @@
           "body": "节流网络，分别打开 lazy 页面和 effect 请求页面。只有前者会在组件代码到达前稳定出现 fallback。"
         }
       ],
+      "since": "React 16+",
       "points": [
         "支持 Suspense 的资源挂起",
         "fallback 与重试",
@@ -8146,6 +8156,7 @@
           "body": "isPending 是还没有数据。error 是失败。data 为空数组是成功但没有行。三个状态要分开画，不能只用一个 loading 布尔值盖住。"
         }
       ],
+      "since": "TanStack Query",
       "points": [
         "query key 包含所有影响结果的参数",
         "组件读取查询结果，不再复制到 useState",
@@ -8222,6 +8233,7 @@
         }
       ],
       "keywords": "Redux Toolkit configureStore createSlice createStore redux-thunk",
+      "since": "Redux Toolkit",
       "points": [
         "官方推荐新代码用 Redux Toolkit",
         "configureStore 默认带 thunk 与 DevTools",
@@ -9111,6 +9123,7 @@
           "body": "payload 里已经有的数据，客户端水合时不应再自动打同一接口，除非你明确要求刷新。网络面板里同一次进入出现两次相同 GET，就是键或调用方式错了。"
         }
       ],
+      "since": "Nuxt 3",
       "points": [
         "useFetch 在服务端取数并写入 payload",
         "onMounted 里的请求不会出现在首屏 HTML",
@@ -9298,9 +9311,9 @@
       "track": "frontend",
       "group": "技术选型",
       "id": "fe-angular-first-party",
-      "title": "Angular 的路由、HTTP 和表单用自己的包",
+      "title": "Angular 的路由、HTTP 和表单用自己的包（v21）",
       "prompt": "为什么新的 Angular 工程还要再装一套 React Query、Redux 和 react-router？",
-      "core": "Angular v21 起，新应用默认采用无 Zone 的变更检测，引导配置里不要再用 provideZoneChangeDetection 把它改回去。模板读取的信号更新、markForCheck、组件输入和模板事件会安排检查。信号用 signal、computed 和 effect 描述状态和派生。HttpClient 从 v21 起默认可注入；更早的工程用 provideHttpClient，而不是再引入已不推荐的 HttpClientModule 当现行写法。路由用 provideRouter 和 RouterOutlet。表单是应用主体时用响应式表单，模型放在组件类里。这些包都在 @angular 下。输入钩子何时触发见 `angular-ngonchanges-primitives`。已有工程可以仍带着 zone.js，那是迁移状态，不是新项目的默认。",
+      "core": "**Angular v21** 起，新应用默认采用无 Zone 的变更检测，引导配置里不要再用 provideZoneChangeDetection 把它改回去。模板读取的信号更新、markForCheck、组件输入和模板事件会安排检查。信号用 signal、computed 和 effect 描述状态和派生。HttpClient 从 v21 起默认可注入；更早的工程用 provideHttpClient，而不是再引入已不推荐的 HttpClientModule 当现行写法。路由用 provideRouter 和 RouterOutlet。表单是应用主体时用响应式表单，模型放在组件类里。这些包都在 @angular 下。输入钩子何时触发见 `angular-ngonchanges-primitives`。已有工程可以仍带着 zone.js，那是迁移状态，不是新项目的默认。",
       "why": "把 React 生态的请求缓存和路由再装一份之后，同一次跳转既走 Angular Router 又走另一个 history，列表既在 HttpClient 的流里又在第二份缓存里。取消订阅和刷新列表会对不上。",
       "example": "订单 API 放在可注入的服务里，组件订阅 HttpClient 返回的 Observable，或按文档用资源把异步数据接进信号。地址用 routerLink。不要为这个工程添加 @tanstack/react-query 或 react-router-dom。",
       "task": "在新工程的依赖里确认路由、HTTP、表单都来自 @angular。若 zone.js 还在，写明这是 v21 之前的工程还是有意覆盖了默认。",
@@ -9316,6 +9329,7 @@
           "body": "新建工程看 polyfills 或依赖里没有 zone.js，引导处没有 provideZoneChangeDetection。发一次 GET 只出现在 HttpClient 的服务里。路由表是 provideRouter 的那一份。"
         }
       ],
+      "since": "Angular v21",
       "points": [
         "Angular v21 新应用默认无 Zone，状态用信号",
         "HttpClient 与 provideRouter 是请求和路由的官方入口",
@@ -9524,6 +9538,7 @@
           "body": "改 id 信号，应只看到新编号的请求，表格第一行属于新编号。Store 里不应再有同一数组。提交备注的网络记录应来自 HttpClient，而不是另一次 httpResource。"
         }
       ],
+      "since": "Angular v21",
       "points": [
         "GET 走 HttpClient 或 httpResource，结果用信号读",
         "httpResource 不做 POST、PUT，变更仍用 HttpClient",
@@ -10962,6 +10977,7 @@
           "body": "看 Hermes 文档的默认说明，新工程不应再为了「打开 Hermes」加一套配置。再找到退出到 JavaScriptCore 的步骤，确认那是可选退路。最后在环境文档的补齐列表里核对你要用的函数，而不是只在 Chrome 里试一次。"
         }
       ],
+      "since": "RN Hermes",
       "points": [
         "Hermes 默认启用，不必再配一次才打开",
         "换 JavaScriptCore 是退出 Hermes",
@@ -11431,6 +11447,7 @@
           "body": "把第一项换成订单页，冷启动应进入订单。删掉订单登记后再 navigateTo，应打不开。对 tab 页 navigateTo 应失败，switchTab 应成功且 query 带不过去。连续 navigateTo 到第 11 层，微信上应失败。"
         }
       ],
+      "since": "uni-app",
       "points": [
         "页面必须写进 pages.json，第一项是冷启动页",
         "navigateTo 的 url 带前导斜杠，query 到 onLoad 时是字符串",
@@ -12598,6 +12615,7 @@
           "body": "分别用 true、false、hidden 构建。true 的脚本尾部应有 sourceMappingURL 且存在 .map；false 两者都没有；hidden 应有 .map 文件，但脚本里没有 sourceMappingURL。"
         }
       ],
+      "since": "Vite",
       "points": [
         "source map 能还原到源码",
         "公开 map 等于公开仓库内容",
@@ -12676,6 +12694,7 @@
           "body": "对照生命周期文档，写出首次 ngOnChanges 在 ngOnInit 之前。把一个 number 输入从 1 改到 2，钩子应进来。再打开 OnPush：输入对象引用不变时，该子树应跳过检查。"
         }
       ],
+      "since": "Angular v21",
       "points": [
         "首次 ngOnChanges 在 ngOnInit 之前",
         "基本类型输入按值，对象输入按引用",
@@ -17431,6 +17450,7 @@
           "body": "用计数 3 的 Latch 跑两轮打印：第二轮若不新建，计数已是零，不会再等。再用同一个 CyclicBarrier 跑两轮，两轮都应打印；中途打断一个线程，等待方会看到破损。"
         }
       ],
+      "since": "JDK 5",
       "points": [
         "Latch 计数到零后不能重置",
         "Barrier 可重复进入下一轮汇合",
@@ -17543,6 +17563,7 @@
           "body": "打开 ReentrantLock、Semaphore、CountDownLatch 和读写锁的继承关系，确认能走到 AQS。再打开 FutureTask，划掉它。说明 state 管资源，队列管还在等的线程。"
         }
       ],
+      "since": "JDK 5 AQS",
       "points": [
         "AQS 用 CAS 管理 state 并把失败线程排进等待队列",
         "ReentrantLock、Semaphore、CountDownLatch、读写锁基于 AQS",
@@ -17764,9 +17785,9 @@
       "track": "java",
       "group": "并发",
       "id": "java-future-errors",
-      "title": "CompletableFuture 的错误恢复",
+      "title": "CompletableFuture 的错误恢复（JDK 8）",
       "prompt": "whenComplete 打印了异常，后续阶段就恢复正常了吗？",
-      "core": "whenComplete 主要观察完成结果，通常不会把原有异常替换成正常值；exceptionally 可从异常产生替代结果，handle 同时接收结果与异常并计算新结果。不同 *Async 方法还涉及执行器选择。顺序是：前一阶段异常完成后，whenComplete 能看见它但不替换它；exceptionally 只在异常时计算替代结果；handle 无论成败都计算一个新结果。边界是：打印栈不会改变完成状态。替代函数若再抛，链继续异常。*Async 变体把回调放到执行器上，默认执行器和业务池不是一回事，阻塞回调会占住池里的线程。下游是成功还是失败，看替代值有没有返回，不看日志里有没有栈。",
+      "core": "CompletableFuture（**JDK 8**）里，whenComplete 主要观察完成结果，通常不会把原有异常替换成正常值；exceptionally 可从异常产生替代结果，handle 同时接收结果与异常并计算新结果。不同 *Async 方法还涉及执行器选择。顺序是：前一阶段异常完成后，whenComplete 能看见它但不替换它；exceptionally 只在异常时计算替代结果；handle 无论成败都计算一个新结果。边界是：打印栈不会改变完成状态。替代函数若再抛，链继续异常。*Async 变体把回调放到执行器上，默认执行器和业务池不是一回事，阻塞回调会占住池里的线程。下游是成功还是失败，看替代值有没有返回，不看日志里有没有栈。",
       "why": "错把 whenComplete 里打印了异常当成链已经恢复，后面的 join 仍会抛出原来的失败。日志有了，结果没有。能分开的信号是：这一步是在观察异常，还是返回了一个替代值，看 join。",
       "example": "supplyAsync 里抛出 IllegalStateException。whenComplete 打印了原因，接着 join 仍然抛出这个异常。在 whenComplete 前面接 exceptionally 返回 0 之后，join 得到 0，不再抛。",
       "task": "分别用 whenComplete、exceptionally、handle 处理同一个失败 Future，观察下游完成状态。",
@@ -17782,6 +17803,7 @@
           "body": "用同一个失败的 supplyAsync 分别接 whenComplete、exceptionally 和 handle。对每条链 join 或看 isCompletedExceptionally。只有返回了替代值的那几条应正常完成，只打印的那条应仍然失败。"
         }
       ],
+      "since": "JDK 8",
       "points": [
         "whenComplete 用来查看结果，不会把失败变成成功",
         "exceptionally 只替换失败时的结果",
@@ -18742,6 +18764,50 @@
     {
       "track": "java",
       "group": "数据库",
+      "id": "mysql-money-decimal-not-ban",
+      "title": "“禁止小数存货币”不能禁掉 DECIMAL",
+      "prompt": "为什么规范写“禁止使用小数存储货币，小数容易导致钱对不上”？",
+      "core": "这里真正该禁的是 **FLOAT/DOUBLE** 一类二进制浮点：0.1 不能精确表示，累加会对不上，见 `mysql-float-ieee-not-8-digits`。**DECIMAL**（以及按分存的整数）是定点，金额常用 `DECIMAL(p,s)` 或最小货币单位整数。资料把“小数”一刀切，学习者会以为 `DECIMAL(10,2)` 也违规，反而改用浮点或字符串硬算。正确口令：货币用 DECIMAL 或整数分；不要用 FLOAT/DOUBLE；展示与四舍五入规则写进业务，而不是靠二进制浮点碰运气。",
+      "why": "评审看见 DECIMAL 就打回“规范禁止小数”，有人改成 FLOAT，对账出现分差。",
+      "example": "`amount DECIMAL(12,2)` 存 19.90，十次相加仍是 199.00。同值进 FLOAT 列再 SUM，常对不上。按分用 `BIGINT` 存 1990 也可以，展示时除以 100。",
+      "task": "划掉“凡小数都不能存货币”。分别标：FLOAT、DECIMAL、整数分——哪个禁、哪个用。",
+      "answer": "划掉「凡小数都不能存货币」。禁 FLOAT/DOUBLE。用 DECIMAL 或整数分。钱对不上来自二进制浮点，不是 DECIMAL 的定点小数。",
+      "keywords": "DECIMAL FLOAT 货币 定点 规范",
+      "origin": "《分布式高并发.pdf》约第 104 页：禁止使用小数存储货币",
+      "diagram": "diagrams/mysql-money-decimal-not-ban.svg",
+      "deep": [
+        {
+          "title": "和手机号 varchar",
+          "body": "同页“手机号必须 varchar”方向对（含区号、不做算术）。类型规范要按语义拆，不能一句“小数”打全部数值类型。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "建 FLOAT 与 DECIMAL(12,2) 各插十个 0.1，SUM 对比。DECIMAL 应为精确和；FLOAT 常不是。"
+        }
+      ],
+      "points": [
+        "禁的是浮点不是定点 DECIMAL",
+        "金额用 DECIMAL 或整数分",
+        "钱对不上来自二进制表示误差"
+      ],
+      "references": [
+        [
+          "MySQL：DECIMAL",
+          "https://dev.mysql.com/doc/refman/8.4/en/fixed-point-types.html"
+        ],
+        [
+          "MySQL：浮点类型",
+          "https://dev.mysql.com/doc/refman/8.4/en/floating-point-types.html"
+        ],
+        [
+          "IEEE 754",
+          "https://en.wikipedia.org/wiki/IEEE_754"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "数据库",
       "id": "mysql-split-not-at-ten-million",
       "title": "单表一千万行不是必须拆分的定律",
       "prompt": "为什么拆分原则里写着「单表拆到一千万以内」，计数一到就开工分库？",
@@ -19378,6 +19444,50 @@
       "references": [
         [
           "MySQL 8.4：InnoDB Transaction Model",
+          "https://dev.mysql.com/doc/refman/8.4/en/innodb-transaction-model.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-mvcc-not-two-version-columns",
+      "title": "InnoDB MVCC 不是“行尾两个创建/删除版本列”那么简单",
+      "prompt": "为什么资料把 MVCC 说成每行后面加创建版本号、删除版本号两列，更新就删旧插新？",
+      "core": "教学比喻里的“创建/删除版本”能帮助建立直觉，但 **InnoDB 现行实现**并不是给业务行附加两列用户可见的版本号字段。聚簇索引记录带有事务 ID、回滚指针等系统字段，历史版本主要在 **undo log** 里串起来；一致性读按 Read View 判断可见性，见 `mysql-mvcc`、`mysql-redo-undo-binlog`。更新也不是简单“写删除版本再插一整行业务副本”的唯一故事——当前行会被修改，旧值通过 undo 保留供旧读。把资料表格当成物理表结构，会找不到那两列，也解释不清 purge、undo 长度与锁定读差异。面试应落到：快照读 vs 锁定读、undo 与 Read View，而不是背两列表格。",
+      "why": "有人 `SHOW CREATE TABLE` 找 create_version 列找不到，或以为更新一定物理插第二行业务数据，空间模型全错。",
+      "example": "事务 A 开启后普通 SELECT 读到价格 10。事务 B 提交改成 12。A 在可重复读下仍可能读到 10：靠 Read View + undo 链，不是表上多了一列 delete_version=B。A 若 `SELECT … FOR UPDATE` 则走锁定读，行为不同。",
+      "task": "划掉“表上真有创建/删除版本两列”。写出：旧版本主要在哪；普通 SELECT 与 FOR UPDATE 各看什么。",
+      "answer": "划掉「表上真有两列版本号」。旧版本主要在 undo；一致性读用 Read View 判断可见性。FOR UPDATE 是锁定读，不是同一套快照故事。资料表格是直觉模型，不是 InnoDB 表结构。",
+      "keywords": "InnoDB MVCC undo Read View 快照读",
+      "origin": "《分布式高并发.pdf》约第 116–118 页：MVCC 两个隐藏版本列",
+      "diagram": "diagrams/mysql-mvcc-not-two-version-columns.svg",
+      "deep": [
+        {
+          "title": "和隔离级别",
+          "body": "RR/RC 下 Read View 建立时机不同，可见性细节以手册为准。不要用“版本号小于当前事务”一句盖所有级别。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "对照 InnoDB 多版本与事务模型文档，确认没有业务列叫 create_version。开两事务做快照读与 FOR UPDATE，观察是否阻塞与读到的值。"
+        }
+      ],
+      "points": [
+        "资料两列表格是直觉不是表结构",
+        "历史版本主要在 undo 链",
+        "快照读与锁定读规则不同"
+      ],
+      "references": [
+        [
+          "MySQL：InnoDB 多版本",
+          "https://dev.mysql.com/doc/refman/8.4/en/innodb-multi-versioning.html"
+        ],
+        [
+          "MySQL：一致性读",
+          "https://dev.mysql.com/doc/refman/8.4/en/innodb-consistent-read.html"
+        ],
+        [
+          "MySQL：事务模型",
           "https://dev.mysql.com/doc/refman/8.4/en/innodb-transaction-model.html"
         ]
       ]
@@ -20044,9 +20154,9 @@
       "track": "java",
       "group": "数据库",
       "id": "mysql-replica-parallel-applier",
-      "title": "从库应用不再只能是一条 SQL 线程",
+      "title": "从库应用不再只能是一条 SQL 线程（MySQL 8.0+）",
       "prompt": "为什么把复制延迟只归因于“主从复制是单线程”，在 8.4 上会过时？",
-      "core": "异步复制确实会让从库落后，读自己的写入仍要读主库或等位点，见 `mysql-replica-lag`。但“从库只能单线程应用 binlog”不是现行全貌：8.0/8.4 可用 replica_parallel_workers 做基于逻辑时钟的并行应用，前提是事务在主库上也能并行提交。大事务、行锁冲突、磁盘和网络仍会造成延迟。一主多从能摊读，摊不掉单条大事务。强制关键读走主库、缓存刚写的键，比只加硬件更对症。",
+      "core": "异步复制确实会让从库落后，读自己的写入仍要读主库或等位点，见 `mysql-replica-lag`。但“从库只能单线程应用 binlog”不是现行全貌：**MySQL 8.0/8.4** 可用 replica_parallel_workers 做基于逻辑时钟的并行应用，前提是事务在主库上也能并行提交。大事务、行锁冲突、磁盘和网络仍会造成延迟。一主多从能摊读，摊不掉单条大事务。强制关键读走主库、缓存刚写的键，比只加硬件更对症。",
       "why": "把复制延迟只归咎于从库单线程，就会漏掉并行回放，也会以为多加一台从库就能消灭大事务的落后。区分信号是 replica_parallel_workers 大于 1 时事务可以并行应用，但一条大事务或行锁冲突仍然追不上。",
       "example": "从库把 replica_parallel_workers 设成多个，主库上本来就能并行提交的小事务在从库并行回放，延迟下降。接着主库提交一个改动几百万行的事务，从库延迟再次拉大。下单后的我的订单仍读主库，不读这台还在追的从库。",
       "task": "对照 8.4 复制线程与 replica_parallel_workers，划掉“复制只能单线程”；写出并行仍然追不上的两类负载。",
@@ -20062,6 +20172,7 @@
           "body": "对照 replica_parallel_workers 划掉只能单线程。把 worker 调大后跑一批互不冲突的小事务，延迟应能下降。再跑一条大事务或互相冲突的更新，从库仍应明显落后。"
         }
       ],
+      "since": "MySQL 8.0+",
       "points": [
         "异步复制会落后，这点没变",
         "8.4 可用多 worker 并行应用事务",
@@ -20913,6 +21024,7 @@
           "body": "打开当前 Redis 字符串文档，核对上限是不是 512MB，并确认没有 Virtual Memory 作为推荐特性。把有些资料里的 1GB、512KB 和自建 VM 三句划掉。"
         }
       ],
+      "since": "Redis no VM",
       "points": [
         "Virtual Memory 换页方案已废弃",
         "STRING 上限是 512MB，不是 1GB 或 512KB key",
@@ -21161,6 +21273,7 @@
           "body": "对同一个键连续 INCR，用 `CLUSTER KEYSLOT` 与 `CLUSTER NODES` 看哈希槽。再在另一节点对同一键 INCR，值应连续，而不是各从 1、2、3 起步。"
         }
       ],
+      "since": "Redis Cluster",
       "points": [
         "INCR 的原子性只覆盖一个键",
         "Cluster 把该键放在一个槽、一台主上",
@@ -21539,6 +21652,7 @@
           "body": "对照 Boot 的打包文档，写出 jar 与 war 各自由谁启动。再在自动配置上加一处 exclude，确认该项不再生效，而不是整份配置被禁止。"
         }
       ],
+      "since": "Spring Boot",
       "points": [
         "默认可执行 jar 内嵌容器",
         "WAR + SpringBootServletInitializer 仍可用",
@@ -22440,6 +22554,7 @@
         }
       ],
       "keywords": "JPA @Modifying clearAutomatically 批量更新 持久化上下文",
+      "since": "Spring Data JPA",
       "points": [
         "@Modifying 发出的是 UPDATE/DELETE，不是查询",
         "已加载实体不会自动变成新值",
@@ -22694,6 +22809,7 @@
         }
       ],
       "keywords": "MyBatis lazyLoading Javassist aggressiveLazyLoading",
+      "since": "MyBatis 3",
       "points": [
         "延迟加载覆盖 association 和 collection",
         "默认代理是 Javassist，CGLIB 已标记过时",
@@ -24317,6 +24433,7 @@
           "body": "对照网关的 WebSocket 说明，把 HTTP 超时和 WebSocket 空闲超时写成两行。让连接空闲超过短超时但小于空闲超时，短超时那套应不再把它掐掉。"
         }
       ],
+      "since": "RFC 6455",
       "points": [
         "WebSocket 先升级，再在同一连接上发帧",
         "短 HTTP 超时会掐掉空闲的长连接",
@@ -24355,6 +24472,7 @@
           "body": "在处理里故意睡一秒，同时发两个连接，看第二个是否被拖到第一秒之后。再把睡眠改到业务池并在完成后写回，第二个连接应不必再等第一个睡完。改到业务池之后，第二个连接的响应不应再等满这一秒。"
         }
       ],
+      "since": "Netty",
       "points": [
         "少量 EventLoop 服务大量连接",
         "Loop 线程里的阻塞会拖住同 Loop 的连接",
@@ -25360,6 +25478,7 @@
         }
       ],
       "keywords": "Kafka ISR replica.lag.time.max.ms KRaft",
+      "since": "Kafka lag.time",
       "points": [
         "现行踢出 ISR 看滞后时间不是条数阈值",
         "条数差会随吞吐抖动",
@@ -25808,6 +25927,7 @@
           "body": "纵览课把它放在“遗留 JMS”列；本课只展开到能对接和能拒绝误用。"
         }
       ],
+      "since": "JMS / ActiveMQ",
       "points": [
         "JMS Queue 点对点，Topic 发布订阅",
         "适合遗留 JMS 客户端与企业集成",
@@ -25846,6 +25966,7 @@
           "body": "先掌握 Kafka 模型，再读本课作对照；落地仍按工作负载课选择。"
         }
       ],
+      "since": "Pulsar",
       "points": [
         "Pulsar 消费模型接近可重放日志",
         "Broker 与持久化存储分层，利于独立扩容",
@@ -26108,6 +26229,7 @@
           "body": "关闭自动刷新，索引一篇文档，立刻做按标识获取和按词搜索。获取应有正文，搜索应为 0 条。手动刷新后再搜索，命中数应为 1。刷新后再搜同一标题，命中数应从 0 变成 1。"
         }
       ],
+      "since": "ES near-realtime",
       "points": [
         "索引成功不等于已经可被搜索",
         "refresh 让新段对搜索可见",
@@ -26184,6 +26306,7 @@
           "body": "对同一查询分别用很大的 from 和 search_after。比较耗时，并核对返回 id 没有跳过或重复。再把 from 加到超过窗口，确认会报错而不是慢慢返回。"
         }
       ],
+      "since": "ES search_after",
       "points": [
         "from+size 必须先取出再丢掉前面的命中",
         "过深的 from 会被 max_result_window 拒绝",
@@ -26515,6 +26638,7 @@
           "body": "名单更新有延迟，所以下线后仍可能被连上。配置通知到了，也不等于已经抄进普通字段的值会变。那两件事分别在后面的注册课和配置课里检查。"
         }
       ],
+      "since": "Nacos",
       "points": [
         "命名空间和分组同时用于发现与配置，第三层的键不同",
         "临时实例靠心跳维持，消费方本地会缓存名单",
@@ -26715,6 +26839,7 @@
           "body": "列出这个应用订阅的每一份 dataId 和加载顺序。找一个两边都有的键，改共享那份再改应用那份，确认运行时用的是后加载的数字。"
         }
       ],
+      "since": "Nacos",
       "points": [
         "一份应用可以订阅多个 dataId 并按顺序合并",
         "后加载的同名键覆盖先加载的",
@@ -30313,6 +30438,7 @@
           "body": "写两个测试共用一个静态列表，第一个加入一项，第二个断言为空。先跑全类，再只跑第二个，比较两次结果。然后改成方法内的局部列表，交换顺序再跑，两次都应通过。单跑与全量的结果必须一致。"
         }
       ],
+      "since": "JUnit 5",
       "points": [
         "默认每个测试方法使用新实例",
         "静态字段和外部单例仍会泄漏",
@@ -30419,6 +30545,7 @@
           "body": "为同一个控制器写切片和整容器两种测试。删掉一个无关 Bean，切片应仍能断言状态码，整容器应在启动上下文时失败。再改错路由，两条才都应失败。改错路由时两种测试才都应失败，缺无关 Bean 时只有整容器失败。"
         }
       ],
+      "since": "Spring Boot Test",
       "points": [
         "完整应用上下文用来证明各层连在一起",
         "Web 切片只装 Web 层，协作对象用替身",

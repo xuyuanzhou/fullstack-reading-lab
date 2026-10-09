@@ -601,6 +601,7 @@
         "schema-migration",
         "mysql-datetime-vs-timestamp",
         "mysql-float-ieee-not-8-digits",
+        "mysql-money-decimal-not-ban",
         "mysql-split-not-at-ten-million",
         "mysql-view-is-stored-query",
         "table-design-from-facts",
@@ -618,6 +619,7 @@
         "mysql-slow-sql-locate",
         "mysql-slow-sql-optimize",
         "mysql-mvcc",
+        "mysql-mvcc-not-two-version-columns",
         "mysql-isolation",
         "mysql-isolation-levels",
         "mysql-deadlock",
@@ -2016,6 +2018,7 @@
             "schema-migration",
             "mysql-datetime-vs-timestamp",
             "mysql-float-ieee-not-8-digits",
+            "mysql-money-decimal-not-ban",
             "mysql-split-not-at-ten-million",
             "mysql-view-is-stored-query"
           ]
@@ -2053,6 +2056,7 @@
           "title": "事务",
           "ids": [
             "mysql-mvcc",
+            "mysql-mvcc-not-two-version-columns",
             "mysql-isolation",
             "mysql-isolation-levels",
             "mysql-deadlock",
@@ -3807,7 +3811,8 @@
         "非 GET 要显式写 method",
         "JSON 正文是字符串并声明 Content-Type",
         "截止时间用 AbortSignal.timeout"
-      ]
+      ],
+      "since": "AbortSignal.timeout"
     },
     {
       "track": "frontend",
@@ -3873,7 +3878,8 @@
         "Range 与 206 部分响应",
         "Content-Range 校验区间",
         "资源变更时的续传安全"
-      ]
+      ],
+      "since": "RFC 9110 Range"
     },
     {
       "track": "frontend",
@@ -4032,7 +4038,8 @@
         "只有 VITE_ 前缀会进入客户端代码",
         "这些值在构建时被写进可下载的脚本",
         "密钥不能放进前端环境变量"
-      ]
+      ],
+      "since": "Vite env"
     },
     {
       "track": "frontend",
@@ -4124,7 +4131,8 @@
         "effect 在提交后和外部系统同步，并在依赖变化时先清理",
         "切换资源标识时要忽略或取消上一次请求",
         "依赖要包含 effect 使用的标识，否则不会重新请求"
-      ]
+      ],
+      "since": "React 16.8"
     },
     {
       "track": "frontend",
@@ -4137,7 +4145,8 @@
         "layout effect 面向绘制前的 DOM 测量与同步修改",
         "useEffect 适合绘制后的普通副作用",
         "SSR 与重计算场景不能无脑互换两个 API"
-      ]
+      ],
+      "since": "React 16.8"
     },
     {
       "track": "frontend",
@@ -4275,14 +4284,15 @@
       "track": "frontend",
       "group": "React",
       "id": "suspense",
-      "title": "Suspense 的等待与重试",
+      "title": "Suspense 的等待与重试（React 16+）",
       "prompt": "Suspense 是任意异步请求的通用 loading 开关吗？",
       "keywords": "React Suspense lazy fallback retry",
       "points": [
         "支持 Suspense 的资源挂起",
         "fallback 与重试",
         "普通 Effect 请求不会自动挂起"
-      ]
+      ],
+      "since": "React 16+"
     },
     {
       "track": "frontend",
@@ -4483,7 +4493,8 @@
         "query key 包含所有影响结果的参数",
         "组件读取查询结果，不再复制到 useState",
         "mutation 成功后失效或更新对应缓存"
-      ]
+      ],
+      "since": "TanStack Query"
     },
     {
       "track": "frontend",
@@ -4509,7 +4520,8 @@
         "官方推荐新代码用 Redux Toolkit",
         "configureStore 默认带 thunk 与 DevTools",
         "createStore 手写样板视为过时入口"
-      ]
+      ],
+      "since": "Redux Toolkit"
     },
     {
       "track": "frontend",
@@ -4804,7 +4816,8 @@
         "useFetch 在服务端取数并写入 payload",
         "onMounted 里的请求不会出现在首屏 HTML",
         "不同参数必须使用不同的数据 key"
-      ]
+      ],
+      "since": "Nuxt 3"
     },
     {
       "track": "frontend",
@@ -4862,14 +4875,15 @@
       "track": "frontend",
       "group": "技术选型",
       "id": "fe-angular-first-party",
-      "title": "Angular 的路由、HTTP 和表单用自己的包",
+      "title": "Angular 的路由、HTTP 和表单用自己的包（v21）",
       "prompt": "为什么新的 Angular 工程还要再装一套 React Query、Redux 和 react-router？",
       "keywords": "Angular zoneless HttpClient provideRouter 响应式表单 信号",
       "points": [
         "Angular v21 新应用默认无 Zone，状态用信号",
         "HttpClient 与 provideRouter 是请求和路由的官方入口",
         "响应式表单表达表单模型，不另装 React 的数据栈"
-      ]
+      ],
+      "since": "Angular v21"
     },
     {
       "track": "frontend",
@@ -4934,7 +4948,8 @@
         "GET 走 HttpClient 或 httpResource，结果用信号读",
         "httpResource 不做 POST、PUT，变更仍用 HttpClient",
         "NgRx 不是新应用的默认数据职责位"
-      ]
+      ],
+      "since": "Angular v21"
     },
     {
       "track": "frontend",
@@ -5401,7 +5416,8 @@
         "Hermes 默认启用，不必再配一次才打开",
         "换 JavaScriptCore 是退出 Hermes",
         "浏览器引擎不是这份应用脚本的运行时"
-      ]
+      ],
+      "since": "RN Hermes"
     },
     {
       "track": "frontend",
@@ -5559,7 +5575,8 @@
         "页面必须写进 pages.json，第一项是冷启动页",
         "navigateTo 的 url 带前导斜杠，query 到 onLoad 时是字符串",
         "tabBar 页面用 switchTab，不能用 navigateTo，也不能在这条 url 上带 query"
-      ]
+      ],
+      "since": "uni-app"
     },
     {
       "track": "frontend",
@@ -5972,7 +5989,8 @@
         "source map 能还原到源码",
         "公开 map 等于公开仓库内容",
         "hidden 生成 map 但不在脚本里声明地址"
-      ]
+      ],
+      "since": "Vite"
     },
     {
       "track": "frontend",
@@ -5998,7 +6016,8 @@
         "首次 ngOnChanges 在 ngOnInit 之前",
         "基本类型输入按值，对象输入按引用",
         "OnPush 不会每次从根扫整棵树"
-      ]
+      ],
+      "since": "Angular v21"
     },
     {
       "track": "frontend",
@@ -7725,7 +7744,8 @@
         "Latch 计数到零后不能重置",
         "Barrier 可重复进入下一轮汇合",
         "Barrier 有破损模型与可选 barrier action"
-      ]
+      ],
+      "since": "JDK 5"
     },
     {
       "track": "java",
@@ -7766,7 +7786,8 @@
         "AQS 用 CAS 管理 state 并把失败线程排进等待队列",
         "ReentrantLock、Semaphore、CountDownLatch、读写锁基于 AQS",
         "现行 FutureTask 不再建立在 AQS 上"
-      ]
+      ],
+      "since": "JDK 5 AQS"
     },
     {
       "track": "java",
@@ -7851,14 +7872,15 @@
       "track": "java",
       "group": "并发",
       "id": "java-future-errors",
-      "title": "CompletableFuture 的错误恢复",
+      "title": "CompletableFuture 的错误恢复（JDK 8）",
       "prompt": "whenComplete 打印了异常，后续阶段就恢复正常了吗？",
       "keywords": "CompletableFuture whenComplete exceptionally handle async errors",
       "points": [
         "whenComplete 用来查看结果，不会把失败变成成功",
         "exceptionally 只替换失败时的结果",
         "handle 同时看到成功值和失败原因"
-      ]
+      ],
+      "since": "JDK 8"
     },
     {
       "track": "java",
@@ -8186,6 +8208,19 @@
     {
       "track": "java",
       "group": "数据库",
+      "id": "mysql-money-decimal-not-ban",
+      "title": "“禁止小数存货币”不能禁掉 DECIMAL",
+      "prompt": "为什么规范写“禁止使用小数存储货币，小数容易导致钱对不上”？",
+      "keywords": "DECIMAL FLOAT 货币 定点 规范",
+      "points": [
+        "禁的是浮点不是定点 DECIMAL",
+        "金额用 DECIMAL 或整数分",
+        "钱对不上来自二进制表示误差"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "数据库",
       "id": "mysql-split-not-at-ten-million",
       "title": "单表一千万行不是必须拆分的定律",
       "prompt": "为什么拆分原则里写着「单表拆到一千万以内」，计数一到就开工分库？",
@@ -8405,6 +8440,19 @@
         "普通 SELECT 的一致性读不加更新所需的锁",
         "两个事务可以同时看见同一版本",
         "扣减用条件更新或锁定读，放在同一个事务里"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-mvcc-not-two-version-columns",
+      "title": "InnoDB MVCC 不是“行尾两个创建/删除版本列”那么简单",
+      "prompt": "为什么资料把 MVCC 说成每行后面加创建版本号、删除版本号两列，更新就删旧插新？",
+      "keywords": "InnoDB MVCC undo Read View 快照读",
+      "points": [
+        "资料两列表格是直觉不是表结构",
+        "历史版本主要在 undo 链",
+        "快照读与锁定读规则不同"
       ]
     },
     {
@@ -8630,14 +8678,15 @@
       "track": "java",
       "group": "数据库",
       "id": "mysql-replica-parallel-applier",
-      "title": "从库应用不再只能是一条 SQL 线程",
+      "title": "从库应用不再只能是一条 SQL 线程（MySQL 8.0+）",
       "prompt": "为什么把复制延迟只归因于“主从复制是单线程”，在 8.4 上会过时？",
       "keywords": "MySQL replica_parallel_workers 复制延迟 逻辑时钟",
       "points": [
         "异步复制会落后，这点没变",
         "8.4 可用多 worker 并行应用事务",
         "大事务、锁冲突和硬件仍会造成延迟"
-      ]
+      ],
+      "since": "MySQL 8.0+"
     },
     {
       "track": "java",
@@ -8938,7 +8987,8 @@
         "Virtual Memory 换页方案已废弃",
         "STRING 上限是 512MB，不是 1GB 或 512KB key",
         "不要用错误体积上限或“一定更快”比较 Memcached"
-      ]
+      ],
+      "since": "Redis no VM"
     },
     {
       "track": "java",
@@ -9018,7 +9068,8 @@
         "INCR 的原子性只覆盖一个键",
         "Cluster 把该键放在一个槽、一台主上",
         "五段步长要独立计数器并钉死客户端，故障转移不重置初值"
-      ]
+      ],
+      "since": "Redis Cluster"
     },
     {
       "track": "java",
@@ -9150,7 +9201,8 @@
         "默认可执行 jar 内嵌容器",
         "WAR + SpringBootServletInitializer 仍可用",
         "自动配置可排除，YAML 与 properties 都支持"
-      ]
+      ],
+      "since": "Spring Boot"
     },
     {
       "track": "java",
@@ -9466,7 +9518,8 @@
         "@Modifying 发出的是 UPDATE/DELETE，不是查询",
         "已加载实体不会自动变成新值",
         "需要时可清空上下文再读"
-      ]
+      ],
+      "since": "Spring Data JPA"
     },
     {
       "track": "java",
@@ -9557,7 +9610,8 @@
         "延迟加载覆盖 association 和 collection",
         "默认代理是 Javassist，CGLIB 已标记过时",
         "aggressiveLazyLoading 默认 false，toString 等仍会触发加载"
-      ]
+      ],
+      "since": "MyBatis 3"
     },
     {
       "track": "java",
@@ -10125,7 +10179,8 @@
         "WebSocket 先升级，再在同一连接上发帧",
         "短 HTTP 超时会掐掉空闲的长连接",
         "长连接的重试和选路不能当幂等 GET"
-      ]
+      ],
+      "since": "RFC 6455"
     },
     {
       "track": "java",
@@ -10138,7 +10193,8 @@
         "少量 EventLoop 服务大量连接",
         "Loop 线程里的阻塞会拖住同 Loop 的连接",
         "阻塞业务放到别的线程池"
-      ]
+      ],
+      "since": "Netty"
     },
     {
       "track": "java",
@@ -10477,7 +10533,8 @@
         "现行踢出 ISR 看滞后时间不是条数阈值",
         "条数差会随吞吐抖动",
         "acks=all 等 ISR 不是全部 replica"
-      ]
+      ],
+      "since": "Kafka lag.time"
     },
     {
       "track": "java",
@@ -10634,7 +10691,8 @@
         "JMS Queue 点对点，Topic 发布订阅",
         "适合遗留 JMS 客户端与企业集成",
         "新系统无 JMS 约束时应按工作负载另选产品"
-      ]
+      ],
+      "since": "JMS / ActiveMQ"
     },
     {
       "track": "java",
@@ -10647,7 +10705,8 @@
         "Pulsar 消费模型接近可重放日志",
         "Broker 与持久化存储分层，利于独立扩容",
         "多租户与地理复制是常见选型理由，不是默认优于 Kafka"
-      ]
+      ],
+      "since": "Pulsar"
     },
     {
       "track": "java",
@@ -10738,7 +10797,8 @@
         "索引成功不等于已经可被搜索",
         "refresh 让新段对搜索可见",
         "按 id 获取和搜索不是同一条可见性路径"
-      ]
+      ],
+      "since": "ES near-realtime"
     },
     {
       "track": "java",
@@ -10764,7 +10824,8 @@
         "from+size 必须先取出再丢掉前面的命中",
         "过深的 from 会被 max_result_window 拒绝",
         "后续页用上一页的排序值 search_after"
-      ]
+      ],
+      "since": "ES search_after"
     },
     {
       "track": "java",
@@ -10856,7 +10917,8 @@
         "命名空间和分组同时用于发现与配置，第三层的键不同",
         "临时实例靠心跳维持，消费方本地会缓存名单",
         "配置由 dataId、分组和命名空间定位，变更通知订阅者"
-      ]
+      ],
+      "since": "Nacos"
     },
     {
       "track": "java",
@@ -10921,7 +10983,8 @@
         "一份应用可以订阅多个 dataId 并按顺序合并",
         "后加载的同名键覆盖先加载的",
         "共享配置的变更会打到所有订阅它的应用"
-      ]
+      ],
+      "since": "Nacos"
     },
     {
       "track": "java",
@@ -12126,7 +12189,8 @@
         "默认每个测试方法使用新实例",
         "静态字段和外部单例仍会泄漏",
         "测试必须能单独运行且与顺序无关"
-      ]
+      ],
+      "since": "JUnit 5"
     },
     {
       "track": "java",
@@ -12165,7 +12229,8 @@
         "完整应用上下文用来证明各层连在一起",
         "Web 切片只装 Web 层，协作对象用替身",
         "切片通过并不证明数据库和事务"
-      ]
+      ],
+      "since": "Spring Boot Test"
     },
     {
       "track": "java",

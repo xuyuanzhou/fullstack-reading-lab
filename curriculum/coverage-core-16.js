@@ -45,6 +45,7 @@ const COVERAGE_CORE_16 = [
     answer:'范围对象实现迭代器方法后，for-of 和展开都会重新要一个迭代器，因此各消费一次都能走完整个范围。若把同一次迭代器交给第二个消费者，第二次从剩下的位置继续。普通对象默认没有这个方法。for-in 遍历下标并不是这套协议。生成器和 Map、Array 已经实现了迭代器方法。',
     deep:[
       {title:'每次消费都重新要迭代器',body:'for-of、展开和 Array.from 都是先调用迭代器方法，再不断 next。普通对象没有这个方法。生成器函数的返回值本身就是迭代器。一次拿到的迭代器被消费到结束之后，不会自动回到起点。'},
+      {title:'生成器',body:'function* 用 yield 写这种状态机，调用本身不跑完，见 js-generator-yield-pause。不要把 * 当成异步。'},
       {title:'怎样自己验证',body:'给范围对象写上迭代器方法，用 for-of 和展开各走一遍，两次都应从起点走完。再手动保存一个迭代器，连续交给两段循环，第二段应接着上次的 next，而不是从头。'},
     ],
     keywords:'JavaScript iterable iterator Symbol.iterator for-of',

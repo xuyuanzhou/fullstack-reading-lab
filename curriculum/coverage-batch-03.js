@@ -499,6 +499,10 @@ const COVERAGE_BATCH_03 = [
         body:'MULTI 到 EXEC 之间是排队。EXEC 才改数据，并且这一段不被别人插入。WATCH 在 EXEC 时发现键变了就放弃整批。批里某一条的运行时错误不会按数据库的方式撤销已经执行的兄弟命令。'
       },
       {
+        title:'和 Lua',
+        body:'读后要分支再写时，Lua 更合适；对照见 redis-multi-vs-lua-pick、redis-lua-atomic。MULTI 不解跨库事务。'
+      },
+      {
         title:'怎样自己验证',
         body:'两个客户端 WATCH 同一库存键。让乙先改并完成，再让甲 EXEC。甲应失败，值保持乙写下的结果。去掉 WATCH 再交错一次，确认后执行的写入盖掉前者。不要用这次实验代替跨库事务。'
       }

@@ -115,6 +115,7 @@ const COVERAGE_OPS_17 = [
     points:['单条命令原子，两条命令之间可被插入','Lua 脚本在服务端连续执行','用到的键必须声明在 KEYS 里'],
     deep:[
       {title:'两条命令中间有缝',body:'每条 Redis 命令自己是原子的，GET 和 SET 之间别人仍能插进来。EVAL 在服务端把这段连续跑完。键必须放进 KEYS，能用 INCR 或 SET NX 一条命令完成时不必写脚本。'},
+      {title:'和 MULTI',body:'无分支批量写可用 MULTI/WATCH；读改一体用 Lua。对照见 redis-multi-vs-lua-pick、redis-transaction。'},
       {title:'怎样自己验证',body:'对照 EVAL 写下 KEYS 放键、ARGV 放参数。库存为 1 时并发 GET+SET，预测两笔都成功。改成脚本里判断再 DECR，同样并发应只有一笔返回成功。'},
     ],
     refs:[['Redis：EVAL','https://redis.io/docs/latest/commands/eval/'],['Redis：Lua programming','https://redis.io/docs/latest/develop/programmability/eval-intro/']]
