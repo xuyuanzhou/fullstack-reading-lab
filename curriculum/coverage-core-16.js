@@ -165,6 +165,7 @@ const COVERAGE_CORE_16 = [
     answer:'terms 聚合返回的是每个状态的桶和 doc_count，不是订单列表。把 hits 调到一万再在程序里计数，要把命中文档都传回应用。统计应放在引擎里做。用来分桶的字段要能聚合，分词文本通常不行。聚合看的是查询当时可见的文档，大基数时还要限制桶的数量。',
     deep:[
       {title:'桶里是统计，不是订单正文',body:'查询先圈定当时可见的文档，聚合再在这些文档上分桶或算指标。terms 返回的是键和 doc_count。刷新间隔和过滤会改变能看见的集合。基数很大时要限制桶的数量，否则响应里只有一部分桶。'},
+      {title:'和导论',body:'聚合/facet 是 ES 典型能力，见 es-what-and-when；重聚合吃容量见 es-tradeoffs-capacity。'},
       {title:'怎样自己验证',body:'写一个按 status 的 terms，看响应里有没有订单正文。再把 hits 调大到一万，在程序里计数，对比传输量和内存。统计结果应来自分桶，而不是来自这批文档。'},
     ],
     keywords:'Elasticsearch aggregations terms 分桶 keyword',
@@ -182,6 +183,7 @@ const COVERAGE_CORE_16 = [
     answer:'带同一 routing 的 GET 能读到刚写入的文档。不带 routing 的 GET 会按 id 另选分片，结果找不到。不带 routing 的搜索会扫全部分片，仍可能命中，但已经不是收拢后的查询。路由值必须稳定，改了以后旧文档还在原地。',
     deep:[
       {title:'读写要打开同一片',body:'routing 在写入时参与选择分片。按 id 读取若带了另一个值，或者根本不带，就会按别的规则打开分片，文档像是没写进去。搜索不带值时会扫全部片，可能找得到，但失去了收拢的意义。值改了，旧文档也不会跟着搬。'},
+      {title:'和导论',body:'分片是水平扩展检索的基础，见 es-what-and-when、es-tradeoffs-capacity；routing 是进阶优化不是入门必选项。'},
       {title:'怎样自己验证',body:'用固定 routing 写入一条文档。分别用相同值、不带值和错误值做 GET，记下只有相同值命中。再做一次不带 routing 的搜索，看它是否因扫过全部分片而仍能找到。'},
     ],
     keywords:'Elasticsearch routing 分片 _id',

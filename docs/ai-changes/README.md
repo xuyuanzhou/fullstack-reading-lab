@@ -11,6 +11,8 @@
 
 | 日期 | 状态 | 标题 |
 | --- | --- | --- |
+| 2026-10-10 | 已完成 | [缓存 / 消息 / 数据库同构导论（Redis / MQ / MySQL）](2026-10-10-redis-mq-mysql-intro.md) |
+| 2026-10-10 | 已完成 | [Elasticsearch 导论补齐与搜索章知识点过一遍](2026-10-10-es-intro-and-pass.md) |
 | 2026-10-09 | 已完成 | [侧栏「搜索」章显示为 Elasticsearch](2026-10-09-sidebar-search-elasticsearch.md) |
 | 2026-10-09 | 已完成 | [提交并发布本机待交的课源与选型课改写](2026-10-09-publish-batch.md) |
 | 2026-10-09 | 已完成 | [D8 续抽：秒杀 MQ≠控库阀门；虚拟节点 32≠定律（2 课）](2026-10-09-d8-seckill-mq-vnode.md) |

@@ -3541,6 +3541,102 @@
     "diagram": "diagrams/thread-pool-formula-not-law.svg",
     "origin": "《分布式高并发.pdf》常见线程池 sizing 口诀（核数倍数）"
   },
+  "mysql-what-and-when": {
+    "core": "**MySQL（InnoDB）**是**关系型数据库**：表、约束、事务（ACID 语义）、索引与 SQL。它擅长：**权威业务状态**、多行一致性写、按键/索引的点查与关联。默认引擎与边界见 `mysql-innodb-default-not-ban-others`、`mysql-acid-c-is-consistency`。它**不是**全文搜索引擎（见 `es-what-and-when`），也**不是**通用内存缓存（见 `redis-what-and-when`）。复杂探索式检索、海量日志分析、纯热点缓存应考虑专用组件。",
+    "why": "用 `LIKE '%词%'` 扛商城搜索；或把会话与排行榜硬塞进表却抱怨慢；或反过来不敢用事务库。",
+    "example": "订单/库存/支付在 MySQL 事务内提交；商品搜索走 ES；详情热点走 Redis。三套职责分开。",
+    "task": "划掉“一个 MySQL 搞定搜索和缓存”。用两句话：它是什么；最适合的两类工作负载。",
+    "answer": "划掉万能。MySQL 是关系库，管事务与权威数据。适合一致性写与按索引查询。搜索与通用缓存交给专用系统。",
+    "deep": [
+      {
+        "title": "和其他库",
+        "body": "PostgreSQL/等也是 RDBMS 家族；本课以 MySQL 8.x 文档为核对基线。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对照 InnoDB 事务文档写一句 ACID 边界；再列一个不该只靠 MySQL 的检索场景。"
+      }
+    ],
+    "references": [
+      [
+        "MySQL：InnoDB",
+        "https://dev.mysql.com/doc/refman/8.4/en/innodb-storage-engine.html"
+      ],
+      [
+        "MySQL：事务",
+        "https://dev.mysql.com/doc/refman/8.4/en/innodb-transaction-model.html"
+      ],
+      [
+        "MySQL：优化概述",
+        "https://dev.mysql.com/doc/refman/8.4/en/optimization.html"
+      ]
+    ],
+    "diagram": "diagrams/mysql-what-and-when.svg"
+  },
+  "mysql-tradeoffs-capacity": {
+    "core": "**优点**：事务与约束、成熟生态、按索引的稳定点查。**代价**：错误索引/SQL 放大锁与 IO；大表变更与备份窗口；水平扩展有分片/分布式事务成本，见 `mysql-scalability-not-hopeless`、`mysql-split-not-at-ten-million`。**容量**：没有全站通用 QPS/行数阈值。粗框架：缓冲池命中、行与索引体积、查询形态（点查 vs 扫）、复制延迟与硬件；用压测与 `EXPLAIN`/监控定界。千万行拆表不是铁律。**为何用**：需要事务权威源时作为默认主存。",
+    "why": "背“单表一千万必拆”或“QPS 五万”上线；复杂报表打满实例却怪“MySQL 不行”。",
+    "example": "订单库按真实 QPS 与 P99 压测；慢查询用 EXPLAIN；只读报表可走副本并接受 lag。行数只是输入之一。",
+    "task": "划掉“单表行数/QPS=固定上限”。写出：优点两条、代价两条；容量两个变量。",
+    "answer": "划掉固定上限。优点如事务与索引点查；代价如坏 SQL 与扩展成本。容量看缓冲池、查询形态与复制，用压测。",
+    "deep": [
+      {
+        "title": "和读写分离",
+        "body": "副本摊读负载，不自动强一致读己之写，见 `rw-split-not-strong-consistency`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "同一表对比主键点查与无索引扫的 EXPLAIN/耗时；观察缓冲池命中变化。"
+      }
+    ],
+    "references": [
+      [
+        "MySQL：InnoDB Buffer Pool",
+        "https://dev.mysql.com/doc/refman/8.4/en/innodb-buffer-pool.html"
+      ],
+      [
+        "MySQL：EXPLAIN",
+        "https://dev.mysql.com/doc/refman/8.4/en/explain.html"
+      ],
+      [
+        "MySQL：复制",
+        "https://dev.mysql.com/doc/refman/8.4/en/replication.html"
+      ]
+    ],
+    "diagram": "diagrams/mysql-tradeoffs-capacity.svg"
+  },
+  "mysql-vs-cache-search": {
+    "core": "**MySQL** 保权威与事务；**Redis** 加速热点读与结构型热状态（`redis-vs-db-cache`）；**Elasticsearch** 做相关性检索与聚合投影（`es-vs-db-search`）。继续堆索引解决不了：跨字段相关性排序、海量日志检索、跨实例共享的微秒级缓存。反过来，缓存/搜索**不能**单独当账本。选型顺序：先写清一致性与查询形态，再决定是否引入第二系统及同步方式。",
+    "why": "商城搜索死撑 LIKE；详情页每次打库却拒缓存；或 ES/Redis 当唯一真相。",
+    "example": "下单事务只写 MySQL；异步同步可搜字段到 ES；详情 Cache Aside 进 Redis。重建索引不影响订单表权威。",
+    "task": "划掉“加索引=搜索引擎/缓存”。为权威写、热点读、全文搜各指定一种系统。",
+    "answer": "划掉等价。权威写用 MySQL。热点读用 Redis。全文/聚合检索用 ES。三者职责分开，投影可重建。",
+    "deep": [
+      {
+        "title": "和 NoSQL 标签",
+        "body": "“NoSQL”不是最终一致的同义词，见 `nosql-label-not-eventual`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "同一需求写三列：一致性、延迟、查询形态；每列只允许一种主系统。"
+      }
+    ],
+    "references": [
+      [
+        "MySQL：全文搜索",
+        "https://dev.mysql.com/doc/refman/8.4/en/fulltext-search.html"
+      ],
+      [
+        "Redis：Cache Aside",
+        "https://redis.io/docs/latest/develop/use-cases/cache-aside/"
+      ],
+      [
+        "Elasticsearch：What is",
+        "https://www.elastic.co/guide/en/elasticsearch/reference/current/elasticsearch-intro.html"
+      ]
+    ],
+    "diagram": "diagrams/mysql-vs-cache-search.svg"
+  },
   "mysql-null-comparison": {
     "core": "在 SQL 里，NULL 表示未知，不是空字符串，也不是 0。NULL = NULL 的结果不是 TRUE。WHERE 只保留判断结果为 TRUE 的行，所以等号和不等号都筛不出 NULL。要写 IS NULL 或 IS NOT NULL。COUNT(列) 不计入该列为 NULL 的行，COUNT(*) 计入每一行。NOT IN 的列表里若出现 NULL，整个判断可能变成未知，结果会空。",
     "why": "学习者会把 NULL 当成没填的空字符串。于是等号条件返回 0 行，按列计数也少算一行，报表变成没有空名字。同一列上 IS NULL 能命中、等号不能，才说明这是未知，不是一个可以相等的值。",
@@ -3548,6 +3644,10 @@
     "task": "建一张含 NULL 和空字符串的表，分别用等号、IS NULL、COUNT(列) 和带 NULL 的 NOT IN 查询，记下各自的行数。",
     "answer": "等号只命中空字符串那一行，命中不了 NULL，因为比较结果不是真，WHERE 不会留下它。IS NULL 只命中 NULL 那一行。按列计数比按行计数少 1。NOT IN 列表里若有 NULL，判断变成未知，结果行数可以是 0。空字符串和未知值各占一行。",
     "deep": [
+      {
+        "title": "和导论",
+        "body": "MySQL 是什么、容量框架与相对缓存/搜索见 `mysql-what-and-when`、`mysql-tradeoffs-capacity`、`mysql-vs-cache-search`。本课专讲 NULL 三值逻辑。"
+      },
       {
         "title": "三值逻辑",
         "body": "NULL 与任何值比较，包括与另一个 NULL，结果都不是真。WHERE 只留下结果为真的行。按列计数不计 NULL，按行计数会计入。NOT IN 碰上 NULL 会让整个条件变成未知。"
@@ -6531,6 +6631,102 @@
       ]
     ]
   },
+  "redis-what-and-when": {
+    "core": "**Redis** 是以内存为主的**数据结构服务器**：提供 String、Hash、List、Set、Sorted Set、Stream 等结构与原子命令，可选持久化与复制。典型用途：**缓存**（热点读）、会话/限流计数、排行榜、短队列与锁等**热状态**。它**不是**通用关系库：默认内存容量受限；持久化与复制语义不同于 InnoDB 事务账本；大对象与复杂多键事务不适合硬塞。结构选型见 `redis-data-types`；旁路缓存见 `cache-aside-steps`。",
+    "why": "把全部业务表只放 Redis，宕机或淘汰丢权威数据；或反过来以为“有 MySQL 就永远不需要缓存”。",
+    "example": "商品详情 Cache Aside：DB 权威，Redis 缓存热点。排行榜用 ZSet。订单支付状态仍以 MySQL 事务为准。",
+    "task": "划掉“Redis=万能数据库”。用两句话：它是什么；三类典型用途各一例。",
+    "answer": "划掉万能库。Redis 是内存数据结构服务。典型：缓存热点、排行榜/计数、短队列或锁。权威交易状态仍在数据库。",
+    "deep": [
+      {
+        "title": "和本地缓存",
+        "body": "进程内缓存更低延迟但难共享与失效；Redis 跨实例共享。见 `cache-local-vs-distributed`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对照 Redis 文档 “Introduction”：列出三种结构命令；再写出一个不该只存 Redis 的表。"
+      }
+    ],
+    "references": [
+      [
+        "Redis：Introduction",
+        "https://redis.io/docs/latest/get-started/"
+      ],
+      [
+        "Redis：Data types",
+        "https://redis.io/docs/latest/develop/data-types/"
+      ],
+      [
+        "Redis：Persistence",
+        "https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/"
+      ]
+    ],
+    "diagram": "diagrams/redis-what-and-when.svg"
+  },
+  "redis-tradeoffs-capacity": {
+    "core": "**优点**：单线程命令模型下延迟低、结构贴访问方式、复制/集群可扩展读与分片。**代价**：内存贵；持久化/复制不是免运维；大 key、热 key、错误淘汰策略会放大故障；MULTI/Lua 有边界，见 `redis-transaction`、`redis-lua-atomic`。**容量**：没有全站通用 QPS。粗框架：可用内存、值大小、命令复杂度、网络与是否 Cluster 分片；用压测与 `INFO`/`MEMORY` 定界，背一个固定并发会误导。**为何用**：读多写少或需要原子结构操作、且可接受缓存语义时引入。",
+    "why": "背“十万 QPS”上线，大 key 与热 key 把实例打满；或不敢上缓存只因说不清数字。",
+    "example": "缓存实例按工作集体积定 maxmemory 与淘汰策略；对热点 GET/SET 与含 KEYS/重 Lua 的路径分别压测。数字写在容量表，不写在口号。",
+    "task": "划掉“Redis 并发=固定数”。写出：优点两条、代价两条；容量要看的两个变量。",
+    "answer": "划掉固定并发。优点如低延迟结构与可扩展缓存；代价如内存与运维。容量看内存与命令形态，用压测。",
+    "deep": [
+      {
+        "title": "单线程误解",
+        "body": "命令执行侧常是单线程，I/O 与模块可多线程；不等于“永远单核跑满全世界”。见 `redis-single-thread`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "同一实例对比小 String GET 与大 value / 复杂 Lua 的延迟；改小 maxmemory 观察淘汰与拒绝。"
+      }
+    ],
+    "references": [
+      [
+        "Redis：Memory optimization",
+        "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/memory-optimization/"
+      ],
+      [
+        "Redis：Benchmark",
+        "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/benchmarks/"
+      ],
+      [
+        "Redis：Eviction",
+        "https://redis.io/docs/latest/develop/reference/eviction/"
+      ]
+    ],
+    "diagram": "diagrams/redis-tradeoffs-capacity.svg"
+  },
+  "redis-vs-db-cache": {
+    "core": "**数据库**提供事务与持久权威状态；**Redis 缓存**用延迟换吞吐，默认允许**短暂不一致**。旁路（Cache Aside）要处理未命中回源、写后删/更新缓存与并发回填，见 `cache-aside-steps`、`cache-db-double-write-race`。穿透/击穿/雪崩是另一类故障，见 `cache-penetration-vs-breakdown`。不要把“有缓存”当成“已与 DB 强一致”。边界：钱货账本在 DB；可重建的热点投影可进 Redis。",
+    "why": "写库成功却读到旧缓存；或缓存当唯一真相源导致对账失败。",
+    "example": "改价写 MySQL 后删缓存键；读未命中再回源。详情页读 Redis；下单扣库存只信 DB 行锁/事务。",
+    "task": "划掉“加了 Redis=永远新数据”。写出：DB 仍负责什么；缓存多提供什么；一种仍见旧值的时序。",
+    "answer": "划掉永远新。DB 负责权威与事务。缓存加速热点读。写后并发回填仍可能短暂旧值，要删键/版本等策略。",
+    "deep": [
+      {
+        "title": "和本地缓存",
+        "body": "多级缓存失效更难；先钉 Redis 与 DB 契约再叠加本地。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "两线程：写库与读回填交错，观察旧值窗口；再试写后删键是否缩短窗口。"
+      }
+    ],
+    "references": [
+      [
+        "Redis：Cache Aside",
+        "https://redis.io/docs/latest/develop/use-cases/cache-aside/"
+      ],
+      [
+        "Redis：Key eviction",
+        "https://redis.io/docs/latest/develop/reference/eviction/"
+      ],
+      [
+        "MySQL：事务",
+        "https://dev.mysql.com/doc/refman/8.4/en/innodb-transaction-model.html"
+      ]
+    ],
+    "diagram": "diagrams/redis-vs-db-cache.svg"
+  },
   "redis-data-types": {
     "core": "Redis 为不同访问方式提供不同结构。String 适合把一个小值整体读写。Hash 适合在一个键下更新单个字段。List 按插入顺序做两端操作。Set 做无序去重。Sorted Set 按分数排序，适合排行榜。Stream 适合追加并按游标读取的日志。把排行榜存成一整段 JSON String，每次改一名次都要重写整个值。过期和持久化是另外的机制，不能用来代替结构选择。",
     "why": "学习者会以为字符串结构能装下会话、排行榜和流水，过期以后再说。排行榜存成一整段 JSON 后，改一个名次就要重写整个值，并发更新互相覆盖。命令是改一个字段、按分数取范围，还是追加一条，才说明该用哪种结构。",
@@ -6538,6 +6734,10 @@
     "task": "为会话、排行榜和审计流水各选一种结构，写出要支持的读法和为什么不用 String 包一层 JSON。",
     "answer": "会话若只是整个替换的小值，用字符串结构一次读写。要按字段改邮箱，用哈希，避免重写整份资料。排行榜要按分数取前十，用有序集合，而不是把 JSON 取回来自己排。审计流水要追加并按游标往后读，用流。过期解决不了这三种读法。三种读法对应三种结构，不能共用一段 JSON。",
     "deep": [
+      {
+        "title": "和导论",
+        "body": "Redis 是什么、容量框架与相对 DB 见 `redis-what-and-when`、`redis-tradeoffs-capacity`、`redis-vs-db-cache`。本课专讲结构选型。"
+      },
       {
         "title": "按访问方式选结构",
         "body": "字符串一次读写整个值。哈希只改键下的一个字段。有序集合按分数取一段范围。流只追加，并用上次的游标接着读。过期和持久化不改变这些命令每次要动多少数据。整段重写会盖掉并发改过的其他字段。"
@@ -6685,6 +6885,10 @@
     "task": "写出读miss和写成功两条步骤。再写一句：为什么写路径是删除缓存，而不是写入新值。",
     "answer": "读的步骤是先缓存，没有再读数据库，然后回填。写的步骤是数据库成功后再删除缓存，让下一次读重新回填。写路径不写入新值，是为了避免和另一次写入交错、把更旧的值放回缓存。并发下仍有短窗口，但这一课先把这两条步骤走对。下一笔未命中读到的应是库里的新价格，而不是写路径塞回去的旧值。",
     "deep": [
+      {
+        "title": "和导论",
+        "body": "DB 与 Redis 职责边界见 `redis-vs-db-cache`；旁路步骤是实现该边界的一种写法，见 `redis-what-and-when`。"
+      },
       {
         "title": "空值",
         "body": "数据库里没有的 id 也可以短暂缓存空结果，避免穿透。空结果的过期要短，不然新插入的行会被空缓存挡住。"
@@ -10092,6 +10296,102 @@
       ]
     ]
   },
+  "mq-what-and-when": {
+    "core": "**消息中间件**把“业务事实已成立”写入**可持久（或按产品语义保留）的通道**，让消费方在自己节奏下处理。它解耦的是**时间与地址**：生产者不必此刻握住下游；多个消费者可订阅同类事件。典型：异步通知、削峰、日志/事件管道。它**不是**把同步 HTTP 换个名字：默认常**至少一次**投递，要幂等；顺序与延迟按产品模型设计（Kafka 分区、Rabbit 队列等）。解耦动机展开见 `mq-why-decouple`；Kafka 日志模型见 `kafka-model`。",
+    "why": "背产品名却说不清为何不能同步调；或以为上了 MQ 就自动 Exactly-once、全局有序。",
+    "example": "下单成功发“订单已创建”；发货宕机时消息积压，恢复后消费。必须当场返回运单号时，仍要同步或同步+补偿，不能只靠事后消费。",
+    "task": "划掉“MQ=异步 HTTP”。用两句话：解耦什么；三类典型用途各一例。",
+    "answer": "划掉异步 HTTP。MQ 解耦时间与消费地址。典型：异步通知、削峰、事件/日志管道。投递与顺序要单独设计。",
+    "deep": [
+      {
+        "title": "和产品名",
+        "body": "Kafka/Rabbit/RocketMQ 模型不同，先问工作负载再选型，见 `mq-pick-workload`、`mq-compare-matrix`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "画同步调用与入队两条时序：下游宕机时用户可见结果有何不同。"
+      }
+    ],
+    "references": [
+      [
+        "Kafka：Introduction",
+        "https://kafka.apache.org/documentation/#introduction"
+      ],
+      [
+        "RabbitMQ：Tutorials",
+        "https://www.rabbitmq.com/tutorials"
+      ],
+      [
+        "微服务：异步消息",
+        "https://microservices.io/patterns/communication-style/messaging.html"
+      ]
+    ],
+    "diagram": "diagrams/mq-what-and-when.svg"
+  },
+  "mq-tradeoffs-capacity": {
+    "core": "**优点**：削峰、多订阅、可重放（视产品）、生产消费独立扩缩。**代价**：至少一次与乱序/延迟；积压打满磁盘；运维分区/副本/消费组；排障链路变长。**容量**：没有全站通用 TPS。粗框架：消息大小、分区/队列并行度、磁盘与网络、消费者处理时间与幂等成本；用压测与 lag 告警定界。积压治理见 `mq-dlq-backlog`、`mq-backlog-expand-queues`。**为何用**：可接受异步可见结果、需要削峰或多订阅时再引入。",
+    "why": "口号百万 TPS 上线，单分区或慢消费者把 lag 堆爆；或因说不清数字拒用消息。",
+    "example": "订单事件按业务键分区；压测生产者批大小与消费者处理 P99；设最大 lag 与死信。数字进容量表。",
+    "task": "划掉“中间件 TPS=固定数”。写出：优点两条、代价两条；容量两个变量。",
+    "answer": "划掉固定 TPS。优点如削峰与多订阅；代价如积压与至少一次。容量看并行度、消息大小与消费耗时，用压测。",
+    "deep": [
+      {
+        "title": "和秒杀",
+        "body": "MQ 顶住不等于下游可控，见 `seckill-mq-not-only-db-valve`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "固定消费者数灌入超速生产，观察 lag 与磁盘；加倍消费者看库/下游是否先炸。"
+      }
+    ],
+    "references": [
+      [
+        "Kafka：Operations",
+        "https://kafka.apache.org/documentation/#operations"
+      ],
+      [
+        "RabbitMQ：Alarms",
+        "https://www.rabbitmq.com/docs/alarms"
+      ],
+      [
+        "Kafka：Consumer lag",
+        "https://kafka.apache.org/documentation/#basic_ops_consumer_lag"
+      ]
+    ],
+    "diagram": "diagrams/mq-tradeoffs-capacity.svg"
+  },
+  "mq-vs-sync-call": {
+    "core": "**同步调用**适合：需要**同一次响应**里的下游结果、强交互式错误立刻返回、事务边界仍在同一请求内（或明确的分布式事务方案）。**消息**适合：事实已提交、允许稍后处理、要削峰或多消费者。把同步改消息却仍要求“页面立刻拿到下游单号”，会设计自相矛盾。投递语义与幂等见 `mq-delivery-semantics`、`mq-consume-idempotent-key`。边界写进产品前提，而不是先选品牌。",
+    "why": "全部异步化后客服要当场运单号却拿不到；或该削峰的链路仍同步把库存服务打挂。",
+    "example": "支付回调验签后同步更新支付状态；发货履约发消息异步执行。库存预扣若必须在下单响应前完成，不能只靠事后消费。",
+    "task": "划掉“能异步就全异步”。列出：必须同步的一条前提；适合消息的一条前提。",
+    "answer": "划掉全异步。必须同步：同一次响应要下游结果。适合消息：事实已成立且可事后处理/削峰。前提先于产品名。",
+    "deep": [
+      {
+        "title": "和 Outbox",
+        "body": "本地事务与发消息的一致性用 Outbox 等模式，见 `distributed-outbox`，不在本课展开。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "写两列用户故事：当场要结果 vs 可稍后；每列只允许同步或消息一种。"
+      }
+    ],
+    "references": [
+      [
+        "微服务：同步与异步",
+        "https://microservices.io/patterns/communication-style/messaging.html"
+      ],
+      [
+        "Kafka：Delivery semantics",
+        "https://kafka.apache.org/documentation/#semantics"
+      ],
+      [
+        "RabbitMQ：Reliability",
+        "https://www.rabbitmq.com/docs/reliability"
+      ]
+    ],
+    "diagram": "diagrams/mq-vs-sync-call.svg"
+  },
   "mq-why-decouple": {
     "core": "同步调用要求下游此刻可用、立刻给出结果，并把对方的延迟和故障直接叠进自己的超时。消息中间件把“业务事实已经成立”先写入可持久的通道，消费方在自己空闲或恢复后再处理。生产者不再持有消费者的地址列表，多个消费者可以各自订阅同一类事件。代价是：调用方拿不到同一次返回里的下游结果；投递默认至少一次，业务必须幂等；顺序和延迟要按产品模型单独设计。没有这些约束，中间件只是把同步失败换成异步积压。",
     "why": "学习者会一上来背产品名词，却说不清为什么不能继续同步调用。发货一挂，下单接口也失败或一直等待，他却去加消息产品。订单在下游宕机时仍然成立、恢复后才消费积压，才说明解耦的是时间，不是把业务正确性交给通道。",
@@ -10099,6 +10399,10 @@
     "task": "写出同步与异步各自不可妥协的前提：要不要当场返回发货单号、能否容忍重复发货、下游挂掉时订单是否仍算成功。",
     "answer": "要当场返回发货单号时，必须同步，因为消息拿不到同一次返回里的下游结果。能容忍重复、并且下游挂掉时订单仍算成功，才可以用消息，恢复后消费积压。重复发货要事先写成幂等。没有这些前提，中间件只是把同步失败换成异步积压。同步失败和异步积压要事先写成两种不同的用户可见结果。",
     "deep": [
+      {
+        "title": "和导论",
+        "body": "消息中间件是什么、容量框架与相对同步调用见 `mq-what-and-when`、`mq-tradeoffs-capacity`、`mq-vs-sync-call`。本课展开解耦时间。"
+      },
       {
         "title": "不是万能总线",
         "body": "查询库存余额、读取订单详情这类要立刻回答用户的读路径，仍用同步接口。把读请求塞进队列只会增加延迟。"
@@ -10963,8 +11267,104 @@
       ]
     ]
   },
+  "es-what-and-when": {
+    "core": "**Elasticsearch（ES）**是建立在 **Apache Lucene** 之上的**分布式搜索与分析引擎**：把文档建成**倒排索引**，用**分片与副本**组成集群，对外提供 **HTTP/JSON API** 做检索、过滤与聚合。它擅长：商品/内容**全文检索**、日志与指标的**检索与聚合**、带 facet 的筛选列表。它**不是**通用关系库：没有替你保证跨文档 ACID 账本、不是“任意 SQL 都更快”的替身。主交易数据仍放数据库；ES 常做**可重建的检索投影**。层次见 `es-lucene-not-btree`；倒排见 `es-inverted-index`。",
+    "why": "把订单、库存直接只写 ES，对账与强一致写挂掉；或反过来以为“有 MySQL 就不该有搜索引擎”。",
+    "example": "商品标题/详情同步到 ES 供搜索与类目筛选；下单、支付、库存变更仍走 MySQL 事务。日志管道写入 ES 做排查检索，权威业务状态不在 ES。",
+    "task": "划掉“ES=万能数据库”。用两句话：它是什么；典型三类用途各举一例。",
+    "answer": "划掉万能库。ES 是分布式搜索与分析引擎（倒排+分片+HTTP API）。典型：全文搜商品、检日志、做筛选聚合。主账本仍在数据库。",
+    "deep": [
+      {
+        "title": "和 OpenSearch",
+        "body": "OpenSearch 是兼容生态的分叉发行版；本课机制以 Elasticsearch 官方文档为准，选型时单独核对版本与许可。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对照官方 “What is Elasticsearch”：写出索引、文档、分片各一句；再列出一个不该只放 ES 的业务表。"
+      }
+    ],
+    "references": [
+      [
+        "Elasticsearch：What is Elasticsearch",
+        "https://www.elastic.co/guide/en/elasticsearch/reference/current/elasticsearch-intro.html"
+      ],
+      [
+        "Elasticsearch：文档",
+        "https://www.elastic.co/guide/en/elasticsearch/reference/current/documents-indices.html"
+      ],
+      [
+        "Apache Lucene",
+        "https://lucene.apache.org/"
+      ]
+    ],
+    "diagram": "diagrams/es-what-and-when.svg"
+  },
+  "es-tradeoffs-capacity": {
+    "core": "**优点**：检索可水平扩展；默认**近实时**可见（见 `es-refresh-visibility`）；过滤与**聚合**适合列表与看板。**代价**：映射变更常要 **reindex**（见 `es-mapping-reindex`）；搜索不是强一致读己之写；集群要管分片、副本、磁盘与脑裂风险；深分页与重聚合很贵。**容量**：没有“全站通用 QPS/PB”。粗框架是：数据量 ≈ 分片数 × 单分片可接受体积；吞吐取决于查询复杂度、堆与文件系统缓存、副本与协调节点。官方用 **shard sizing** 与压测定界，背一个并发数字会误导。**为何用**：当检索/分析形态与 OLTP 正交、DB `LIKE` 扛不住时再引入，并接受同步与运维成本。",
+    "why": "背“百万 QPS、PB 级”上线，复杂聚合把集群打满；或不敢上 ES 只因说不清一个固定并发。",
+    "example": "商品索引：先定单分片目标体积与峰值搜索 QPS，压测 term + filter + 一两个 agg；日志索引按时间滚动索引控制分片膨胀。数字写在容量表里，不写在面试口号里。",
+    "task": "划掉“ES 并发=某个固定数”。写出：优点两条、代价两条；容量要测量的两个变量。",
+    "answer": "划掉固定并发。优点如水平检索与近实时聚合；代价如映射重建与运维。容量看分片体积与查询形态，用压测，不背口号。",
+    "deep": [
+      {
+        "title": "分片经验",
+        "body": "单分片过大难恢复；分片过多空耗管理。以官方 size-your-shards 为起点，再按业务查询压测。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "同一数据集对比：简单 term 与重聚合的延迟；把分片数减半再测，观察吞吐与恢复时间变化。"
+      }
+    ],
+    "references": [
+      [
+        "Elasticsearch：Size your shards",
+        "https://www.elastic.co/guide/en/elasticsearch/reference/current/size-your-shards.html"
+      ],
+      [
+        "Elasticsearch：近实时搜索",
+        "https://www.elastic.co/guide/en/elasticsearch/reference/current/near-real-time.html"
+      ],
+      [
+        "Elasticsearch：集群",
+        "https://www.elastic.co/guide/en/elasticsearch/reference/current/scalability.html"
+      ]
+    ],
+    "diagram": "diagrams/es-tradeoffs-capacity.svg"
+  },
+  "es-vs-db-search": {
+    "core": "关系库擅长**事务与按键/索引点查**；`LIKE '%…%'` 或简易全文往往缺**相关性排序**、灵活**分词**、大规模**聚合/facet**与可控的深分页（ES 侧见 `es-search-after`、`es-aggregations`、`elastic-analysis`）。ES 把文档当**检索投影**：主数据在 DB 提交后，经同步/Outbox 写入索引；索引可重建，权威状态以 DB 为准。不要把“能模糊匹配”等同于“已经有搜索引擎”。边界：强一致读己之写、多行事务仍在 DB；相关性与探索式检索在 ES。",
+    "why": "全站模糊搜打爆 MySQL；或 ES 当唯一真相源导致对账失败。",
+    "example": "下单改库存只写 MySQL；异步把可搜字段 upsert 到 ES。搜索页打 ES；订单详情按 id 回源 DB。重建索引时别名切换，用户无感。",
+    "task": "划掉“LIKE=搜索引擎”。列出：DB 仍负责什么；ES 多提供哪三类能力。",
+    "answer": "划掉等价。DB 负责事务与权威状态。ES 多提供分词相关性、规模化筛选聚合、更合适的检索分页。ES 是可重建投影。",
+    "deep": [
+      {
+        "title": "和同步",
+        "body": "双写竞态、延迟与重建策略要单独设计；本课只钉职责边界，不展开整条管道。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "同一批标题：DB 前缀/后缀 LIKE 与 ES match 对比排序是否按相关度；加类目聚合看 DB 是否要另写一堆 SQL。"
+      }
+    ],
+    "references": [
+      [
+        "Elasticsearch：搜索",
+        "https://www.elastic.co/guide/en/elasticsearch/reference/current/search-search.html"
+      ],
+      [
+        "MySQL：全文搜索",
+        "https://dev.mysql.com/doc/refman/8.4/en/fulltext-search.html"
+      ],
+      [
+        "Elasticsearch：可搜索的字段类型",
+        "https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-types.html"
+      ]
+    ],
+    "diagram": "diagrams/es-vs-db-search.svg"
+  },
   "es-inverted-index": {
-    "core": "正排是文档指向它里面的词，适合按 id 取出整篇。倒排把方向反过来：每个词记下出现过它的文档。搜索先查词，再拿到文档列表，所以不必逐篇扫描。文本在写入时就被分析器切成词；查询时同一套规则再切一次。两边规则不一致，人眼看得到的字，索引里可能是另一个词。精确过滤、排序用 keyword 这种不分词的字段，全文搜索用 text。",
+    "core": "正排是文档指向它里面的词，适合按 id 取出整篇。倒排把方向反过来：每个词记下出现过它的文档。搜索先查词，再拿到文档列表，所以不必逐篇扫描。文本在写入时就被分析器切成词；查询时同一套规则再切一次。两边规则不一致，人眼看得到的字，索引里可能是另一个词。精确过滤、排序用 keyword 这种不分词的字段，全文搜索用 text。导论见 `es-what-and-when`：ES 用倒排做检索投影，不是替库。",
     "why": "学习者会以为搜索一个词就是把每一篇描述都扫一遍，分词规则一改就去全库重读。改一个字的大小写后，分析器收成同一个词，查询只读这一项。精确值走了分词字段却对不上，才说明快是因为词指向文档，不是因为扫得更快。",
     "example": "倒排是「词 → 文档号列表」，不是扫全表：\n\n```text\n词「手机」 → [doc1, doc5, doc9]\n查询只读这一项；改大小写后若分析器归一，仍落在同一项\n# keyword 精确过滤不要走会分词的 text 字段\n```",
     "task": "用三个短句手工写出倒排：每个词后面跟文档编号。再改一个字的大小写，看分析器会不会把它收成同一个词。",
@@ -10973,6 +11373,10 @@
       {
         "title": "倒排与分析",
         "body": "正排是文档指向它里面的词，适合按编号取出整篇。倒排是词指向文档列表，搜索先查词再拿列表，所以不必逐篇扫描。文本在写入时被切成词，查询时要用同一套规则再切一次。规则不一致时，人眼相同的字会落到另一个词项。"
+      },
+      {
+        "title": "和导论",
+        "body": "何时上 ES、与 DB 检索的边界见 `es-what-and-when`、`es-vs-db-search`；容量与近实时权衡见 `es-tradeoffs-capacity`。"
       },
       {
         "title": "怎样自己验证",
@@ -10991,7 +11395,7 @@
     ]
   },
   "es-lucene-not-btree": {
-    "core": "Elasticsearch 的全文检索建立在 Apache Lucene 上。Lucene 为词项建立倒排表：词 → 出现过的文档（及位置等信息）。ES 把多份 Lucene 索引组织成分片、副本和集群，对外提供 HTTP JSON API，并处理映射、刷新与近实时可见性。资料把 Lucene 写成 B+ 树、遍历搜索、只能一个索引库，把倒排当成 ES 才有的发明，层次是反的。B+ 树常见于关系库二级索引，不是 Lucene 正文检索的主结构。ES 也不是“没有事务所以删除一定不可恢复”：有刷新、快照、版本/seq_no 乐观并发；删除后能否看见取决于 refresh 与副本，而不是“没有事务”四个字。动态映射的 _default_ 与默认 string 类型属于旧版本叙事。",
+    "core": "Elasticsearch 的全文检索建立在 Apache Lucene 上。Lucene 为词项建立倒排表：词 → 出现过的文档（及位置等信息）。ES 把多份 Lucene 索引组织成分片、副本和集群，对外提供 HTTP JSON API，并处理映射、刷新与近实时可见性——导论「ES 是什么」见 `es-what-and-when`，本课专纠「Lucene=B+ 树 / 只有 ES 才倒排」。资料把 Lucene 写成 B+ 树、遍历搜索、只能一个索引库，把倒排当成 ES 才有的发明，层次是反的。B+ 树常见于关系库二级索引，不是 Lucene 正文检索的主结构。ES 也不是“没有事务所以删除一定不可恢复”：有刷新、快照、版本/seq_no 乐观并发；删除后能否看见取决于 refresh 与副本，而不是“没有事务”四个字。动态映射的 _default_ 与默认 string 类型属于旧版本叙事。",
     "why": "按“Lucene 是 B+ 树、ES 才用倒排”去对比，底层检索引擎会说错，分片、refresh 和映射演进也会被漏掉。区分信号是词指向文档列表，而不是一棵按键有序的树。画错结构，查询也会选错。",
     "example": "Lucene 倒排 + 分片并行，不是 B+ 树口诀：\n\n```text\n「耳机」→ postings…  （各分片各有一份）\nDELETE 成功 ≠ 立刻从搜索消失（要等 refresh）\n# 不要画一棵 MySQL 风格 B+ 树当 Lucene\n```",
     "task": "对照 ES 文档里的倒排索引说明，划掉资料中的 B+ 树对比，并写出 refresh 与“删除立即永远消失”的差别。",
@@ -11000,6 +11404,10 @@
       {
         "title": "倒排回答的是词",
         "body": "倒排适合“哪些文档包含这些词”。按主键取整行、按范围扫有序键，不是它的形状。把 Lucene 画成 B+ 树，会用错查询，也会误解删除和 refresh。按词找文档，不是按键扫树。"
+      },
+      {
+        "title": "和导论",
+        "body": "产品定位与何时用见 `es-what-and-when`；近实时可见性展开见 `es-refresh-visibility`。"
       },
       {
         "title": "怎样自己验证",
@@ -11018,7 +11426,7 @@
     ]
   },
   "elastic-analysis": {
-    "core": "全文检索先把 text 字段和查询文本经过分析器转换为 token，再匹配索引项。分词、大小写、词形与同义词规则不一致会改变结果；keyword 字段则适合精确值等用途。顺序是：文本进入 text 字段时被分析成 token，查询文本再被分析一次，两边的 token 相同才匹配。边界是：分析器、大小写、词形和同义词只要有一边不同，原文里有这个词也会落空。keyword 不做这套分词，适合精确值。改分析器不会自动改写已经进索引的 token。先把两边的 token 打出来再改查询。没看见 token 之前，不要先判断是数据没写进去。没重建索引时，旧 token 还在，查询改了分析器也不会马上对上。",
+    "core": "全文检索先把 text 字段和查询文本经过分析器转换为 token，再匹配索引项。分词、大小写、词形与同义词规则不一致会改变结果；keyword 字段则适合精确值等用途。顺序是：文本进入 text 字段时被分析成 token，查询文本再被分析一次，两边的 token 相同才匹配。边界是：分析器、大小写、词形和同义词只要有一边不同，原文里有这个词也会落空。keyword 不做这套分词，适合精确值。改分析器不会自动改写已经进索引的 token。先把两边的 token 打出来再改查询。没看见 token 之前，不要先判断是数据没写进去。没重建索引时，旧 token 还在，查询改了分析器也不会马上对上。这正是相对 DB `LIKE` 的能力与代价，见 `es-vs-db-search`。",
     "why": "错把文档里明明有这个词当成查询一定能命中，索引时和查询时的分析器不一致，词被切成了不同的 token。搜的是原文，对上的是另一套词条。能分开的信号是：分析 API 对同一句话给出的 token 是否一致。",
     "example": "索引与查询必须同一套分析器：\n\n```http\nPUT /products\n{ \"mappings\": { \"properties\": {\n  \"name\": { \"type\": \"text\", \"analyzer\": \"ik_max_word\",\n            \"search_analyzer\": \"ik_smart\" }\n} } }\n# 索引一种、查询另一种 → 「无线鼠标」可能搜不到\n```",
     "task": "用分析 API 比较同一句话在两种分析器下的 token，再做查询。",
@@ -11027,6 +11435,10 @@
       {
         "title": "匹配的是 token",
         "body": "倒排索引里是分析之后的词条，不是原始句子。索引和查询各走一次分析。任何一边多切、少切或换了同义词，精确的原文搜索都会失败。keyword 子字段保留另一套精确用途。"
+      },
+      {
+        "title": "和导论",
+        "body": "分词相关性是选用 ES 的理由之一，见 `es-what-and-when`、`es-vs-db-search`；改分析器常要重建，见 `es-mapping-reindex`。"
       },
       {
         "title": "怎样自己验证",
@@ -11056,6 +11468,10 @@
         "body": "查询上下文按像不像搜索词给分，用来排序。过滤上下文只回答满足不满足，例如状态和价格区间，结果可以缓存，也不参与打分。两边混成一种查询，计算更重，排序也被无关条件带动。"
       },
       {
+        "title": "和导论",
+        "body": "facet/筛选列表正是 ES 典型用途之一，见 `es-what-and-when`；重过滤+打分会吃容量，见 `es-tradeoffs-capacity`。"
+      },
+      {
         "title": "怎样自己验证",
         "body": "把同一条搜索拆成两列：打分的词，以及只做是非的条件。先只改过滤条件，看命中集合变、前几名的相对分数可以不变。再把价格放进打分，看无关文档是否被抬到前面。价格回到过滤之后，前几名应重新按关键词的分数排列。"
       }
@@ -11068,7 +11484,7 @@
     ]
   },
   "es-refresh-visibility": {
-    "core": "Elasticsearch 的索引成功表示文档已被接受。搜索看见它，要等 refresh 把新的段打开。默认大约每一秒刷新一次，所以搜索是近实时的。按 id 获取可以读到尚未刷新、但已经进 translog 的文档，这和搜索不是同一条路径。把 refresh 设成立即发生，写入会变慢。刷新也不是磁盘上的 fsync，进程崩溃时还要靠 translog 恢复。",
+    "core": "Elasticsearch 的索引成功表示文档已被接受。搜索看见它，要等 refresh 把新的段打开。默认大约每一秒刷新一次，所以搜索是近实时的——导论里把它写成优点也写成与强一致读己之写的代价，见 `es-tradeoffs-capacity`。按 id 获取可以读到尚未刷新、但已经进 translog 的文档，这和搜索不是同一条路径。把 refresh 设成立即发生，写入会变慢。刷新也不是磁盘上的 fsync，进程崩溃时还要靠 translog 恢复。",
     "why": "学习者会以为索引返回 201，下一次搜索就一定能查到这篇文档。测试里写入后马上搜索偶发失败，他当成写入丢了又重试。按标识能读到正文、按词搜索仍是 0 条，才说明差在刷新，不是文档没被接受。",
     "example": "index 成功不等于马上能搜到：\n\n```http\nPUT /p/_doc/1  → 201\nGET  /p/_doc/1  → 有正文（按 id 取）\nGET  /p/_search?q=title:x  → 刷新前 hits=0\nPOST /p/_refresh\nGET  /p/_search?q=title:x  → hits=1\n```",
     "task": "关闭自动刷新，索引一篇文档，比较按 id 获取和按词搜索的结果，再手动 refresh 后重试搜索。",
@@ -11077,6 +11493,10 @@
       {
         "title": "近实时搜索",
         "body": "索引成功表示文档已被接受。搜索看见它，要等刷新把新的段打开。默认大约每秒一次，所以搜索是近实时的。按标识获取可以读到已进事务日志但尚未刷新的文档。把刷新设成立即发生，写入会变慢。"
+      },
+      {
+        "title": "和导论",
+        "body": "近实时是选型时的权衡项，不是“无限快且强一致”，见 `es-tradeoffs-capacity`、`es-what-and-when`。"
       },
       {
         "title": "怎样自己验证",
@@ -11106,6 +11526,10 @@
         "body": "没有倒排时，你要读每篇文档再判断有没有这个词。有了倒排，先在词典里定位这个词，再只处理它的文档列表。列表本身可以很长，打分、过滤和取原文都发生在列表上。把第一段的“不用扫全文”说成整次查询是 O(1)，就把第二段算没了。"
       },
       {
+        "title": "和导论",
+        "body": "查询形态决定容量，背固定并发无意义，见 `es-tradeoffs-capacity`；倒排定位见 `es-inverted-index`。"
+      },
+      {
         "title": "怎样自己验证",
         "body": "在一个有稀有词和高频词的索引上，对同一个 keyword 字段各发一次 term 查询，并带上 \"profile\": true。两次的词典部分都应很快。高频词那次在倒排表上前进的文档数应明显更多，took 也通常更长。再对一个 text 字段用整句做 term 查询，应很少命中，因为索引里是分析之后的词，不是原句。"
       }
@@ -11131,6 +11555,10 @@
       {
         "title": "深页不是只多读一页",
         "body": "from 要先找到并丢掉前面的命中，页码越大越贵。search_after 从上次的位置继续，不重复付出前面的代价。排序值必须稳定，否则会漏行或重复。排序不稳定时，续页会漏掉或重复 id。"
+      },
+      {
+        "title": "和导论",
+        "body": "深分页是容量与查询形态问题，见 `es-tradeoffs-capacity`；相对 DB 翻页见 `es-vs-db-search`。"
       },
       {
         "title": "怎样自己验证",
@@ -11160,6 +11588,10 @@
         "body": "应用不要写死物理索引名。别名从旧指到新的那一下，读写一起过去。切之前要确认新索引已经灌完并且可搜，否则会短暂查到半份数据。应用只认别名，不写死物理索引名，切早了会查到半份。"
       },
       {
+        "title": "和导论",
+        "body": "映射重建是选用 ES 的运维代价，见 `es-tradeoffs-capacity`；投影可重建见 `es-vs-db-search`。"
+      },
+      {
         "title": "怎样自己验证",
         "body": "对一个字段尝试改类型，记下报错。按新索引、reindex、切别名做完，再搜同一价格：旧的按词、新的按数值。只改模板后，旧索引的映射应仍然不变。改类型的报错要先记下来，再开始建新索引。"
       }
@@ -11187,6 +11619,10 @@
         "body": "查询先圈定当时可见的文档，聚合再在这些文档上分桶或算指标。terms 返回的是键和 doc_count。刷新间隔和过滤会改变能看见的集合。基数很大时要限制桶的数量，否则响应里只有一部分桶。"
       },
       {
+        "title": "和导论",
+        "body": "聚合/facet 是 ES 典型能力，见 `es-what-and-when`；重聚合吃容量见 `es-tradeoffs-capacity`。"
+      },
+      {
         "title": "怎样自己验证",
         "body": "写一个按 status 的 terms，看响应里有没有订单正文。再把 hits 调大到一万，在程序里计数，对比传输量和内存。统计结果应来自分桶，而不是来自这批文档。"
       }
@@ -11212,6 +11648,10 @@
       {
         "title": "读写要打开同一片",
         "body": "routing 在写入时参与选择分片。按 id 读取若带了另一个值，或者根本不带，就会按别的规则打开分片，文档像是没写进去。搜索不带值时会扫全部片，可能找得到，但失去了收拢的意义。值改了，旧文档也不会跟着搬。"
+      },
+      {
+        "title": "和导论",
+        "body": "分片是水平扩展检索的基础，见 `es-what-and-when`、`es-tradeoffs-capacity`；routing 是进阶优化不是入门必选项。"
       },
       {
         "title": "怎样自己验证",

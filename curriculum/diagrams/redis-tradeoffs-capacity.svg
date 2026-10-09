@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-labelledby="title desc">
+  <title id="title">Redis capacity needs memory and load tests</title>
+  <desc id="desc">No universal QPS; size by memory, command shape, eviction.</desc>
+  <rect width="960" height="400" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">Redis / capacity</text>
+  <text x="32" y="64" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">Tradeoffs and sizing, no universal QPS slogan</text>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <rect x="32" y="96" width="280" height="176" rx="14" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="52" y="132" font-size="15" font-weight="600" fill="#2e3330">Pros</text>
+    <text x="52" y="164" font-size="14" fill="#3f6a58">low latency structures</text>
+    <text x="52" y="196" font-size="14" fill="#3f6a58">shared hot state</text>
+    <text x="52" y="228" font-size="14" fill="#5e6661">replica / cluster scale</text>
+    <rect x="340" y="96" width="280" height="176" rx="14" fill="#f6ecea" stroke="#a05048"/>
+    <text x="360" y="132" font-size="15" font-weight="600" fill="#6e3530">Costs</text>
+    <text x="360" y="164" font-size="14" fill="#2e3330">RAM price</text>
+    <text x="360" y="196" font-size="14" fill="#2e3330">ops + persistence</text>
+    <text x="360" y="228" font-size="14" fill="#5e6661">big / hot key risk</text>
+    <rect x="648" y="96" width="280" height="176" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="668" y="132" font-size="15" font-weight="600" fill="#2e3330">Measure</text>
+    <text x="668" y="164" font-size="14" fill="#3f6a58">working set size</text>
+    <text x="668" y="196" font-size="14" fill="#3f6a58">command complexity</text>
+    <text x="668" y="228" font-size="14" fill="#5e6661">load test, not slogan</text>
+    <rect x="32" y="296" width="896" height="72" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="52" y="328" font-size="15" font-weight="600" fill="#2e3330">Capacity = memory + command shape + eviction. Put numbers in a capacity sheet.</text>
+    <text x="52" y="352" font-size="14" fill="#5e6661">See redis-single-thread and redis-big-hot-key</text>
+  </g>
+</svg>

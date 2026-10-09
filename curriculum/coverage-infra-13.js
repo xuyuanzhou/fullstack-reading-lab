@@ -269,6 +269,7 @@ const COVERAGE_INFRA_13 = [
     points:['from+size 必须先取出再丢掉前面的命中','过深的 from 会被 max_result_window 拒绝','后续页用上一页的排序值 search_after'],
     deep:[
       {title:'深页不是只多读一页',body:'from 要先找到并丢掉前面的命中，页码越大越贵。search_after 从上次的位置继续，不重复付出前面的代价。排序值必须稳定，否则会漏行或重复。排序不稳定时，续页会漏掉或重复 id。'},
+      {title:'和导论',body:'深分页是容量与查询形态问题，见 es-tradeoffs-capacity；相对 DB 翻页见 es-vs-db-search。'},
       {title:'怎样自己验证',body:'对同一查询分别用很大的 from 和 search_after。比较耗时，并核对返回 id 没有跳过或重复。再把 from 加到超过窗口，确认会报错而不是慢慢返回。'},
     ],
     refs:[['Elasticsearch：分页','https://www.elastic.co/docs/reference/elasticsearch/rest-apis/paginate-search-results'],['Elasticsearch：search_after','https://www.elastic.co/docs/reference/elasticsearch/rest-apis/paginate-search-results#search-after']]
@@ -286,6 +287,7 @@ const COVERAGE_INFRA_13 = [
     points:['字段类型在写入时按当时映射固定','改类型通常要新索引并 reindex','用别名切换，避免应用改索引名'],
     deep:[
       {title:'别名是切换点',body:'应用不要写死物理索引名。别名从旧指到新的那一下，读写一起过去。切之前要确认新索引已经灌完并且可搜，否则会短暂查到半份数据。应用只认别名，不写死物理索引名，切早了会查到半份。'},
+      {title:'和导论',body:'映射重建是选用 ES 的运维代价，见 es-tradeoffs-capacity；投影可重建见 es-vs-db-search。'},
       {title:'怎样自己验证',body:'对一个字段尝试改类型，记下报错。按新索引、reindex、切别名做完，再搜同一价格：旧的按词、新的按数值。只改模板后，旧索引的映射应仍然不变。改类型的报错要先记下来，再开始建新索引。'},
     ],
     refs:[['Elasticsearch：mapping','https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html'],['Elasticsearch：Reindex API','https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-reindex.html']]

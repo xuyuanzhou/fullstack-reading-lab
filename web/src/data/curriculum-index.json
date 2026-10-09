@@ -551,6 +551,9 @@
         "thread-pool-formula-not-law"
       ],
       "消息队列": [
+        "mq-what-and-when",
+        "mq-tradeoffs-capacity",
+        "mq-vs-sync-call",
         "mq-why-decouple",
         "mq-delivery-semantics",
         "mq-compare-matrix",
@@ -606,6 +609,9 @@
         "ddd-repository-one-entry"
       ],
       "数据库": [
+        "mysql-what-and-when",
+        "mysql-tradeoffs-capacity",
+        "mysql-vs-cache-search",
         "mysql-null-comparison",
         "mysql-not-null-default-not-absolute",
         "mysql-check-enforced-not-parsed-only",
@@ -762,6 +768,9 @@
         "mybatis-middleware-layers"
       ],
       "缓存": [
+        "redis-what-and-when",
+        "redis-tradeoffs-capacity",
+        "redis-vs-db-cache",
         "redis-data-types",
         "redis-hash-field-update",
         "redis-zset-rank-range",
@@ -841,6 +850,9 @@
         "gateway-websocket-upgrade"
       ],
       "搜索": [
+        "es-what-and-when",
+        "es-tradeoffs-capacity",
+        "es-vs-db-search",
         "es-inverted-index",
         "es-lucene-not-btree",
         "elastic-analysis",
@@ -1969,6 +1981,14 @@
       ],
       "缓存": [
         {
+          "title": "导论",
+          "ids": [
+            "redis-what-and-when",
+            "redis-tradeoffs-capacity",
+            "redis-vs-db-cache"
+          ]
+        },
+        {
           "title": "键与类型",
           "ids": [
             "redis-data-types",
@@ -2103,6 +2123,14 @@
       ],
       "搜索": [
         {
+          "title": "导论",
+          "ids": [
+            "es-what-and-when",
+            "es-tradeoffs-capacity",
+            "es-vs-db-search"
+          ]
+        },
+        {
           "title": "查询",
           "ids": [
             "es-inverted-index",
@@ -2129,6 +2157,14 @@
         }
       ],
       "数据库": [
+        {
+          "title": "导论",
+          "ids": [
+            "mysql-what-and-when",
+            "mysql-tradeoffs-capacity",
+            "mysql-vs-cache-search"
+          ]
+        },
         {
           "title": "表",
           "ids": [
@@ -2379,6 +2415,14 @@
         }
       ],
       "消息队列": [
+        {
+          "title": "导论",
+          "ids": [
+            "mq-what-and-when",
+            "mq-tradeoffs-capacity",
+            "mq-vs-sync-call"
+          ]
+        },
         {
           "title": "选型",
           "ids": [
@@ -8755,6 +8799,48 @@
     {
       "track": "java",
       "group": "数据库",
+      "id": "mysql-what-and-when",
+      "title": "MySQL 是关系库，管事务与权威数据，不是搜索/缓存引擎",
+      "prompt": "为什么业务一上来先落 MySQL，却又不能拿它当 Elasticsearch 或 Redis 用？",
+      "keywords": "MySQL InnoDB 事务 权威数据",
+      "points": [
+        "MySQL 是关系库与事务引擎",
+        "适合权威状态与索引查询",
+        "不是搜索引擎或通用缓存"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-tradeoffs-capacity",
+      "title": "MySQL 优缺点与容量看缓冲池、查询与复制，没有万能 QPS",
+      "prompt": "为什么不能背“单库多少 QPS、单表多少行”当容量定律？",
+      "keywords": "MySQL 容量 缓冲池 EXPLAIN 压测",
+      "points": [
+        "优点是事务与成熟 OLTP",
+        "代价含坏 SQL 与扩展成本",
+        "容量靠压测没有万能行数"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
+      "id": "mysql-vs-cache-search",
+      "title": "库、缓存、搜索分工：权威、加速、检索投影",
+      "prompt": "什么时候该加 Redis 或 Elasticsearch，而不是继续只加 MySQL 索引？",
+      "keywords": "MySQL Redis Elasticsearch 职责分工",
+      "points": [
+        "库管权威与事务",
+        "缓存加速热点",
+        "搜索引擎做检索投影"
+      ],
+      "since": "MySQL 8.4"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
       "id": "mysql-null-comparison",
       "title": "NULL 不是空字符串，等号也筛不出它",
       "prompt": "WHERE name = NULL 为什么找不到空着的名字？",
@@ -10146,6 +10232,48 @@
         "自增不是连续业务编号"
       ],
       "since": "MySQL 8.0"
+    },
+    {
+      "track": "java",
+      "group": "缓存",
+      "id": "redis-what-and-when",
+      "title": "Redis 是内存数据结构服务，常作缓存与热状态，不是替库",
+      "prompt": "为什么资料一上来讲 String/Hash，却很少先说清 Redis 到底是什么、什么时候不该用？",
+      "keywords": "Redis 缓存 数据结构 内存",
+      "points": [
+        "Redis 是内存数据结构服务",
+        "擅长缓存与热状态",
+        "不是替关系库做账本"
+      ],
+      "since": "Redis"
+    },
+    {
+      "track": "java",
+      "group": "缓存",
+      "id": "redis-tradeoffs-capacity",
+      "title": "Redis 优缺点与容量看内存、命令与淘汰，没有全站通用 QPS",
+      "prompt": "为什么面试爱问“Redis 能扛多少并发”，却很难有一句标准答案？",
+      "keywords": "Redis 容量 maxmemory 淘汰 压测",
+      "points": [
+        "优点是低延迟与结构命令",
+        "代价含内存与运维复杂度",
+        "容量靠内存与压测没有万能数字"
+      ],
+      "since": "Redis"
+    },
+    {
+      "track": "java",
+      "group": "缓存",
+      "id": "redis-vs-db-cache",
+      "title": "数据库负责权威状态，Redis 缓存不能自动保证一致",
+      "prompt": "为什么“查库慢就加 Redis”之后，用户仍偶发看到旧数据或空窗？",
+      "keywords": "Redis Cache Aside 一致性 数据库",
+      "points": [
+        "DB 是权威状态",
+        "缓存默认可短暂不一致",
+        "旁路要处理回填与失效"
+      ],
+      "since": "Redis"
     },
     {
       "track": "java",
@@ -11988,6 +12116,48 @@
     {
       "track": "java",
       "group": "消息队列",
+      "id": "mq-what-and-when",
+      "title": "消息中间件解耦时间与消费，不是“异步 HTTP”",
+      "prompt": "为什么订单服务不直接调发货，却要引入 Kafka/Rabbit 一类中间件？",
+      "keywords": "消息中间件 解耦 异步 投递",
+      "points": [
+        "解耦时间与消费方地址",
+        "典型异步通知削峰事件管",
+        "不是换皮的同步 HTTP"
+      ],
+      "since": "messaging"
+    },
+    {
+      "track": "java",
+      "group": "消息队列",
+      "id": "mq-tradeoffs-capacity",
+      "title": "消息系统优缺点与容量看积压、分区与磁盘，没有万能 TPS",
+      "prompt": "为什么不能背一句“Kafka 百万 TPS”就当容量规划？",
+      "keywords": "消息队列 容量 积压 分区 压测",
+      "points": [
+        "优点是削峰与多订阅",
+        "代价含积压与投递语义",
+        "容量靠并行与压测无万能 TPS"
+      ],
+      "since": "messaging"
+    },
+    {
+      "track": "java",
+      "group": "消息队列",
+      "id": "mq-vs-sync-call",
+      "title": "同步调用要当场结果，消息适合事后处理",
+      "prompt": "什么时候必须继续用 HTTP/RPC，而不是“全部改成发消息”？",
+      "keywords": "同步调用 消息 异步 幂等",
+      "points": [
+        "同步要同一次响应结果",
+        "消息适合事后与削峰",
+        "前提先于中间件品牌"
+      ],
+      "since": "messaging"
+    },
+    {
+      "track": "java",
+      "group": "消息队列",
       "id": "mq-why-decouple",
       "title": "消息中间件先解耦时间，再谈选型",
       "prompt": "订单服务直接 HTTP 调发货服务，和先发一条消息，差在哪里？",
@@ -12432,6 +12602,48 @@
         "竞争消费不保证跨进程的处理顺序"
       ],
       "since": "JMS Queue"
+    },
+    {
+      "track": "java",
+      "group": "搜索",
+      "id": "es-what-and-when",
+      "title": "Elasticsearch 是分布式搜索与分析引擎，不是替库",
+      "prompt": "为什么一说“全文搜索、日志检索”，资料就推 Elasticsearch，却又不能把它当订单主库？",
+      "keywords": "Elasticsearch Lucene 搜索引擎 分片",
+      "points": [
+        "ES 是搜索与分析引擎不是替库",
+        "建立在 Lucene 与分片集群之上",
+        "全文、日志检索、筛选聚合是典型用途"
+      ],
+      "since": "Elasticsearch"
+    },
+    {
+      "track": "java",
+      "group": "搜索",
+      "id": "es-tradeoffs-capacity",
+      "title": "优缺点与容量要按分片和查询形态估，没有全站通用并发数",
+      "prompt": "为什么面试常问“ES 并发多少、能撑多少数据”，却很难有一句标准答案？",
+      "keywords": "Elasticsearch 容量 分片 近实时 权衡",
+      "points": [
+        "优点是扩展检索与近实时分析",
+        "代价含映射重建与运维复杂度",
+        "容量靠分片与压测没有万能数字"
+      ],
+      "since": "Elasticsearch"
+    },
+    {
+      "track": "java",
+      "group": "搜索",
+      "id": "es-vs-db-search",
+      "title": "DB 的 LIKE 与 ES 检索解决的不是同一类问题",
+      "prompt": "为什么商品名用 `LIKE '%手机%'` 能出结果，却仍常把搜索放到 Elasticsearch？",
+      "keywords": "Elasticsearch MySQL LIKE 检索投影",
+      "points": [
+        "LIKE 不是搜索引擎",
+        "ES 补相关性分词与聚合",
+        "主数据在 DB，ES 是投影"
+      ],
+      "since": "Elasticsearch"
     },
     {
       "track": "java",

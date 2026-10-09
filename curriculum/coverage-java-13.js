@@ -4,7 +4,7 @@ const COVERAGE_JAVA_13 = [
     track:'java', group:'搜索', id:'es-lucene-not-btree',
     title:'Lucene 和 ES 都是倒排索引，不是 B+ 树对比',
     prompt:'为什么“Lucene 用 B+ 树、只能一个库；ES 才用倒排索引做分布式”不能当答案？',
-    core:'Elasticsearch 的全文检索建立在 Apache Lucene 上。Lucene 为词项建立倒排表：词 → 出现过的文档（及位置等信息）。ES 把多份 Lucene 索引组织成分片、副本和集群，对外提供 HTTP JSON API，并处理映射、刷新与近实时可见性。资料把 Lucene 写成 B+ 树、遍历搜索、只能一个索引库，把倒排当成 ES 才有的发明，层次是反的。B+ 树常见于关系库二级索引，不是 Lucene 正文检索的主结构。ES 也不是“没有事务所以删除一定不可恢复”：有刷新、快照、版本/seq_no 乐观并发；删除后能否看见取决于 refresh 与副本，而不是“没有事务”四个字。动态映射的 _default_ 与默认 string 类型属于旧版本叙事。',
+    core:'Elasticsearch 的全文检索建立在 Apache Lucene 上。Lucene 为词项建立倒排表：词 → 出现过的文档（及位置等信息）。ES 把多份 Lucene 索引组织成分片、副本和集群，对外提供 HTTP JSON API，并处理映射、刷新与近实时可见性——导论「ES 是什么」见 `es-what-and-when`，本课专纠「Lucene=B+ 树 / 只有 ES 才倒排」。资料把 Lucene 写成 B+ 树、遍历搜索、只能一个索引库，把倒排当成 ES 才有的发明，层次是反的。B+ 树常见于关系库二级索引，不是 Lucene 正文检索的主结构。ES 也不是“没有事务所以删除一定不可恢复”：有刷新、快照、版本/seq_no 乐观并发；删除后能否看见取决于 refresh 与副本，而不是“没有事务”四个字。动态映射的 _default_ 与默认 string 类型属于旧版本叙事。',
     why:'按“Lucene 是 B+ 树、ES 才用倒排”去对比，底层检索引擎会说错，分片、refresh 和映射演进也会被漏掉。区分信号是词指向文档列表，而不是一棵按键有序的树。画错结构，查询也会选错。',
     example:'商品标题分词后，“耳机”指向包含它的文档编号列表。ES 把这种 Lucene 索引放到多个分片上并行搜。不要画一棵 B+ 树当 Lucene。删除后要等 refresh 才从搜索里消失，不是立刻永远看不见。',
     task:'对照 ES 文档里的倒排索引说明，划掉资料中的 B+ 树对比，并写出 refresh 与“删除立即永远消失”的差别。',
@@ -13,6 +13,7 @@ const COVERAGE_JAVA_13 = [
     points:['Lucene 用倒排表，不是用 B+ 树做全文检索','ES 在 Lucene 之上做分片、副本与 HTTP API','删除与可见性要看 refresh/副本，不是“没有事务”四个字'],
     deep:[
       {title:'倒排回答的是词',body:'倒排适合“哪些文档包含这些词”。按主键取整行、按范围扫有序键，不是它的形状。把 Lucene 画成 B+ 树，会用错查询，也会误解删除和 refresh。按词找文档，不是按键扫树。'},
+      {title:'和导论',body:'产品定位与何时用见 es-what-and-when；近实时可见性展开见 es-refresh-visibility。'},
       {title:'怎样自己验证',body:'对照 ES 文档里的倒排索引说明，划掉资料中的 B+ 树句子。写一条标题检索，看命中的是分词后的词。再对比 refresh 前后，新文档并不是写入瞬间就能搜到。'},
     ],
     refs:[['Elasticsearch：倒排索引','https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-index_.html'],['Lucene：index 包说明','https://lucene.apache.org/core/9_11_1/core/org/apache/lucene/index/package-summary.html']]

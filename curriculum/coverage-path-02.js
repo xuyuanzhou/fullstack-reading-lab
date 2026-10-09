@@ -246,7 +246,7 @@ const COVERAGE_PATH_02 = [
     track:'java', group:'搜索', id:'es-refresh-visibility',
     title:'写入成功后，搜索仍可能看不到',
     prompt:'索引请求返回 201，下一次搜索为什么还查不到这篇文档？',
-    core:'Elasticsearch 的索引成功表示文档已被接受。搜索看见它，要等 refresh 把新的段打开。默认大约每一秒刷新一次，所以搜索是近实时的。按 id 获取可以读到尚未刷新、但已经进 translog 的文档，这和搜索不是同一条路径。把 refresh 设成立即发生，写入会变慢。刷新也不是磁盘上的 fsync，进程崩溃时还要靠 translog 恢复。',
+    core:'Elasticsearch 的索引成功表示文档已被接受。搜索看见它，要等 refresh 把新的段打开。默认大约每一秒刷新一次，所以搜索是近实时的——导论里把它写成优点也写成与强一致读己之写的代价，见 `es-tradeoffs-capacity`。按 id 获取可以读到尚未刷新、但已经进 translog 的文档，这和搜索不是同一条路径。把 refresh 设成立即发生，写入会变慢。刷新也不是磁盘上的 fsync，进程崩溃时还要靠 translog 恢复。',
     why:'学习者会以为索引返回 201，下一次搜索就一定能查到这篇文档。测试里写入后马上搜索偶发失败，他当成写入丢了又重试。按标识能读到正文、按词搜索仍是 0 条，才说明差在刷新，不是文档没被接受。',
     example:'关闭自动刷新后索引一篇文档，响应是成功。立刻按标识获取，正文已经能读到。按标题词搜索，命中数是 0。手动刷新后再搜索，命中数变成 1。刷新前的搜索失败并不是索引请求被拒绝。刷新前命中数为 0，刷新后变为 1。',
     task:'关闭自动刷新，索引一篇文档，比较按 id 获取和按词搜索的结果，再手动 refresh 后重试搜索。',
@@ -255,6 +255,7 @@ const COVERAGE_PATH_02 = [
     points:['索引成功不等于已经可被搜索','refresh 让新段对搜索可见','按 id 获取和搜索不是同一条可见性路径'],
     deep:[
       {title:'近实时搜索',body:'索引成功表示文档已被接受。搜索看见它，要等刷新把新的段打开。默认大约每秒一次，所以搜索是近实时的。按标识获取可以读到已进事务日志但尚未刷新的文档。把刷新设成立即发生，写入会变慢。'},
+      {title:'和导论',body:'近实时是选型时的权衡项，不是“无限快且强一致”，见 es-tradeoffs-capacity、es-what-and-when。'},
       {title:'怎样自己验证',body:'关闭自动刷新，索引一篇文档，立刻做按标识获取和按词搜索。获取应有正文，搜索应为 0 条。手动刷新后再搜索，命中数应为 1。刷新后再搜同一标题，命中数应从 0 变成 1。'}
     ],
     refs:[['Elasticsearch：近实时搜索','https://www.elastic.co/docs/manage-data/data-store/near-real-time-search'],['Elasticsearch：refresh','https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-refresh']]

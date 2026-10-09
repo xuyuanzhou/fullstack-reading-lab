@@ -13,6 +13,7 @@ const COVERAGE_JAVA_30 = [
     points:['倒排避免逐篇扫描，查词不是哈希 O(1)','FST 查找与词长相关，还要扫倒排表','高频词贵在倒排表长度，不在词典'],
     deep:[
       {title:'常数的是“不必打开每一篇”，不是整次查询',body:'没有倒排时，你要读每篇文档再判断有没有这个词。有了倒排，先在词典里定位这个词，再只处理它的文档列表。列表本身可以很长，打分、过滤和取原文都发生在列表上。把第一段的“不用扫全文”说成整次查询是 O(1)，就把第二段算没了。'},
+      {title:'和导论',body:'查询形态决定容量，背固定并发无意义，见 es-tradeoffs-capacity；倒排定位见 es-inverted-index。'},
       {title:'怎样自己验证',body:'在一个有稀有词和高频词的索引上，对同一个 keyword 字段各发一次 term 查询，并带上 "profile": true。两次的词典部分都应很快。高频词那次在倒排表上前进的文档数应明显更多，took 也通常更长。再对一个 text 字段用整句做 term 查询，应很少命中，因为索引里是分析之后的词，不是原句。'}
     ],
     refs:[['Elasticsearch：Inverted index','https://www.elastic.co/guide/en/elasticsearch/reference/current/documents-indices.html'],['Elasticsearch：Term query','https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-term-query.html']]

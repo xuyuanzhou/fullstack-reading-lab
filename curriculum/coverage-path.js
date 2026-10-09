@@ -131,6 +131,7 @@ const COVERAGE_PATH = [
     keywords:'MySQL NULL IS NULL COUNT NOT IN 三值逻辑',
     points:['NULL 表示未知，和空字符串不同','WHERE 的等号保留不了 NULL 行','COUNT(列) 跳过 NULL，COUNT(*) 计入行'],
     deep:[
+      {title:'和导论',body:'MySQL 是什么、容量框架与相对缓存/搜索见 mysql-what-and-when、mysql-tradeoffs-capacity、mysql-vs-cache-search。本课专讲 NULL 三值逻辑。'},
       {title:'三值逻辑',body:'NULL 与任何值比较，包括与另一个 NULL，结果都不是真。WHERE 只留下结果为真的行。按列计数不计 NULL，按行计数会计入。NOT IN 碰上 NULL 会让整个条件变成未知。'},
       {title:'怎样自己验证',body:'建三行：一个名字、一个空字符串、一个 NULL。依次跑等号、IS NULL、按列计数、按行计数，以及列表里带 NULL 的 NOT IN。四次行数不应把空字符串和 NULL 算进同一次结果。'}
     ],
@@ -148,6 +149,7 @@ const COVERAGE_PATH = [
     keywords:'Redis String Hash Sorted Set Stream 数据结构',
     points:['String 适合整体读写一个值','Hash、Set、Sorted Set 对应字段、去重和按分数排序','Stream 适合追加日志，过期不能代替结构'],
     deep:[
+      {title:'和导论',body:'Redis 是什么、容量框架与相对 DB 见 redis-what-and-when、redis-tradeoffs-capacity、redis-vs-db-cache。本课专讲结构选型。'},
       {title:'按访问方式选结构',body:'字符串一次读写整个值。哈希只改键下的一个字段。有序集合按分数取一段范围。流只追加，并用上次的游标接着读。过期和持久化不改变这些命令每次要动多少数据。整段重写会盖掉并发改过的其他字段。'},
       {title:'展开课',body:'Hash 字段更新见 redis-hash-field-update。ZSet 排行与范围见 redis-zset-rank-range。近似 UV 用 HyperLogLog 见 redis-hyperloglog-approx，它列不出成员。'},
       {title:'怎样自己验证',body:'对同一份排行先存成一整段字符串，改一名次要整段重写，看写入长度。再改成按分数写入并取前十名，返回应已按分数排好，且不会把其他成员重新写一遍。前十名的顺序应来自分数而不是写入时刻。'}

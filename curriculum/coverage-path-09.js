@@ -100,6 +100,7 @@ const COVERAGE_PATH_09 = [
     diagram:'diagrams/cache-aside.svg',
     points:['未命中时读数据库并回填缓存','写数据库成功后再删除缓存','缓存不会自动跟随数据库更新'],
     deep:[
+      {title:'和导论',body:'DB 与 Redis 职责边界见 redis-vs-db-cache；旁路步骤是实现该边界的一种写法，见 redis-what-and-when。'},
       {title:'空值',body:'数据库里没有的 id 也可以短暂缓存空结果，避免穿透。空结果的过期要短，不然新插入的行会被空缓存挡住。'},
       {title:'和一致性课',body:'先删缓存再写库，或写库后删失败，都会出现旧值窗口。步骤对了，仍要看那一课的并发窗口。'},
       {title:'客户端缓存',body:'进程内再囤一份 Redis 读结果时，同样要失效路径，见 redis-client-side-cache-invalidate。'}
@@ -127,7 +128,7 @@ const COVERAGE_PATH_09 = [
     track:'java', group:'搜索', id:'es-inverted-index',
     title:'倒排索引是“词指向哪些文档”',
     prompt:'为什么搜索“手机”不用把每一篇商品描述都扫一遍？',
-    core:'正排是文档指向它里面的词，适合按 id 取出整篇。倒排把方向反过来：每个词记下出现过它的文档。搜索先查词，再拿到文档列表，所以不必逐篇扫描。文本在写入时就被分析器切成词；查询时同一套规则再切一次。两边规则不一致，人眼看得到的字，索引里可能是另一个词。精确过滤、排序用 keyword 这种不分词的字段，全文搜索用 text。',
+    core:'正排是文档指向它里面的词，适合按 id 取出整篇。倒排把方向反过来：每个词记下出现过它的文档。搜索先查词，再拿到文档列表，所以不必逐篇扫描。文本在写入时就被分析器切成词；查询时同一套规则再切一次。两边规则不一致，人眼看得到的字，索引里可能是另一个词。精确过滤、排序用 keyword 这种不分词的字段，全文搜索用 text。导论见 `es-what-and-when`：ES 用倒排做检索投影，不是替库。',
     why:'学习者会以为搜索一个词就是把每一篇描述都扫一遍，分词规则一改就去全库重读。改一个字的大小写后，分析器收成同一个词，查询只读这一项。精确值走了分词字段却对不上，才说明快是因为词指向文档，不是因为扫得更快。',
     example:'三篇商品含有“手机”。倒排里这个词指向这三篇的编号，查询只读这一项，打开的不是全部商品。把其中一篇改成不同大小写，若分析器收成同一个词，这一项仍指向它。精确过滤若走了会分词的字段，同一个编号可能查不到。',
     task:'用三个短句手工写出倒排：每个词后面跟文档编号。再改一个字的大小写，看分析器会不会把它收成同一个词。',
@@ -136,6 +137,7 @@ const COVERAGE_PATH_09 = [
     points:['倒排记录每个词出现在哪些文档','写入时分词，查询时用同一套规则','精确值用 keyword，全文用 text'],
     deep:[
       {title:'倒排与分析',body:'正排是文档指向它里面的词，适合按编号取出整篇。倒排是词指向文档列表，搜索先查词再拿列表，所以不必逐篇扫描。文本在写入时被切成词，查询时要用同一套规则再切一次。规则不一致时，人眼相同的字会落到另一个词项。'},
+      {title:'和导论',body:'何时上 ES、与 DB 检索的边界见 es-what-and-when、es-vs-db-search；容量与近实时权衡见 es-tradeoffs-capacity。'},
       {title:'怎样自己验证',body:'用三个短句手工写出每个词后面的文档编号，再查其中一个词，确认只读这一项。把同一个词改一下大小写重新分析，看它是否仍落在原来的项里；精确字段则不应被切成另一个词。'}
     ],
     refs:[['Elasticsearch：文本分析','https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis.html'],['Elasticsearch：mapping','https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html']]
@@ -153,6 +155,7 @@ const COVERAGE_PATH_09 = [
     points:['查询上下文计算相关性分数','过滤上下文只判断是否匹配','精确条件放过滤，避免干扰排序'],
     deep:[
       {title:'查询打分与过滤',body:'查询上下文按像不像搜索词给分，用来排序。过滤上下文只回答满足不满足，例如状态和价格区间，结果可以缓存，也不参与打分。两边混成一种查询，计算更重，排序也被无关条件带动。'},
+      {title:'和导论',body:'facet/筛选列表正是 ES 典型用途之一，见 es-what-and-when；重过滤+打分会吃容量，见 es-tradeoffs-capacity。'},
       {title:'怎样自己验证',body:'把同一条搜索拆成两列：打分的词，以及只做是非的条件。先只改过滤条件，看命中集合变、前几名的相对分数可以不变。再把价格放进打分，看无关文档是否被抬到前面。价格回到过滤之后，前几名应重新按关键词的分数排列。'}
     ],
     refs:[['Elasticsearch：查询与过滤上下文','https://www.elastic.co/docs/reference/query-languages/query-dsl/query-filter-context']]
