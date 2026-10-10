@@ -39470,6 +39470,10 @@
       "keywords": "架构演进 单体 模块化单体 水平扩展 微服务",
       "deep": [
         {
+          "title": "和导论",
+          "body": "系统设计章先写一条路径，再谈拆分和容量，见 `arch-chapter-aim`。本课专讲演进停在哪一级。"
+        },
+        {
           "title": "和全栈主线",
           "body": "主线先走通一条写路径。演进课回答的是这条路径在规模变大时拓扑怎么变，不代替不变量与契约。"
         },
@@ -40256,6 +40260,10 @@
       "origin": "《分布式高并发.pdf》第 19 页",
       "diagram": "library-assets/distributed-hc/p0019.png",
       "deep": [
+        {
+          "title": "和导论",
+          "body": "分布式章回答多进程之间怎样看见同一份事实，见 `dist-chapter-aim`。本课专讲分区时的取舍。"
+        },
         {
           "title": "什么叫网络分区",
           "body": "节点还在运行，但节点间消息无法在可接受时间内到达。分区期间，系统无法同时证明另一侧已接受什么。"
@@ -43483,6 +43491,10 @@
       "diagram": "diagrams/docker-layer-cache.svg",
       "deep": [
         {
+          "title": "和导论",
+          "body": "Docker 是什么、怎样 build/run、不是虚拟机见 `docker-what-it-is`、`docker-image-run`、`docker-not-a-vm`。本课专讲层缓存与 COPY 顺序。"
+        },
+        {
           "title": "多阶段不会自动修好顺序",
           "body": "构建阶段里的层顺序仍然生效。只是最终阶段若不 COPY 构建工具，运行镜像里才看不到它们。顺序错了，构建阶段照样每次重装。"
         },
@@ -43794,6 +43806,10 @@
       "keywords": "kubeadm CNI CoreDNS join init",
       "diagram": "diagrams/kubeadm-cni-dns.svg",
       "deep": [
+        {
+          "title": "和导论",
+          "body": "Kubernetes 是什么、kubectl apply 进门、不是 Docker 引擎见 `k8s-what-it-is`、`k8s-cluster-enter`、`k8s-not-docker-engine`。本课专讲 kubeadm 与 CNI。"
+        },
         {
           "title": "Pod CIDR 不要和宿主机网段撞",
           "body": "插件偏好的网段若和主机网络重叠会出问题。init 时用 --pod-network-cidr 选一段不冲突的，并改插件清单里对应的网段。"
@@ -44465,6 +44481,10 @@
       "answer": "从浏览器到网关、服务日志和 SQL 日志应找到同一个追踪标识，否则三份数字不是同一次下单。人为把池变小后，变慢的跨度应是获取连接，语句跨度仍短。指标说明整体变慢，链路说明这一次慢在哪一跳。网关很快时不能把 504 或总耗时算到入口上。池变小之后，语句那一段的耗时不应跟着变成三秒。",
       "keywords": "OpenTelemetry traceparent span W3C Trace Context",
       "deep": [
+        {
+          "title": "和导论",
+          "body": "工程实践章回答一次请求怎样被看见、变慢时调哪一段，见 `java-eng-chapter-aim`。本课专讲同一次追踪。"
+        },
         {
           "title": "采样",
           "body": "全量追踪在高峰很贵。错误和慢请求应提高采样，正常请求可以降。没有错误采样时，你正好要查的那次可能没被记下。"
