@@ -13,6 +13,7 @@ const COVERAGE_FRONTEND_17 = [
     keywords:'uni-app uni-app x uts uvue vueVersion UNI-APP-X',
     points:['uni-app 新项目用 Vue 3 的 vue 页面，uni-app x 用 uvue 和 uts','uts 在 Web 和小程序编成 JS，Android 编成 Kotlin，iOS 编成 Swift，鸿蒙 Next 编成 ArkTS','Android 没有内置 JS 引擎，旧 vue 页面不能直接混进 uni-app x'],
     deep:[
+      {title:'和导论',body:'uni-app / Taro 是什么、两条编译层见 uniapp-what-it-is、taro-what-it-is、uniapp-taro-not-same-runtime。本课专讲 uni-app x 与旧 vue 页的边界。'},
       {title:'两套项目用条件编译分开',body:'UNI-APP-X 只在 uni-app x 工程里成立。想在源码里区分，用这个宏，而不是在运行时探测「是不是 x」。Web 和小程序上 uts 会变成 JS，所以那边仍能调用该端的 JS API。'},
       {title:'怎样自己验证',body:'打开 manifest，确认 Vue 工程的 vueVersion 是 3，页面后缀是 vue。再打开 uni-app x 工程，页面后缀应是 uvue。选 Android 编译，产物侧应出现 Kotlin，而不是把原 .vue 原样打进包里。'}
     ],

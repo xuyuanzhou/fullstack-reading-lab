@@ -14,6 +14,7 @@ const COVERAGE_JAVA_47 = [
     diagram:'diagrams/gha-workflow-path.svg',
     points:['工作流文件必须放在 .github/workflows','on 匹配这次事件才开跑','这次运行读的是该提交里的 YAML'],
     deep:[
+      {title:'和导论',body:'GitHub Actions 是什么、作业怎样排队、不是线上进程见 gha-what-it-is、gha-workflow-enter、gha-not-the-runtime。本课专讲工作流路径与触发。'},
       {title:'一个仓库可以有多份',body:'构建测试、发布、给 issue 打标签可以分成多个文件。每一份自己的 on。不要把互不相关的任务塞进同一个永远触发的文件里，失败会互相挡住。'},
       {title:'怎样自己验证',body:'把 YAML 放进 `.github/workflows` 并 push，Actions 里应出现这次提交的运行。把文件移出该目录再 push，这次不应再匹配。打开运行摘要，确认 SHA 是第二次之前那次仍在目录里的提交。'}
     ],
@@ -71,6 +72,7 @@ const COVERAGE_JAVA_47 = [
     diagram:'diagrams/docker-layer-cache.svg',
     points:['一条指令一层，失效后后面的层都重做','COPY 的源文件变了，这一层失效','不要把整份源码 COPY 放在安装工具之前'],
     deep:[
+      {title:'和导论',body:'Docker 是什么、怎样 build/run、不是虚拟机见 docker-what-it-is、docker-image-run、docker-not-a-vm。本课专讲层缓存与 COPY 顺序。'},
       {title:'多阶段不会自动修好顺序',body:'构建阶段里的层顺序仍然生效。只是最终阶段若不 COPY 构建工具，运行镜像里才看不到它们。顺序错了，构建阶段照样每次重装。'},
       {title:'怎样自己验证',body:'docker build 两次，第二次只改源码。安装层应显示缓存命中。把 COPY . 挪到安装之前再构建，安装层不应再显示缓存命中。'}
     ],
@@ -109,6 +111,7 @@ const COVERAGE_JAVA_47 = [
     diagram:'diagrams/kubeadm-cni-dns.svg',
     points:['kubeadm init 之后要部署 CNI','没有 Pod 网络时 CoreDNS 不会 Running','一个集群只装一份 Pod 网络，然后再 join'],
     deep:[
+      {title:'和导论',body:'Kubernetes 是什么、kubectl apply 进门、不是 Docker 引擎见 k8s-what-it-is、k8s-cluster-enter、k8s-not-docker-engine。本课专讲 kubeadm 与 CNI。'},
       {title:'Pod CIDR 不要和宿主机网段撞',body:'插件偏好的网段若和主机网络重叠会出问题。init 时用 --pod-network-cidr 选一段不冲突的，并改插件清单里对应的网段。'},
       {title:'怎样自己验证',body:'init 之后立刻 get pods -A，CoreDNS 应还不是 Running。apply 网络插件后再看，CoreDNS 应为 Running，这时才 join。join 使用 init 打印的那条命令。'}
     ],

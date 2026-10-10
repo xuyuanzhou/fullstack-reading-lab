@@ -116,6 +116,10 @@ const COVERAGE_LESSONS = [
     diagram:'library-assets/illustrated-basics/http-p0034.png',
     deep:[
       {
+        title:'和导论',
+        body:'HTTP 是什么、fetch 怎样发出请求、和 TCP 的层次见 http-what-it-is、http-request-enters、http-not-tcp。本课专讲方法的安全与幂等。'
+      },
+      {
         title:'语义和实现要分开',
         body:'安全和幂等是方法的约定，不是某个框架自动加上的锁。查询不应靠它改状态。覆盖更新可以设计成幂等。扣款、下单必须另有业务键，否则 POST 重试就会重复生效。看表里的行数，不要只看方法名。'
       },
@@ -319,6 +323,10 @@ const COVERAGE_LESSONS = [
     origin:'《JVM内存区域划分.pdf》的运行时数据区章节',
     diagram:'diagrams/jvm-areas.svg',
     deep:[
+      {
+        title:'和导论',
+        body:'JVM 是什么、类怎样装进虚拟机、不管业务语法见 jvm-what-it-is、jvm-enter-class、jvm-not-the-language。本课专讲运行时数据区。'
+      },
       {
         title:'规范层',
         body:'JVM 规范描述可观察的逻辑区域与行为边界，例如 pc、虚拟机栈、堆和方法区。'

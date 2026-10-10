@@ -68,6 +68,7 @@ const COVERAGE_PATH = [
     diagram:'library-assets/illustrated-basics/http-p0039.png',
     points:['Cookie 按属性自动附在匹配的请求上','HttpOnly 阻止脚本读取该 Cookie','localStorage 不自动发送，同源脚本可以读取'],
     deep:[
+      {title:'和导论',body:'浏览器安全管谁读凭证、谁跑脚本见 browser-security-what。本课专讲 Cookie 与 localStorage。'},
       {title:'自动附带与脚本可读',body:'Cookie 按域、路径和 SameSite 决定是否附在请求上。HttpOnly 挡住脚本读取。localStorage 只留在该源页面里，请求不会自动带上，同源脚本却能读到这项。'},
       {title:'怎样自己验证',body:'分别设置 HttpOnly Cookie 和一项 localStorage。在控制台读 document.cookie，在网络面板看下一请求的请求头，再关掉浏览器重开。Cookie 看得到头、读不到脚本；存储项相反。'}
     ],
@@ -232,6 +233,7 @@ const COVERAGE_PATH = [
     keywords:'JUnit 5 TestInstance PER_METHOD 测试隔离',
     points:['默认每个测试方法使用新实例','静态字段和外部单例仍会泄漏','测试必须能单独运行且与顺序无关'],
     deep:[
+      {title:'和导论',body:'JUnit 是什么、构建怎样发现测试、不代替应用进程见 junit-what-it-is、junit-enter-test、junit-not-the-app。本课专讲实例生命周期。'},
       {title:'实例生命周期',body:'默认每个测试方法一个新实例，实例字段不会自动带到下一个方法。静态字段、单例、未关闭的资源和被替换的静态依赖仍会跨方法留下。改成每个类一个实例后，实例字段也会留下来。'},
       {title:'怎样自己验证',body:'写两个测试共用一个静态列表，第一个加入一项，第二个断言为空。先跑全类，再只跑第二个，比较两次结果。然后改成方法内的局部列表，交换顺序再跑，两次都应通过。单跑与全量的结果必须一致。'}
     ],

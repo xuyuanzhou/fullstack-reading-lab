@@ -66,6 +66,8 @@ const COVERAGE_JAVA_32 = [
     task:'对照 epoll(7) 的 ET，写出读到何时才能停；划掉“剩下的以后会再通知”。',
     answer:'划掉“剩下的以后会再通知”。EPOLLET 只在状态变化时通知一次。描述符要非阻塞，读到 read 返回 EAGAIN 才能停。只读出 200 字节、缓冲里还留着数据，就回到 epoll_wait，剩下的不会再敲门。不加 EPOLLET 时才是只要缓冲里还有数据就继续通知。',
     keywords:'epoll EPOLLET EPOLLIN EAGAIN LT',
+    origin:'本地库《图解系统》epoll 边缘触发与水平触发页',
+    diagram:'library-assets/illustrated-basics/os-p0360.png',
     points:['LT 有数据就持续通知，ET 只在状态沿上通知','ET 必须循环读到 EAGAIN','半包留在内核里不会自己再敲门'],
     deep:[
       {title:'短读有两种',body:'缓冲里只有 200 字节，你要读 500，read 返回 200，对流来说这一下已经空了。缓冲里有 500，你只要 200，read 也返回 200，里面还剩 300。ET 不会替你区分这两种返回值。停的条件是 EAGAIN，不是“这次 read 成功返回过”。'},

@@ -48,6 +48,7 @@ const COVERAGE_PATH_05 = [
     keywords:'Vite ESM Rollup 代码分割 模块图 webpack',
     points:['Vite 开发时走原生 ESM，生产构建再打包','代码分割边界是动态 import，按路由和低频模块划分','webpack 是存量构建器，不是新项目的默认起点'],
     deep:[
+      {title:'和导论',body:'前端工程实践章回答构建、度量和发布各停在哪一层，见 fe-eng-chapter-aim。本课专讲 Vite 模块图。'},
       {title:'和已有 webpack 课',body:'动态 import、缓存失效、chunk 失败恢复这些机制仍然成立。那一课改成“存量 webpack 仓库如何理解分割”，新建步骤以这一课为准。'},
       {title:'环境变量',body:'只有约定前缀的变量会进入客户端包。没有前缀的密钥若被写进前端代码，构建时就会进包。这和“打进前端包里的变量不是秘密”是同一条规则。'}
     ],
@@ -102,6 +103,7 @@ const COVERAGE_PATH_05 = [
     keywords:'OpenTelemetry traceparent span W3C Trace Context',
     points:['同一请求用同一个 trace id 穿过网关和服务','span 分开记录网关、应用、连接池和 SQL','日志必须带上 trace id，才能从投诉跳到那一次调用'],
     deep:[
+      {title:'和导论',body:'工程实践章回答一次请求怎样被看见、变慢时调哪一段，见 java-eng-chapter-aim。本课专讲同一次追踪。'},
       {title:'采样',body:'全量追踪在高峰很贵。错误和慢请求应提高采样，正常请求可以降。没有错误采样时，你正好要查的那次可能没被记下。'},
       {title:'和超时课的关系',body:'java-http-timeout、nginx-proxy-timeout、hikari-pool-timeout 描述的是不同时钟。这一课要求它们作为同一条 trace 上相邻的 span 出现，而不是三份孤立配置。'}
     ],
@@ -155,6 +157,7 @@ const COVERAGE_PATH_05 = [
     keywords:'Spring Security SecurityFilterChain SecurityContext 授权',
     points:['过滤链在控制器之前建立安全上下文','未配置的路径不能默认放行','对象级归属不在链上按 id 猜测，而在服务里检查'],
     deep:[
+      {title:'和导论',body:'Spring Security 是什么、过滤器链进门、不只登录页见 spring-security-what、spring-security-enter-chain、spring-security-not-only-login。本课专讲过滤链与控制器分工。'},
       {title:'和网关的分工',body:'网关可以拒绝没有令牌的请求。服务内的链仍要建立身份并做对象检查。只信网关转发的请求头而不校验，内网被绕过时就会变成匿名管理员。'},
       {title:'线程',body:'安全上下文默认绑在线程上。换线程处理异步请求时要明确传递，否则异步线程里会变成未认证。'}
     ],
@@ -173,6 +176,7 @@ const COVERAGE_PATH_05 = [
     keywords:'Node.js http Set-Cookie HttpOnly BFF 会话',
     points:['http 处理器负责状态码、响应头和正文','浏览器会话用 Set-Cookie，而不是 JSON 里的 token','请求体要限额；错误要回到这一次响应'],
     deep:[
+      {title:'和导论',body:'Node.js 是什么、怎样启动进程、没有文档见 node-what-it-is、node-run-process、node-not-browser。本课专讲会话 Cookie。'},
       {title:'框架',body:'Express 或 Fastify 把这些头封装了，语义不变。先能在原始 http 上写出正确的 Cookie，再用框架，才不会把封装当成另一种登录模型。'},
       {title:'和 Java 会话',body:'BFF 上的 Cookie 会话与 Java 服务上的 Security 上下文是两跳。BFF 终止浏览器会话，再以服务身份调用上游，不要把浏览器 Cookie 原样转发到内网。'}
     ],

@@ -14,6 +14,7 @@ const COVERAGE_FRONTEND_18 = [
     keywords:'React Native View Text Flexbox 原生视图',
     points:['View 和 Text 对应原生视图，不是 HTML 元素','子视图用 Yoga 的 Flexbox 排列，不手写安卓布局类','嵌网页用 WebView，不能用 View 代替'],
     deep:[
+      {title:'和导论',body:'React Native 是什么、从 Expo 进门、不是 WebView 见 rn-what-it-is、rn-enter-app、rn-not-webview-app。本课专讲 View 与 Text。'},
       {title:'对照不是同一套运行时',body:'文档用 div 和 p 帮助网页开发者认组件。渲染结果是平台视图。查元素、改 class、读 offsetHeight 这些浏览器动作没有落点。'},
       {title:'怎样自己验证',body:'在组件里写一个 div，确认它不是可用的宿主组件。改成 View 包 Text 后能显示。再全局搜索 document 和 className，界面组件里不应依赖它们来排这个卡片。'}
     ],

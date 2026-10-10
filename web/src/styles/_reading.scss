@@ -991,20 +991,6 @@
       justify-self: start;
     }
   }
-
-  .core-panel,
-  .example-box {
-    padding: 14px;
-  }
-
-  .lesson-hero h1 {
-    font-size: 1.35rem;
-    overflow-wrap: anywhere;
-  }
-
-  .prompt-box {
-    padding-left: 12px;
-  }
 }
 
 .lesson-hero {
@@ -1949,5 +1935,20 @@
     border-right: 0;
     margin-right: 12px;
     padding-right: 0;
+  }
+
+  /* 必须写在 .core-panel / .lesson-hero 基样式之后，否则会被盖掉 */
+  .core-panel,
+  .example-box {
+    padding: 14px;
+  }
+
+  .lesson-hero h1 {
+    font-size: 1.35rem;
+    overflow-wrap: anywhere;
+  }
+
+  .prompt-box {
+    padding-left: 12px;
   }
 }

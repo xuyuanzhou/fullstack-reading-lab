@@ -12,6 +12,7 @@ const COVERAGE_JAVA_117 = [
     keywords:'Java primitive type integer division byte int long char boolean',
     points:['八种基本类型直接存值','整数字面量默认 int，小数字面量默认 double','整数除法向零截断'],
     deep:[
+      {title:'和导论',body:'Java 是什么、怎样从 main 启动、和 JavaScript 的边界见 java-what-it-is、java-enter-main、java-not-javascript。本课专讲八种基本类型。'},
       {title:'char 和 boolean',body:'char 存一个 UTF-16 码元，范围是 0 到 65535，不是一段完整的文字。boolean 只有 true 和 false，不能当成 0 和 1 去运算。'},
       {title:'怎样自己验证',body:'写 int q = 5 / 2 和 double d = 5.0 / 2，打印两个结果。再写 (-5) / 2，确认是 -2。'},
     ],

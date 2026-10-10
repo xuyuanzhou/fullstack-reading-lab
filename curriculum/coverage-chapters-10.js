@@ -36,6 +36,7 @@ const COVERAGE_CHAPTERS_10 = [
     keywords:'Spring IoC DI @Autowired 构造器注入 组件扫描',
     points:['容器负责创建对象并注入依赖','注入按类型或名字匹配候选 Bean','多个同类型 Bean 时要标明用哪一个'],
     deep:[
+      {title:'和导论',body:'Spring 是什么、Boot 怎样启动、不代替业务见 spring-what-it-is、spring-enter-boot、spring-not-the-business。本课专讲注入与扫描。'},
       {title:'和生命周期课',body:'注入发生在初始化回调之前。@PostConstruct 里已经能用到注入好的依赖。'},
       {title:'和测试',body:'切片测试只装一部分 Bean。缺依赖时，先看测试有没有把需要的 Bean 引进来。'}
     ],
@@ -54,6 +55,7 @@ const COVERAGE_CHAPTERS_10 = [
     keywords:'JPA entity identity persistence context equals hashCode',
     points:['同一持久化上下文里，同一主键对应同一实例','内存中的字段可以暂时和表不一致','equals 应以稳定主键为中心设计'],
     deep:[
+      {title:'和导论',body:'JPA 是什么、实体怎样进会话、和 MyBatis 的边界见 jpa-what-it-is、jpa-enter-entity、jpa-not-mybatis。本课专讲实体身份。'},
       {title:'持久化身份',body:'同一持久化上下文里，同一主键对应同一个 Java 实例，所以改字段会从另一条引用看见。字段可以暂时和表里的行不同，要等刷新才写成语句。事务外新建的对象即使主键相同，也不是这个实例。'},
       {title:'怎样自己验证',body:'在同一事务里按编号加载两次，用双等号比较并改一边的备注，看另一边是否同时变。再在事务外 new 两个同号对象，确认双等号为假，并试一次按全部字段比较会让集合去重不稳定。'}
     ],
@@ -106,6 +108,7 @@ const COVERAGE_CHAPTERS_10 = [
     keywords:'MyBatis Mapper SQL JPA Repository',
     points:['Mapper 方法对应明确的 SQL','MyBatis 没有 JPA 那种脏检查会话','复杂 SQL 用 MyBatis，实体状态机用 JPA'],
     deep:[
+      {title:'和导论',body:'MyBatis 是什么、映射器怎样绑定、不托管实体见 mybatis-what-it-is、mybatis-enter-mapper、mybatis-not-jpa。本课专讲 Mapper 与 JPA 的分工。'},
       {title:'语句绑定与会话',body:'映射器把方法或映射文件直接绑到一条语句，列、联表和结果映射都要写清，没有自动脏检查。会话以实体为中心管理状态。复杂报表适合前者，事务内的聚合适合后者。映射改一列不会把内存对象标成脏，会话改字段才会在提交时发出更新。'},
       {title:'怎样自己验证',body:'把同一条列表分别写成仓储方法和映射文件。改映射里的一列，看发出的语句变了而实体没有自动变脏。再在会话里改聚合字段，看提交时出现更新语句，映射那条却没有。两条路径的语句日志应分开出现，不能期待映射那条自动跟踪实体。'}
     ],
@@ -160,6 +163,7 @@ const COVERAGE_CHAPTERS_10 = [
     keywords:'Nginx server location proxy_pass root',
     points:['先匹配 server，再匹配 location','不同 location 写法优先级不同','没被选中的段里的 proxy_pass 不会执行'],
     deep:[
+      {title:'和导论',body:'Nginx 是什么、容量框架、相对网关见 nginx-what-and-when、nginx-tradeoffs-capacity、nginx-vs-gateway。本课专讲 server 与 location。'},
       {title:'先选站点再选位置',body:'先按监听和站点名选定服务器，再在位置规则里挑最具体的匹配。精确、前缀和正则的优先级不同。同一请求只落在一条最终选中的位置上，写了但没被选中的反代不会执行。正则和精确谁更优先，要看这次请求实际落在哪一段，而不是谁写在文件更上面。'},
       {title:'怎样自己验证',body:'准备两段前缀和一段精确匹配，请求三条路径。在访问日志或响应里记下每次命中哪一段。健康检查那条应直接返回，而不是走进转到后端的那段。健康检查的响应不应经过转到后端的那段代理。'}
     ],
@@ -213,6 +217,7 @@ const COVERAGE_CHAPTERS_10 = [
     keywords:'Netty EventLoop 非阻塞 线程模型',
     points:['少量 EventLoop 服务大量连接','Loop 线程里的阻塞会拖住同 Loop 的连接','阻塞业务放到别的线程池'],
     deep:[
+      {title:'和导论',body:'Netty 是什么、Bootstrap 怎样进门、不是 Spring MVC 见 netty-what-it-is、netty-enter-bootstrap、netty-not-spring-mvc。本课专讲 EventLoop。'},
       {title:'事件线程与业务池',body:'少量事件线程轮值大量连接。在这个线程里睡眠、同步查库或做重计算，同一轮值上的其他连接都要等。阻塞工作应丢到业务池，完成后再写回连接。同一条事件线程上的其他连接，在睡眠结束前都得不到处理。'},
       {title:'怎样自己验证',body:'在处理里故意睡一秒，同时发两个连接，看第二个是否被拖到第一秒之后。再把睡眠改到业务池并在完成后写回，第二个连接应不必再等第一个睡完。改到业务池之后，第二个连接的响应不应再等满这一秒。'}
     ],

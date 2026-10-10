@@ -579,7 +579,7 @@ export const OUTLINE = {
     工程实践: [
       { title: '这一章', ids: ['java-eng-chapter-aim', 'request-trace-one-hop', 'otel-three-signals', 'java-http-timeout', 'hikari-pool-timeout', 'jdbc-datasource-not-diy-pool', 'spring-graceful-shutdown', 'log-correlation-id', 'zabbix-active-at-scale'] },
       { title: '排查', ids: ['server-slow-which-resource', 'backend-tune-the-span', 'cpu-cache-line-sharing', 'cpu-heap-not-cpu-cache'] },
-      { title: '发布运维', ids: ['design-review', 'docker-multistage', 'k8s-probes', 'k8s-memory-limit', 'secrets-not-in-image', 'spring-boot-devtools-restarts', 'git-restore-over-checkout', 'linux-bkl-gone', 'linux-user-kernel-syscall', 'linux-virtual-memory-isolation', 'linux-virtual-addr-mmu', 'linux-memory-segmentation', 'linux-external-fragmentation', 'linux-memory-paging', 'linux-multilevel-page-table', 'linux-page-fault-swap', 'linux-tlb-cache', 'linux-segmented-paging', 'k8s-runtime-not-only-docker', 'linux-root-group-not-root', 'linux-fork-copies-one-thread', 'linux-shell-pipe-fds', 'linux-process-states', 'linux-process-context-switch', 'docker-root-not-host-root', 'etcd-v3-grpc-not-rest', 'git-default-branch-not-master', 'retired-spring-cloud-netflix'] },
+      { title: '发布运维', ids: ['design-review', 'docker-multistage', 'k8s-probes', 'k8s-memory-limit', 'secrets-not-in-image', 'spring-boot-devtools-restarts', 'git-restore-over-checkout', 'linux-bkl-gone', 'linux-user-kernel-syscall', 'linux-virtual-memory-isolation', 'linux-virtual-addr-mmu', 'linux-memory-segmentation', 'linux-external-fragmentation', 'linux-memory-paging', 'linux-multilevel-page-table', 'linux-page-fault-swap', 'linux-tlb-cache', 'linux-segmented-paging', 'k8s-runtime-not-only-docker', 'linux-root-group-not-root', 'linux-fork-copies-one-thread', 'linux-shell-pipe-fds', 'linux-process-states', 'linux-process-context-switch', 'linux-vfs-unified-api', 'linux-epoll-vs-select', 'docker-root-not-host-root', 'etcd-v3-grpc-not-rest', 'git-default-branch-not-master', 'retired-spring-cloud-netflix'] },
     ],
   },
 };
@@ -1461,6 +1461,8 @@ export const LESSON_SINCE = {
   "linux-shell-pipe-fds": "engineering",
   "linux-process-states": "engineering",
   "linux-process-context-switch": "engineering",
+  "linux-vfs-unified-api": "engineering",
+  "linux-epoll-vs-select": "engineering",
   "log-correlation-id": "correlation id",
   "leaky-bucket-not-no-critical-edge": "distributed",
   "lru-capacity-not-ttl-expire": "distributed",

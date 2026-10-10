@@ -12,6 +12,7 @@ const COVERAGE_FRONTEND_52 = [
     keywords:'CSS style rule selector declaration',
     points:['规则由选择器和声明组成','声明是属性、冒号和值','同一属性冲突时看层叠'],
     deep:[
+      {title:'和导论',body:'CSS 是什么、怎样挂到文档、布局由浏览器算见 css-what-it-is、css-attach-to-document、css-not-the-engine。本课专讲规则写法。'},
       {title:'一条规则里可以有多条声明',body:'花括号里可以写 color 和 margin。每条声明用分号分开。少写分号时，下一条声明可能被吃进上一条的值里。'},
       {title:'怎样自己验证',body:'给一个 p 写上 color: blue，在开发者工具里确认计算后的颜色来自这条声明。'},
     ],

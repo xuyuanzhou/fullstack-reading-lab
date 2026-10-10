@@ -179,6 +179,7 @@ const COVERAGE_PATH_09 = [
     diagram:'diagrams/mw-three-hops.svg',
     points:['反向代理把请求转到上游','负载均衡在多个实例中选择','网关处理接口级鉴权、限流和路由'],
     deep:[
+      {title:'和导论',body:'API 网关是什么、代价与相对代理见 gateway-what-and-when、gateway-tradeoffs-capacity、gateway-vs-proxy。本课专讲三问分工。'},
       {title:'和已有课',body:'Nginx 的连接超时、读取超时在 nginx-proxy-timeout。网关与服务内授权的分工在 gateway-one-hop。'},
       {title:'健康检查',body:'均衡器摘掉的是连不上或探测失败的实例。网关返回 401 是令牌问题，不是实例不健康。'}
     ],

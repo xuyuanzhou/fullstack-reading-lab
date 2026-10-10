@@ -192,6 +192,10 @@
     "answer": "八种是 byte、short、int、long、float、double、char、boolean。7 / 2 是 3，因为两边都是 int，小数被丢掉。7.0 / 2 是 3.5，因为有一边是浮点。(-7) / 2 是 -3，向零截断，不是向下取到 -4。",
     "deep": [
       {
+        "title": "和导论",
+        "body": "Java 是什么、怎样从 main 启动、和 JavaScript 的边界见 `java-what-it-is`、`java-enter-main`、`java-not-javascript`。本课专讲八种基本类型。"
+      },
+      {
         "title": "char 和 boolean",
         "body": "char 存一个 UTF-16 码元，范围是 0 到 65535，不是一段完整的文字。boolean 只有 true 和 false，不能当成 0 和 1 去运算。"
       },
@@ -3004,6 +3008,10 @@
     "answer": "每个线程有自己的 pc 和 Java 虚拟机栈，栈帧随方法调用创建。堆和方法区由线程共享，对象通常在堆上，类的相关结构属于方法区语义。这些是规范里的逻辑区域。某个虚拟机把方法区放在哪块物理内存、用什么参数调节，都是实现，不能写成规范本身。native 方法执行时 pc 的值未定义。",
     "deep": [
       {
+        "title": "和导论",
+        "body": "JVM 是什么、类怎样装进虚拟机、不管业务语法见 `jvm-what-it-is`、`jvm-enter-class`、`jvm-not-the-language`。本课专讲运行时数据区。"
+      },
+      {
         "title": "规范层",
         "body": "JVM 规范描述可观察的逻辑区域与行为边界，例如 pc、虚拟机栈、堆和方法区。"
       },
@@ -3644,6 +3652,10 @@
     "task": "写一个带线程名输出的 Runnable，依次调用 t.run()、t.start()、t.join()，说明每次任务运行在哪个线程；再尝试第二次 start()。",
     "answer": "对用 Runnable 创建的平台线程，t.run() 在调用者线程里同步执行，打印的是调用者的线程名。t.start() 才让任务在新线程里再跑一次，打印新线程名。t.join() 等到这个新线程结束才继续。对同一实例第二次 start() 抛出 IllegalThreadStateException。虚拟线程直接调用 run 的行为要按对应版本另看，不能把这次平台线程的结果抄过去。",
     "deep": [
+      {
+        "title": "和导论",
+        "body": "Java 并发是什么、怎样进门、不是分布式见 `java-concurrency-what`、`java-thread-enter`、`java-concurrency-not-distributed`。本课专讲 start 与 run。"
+      },
       {
         "title": "同步调用和启动",
         "body": "run 是普通方法，调用栈停在当前线程，任务做完才返回。start 安排线程执行，调用本身很快返回，任务可能还在跑。join 用来等它结束。同一个 Thread 实例不能成功启动两次。"
@@ -9120,6 +9132,10 @@
     "answer": "扫描决定谁进容器，实现类移出扫描包后，报错应出现在扫描或创建之前，容器里没有这个类型。注入按类型或名字匹配，两个候选又没有资格说明时，失败在注入这一步。初始化要等注入之后。这些失败都在启动期，不是第一次请求才出现。移出扫描包后的报错应出现在启动日志，而不是第一次调用的栈里。",
     "deep": [
       {
+        "title": "和导论",
+        "body": "Spring 是什么、Boot 怎样启动、不代替业务见 `spring-what-it-is`、`spring-enter-boot`、`spring-not-the-business`。本课专讲注入与扫描。"
+      },
+      {
         "title": "和生命周期课",
         "body": "注入发生在初始化回调之前。@PostConstruct 里已经能用到注入好的依赖。"
       },
@@ -9769,6 +9785,10 @@
     "answer": "同一事务里按编号加载两次，双等号应为真，改一边的备注另一边立刻可见。事务外 new 两个同号实体，双等号为假。相等应只在主键非空时按主键比较，并让哈希稳定。主键还是空时不要用会变的业务字段当身份，否则持久化前后集合里的位置会变。主键仍为空时放进集合，保存后再比一次，身份不应换成另一个对象。",
     "deep": [
       {
+        "title": "和导论",
+        "body": "JPA 是什么、实体怎样进会话、和 MyBatis 的边界见 `jpa-what-it-is`、`jpa-enter-entity`、`jpa-not-mybatis`。本课专讲实体身份。"
+      },
+      {
         "title": "持久化身份",
         "body": "同一持久化上下文里，同一主键对应同一个 Java 实例，所以改字段会从另一条引用看见。字段可以暂时和表里的行不同，要等刷新才写成语句。事务外新建的对象即使主键相同，也不是这个实例。"
       },
@@ -10116,6 +10136,10 @@
     "task": "把一条列表查询分别用 Repository 方法和 Mapper XML 表达。标出谁决定 SQL，谁决定实体状态。",
     "answer": "列表查询用映射文件表达时，语句形状由这份映射决定，实体不会因此进入会话。仓储方法表达时，实体状态由会话决定，语句往往不是你逐列写出来的。要精细控制语句就选映射，要在事务里管聚合状态就选会话。不要让同一行被两套同时改。同一行被两边同时改时，后提交的会盖掉先提交的，没有统一的脏检查。",
     "deep": [
+      {
+        "title": "和导论",
+        "body": "MyBatis 是什么、映射器怎样绑定、不托管实体见 `mybatis-what-it-is`、`mybatis-enter-mapper`、`mybatis-not-jpa`。本课专讲 Mapper 与 JPA 的分工。"
+      },
       {
         "title": "语句绑定与会话",
         "body": "映射器把方法或映射文件直接绑到一条语句，列、联表和结果映射都要写清，没有自动脏检查。会话以实体为中心管理状态。复杂报表适合前者，事务内的聚合适合后者。映射改一列不会把内存对象标成脏，会话改字段才会在提交时发出更新。"
@@ -10643,6 +10667,10 @@
     "answer": "新增的 GET 在还没配规则时，未登录请求应被拒绝，业务方法没有日志。把默认改成拒绝未匹配路径后，这个结果保持，直到你为它写上认证规则。认证在过滤链完成，控制器读的是已经建立的安全上下文。这张订单属于谁，仍要在服务里再查一次。对象是否属于当前用户，不能靠过滤链上的“已登录”代替。",
     "deep": [
       {
+        "title": "和导论",
+        "body": "Spring Security 是什么、过滤器链进门、不只登录页见 `spring-security-what`、`spring-security-enter-chain`、`spring-security-not-only-login`。本课专讲过滤链与控制器分工。"
+      },
+      {
         "title": "和网关的分工",
         "body": "网关可以拒绝没有令牌的请求。服务内的链仍要建立身份并做对象检查。只信网关转发的请求头而不校验，内网被绕过时就会变成匿名管理员。"
       },
@@ -11012,6 +11040,10 @@
     "task": "用两段前缀和一个精确匹配，分别请求三条路径，记下每次命中哪一段。",
     "answer": "三条路径要分别记下命中的段。精确的健康检查应直接返回，不进代理。前缀那段只接住落在它下面、又没有被更具体规则抢走的路径。另一条路径若被别的规则选中，你改的超时和反代都不会执行。先选定站点，再选定这一段，只有被选中的配置生效。没有被选中的那段上的超时数字，不应出现在这次错误里。",
     "deep": [
+      {
+        "title": "和导论",
+        "body": "Nginx 是什么、容量框架、相对网关见 `nginx-what-and-when`、`nginx-tradeoffs-capacity`、`nginx-vs-gateway`。本课专讲 server 与 location。"
+      },
       {
         "title": "先选站点再选位置",
         "body": "先按监听和站点名选定服务器，再在位置规则里挑最具体的匹配。精确、前缀和正则的优先级不同。同一请求只落在一条最终选中的位置上，写了但没被选中的反代不会执行。正则和精确谁更优先，要看这次请求实际落在哪一段，而不是谁写在文件更上面。"
@@ -11431,6 +11463,10 @@
     "answer": "先给每一跳标上它回答的那一问：转到哪、选哪一台、这个接口让不让过。答了两问的盒子要写出对应的两段配置名，不能只写一个产品名。代理负责转发，均衡负责挑实例并跳过不健康的，网关负责接口级的鉴权和限流。一个程序可以兼任，三问不能并成一句。鉴权拒绝和实例不健康要出现在不同的一跳上。",
     "deep": [
       {
+        "title": "和导论",
+        "body": "API 网关是什么、代价与相对代理见 `gateway-what-and-when`、`gateway-tradeoffs-capacity`、`gateway-vs-proxy`。本课专讲三问分工。"
+      },
+      {
         "title": "和已有课",
         "body": "Nginx 的连接超时、读取超时在 nginx-proxy-timeout。网关与服务内授权的分工在 gateway-one-hop。"
       },
@@ -11726,6 +11762,10 @@
     "answer": "在处理里睡一秒时，两个并发连接里第二个会被拖住，因为它和第一个共用轮值的线程。改成把阻塞工作提交到业务池、完成后再写回连接，第二个连接不再被这次睡眠拖住。这条线程不能跑阻塞任务，阻塞工作必须离开它。第二个连接的开始时间不应被第一个连接的睡眠拖过一整秒。",
     "deep": [
       {
+        "title": "和导论",
+        "body": "Netty 是什么、Bootstrap 怎样进门、不是 Spring MVC 见 `netty-what-it-is`、`netty-enter-bootstrap`、`netty-not-spring-mvc`。本课专讲 EventLoop。"
+      },
+      {
         "title": "事件线程与业务池",
         "body": "少量事件线程轮值大量连接。在这个线程里睡眠、同步查库或做重计算，同一轮值上的其他连接都要等。阻塞工作应丢到业务池，完成后再写回连接。同一条事件线程上的其他连接，在睡眠结束前都得不到处理。"
       },
@@ -11824,7 +11864,9 @@
         "Netty EventLoop",
         "https://netty.io/wiki/new-and-noteworthy-in-4.0.html"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/os-p0309.png",
+    "origin": "本地库《图解系统》select 多路复用时序页（Java 侧以 Selector / Netty 为准）"
   },
   "epoll-et-must-drain": {
     "core": "epoll 默认是水平触发：套接字缓冲里只要还有数据，epoll_wait 就会再次把它放进就绪列表。加上 EPOLLET 变成边沿触发：只在状态变化时通知一次，例如缓冲从没有数据变成有数据。手册里的例子是管道里写了 2KB，第一次 epoll_wait 返回，读走 1KB，再等一次就可能一直阻塞，尽管还剩 1KB。所以 ET 要配合非阻塞描述符，一直 read，直到返回 EAGAIN，才可以回到 epoll_wait。你若规定只读 200 字节就去处理业务，剩下的 300 字节还在内核缓冲里，这次边沿已经消费掉了，不会因为“里面还有”再敲一次门。对流来说，如果你请求读的长度大于缓冲里剩下的，返回的字节数更少，说明这一下已经读干；主动只读 200 时，不能把“正好返回 200”当成读干。",
@@ -11851,7 +11893,9 @@
         "epoll_ctl(2)",
         "https://man7.org/linux/man-pages/man2/epoll_ctl.2.html"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/os-p0360.png",
+    "origin": "本地库《图解系统》epoll 边缘触发与水平触发页"
   },
   "netty-idle-heartbeat": {
     "core": "TCP 不会立刻告诉你对端没了。IdleStateHandler 在读空闲、写空闲或双向空闲超时后发出事件。读空闲通常表示对端不再说话，可以关掉连接。写空闲可以发心跳，维持 NAT 和中间设备。心跳应在 EventLoop 里写一个很小的包，不要为了心跳去调数据库。空闲超时要大于正常业务间隔，又小于你愿意占用文件描述符的时间。",
@@ -11986,7 +12030,9 @@
         "Netty：FileRegion",
         "https://netty.io/4.1/api/io/netty/channel/FileRegion.html"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/os-p0340.png",
+    "origin": "本地库《图解系统》sendfile / mmap 少拷贝路径页（Netty FileRegion 以官方文档为准）"
   },
   "mq-what-and-when": {
     "core": "**消息中间件**把“业务事实已成立”写入**可持久（或按产品语义保留）的通道**，让消费方在自己节奏下处理。它解耦的是**时间与地址**：生产者不必此刻握住下游；多个消费者可订阅同类事件。典型：异步通知、削峰、日志/事件管道。它**不是**把同步 HTTP 换个名字：默认常**至少一次**投递，要幂等；顺序与延迟按产品模型设计（Kafka 分区、Rabbit 队列等）。解耦动机展开见 `mq-why-decouple`；Kafka 日志模型见 `kafka-model`。",
@@ -17052,6 +17098,10 @@
     "answer": "文件在 `.github/workflows` 且 on 匹配时，这次提交会开跑。挪到根目录后，同一次 push 不再触发。运行用的是该提交里的 YAML，不是默认分支上尚未包含这次改动的版本。",
     "deep": [
       {
+        "title": "和导论",
+        "body": "GitHub Actions 是什么、作业怎样排队、不是线上进程见 `gha-what-it-is`、`gha-workflow-enter`、`gha-not-the-runtime`。本课专讲工作流路径与触发。"
+      },
+      {
         "title": "一个仓库可以有多份",
         "body": "构建测试、发布、给 issue 打标签可以分成多个文件。每一份自己的 on。不要把互不相关的任务塞进同一个永远触发的文件里，失败会互相挡住。"
       },
@@ -17635,6 +17685,10 @@
     "task": "写两个测试共用一个静态集合，单独运行第二个。再改成每个测试自己的数据，确认顺序变化不影响结果。",
     "answer": "两个测试共用静态集合时，单独运行第二个看不到第一个加入的那一项，断言为空会失败或碰巧通过，结果取决于有没有先跑第一个。默认的新实例只隔离实例字段。改成每个测试自己的局部数据后，交换方法顺序两次都通过，测试之间不能再有顺序依赖。全量和单跑的差异就是顺序依赖。",
     "deep": [
+      {
+        "title": "和导论",
+        "body": "JUnit 是什么、构建怎样发现测试、不代替应用进程见 `junit-what-it-is`、`junit-enter-test`、`junit-not-the-app`。本课专讲实例生命周期。"
+      },
       {
         "title": "实例生命周期",
         "body": "默认每个测试方法一个新实例，实例字段不会自动带到下一个方法。静态字段、单例、未关闭的资源和被替换的静态依赖仍会跨方法留下。改成每个类一个实例后，实例字段也会留下来。"
@@ -18805,6 +18859,64 @@
     ],
     "diagram": "library-assets/illustrated-basics/os-p0154.png",
     "origin": "本地库《图解系统》进程上下文切换页"
+  },
+  "linux-vfs-unified-api": {
+    "core": "Linux 上文件系统种类很多。操作系统在用户与具体文件系统之间加一层虚拟文件系统（Virtual File System，VFS）：用户侧仍是 open、read、write、close 等统一接口；VFS 再把调用分派到具体文件系统的实现（如磁盘上的 ext4、网络上的 NFS、内存里的 proc）。“一切皆文件”描述的是这种统一视图，不是所有后端都用同一种磁盘布局。inode、目录项等是具体文件系统里的组织单位，经 VFS 暴露成统一对象模型。",
+    "why": "以为每一种文件系统各有一套互不兼容的系统调用，就解释不了为何同一段代码能打开不同后端。区分信号是：统一的是接口；不同的是下面的实现。",
+    "example": "`cat /etc/hosts` 与 `cat /proc/cpuinfo` 都走 read，但一个落到磁盘文件系统，一个落到内核导出的 proc 数据。",
+    "task": "用一句话说明 VFS 夹在哪两层之间；写出用户看到的统一接口举两例；说明“一切皆文件”指的是视图还是同一种存储格式。",
+    "answer": "VFS 在用户与具体文件系统之间。统一接口如 open、read。一切皆文件指统一视图，不是同一种磁盘布局。",
+    "deep": [
+      {
+        "title": "和管道课的关系",
+        "body": "管道、套接字也常以文件描述符出现，仍经 VFS/描述符表管理。`linux-shell-pipe-fds` 讲管道两端如何接到子进程。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对照 VFS 分层图，标出用户接口层与具体文件系统层。再各举一个磁盘文件与 /proc 文件的例子。"
+      }
+    ],
+    "references": [
+      [
+        "kernel：VFS",
+        "https://docs.kernel.org/filesystems/vfs.html"
+      ],
+      [
+        "man：path_resolution",
+        "https://man7.org/linux/man-pages/man7/path_resolution.7.html"
+      ]
+    ],
+    "diagram": "library-assets/illustrated-basics/os-p0287.png",
+    "origin": "本地库《图解系统》虚拟文件系统 VFS 页"
+  },
+  "linux-epoll-vs-select": {
+    "core": "I/O 多路复用让一条线程同时盯很多描述符。select/poll 常见成本是：每次调用把关注集合从用户态拷进内核，再线性检查；select 还有 FD_SETSIZE 一类上限。epoll 在内核用树形结构登记关注的描述符，事件就绪时挂到就绪链表；`epoll_wait` 主要取回已就绪的项，不必每次扫全部。水平触发与边缘触发见 `epoll-et-must-drain`；Java NIO Selector / Netty EventLoop 见 `nio-not-one-thread-per-request`。",
+    "why": "只背“都能同时等很多连接”，会漏掉拷贝与扫描成本，也解释不清为何高并发服务偏 epoll。区分信号是：每次是否搬运整份集合、返回时是否只含就绪项。",
+    "example": "一万个空闲连接注册在 epoll 上时，一次 `epoll_wait` 在没有事件时几乎不用遍历这一万个；select 则要带着更大的集合进内核检查。",
+    "task": "写出 select/poll 相对 epoll 的两个常见成本；说明 epoll_wait 返回的是什么；点名 ET/LT 细节去哪一课。",
+    "answer": "成本：整份集合拷贝进内核；对关注集合线性扫描。epoll_wait 返回已就绪的描述符（事件）。ET/LT 细节见 `epoll-et-must-drain`。",
+    "deep": [
+      {
+        "title": "和 NIO 课怎么分工",
+        "body": "`nio-not-one-thread-per-request` 讲一条线程盯多通道。本课钉 Linux 上 select 与 epoll 的成本差别。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对照对比页，列出 select 的两次遍历/拷贝与 epoll 的就绪链表。划掉“多路复用都一样贵”。"
+      }
+    ],
+    "references": [
+      [
+        "man：epoll",
+        "https://man7.org/linux/man-pages/man7/epoll.7.html"
+      ],
+      [
+        "man：select",
+        "https://man7.org/linux/man-pages/man2/select.2.html"
+      ]
+    ],
+    "diagram": "library-assets/illustrated-basics/os-p0358.png",
+    "origin": "本地库《图解系统》select/poll 与 epoll 对比页"
   },
   "docker-root-not-host-root": {
     "core": "容器里 whoami 是 root，只说明这个进程在自己的用户命名空间里 uid 是 0。没有做用户命名空间重映射时，这个 0 就是宿主机上的 uid 0，身份确实大。即便如此，默认仍会丢掉一批 Linux capabilities，并套上 seccomp。容器有自己的挂载命名空间，里面的 /etc/shadow 是镜像里的文件，不是宿主机那一份，除非你把宿主机路径挂进去。--privileged 会把能力加回来，并放宽隔离，那才是“提升权限”之后危险的那种跑法。打开 userns-remap 后，容器里的 uid 0 映射到 /etc/subuid 里的一段普通号，例如从 231072 起，在宿主机上没有 root 特权。rootless 更进一步：守护进程本身就不是宿主机 root。两种映射都不是 2016 年“容器 root 等于宿主机 root”那一句能概括的。",

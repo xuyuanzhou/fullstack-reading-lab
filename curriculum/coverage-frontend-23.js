@@ -15,6 +15,10 @@ const COVERAGE_FRONTEND_23 = [
     keywords: "Flutter Widget Element RenderObject Text",
     deep: [
       {
+        title: "和导论",
+        body: "Flutter 是什么、flutter create 进门、没有文档树见 flutter-what-it-is、flutter-enter-app、flutter-not-html。本课专讲 Widget 三层。"
+      },
+      {
         title: "手里的 Widget 不是屏幕上的像素",
         body: "build 可以每次 new 一个 Text。框架按运行时类型和 key 更新 Element，再让对应的 RenderObject 布局和 paint。拿 Widget 实例去比「是不是同一个 DOM 节点」没有意义。"
       },

@@ -13,6 +13,7 @@ const COVERAGE_PATH_02 = [
     keywords:'DOM eventPhase capture bubble stopPropagation 事件委托',
     points:['事件按捕获、目标、冒泡三段传播','stopPropagation 不停掉同一节点的其他监听器','不冒泡的事件不能用父元素做委托'],
     deep:[
+      {title:'和导论',body:'浏览器是什么、导航怎样取出文档、和 Node 的边界见 browser-what-it-is、browser-document-enters、browser-not-node。本课专讲事件传播。'},
       {title:'捕获、目标与冒泡',body:'一次点击先从 window 走到目标，再原路返回。阶段用 1、2、3 区分。默认监听在冒泡。stopPropagation 只挡住后续节点，同一节点上其余监听仍会运行；立即停止才会连当前节点剩下的监听一起停掉。'},
       {title:'和默认行为',body:'preventDefault 阻止浏览器默认动作（如提交导航、链接跳转），与 stopPropagation 不同。表单提交前校验见 html5-constraint-before-submit；拖放默认见 html5-drop-prevent-default。'},
       {title:'怎样自己验证',body:'在祖先、按钮和文档上分别注册捕获与冒泡，点一次按钮，按控制台顺序记下三段。再在按钮里分别调用两种 stop，看同一节点上的第二个监听还打不打印。不冒泡的 focus 再点一次，父元素不应有日志。'}

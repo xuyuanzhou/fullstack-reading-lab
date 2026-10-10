@@ -16,6 +16,10 @@ const COVERAGE_BATCH_04 = [
     refs:[['Oracle Java 25：Thread','https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Thread.html']],
     deep:[
       {
+        title:'和导论',
+        body:'Java 并发是什么、怎样进门、不是分布式见 java-concurrency-what、java-thread-enter、java-concurrency-not-distributed。本课专讲 start 与 run。'
+      },
+      {
         title:'同步调用和启动',
         body:'run 是普通方法，调用栈停在当前线程，任务做完才返回。start 安排线程执行，调用本身很快返回，任务可能还在跑。join 用来等它结束。同一个 Thread 实例不能成功启动两次。'
       },

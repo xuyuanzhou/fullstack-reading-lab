@@ -1066,6 +1066,8 @@
         "linux-shell-pipe-fds",
         "linux-process-states",
         "linux-process-context-switch",
+        "linux-vfs-unified-api",
+        "linux-epoll-vs-select",
         "docker-root-not-host-root",
         "etcd-v3-grpc-not-rest",
         "git-default-branch-not-master",
@@ -3267,6 +3269,8 @@
             "linux-shell-pipe-fds",
             "linux-process-states",
             "linux-process-context-switch",
+            "linux-vfs-unified-api",
+            "linux-epoll-vs-select",
             "docker-root-not-host-root",
             "etcd-v3-grpc-not-rest",
             "git-default-branch-not-master",
@@ -18645,6 +18649,36 @@
         "切换前保存寄存器与 PC，再装入下一任务",
         "进程切换在内核态，含用户态与内核态资源",
         "同进程线程切换通常不必换整份地址空间"
+      ],
+      "since": "engineering"
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-vfs-unified-api",
+      "title": "VFS 给多种文件系统一套统一的用户接口",
+      "prompt": "为什么用户能用同一套 open/read 打开 ext4、NFS 和 /proc 里的文件？",
+      "promptAnswer": "中间有虚拟文件系统（VFS）。它对用户提供统一接口，下面再接到具体文件系统。",
+      "keywords": "VFS 虚拟文件系统 inode open read",
+      "points": [
+        "VFS 向用户提供统一文件接口",
+        "下面再接到具体文件系统实现",
+        "一切皆文件是统一视图，不是单一存储格式"
+      ],
+      "since": "engineering"
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-epoll-vs-select",
+      "title": "epoll 用就绪链表避免每次扫全部描述符",
+      "prompt": "为什么连接数上去以后，还把 select 当唯一多路复用答案，会在解释 epoll 时说不通？",
+      "promptAnswer": "select/poll 每次要带着整份集合进内核并线性扫。epoll 在内核里维护关注集合，只返回就绪的那些。",
+      "keywords": "epoll select poll 多路复用 就绪链表",
+      "points": [
+        "select/poll 常要拷贝并扫描整份关注集合",
+        "epoll 在内核登记关注，wait 取就绪项",
+        "ET/LT 行为见 `epoll-et-must-drain`"
       ],
       "since": "engineering"
     },

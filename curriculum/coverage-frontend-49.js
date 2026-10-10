@@ -12,6 +12,7 @@ const COVERAGE_FRONTEND_49 = [
     keywords:'JavaScript primitive typeof null object',
     points:['值分成原始值和对象','原始值有七种','typeof 报告大类，typeof null 仍是 object'],
     deep:[
+      {title:'和导论',body:'JavaScript 是什么、脚本怎样进页面、和 Java 的边界见 js-what-it-is、js-run-in-page、js-not-java-around。本课专讲值的种类。'},
       {title:'函数的 typeof 是 function',body:'函数属于对象，但 typeof function () {} 得到 "function"，不是 "object"。这是 typeof 多出来的一个结果，不表示函数不是对象。'},
       {title:'怎样自己验证',body:'在控制台对 1、"a"、true、undefined、null、{} 和 function () {} 打印 typeof。确认 null 的结果是 object。'},
     ],

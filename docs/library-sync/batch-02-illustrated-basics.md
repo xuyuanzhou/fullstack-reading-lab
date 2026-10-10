@@ -47,6 +47,11 @@
 | `linux-tlb-cache` | 图解系统 p133（TLB / 快表） | `os-p0133.png` | 已挂（新建定义课） |
 | `linux-segmented-paging` | 图解系统 p135（段页式与 Linux） | `os-p0135.png` | 已挂（新建定义课） |
 | `linux-shell-pipe-fds` | 图解系统 p187（shell 管道描述符） | `os-p0187.png` | 已挂（新建定义课） |
+| `linux-vfs-unified-api` | 图解系统 p287（VFS） | `os-p0287.png` | 已挂（新建定义课） |
+| `linux-epoll-vs-select` | 图解系统 p358（select/poll vs epoll） | `os-p0358.png` | 已挂（新建定义课） |
+| `nio-not-one-thread-per-request` | 图解系统 p309（select 多路复用时序） | `os-p0309.png` | 已挂 |
+| `epoll-et-must-drain` | 图解系统 p360（ET/LT） | `os-p0360.png` | 已挂 |
+| `netty-file-region` | 图解系统 p340（sendfile/mmap） | `os-p0340.png` | 已挂 |
 | `redis-aof-keeps-rdb` 等 4 课 | 大数据热门技术思维导图 Redis.png | `redis-mindmap.png` | 已挂 |
 
 另导出备用：OS `os-p0005`/`p0012`/`p0020`/`p0124`～`p0126`/`p0129`/`p0131`/`p0132`/`p0134`；HTTP `http-p0028`～`p0033`/`p0038`/`p0051`/`p0066`～`p0068`/`p0070`/`p0093`～`p0095`/`p0115`/`p0116`/`p0119`；网络 `network-p0026`/`p0027`/`p0067`；Redis `redis-ds-p0021`/`p0031`/`p0034`/`p0036`；封面级 `http-p0001`/`network-p0001`/`redis-ds-p0001` 可弃用。跳过：`os-p0001`、`os-p0231`。

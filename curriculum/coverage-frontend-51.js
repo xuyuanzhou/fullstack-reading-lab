@@ -12,6 +12,7 @@ const COVERAGE_FRONTEND_51 = [
     keywords:'TypeScript type annotation number erase',
     points:['冒号后面是类型标注','参数和返回值同样写标注','生成的 JavaScript 不再保留标注'],
     deep:[
+      {title:'和导论',body:'TypeScript 是什么、怎样编成 JavaScript、类型在运行时消失见 ts-what-it-is、ts-compile-to-js、ts-not-runtime-check。本课专讲标注写法。'},
       {title:'有初值时可以省略',body:'let n = 1 时，编译器把 n 推断为 number。写出 : number 是在声明处把这个决定固定下来。'},
       {title:'怎样自己验证',body:'写 let n: number = 1，再赋一个字符串。确认报错出现在编译，而不是页面打开之后。'},
     ],

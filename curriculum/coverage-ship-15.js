@@ -100,6 +100,8 @@ const COVERAGE_SHIP_15 = [
     task:'对照 DefaultFileRegion，写出它需要的文件、位置和长度。说明什么时候仍必须经过 ByteBuf。',
     answer:'FileRegion 需要文件、起始位置和长度，预测数据可以不经过把整文件放进堆。先读全部字节再写，预测堆随文件变大，并发几个 1GB 会失败。只有要修改内容时才走用户态缓冲。能直接送文件就不要整文件进堆。预测先写下来再对照日志或界面，对不上就停在这一步，不要改邻接的配置。',
     keywords:'Netty DefaultFileRegion sendfile 零拷贝',
+    origin:'本地库《图解系统》sendfile / mmap 少拷贝路径页（Netty FileRegion 以官方文档为准）',
+    diagram:'library-assets/illustrated-basics/os-p0340.png',
     points:['不要把整个文件读进堆再发送','FileRegion 按区间把文件交给系统发送','需要改字节内容时才走用户态缓冲'],
     deep:[
       {title:'零拷贝的边界',body:'文件区域描述的是内核可以送出的那一段。要加密、要改字节、要插进别的内容，就得走用户态缓冲。不要为了省事对所有下载都先读进堆。边界不满足时就停，不要把这次失败算到下一层头上。'},

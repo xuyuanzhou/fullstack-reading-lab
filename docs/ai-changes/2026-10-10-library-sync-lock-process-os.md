@@ -40,7 +40,7 @@ node scripts/export-curriculum.mjs && node scripts/verify_content.mjs
 
 - [ ] `distributed-outbox` 仍无专页则保持 origin + 官方 Outbox 引用
 - [ ] Redis embstr / AI 工具篇机制图仍无则跳过
-- [ ] OS 文件与 IO 多路复用章按已有课再选题
+- [x] OS 文件与 IO 多路复用章 → 已由 [os-io-epoll](2026-10-10-library-sync-os-io-epoll.md) 接续
 
 ## 给下一模型
 

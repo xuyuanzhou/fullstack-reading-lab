@@ -50,6 +50,7 @@ const COVERAGE_PATH_04 = [
     keywords:'React Router loader useLoaderData URL 数据路由',
     points:['loader 在渲染路由元素之前执行','失败走路由的错误元素，而不是空白后再请求','可分享的筛选条件放在 URL'],
     deep:[
+      {title:'和导论',body:'React 生态章回答地址、客户端状态和服务器状态各放哪，见 react-eco-chapter-aim。本课专讲 loader。'},
       {title:'和组件状态的分工',body:'对话框是否打开、输入框里还没提交的内容，属于这一次界面，用 state。订单号、页码、筛选，属于地址，用路由。把后者放进 state，复制链接的人看不到同一页。'},
       {title:'不要两套一起拉',body:'loader 已经提供的数据，不要在组件里再用 effect 请求一次。两套来源会竞态。需要重新加载时，用路由提供的重新验证，而不是再写一个请求。'}
     ],
@@ -87,6 +88,7 @@ const COVERAGE_PATH_04 = [
     keywords:'Vue Router params 复用 beforeEach watch',
     points:['同一路由组件在参数变化时可能被复用','setup 不会因此自动再执行','用 watch 路由参数或用路径作为 key 重新加载'],
     deep:[
+      {title:'和导论',body:'Vue 生态章回答换地址、跨页状态和首屏数据各用谁，见 vue-eco-chapter-aim。本课专讲参数变化时复用。'},
       {title:'守卫做授权',body:'beforeEach 里没有登录就取消这次导航并转到登录页。不要在每个页面的 onMounted 里各写一遍跳转，那样第一次渲染已经发生。'},
       {title:'和 Pinia 的边界',body:'当前订单内容来自路由 id 对应的请求，不必先复制进一个全局 store。多个不相关页面都要的会话用户，才放进 store。'}
     ],

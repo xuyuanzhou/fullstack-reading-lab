@@ -9,7 +9,7 @@ example:'两地节点断联后，库存写入若必须避免冲突，一侧返�
 task:'画出两个节点失联后的写请求路径，并明确你会向用户返回成功、失败还是等待，以及恢复后如何收敛。',
 answer:'两个节点失联后，关键库存写入应返回失败或等待，不能两侧都当成功，否则恢复时对不上同一份库存。允许暂时分歧的资料可以两侧都返回成功，但要写明恢复后如何合并。不能凭产品名称决定这次是成功、失败还是等待。恢复后的合并规则要写在路径上，不能等冲突出现再临时决定。',
 keywords:'CAP consistency availability partition Redis MongoDB 分区 一致性 可用性',origin:'《分布式高并发.pdf》第 19 页',diagram:'library-assets/distributed-hc/p0019.png',
-deep:[{title:'什么叫网络分区',body:'节点还在运行，但节点间消息无法在可接受时间内到达。分区期间，系统无法同时证明另一侧已接受什么。'},{title:'三种「一致」不要混',body:'CAP 的 C 是分区时还能不能给出一份最新读写视图。库里的完整性约束是 ACID 的 C。过一会儿对账成功是最终一致。三个词不要合成一句，见 `distributed-consistency-three-words`。'},{title:'资料常见写法',body:'“Redis 是 CP”“MongoDB 是 AP”都过于笼统。复制、确认级别、主节点选举和客户端读偏好会改变具体行为。'}]
+deep:[{title:'和导论',body:'分布式章回答多进程之间怎样看见同一份事实，见 dist-chapter-aim。本课专讲分区时的取舍。'},{title:'什么叫网络分区',body:'节点还在运行，但节点间消息无法在可接受时间内到达。分区期间，系统无法同时证明另一侧已接受什么。'},{title:'三种「一致」不要混',body:'CAP 的 C 是分区时还能不能给出一份最新读写视图。库里的完整性约束是 ACID 的 C。过一会儿对账成功是最终一致。三个词不要合成一句，见 `distributed-consistency-three-words`。'},{title:'资料常见写法',body:'“Redis 是 CP”“MongoDB 是 AP”都过于笼统。复制、确认级别、主节点选举和客户端读偏好会改变具体行为。'}]
 },
 {
 track:'java',group:'分布式与高并发',id:'distributed-kafka-order',title:'Kafka 顺序：分区内有序',

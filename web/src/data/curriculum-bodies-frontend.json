@@ -192,6 +192,10 @@
     "answer": "七种原始值是 undefined、null、boolean、number、bigint、string、symbol。typeof 1 是 \"number\"，typeof {} 是 \"object\"。typeof null 也是 \"object\"，但 null 不是对象，见 `js-not-everything-object`。",
     "deep": [
       {
+        "title": "和导论",
+        "body": "JavaScript 是什么、脚本怎样进页面、和 Java 的边界见 `js-what-it-is`、`js-run-in-page`、`js-not-java-around`。本课专讲值的种类。"
+      },
+      {
         "title": "函数的 typeof 是 function",
         "body": "函数属于对象，但 typeof function () {} 得到 \"function\"，不是 \"object\"。这是 typeof 多出来的一个结果，不表示函数不是对象。"
       },
@@ -1442,6 +1446,10 @@
     "answer": "变量、参数和返回值都用冒号写上 number。把字符串赋给 number 会编译失败。生成的 JavaScript 不再保留这些标注。unknown 见 `ts-unknown`。",
     "deep": [
       {
+        "title": "和导论",
+        "body": "TypeScript 是什么、怎样编成 JavaScript、类型在运行时消失见 `ts-what-it-is`、`ts-compile-to-js`、`ts-not-runtime-check`。本课专讲标注写法。"
+      },
+      {
         "title": "有初值时可以省略",
         "body": "let n = 1 时，编译器把 n 推断为 number。写出 : number 是在声明处把这个决定固定下来。"
       },
@@ -1885,6 +1893,10 @@
     "answer": "p 是选择器，color: blue 是声明。属性是 color，值是 blue。谁盖过谁见 `css-cascade`。盒模型见 `css-box-sizing`。",
     "deep": [
       {
+        "title": "和导论",
+        "body": "CSS 是什么、怎样挂到文档、布局由浏览器算见 `css-what-it-is`、`css-attach-to-document`、`css-not-the-engine`。本课专讲规则写法。"
+      },
+      {
         "title": "一条规则里可以有多条声明",
         "body": "花括号里可以写 color 和 margin。每条声明用分号分开。少写分号时，下一条声明可能被吃进上一条的值里。"
       },
@@ -2282,6 +2294,10 @@
     "task": "在祖先、目标和文档上分别注册捕获与冒泡监听，记录顺序；再分别调用两种 stop 方法，看同一节点上的第二个监听器是否还在。",
     "answer": "祖先上的捕获监听最先执行，接着是目标上的监听，最后才是祖先和文档上的冒泡监听。stopPropagation 之后，其他节点不再收到这次事件，但同一按钮上还没跑的第二个监听仍然执行。改成 stopImmediatePropagation 后，当前节点剩下的监听也不再跑。focus 这类不冒泡的事件，父元素上的委托一次都不会出现。",
     "deep": [
+      {
+        "title": "和导论",
+        "body": "浏览器是什么、导航怎样取出文档、和 Node 的边界见 `browser-what-it-is`、`browser-document-enters`、`browser-not-node`。本课专讲事件传播。"
+      },
       {
         "title": "捕获、目标与冒泡",
         "body": "一次点击先从 window 走到目标，再原路返回。阶段用 1、2、3 区分。默认监听在冒泡。stopPropagation 只挡住后续节点，同一节点上其余监听仍会运行；立即停止才会连当前节点剩下的监听一起停掉。"
@@ -3175,6 +3191,10 @@
     "answer": "查询用安全方法，重复执行不应要求改服务器状态，失败后可以再读。覆盖式 PUT 按资源标识写整份表示，重复写的预期效果与一次相同。扣款不能只看 POST 这个名字，必须用业务键和持久化约束让重试返回第一次的结果，而不是再扣一次。状态码可以不同，效果不能再来一次。",
     "deep": [
       {
+        "title": "和导论",
+        "body": "HTTP 是什么、fetch 怎样发出请求、和 TCP 的层次见 `http-what-it-is`、`http-request-enters`、`http-not-tcp`。本课专讲方法的安全与幂等。"
+      },
+      {
         "title": "语义和实现要分开",
         "body": "安全和幂等是方法的约定，不是某个框架自动加上的锁。查询不应靠它改状态。覆盖更新可以设计成幂等。扣款、下单必须另有业务键，否则 POST 重试就会重复生效。看表里的行数，不要只看方法名。"
       },
@@ -4018,6 +4038,10 @@
     "task": "分别设置 HttpOnly Cookie 和 localStorage 项，检查 document.cookie、请求头和关闭浏览器后的残留。",
     "answer": "HttpOnly Cookie 会出现在匹配请求的请求头里，document.cookie 读不到它；没有过期时间时关掉浏览器后会话消失。localStorage 刷新还在，但请求头里不会自动出现，同源脚本可以读到。自动提交和脚本可读是两道分开的检查。",
     "deep": [
+      {
+        "title": "和导论",
+        "body": "浏览器安全管谁读凭证、谁跑脚本见 `browser-security-what`。本课专讲 Cookie 与 localStorage。"
+      },
       {
         "title": "自动附带与脚本可读",
         "body": "Cookie 按域、路径和 SameSite 决定是否附在请求上。HttpOnly 挡住脚本读取。localStorage 只留在该源页面里，请求不会自动带上，同源脚本却能读到这项。"
@@ -5726,6 +5750,10 @@
     "answer": "改成 loader 后，刷新、后退和直接打开带查询串的地址，数据和错误页面都还在，因为请求在渲染路由元素之前按地址执行。失败抛出带状态的响应，由错误元素显示，而不是先空白再请求。可分享的筛选留在查询串里。进入页面之后才发生的订阅仍放在 effect。",
     "deep": [
       {
+        "title": "和导论",
+        "body": "React 生态章回答地址、客户端状态和服务器状态各放哪，见 `react-eco-chapter-aim`。本课专讲 loader。"
+      },
+      {
         "title": "和组件状态的分工",
         "body": "对话框是否打开、输入框里还没提交的内容，属于这一次界面，用 state。订单号、页码、筛选，属于地址，用路由。把后者放进 state，复制链接的人看不到同一页。"
       },
@@ -6714,6 +6742,10 @@
     "task": "在两个订单 id 之间用 router-link 切换，记录 setup 次数和页面标题。加上对 params.id 的 watch 后再记一次。",
     "answer": "用链接在两个订单 id 之间切换时，setup 只执行一次，标题停在进入时的那张订单。加上对 params.id 的 watch 后，id 从 1 变成 2 会重新请求，标题跟着变。守卫只决定能不能进入，不负责参数变化后的重载。可分享条件放在参数或查询串。",
     "deep": [
+      {
+        "title": "和导论",
+        "body": "Vue 生态章回答换地址、跨页状态和首屏数据各用谁，见 `vue-eco-chapter-aim`。本课专讲参数变化时复用。"
+      },
       {
         "title": "守卫做授权",
         "body": "beforeEach 里没有登录就取消这次导航并转到登录页。不要在每个页面的 onMounted 里各写一遍跳转，那样第一次渲染已经发生。"
@@ -7758,6 +7790,10 @@
     "answer": "三句分别落到团队、发版节奏和失败可见性。同一小队、同一次流水线就写「这次不拆」。只有独立发版或长期异构栈写清之后，才进入组合方式。",
     "deep": [
       {
+        "title": "和导论",
+        "body": "微前端是什么见 `mfe-what-it-is`。本课专讲何时才该拆。"
+      },
+      {
         "title": "和微服务的类比停在边界",
         "body": "后端拆服务看的是数据与事务边界。前端拆应用看的是页面所有权与发布节奏。两边都不是「拆得越碎越好」。"
       },
@@ -8462,6 +8498,10 @@
     "answer": "容器换成 View，文字换成 Text，排列用这个 View 上的 Flexbox，样式用 StyleSheet 的数字对象。className 和 div 不再存在，document 查不到这棵树。要显示网址用 WebView，不能把 View 当成浏览器文档。View 和 Text 只是文档里用来对照 div 和 p 的说法，运行时是平台原生视图。",
     "deep": [
       {
+        "title": "和导论",
+        "body": "React Native 是什么、从 Expo 进门、不是 WebView 见 `rn-what-it-is`、`rn-enter-app`、`rn-not-webview-app`。本课专讲 View 与 Text。"
+      },
+      {
         "title": "对照不是同一套运行时",
         "body": "文档用 div 和 p 帮助网页开发者认组件。渲染结果是平台视图。查元素、改 class、读 offsetHeight 这些浏览器动作没有落点。"
       },
@@ -8876,6 +8916,10 @@
     "answer": "外层用 Column 或 Container，文字用 Text。build 交出的是新的 Widget 配置，状态在 Element 上，布局和绘制在 RenderObject 上。没有 div、className 和 document，字体也不会沿一棵文档继承下来。",
     "deep": [
       {
+        "title": "和导论",
+        "body": "Flutter 是什么、flutter create 进门、没有文档树见 `flutter-what-it-is`、`flutter-enter-app`、`flutter-not-html`。本课专讲 Widget 三层。"
+      },
+      {
         "title": "手里的 Widget 不是屏幕上的像素",
         "body": "build 可以每次 new 一个 Text。框架按运行时类型和 key 更新 Element，再让对应的 RenderObject 布局和 paint。拿 Widget 实例去比「是不是同一个 DOM 节点」没有意义。"
       },
@@ -9150,6 +9194,10 @@
     "task": "先看页面后缀和 manifest 的 vueVersion。若目标是已有的 Vue 小程序或 H5，留在 uni-app。若目标是 Android 上的 Kotlin，单独开 uni-app x，把页面改成 uvue 再编，确认产物里出现的是 Kotlin 而不是原样的 .vue。",
     "answer": "uni-app 继续用 Vue 3 的 .vue。uni-app x 只认 .uvue 和 uts：Android 产物是 Kotlin，iOS 是 Swift，鸿蒙 Next 是 ArkTS，Web 和小程序才是 JavaScript。旧 .vue 不能放进同一个 uni-app x 工程在 Android 上跑。小程序以微信 4.41、支付宝 5.31 的官方支持为准。蒸汽模式按平台落地，不是已经全端替换。",
     "deep": [
+      {
+        "title": "和导论",
+        "body": "uni-app / Taro 是什么、两条编译层见 `uniapp-what-it-is`、`taro-what-it-is`、`uniapp-taro-not-same-runtime`。本课专讲 uni-app x 与旧 vue 页的边界。"
+      },
       {
         "title": "两套项目用条件编译分开",
         "body": "UNI-APP-X 只在 uni-app x 工程里成立。想在源码里区分，用这个宏，而不是在运行时探测「是不是 x」。Web 和小程序上 uts 会变成 JS，所以那边仍能调用该端的 JS API。"
@@ -9444,6 +9492,10 @@
     "task": "写一个最小登录和读取当前用户的处理器。用浏览器登录后查看 Cookie 是否 HttpOnly。用脚本读 document.cookie，确认读不到会话值。",
     "answer": "登录成功后，响应应设置 HttpOnly 的会话 Cookie，而不是在 JSON 里给一段让脚本保存的令牌。随后读取当前用户的请求带上这个 Cookie，处理器从 Cookie 读会话。在控制台读 document.cookie 应看不到该会话值。不要再从授权头读取前端自己带来的令牌。",
     "deep": [
+      {
+        "title": "和导论",
+        "body": "Node.js 是什么、怎样启动进程、没有文档见 `node-what-it-is`、`node-run-process`、`node-not-browser`。本课专讲会话 Cookie。"
+      },
       {
         "title": "框架",
         "body": "Express 或 Fastify 把这些头封装了，语义不变。先能在原始 http 上写出正确的 Cookie，再用框架，才不会把封装当成另一种登录模型。"
@@ -9965,6 +10017,10 @@
     "task": "用现行脚手架建一个最小应用，改一个组件看开发时是否整包重编。再给一个路由加动态 import，对比生产包里的 chunk 文件名。",
     "answer": "新项目用现行工具的模块图，不必先写旧的打包配置。改一个组件时，开发过程不应整包重编。某个路由改成动态导入后，生产包里应出现对应的块文件名，首屏字节下降。分割是否有效看首屏和路由切换，不看配置文件有多少行。旧仓库可以继续用原来的打包器。首屏块的文件名不应再包含那个改成动态导入的图表。",
     "deep": [
+      {
+        "title": "和导论",
+        "body": "前端工程实践章回答构建、度量和发布各停在哪一层，见 `fe-eng-chapter-aim`。本课专讲 Vite 模块图。"
+      },
       {
         "title": "和已有 webpack 课",
         "body": "动态 import、缓存失效、chunk 失败恢复这些机制仍然成立。那一课改成“存量 webpack 仓库如何理解分割”，新建步骤以这一课为准。"

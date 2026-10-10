@@ -371,6 +371,46 @@ const COVERAGE_JAVA_23 = [
       {title:'怎样自己验证',body:'对照 shell 父进程与两个子进程的描述符图，标出谁关读端、谁关写端。写一句：匿名管道不是凭空出现的全局管子。'},
     ],
     refs:[['man：pipe','https://man7.org/linux/man-pages/man2/pipe.2.html'],['man：pipe(7)','https://man7.org/linux/man-pages/man7/pipe.7.html']]
+  },
+  {
+    track:'java', group:'工程实践', id:'linux-vfs-unified-api',
+    title:'VFS 给多种文件系统一套统一的用户接口',
+    prompt:'为什么用户能用同一套 open/read 打开 ext4、NFS 和 /proc 里的文件？',
+    promptAnswer:'中间有虚拟文件系统（VFS）。它对用户提供统一接口，下面再接到具体文件系统。',
+    core:'Linux 上文件系统种类很多。操作系统在用户与具体文件系统之间加一层虚拟文件系统（Virtual File System，VFS）：用户侧仍是 open、read、write、close 等统一接口；VFS 再把调用分派到具体文件系统的实现（如磁盘上的 ext4、网络上的 NFS、内存里的 proc）。“一切皆文件”描述的是这种统一视图，不是所有后端都用同一种磁盘布局。inode、目录项等是具体文件系统里的组织单位，经 VFS 暴露成统一对象模型。',
+    why:'以为每一种文件系统各有一套互不兼容的系统调用，就解释不了为何同一段代码能打开不同后端。区分信号是：统一的是接口；不同的是下面的实现。',
+    example:'`cat /etc/hosts` 与 `cat /proc/cpuinfo` 都走 read，但一个落到磁盘文件系统，一个落到内核导出的 proc 数据。',
+    task:'用一句话说明 VFS 夹在哪两层之间；写出用户看到的统一接口举两例；说明“一切皆文件”指的是视图还是同一种存储格式。',
+    answer:'VFS 在用户与具体文件系统之间。统一接口如 open、read。一切皆文件指统一视图，不是同一种磁盘布局。',
+    keywords:'VFS 虚拟文件系统 inode open read',
+    origin:'本地库《图解系统》虚拟文件系统 VFS 页',
+    diagram:'library-assets/illustrated-basics/os-p0287.png',
+    points:['VFS 向用户提供统一文件接口','下面再接到具体文件系统实现','一切皆文件是统一视图，不是单一存储格式'],
+    deep:[
+      {title:'和管道课的关系',body:'管道、套接字也常以文件描述符出现，仍经 VFS/描述符表管理。`linux-shell-pipe-fds` 讲管道两端如何接到子进程。'},
+      {title:'怎样自己验证',body:'对照 VFS 分层图，标出用户接口层与具体文件系统层。再各举一个磁盘文件与 /proc 文件的例子。'},
+    ],
+    refs:[['kernel：VFS','https://docs.kernel.org/filesystems/vfs.html'],['man：path_resolution','https://man7.org/linux/man-pages/man7/path_resolution.7.html']]
+  },
+  {
+    track:'java', group:'工程实践', id:'linux-epoll-vs-select',
+    title:'epoll 用就绪链表避免每次扫全部描述符',
+    prompt:'为什么连接数上去以后，还把 select 当唯一多路复用答案，会在解释 epoll 时说不通？',
+    promptAnswer:'select/poll 每次要带着整份集合进内核并线性扫。epoll 在内核里维护关注集合，只返回就绪的那些。',
+    core:'I/O 多路复用让一条线程同时盯很多描述符。select/poll 常见成本是：每次调用把关注集合从用户态拷进内核，再线性检查；select 还有 FD_SETSIZE 一类上限。epoll 在内核用树形结构登记关注的描述符，事件就绪时挂到就绪链表；`epoll_wait` 主要取回已就绪的项，不必每次扫全部。水平触发与边缘触发见 `epoll-et-must-drain`；Java NIO Selector / Netty EventLoop 见 `nio-not-one-thread-per-request`。',
+    why:'只背“都能同时等很多连接”，会漏掉拷贝与扫描成本，也解释不清为何高并发服务偏 epoll。区分信号是：每次是否搬运整份集合、返回时是否只含就绪项。',
+    example:'一万个空闲连接注册在 epoll 上时，一次 `epoll_wait` 在没有事件时几乎不用遍历这一万个；select 则要带着更大的集合进内核检查。',
+    task:'写出 select/poll 相对 epoll 的两个常见成本；说明 epoll_wait 返回的是什么；点名 ET/LT 细节去哪一课。',
+    answer:'成本：整份集合拷贝进内核；对关注集合线性扫描。epoll_wait 返回已就绪的描述符（事件）。ET/LT 细节见 epoll-et-must-drain。',
+    keywords:'epoll select poll 多路复用 就绪链表',
+    origin:'本地库《图解系统》select/poll 与 epoll 对比页',
+    diagram:'library-assets/illustrated-basics/os-p0358.png',
+    points:['select/poll 常要拷贝并扫描整份关注集合','epoll 在内核登记关注，wait 取就绪项','ET/LT 行为见 epoll-et-must-drain'],
+    deep:[
+      {title:'和 NIO 课怎么分工',body:'`nio-not-one-thread-per-request` 讲一条线程盯多通道。本课钉 Linux 上 select 与 epoll 的成本差别。'},
+      {title:'怎样自己验证',body:'对照对比页，列出 select 的两次遍历/拷贝与 epoll 的就绪链表。划掉“多路复用都一样贵”。'},
+    ],
+    refs:[['man：epoll','https://man7.org/linux/man-pages/man7/epoll.7.html'],['man：select','https://man7.org/linux/man-pages/man2/select.2.html']]
   }
 ];
 

@@ -51,6 +51,8 @@ const COVERAGE_JAVA_27 = [
       {title:'怎样自己验证',body:'用 Netty 或一段自己注册 Selector 的服务，循环接上一批空闲连接，数量远大于线程数。jcmd 的 Thread.print 里，停在 select 的线程应仍是 EventLoop 或你创建的那几条，不应接近连接数。作为对照，一连接一线程的 BIO 在同样连接数下，会看到接近连接数的线程停在 read。'}
     ],
     keywords:'NIO Selector Reactor EventLoop BIO',
+    origin:'本地库《图解系统》select 多路复用时序页（Java 侧以 Selector / Netty 为准）',
+    diagram:'library-assets/illustrated-basics/os-p0309.png',
     points:['BIO 阻塞模型才是连接占用线程','NIO Selector 一条线程可盯多个 Channel','Netty EventLoop 是 Reactor 不是一请求一线程'],
     refs:[['Selector','https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/channels/Selector.html'],['Netty EventLoop','https://netty.io/wiki/new-and-noteworthy-in-4.0.html']]
   },

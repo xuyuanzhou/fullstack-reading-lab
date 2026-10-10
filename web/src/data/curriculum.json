@@ -1066,6 +1066,8 @@
         "linux-shell-pipe-fds",
         "linux-process-states",
         "linux-process-context-switch",
+        "linux-vfs-unified-api",
+        "linux-epoll-vs-select",
         "docker-root-not-host-root",
         "etcd-v3-grpc-not-rest",
         "git-default-branch-not-master",
@@ -3267,6 +3269,8 @@
             "linux-shell-pipe-fds",
             "linux-process-states",
             "linux-process-context-switch",
+            "linux-vfs-unified-api",
+            "linux-epoll-vs-select",
             "docker-root-not-host-root",
             "etcd-v3-grpc-not-rest",
             "git-default-branch-not-master",
@@ -3563,6 +3567,10 @@
       "answer": "七种原始值是 undefined、null、boolean、number、bigint、string、symbol。typeof 1 是 \"number\"，typeof {} 是 \"object\"。typeof null 也是 \"object\"，但 null 不是对象，见 `js-not-everything-object`。",
       "keywords": "JavaScript primitive typeof null object",
       "deep": [
+        {
+          "title": "和导论",
+          "body": "JavaScript 是什么、脚本怎样进页面、和 Java 的边界见 `js-what-it-is`、`js-run-in-page`、`js-not-java-around`。本课专讲值的种类。"
+        },
         {
           "title": "函数的 typeof 是 function",
           "body": "函数属于对象，但 typeof function () {} 得到 \"function\"，不是 \"object\"。这是 typeof 多出来的一个结果，不表示函数不是对象。"
@@ -5396,6 +5404,10 @@
       "keywords": "TypeScript type annotation number erase",
       "deep": [
         {
+          "title": "和导论",
+          "body": "TypeScript 是什么、怎样编成 JavaScript、类型在运行时消失见 `ts-what-it-is`、`ts-compile-to-js`、`ts-not-runtime-check`。本课专讲标注写法。"
+        },
+        {
           "title": "有初值时可以省略",
           "body": "let n = 1 时，编译器把 n 推断为 number。写出 : number 是在声明处把这个决定固定下来。"
         },
@@ -6050,6 +6062,10 @@
       "keywords": "CSS style rule selector declaration",
       "deep": [
         {
+          "title": "和导论",
+          "body": "CSS 是什么、怎样挂到文档、布局由浏览器算见 `css-what-it-is`、`css-attach-to-document`、`css-not-the-engine`。本课专讲规则写法。"
+        },
+        {
           "title": "一条规则里可以有多条声明",
           "body": "花括号里可以写 color 和 margin。每条声明用分号分开。少写分号时，下一条声明可能被吃进上一条的值里。"
         },
@@ -6637,6 +6653,10 @@
       "answer": "祖先上的捕获监听最先执行，接着是目标上的监听，最后才是祖先和文档上的冒泡监听。stopPropagation 之后，其他节点不再收到这次事件，但同一按钮上还没跑的第二个监听仍然执行。改成 stopImmediatePropagation 后，当前节点剩下的监听也不再跑。focus 这类不冒泡的事件，父元素上的委托一次都不会出现。",
       "keywords": "DOM eventPhase capture bubble stopPropagation 事件委托",
       "deep": [
+        {
+          "title": "和导论",
+          "body": "浏览器是什么、导航怎样取出文档、和 Node 的边界见 `browser-what-it-is`、`browser-document-enters`、`browser-not-node`。本课专讲事件传播。"
+        },
         {
           "title": "捕获、目标与冒泡",
           "body": "一次点击先从 window 走到目标，再原路返回。阶段用 1、2、3 区分。默认监听在冒泡。stopPropagation 只挡住后续节点，同一节点上其余监听仍会运行；立即停止才会连当前节点剩下的监听一起停掉。"
@@ -7951,6 +7971,10 @@
       "diagram": "library-assets/illustrated-basics/http-p0034.png",
       "deep": [
         {
+          "title": "和导论",
+          "body": "HTTP 是什么、fetch 怎样发出请求、和 TCP 的层次见 `http-what-it-is`、`http-request-enters`、`http-not-tcp`。本课专讲方法的安全与幂等。"
+        },
+        {
           "title": "语义和实现要分开",
           "body": "安全和幂等是方法的约定，不是某个框架自动加上的锁。查询不应靠它改状态。覆盖更新可以设计成幂等。扣款、下单必须另有业务键，否则 POST 重试就会重复生效。看表里的行数，不要只看方法名。"
         },
@@ -9166,6 +9190,10 @@
       "origin": "本地库《图解 HTTP》Cookie 签发与回传页",
       "diagram": "library-assets/illustrated-basics/http-p0039.png",
       "deep": [
+        {
+          "title": "和导论",
+          "body": "浏览器安全管谁读凭证、谁跑脚本见 `browser-security-what`。本课专讲 Cookie 与 localStorage。"
+        },
         {
           "title": "自动附带与脚本可读",
           "body": "Cookie 按域、路径和 SameSite 决定是否附在请求上。HttpOnly 挡住脚本读取。localStorage 只留在该源页面里，请求不会自动带上，同源脚本却能读到这项。"
@@ -11626,6 +11654,10 @@
       "keywords": "React Router loader useLoaderData URL 数据路由",
       "deep": [
         {
+          "title": "和导论",
+          "body": "React 生态章回答地址、客户端状态和服务器状态各放哪，见 `react-eco-chapter-aim`。本课专讲 loader。"
+        },
+        {
           "title": "和组件状态的分工",
           "body": "对话框是否打开、输入框里还没提交的内容，属于这一次界面，用 state。订单号、页码、筛选，属于地址，用路由。把后者放进 state，复制链接的人看不到同一页。"
         },
@@ -13064,6 +13096,10 @@
       "keywords": "Vue Router params 复用 beforeEach watch",
       "deep": [
         {
+          "title": "和导论",
+          "body": "Vue 生态章回答换地址、跨页状态和首屏数据各用谁，见 `vue-eco-chapter-aim`。本课专讲参数变化时复用。"
+        },
+        {
           "title": "守卫做授权",
           "body": "beforeEach 里没有登录就取消这次导航并转到登录页。不要在每个页面的 onMounted 里各写一遍跳转，那样第一次渲染已经发生。"
         },
@@ -14456,6 +14492,10 @@
       "diagram": "diagrams/mfe-when-to-split.svg",
       "deep": [
         {
+          "title": "和导论",
+          "body": "微前端是什么见 `mfe-what-it-is`。本课专讲何时才该拆。"
+        },
+        {
           "title": "和微服务的类比停在边界",
           "body": "后端拆服务看的是数据与事务边界。前端拆应用看的是页面所有权与发布节奏。两边都不是「拆得越碎越好」。"
         },
@@ -15466,6 +15506,10 @@
       "keywords": "React Native View Text Flexbox 原生视图",
       "deep": [
         {
+          "title": "和导论",
+          "body": "React Native 是什么、从 Expo 进门、不是 WebView 见 `rn-what-it-is`、`rn-enter-app`、`rn-not-webview-app`。本课专讲 View 与 Text。"
+        },
+        {
           "title": "对照不是同一套运行时",
           "body": "文档用 div 和 p 帮助网页开发者认组件。渲染结果是平台视图。查元素、改 class、读 offsetHeight 这些浏览器动作没有落点。"
         },
@@ -16071,6 +16115,10 @@
       "keywords": "Flutter Widget Element RenderObject Text",
       "deep": [
         {
+          "title": "和导论",
+          "body": "Flutter 是什么、flutter create 进门、没有文档树见 `flutter-what-it-is`、`flutter-enter-app`、`flutter-not-html`。本课专讲 Widget 三层。"
+        },
+        {
           "title": "手里的 Widget 不是屏幕上的像素",
           "body": "build 可以每次 new 一个 Text。框架按运行时类型和 key 更新 Element，再让对应的 RenderObject 布局和 paint。拿 Widget 实例去比「是不是同一个 DOM 节点」没有意义。"
         },
@@ -16472,6 +16520,10 @@
       "answer": "uni-app 继续用 Vue 3 的 .vue。uni-app x 只认 .uvue 和 uts：Android 产物是 Kotlin，iOS 是 Swift，鸿蒙 Next 是 ArkTS，Web 和小程序才是 JavaScript。旧 .vue 不能放进同一个 uni-app x 工程在 Android 上跑。小程序以微信 4.41、支付宝 5.31 的官方支持为准。蒸汽模式按平台落地，不是已经全端替换。",
       "keywords": "uni-app uni-app x uts uvue vueVersion UNI-APP-X",
       "deep": [
+        {
+          "title": "和导论",
+          "body": "uni-app / Taro 是什么、两条编译层见 `uniapp-what-it-is`、`taro-what-it-is`、`uniapp-taro-not-same-runtime`。本课专讲 uni-app x 与旧 vue 页的边界。"
+        },
         {
           "title": "两套项目用条件编译分开",
           "body": "UNI-APP-X 只在 uni-app x 工程里成立。想在源码里区分，用这个宏，而不是在运行时探测「是不是 x」。Web 和小程序上 uts 会变成 JS，所以那边仍能调用该端的 JS API。"
@@ -16906,6 +16958,10 @@
       "answer": "登录成功后，响应应设置 HttpOnly 的会话 Cookie，而不是在 JSON 里给一段让脚本保存的令牌。随后读取当前用户的请求带上这个 Cookie，处理器从 Cookie 读会话。在控制台读 document.cookie 应看不到该会话值。不要再从授权头读取前端自己带来的令牌。",
       "keywords": "Node.js http Set-Cookie HttpOnly BFF 会话",
       "deep": [
+        {
+          "title": "和导论",
+          "body": "Node.js 是什么、怎样启动进程、没有文档见 `node-what-it-is`、`node-run-process`、`node-not-browser`。本课专讲会话 Cookie。"
+        },
         {
           "title": "框架",
           "body": "Express 或 Fastify 把这些头封装了，语义不变。先能在原始 http 上写出正确的 Cookie，再用框架，才不会把封装当成另一种登录模型。"
@@ -17679,6 +17735,10 @@
       "answer": "新项目用现行工具的模块图，不必先写旧的打包配置。改一个组件时，开发过程不应整包重编。某个路由改成动态导入后，生产包里应出现对应的块文件名，首屏字节下降。分割是否有效看首屏和路由切换，不看配置文件有多少行。旧仓库可以继续用原来的打包器。首屏块的文件名不应再包含那个改成动态导入的图表。",
       "keywords": "Vite ESM Rollup 代码分割 模块图 webpack",
       "deep": [
+        {
+          "title": "和导论",
+          "body": "前端工程实践章回答构建、度量和发布各停在哪一层，见 `fe-eng-chapter-aim`。本课专讲 Vite 模块图。"
+        },
         {
           "title": "和已有 webpack 课",
           "body": "动态 import、缓存失效、chunk 失败恢复这些机制仍然成立。那一课改成“存量 webpack 仓库如何理解分割”，新建步骤以这一课为准。"
@@ -18590,6 +18650,10 @@
       "answer": "八种是 byte、short、int、long、float、double、char、boolean。7 / 2 是 3，因为两边都是 int，小数被丢掉。7.0 / 2 是 3.5，因为有一边是浮点。(-7) / 2 是 -3，向零截断，不是向下取到 -4。",
       "keywords": "Java primitive type integer division byte int long char boolean",
       "deep": [
+        {
+          "title": "和导论",
+          "body": "Java 是什么、怎样从 main 启动、和 JavaScript 的边界见 `java-what-it-is`、`java-enter-main`、`java-not-javascript`。本课专讲八种基本类型。"
+        },
         {
           "title": "char 和 boolean",
           "body": "char 存一个 UTF-16 码元，范围是 0 到 65535，不是一段完整的文字。boolean 只有 true 和 false，不能当成 0 和 1 去运算。"
@@ -22840,6 +22904,10 @@
       "diagram": "diagrams/jvm-areas.svg",
       "deep": [
         {
+          "title": "和导论",
+          "body": "JVM 是什么、类怎样装进虚拟机、不管业务语法见 `jvm-what-it-is`、`jvm-enter-class`、`jvm-not-the-language`。本课专讲运行时数据区。"
+        },
+        {
           "title": "规范层",
           "body": "JVM 规范描述可观察的逻辑区域与行为边界，例如 pc、虚拟机栈、堆和方法区。"
         },
@@ -23796,6 +23864,10 @@
       "answer": "对用 Runnable 创建的平台线程，t.run() 在调用者线程里同步执行，打印的是调用者的线程名。t.start() 才让任务在新线程里再跑一次，打印新线程名。t.join() 等到这个新线程结束才继续。对同一实例第二次 start() 抛出 IllegalThreadStateException。虚拟线程直接调用 run 的行为要按对应版本另看，不能把这次平台线程的结果抄过去。",
       "keywords": "Java Thread start run Runnable platform thread virtual thread 调用线程",
       "deep": [
+        {
+          "title": "和导论",
+          "body": "Java 并发是什么、怎样进门、不是分布式见 `java-concurrency-what`、`java-thread-enter`、`java-concurrency-not-distributed`。本课专讲 start 与 run。"
+        },
         {
           "title": "同步调用和启动",
           "body": "run 是普通方法，调用栈停在当前线程，任务做完才返回。start 安排线程执行，调用本身很快返回，任务可能还在跑。join 用来等它结束。同一个 Thread 实例不能成功启动两次。"
@@ -31677,6 +31749,10 @@
       "keywords": "Spring IoC DI @Autowired 构造器注入 组件扫描",
       "deep": [
         {
+          "title": "和导论",
+          "body": "Spring 是什么、Boot 怎样启动、不代替业务见 `spring-what-it-is`、`spring-enter-boot`、`spring-not-the-business`。本课专讲注入与扫描。"
+        },
+        {
           "title": "和生命周期课",
           "body": "注入发生在初始化回调之前。@PostConstruct 里已经能用到注入好的依赖。"
         },
@@ -32643,6 +32719,10 @@
       "keywords": "JPA entity identity persistence context equals hashCode",
       "deep": [
         {
+          "title": "和导论",
+          "body": "JPA 是什么、实体怎样进会话、和 MyBatis 的边界见 `jpa-what-it-is`、`jpa-enter-entity`、`jpa-not-mybatis`。本课专讲实体身份。"
+        },
+        {
           "title": "持久化身份",
           "body": "同一持久化上下文里，同一主键对应同一个 Java 实例，所以改字段会从另一条引用看见。字段可以暂时和表里的行不同，要等刷新才写成语句。事务外新建的对象即使主键相同，也不是这个实例。"
         },
@@ -33154,6 +33234,10 @@
       "answer": "列表查询用映射文件表达时，语句形状由这份映射决定，实体不会因此进入会话。仓储方法表达时，实体状态由会话决定，语句往往不是你逐列写出来的。要精细控制语句就选映射，要在事务里管聚合状态就选会话。不要让同一行被两套同时改。同一行被两边同时改时，后提交的会盖掉先提交的，没有统一的脏检查。",
       "keywords": "MyBatis Mapper SQL JPA Repository",
       "deep": [
+        {
+          "title": "和导论",
+          "body": "MyBatis 是什么、映射器怎样绑定、不托管实体见 `mybatis-what-it-is`、`mybatis-enter-mapper`、`mybatis-not-jpa`。本课专讲 Mapper 与 JPA 的分工。"
+        },
         {
           "title": "语句绑定与会话",
           "body": "映射器把方法或映射文件直接绑到一条语句，列、联表和结果映射都要写清，没有自动脏检查。会话以实体为中心管理状态。复杂报表适合前者，事务内的聚合适合后者。映射改一列不会把内存对象标成脏，会话改字段才会在提交时发出更新。"
@@ -33938,6 +34022,10 @@
       "keywords": "Spring Security SecurityFilterChain SecurityContext 授权",
       "deep": [
         {
+          "title": "和导论",
+          "body": "Spring Security 是什么、过滤器链进门、不只登录页见 `spring-security-what`、`spring-security-enter-chain`、`spring-security-not-only-login`。本课专讲过滤链与控制器分工。"
+        },
+        {
           "title": "和网关的分工",
           "body": "网关可以拒绝没有令牌的请求。服务内的链仍要建立身份并做对象检查。只信网关转发的请求头而不校验，内网被绕过时就会变成匿名管理员。"
         },
@@ -34486,6 +34574,10 @@
       "answer": "三条路径要分别记下命中的段。精确的健康检查应直接返回，不进代理。前缀那段只接住落在它下面、又没有被更具体规则抢走的路径。另一条路径若被别的规则选中，你改的超时和反代都不会执行。先选定站点，再选定这一段，只有被选中的配置生效。没有被选中的那段上的超时数字，不应出现在这次错误里。",
       "keywords": "Nginx server location proxy_pass root",
       "deep": [
+        {
+          "title": "和导论",
+          "body": "Nginx 是什么、容量框架、相对网关见 `nginx-what-and-when`、`nginx-tradeoffs-capacity`、`nginx-vs-gateway`。本课专讲 server 与 location。"
+        },
         {
           "title": "先选站点再选位置",
           "body": "先按监听和站点名选定服务器，再在位置规则里挑最具体的匹配。精确、前缀和正则的优先级不同。同一请求只落在一条最终选中的位置上，写了但没被选中的反代不会执行。正则和精确谁更优先，要看这次请求实际落在哪一段，而不是谁写在文件更上面。"
@@ -35107,6 +35199,10 @@
       "keywords": "反向代理 负载均衡 API 网关 Nginx",
       "deep": [
         {
+          "title": "和导论",
+          "body": "API 网关是什么、代价与相对代理见 `gateway-what-and-when`、`gateway-tradeoffs-capacity`、`gateway-vs-proxy`。本课专讲三问分工。"
+        },
+        {
           "title": "和已有课",
           "body": "Nginx 的连接超时、读取超时在 nginx-proxy-timeout。网关与服务内授权的分工在 gateway-one-hop。"
         },
@@ -35541,6 +35637,10 @@
       "keywords": "Netty EventLoop 非阻塞 线程模型",
       "deep": [
         {
+          "title": "和导论",
+          "body": "Netty 是什么、Bootstrap 怎样进门、不是 Spring MVC 见 `netty-what-it-is`、`netty-enter-bootstrap`、`netty-not-spring-mvc`。本课专讲 EventLoop。"
+        },
+        {
           "title": "事件线程与业务池",
           "body": "少量事件线程轮值大量连接。在这个线程里睡眠、同步查库或做重计算，同一轮值上的其他连接都要等。阻塞工作应丢到业务池，完成后再写回连接。同一条事件线程上的其他连接，在睡眠结束前都得不到处理。"
         },
@@ -35669,6 +35769,8 @@
         }
       ],
       "keywords": "NIO Selector Reactor EventLoop BIO",
+      "origin": "本地库《图解系统》select 多路复用时序页（Java 侧以 Selector / Netty 为准）",
+      "diagram": "library-assets/illustrated-basics/os-p0309.png",
       "since": "Netty",
       "points": [
         "BIO 阻塞模型才是连接占用线程",
@@ -35699,6 +35801,8 @@
       "task": "对照 epoll(7) 的 ET，写出读到何时才能停；划掉“剩下的以后会再通知”。",
       "answer": "划掉“剩下的以后会再通知”。EPOLLET 只在状态变化时通知一次。描述符要非阻塞，读到 read 返回 EAGAIN 才能停。只读出 200 字节、缓冲里还留着数据，就回到 epoll_wait，剩下的不会再敲门。不加 EPOLLET 时才是只要缓冲里还有数据就继续通知。",
       "keywords": "epoll EPOLLET EPOLLIN EAGAIN LT",
+      "origin": "本地库《图解系统》epoll 边缘触发与水平触发页",
+      "diagram": "library-assets/illustrated-basics/os-p0360.png",
       "deep": [
         {
           "title": "短读有两种",
@@ -35899,6 +36003,8 @@
       "task": "对照 DefaultFileRegion，写出它需要的文件、位置和长度。说明什么时候仍必须经过 ByteBuf。",
       "answer": "FileRegion 需要文件、起始位置和长度，预测数据可以不经过把整文件放进堆。先读全部字节再写，预测堆随文件变大，并发几个 1GB 会失败。只有要修改内容时才走用户态缓冲。能直接送文件就不要整文件进堆。预测先写下来再对照日志或界面，对不上就停在这一步，不要改邻接的配置。",
       "keywords": "Netty DefaultFileRegion sendfile 零拷贝",
+      "origin": "本地库《图解系统》sendfile / mmap 少拷贝路径页（Netty FileRegion 以官方文档为准）",
+      "diagram": "library-assets/illustrated-basics/os-p0340.png",
       "deep": [
         {
           "title": "零拷贝的边界",
@@ -43204,6 +43310,10 @@
       "diagram": "diagrams/gha-workflow-path.svg",
       "deep": [
         {
+          "title": "和导论",
+          "body": "GitHub Actions 是什么、作业怎样排队、不是线上进程见 `gha-what-it-is`、`gha-workflow-enter`、`gha-not-the-runtime`。本课专讲工作流路径与触发。"
+        },
+        {
           "title": "一个仓库可以有多份",
           "body": "构建测试、发布、给 issue 打标签可以分成多个文件。每一份自己的 on。不要把互不相关的任务塞进同一个永远触发的文件里，失败会互相挡住。"
         },
@@ -44043,6 +44153,10 @@
       "answer": "两个测试共用静态集合时，单独运行第二个看不到第一个加入的那一项，断言为空会失败或碰巧通过，结果取决于有没有先跑第一个。默认的新实例只隔离实例字段。改成每个测试自己的局部数据后，交换方法顺序两次都通过，测试之间不能再有顺序依赖。全量和单跑的差异就是顺序依赖。",
       "keywords": "JUnit 5 TestInstance PER_METHOD 测试隔离",
       "deep": [
+        {
+          "title": "和导论",
+          "body": "JUnit 是什么、构建怎样发现测试、不代替应用进程见 `junit-what-it-is`、`junit-enter-test`、`junit-not-the-app`。本课专讲实例生命周期。"
+        },
         {
           "title": "实例生命周期",
           "body": "默认每个测试方法一个新实例，实例字段不会自动带到下一个方法。静态字段、单例、未关闭的资源和被替换的静态依赖仍会跨方法留下。改成每个类一个实例后，实例字段也会留下来。"
@@ -45765,6 +45879,90 @@
         [
           "Intel SDM：Context",
           "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-vfs-unified-api",
+      "title": "VFS 给多种文件系统一套统一的用户接口",
+      "prompt": "为什么用户能用同一套 open/read 打开 ext4、NFS 和 /proc 里的文件？",
+      "promptAnswer": "中间有虚拟文件系统（VFS）。它对用户提供统一接口，下面再接到具体文件系统。",
+      "core": "Linux 上文件系统种类很多。操作系统在用户与具体文件系统之间加一层虚拟文件系统（Virtual File System，VFS）：用户侧仍是 open、read、write、close 等统一接口；VFS 再把调用分派到具体文件系统的实现（如磁盘上的 ext4、网络上的 NFS、内存里的 proc）。“一切皆文件”描述的是这种统一视图，不是所有后端都用同一种磁盘布局。inode、目录项等是具体文件系统里的组织单位，经 VFS 暴露成统一对象模型。",
+      "why": "以为每一种文件系统各有一套互不兼容的系统调用，就解释不了为何同一段代码能打开不同后端。区分信号是：统一的是接口；不同的是下面的实现。",
+      "example": "`cat /etc/hosts` 与 `cat /proc/cpuinfo` 都走 read，但一个落到磁盘文件系统，一个落到内核导出的 proc 数据。",
+      "task": "用一句话说明 VFS 夹在哪两层之间；写出用户看到的统一接口举两例；说明“一切皆文件”指的是视图还是同一种存储格式。",
+      "answer": "VFS 在用户与具体文件系统之间。统一接口如 open、read。一切皆文件指统一视图，不是同一种磁盘布局。",
+      "keywords": "VFS 虚拟文件系统 inode open read",
+      "origin": "本地库《图解系统》虚拟文件系统 VFS 页",
+      "diagram": "library-assets/illustrated-basics/os-p0287.png",
+      "deep": [
+        {
+          "title": "和管道课的关系",
+          "body": "管道、套接字也常以文件描述符出现，仍经 VFS/描述符表管理。`linux-shell-pipe-fds` 讲管道两端如何接到子进程。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "对照 VFS 分层图，标出用户接口层与具体文件系统层。再各举一个磁盘文件与 /proc 文件的例子。"
+        }
+      ],
+      "since": "engineering",
+      "points": [
+        "VFS 向用户提供统一文件接口",
+        "下面再接到具体文件系统实现",
+        "一切皆文件是统一视图，不是单一存储格式"
+      ],
+      "references": [
+        [
+          "kernel：VFS",
+          "https://docs.kernel.org/filesystems/vfs.html"
+        ],
+        [
+          "man：path_resolution",
+          "https://man7.org/linux/man-pages/man7/path_resolution.7.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-epoll-vs-select",
+      "title": "epoll 用就绪链表避免每次扫全部描述符",
+      "prompt": "为什么连接数上去以后，还把 select 当唯一多路复用答案，会在解释 epoll 时说不通？",
+      "promptAnswer": "select/poll 每次要带着整份集合进内核并线性扫。epoll 在内核里维护关注集合，只返回就绪的那些。",
+      "core": "I/O 多路复用让一条线程同时盯很多描述符。select/poll 常见成本是：每次调用把关注集合从用户态拷进内核，再线性检查；select 还有 FD_SETSIZE 一类上限。epoll 在内核用树形结构登记关注的描述符，事件就绪时挂到就绪链表；`epoll_wait` 主要取回已就绪的项，不必每次扫全部。水平触发与边缘触发见 `epoll-et-must-drain`；Java NIO Selector / Netty EventLoop 见 `nio-not-one-thread-per-request`。",
+      "why": "只背“都能同时等很多连接”，会漏掉拷贝与扫描成本，也解释不清为何高并发服务偏 epoll。区分信号是：每次是否搬运整份集合、返回时是否只含就绪项。",
+      "example": "一万个空闲连接注册在 epoll 上时，一次 `epoll_wait` 在没有事件时几乎不用遍历这一万个；select 则要带着更大的集合进内核检查。",
+      "task": "写出 select/poll 相对 epoll 的两个常见成本；说明 epoll_wait 返回的是什么；点名 ET/LT 细节去哪一课。",
+      "answer": "成本：整份集合拷贝进内核；对关注集合线性扫描。epoll_wait 返回已就绪的描述符（事件）。ET/LT 细节见 `epoll-et-must-drain`。",
+      "keywords": "epoll select poll 多路复用 就绪链表",
+      "origin": "本地库《图解系统》select/poll 与 epoll 对比页",
+      "diagram": "library-assets/illustrated-basics/os-p0358.png",
+      "deep": [
+        {
+          "title": "和 NIO 课怎么分工",
+          "body": "`nio-not-one-thread-per-request` 讲一条线程盯多通道。本课钉 Linux 上 select 与 epoll 的成本差别。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "对照对比页，列出 select 的两次遍历/拷贝与 epoll 的就绪链表。划掉“多路复用都一样贵”。"
+        }
+      ],
+      "since": "engineering",
+      "points": [
+        "select/poll 常要拷贝并扫描整份关注集合",
+        "epoll 在内核登记关注，wait 取就绪项",
+        "ET/LT 行为见 `epoll-et-must-drain`"
+      ],
+      "references": [
+        [
+          "man：epoll",
+          "https://man7.org/linux/man-pages/man7/epoll.7.html"
+        ],
+        [
+          "man：select",
+          "https://man7.org/linux/man-pages/man2/select.2.html"
         ]
       ]
     },
