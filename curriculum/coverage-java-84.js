@@ -12,7 +12,7 @@ const COVERAGE_JAVA_84 = [
     answer:"划掉纹身。先问分区场景与一致性定义。再谈具体部署的取舍。产品名不是标签。",
     keywords:"CAP Redis Mongo 标签",
     origin:"《分布式高并发.pdf》约第 19–20 页：CA/AP/CP 产品对照表",
-    diagram:"diagrams/cap-label-not-product-tattoo.svg",
+    diagram:'library-assets/distributed-hc/p0019.png',
     points:["先定义分区与 C","部署改变取舍","产品名不能纹身"],
     deep:[
       {title:"和 BASE",body:"BASE 口号也不禁事务，见 base 课。"},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_84 = [
     answer:"划掉绝望论。副本、缓存、分片都是路。换引擎因模型契合，不是因为口号扩展性差。",
     keywords:"扩展性 副本 分片 NoSQL",
     origin:"《分布式高并发.pdf》约第 57 页附近：关系数据库扩展性差",
-    diagram:"diagrams/mysql-scalability-not-hopeless.svg",
+    diagram:'library-assets/distributed-hc/p0057.png',
     points:["单机有边界但可扩展","NoSQL 也有代价","按访问模型选"],
     deep:[
       {title:"和一千万拆分",body:"行数阈值不可靠，见 split 课。"},

@@ -12,7 +12,7 @@ const COVERAGE_JAVA_61 = [
     answer:'划掉「JOIN 一律禁止」。有索引、过滤足够的小结果联结可接受。用 EXPLAIN 看是否索引探查、是否危险的 temporary/filesort。无证据时不要把联结拆成 N+1。',
     keywords:'MySQL JOIN 临时表 EXPLAIN 规范',
     origin:'《分布式高并发.pdf》约第 105 页：禁止使用 JOIN、禁止大表子查询',
-    diagram:'diagrams/mysql-join-ban-not-absolute.svg',
+    diagram:'library-assets/distributed-hc/p0105.png',
     points:['JOIN 不必然产生临时表','无索引大表联结才危险','禁令应落到 EXPLAIN，而不是禁用关键字'],
     deep:[
       {title:'和子查询',body:'相关子查询可能反复执行；半连接/改写后的 IN/EXISTS 有时与 JOIN 等价。同样用计划说话，不要只禁语法外形。'},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_61 = [
     answer:'划掉「OR 必须改 IN」。同列多值 IN 更易读，计划常相近。跨列 OR 看 EXPLAIN，必要时 UNION 或补索引。禁令不能代替现行优化器证据。',
     keywords:'MySQL OR IN 索引 EXPLAIN',
     origin:'《分布式高并发.pdf》约第 105 页：禁止 OR，必须改为 IN',
-    diagram:'diagrams/mysql-or-not-must-become-in.svg',
+    diagram:'library-assets/distributed-hc/p0105.png',
     points:['同列 OR 与 IN 计划常相近','跨列 OR 才更需警惕','用现行 EXPLAIN，不背旧版口诀'],
     deep:[
       {title:'和“禁止小数存货币”',body:'同份规范还有“禁止小数存货币”。若把 DECIMAL 也禁掉就错了；金额应 DECIMAL 或整数分，不要 FLOAT，见已有浮点精度课。关键字禁令要拆开看对象。'},

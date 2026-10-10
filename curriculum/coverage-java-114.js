@@ -12,7 +12,7 @@ const COVERAGE_JAVA_114 = [
     answer:'划掉。服务端要用同一键查重/占位。键由客户端或网关对同一意图保持稳定，不能每次重试新建。',
     keywords:'幂等键 Idempotency-Key UUID 去重',
     origin:'《分布式高并发.pdf》幂等口诀常见缩写',
-    diagram:'diagrams/idempotency-key-not-only-uuid.svg',
+    diagram:'library-assets/distributed-hc/p0032.png',
     points:['幂等靠服务端去重存储','UUID 只是可能的键值','重试必须复用同一键'],
     deep:[
       {title:'和唯一索引',body:'业务单号 UNIQUE 是一种落地；要定义冲突时返回什么。'},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_114 = [
     answer:'划掉。回拨让时间部分倒退可能撞号。要检测回拨并等待/拒发/换方案，并管好机器位。',
     keywords:'雪花 ID 时钟回拨 NTP workerId',
     origin:'《分布式高并发.pdf》雪花可改参数常见省略回拨',
-    diagram:'diagrams/snowflake-clock-rollback.svg',
+    diagram:'library-assets/distributed-hc/p0195.png',
     points:['雪花依赖单调时间','回拨可能撞号','要检测与策略不能只改位数'],
     deep:[
       {title:'和号段',body:'号段预取对墙钟不敏感，但有断号，见 db-sequence-batch-not-gapless。'},

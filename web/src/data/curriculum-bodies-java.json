@@ -1118,7 +1118,7 @@
         "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#clone()"
       ]
     ],
-    "diagram": "diagrams/java-clone-checked.svg",
+    "diagram": "library-assets/java-illustrated/eight-fig-03.png",
     "origin": "本地库 Java 基础导图的标识接口枝，以及「8张图解java」异常树把 CloneNotSupportedException 画在 Exception 下"
   },
   "java-collections": {
@@ -1184,7 +1184,9 @@
         "ArrayDeque",
         "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ArrayDeque.html"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/ds-algo-mindmap.png",
+    "origin": "本地库数据结构思维导图把 Stack 画成默认栈"
   },
   "java-set-not-always-sorted": {
     "core": "HashSet 和 HashMap 不保证迭代顺序，扩容之后顺序还可能变。要记住插入顺序，用 LinkedHashSet 或 LinkedHashMap，它们在哈希表外再串一条链表。要按比较器排序，用 TreeSet 或 TreeMap。Set 去重靠 equals 和 hashCode，有序集靠 compareTo，不是内部排好再给你。",
@@ -1231,7 +1233,7 @@
         "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Arrays.html"
       ]
     ],
-    "diagram": "diagrams/java-collection-collections.svg",
+    "diagram": "library-assets/java-illustrated/eight-fig-04.png",
     "origin": "本地库「8张图解java」里 Collection 与 Collections 并排的图"
   },
   "java-arrays-aslist-fixed": {
@@ -1459,7 +1461,7 @@
         "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/StringBuffer.html"
       ]
     ],
-    "diagram": "diagrams/java-stringbuilder-buffer.svg",
+    "diagram": "library-assets/java-illustrated/eight-fig-01.png",
     "origin": "本地库 Java 基础导图把 StringBuffer 标成多线程默认"
   },
   "java-time-instant": {
@@ -2960,7 +2962,8 @@
         "https://openjdk.org/jeps/261"
       ]
     ],
-    "diagram": "diagrams/jvm-classloaders.svg"
+    "diagram": "library-assets/illustrated-basics/jvm-mindmap.png",
+    "origin": "本地库 Java 虚拟机思维导图扩展类加载器枝"
   },
   "jvm-jmm-not-runtime-areas": {
     "core": "运行时数据区（pc、虚拟机栈、堆、方法区）是 JVM 规范里的内存结构，见 `jvm-areas`。Java 内存模型（JMM）规定共享变量如何在线程之间变得可见：抽象的主内存与每线程工作内存、happens-before、禁止哪些重排序。工作内存对应缓存、寄存器和编译器优化，不是再分出去的第三块堆。两者可以同时考，但不能画成一张“JVM 内存模型 = 堆+栈+主内存”。线程通信是刷新到主内存再读，这是 JMM 的可见性故事，不是 malloc 分区。",
@@ -3084,7 +3087,7 @@
         "https://docs.oracle.com/javase/8/docs/technotes/guides/troubleshoot/tooldescr007.html"
       ]
     ],
-    "diagram": "diagrams/jvm-xmx-not-container-limit.svg",
+    "diagram": "library-assets/distributed-hc/p0189.png",
     "origin": "《分布式高并发.pdf》容器/JVM 内存口诀常见混淆"
   },
   "jvm-gc-choice": {
@@ -3221,7 +3224,8 @@
         "https://docs.oracle.com/en/java/javase/21/gctuning/"
       ]
     ],
-    "diagram": "diagrams/jvm-no-permgen.svg"
+    "diagram": "library-assets/illustrated-basics/jvm-mindmap.png",
+    "origin": "本地库 Java 虚拟机思维导图仍画永久代"
   },
   "jvm-tenuring-threshold-15": {
     "core": "对象头里的年龄只有 4 位，最大记到 15。-XX:MaxTenuringThreshold 是晋升阈值的上限，合法最大值是 15。Java 21 的手册写明：Parallel 收集器的默认值是 15。年轻代回收拷贝对象时，如果当前年龄已经达到阈值，就晋升到老年代；还没达到，就拷进 Survivor 并把年龄加 1。新生对象年龄是 0。阈值若从始至终都是 15，年龄要先被加到 15，下一次年轻代回收才晋升，于是有人把次数数成 16。这个 16 不是参数，也不能写成必须。PrintFlagsFinal 里的 MaxTenuringThreshold 是 15，写成 16 不会被接受。自适应还会把当前阈值降到 15 以下。TargetSurvivorRatio 默认 50，期望留在 Survivor 里的体积大约是该空间的一半。年龄从 1 往上累加，体积一旦超过这个目标，当前阈值就降到这个年龄，更年轻的对象在这次回收就会晋升。",
@@ -3697,7 +3701,9 @@
         "ReadWriteLock",
         "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/locks/ReadWriteLock.html"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/os-p0233.png",
+    "origin": "本地库《图解系统》读者-写者问题页"
   },
   "java-cas-aba-stamp": {
     "core": "CAS 用当前值与期望值比较，相等才换成新值。它提供的是单次变量的原子更新，不是整段业务的事务。失败重试会自旋，长时间争用会占 CPU，不能笼统说一定比 synchronized 快。ABA 是值从 A 变到 B 再变回 A，CAS 会当成没人动过；无锁栈弹出再压入同一节点就会踩中。避免办法是带版本的引用，如 AtomicStampedReference，或用不复用的新对象。公开 API 是 java.util.concurrent.atomic 与 VarHandle；sun.misc.Unsafe 不是应用代码该依赖的入口。",
@@ -3985,7 +3991,9 @@
         "Java：Virtual Threads",
         "https://docs.oracle.com/en/java/javase/21/core/virtual-threads.html"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/os-p0079.png",
+    "origin": "本地库《图解系统》进程与线程调度页"
   },
   "java-threads-not-linear-speedup": {
     "core": "只有工作能拆开、很少共享、又有足够的核，加速才接近线性。抢同一把锁、同一段 IO、同一份结果数组，线程越多越排队。创建和切换也有成本。Amdahl 定律：串行部分会卡住加速比。线程池默认也不是“核数乘十就更快”，见 `java-executors-factory-oom`。",
@@ -4002,7 +4010,9 @@
         "JLS 17 Threads and Locks",
         "https://docs.oracle.com/javase/specs/jls/se21/html/jls-17.html"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/os-p0079.png",
+    "origin": "本地库《图解系统》CPU 如何选择线程页"
   },
   "thread-pool-formula-not-law": {
     "core": "口诀 **Nthreads ≈ Ncpu × (1 + 等待/计算)** 或粗暴的 **×2**，只能当**起点**。真实容量取决于：任务是 CPU 密还是阻塞 IO、队列有界与否、拒绝策略、下游超时、上下文切换。把公式当真理会：IO 任务池过小排队爆炸，或 CPU 任务池过大抖动。虚拟线程改变的是“一请求一平台线程”成本模型，见 `java-virtual-threads`，也不等于无限并发下游。压测与池指标（活跃、队列、拒绝）比背核数倍数重要。邻接 `java-threads-not-linear-speedup`、`java-linked-blocking-unbounded`。",
@@ -4034,7 +4044,7 @@
         "https://jcip.net/"
       ]
     ],
-    "diagram": "diagrams/thread-pool-formula-not-law.svg",
+    "diagram": "library-assets/distributed-hc/p0183.png",
     "origin": "《分布式高并发.pdf》常见线程池 sizing 口诀（核数倍数）"
   },
   "mysql-what-and-when": {
@@ -4194,7 +4204,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/data-type-defaults.html"
       ]
     ],
-    "diagram": "diagrams/mysql-not-null-default-not-absolute.svg",
+    "diagram": "library-assets/distributed-hc/p0104.png",
     "origin": "《分布式高并发.pdf》约第 104 页：必须 NOT NULL 并且提供默认值"
   },
   "mysql-check-enforced-not-parsed-only": {
@@ -4312,7 +4322,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/subquery-optimization.html"
       ]
     ],
-    "diagram": "diagrams/mysql-join-ban-not-absolute.svg",
+    "diagram": "library-assets/distributed-hc/p0105.png",
     "origin": "《分布式高并发.pdf》约第 105 页：禁止使用 JOIN、禁止大表子查询"
   },
   "mysql-or-not-must-become-in": {
@@ -4345,7 +4355,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/explain.html"
       ]
     ],
-    "diagram": "diagrams/mysql-or-not-must-become-in.svg",
+    "diagram": "library-assets/distributed-hc/p0105.png",
     "origin": "《分布式高并发.pdf》约第 105 页：禁止 OR，必须改为 IN"
   },
   "mysql-where-having": {
@@ -4560,7 +4570,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/select.html"
       ]
     ],
-    "diagram": "diagrams/mysql-text-ban-not-absolute.svg",
+    "diagram": "library-assets/distributed-hc/p0104.png",
     "origin": "《分布式高并发.pdf》约第 104 页：禁止使用 TEXT、BLOB"
   },
   "mysql-varchar-length": {
@@ -4790,7 +4800,7 @@
         "https://en.wikipedia.org/wiki/IEEE_754"
       ]
     ],
-    "diagram": "diagrams/mysql-money-decimal-not-ban.svg",
+    "diagram": "library-assets/distributed-hc/p0104.png",
     "origin": "《分布式高并发.pdf》约第 104 页：禁止使用小数存储货币"
   },
   "mysql-split-not-at-ten-million": {
@@ -4819,7 +4829,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/innodb-buffer-pool.html"
       ]
     ],
-    "diagram": "diagrams/mysql-split-not-ten-million.svg",
+    "diagram": "library-assets/distributed-hc/p0068.png",
     "origin": "《分布式高并发.pdf》约第 68 页：拆分原则写单表数据到一千万以内"
   },
   "mysql-json-not-document-db": {
@@ -4995,7 +5005,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/create-table-check-constraints.html"
       ]
     ],
-    "diagram": "diagrams/mysql-enum-ban-not-absolute.svg",
+    "diagram": "library-assets/distributed-hc/p0104.png",
     "origin": "《分布式高并发.pdf》约第 104 页：禁止使用 ENUM，可使用 TINYINT 代替"
   },
   "mysql-temp-table-vs-cte": {
@@ -5059,7 +5069,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/charset-unicode-utf8mb3.html"
       ]
     ],
-    "diagram": "diagrams/mysql-utf-eight-alias-not-mb-four.svg",
+    "diagram": "library-assets/distributed-hc/p0104.png",
     "origin": "《分布式高并发.pdf》约第 104 页：必须使用 UTF8 字符集"
   },
   "mysql-fk-ban-not-absolute": {
@@ -5092,7 +5102,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/explain.html"
       ]
     ],
-    "diagram": "diagrams/mysql-fk-ban-not-absolute.svg",
+    "diagram": "library-assets/distributed-hc/p0104.png",
     "origin": "《分布式高并发.pdf》约第 104 页：禁止使用外键"
   },
   "mysql-phone-varchar-length-not-twenty": {
@@ -5125,7 +5135,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/explain.html"
       ]
     ],
-    "diagram": "diagrams/mysql-phone-varchar-length-not-twenty.svg",
+    "diagram": "library-assets/distributed-hc/p0104.png",
     "origin": "《分布式高并发.pdf》约第 104 页：必须 varchar(20) 存手机号"
   },
   "mysql-insert-must-name-columns": {
@@ -5158,7 +5168,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/create-table-generated-columns.html"
       ]
     ],
-    "diagram": "diagrams/mysql-insert-must-name-columns.svg",
+    "diagram": "library-assets/distributed-hc/p0105.png",
     "origin": "《分布式高并发.pdf》约第 105 页：禁止 INSERT VALUES 不写列"
   },
   "mysql-innodb-default-not-ban-others": {
@@ -5191,7 +5201,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/myisam-storage-engine.html"
       ]
     ],
-    "diagram": "diagrams/mysql-innodb-default-not-ban-others.svg",
+    "diagram": "library-assets/distributed-hc/p0104.png",
     "origin": "《分布式高并发.pdf》约第 104 页：必须使用 InnoDB"
   },
   "mysql-db-not-blob-store": {
@@ -5224,7 +5234,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/explain.html"
       ]
     ],
-    "diagram": "diagrams/mysql-db-not-blob-store.svg",
+    "diagram": "library-assets/distributed-hc/p0104.png",
     "origin": "《分布式高并发.pdf》约第 104 页：禁止存储大文件或大照片"
   },
   "mysql-instance-table-count-not-500": {
@@ -5257,7 +5267,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/innodb-storage-engine.html"
       ]
     ],
-    "diagram": "diagrams/mysql-instance-table-count-not-five-hundred.svg",
+    "diagram": "library-assets/distributed-hc/p0104.png",
     "origin": "《分布式高并发.pdf》约第 104 页：单实例表数目必须小于 500"
   },
   "mysql-column-count-thirty-not-law": {
@@ -5290,7 +5300,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/explain.html"
       ]
     ],
-    "diagram": "diagrams/mysql-column-count-thirty-not-law.svg",
+    "diagram": "library-assets/distributed-hc/p0104.png",
     "origin": "《分布式高并发.pdf》约第 104 页：单表列数目必须小于 30"
   },
   "mysql-db-features-ban-not-absolute": {
@@ -5323,7 +5333,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/stored-programs-defining.html"
       ]
     ],
-    "diagram": "diagrams/mysql-db-features-ban-not-absolute.svg",
+    "diagram": "library-assets/distributed-hc/p0104.png",
     "origin": "《分布式高并发.pdf》约第 104 页：禁止存储过程、视图、触发器、Event"
   },
   "mysql-ddl-merge-heuristic": {
@@ -5356,7 +5366,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/metadata-locking.html"
       ]
     ],
-    "diagram": "diagrams/mysql-ddl-merge-heuristic.svg",
+    "diagram": "library-assets/distributed-hc/p0105.png",
     "origin": "《分布式高并发.pdf》约第 105 页：同表 DDL 合并一条"
   },
   "mysql-catch-sql-exception-not-enough": {
@@ -5389,7 +5399,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/explain.html"
       ]
     ],
-    "diagram": "diagrams/mysql-catch-sql-exception-not-enough.svg",
+    "diagram": "library-assets/distributed-hc/p0105.png",
     "origin": "《分布式高并发.pdf》约第 105 页：应用程序必须捕获 SQL 异常"
   },
   "mysql-pk-autoinc-not-only-choice": {
@@ -5422,7 +5432,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/innodb-index-types.html"
       ]
     ],
-    "diagram": "diagrams/mysql-pk-autoinc-not-only-choice.svg",
+    "diagram": "library-assets/distributed-hc/p0104.png",
     "origin": "《分布式高并发.pdf》约第 104 页：表必须有主键例如自增"
   },
   "mysql-subquery-ban-not-absolute": {
@@ -5455,7 +5465,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/explain.html"
       ]
     ],
-    "diagram": "diagrams/mysql-subquery-ban-not-absolute.svg",
+    "diagram": "library-assets/distributed-hc/p0105.png",
     "origin": "《分布式高并发.pdf》约第 105 页：禁止大表使用子查询"
   },
   "mysql-scalability-not-hopeless": {
@@ -5488,7 +5498,7 @@
         "https://martinfowler.com/articles/nosqlIntro.html"
       ]
     ],
-    "diagram": "diagrams/mysql-scalability-not-hopeless.svg",
+    "diagram": "library-assets/distributed-hc/p0057.png",
     "origin": "《分布式高并发.pdf》约第 57 页附近：关系数据库扩展性差"
   },
   "db-proxy-layer-not-only-choice": {
@@ -5521,7 +5531,7 @@
         "https://martinfowler.com/articles/microservices.html"
       ]
     ],
-    "diagram": "diagrams/db-proxy-layer-not-only-choice.svg",
+    "diagram": "library-assets/distributed-hc/p0060.png",
     "origin": "《分布式高并发.pdf》约第 60 页附近：中间代理层管理数据源"
   },
   "hot-cold-ratio-not-fixed-one-to-four": {
@@ -5554,7 +5564,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/explain.html"
       ]
     ],
-    "diagram": "diagrams/hot-cold-ratio-not-fixed-one-to-four.svg",
+    "diagram": "library-assets/distributed-hc/p0060.png",
     "origin": "《分布式高并发.pdf》约第 60 页附近：冷热比约 1:4"
   },
   "business-split-db-not-only-path": {
@@ -5587,7 +5597,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/xa.html"
       ]
     ],
-    "diagram": "diagrams/business-split-db-not-only-path.svg",
+    "diagram": "library-assets/distributed-hc/p0014.png",
     "origin": "《分布式高并发.pdf》约第 14 页附近：业务分库"
   },
   "rw-split-not-strong-consistency": {
@@ -5620,7 +5630,7 @@
         "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ReadRepl.html"
       ]
     ],
-    "diagram": "diagrams/rw-split-not-strong-consistency.svg",
+    "diagram": "library-assets/distributed-hc/p0013.png",
     "origin": "《分布式高并发.pdf》读写分离架构常见省略延迟"
   },
   "table-design-from-facts": {
@@ -6008,7 +6018,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/multiple-column-indexes.html"
       ]
     ],
-    "diagram": "diagrams/mysql-index-count-five-not-law.svg",
+    "diagram": "library-assets/distributed-hc/p0104.png",
     "origin": "《分布式高并发.pdf》约第 104–105 页：单表索引 5 个以内、单索引字段不超过 5"
   },
   "mysql-implicit-convert-breaks-index": {
@@ -6041,7 +6051,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/index-condition-pushdown-optimization.html"
       ]
     ],
-    "diagram": "diagrams/mysql-implicit-convert-breaks-index.svg",
+    "diagram": "library-assets/distributed-hc/p0105.png",
     "origin": "《分布式高并发.pdf》约第 105 页：禁止使用属性隐式转换；phone=数字字面量"
   },
   "mysql-where-func-blocks-index": {
@@ -6078,7 +6088,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/create-table-generated-columns.html"
       ]
     ],
-    "diagram": "diagrams/mysql-where-func-blocks-index.svg",
+    "diagram": "library-assets/distributed-hc/p0105.png",
     "origin": "《分布式高并发.pdf》约第 105 页：禁止在 WHERE 属性上使用函数或表达式"
   },
   "mysql-generated-column-not-where-wrap": {
@@ -6142,7 +6152,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/problems-with-null.html"
       ]
     ],
-    "diagram": "diagrams/mysql-negative-predicate-not-always-scan.svg",
+    "diagram": "library-assets/distributed-hc/p0105.png",
     "origin": "《分布式高并发.pdf》约第 105 页：禁止负向查询"
   },
   "mysql-leading-percent-like-heuristic": {
@@ -6175,7 +6185,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/explain.html"
       ]
     ],
-    "diagram": "diagrams/mysql-leading-percent-like-heuristic.svg",
+    "diagram": "library-assets/distributed-hc/p0105.png",
     "origin": "《分布式高并发.pdf》约第 105 页：禁止 % 开头模糊查询"
   },
   "mysql-low-selectivity-index-heuristic": {
@@ -6208,7 +6218,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/explain.html"
       ]
     ],
-    "diagram": "diagrams/mysql-low-selectivity-index-heuristic.svg",
+    "diagram": "library-assets/distributed-hc/p0105.png",
     "origin": "《分布式高并发.pdf》约第 105 页：禁止低区分度/热更新列建索引"
   },
   "mysql-composite-selectivity-order-heuristic": {
@@ -6241,7 +6251,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/explain.html"
       ]
     ],
-    "diagram": "diagrams/mysql-composite-selectivity-order-heuristic.svg",
+    "diagram": "library-assets/distributed-hc/p0105.png",
     "origin": "《分布式高并发.pdf》约第 105 页：组合索引区分度高的在前"
   },
   "mysql-count-star-innodb-not-always-scan": {
@@ -6274,7 +6284,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/innodb-storage-engine.html"
       ]
     ],
-    "diagram": "diagrams/mysql-count-star-innodb-not-always-scan.svg",
+    "diagram": "library-assets/distributed-hc/p0108.png",
     "origin": "《分布式高并发.pdf》约第 108 页附近：InnoDB count 扫表 vs MyISAM 计数器"
   },
   "mysql-extend-index-before-new": {
@@ -6307,7 +6317,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/explain.html"
       ]
     ],
-    "diagram": "diagrams/mysql-extend-index-before-new.svg",
+    "diagram": "library-assets/distributed-hc/p0106.png",
     "origin": "《分布式高并发.pdf》约第 106 页：尽量扩展索引不要新建"
   },
   "mysql-and-order-optimizer-reorders": {
@@ -6340,7 +6350,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/explain.html"
       ]
     ],
-    "diagram": "diagrams/mysql-and-order-optimizer-reorders.svg",
+    "diagram": "library-assets/distributed-hc/p0106.png",
     "origin": "《分布式高并发.pdf》约第 106 页：and 之间可以乱序"
   },
   "mysql-right-fuzzy-like-can-use-index": {
@@ -6373,7 +6383,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/pattern-matching.html"
       ]
     ],
-    "diagram": "diagrams/mysql-right-fuzzy-like-can-use-index.svg",
+    "diagram": "library-assets/distributed-hc/p0106.png",
     "origin": "《分布式高并发.pdf》约第 106 页：右模糊会使用索引"
   },
   "mysql-invisible-index-not-drop": {
@@ -6638,7 +6648,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/innodb-transaction-model.html"
       ]
     ],
-    "diagram": "diagrams/mysql-mvcc-not-two-version-columns.svg",
+    "diagram": "library-assets/distributed-hc/p0116.png",
     "origin": "《分布式高并发.pdf》约第 116–118 页：MVCC 两个隐藏版本列"
   },
   "mysql-isolation": {
@@ -6716,7 +6726,9 @@
         "MySQL 8.4：Error Handling",
         "https://dev.mysql.com/doc/refman/8.4/en/innodb-error-handling.html"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/os-p0245.png",
+    "origin": "本地库《图解系统》交叉加锁死锁示例页（对照加锁顺序；重试语义以 InnoDB 文档为准）"
   },
   "mysql-skip-locked-not-queue": {
     "core": "**`FOR UPDATE SKIP LOCKED`**（MySQL 8+）在锁定读时**跳过已被别的事务锁住的行**，让多个工人互不阻塞地领取不同行，适合简易「库表任务」抢占。它提供的是**行锁语义下的并发领取**，不是带 ACK、重试退避、死信、跨语言消费组的消息队列。崩溃、长事务、未正确更新状态都会造成重复处理或任务卡死，要自己设计状态机与可见超时。可靠异步仍常看 MQ/Outbox，见 `distributed-outbox`、`mq-dlq-backlog`。不要把 SKIP LOCKED 背成 Kafka。",
@@ -6883,7 +6895,7 @@
         "https://redis.io/docs/latest/operate/oss_and_stack/management/replication/"
       ]
     ],
-    "diagram": "diagrams/nosql-label-not-consistency.svg",
+    "diagram": "library-assets/distributed-hc/p0057.png",
     "origin": "《分布式高并发.pdf》约第 57 页：把 NoSQL 概括为最终一致性而非 ACID"
   },
   "mysql-myisam-innodb": {
@@ -7446,7 +7458,9 @@
         "Redis：数据类型",
         "https://redis.io/docs/latest/develop/data-types/"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/redis-ds-p0005.png",
+    "origin": "本地库《图解 redis 数据结构》键值与 value 类型总览"
   },
   "redis-hash-field-update": {
     "core": "Redis **Hash** 把多个字段放在一个键下，`HSET`/`HGET` 可改单个字段，不必重写整份文档。适合「同一对象、字段常局部更新」。整份快照、要一次性替换时，String + JSON 也可以，但改一个字段成本是整键读写。字段极多、要二级索引时，Hash 不是关系数据库。类型总览见 `redis-data-types`。集群上一个 Hash 键仍落在一个槽，见 `redis-cluster-incr-not-five-steps`。",
@@ -7473,7 +7487,9 @@
         "Redis：HSET",
         "https://redis.io/docs/latest/commands/hset/"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/redis-ds-p0020.png",
+    "origin": "本地库《图解 redis 数据结构》哈希表页"
   },
   "redis-zset-rank-range": {
     "core": "**Sorted Set** 每个成员带一个分（score），Redis 按分维护顺序。`ZADD` 写入或更新分，`ZRANGE`/`ZREVRANGE` 取一段，`ZRANK`/`ZREVRANK` 查名次。适合排行榜、延时队列（分用时间戳）。成员唯一；同分时按成员字典序。不要用 List 手动保持有序却忽略并发插入。大 Key 与热 key 见 `redis-big-hot-key`。",
@@ -7504,7 +7520,9 @@
         "Redis：ZRANGE",
         "https://redis.io/docs/latest/commands/zrange/"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/redis-ds-p0030.png",
+    "origin": "本地库《图解 redis 数据结构》跳表结构设计页"
   },
   "redis-geo-on-zset-not-gis": {
     "core": "Redis **GEO** 命令（`GEOADD` / `GEOSEARCH` 等）在底层用 **有序集合 + geohash** 存经纬度，方便半径/盒范围查附近点。它适合“附近的人/店”这类近似检索，**不是** PostGIS 那种完整 GIS：复杂多边形、精确测地、多层空间关系要放到专门空间库或自建索引。成员仍是 ZSet 成员名，精度与 geohash 网格有关。`BITFIELD` 是另一类紧凑整数位域命令，和 GEO 无关，不要混进“空间课”。选型：热点附近查询可 GEO；严肃地理业务用空间库，Redis 只做缓存或粗筛。",
@@ -7940,7 +7958,9 @@
         "Redis Cluster spec",
         "https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/redis-ds-p0010.png",
+    "origin": "本地库《图解 redis 数据结构》SDS 结构设计页（协议上限以 SET 文档为准）"
   },
   "redis-list-quicklist-listpack": {
     "core": "**Redis 3.2** 起 List 底层是 **quicklist**（分段的 ziplist 串起来）。**Redis 7.0** 起 ziplist 被 **listpack** 替换，Hash/Zset 小对象也走 listpack。键空间本身是字典，平均查找很快，最坏仍可能冲突、rehash。不要把 3.0 教材的“压缩列表或双向链表”当成现行默认。命令仍在执行线程排队，见 `redis-single-thread`。",
@@ -7957,7 +7977,9 @@
         "Redis quicklist",
         "https://redis.io/docs/latest/develop/data-types/lists/"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/redis-ds-p0035.png",
+    "origin": "本地库《图解 redis 数据结构》quicklist / listpack 页"
   },
   "lru-needs-hash-and-list": {
     "core": "O(1) LRU 需要哈希定位+双向链表维护次序，资料方向对。易错只画链表忘哈希，或把容量淘汰当成 TTL（见 lru-capacity 课）。并发下还要锁或分段。",
@@ -7989,7 +8011,7 @@
         "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/LinkedHashMap.html"
       ]
     ],
-    "diagram": "diagrams/lru-needs-hash-and-list.svg",
+    "diagram": "library-assets/distributed-hc/p0198.png",
     "origin": "《分布式高并发.pdf》约第 198 页附近：链表和 HashMap 实现 LRU"
   },
   "redis-persistence": {
@@ -8242,7 +8264,7 @@
         "https://redis.io/docs/latest/operate/oss_and_stack/management/replication/"
       ]
     ],
-    "diagram": "diagrams/redis-aof-rdb.svg",
+    "diagram": "library-assets/illustrated-basics/redis-mindmap.png",
     "origin": "本地库 Redis 思维导图的持久化枝"
   },
   "redis-cluster-cli-not-trib": {
@@ -8271,7 +8293,7 @@
         "https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/"
       ]
     ],
-    "diagram": "diagrams/redis-cluster-cli.svg",
+    "diagram": "library-assets/illustrated-basics/redis-mindmap.png",
     "origin": "本地库 Redis 思维导图的集群枝"
   },
   "redis-proxy-hash-not-cluster": {
@@ -8300,7 +8322,7 @@
         "https://redis.io/docs/latest/operate/oss_and_stack/management/scaling/"
       ]
     ],
-    "diagram": "diagrams/redis-proxy-hash.svg",
+    "diagram": "library-assets/illustrated-basics/redis-mindmap.png",
     "origin": "本地库 Redis 思维导图把 Twemproxy、Hash 取模与集群画在一起"
   },
   "redis-cluster-slots-not-app-shard-key": {
@@ -8364,7 +8386,7 @@
         "https://redis.io/docs/latest/commands/bgsave/"
       ]
     ],
-    "diagram": "diagrams/redis-save-bgsave.svg",
+    "diagram": "library-assets/illustrated-basics/redis-mindmap.png",
     "origin": "本地库 Redis 思维导图把 SAVE 与 BGSAVE 并列为两种产生 RDB 的方式"
   },
   "redis-cluster-incr-not-five-steps": {
@@ -8397,7 +8419,7 @@
         "https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/"
       ]
     ],
-    "diagram": "diagrams/redis-cluster-incr-one-slot.svg",
+    "diagram": "library-assets/distributed-hc/p0196.png",
     "origin": "《分布式高并发.pdf》约第 196 页：用 Redis 集群按 1..5 初值与步长 5 发全局 ID"
   },
   "redis-lua-atomic": {
@@ -8744,7 +8766,7 @@
         "https://redis.io/docs/latest/develop/pubsub/keyspace-notifications/"
       ]
     ],
-    "diagram": "diagrams/redis-pubsub-not-reliable-queue.svg",
+    "diagram": "library-assets/distributed-hc/p0030.png",
     "origin": "《分布式高并发.pdf》约第 30 页：发布订阅时间依赖"
   },
   "redis-sharded-pubsub-not-cluster-queue": {
@@ -10590,7 +10612,7 @@
         "https://nginx.org/en/docs/http/ngx_http_proxy_module.html"
       ]
     ],
-    "diagram": "diagrams/cdn-not-just-reverse-proxy-cache.svg",
+    "diagram": "library-assets/distributed-hc/p0013.png",
     "origin": "《分布式高并发.pdf》约第 13 页：CDN 和反向代理的基本原理都是缓存"
   },
   "nginx-static-cache-headers": {
@@ -11512,7 +11534,7 @@
         "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/DELETE"
       ]
     ],
-    "diagram": "diagrams/mq-delete-not-always-idempotent.svg",
+    "diagram": "library-assets/distributed-hc/p0032.png",
     "origin": "《分布式高并发.pdf》约第 32 页：删除操作也是幂等的"
   },
   "mq-backlog-expand-queues": {
@@ -11699,7 +11721,9 @@
         "Kafka：acks",
         "https://kafka.apache.org/documentation/#producerconfigs_acks"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/kafka-mindmap.png",
+    "origin": "本地库 Kafka 思维导图把集群绑在 ZooKeeper"
   },
   "kafka-producer-does-batch": {
     "core": "Kafka 生产者按分区攒 batch，linger.ms 和 batch.size 就是批量发送；服务端零拷贝追加日志。广播语义用多个订阅组或 fan-out，不是 AMQP 那种交换机名词，但不能说“不支持批量”。客户端和运维不要求写 Scala。文档在 kafka.apache.org。有些资料里 ActiveMQ 吞吐弱、Rabbit 用 Erlang、RocketMQ 适合堆积，方向可对照 `mq-compare-matrix`，具体以现行手册为准，不要把 2018 年的“社区新生”再当现状。",
@@ -12813,7 +12837,7 @@
         "https://zookeeper.apache.org/doc/current/zookeeperProgrammers.html#ch_zkWatches"
       ]
     ],
-    "diagram": "diagrams/config-center-poll-needs-watch.svg",
+    "diagram": "library-assets/distributed-hc/p0202.png",
     "origin": "《分布式高并发.pdf》约第 202–205 页：配置中心 localcache 轮询与推送改进"
   },
   "sca-nacos-ephemeral": {
@@ -14043,15 +14067,15 @@
     "answer": "两个节点失联后，关键库存写入应返回失败或等待，不能两侧都当成功，否则恢复时对不上同一份库存。允许暂时分歧的资料可以两侧都返回成功，但要写明恢复后如何合并。不能凭产品名称决定这次是成功、失败还是等待。恢复后的合并规则要写在路径上，不能等冲突出现再临时决定。",
     "deep": [
       {
-        "title": "前置：什么叫网络分区",
+        "title": "什么叫网络分区",
         "body": "节点还在运行，但节点间消息无法在可接受时间内到达。分区期间，系统无法同时证明另一侧已接受什么。"
       },
       {
-        "title": "边界：一致性不是所有语境中的同一个词",
+        "title": "三种「一致」不要混",
         "body": "CAP 的 C 是分区时还能不能给出一份最新读写视图。库里的完整性约束是 ACID 的 C。过一会儿对账成功是最终一致。三个词不要合成一句，见 `distributed-consistency-three-words`。"
       },
       {
-        "title": "常见误区",
+        "title": "资料常见写法",
         "body": "“Redis 是 CP”“MongoDB 是 AP”都过于笼统。复制、确认级别、主节点选举和客户端读偏好会改变具体行为。"
       }
     ],
@@ -14061,8 +14085,8 @@
         "https://www.cs.princeton.edu/courses/archive/spr22/cos418/papers/cap.pdf"
       ]
     ],
-    "diagram": "diagrams/cap-partition.svg",
-    "origin": "《分布式高并发.pdf》第 19 页的 CAP 讨论"
+    "diagram": "library-assets/distributed-hc/p0019.png",
+    "origin": "《分布式高并发.pdf》第 19 页"
   },
   "base-slogan-not-ban-tx": {
     "core": "**BASE**（Basically Available / Soft state / Eventually consistent）是对一类互联网实践的概括口号，**不是**像 Gilbert–Lynch 那样对 CAP 的形式化定理。它说的是：有些读写路径可以接受短暂不一致与中间态，以换吞吐与分区下的继续服务，见 `distributed-cap`、`distributed-consistency-three-words`。资料写成“不可能采用分布式事务……BASE 就是办法”，会把口号收成禁令。库存扣减、支付记账仍常用**本地事务**、约束更新、Outbox，必要时 XA/Saga，见 `distributed-xa`、`distributed-outbox`、`distributed-mq-not-erase-invariant`。软状态指同步过程中允许中间态，不是“错多久都行”；最终一致要约定收敛条件与对账，不是放下不管。",
@@ -14094,7 +14118,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/xa.html"
       ]
     ],
-    "diagram": "diagrams/base-slogan-not-ban-tx.svg",
+    "diagram": "library-assets/distributed-hc/p0019.png",
     "origin": "《分布式高并发.pdf》约第 19–20 页：BASE 定理与不可能用分布式事务"
   },
   "distributed-consistency-three-words": {
@@ -14141,7 +14165,7 @@
         "body": "准备阶段询问参与者是否可以提交，决议阶段通知参与者执行。协议解决的是协同决策，不消除网络故障和阻塞成本。"
       },
       {
-        "title": "常见误区",
+        "title": "资料常见写法",
         "body": "“XA 包括 2PC 和 3PC”及“3PC 一超时就能自动提交”都需要更正。AT 第一阶段会本地提交，不是 XA 的第三阶段，见 `distributed-at-sees-before-global`。"
       }
     ],
@@ -14151,8 +14175,8 @@
         "https://dev.mysql.com/doc/refman/8.4/en/xa.html"
       ]
     ],
-    "diagram": "diagrams/distributed-xa.svg",
-    "origin": "《分布式高并发.pdf》第 71、77 页的 XA 与 3PC 说明"
+    "diagram": "library-assets/distributed-hc/p0071.png",
+    "origin": "《分布式高并发.pdf》第 71 页（另见第 77 页）"
   },
   "distributed-outbox": {
     "core": "将业务状态与待发布事件写入同一个本地事务的 Outbox 表，由独立发布器持续发送。它缩小了数据库提交与消息发布之间的丢失窗口，但发布器可能重复发送，消费者仍要幂等。顺序是同一个本地事务写入业务行和待发布事件，提交后再由发布器发送并标记。边界是发布器可能重复发送，这不是端到端只一次；消费者仍要幂等。先发消息再提交库，会让消费端看见尚未提交的订单。标记更新失败只造成再发送，不造成订单行丢失。去重若和副作用不在同一个提交里，仍可能出现副作用做了两次或一次都没做。先发消息的那条路径不在这个表的保护里。重启后订单行数仍是 1，消息侧可以是 2，消费结果必须仍是 1。",
@@ -14223,7 +14247,7 @@
         "body": "租约可减少并发工作，但不能让已经执行中的旧工作者自动停止。需要按写入目标的能力设计防旧写措施。"
       },
       {
-        "title": "常见误区",
+        "title": "资料常见写法",
         "body": "过期时间越长不等于越安全；它影响故障恢复速度与误并发窗口。续期也需要明确工作者失联时的行为。"
       }
     ],
@@ -14265,7 +14289,7 @@
         "https://curator.apache.org/docs/recipes-shared-reentrant-lock"
       ]
     ],
-    "diagram": "diagrams/dist-lock-owner-not-mac-pid-tid.svg",
+    "diagram": "library-assets/distributed-hc/p0202.png",
     "origin": "《分布式高并发.pdf》约第 202 页：分布式可重入锁记录 MAC+进程+线程"
   },
   "dist-lock-reentrant-not-deadlock-cure": {
@@ -14298,7 +14322,7 @@
         "https://curator.apache.org/docs/recipes-shared-reentrant-lock"
       ]
     ],
-    "diagram": "diagrams/dist-lock-reentrant-not-deadlock-cure.svg",
+    "diagram": "library-assets/distributed-hc/p0199.png",
     "origin": "《分布式高并发.pdf》约第 199 页：可重入锁（避免死锁）"
   },
   "zk-linearizable-not-realtime": {
@@ -14358,7 +14382,7 @@
         "https://zookeeper.apache.org/doc/current/zookeeperProgrammers.html#ch_zkGuarantees"
       ]
     ],
-    "diagram": "diagrams/zk-odd-count-not-quorum-law.svg",
+    "diagram": "library-assets/distributed-hc/p0144.png",
     "origin": "《分布式高并发.pdf》约第 144 页：半数机制故适合奇数台"
   },
   "redis-lock-setnx-expire-race": {
@@ -14386,7 +14410,9 @@
         "Redis SETNX",
         "https://redis.io/docs/latest/commands/setnx/"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/redis-mindmap.png",
+    "origin": "本地库蚂蚁金服面经 SETNX+EXPIRE 写法"
   },
   "redis-lock-getset-wall-clock": {
     "core": "这种写法把**过期判定交给各客户端的系统时钟**。机器 A 比 B 快几秒，B 会以为锁已超时并 `GETSET` 抢走；A 仍按自己的表认为锁有效，两边同时进临界区。时钟回拨或 NTP 跳跃同样会让「未到期」和「已到期」对不上。现行做法是 `SET key token NX EX seconds`（或 `PX`），**TTL 由 Redis 服务端倒数**，释放时比对 token 再删，见 `redis-lock-setnx-expire-race`、`distributed-lock`。有些资料里的 getset 链并不能修好 SETNX+EXPIRE 的崩溃窗口，只是换了一种更容易被时钟打穿的协议。",
@@ -14422,7 +14448,7 @@
         "https://redis.io/docs/latest/commands/getset/"
       ]
     ],
-    "diagram": "diagrams/redis-lock-getset-clock.svg",
+    "diagram": "library-assets/distributed-hc/p0201.png",
     "origin": "《分布式高并发.pdf》约第 201 页：setnx/get/getset 与本机时间比较的锁"
   },
   "mysql-for-update-not-dist-lease": {
@@ -14463,7 +14489,7 @@
         "https://redis.io/docs/latest/develop/clients/patterns/distributed-locks/"
       ]
     ],
-    "diagram": "diagrams/mysql-for-update-not-lease.svg",
+    "diagram": "library-assets/distributed-hc/p0200.png",
     "origin": "《分布式高并发.pdf》约第 200 页：用数据库排他锁 / FOR UPDATE 做分布式锁"
   },
   "db-insert-unique-cron-not-lease": {
@@ -14496,7 +14522,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/constraint-primary-key.html"
       ]
     ],
-    "diagram": "diagrams/db-insert-unique-cron-not-lease.svg",
+    "diagram": "library-assets/distributed-hc/p0199.png",
     "origin": "《分布式高并发.pdf》约第 199–200 页：主键唯一做锁；定时任务清超时；while 重插"
   },
   "cap-label-not-product-tattoo": {
@@ -14529,7 +14555,7 @@
         "https://www.mongodb.com/docs/manual/reference/write-concern/"
       ]
     ],
-    "diagram": "diagrams/cap-label-not-product-tattoo.svg",
+    "diagram": "library-assets/distributed-hc/p0019.png",
     "origin": "《分布式高并发.pdf》约第 19–20 页：CA/AP/CP 产品对照表"
   },
   "sync-replication-not-only-durability": {
@@ -14562,7 +14588,7 @@
         "https://www.infoq.com/articles/cap-twelve-years-later-how-the-rules-have-changed/"
       ]
     ],
-    "diagram": "diagrams/sync-replication-not-only-durability.svg",
+    "diagram": "library-assets/distributed-hc/p0033.png",
     "origin": "《分布式高并发.pdf》约第 33 页附近：同步复制才能保证"
   },
   "snowflake-params-need-capacity-math": {
@@ -14595,7 +14621,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/"
       ]
     ],
-    "diagram": "diagrams/snowflake-params-need-capacity-math.svg",
+    "diagram": "library-assets/distributed-hc/p0196.png",
     "origin": "《分布式高并发.pdf》约第 196 页附近：snowflake 可按需修改"
   },
   "snowflake-clock-rollback": {
@@ -14628,7 +14654,7 @@
         "https://www.ntp.org/"
       ]
     ],
-    "diagram": "diagrams/snowflake-clock-rollback.svg",
+    "diagram": "library-assets/distributed-hc/p0195.png",
     "origin": "《分布式高并发.pdf》雪花可改参数常见省略回拨"
   },
   "distributed-one-db-first": {
@@ -14905,7 +14931,8 @@
         "https://redis.io/docs/latest/develop/use-cases/rate-limiter/"
       ]
     ],
-    "origin": "《分布式高并发.pdf》第 89–91 页的限流章节"
+    "diagram": "library-assets/distributed-hc/p0089.png",
+    "origin": "《分布式高并发.pdf》第 89 页（89–91）"
   },
   "leaky-bucket-not-no-critical-edge": {
     "core": "**固定窗口计数器**在窗口边界可叠出约两倍突发，资料批评成立。**漏桶**约束的是**出水（处理/转发）速率**上限，满则溢出或排队——它解决的是整形，不是把“临界问题”这个词消掉。入口仍可能瞬时灌满桶；若把漏桶放在网关之后，上游连接与队列照样会在边界或尖峰堆积。资料后文也承认**令牌桶允许突发**、业界更常用，见 `distributed-token-bucket`：速率与突发容量是两维，不是“漏桶完美、令牌桶将就”。选型问：要削平下游、还是允许短突发；桶放在哪一层；溢出是拒还是排。",
@@ -14937,7 +14964,7 @@
         "https://redis.io/docs/latest/develop/use-cases/rate-limiter/"
       ]
     ],
-    "diagram": "diagrams/leaky-bucket-not-no-critical-edge.svg",
+    "diagram": "library-assets/distributed-hc/p0089.png",
     "origin": "《分布式高并发.pdf》约第 89–91 页：漏桶天生不会出现临界问题；常速处理"
   },
   "qps-formula-not-capacity": {
@@ -14970,7 +14997,7 @@
         "https://sre.google/sre-book/handling-overload/"
       ]
     ],
-    "diagram": "diagrams/qps-formula-not-capacity.svg",
+    "diagram": "library-assets/distributed-hc/p0026.png",
     "origin": "《分布式高并发.pdf》性能估算口诀常见外推"
   },
   "circuit-breaker-not-retry": {
@@ -15003,7 +15030,7 @@
         "https://sentinelguard.io/zh-cn/docs/circuit-breaking.html"
       ]
     ],
-    "diagram": "diagrams/circuit-breaker-not-retry.svg",
+    "diagram": "library-assets/distributed-hc/p0020.png",
     "origin": "《分布式高并发.pdf》容错口诀常把熔断与重试混写"
   },
   "graceful-shutdown-not-zero-loss": {
@@ -15036,7 +15063,7 @@
         "https://sre.google/sre-book/release-engineering/"
       ]
     ],
-    "diagram": "diagrams/graceful-shutdown-not-zero-loss.svg",
+    "diagram": "library-assets/distributed-hc/p0028.png",
     "origin": "《分布式高并发.pdf》发布与停机口诀常见夸大"
   },
   "distributed-seckill": {
@@ -15065,8 +15092,8 @@
         "https://dev.mysql.com/doc/refman/8.4/en/update.html"
       ]
     ],
-    "diagram": "diagrams/seckill-flow.svg",
-    "origin": "《分布式高并发.pdf》的秒杀设计相关章节"
+    "diagram": "library-assets/distributed-hc/p0051.png",
+    "origin": "《分布式高并发.pdf》第 51 页附近（秒杀）"
   },
   "seckill-js-needs-cache-control": {
     "core": "静态大页上 CDN 没问题，见 `cdn-not-just-reverse-proxy-cache`。开抢标记、动态下单 URL 若放在单独 JS 里，**CDN 默认仍可能按扩展名或路径缓存**。资料说的“不会被缓存、一直打回源”，只有配了响应头（如 `Cache-Control: no-store` / 很短的 `max-age`）、CDN 对该路径的不缓存规则，或每次变更换查询串/文件名时才成立。文件“很小”只影响带宽，不改变缓存策略。即便控制脚本每次回源，**开抢是否允许仍以服务端校验为准**，见 `seckill-client-gate-not-enough`、`distributed-seckill`。",
@@ -15094,7 +15121,7 @@
         "https://developer.mozilla.org/en-US/docs/Glossary/CDN"
       ]
     ],
-    "diagram": "diagrams/seckill-js-needs-cache-control.svg",
+    "diagram": "library-assets/distributed-hc/p0051.png",
     "origin": "《分布式高并发.pdf》约第 51 页：防止提前下单的 JS 不会被 CDN 缓存"
   },
   "seckill-client-gate-not-enough": {
@@ -15123,7 +15150,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/update.html"
       ]
     ],
-    "diagram": "diagrams/seckill-client-gate-not-enough.svg",
+    "diagram": "library-assets/distributed-hc/p0049.png",
     "origin": "《分布式高并发.pdf》约第 49–52 页：Disable 按钮与不能信任客户端"
   },
   "seckill-mq-not-only-db-valve": {
@@ -15156,7 +15183,7 @@
         "https://redis.io/docs/latest/develop/use-cases/rate-limiter/"
       ]
     ],
-    "diagram": "diagrams/seckill-mq-not-only-db-valve.svg",
+    "diagram": "library-assets/distributed-hc/p0053.png",
     "origin": "《分布式高并发.pdf》约第 53 页：MQ 顶住即可控下单与扣库存"
   },
   "distributed-mq-not-erase-invariant": {
@@ -15189,7 +15216,7 @@
         "https://microservices.io/patterns/data/saga.html"
       ]
     ],
-    "diagram": "diagrams/distributed-mq-not-erase.svg",
+    "diagram": "library-assets/distributed-hc/p0027.png",
     "origin": "《分布式高并发.pdf》约第 27 页：库存不可用也不影响下单的解耦叙述"
   },
   "distributed-consistent-hash": {
@@ -15214,7 +15241,8 @@
         "https://people.csail.mit.edu/karger/Papers/web.pdf"
       ]
     ],
-    "origin": "《分布式高并发.pdf》第 94 页的一致性哈希讨论"
+    "diagram": "library-assets/distributed-hc/p0094.png",
+    "origin": "《分布式高并发.pdf》第 94 页"
   },
   "consistent-hash-vnode-count-not-law": {
     "core": "**虚拟节点**把每个物理节点映射到环上多点，减轻“节点太少时弧长不均”，资料方向对，见 `distributed-consistent-hash`。把 **32**（或任意固定数）写成定律会过时：合适数量取决于节点数、键分布、迁移成本与实现（有的系统用数百到上千 vnode）。虚拟节点也**治不好单键热点**，见 `hash-skew-not-only-virtual-nodes`。选型应测分片负载方差与扩缩迁移量，而不是背 32。",
@@ -15246,7 +15274,7 @@
         "https://nginx.org/en/docs/http/ngx_http_upstream_module.html#hash"
       ]
     ],
-    "diagram": "diagrams/consistent-hash-vnode-count-not-law.svg",
+    "diagram": "library-assets/distributed-hc/p0100.png",
     "origin": "《分布式高并发.pdf》约第 100 页：虚拟节点通常设为 32 甚至更大"
   },
   "distributed-bloom": {
@@ -15265,7 +15293,7 @@
         "body": "误判率受位数组长度、哈希函数数量及插入量共同影响。容量满后不能继续沿用最初的误判率估算。"
       },
       {
-        "title": "常见误区",
+        "title": "资料常见写法",
         "body": "比较两个 URL 的哈希值并不是布隆过滤器的成员测试；普通位数组上的直接清零也不是安全删除。"
       }
     ],
@@ -15279,8 +15307,8 @@
         "https://redis.io/docs/latest/develop/data-types/probabilistic/cuckoo-filter/"
       ]
     ],
-    "diagram": "diagrams/bloom-filter.svg",
-    "origin": "《分布式高并发.pdf》第 79–82 页的布隆过滤器图解"
+    "diagram": "library-assets/distributed-hc/p0080.png",
+    "origin": "《分布式高并发.pdf》第 80 页（79–82 图解）"
   },
   "distributed-cache": {
     "core": "雪崩通常指大量键在相近时间失效或缓存整体故障；击穿偏向单个热点键失效后的并发回源；穿透则是请求根本不存在的数据。三种情形的根因和保护手段不同。顺序是先看键的分布、命中率和数据库压力，再决定是错开过期、挡住同一键的并发回源，还是挡掉根本不存在的请求。边界是锁只能减少同一键的重复构建，缓存整体不可用时，热点锁也保不住数据库。三种路径不能共用一句加锁。观测先分开：过期时间是否挤在同一分钟、单个键的并发、以及不存在键的空查比例。锁的等待时间变长而数据库仍忙，说明锁的范围已经错了。三种路径的副作用也要分开写。把三种请求的键打在同一张图上，才能看出是整点、单键还是随机空号。",
@@ -15304,7 +15332,8 @@
         "https://redis.io/docs/latest/develop/use-cases/cache-aside/"
       ]
     ],
-    "origin": "《分布式高并发.pdf》第 25 页的缓存失效方案"
+    "diagram": "library-assets/distributed-hc/p0025.png",
+    "origin": "《分布式高并发.pdf》第 25 页"
   },
   "lru-capacity-not-ttl-expire": {
     "core": "**容量 LRU**回答：容量满了踢最久未用。**TTL/绝对过期**回答：这条记录到点失效，即使容量还没满。两者可以叠在同一实现里，但不是同一机制。资料标题带“过期时间”，正文却停在 O(1) 的 get/set + 链表头插、满则删尾——这是容量维，没有 per-entry deadline，也没有到期懒删/定时扫。面试若只画链表，答不出：未满时过期键是否还应命中、过期与 LRU 谁先踢、写时带 `expireAt` 还是读时校验。生产缓存常见是容量策略（近似 LRU/LFU）与 TTL 并行，见 `redis-eviction-policy-menu`、`distributed-cache`；Redis 的 `volatile-lru` 更是“先限定在带 TTL 的键里再近似 LRU”，说明两维正交。",
@@ -15336,7 +15365,7 @@
         "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Caching"
       ]
     ],
-    "diagram": "diagrams/lru-capacity-not-ttl-expire.svg",
+    "diagram": "library-assets/distributed-hc/p0197.png",
     "origin": "《分布式高并发.pdf》约第 197–198 页：带有过期时间的 LRU 缓存"
   },
   "distributed-kafka-order": {
@@ -15355,7 +15384,7 @@
         "body": "消费端如果把同一分区任务无约束并行化，或者失败后跳过消息，日志顺序也不等于副作用执行顺序。"
       },
       {
-        "title": "常见误区",
+        "title": "资料常见写法",
         "body": "“一个 Topic 只能有一个队列”并非保持单个订单顺序的必要条件；先定义究竟按订单、账户还是全局排序。"
       }
     ],
@@ -15365,8 +15394,8 @@
         "https://kafka.apache.org/documentation/"
       ]
     ],
-    "diagram": "diagrams/kafka-order.svg",
-    "origin": "《分布式高并发.pdf》第 33 页的消息顺序建议"
+    "diagram": "library-assets/distributed-hc/p0033.png",
+    "origin": "《分布式高并发.pdf》第 33 页"
   },
   "dns-lb-not-just-round-robin": {
     "core": "DNS 可以把一名多址解析到多台，**解析器与多层缓存**决定客户端实际拿到哪条记录；不是业务进程里可控的 round-robin 负载均衡器。TTL 调极小会增加 DNS 查询流量，也不能立刻让全球缓存都忘掉已下线的 IP，见资料易夸大的“调小就及时且随机”。真正按实例健康摘流，要在反向代理 / 云 LB / 客户端负载均衡上做，见 `nginx-upstream-passive`、`mw-proxy-lb-gateway`。地理 DNS 是另一能力，也不等于感知应用健康。",
@@ -15402,6 +15431,7 @@
         "https://developers.cloudflare.com/dns/manage-dns-records/reference/ttl/"
       ]
     ],
+    "diagram": "library-assets/distributed-hc/p0092.png",
     "origin": "《分布式高并发.pdf》约第 92 页：DNS 负载均衡与调小刷新时间"
   },
   "http-redirect-lb-two-hops": {
@@ -15434,7 +15464,7 @@
         "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/302"
       ]
     ],
-    "diagram": "diagrams/http-redirect-lb-two-hops.svg",
+    "diagram": "library-assets/distributed-hc/p0093.png",
     "origin": "《分布式高并发.pdf》约第 93 页：http 重定向协议实现负载均衡"
   },
   "microservices-not-just-soa-relabel": {
@@ -15467,7 +15497,7 @@
         "https://glossary.cncf.io/"
       ]
     ],
-    "diagram": "diagrams/microservices-not-just-soa-relabel.svg",
+    "diagram": "library-assets/distributed-hc/p0017.png",
     "origin": "《分布式高并发.pdf》约第 17 页：微服务本质还是 SOA"
   },
   "split-vs-cluster-not-interchangeable": {
@@ -15500,7 +15530,7 @@
         "https://glossary.cncf.io/"
       ]
     ],
-    "diagram": "diagrams/split-vs-cluster-not-interchangeable.svg",
+    "diagram": "library-assets/distributed-hc/p0016.png",
     "origin": "《分布式高并发.pdf》约第 16–17 页：拆分 VS 集群"
   },
   "service-extract-not-only-connection-math": {
@@ -15533,7 +15563,7 @@
         "https://martinfowler.com/articles/microservices.html"
       ]
     ],
-    "diagram": "diagrams/service-extract-not-only-connection-math.svg",
+    "diagram": "library-assets/distributed-hc/p0016.png",
     "origin": "《分布式高并发.pdf》约第 16 页：连接数目是服务器规模的平方"
   },
   "select-not-always-business-idempotent": {
@@ -15566,7 +15596,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/select.html"
       ]
     ],
-    "diagram": "diagrams/select-not-always-business-idempotent.svg",
+    "diagram": "library-assets/distributed-hc/p0032.png",
     "origin": "《分布式高并发.pdf》约第 32 页：select 是天然幂等操作"
   },
   "idempotency-key-not-only-uuid": {
@@ -15599,7 +15629,7 @@
         "https://microservices.io/patterns/data/transactional-outbox.html"
       ]
     ],
-    "diagram": "diagrams/idempotency-key-not-only-uuid.svg",
+    "diagram": "library-assets/distributed-hc/p0032.png",
     "origin": "《分布式高并发.pdf》幂等口诀常见缩写"
   },
   "hash-skew-not-only-virtual-nodes": {
@@ -15632,7 +15662,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/explain.html"
       ]
     ],
-    "diagram": "diagrams/hash-skew-not-only-virtual-nodes.svg",
+    "diagram": "library-assets/distributed-hc/p0060.png",
     "origin": "《分布式高并发.pdf》约第 60、94 页附近：数据分配不一定均匀"
   },
   "message-order-not-always-required": {
@@ -15665,7 +15695,7 @@
         "https://martinfowler.com/articles/microservices.html"
       ]
     ],
-    "diagram": "diagrams/message-order-not-always-required.svg",
+    "diagram": "library-assets/distributed-hc/p0033.png",
     "origin": "《分布式高并发.pdf》约第 33 页：是否必须严格有序"
   },
   "distributed-clock-skew": {
@@ -15779,7 +15809,7 @@
         "https://www.slf4j.org/manual.html#mdc"
       ]
     ],
-    "diagram": "diagrams/threadlocal-not-distributed-context.svg",
+    "diagram": "library-assets/distributed-hc/p0127.png",
     "origin": "《分布式高并发.pdf》上下文传递常见缩写"
   },
   "connection-pool-not-thread-pool": {
@@ -15812,7 +15842,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/server-system-variables.html#sysvar_max_connections"
       ]
     ],
-    "diagram": "diagrams/connection-pool-not-thread-pool.svg",
+    "diagram": "library-assets/distributed-hc/p0182.png",
     "origin": "《分布式高并发.pdf》池化参数口诀常见绑定"
   },
   "mysql-uuid-not-clustered-pk": {
@@ -15872,7 +15902,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/miscellaneous-functions.html#function_uuid"
       ]
     ],
-    "diagram": "diagrams/uuid-not-only-random-string.svg",
+    "diagram": "library-assets/distributed-hc/p0193.png",
     "origin": "《分布式高并发.pdf》约第 193 页：UUID 无排序、往往字符串存储"
   },
   "db-sequence-batch-not-gapless": {
@@ -15905,7 +15935,7 @@
         "https://www.rfc-editor.org/rfc/rfc9562"
       ]
     ],
-    "diagram": "diagrams/db-sequence-batch-not-gapless.svg",
+    "diagram": "library-assets/distributed-hc/p0194.png",
     "origin": "《分布式高并发.pdf》约第 194–195 页：sequence 表乐观锁；一次取 500 缓存"
   },
   "db-autoinc-offset-step-needs-ops": {
@@ -15938,7 +15968,7 @@
         "https://dev.mysql.com/doc/refman/8.4/en/replication-options-master.html"
       ]
     ],
-    "diagram": "diagrams/db-autoinc-offset-step-needs-ops.svg",
+    "diagram": "library-assets/distributed-hc/p0194.png",
     "origin": "《分布式高并发.pdf》约第 194 页：多 Master 不同起始、相同步长发号"
   },
   "gha-workflow-in-dot-github": {
@@ -16055,7 +16085,7 @@
         "https://www.jenkins.io/doc/"
       ]
     ],
-    "diagram": "diagrams/jenkins-not-only-ci-tool.svg",
+    "diagram": "library-assets/distributed-hc/p0193.png",
     "origin": "《分布式高并发.pdf》约第 193 页：持续集成专节写使用 Jenkins 等工具"
   },
   "docker-layer-cache-copy": {
@@ -16144,7 +16174,7 @@
         "https://kubernetes.io/docs/concepts/security/"
       ]
     ],
-    "diagram": "diagrams/container-shares-host-kernel.svg",
+    "diagram": "library-assets/distributed-hc/p0185.png",
     "origin": "《分布式高并发.pdf》约第 185 页附近：容器无自己的内核"
   },
   "docker-image-template-not-container": {
@@ -16177,7 +16207,7 @@
         "https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-a-container/"
       ]
     ],
-    "diagram": "diagrams/docker-image-template-not-container.svg",
+    "diagram": "library-assets/distributed-hc/p0186.png",
     "origin": "《分布式高并发.pdf》约第 186 页附近：镜像是只读模板"
   },
   "vm-vs-container-isolation-tradeoff": {
@@ -16210,7 +16240,7 @@
         "https://kubernetes.io/docs/concepts/overview/"
       ]
     ],
-    "diagram": "diagrams/vm-vs-container-isolation-tradeoff.svg",
+    "diagram": "library-assets/distributed-hc/p0184.png",
     "origin": "《分布式高并发.pdf》约第 184–186 页：虚拟机与容器对比"
   },
   "one-container-one-service-heuristic": {
@@ -16243,7 +16273,7 @@
         "https://docs.docker.com/config/containers/multi-service_container/"
       ]
     ],
-    "diagram": "diagrams/one-container-one-service-heuristic.svg",
+    "diagram": "library-assets/distributed-hc/p0187.png",
     "origin": "《分布式高并发.pdf》约第 187 页附近：一个容器运行一种服务"
   },
   "docker-registry-not-just-repo-bucket": {
@@ -16276,7 +16306,7 @@
         "https://github.com/opencontainers/distribution-spec"
       ]
     ],
-    "diagram": "diagrams/docker-registry-not-just-repo-bucket.svg",
+    "diagram": "library-assets/distributed-hc/p0187.png",
     "origin": "《分布式高并发.pdf》约第 187 页：仓库与注册服务器有区别；总结混称仓储"
   },
   "kubeadm-cni-before-coredns": {
@@ -16906,8 +16936,8 @@
         "https://docs.oracle.com/javase/specs/jvms/se21/html/jvms-2.html#jvms-2.5.3"
       ]
     ],
-    "diagram": "diagrams/cpu-cache-line.svg",
-    "origin": "本地库「计算机组成」导图里把缓存画成对程序员透明"
+    "diagram": "library-assets/illustrated-basics/computer-organization.png",
+    "origin": "图解计算机组成（计算机组成.png）"
   },
   "cpu-heap-not-cpu-cache": {
     "core": "处理器的 L1、L2、L3 是硬件缓存，容量由 CPU 决定，JVM 参数调不到。Java 堆在主存里，由 `-Xmx` / `-Xms` 限制，规范里叫 heap，见 `jvm-areas`。对象分配在堆上（或逃逸后的标量替换），被反复访问的字段会进缓存行，但「堆有 8G」不等于「L3 有 8G」。把组成课里的存储层次和 JVM 运行时区域画成同一枝，会把 GC 停顿、缓存未命中和堆溢出混成一个旋钮。调堆见 `jvm-oom-signals`；慢在哪一层见 `server-slow-which-resource`。",
@@ -16935,8 +16965,8 @@
         "https://docs.oracle.com/en/java/javase/21/docs/specs/man/java.html"
       ]
     ],
-    "diagram": "diagrams/cpu-dram-heap.svg",
-    "origin": "本地库「计算机组成」导图的存储层次"
+    "diagram": "library-assets/illustrated-basics/computer-organization.png",
+    "origin": "图解计算机组成（计算机组成.png）· 存储层次"
   },
   "design-review": {
     "core": "先澄清规模、吞吐、延迟、一致性和故障目标；设计数据模型及最简单可行路径；再指出瓶颈、演进策略和验证方式。顺序是：问清峰值和正确性底线，画出一次请求碰到的数据，给出能满足不变量的最小设计，最后写明哪个指标到了阈值才引入新组件。边界是：组件名称不是架构。Redis 解决不了没定义的一致性，队列解决不了没定义的容量。每加一层都要说清它去掉的瓶颈和带来的失败模式。最小设计先用数据库条件更新保住库存不为负。只有连接数、锁等待或延迟分布证明数据库先到顶，才加缓存或队列，并写明新组件失败时订单怎样恢复。每加一个组件，都要写明它去掉的瓶颈，以及它自己失败时订单怎样恢复。",
@@ -17135,7 +17165,241 @@
         "kernel：preempt",
         "https://docs.kernel.org/scheduler/preempt.html"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/os-p0111.png",
+    "origin": "本地库《图解系统》内核能力与调度页"
+  },
+  "linux-virtual-memory-isolation": {
+    "core": "单片机等场景常让 CPU 直接使用物理地址；两个程序若都写同一个绝对地址，会互相覆盖。操作系统为每个进程提供独立的虚拟地址空间：进程只在自己的虚拟地址里访问，相同的虚拟地址可以映射到不同的物理内存。映射由操作系统维护，访存时再经硬件翻译。这样进程不必协调彼此的物理布局，也能避免直接踩到对方的数据。",
+    "why": "把物理直访当成多进程现状，就解释不了进程隔离，也解释不了为何两个进程打印出相同指针值却互不影响。区分信号是：冲突来自共用绝对物理地址；虚拟地址把“程序看到的地址”和“内存条位置”分开。",
+    "example": "进程 A 与进程 B 都在虚拟地址 0x2000 写入，物理页可以完全不同，因此不会互相覆盖。若强制共用物理地址 0x2000，后写的会毁掉先写的内容。",
+    "task": "画出「进程 → 虚拟内存 → 物理内存」三层；用一句话说明为何两个进程可以用相同虚拟地址；写出物理直访模型在多进程下的主要风险。",
+    "answer": "三层是进程、虚拟内存、物理内存。两个进程可以用相同虚拟地址，因为各自映射到不同物理位置。物理直访的主要风险是互相覆盖、无法隔离。",
+    "deep": [
+      {
+        "title": "虚拟内存在这里解决的问题",
+        "body": "先解决隔离与独立地址空间，再谈缺页、换页和文件映射。没有这层抽象，后面的页表机制没有落点。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对照「进程 / 虚拟内存 / 物理内存」三层图，指出程序写出的地址落在哪一层。再写一句：冲突来自绝对物理地址，不是来自“数字长得像”。"
+      }
+    ],
+    "references": [
+      [
+        "kernel：Memory Management",
+        "https://docs.kernel.org/admin-guide/mm/index.html"
+      ],
+      [
+        "man：mmap",
+        "https://man7.org/linux/man-pages/man2/mmap.2.html"
+      ]
+    ],
+    "diagram": "library-assets/illustrated-basics/os-p0121.png",
+    "origin": "本地库《图解系统》为何需要虚拟内存页"
+  },
+  "linux-virtual-addr-mmu": {
+    "core": "虚拟地址是程序看到的地址空间；物理地址才是硬件内存里真正的位置。操作系统给每个进程一套虚拟地址空间，访存时由芯片里的内存管理单元（MMU）做地址翻译。同一虚拟地址在不同进程可以对应不同物理页；未映射或被换出时会走缺页，不是“指针数字直接等于内存条偏移”。管理虚拟与物理对应关系的常见机制是分段与分页；现行通用操作系统以分页为主，分段多作历史与兼容背景。",
+    "why": "把虚拟地址当成物理地址，就解释不了进程隔离、同一指针值在两个进程里指向不同内容，也解释不了缺页与换页。区分信号是：CPU 发出的是虚拟地址，落到内存条之前一定经过 MMU。",
+    "example": "两个进程各自把一个 int 放在看起来相同的虚拟地址上，物理页可以完全不同。进程访问尚未映射的页会触发缺页异常，由内核补页或报错，而不是直接读到别的进程的物理内存。",
+    "task": "画出「CPU → MMU → 物理内存」三步；写出虚拟地址与物理地址各一句话定义；说明分段与分页分别按什么单位做映射。",
+    "answer": "CPU 发出虚拟地址，MMU 翻译成物理地址，再访问物理内存。虚拟地址是程序使用的地址；物理地址是硬件内存中的位置。分段按逻辑段（代码、数据、栈等）映射；分页按固定大小的页映射。现行通用系统以分页为主。",
+    "deep": [
+      {
+        "title": "为什么要虚拟地址",
+        "body": "每个进程看到自己的地址空间，彼此隔离；物理页可以按需映射、共享只读页或换出到磁盘。没有这层翻译，多进程就不能安全共用同一块物理内存。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对照一张「CPU → MMU → 物理内存」图，指出程序打印的指针落在哪一侧。再写两句：虚拟地址是程序用的；物理地址是硬件位置。分段按逻辑段，分页按页，现行通用系统以分页为主。"
+      }
+    ],
+    "references": [
+      [
+        "kernel：Memory Management",
+        "https://docs.kernel.org/admin-guide/mm/index.html"
+      ],
+      [
+        "Intel SDM：Memory Management",
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html"
+      ]
+    ],
+    "diagram": "library-assets/illustrated-basics/os-p0122.png",
+    "origin": "本地库《图解系统》虚拟地址与物理地址页"
+  },
+  "linux-memory-segmentation": {
+    "core": "分段机制下，虚拟地址常拆成段选择子（含段号）与段内偏移：用段号索引段表，取出段基址、段界限等，再把偏移加到基址上得到物理地址；偏移不能越过段界限。程序常按代码、数据、堆、栈等逻辑段划分，段长短不一。段大小可变，容易产生外部碎片，整段换入换出成本也高，所以后来主流转向固定大小的分页。现行 x86 仍保留段相关结构，但通用操作系统的地址翻译主路径是分页。",
+    "why": "把四大段直映物理内存当成现状，会对不上页表、缺页和按页换入换出。区分信号是：段表按可变长段映射；页表按固定页映射。",
+    "example": "访问某段内偏移 500：先用段号查段表得到基址，再基址加 500。若偏移超过段界限则非法。四个段在物理内存上可以不相邻，中间留下难以利用的空洞，这就是外部碎片的来源之一。",
+    "task": "写出分段下虚拟地址的两部分；说明物理地址怎样由基址与偏移得到；写一句现行通用系统为何不以分段做主映射。",
+    "answer": "两部分是段选择子（段号）与段内偏移。物理地址由段基址加段内偏移得到，且偏移不能越界。现行通用系统不以分段做主映射，因为可变长段易碎片、整段交换成本高，主路径改为分页。",
+    "deep": [
+      {
+        "title": "分段解决了什么，又留下什么",
+        "body": "分段让程序按逻辑段组织，不必直接写物理地址。留下的问题是可变长占用造成外部碎片，以及整段换入换出偏慢，这些推动了分页。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对照段选择子与段内偏移的图，用手算一次基址加偏移。再写一句：今天讲进程地址空间映射，主模型是页表而不是四大段直映。"
+      }
+    ],
+    "references": [
+      [
+        "Intel SDM：Segmentation",
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html"
+      ],
+      [
+        "kernel：Memory Management",
+        "https://docs.kernel.org/admin-guide/mm/index.html"
+      ]
+    ],
+    "diagram": "library-assets/illustrated-basics/os-p0123.png",
+    "origin": "本地库《图解系统》分段地址翻译页"
+  },
+  "linux-memory-paging": {
+    "core": "分页把虚拟地址空间和物理内存都切成固定大小的页（Linux 常见默认 4KB）。虚拟地址分为页号与页内偏移：页号索引页表，得到物理页号（或页帧基址），再与页内偏移拼成物理地址；翻译由 MMU 完成。相对分段，页是固定粒度，换入换出可以按页进行，不必整段搬迁。页不在物理内存时会缺页，由内核补页或换入后再继续执行。",
+    "why": "把整段换入换出当成现状，会夸大碎片与交换成本，也对不上页表、缺页这些现行机制。区分信号是：地址先按页号查表，再拼偏移。",
+    "example": "访问某个虚拟地址时，先取出页号查页表得到物理页，再加上页内偏移才落到具体字节。进程不必一次性装入全部虚拟页；首次访问未映射页会触发缺页，内核分配物理页并更新页表。",
+    "task": "写出分页下虚拟地址的两部分名称；用三步写出「页号 → 页表 → 物理地址」；说明 Linux 常见默认页大小。",
+    "answer": "两部分是页号与页内偏移。三步：拆出页号和偏移；用页号查页表得到物理页；物理页与偏移拼成物理地址。Linux 常见默认页大小是 4KB。",
+    "deep": [
+      {
+        "title": "分页相对分段在交换上的差别",
+        "body": "分段时常要搬整段，碎片和交换成本都大。分页按页换入换出，未用到的虚拟页可以先不占物理内存，靠缺页再装入。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对照页号与页内偏移的拆分图，用手算一次：给定页号查表得到物理页，再加偏移。写出一句：翻译在 MMU，页表由操作系统维护。"
+      }
+    ],
+    "references": [
+      [
+        "kernel：Memory Management",
+        "https://docs.kernel.org/admin-guide/mm/index.html"
+      ],
+      [
+        "kernel：Page Table Isolation",
+        "https://docs.kernel.org/x86/pti.html"
+      ]
+    ],
+    "diagram": "library-assets/illustrated-basics/os-p0128.png",
+    "origin": "本地库《图解系统》分页地址翻译页"
+  },
+  "linux-multilevel-page-table": {
+    "core": "简单单级页表要为整个虚拟地址空间准备页表项。以 32 位、4KB 页为例，约 2^20 个页表项，每项 4 字节则约 4MB，且每个进程一份，进程一多就很贵。多级页表把页号再拆成多级索引：先查一级表得到二级表基址，再查二级得到物理页号，最后拼页内偏移。未使用的虚拟区间可以不建下级页表，从而省空间。64 位还会用更多级或其它压缩结构，但“按需展开、不按满地址空间常驻一张扁平表”的道理相同。",
+    "why": "按每人一张满幅扁平页表去估内存，会高估页表占用，也解释不了为什么空地址区间不必占满物理页表页。区分信号是：多级索引 + 未用区间可不建下级表。",
+    "example": "32 位常见拆分是 10 位一级页号、10 位二级页号、12 位页内偏移（对应 4KB 页）。进程只用了少量虚拟页时，一级表里大量项为空，对应二级表根本不分配。",
+    "task": "算出 32 位、4KB 页、每项 4 字节时单级页表大约多大；写出多级页表省空间的关键一句；标出 10-10-12 拆分里哪一段是页内偏移。",
+    "answer": "单级页表大约 4MB（2^20 项 × 4 字节）。多级页表省空间的关键是：未使用的虚拟区间可以不建下级页表。10-10-12 里最后 12 位是页内偏移。",
+    "deep": [
+      {
+        "title": "多级并非永远更省",
+        "body": "若进程真的映射满整个地址空间，多级表项总数不会变少，还多了层级指针。省的是“大部分虚拟空间从未用到”这一常见情况。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "用 2^32 / 4KB 算出页数，再乘每项 4 字节得到约 4MB。对照 10-10-12 图，指出一级索引、二级索引和页内偏移各多少位。"
+      }
+    ],
+    "references": [
+      [
+        "kernel：Memory Management",
+        "https://docs.kernel.org/admin-guide/mm/index.html"
+      ],
+      [
+        "Intel SDM：Paging",
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html"
+      ]
+    ],
+    "diagram": "library-assets/illustrated-basics/os-p0130.png",
+    "origin": "本地库《图解系统》多级页表页"
+  },
+  "linux-page-fault-swap": {
+    "core": "分页下不必一次装入进程的全部虚拟页。访问到页表中尚未对应物理页（或页在磁盘上）的地址时，硬件产生缺页异常，陷入内核：分配或换入物理页、更新页表，再回到用户态继续执行。内存紧张时，操作系统可以把近期较少使用的页换出到磁盘上的交换空间（如 Linux 的 swap），需要时再换入。按页换入换出比整段搬迁粒度更小，也支持按需装入。",
+    "why": "按“启动时装满物理内存”去想，解释不了为什么进程虚拟空间可以很大却只占部分 RSS，也解释不了 swap 命中后的停顿。区分信号是：缺页路径负责补页；换出换入按页与磁盘交互。",
+    "example": "首次读到尚未分配物理页的数据页会缺页，内核分配一页并填好页表项。物理内存不够时，可能把另一个进程很久未用的脏页写到 swap，腾出页帧给当前缺页。",
+    "task": "写出缺页发生后的三步（异常 → 内核做什么 → 回到哪里）；用一句话区分换出与换入；说明为何按页交换通常比整段交换更合适。",
+    "answer": "缺页后：硬件进缺页异常；内核分配或换入物理页并更新页表；再返回用户态继续执行。换出是把页写到磁盘腾出内存，换入是从磁盘读回。按页交换粒度小，不必整段搬迁。",
+    "deep": [
+      {
+        "title": "和分段整段交换的差别",
+        "body": "分段时常要搬整段，成本高。分页只移动用到的页，未访问的虚拟页可以长期不占物理页帧。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对照「虚拟页 → 页表 → 物理页 / 硬盘」图，标出换出与换入两条箭头。写下一句：缺页是访问路径上的补页机会，不是程序写错才会发生的唯一情况。"
+      }
+    ],
+    "references": [
+      [
+        "kernel：Page Frame Reclamation",
+        "https://docs.kernel.org/mm/page_reclaim.html"
+      ],
+      [
+        "man：mmap",
+        "https://man7.org/linux/man-pages/man2/mmap.2.html"
+      ]
+    ],
+    "diagram": "library-assets/illustrated-basics/os-p0127.png",
+    "origin": "本地库《图解系统》缺页与换入换出页"
+  },
+  "linux-tlb-cache": {
+    "core": "多级页表降低了页表占用，但一次地址翻译可能要读多级表项，延迟高。利用程序局部性，CPU 芯片内用 TLB（Translation Lookaside Buffer，也称快表、页表缓存）保存近期用过的页表翻译结果。MMU 先查 TLB：命中则直接得到物理页相关信息；未命中再查内存中的页表，并通常把结果填回 TLB。进程切换或页表更新时还要考虑 TLB 失效，否则会用到过期翻译。",
+    "why": "忽略 TLB，会低估多级页表的时间成本，也解释不了为何页表更改后要刷新快表。区分信号是：TLB 在 CPU 侧缓存翻译；页表在内存里是完整映射权威来源。",
+    "example": "循环访问同一小段代码页时，TLB 命中率通常很高，地址翻译几乎不再每次穿透多级页表。修改页表映射或切换到另一进程的地址空间后，需要让旧的 TLB 项失效，避免落到错误物理页。",
+    "task": "写出 TLB 命中与未命中时 MMU 各怎么做；用一句话说明局部性为何让 TLB 有效；指出 TLB 与页表谁是完整映射的权威来源。",
+    "answer": "命中：MMU 用 TLB 里的翻译继续访问。未命中：查内存中的页表，并通常把结果写入 TLB。局部性使短期访问集中在少数页，TLB 才有高命中率。完整映射的权威来源是内存中的页表，不是 TLB。",
+    "deep": [
+      {
+        "title": "多级页表与 TLB 各管什么",
+        "body": "多级页表主要省空间；TLB 主要补时间。两者都依赖局部性：地址空间用不满，且短期访问集中。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对照 CPU 芯片内 MMU 与 TLB 的图，指出虚拟地址先到哪里。写两句：命中走快表；改页表或切进程要考虑 TLB 失效。"
+      }
+    ],
+    "references": [
+      [
+        "Intel SDM：Caching Translation Information",
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html"
+      ],
+      [
+        "kernel：Memory Management",
+        "https://docs.kernel.org/admin-guide/mm/index.html"
+      ]
+    ],
+    "diagram": "library-assets/illustrated-basics/os-p0133.png",
+    "origin": "本地库《图解系统》TLB 与 MMU 页"
+  },
+  "linux-segmented-paging": {
+    "core": "段页式把分段与分页接在一条链上：程序侧常是段号加偏移的逻辑地址；段式管理先映射出线性地址（也常称虚拟地址）；页式管理再经页表落到物理地址。地址里还可以进一步看成段号、段内页号、页内偏移。Intel 从 80386 起在分段之上叠加分页；Linux 在这种硬件模型上做内存管理，并不是“只有分页、芯片上从来没有段”。合用时一次翻译可能经过段表与页表等多级访存，开销更大，但可兼顾逻辑分段与按页分配。",
+    "why": "把二者对立成互斥选项，就读不懂逻辑地址、线性地址、物理地址三层，也解释不了为何教材仍提段寄存器。区分信号是：段的输出是线性/虚拟地址，页的输出才是物理地址。",
+    "example": "逻辑地址进入段式单元得到线性地址，再进入页式单元得到物理地址。段表项可以指向该段的页表，页表项再给出物理页号，最后拼页内偏移。",
+    "task": "按顺序列出逻辑地址、线性地址、物理地址；标明段式单元与页式单元各吃哪一种、产出哪一种；写一句 Linux 为何仍要理解这条链。",
+    "answer": "顺序是逻辑地址 → 线性地址（虚拟地址） → 物理地址。段式单元吃逻辑地址、产出线性地址；页式单元吃线性地址、产出物理地址。Linux 跑在先段后页的硬件模型上，公开课要把三层地址分清，不能背成互斥二选一。",
+    "deep": [
+      {
+        "title": "和“现行以分页为主”怎么同时成立",
+        "body": "主路径的灵活映射、缺页、换页按页做；硬件上仍可能先经过段式再进入页式。教学上既要说清主模型是分页，也要分清三层地址名字。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对照「逻辑地址 → 段式 → 线性地址 → 页式 → 物理地址」图，给每一箭头写下输入输出。划掉“分段与分页只能挑一个”。"
+      }
+    ],
+    "references": [
+      [
+        "Intel SDM：Memory Management",
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html"
+      ],
+      [
+        "kernel：Memory Management",
+        "https://docs.kernel.org/admin-guide/mm/index.html"
+      ]
+    ],
+    "diagram": "library-assets/illustrated-basics/os-p0135.png",
+    "origin": "本地库《图解系统》段页式与 Linux 内存管理页"
   },
   "k8s-runtime-not-only-docker": {
     "core": "kubelet 不直接调用某一种容器引擎，它通过 CRI 把创建 Pod、启停容器交给节点上的运行时。1.24 起，Kubernetes 不再内置 dockershim，所以“装好 Docker Engine，kubelet 就能用”不再成立。节点上常见的是实现了 CRI 的 containerd 或 CRI-O。还想用 Docker Engine 时，要另接 cri-dockerd，由它把 CRI 调用转给 Docker。控制面一直在工作：API Server 接收请求，调度器决定 Pod 去哪，控制器把期望状态推向集群，etcd 存集群数据。这些进程常常带有不调度业务的污点，所以默认不把你的工作负载放上去。那是“不跑业务 Pod”，不是“Master 不参加实际工作”。",
@@ -17216,7 +17480,38 @@
         "pthreads：fork",
         "https://man7.org/linux/man-pages/man7/pthreads.7.html"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/os-p0184.png",
+    "origin": "本地库《图解系统》管道章中的 fork 创建子进程页"
+  },
+  "linux-shell-pipe-fds": {
+    "core": "shell 执行 `A | B` 时，父进程先调用 `pipe` 得到读端与写端文件描述符，再 `fork` 出两个子进程。写侧子进程保留写端、关闭读端；读侧子进程保留读端、关闭写端；父进程通常关掉两端，避免多余引用妨碍读端收到结束。匿名管道因此只适合有共同祖先、能继承描述符的进程；无亲缘关系要用命名管道等其它 IPC。双向通信通常需要两根管道。",
+    "why": "漏掉 fork 继承，就会以为任意两个进程都能接匿名管道，也对不上为何要关闭不用的一端。区分信号是：匿名管道靠描述符继承；命名管道以路径存在，可给无亲缘进程用。",
+    "example": "`ls | grep txt`：shell 建 pipe，一个子进程执行 ls 并把标准输出接到写端，另一个执行 grep 并从读端接到标准输入；各自关闭不用的那一端。",
+    "task": "按顺序列出 shell 建管道的三步；说明写端子进程与读端子进程各保留哪一端；写一句匿名管道与命名管道在亲缘关系上的差别。",
+    "answer": "三步：pipe 创建读写端；fork 出两个子进程；各进程关闭不用的一端（父进程常两端都关）。写侧保留写端，读侧保留读端。匿名管道依赖继承，适合有共同祖先的进程；命名管道以路径存在，可供无亲缘进程使用。",
+    "deep": [
+      {
+        "title": "和只讲 fork 复制的关系",
+        "body": "`linux-fork-copies-one-thread` 讲创建时拷什么。本课钉管道场景：描述符如何接到子进程，以及关闭策略如何影响读端结束。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对照 shell 父进程与两个子进程的描述符图，标出谁关读端、谁关写端。写一句：匿名管道不是凭空出现的全局管子。"
+      }
+    ],
+    "references": [
+      [
+        "man：pipe",
+        "https://man7.org/linux/man-pages/man2/pipe.2.html"
+      ],
+      [
+        "man：pipe(7)",
+        "https://man7.org/linux/man-pages/man7/pipe.7.html"
+      ]
+    ],
+    "diagram": "library-assets/illustrated-basics/os-p0187.png",
+    "origin": "本地库《图解系统》shell 管道与匿名管道页"
   },
   "docker-root-not-host-root": {
     "core": "容器里 whoami 是 root，只说明这个进程在自己的用户命名空间里 uid 是 0。没有做用户命名空间重映射时，这个 0 就是宿主机上的 uid 0，身份确实大。即便如此，默认仍会丢掉一批 Linux capabilities，并套上 seccomp。容器有自己的挂载命名空间，里面的 /etc/shadow 是镜像里的文件，不是宿主机那一份，除非你把宿主机路径挂进去。--privileged 会把能力加回来，并放宽隔离，那才是“提升权限”之后危险的那种跑法。打开 userns-remap 后，容器里的 uid 0 映射到 /etc/subuid 里的一段普通号，例如从 231072 起，在宿主机上没有 root 特权。rootless 更进一步：守护进程本身就不是宿主机 root。两种映射都不是 2016 年“容器 root 等于宿主机 root”那一句能概括的。",
@@ -17277,7 +17572,9 @@
         "GitHub：renaming master to main",
         "https://github.com/github/renaming"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/git-p0001.png",
+    "origin": "图解 Git.pdf 第 1 页"
   },
   "retired-spring-cloud-netflix": {
     "core": "Spring Cloud 2020.0 起，发行版移除了 Hystrix、Ribbon 和 Zuul 1 这些 Netflix 模块。进程内限流和熔断用 Sentinel 或 Resilience4j。客户端负载均衡的现行实现是 Spring Cloud LoadBalancer。北向入口用 Spring Cloud Gateway。Spring Boot 3 基于 Jakarta EE，依赖的包名是 jakarta.servlet、jakarta.persistence，不是 javax 下的同名包。MySQL 8 也已经移除查询缓存。旧项目可以留在 Boot 2 维持这些类，新的课程和新建服务按现行组件写。",

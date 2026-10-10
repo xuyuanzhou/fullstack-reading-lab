@@ -39,6 +39,8 @@ const COVERAGE_JAVA_34 = [
     task:'写出 3.2 的 quicklist 和 7.0 的 listpack；划掉“List=链表或 ziplist”。',
     answer:'3.2 起 List 用 quicklist。7.0 起小结构用 listpack。别再只背 3.0 的两种实现。',
     keywords:'Redis quicklist listpack ziplist List',
+    origin:'本地库《图解 redis 数据结构》quicklist / listpack 页',
+    diagram:'library-assets/illustrated-basics/redis-ds-p0035.png',
     points:['3.2 之后 List 是 quicklist','7.0 用 listpack 替代 ziplist','键空间哈希平均快，不是绝对最坏 O(1)'],
     refs:[['Redis 7 listpack','https://github.com/redis/redis/blob/unstable/src/listpack.h'],['Redis quicklist','https://redis.io/docs/latest/develop/data-types/lists/']]
   },

@@ -11,6 +11,21 @@
 
 | 日期 | 状态 | 标题 |
 | --- | --- | --- |
+| 2026-10-10 | 已完成 | [库图入库：GitHub Pages 可显示 library-assets](2026-10-10-library-assets-github-pages.md) |
+| 2026-10-10 | 已完成 | [分层 / 握手对比 / HTTPS / 证书链 / Range / Redis 类型](2026-10-10-library-sync-handshake-tls-types.md) |
+| 2026-10-10 | 已完成 | [401/403、Cookie、SDS、端口、503 专页挂图](2026-10-10-library-sync-status-cookie-sds.md) |
+| 2026-10-10 | 已完成 | [HTTP / 网络 / Redis 分章专页换挂（告别封面）](2026-10-10-library-sync-http-net-redis-pages.md) |
+| 2026-10-10 | 已完成 | [虚存隔离 / 段页式 / shell 管道三课挂图](2026-10-10-library-sync-isolation-segpage-pipe.md) |
+| 2026-10-10 | 已完成 | [分段 / 缺页换入换出 / TLB 三课挂图](2026-10-10-library-sync-seg-fault-tlb.md) |
+| 2026-10-10 | 已完成 | [新建分页与多级页表定义课并挂 OS 图](2026-10-10-library-sync-paging-page-table.md) |
+| 2026-10-10 | 已完成 | [新建虚拟地址/MMU 定义课并挂 os-p0122](2026-10-10-library-sync-virtual-addr-mmu.md) |
+| 2026-10-10 | 已完成 | [图解 OS：读写锁与死锁课挂图；同步台账收口](2026-10-10-library-sync-os-rwlock-deadlock.md) |
+| 2026-10-10 | 已完成 | [图解 OS 续挂三课；工具篇与面经跳过落盘](2026-10-10-library-sync-os-tools-skip.md) |
+| 2026-10-10 | 已完成 | [AI 路线续挂：实战 / 项目 / 面试手册图](2026-10-10-library-sync-ai-diagrams-more.md) |
+| 2026-10-10 | 已完成 | [AI 路线挂手册库图；暂留课明确跳过](2026-10-10-library-sync-ai-diagrams.md) |
+| 2026-10-10 | 已完成 | [本机知识库同步：批 5（面经导图 + AI 选题资产）](2026-10-10-library-sync-batch5.md) |
+| 2026-10-10 | 已完成 | [本机知识库同步：批 2 续挂（OS / FE / D8 / 图解 Java）](2026-10-10-library-sync-batch2.md) |
+| 2026-10-10 | 已完成 | [本机知识库同步：管道 + 批 1～4 首轮](2026-10-10-library-sync-batch1.md) |
 | 2026-10-10 | 已完成 | [公开课不再自造分类名](2026-10-10-no-coined-terms.md) |
 | 2026-10-10 | 已完成 | [语言基础、TypeScript、CSS、React、Vue 补上定义课](2026-10-10-foundations-before-corrections.md) |
 | 2026-10-10 | 已完成 | [Java 基础补上类型和语法](2026-10-10-java-basics-types-syntax.md) |

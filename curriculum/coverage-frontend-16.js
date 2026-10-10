@@ -11,8 +11,8 @@ const COVERAGE_FRONTEND_16 = [
     task:'划掉「万物皆对象」。分别记录 1、{}、Object.create(null)、null 的 typeof 和 getPrototypeOf。',
     answer:'1 的 typeof 是 number，不是对象。普通对象有原型。create(null) 是对象但原型是 null。null 不是对象，getPrototypeOf(null) 抛错。链停在 null，不是空对象。',
     keywords:'JavaScript primitive Object.create null prototype typeof',
-    origin:'本地库「原型链流程图」上的万物皆对象口诀',
-    diagram:'diagrams/js-null-end.svg',
+    origin:'本地库「原型链流程图」：万物皆对象口诀',
+    diagram:'library-assets/illustrated-basics/prototype-chain-flow.png',
     points:['原始值不是对象，属性访问才会临时装箱','null 不是空对象，typeof 的 object 是历史包袱','没有原型的对象用 Object.create(null)，日常不要读 __proto__'],
     deep:[
       {title:'装箱留不住字段',body:'给原始值写属性只打在临时包装对象上，语句结束就丢掉。需要长期字段就用对象或显式 new Number 这类包装，后者几乎不该出现在新代码里。'},
@@ -31,8 +31,8 @@ const COVERAGE_FRONTEND_16 = [
     task:'对比 function、箭头函数、bind 之后的函数有没有 prototype，以及 Function.prototype 的 typeof。划掉「原型都是 Object 构造的」。',
     answer:'只有可 new 的函数才有 prototype。箭头和 bind 没有。Function.prototype 的 typeof 是 function。它的原型才是 Object.prototype。',
     keywords:'JavaScript arrow function prototype Function.prototype bind new',
-    origin:'本地库「原型链流程图」上的构造函数与原型对象口诀',
-    diagram:'diagrams/js-arrow-no-prototype.svg',
+    origin:'本地库「原型链流程图」：构造函数与原型对象口诀',
+    diagram:'library-assets/illustrated-basics/prototype-chain-flow.png',
     points:['箭头函数和 bind 函数没有 prototype，不能 new','Function.prototype 是函数，不是普通对象实例','实例链到构造函数的 prototype，不要靠 __proto__ 口诀'],
     deep:[
       {title:'class 也是函数',body:'class 声明的构造函数仍是函数，方法在 prototype 上。它不能当普通函数不带 new 调用。这和箭头函数「根本没有 prototype」不是同一条限制。'},

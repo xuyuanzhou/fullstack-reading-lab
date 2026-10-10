@@ -19,3 +19,6 @@ __pycache__/
 *.jpg
 *.jpeg
 *.webp
+# 公开课库图必须进仓，否则 GitHub Pages 构建拿不到 PNG
+!curriculum/library-assets/
+!curriculum/library-assets/**

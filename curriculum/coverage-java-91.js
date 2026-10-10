@@ -12,7 +12,7 @@ const COVERAGE_JAVA_91 = [
     answer:'划掉大桶口诀。Registry 是服务端点；Repository 是镜像名空间；tag/digest 指向具体镜像内容。Hub 只是一种公开 Registry。',
     keywords:'Docker Registry Repository tag Harbor',
     origin:'《分布式高并发.pdf》约第 187 页：仓库与注册服务器有区别；总结混称仓储',
-    diagram:'diagrams/docker-registry-not-just-repo-bucket.svg',
+    diagram:'library-assets/distributed-hc/p0187.png',
     points:['Registry 是托管服务端点','Repository 是镜像名空间','tag 或 digest 才钉死构建'],
     deep:[
       {title:'和镜像层',body:'拉下来的是按 digest 寻址的内容地址存储；tag 只是可变指针，可能被重新指向。'},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_91 = [
     answer:'划掉又省又连续。批量换吞吐、丢连续性；崩溃浪费未用段。要连续就别批量；要分布式唯一可接受缺口或换雪花。',
     keywords:'sequence 乐观锁 号段 断号',
     origin:'《分布式高并发.pdf》约第 194–195 页：sequence 表乐观锁；一次取 500 缓存',
-    diagram:'diagrams/db-sequence-batch-not-gapless.svg',
+    diagram:'library-assets/distributed-hc/p0194.png',
     points:['乐观锁发号有热点行成本','批量预取会跳号','连续与吞吐要二选一偏置'],
     deep:[
       {title:'和多 Master 步长',body:'多主不同起点+相同步长是另一路并行，也不是 Cluster 自动拆号，见 Redis 发号课。'},

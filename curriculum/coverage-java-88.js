@@ -12,7 +12,7 @@ const COVERAGE_JAVA_88 = [
     answer:"划掉忽视隔离。共享内核更轻也共享攻击面。用命名空间/策略加固，强隔离看 VM。",
     keywords:"容器 内核 命名空间 隔离",
     origin:"《分布式高并发.pdf》约第 185 页附近：容器无自己的内核",
-    diagram:"diagrams/container-shares-host-kernel.svg",
+    diagram:'library-assets/distributed-hc/p0185.png',
     points:["共享宿主机内核","轻量与攻击面并存","加固与强隔离选项"],
     deep:[
       {title:"和 root",body:"容器内 root 不等于宿主机 root，但也不是无关，见 docker-root 课。"},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_88 = [
     answer:"划掉等同。镜像只读模板；容器是实例；持久化用卷。",
     keywords:"Docker 镜像 容器 卷",
     origin:"《分布式高并发.pdf》约第 186 页附近：镜像是只读模板",
-    diagram:"diagrams/docker-image-template-not-container.svg",
+    diagram:'library-assets/distributed-hc/p0186.png',
     points:["镜像只读可多实例","容器有可写层","持久化用卷"],
     deep:[
       {title:"和多层构建",body:"构建缓存与层复制见 docker-layer 课。"},

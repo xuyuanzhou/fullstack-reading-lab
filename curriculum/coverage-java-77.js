@@ -12,7 +12,7 @@ const COVERAGE_JAVA_77 = [
     answer:"划掉一句本质相同。谱系相关，但微服务强调独立部署与去中心治理等。多语言/REST 不是充分条件。",
     keywords:"微服务 SOA Fowler 独立部署",
     origin:"《分布式高并发.pdf》约第 17 页：微服务本质还是 SOA",
-    diagram:"diagrams/microservices-not-just-soa-relabel.svg",
+    diagram:'library-assets/distributed-hc/p0017.png',
     points:["谱系相关不等于定义等同","独立部署与数据所有权是分叉","REST/多语言不是充分条件"],
     deep:[
       {title:"和拆分动机",body:"连接数平方、共用业务提取是动机之一，见拆分课；不等于完成微服务。"},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_77 = [
     answer:"划掉一刀切。默认算力上移。视图/过程/触发器/Event 风险不同；例外要拥有者与观测。禁止藏副作用，不是禁止一切对象。",
     keywords:"视图 触发器 Event 存储过程 扩展性",
     origin:"《分布式高并发.pdf》约第 104 页：禁止存储过程、视图、触发器、Event",
-    diagram:"diagrams/mysql-db-features-ban-not-absolute.svg",
+    diagram:'library-assets/distributed-hc/p0104.png',
     points:["算力上移是默认策略","四种对象风险不同","例外要拥有者与观测"],
     deep:[
       {title:"和 Event",body:"Event Scheduler 适合库内维护任务，但要当生产作业看，不是隐藏 cron。"},

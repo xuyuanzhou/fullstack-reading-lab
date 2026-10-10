@@ -45,6 +45,8 @@ const COVERAGE_PATH = [
     task:'在网络面板里对同一源的多张图记录连接 ID，区分复用、排队和缓存命中。',
     answer:'同一源多张图应记下相同的连接标识，表示复用而不是各握一次手。超出并发上限的请求状态仍是排队，计时里没有新的握手段。缓存仍新鲜的那张没有请求行，所以资源数、请求数和握手次数要分三列记，不能按图片张数推断握手。不能按图片张数推断握手次数，要分开计。',
     keywords:'HTTP keep-alive HTTP/2 connection reuse 持久连接 瀑布图',
+    origin:'本地库《图解网络》HTTP/1.0 短连接与 1.1 长连接（含三次握手）',
+    diagram:'library-assets/illustrated-basics/network-p0080.png',
     points:['HTTP/1.1 默认可在同一连接上连续请求','同域并发连接有上限，超出的请求会排队','缓存命中时不再为该资源建立请求'],
     deep:[
       {title:'连接复用与排队',body:'持久连接上可以连续发多个请求。同域并发达到上限后，后来的请求等空闲连接，而不是再做一次握手。HTTP/2 则在一条连接里用多个流并行。缓存新鲜时这一行根本不出现。'},
@@ -62,6 +64,8 @@ const COVERAGE_PATH = [
     task:'分别设置 HttpOnly Cookie 和 localStorage 项，检查 document.cookie、请求头和关闭浏览器后的残留。',
     answer:'HttpOnly Cookie 会出现在匹配请求的请求头里，document.cookie 读不到它；没有过期时间时关掉浏览器后会话消失。localStorage 刷新还在，但请求头里不会自动出现，同源脚本可以读到。自动提交和脚本可读是两道分开的检查。',
     keywords:'Cookie HttpOnly SameSite Secure localStorage 会话',
+    origin:'本地库《图解 HTTP》Cookie 签发与回传页',
+    diagram:'library-assets/illustrated-basics/http-p0039.png',
     points:['Cookie 按属性自动附在匹配的请求上','HttpOnly 阻止脚本读取该 Cookie','localStorage 不自动发送，同源脚本可以读取'],
     deep:[
       {title:'自动附带与脚本可读',body:'Cookie 按域、路径和 SameSite 决定是否附在请求上。HttpOnly 挡住脚本读取。localStorage 只留在该源页面里，请求不会自动带上，同源脚本却能读到这项。'},
@@ -151,6 +155,8 @@ const COVERAGE_PATH = [
     task:'为会话、排行榜和审计流水各选一种结构，写出要支持的读法和为什么不用 String 包一层 JSON。',
     answer:'会话若只是整个替换的小值，用字符串结构一次读写。要按字段改邮箱，用哈希，避免重写整份资料。排行榜要按分数取前十，用有序集合，而不是把 JSON 取回来自己排。审计流水要追加并按游标往后读，用流。过期解决不了这三种读法。三种读法对应三种结构，不能共用一段 JSON。',
     keywords:'Redis String Hash Sorted Set Stream 数据结构',
+    origin:'本地库《图解 redis 数据结构》键值与 value 类型总览',
+    diagram:'library-assets/illustrated-basics/redis-ds-p0005.png',
     points:['String 适合整体读写一个值','Hash、Set、Sorted Set 对应字段、去重和按分数排序','Stream 适合追加日志，过期不能代替结构'],
     deep:[
       {title:'和导论',body:'Redis 是什么、容量框架与相对 DB 见 redis-what-and-when、redis-tradeoffs-capacity、redis-vs-db-cache。本课专讲结构选型。'},

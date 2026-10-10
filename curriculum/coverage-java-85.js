@@ -12,7 +12,7 @@ const COVERAGE_JAVA_85 = [
     answer:"划掉唯一解。代理集中路由也集中故障；应用感知要改代码但边界清晰。跨片问题两种都躲不开。",
     keywords:"分库 代理 读写分离",
     origin:"《分布式高并发.pdf》约第 60 页附近：中间代理层管理数据源",
-    diagram:"diagrams/db-proxy-layer-not-only-choice.svg",
+    diagram:'library-assets/distributed-hc/p0060.png',
     points:["代理可降连接与集中路由","不是唯一分片形态","跨片复杂度仍在"],
     deep:[
       {title:"和连接平方",body:"代理常是降连接的先手，见连接课。"},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_85 = [
     answer:"划掉通用比。用访问频率与合规留存定热温冷。比例是结果不是公理。",
     keywords:"冷热分层 归档 生命周期",
     origin:"《分布式高并发.pdf》约第 60 页附近：冷热比约 1:4",
-    diagram:"diagrams/hot-cold-ratio-not-fixed-one-to-four.svg",
+    diagram:'library-assets/distributed-hc/p0060.png',
     points:["比例随业务变","用访问统计校准","分层策略重于数字"],
     deep:[
       {title:"和分区表",body:"按时间分区便于摘冷数据。"},

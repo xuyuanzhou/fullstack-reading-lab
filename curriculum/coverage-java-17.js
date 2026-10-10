@@ -47,6 +47,8 @@ const COVERAGE_JAVA_17 = [
     task:'画出 SETNX 成功、尚未 EXPIRE、进程被杀的时间线；对照 SET 文档写出 NX+EX 一条命令。',
     answer:'时间线是 SETNX 成功、EXPIRE 尚未执行、进程被杀，预测键永久留下。对照 SET 文档，一条命令写成 SET key token NX EX 秒数，预测加锁和过期同时完成。TTL 到了仍只是租约，业务跑超时还要用版本拦住旧持有者。',
     keywords:'Redis SETNX SET NX EX 分布式锁 租约',
+    origin:'本地库蚂蚁金服面经 SETNX+EXPIRE 写法',
+    diagram:'library-assets/illustrated-basics/redis-mindmap.png',
     points:['SETNX 与 EXPIRE 分开执行会在崩溃时留下死锁键','应用 SET key token NX EX 一次完成','TTL 到期后旧持有者仍可能写，要业务版本校验'],
     deep:[
       {title:'过期必须和占位同一条命令',body:'SETNX 只负责没有键时写入，不管 TTL。崩溃发生在下一条 EXPIRE 之前，锁就死了。现行写法是带唯一 token 的 SET NX EX。过期后旧持有者仍可能写，所以还要业务版本。'},

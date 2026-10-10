@@ -12,7 +12,7 @@ const COVERAGE_FRONTEND_28 = [
     answer:'第一个参数传函数引用或箭头函数。不要传 "clock()"。clear 使用同一次调用返回的 id。',
     keywords:'setTimeout setInterval eval CSP clearInterval',
     origin:'本地库 JavaScript 思维导图 BOM 枝里的 setInterval("clock()", 1000)',
-    diagram:'diagrams/js-timer-fn-not-string.svg',
+    diagram:'library-assets/frontend-local/js-mindmap-2.png',
     points:['定时器第一个参数应是函数','字符串形式会再求值，类似 eval','clear 必须用同一次调用返回的句柄'],
     deep:[
       {title:'和立刻调用的括号',body:'`setTimeout(clock(), 1000)` 会马上执行 clock，把返回值交给定时器，通常也是错的。要延迟执行就传 `clock` 或 `() => clock()`，不要在传参时加一对会立刻调用的括号。'},
@@ -33,7 +33,7 @@ const COVERAGE_FRONTEND_28 = [
     answer:'eval 系只给开发。生产不要公开它们。需要排障用 hidden 或私有 map 通道，和 Vite 的 hidden 同一意图。',
     keywords:'webpack devtool eval-source-map hidden-source-map 生产',
     origin:'本地库 webpack improve_build 文档里的 devtool 对照表',
-    diagram:'diagrams/webpack-eval-sourcemap.svg',
+    diagram:'library-assets/frontend-local/webpack-devtool-2.png',
     points:['eval 系 source map 为重建速度服务','官方表上它们不标给生产','生产公开 map 等于公开源码，应用 hidden 或私有通道'],
     deep:[
       {title:'和 Vite 那一课',body:'工具名不同，边界相同：开发要快映射，生产不要把还原源码的文件挂到公网。Vite 用 `build.sourcemap: "hidden"`，Webpack 用 `hidden-source-map`。'},

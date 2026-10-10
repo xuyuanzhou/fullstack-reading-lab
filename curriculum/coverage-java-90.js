@@ -12,7 +12,7 @@ const COVERAGE_JAVA_90 = [
     answer:"划掉随便改。先估峰值、节点数、时钟策略与兼容。改位即改容量与风险。",
     keywords:"雪花 ID 位分配 时钟",
     origin:"《分布式高并发.pdf》约第 196 页附近：snowflake 可按需修改",
-    diagram:"diagrams/snowflake-params-need-capacity-math.svg",
+    diagram:'library-assets/distributed-hc/p0196.png',
     points:["可定制但要算术","序列与节点位互斥","时钟回拨要有策略"],
     deep:[
       {title:"和 Redis 发号",body:"集群发号不是五节点各步长 5 那么简单，见 incr 课。"},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_90 = [
     answer:"划掉单链表。哈希 O(1) 定位，链表维护次序。容量淘汰≠TTL。",
     keywords:"LRU HashMap 链表",
     origin:"《分布式高并发.pdf》约第 198 页附近：链表和 HashMap 实现 LRU",
-    diagram:"diagrams/lru-needs-hash-and-list.svg",
+    diagram:'library-assets/distributed-hc/p0198.png',
     points:["哈希定位要分清","链表维护次序","容量与 TTL 分开"],
     deep:[
       {title:"和分布式缓存",body:"本地 LRU 与 Redis maxmemory 策略不同层。"},

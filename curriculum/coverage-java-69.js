@@ -12,7 +12,7 @@ const COVERAGE_JAVA_69 = [
     answer:'划掉一律禁止转换。坏在字符串列对数字字面量，列被转换。改为同类型字面量/绑定，或 CAST 常量侧。用 EXPLAIN 证明 key。',
     keywords:'MySQL 隐式转换 索引 类型 手机号',
     origin:'《分布式高并发.pdf》约第 105 页：禁止使用属性隐式转换；phone=数字字面量',
-    diagram:'diagrams/mysql-implicit-convert-breaks-index.svg',
+    diagram:'library-assets/distributed-hc/p0105.png',
     points:['错类型比较常让列被转换从而挡索引','对齐字面量/绑定类型是正解','CAST 放常量侧不等于犯规'],
     deep:[
       {title:'和字符集校对规则',body:'同是字符串，字符集/校对规则不同也可能触发转换或无法用索引。连接条件两边对齐 charset/collation，与数字/字符串问题同类。'},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_69 = [
     answer:'划掉一律禁函数。禁的是包住索引列导致无法范围匹配。把变换挪到常量侧，或用生成列/函数索引显式建模。用 EXPLAIN 核对。',
     keywords:'MySQL sargable 函数 索引 WHERE',
     origin:'《分布式高并发.pdf》约第 105 页：禁止在 WHERE 属性上使用函数或表达式',
-    diagram:'diagrams/mysql-where-func-blocks-index.svg',
+    diagram:'library-assets/distributed-hc/p0105.png',
     points:['函数包住索引列常挡范围扫描','计算应尽量留在常量侧','函数索引是例外需显式设计'],
     deep:[
       {title:'和前导模糊',body:'`LIKE \'%x\'` 也是谓词形态问题，不是函数，却同样难用 B+ 树最左。见既有模糊/前缀索引课。'},

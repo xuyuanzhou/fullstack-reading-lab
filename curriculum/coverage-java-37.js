@@ -38,6 +38,8 @@ const COVERAGE_JAVA_37 = [
     task:'划掉“栈结构=Stack 类”；写出应用该用哪个接口。',
     answer:'新代码用 Deque/ArrayDeque。Stack 是遗留 Vector 子类。',
     keywords:'Stack Vector Deque ArrayDeque LIFO',
+    origin:'本地库数据结构思维导图把 Stack 画成默认栈',
+    diagram:'library-assets/illustrated-basics/ds-algo-mindmap.png',
     points:['Stack 继承 Vector，是遗留 API','文档推荐 Deque 做 LIFO','单线程栈用 ArrayDeque，不要图名字'],
     refs:[['Stack','https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Stack.html'],['ArrayDeque','https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ArrayDeque.html']]
   },

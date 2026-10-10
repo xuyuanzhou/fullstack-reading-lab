@@ -12,7 +12,7 @@ const COVERAGE_JAVA_79 = [
     answer:"划掉命运论。无 WHERE 的精确总数昂贵可用汇总；有 WHERE 看索引。别用旧 MyISAM 对比代替计划。",
     keywords:"COUNT InnoDB MVCC 汇总表",
     origin:"《分布式高并发.pdf》约第 108 页附近：InnoDB count 扫表 vs MyISAM 计数器",
-    diagram:"diagrams/mysql-count-star-innodb-not-always-scan.svg",
+    diagram:'library-assets/distributed-hc/p0108.png',
     points:["MVCC 使表级计数器不简单","有 WHERE 看索引","精确总数可用汇总"],
     deep:[
       {title:"和覆盖索引",body:"COUNT 有时只扫二级索引更窄。看 EXPLAIN。"},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_79 = [
     answer:"划掉只能自增。要有聚簇主键且宜短宜稳宜顺。自增是常见实现，不是唯一。乱序 UUID 慎做 PK。",
     keywords:"主键 自增 聚簇索引 雪花",
     origin:"《分布式高并发.pdf》约第 104 页：表必须有主键例如自增",
-    diagram:"diagrams/mysql-pk-autoinc-not-only-choice.svg",
+    diagram:'library-assets/distributed-hc/p0104.png',
     points:["InnoDB 需要聚簇键","宜短宜稳宜顺","自增常见但非唯一"],
     deep:[
       {title:"和隐藏行 ID",body:"无合适 PK 时隐藏 6 字节行 ID，难被业务引用。"},

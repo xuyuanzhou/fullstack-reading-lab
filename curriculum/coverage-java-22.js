@@ -83,6 +83,8 @@ const COVERAGE_JAVA_22 = [
     task:'对照 TLS 1.3，划掉“SSL 固定 9 包”；写出 HTTPS 相对 HTTP 真正多的两件事：加密和证书校验。',
     answer:'对照 TLS 1.3，划掉“SSL 固定 9 包、三次握手再加起来 12 包”。握手是 1-RTT，会话恢复还可以 0-RTT，不是一笔固定包数。HTTPS 相对 HTTP 真正多的两件事是应用数据加密，以及校验证书里的主机名。明文 HTTP 没有机密性。',
     keywords:'HTTPS TLS 1.3 HTTP 443 证书',
+    origin:'本地库《图解 HTTP》HTTPS/SSL 握手示意（现行包数以 TLS 1.3 为准）',
+    diagram:'library-assets/illustrated-basics/http-p0149.png',
     points:['HTTPS 是 HTTP over TLS，常见端口 443','TLS 1.3 握手不是固定 9 个包','免费证书普及，明文 HTTP 没有机密性'],
     deep:[
       {title:'包数不是安全税',body:'延迟差主要来自握手和证书校验，不是 12 减 3。TLS 1.3 一轮就能握手，会话恢复还可以零轮。HTTP/2 和 HTTP/3 几乎都跑在加密连接上，免费证书也已普及，内网不能再用包数把 TLS 关掉。'},

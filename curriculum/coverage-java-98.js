@@ -12,7 +12,7 @@ const COVERAGE_JAVA_98 = [
     answer:'划掉定律。缺任务等待比与队列/拒绝策略。要看活跃线程、队列深度与拒绝，并用压测定。',
     keywords:'线程池 大小 CPU 启发式',
     origin:'《分布式高并发.pdf》常见线程池 sizing 口诀（核数倍数）',
-    diagram:'diagrams/thread-pool-formula-not-law.svg',
+    diagram:'library-assets/distributed-hc/p0183.png',
     points:['核数倍数只是起点','区分 CPU 与阻塞任务','队列与拒绝策略要一起设计'],
     deep:[
       {title:'和虚拟线程',body:'可多挂起等待，仍受连接池、锁、速率限制约束；不是取消容量规划。'},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_98 = [
     answer:'划掉等价。读写分离优化读吞吐。要读到刚写的值需读主、等位点或缓存，不能默认从库。',
     keywords:'读写分离 复制延迟 read-your-writes',
     origin:'《分布式高并发.pdf》读写分离架构常见省略延迟',
-    diagram:'diagrams/rw-split-not-strong-consistency.svg',
+    diagram:'library-assets/distributed-hc/p0013.png',
     points:['读写分离摊读负载','副本可能落后于主','读己之写要额外策略'],
     deep:[
       {title:'和分库',body:'分片解决的是数据规模与写扩展，与副本读扩展不同维。'},

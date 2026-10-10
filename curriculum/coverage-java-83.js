@@ -12,7 +12,7 @@ const COVERAGE_JAVA_83 = [
     answer:"划掉凡查询皆可。SQL SELECT 在数据不变时结果稳定，但业务读可能有副作用。写路径仍要幂等键。",
     keywords:"幂等 SELECT 消息消费",
     origin:"《分布式高并发.pdf》约第 32 页：select 是天然幂等操作",
-    diagram:"diagrams/select-not-always-business-idempotent.svg",
+    diagram:'library-assets/distributed-hc/p0032.png',
     points:["SQL 层与业务层幂等不同","读也可能有副作用","写路径仍要键"],
     deep:[
       {title:"和删除幂等",body:"删除更不是天然幂等，见 delete 课。"},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_83 = [
     answer:"划掉当队列。Pub/Sub 适合在线广播。无持久、无积压给晚到者。要可靠投递换 Stream/MQ。",
     keywords:"Redis Pub/Sub Stream 可靠投递",
     origin:"《分布式高并发.pdf》约第 30 页：发布订阅时间依赖",
-    diagram:"diagrams/redis-pubsub-not-reliable-queue.svg",
+    diagram:'library-assets/distributed-hc/p0030.png',
     points:["晚订阅丢失历史","不是任务队列","可靠投递换 Stream/MQ"],
     deep:[
       {title:"和键空间通知",body:"键事件也是信号，不是业务队列。"},

@@ -11,7 +11,7 @@ const COVERAGE_JAVA_44 = [
     answer:'Collection 是接口，不能直接 new，由 ArrayList 等实现。Collections 和 Arrays 是工具类，方法是静态的。Map 不在 Collection 树上。asList 见另一课。',
     keywords:'Collection Collections Arrays List Set Map',
     origin:'本地库「8张图解java」里 Collection 与 Collections 并排的图',
-    diagram:'diagrams/java-collection-collections.svg',
+    diagram:'library-assets/java-illustrated/eight-fig-04.png',
     points:['Collection 是 List/Set/Queue 的根接口','Collections 只有静态方法，不是容器','Arrays 也是工具类，asList 不是 java.util.ArrayList'],
     deep:[
       {title:'Map 为什么不在树上',body:'Map 是键值对，没有 Collection 那种单一元素迭代契约。要遍历时用 entrySet、keySet，那些才是 Set。不要强迫 Map 实现 Collection。'},
@@ -31,7 +31,7 @@ const COVERAGE_JAVA_44 = [
     answer:'重启时若 AOF 开着就优先 AOF。复制全量和 AOF 重写仍会用到 RDB。默认也可以只开 RDB。打开 AOF 不是零丢失。',
     keywords:'Redis AOF RDB preamble persistence dump.rdb',
     origin:'本地库 Redis 思维导图的持久化枝',
-    diagram:'diagrams/redis-aof-rdb.svg',
+    diagram:'library-assets/illustrated-basics/redis-mindmap.png',
     points:['默认可以只开 RDB，重启读 dump.rdb','打开 AOF 后重启优先 AOF，RDB 仍用于快照和复制','AOF 重写可以带 RDB 前缀，不是互斥开关'],
     deep:[
       {title:'启动读哪个文件',body:'appendonly yes 时用 AOF 恢复。关掉 AOF 才用 RDB。这是启动顺序，不是“第二种文件非法”。备份策略可以两种都留。'},
@@ -51,7 +51,7 @@ const COVERAGE_JAVA_44 = [
     answer:'创建用 redis-cli --cluster。槽位 16384。哨兵只做主从切换。3.0 起核心才有集群，这点保留。',
     keywords:'Redis Cluster redis-cli redis-trib 16384',
     origin:'本地库 Redis 思维导图的集群枝',
-    diagram:'diagrams/redis-cluster-cli.svg',
+    diagram:'library-assets/illustrated-basics/redis-mindmap.png',
     points:['运维入口是 redis-cli --cluster','redis-trib.rb 已不是创建命令','集群从 3.0 进入核心，槽位仍是 16384'],
     deep:[
       {title:'和第三方代理',body:'Codis、Twemproxy 是旧分片方案。官方集群用槽和重定向。新部署不要把代理画成默认。'},

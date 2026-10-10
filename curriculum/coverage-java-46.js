@@ -11,7 +11,7 @@ const COVERAGE_JAVA_46 = [
     answer:'Cloneable 没有方法。Object.clone 是 protected。CloneNotSupportedException 是检查异常，挂在 Exception 下。需要拷贝时自己公开并处理这个异常，或改用拷贝构造。',
     keywords:'Cloneable clone CloneNotSupportedException checked Exception',
     origin:'本地库 Java 基础导图的标识接口枝，以及「8张图解java」异常树把 CloneNotSupportedException 画在 Exception 下',
-    diagram:'diagrams/java-clone-checked.svg',
+    diagram:'library-assets/java-illustrated/eight-fig-03.png',
     points:['Cloneable 是空标记，不含 clone 方法','Object.clone 是 protected，默认浅拷贝','CloneNotSupportedException 是检查异常，不是 RuntimeException'],
     deep:[
       {title:'和 Serializable 一样不要当装饰',body:'两个都是标记。盖上 Cloneable 不会改变字段怎么复制。共享可变字段被浅拷贝后，两边改的是同一块。需要深拷贝就显式复制，不要指望标记替你做。'},
@@ -30,7 +30,7 @@ const COVERAGE_JAVA_46 = [
     answer:'局部拼接用 StringBuilder，最后得到 String。跨线程不要共享可变缓冲当协议；要共享就先定谁写完、用不可变结果传递。StringBuffer 的 synchronized 只锁单次调用。',
     keywords:'StringBuilder StringBuffer String synchronized',
     origin:'本地库 Java 基础导图把 StringBuffer 标成多线程默认',
-    diagram:'diagrams/java-stringbuilder-buffer.svg',
+    diagram:'library-assets/java-illustrated/eight-fig-01.png',
     points:['同一线程改缓冲区用 StringBuilder','StringBuffer 的同步只覆盖单次方法调用','跨线程先定所有权，不要把 Buffer 当协议'],
     deep:[
       {title:'不可变结果仍然是 String',body:'Builder 和 Buffer 都是拼完再 `toString`。池和字面量那一套只作用于 String，见 `java-string-new-vs-pool`。不要为了进池先 new StringBuffer。'},

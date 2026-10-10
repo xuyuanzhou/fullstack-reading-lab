@@ -29,6 +29,8 @@ const COVERAGE_JAVA_29 = [
     task:'写出 HTTP 与 HTTPS 默认端口；划掉“HTTP 三次握手”。',
     answer:'HTTP 默认 TCP 80，HTTPS 默认 TCP 443。划掉“HTTP 三次握手”：三次握手是 TCP 建连，发生在请求行之前。TLS 在 TCP 连上 443 之后才开始。端口写反时，应看到连错端口或 ClientHello 对不上，而不是 HTTP 状态码。',
     keywords:'HTTPS 443 HTTP 80 TLS TCP handshake',
+    origin:'本地库《图解网络》TCP 报文与默认端口页',
+    diagram:'library-assets/illustrated-basics/network-p0028.png',
     points:['HTTP 默认 80，HTTPS 默认 443','三次握手属于 TCP 不是 HTTP','TLS 发生在 TCP 连接建立之后'],
     deep:[
       {title:'没写端口时，方案名决定连哪里',body:'https:// 默认补 443，http:// 默认补 80。地址栏里写了 :8443 这种端口，才不再用默认值。所以“服务已启动”仍要问它听的是哪一个端口，以及对端是按哪个方案去连的。两个都对，才进得了 TLS。'},

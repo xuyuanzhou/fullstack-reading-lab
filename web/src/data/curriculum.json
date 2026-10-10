@@ -977,9 +977,18 @@
         "spring-boot-devtools-restarts",
         "git-restore-over-checkout",
         "linux-bkl-gone",
+        "linux-virtual-memory-isolation",
+        "linux-virtual-addr-mmu",
+        "linux-memory-segmentation",
+        "linux-memory-paging",
+        "linux-multilevel-page-table",
+        "linux-page-fault-swap",
+        "linux-tlb-cache",
+        "linux-segmented-paging",
         "k8s-runtime-not-only-docker",
         "linux-root-group-not-root",
         "linux-fork-copies-one-thread",
+        "linux-shell-pipe-fds",
         "docker-root-not-host-root",
         "etcd-v3-grpc-not-rest",
         "git-default-branch-not-master",
@@ -2942,9 +2951,18 @@
             "spring-boot-devtools-restarts",
             "git-restore-over-checkout",
             "linux-bkl-gone",
+            "linux-virtual-memory-isolation",
+            "linux-virtual-addr-mmu",
+            "linux-memory-segmentation",
+            "linux-memory-paging",
+            "linux-multilevel-page-table",
+            "linux-page-fault-swap",
+            "linux-tlb-cache",
+            "linux-segmented-paging",
             "k8s-runtime-not-only-docker",
             "linux-root-group-not-root",
             "linux-fork-copies-one-thread",
+            "linux-shell-pipe-fds",
             "docker-root-not-host-root",
             "etcd-v3-grpc-not-rest",
             "git-default-branch-not-master",
@@ -3867,8 +3885,8 @@
       "task": "划掉「万物皆对象」。分别记录 1、{}、Object.create(null)、null 的 typeof 和 getPrototypeOf。",
       "answer": "划掉「万物皆对象」。1 的 typeof 是 number，不是对象。普通对象有原型。create(null) 是对象但原型是 null。null 不是对象，getPrototypeOf(null) 抛错。链停在 null，不是空对象。",
       "keywords": "JavaScript primitive Object.create null prototype typeof",
-      "origin": "本地库「原型链流程图」上的万物皆对象口诀",
-      "diagram": "diagrams/js-null-end.svg",
+      "origin": "本地库「原型链流程图」：万物皆对象口诀",
+      "diagram": "library-assets/illustrated-basics/prototype-chain-flow.png",
       "deep": [
         {
           "title": "装箱留不住字段",
@@ -3913,8 +3931,8 @@
       "task": "对比 function、箭头函数、bind 之后的函数有没有 prototype，以及 Function.prototype 的 typeof。划掉「原型都是 Object 构造的」。",
       "answer": "划掉「原型都是 Object 构造的」。只有可 new 的函数才有 prototype。箭头和 bind 没有。Function.prototype 的 typeof 是 function。它的原型才是 Object.prototype。",
       "keywords": "JavaScript arrow function prototype Function.prototype bind new",
-      "origin": "本地库「原型链流程图」上的构造函数与原型对象口诀",
-      "diagram": "diagrams/js-arrow-no-prototype.svg",
+      "origin": "本地库「原型链流程图」：构造函数与原型对象口诀",
+      "diagram": "library-assets/illustrated-basics/prototype-chain-flow.png",
       "deep": [
         {
           "title": "class 也是函数",
@@ -4679,7 +4697,7 @@
       "answer": "划掉「字符串形式的 setInterval」。第一个参数传函数引用或箭头函数。不要传 \"clock()\"。clear 使用同一次调用返回的 id。",
       "keywords": "setTimeout setInterval eval CSP clearInterval",
       "origin": "本地库 JavaScript 思维导图 BOM 枝里的 setInterval(\"clock()\", 1000)",
-      "diagram": "diagrams/js-timer-fn-not-string.svg",
+      "diagram": "library-assets/frontend-local/js-mindmap-2.png",
       "deep": [
         {
           "title": "和立刻调用的括号",
@@ -5154,7 +5172,7 @@
       "answer": "划掉「Flow 仍是 React 官方并列默认」。新代码用 TypeScript，跟文档示例走。Flow 只留在已经在用的仓库。PropTypes 是运行时，不能代替类型检查。不要为了 2019 图再装一套 Flow。",
       "keywords": "React TypeScript Flow PropTypes 类型检查",
       "origin": "本地库 2019 React 开发者路线图把 Flow 与 TypeScript 并列",
-      "diagram": "diagrams/react-flow-ts.svg",
+      "diagram": "library-assets/frontend-local/react-roadmap-2019.png",
       "deep": [
         {
           "title": "和 JSDoc",
@@ -6656,6 +6674,8 @@
       "task": "为带内容哈希的 JS 文件和入口 HTML 分别提出缓存策略，并解释回滚时的影响。",
       "answer": "带内容哈希的 JS 可以长缓存，因为改内容就会换文件名。入口 HTML 用验证或很短的新鲜期，让用户尽快拿到新的文件名。回滚时要保证旧 HTML 仍引用得到的那些哈希资源还在服务器上，不能只留下最新一份。no-cache 仍会存，只是用之前要验证；真正不存的是 no-store。",
       "keywords": "HTTP Cache-Control ETag 304 cache",
+      "origin": "本地库《图解 HTTP》客户端缓存与重新验证页",
+      "diagram": "library-assets/illustrated-basics/http-p0069.png",
       "deep": [
         {
           "title": "304 不是失败",
@@ -6677,8 +6697,7 @@
           "MDN：HTTP caching",
           "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Caching"
         ]
-      ],
-      "diagram": "diagrams/http-cache.svg"
+      ]
     },
     {
       "track": "frontend",
@@ -7054,6 +7073,8 @@
       "task": "为查询、覆盖更新、扣款三个接口分别说明方法、重试条件和服务器防重措施。",
       "answer": "查询用安全方法，重复执行不应要求改服务器状态，失败后可以再读。覆盖式 PUT 按资源标识写整份表示，重复写的预期效果与一次相同。扣款不能只看 POST 这个名字，必须用业务键和持久化约束让重试返回第一次的结果，而不是再扣一次。状态码可以不同，效果不能再来一次。",
       "keywords": "HTTP safe idempotent GET PUT DELETE POST 重试",
+      "origin": "本地库《图解 HTTP》方法一览页",
+      "diagram": "library-assets/illustrated-basics/http-p0034.png",
       "deep": [
         {
           "title": "语义和实现要分开",
@@ -7095,7 +7116,7 @@
       "answer": "划掉「插入=PUT、REST=只回 JSON」。服务分配 id 的创建用 POST 到集合，返回新 URI。客户端已知最终 URI 时，可对该 URI 做 PUT，效果是创建或覆盖且宜幂等。只用 JSON 做前后端分离，不代替方法语义，也不能解释成只用 GET/POST。",
       "keywords": "HTTP POST PUT REST 创建 幂等 JSON",
       "origin": "《分布式高并发.pdf》约第 17–18 页 REST 叙述：插入写成 PUT，实践收成只回 JSON",
-      "diagram": "diagrams/http-create-post-not-put.svg",
+      "diagram": "library-assets/distributed-hc/p0017.png",
       "deep": [
         {
           "title": "和 PATCH",
@@ -7180,6 +7201,8 @@
       "task": "为未登录、已登录但缺权限、参数不合法三种请求各选一个状态码，并说明客户端下一步做什么。",
       "answer": "未登录应返回 401，客户端下一步是按认证方式重新证明身份。已登录但缺权限应返回 403，下一步是停止该操作而不是再登录。参数不合法返回 400，并在正文里说明字段。这三种都不能写成 200 再在 JSON 里塞错误码。三种状态码不能合并成一个 200。",
       "keywords": "HTTP 401 403 WWW-Authenticate 认证 授权",
+      "origin": "本地库《图解 HTTP》401 / 403 状态码页",
+      "diagram": "library-assets/illustrated-basics/http-p0059.png",
       "deep": [
         {
           "title": "认证失败与授权拒绝",
@@ -7344,6 +7367,8 @@
       "task": "对照 RFC 9110 写出 500 与 503 的差别，并说明什么情况下客户端根本拿不到状态码。",
       "answer": "对照 RFC 9110：500 是处理过程中出现未抓住的错误，503 是此刻暂时不能服务，可以带 Retry-After。客户端根本拿不到状态码的情况，是连接失败、拒绝或中途断开，代理有时给 502，但源头崩溃并不保证有一张 503。连接被拒绝时，预测抓包里没有状态行。",
       "keywords": "HTTP 503 500 Retry-After 302 502",
+      "origin": "本地库《图解 HTTP》503 与状态码不一致提醒页",
+      "diagram": "library-assets/illustrated-basics/http-p0061.png",
       "deep": [
         {
           "title": "有响应才谈得上 503",
@@ -7384,6 +7409,8 @@
       "task": "写出 HttpOnly、Secure、SameSite=Lax 各防止或限制什么；再写一条误把会话放进 localStorage 的后果。",
       "answer": "HttpOnly 挡脚本读取。Secure 限 HTTPS。Lax 限制多数跨站带 Cookie。会话进 localStorage 可被 XSS 直接读走。",
       "keywords": "Set-Cookie HttpOnly Secure SameSite CSRF",
+      "origin": "本地库《图解 HTTP》Set-Cookie 回传示例页（现代属性以 MDN 为准）",
+      "diagram": "library-assets/illustrated-basics/http-p0040.png",
       "deep": [
         {
           "title": "和 credentials",
@@ -7811,6 +7838,8 @@
       "task": "在网络面板里对同一源的多张图记录连接 ID，区分复用、排队和缓存命中。",
       "answer": "同一源多张图应记下相同的连接标识，表示复用而不是各握一次手。超出并发上限的请求状态仍是排队，计时里没有新的握手段。缓存仍新鲜的那张没有请求行，所以资源数、请求数和握手次数要分三列记，不能按图片张数推断握手。不能按图片张数推断握手次数，要分开计。",
       "keywords": "HTTP keep-alive HTTP/2 connection reuse 持久连接 瀑布图",
+      "origin": "本地库《图解网络》HTTP/1.0 短连接与 1.1 长连接（含三次握手）",
+      "diagram": "library-assets/illustrated-basics/network-p0080.png",
       "deep": [
         {
           "title": "连接复用与排队",
@@ -7885,6 +7914,8 @@
       "task": "模拟服务端分别返回 206、200 与 416，设计客户端如何保存或重启下载。",
       "answer": "206 且区间、验证器都和本地文件对得上时，才把片段追加到已有字节后面。200 表示服务器给了完整表示，应丢弃旧片段，按这份重新保存。416 表示区间不被接受，先核对本地长度和资源是否还存在，再决定从头下载还是停在错误。三种都不要盲目追加。",
       "keywords": "HTTP Range 206 Content-Range If-Range 断点续传",
+      "origin": "本地库《图解 HTTP》Range 字节范围页",
+      "diagram": "library-assets/illustrated-basics/http-p0049.png",
       "deep": [
         {
           "title": "三段响应三种处理",
@@ -7965,6 +7996,8 @@
       "task": "列出证书过期、名字不匹配、页面里再请求 http:// 三种情况各自坏在哪一层。",
       "answer": "证书过期：预测坏在证书有效期，浏览器不应信任。名字不匹配：预测坏在主机名核对，加密仍可能完成但找错了服务器。页面里再请求 http://：预测坏在混合内容，主页面的 TLS 盖不住这段明文。锁标志不等于业务安全。预测先写下来再对照日志或界面，对不上就停在这一步，不要改邻接的配置。",
       "keywords": "TLS 证书 主机名校验 HTTPS 混合内容",
+      "origin": "本地库《图解网络》证书信任链页",
+      "diagram": "library-assets/illustrated-basics/network-p0095.png",
       "deep": [
         {
           "title": "加密和找对人是两步",
@@ -8005,6 +8038,8 @@
       "task": "画出五层里 TCP 与 HTTP 的位置；划掉“HTTP 七层实现叫三次握手”。",
       "answer": "五层里 TCP 在传输层，HTTP 在应用层。划掉 HTTP 七层实现叫三次握手：三次握手建立的是 TCP 连接，发生在请求行之前。OSI 的七层是另一套模型，不能当成 HTTP 的别名。握手失败时，预测还没有任何 HTTP 状态码可以看。",
       "keywords": "TCP 三次握手 OSI 五层 HTTP",
+      "origin": "本地库《图解网络》分层封装（应用 HTTP / 传输 TCP）",
+      "diagram": "library-assets/illustrated-basics/network-p0046.png",
       "deep": [
         {
           "title": "先有连接，才有请求行",
@@ -8045,6 +8080,8 @@
       "task": "对照 TLS 1.3，划掉“SSL 固定 9 包”；写出 HTTPS 相对 HTTP 真正多的两件事：加密和证书校验。",
       "answer": "对照 TLS 1.3，划掉“SSL 固定 9 包、三次握手再加起来 12 包”。握手是 1-RTT，会话恢复还可以 0-RTT，不是一笔固定包数。HTTPS 相对 HTTP 真正多的两件事是应用数据加密，以及校验证书里的主机名。明文 HTTP 没有机密性。",
       "keywords": "HTTPS TLS 1.3 HTTP 443 证书",
+      "origin": "本地库《图解 HTTP》HTTPS/SSL 握手示意（现行包数以 TLS 1.3 为准）",
+      "diagram": "library-assets/illustrated-basics/http-p0149.png",
       "deep": [
         {
           "title": "包数不是安全税",
@@ -8085,6 +8122,8 @@
       "task": "写出一种长度前缀帧；说明 UDP 为什么通常没有“粘包”这个问题。",
       "answer": "长度前缀帧：双方约定长度占几个字节、高位在前还是低位在前，先写长度，再写恰好那么长的正文。接收端没凑够就继续读，凑够才是一条消息，并拒绝超过上限的长度。UDP 通常没有这种粘包，是因为一次接收对应一个数据报，发送边界还在。它仍会丢失和乱序；接收缓冲区小于数据报时，多出来的部分被截断。",
       "keywords": "TCP 字节流 分帧 长度前缀 UDP 数据报",
+      "origin": "本地库《图解网络》HTTP 与 TCP 字节流分界页（Content-Length / 粘包）",
+      "diagram": "library-assets/illustrated-basics/network-p0066.png",
       "deep": [
         {
           "title": "半包和并包用同一块缓冲区",
@@ -8125,6 +8164,8 @@
       "task": "写出 HTTP 与 HTTPS 默认端口；划掉“HTTP 三次握手”。",
       "answer": "HTTP 默认 TCP 80，HTTPS 默认 TCP 443。划掉“HTTP 三次握手”：三次握手是 TCP 建连，发生在请求行之前。TLS 在 TCP 连上 443 之后才开始。端口写反时，应看到连错端口或 ClientHello 对不上，而不是 HTTP 状态码。",
       "keywords": "HTTPS 443 HTTP 80 TLS TCP handshake",
+      "origin": "本地库《图解网络》TCP 报文与默认端口页",
+      "diagram": "library-assets/illustrated-basics/network-p0028.png",
       "deep": [
         {
           "title": "没写端口时，方案名决定连哪里",
@@ -8165,6 +8206,8 @@
       "task": "划掉“TCP 一定不丢不重”；写出连接失败时应用还要做什么。",
       "answer": "划掉“TCP 一定不丢不重，并且一定按序到达”。连接存活时，TCP 用校验和、序号、确认和重传，把字节流按顺序交给应用。连接会复位或超时，应用会看到错误，在途的数据可能到不了业务。应用仍要设超时，失败后的重试要能认出已经处理过的同一次请求。UDP 没有这套重传。",
       "keywords": "TCP retransmission ACK UDP reliability",
+      "origin": "本地库《图解网络》TCP 首部与序号确认页",
+      "diagram": "library-assets/illustrated-basics/network-p0025.png",
       "deep": [
         {
           "title": "重传补的是段，不是业务只执行一次",
@@ -8204,6 +8247,8 @@
       "task": "分别设置 HttpOnly Cookie 和 localStorage 项，检查 document.cookie、请求头和关闭浏览器后的残留。",
       "answer": "HttpOnly Cookie 会出现在匹配请求的请求头里，document.cookie 读不到它；没有过期时间时关掉浏览器后会话消失。localStorage 刷新还在，但请求头里不会自动出现，同源脚本可以读到。自动提交和脚本可读是两道分开的检查。",
       "keywords": "Cookie HttpOnly SameSite Secure localStorage 会话",
+      "origin": "本地库《图解 HTTP》Cookie 签发与回传页",
+      "diagram": "library-assets/illustrated-basics/http-p0039.png",
       "deep": [
         {
           "title": "自动附带与脚本可读",
@@ -15718,7 +15763,7 @@
       "answer": "按角色和名称查询。内部字段名不是契约。Enzyme 的 shallow/instance 不是 React 19 的默认答案。Jest 可以留，断言目标换成用户能看见的控件。",
       "keywords": "Enzyme Testing Library getByRole React 组件测试",
       "origin": "本地库 2019 React 开发者路线图把 Enzyme 列为组件测试",
-      "diagram": "diagrams/react-enzyme-rtl.svg",
+      "diagram": "library-assets/frontend-local/react-roadmap-2019.png",
       "deep": [
         {
           "title": "shallow 不是更快的用户",
@@ -16114,7 +16159,7 @@
       "answer": "eval 系只给开发。生产不要公开它们。需要排障用 hidden 或私有 map 通道，和 Vite 的 hidden 同一意图。",
       "keywords": "webpack devtool eval-source-map hidden-source-map 生产",
       "origin": "本地库 webpack improve_build 文档里的 devtool 对照表",
-      "diagram": "diagrams/webpack-eval-sourcemap.svg",
+      "diagram": "library-assets/frontend-local/webpack-devtool-2.png",
       "deep": [
         {
           "title": "和 Vite 那一课",
@@ -18155,7 +18200,7 @@
       "answer": "划掉「实现 Cloneable 就有公开 clone」。Cloneable 没有方法。Object.clone 是 protected。CloneNotSupportedException 是检查异常，挂在 Exception 下。需要拷贝时自己公开并处理这个异常，或改用拷贝构造。",
       "keywords": "Cloneable clone CloneNotSupportedException checked Exception",
       "origin": "本地库 Java 基础导图的标识接口枝，以及「8张图解java」异常树把 CloneNotSupportedException 画在 Exception 下",
-      "diagram": "diagrams/java-clone-checked.svg",
+      "diagram": "library-assets/java-illustrated/eight-fig-03.png",
       "deep": [
         {
           "title": "和 Serializable 一样不要当装饰",
@@ -18274,6 +18319,8 @@
       "task": "划掉“栈结构=Stack 类”；写出应用该用哪个接口。",
       "answer": "划掉「栈结构=Stack 类」。新代码用 Deque/ArrayDeque。Stack 是遗留 Vector 子类。",
       "keywords": "Stack Vector Deque ArrayDeque LIFO",
+      "origin": "本地库数据结构思维导图把 Stack 画成默认栈",
+      "diagram": "library-assets/illustrated-basics/ds-algo-mindmap.png",
       "since": "JDK 6",
       "points": [
         "Stack 继承 Vector，是遗留 API",
@@ -18333,7 +18380,7 @@
       "answer": "划掉「Collections 是集合根接口」。Collection 是接口，不能直接 new，由 ArrayList 等实现。Collections 和 Arrays 是工具类，方法是静态的。Map 不在 Collection 树上。asList 见另一课。",
       "keywords": "Collection Collections Arrays List Set Map",
       "origin": "本地库「8张图解java」里 Collection 与 Collections 并排的图",
-      "diagram": "diagrams/java-collection-collections.svg",
+      "diagram": "library-assets/java-illustrated/eight-fig-04.png",
       "deep": [
         {
           "title": "Map 为什么不在树上",
@@ -18694,7 +18741,7 @@
       "answer": "划掉「有线程就用 StringBuffer」。局部拼接用 StringBuilder，最后得到 String。跨线程不要共享可变缓冲当协议；要共享就先定谁写完、用不可变结果传递。StringBuffer 的 synchronized 只锁单次调用。",
       "keywords": "StringBuilder StringBuffer String synchronized",
       "origin": "本地库 Java 基础导图把 StringBuffer 标成多线程默认",
-      "diagram": "diagrams/java-stringbuilder-buffer.svg",
+      "diagram": "library-assets/java-illustrated/eight-fig-01.png",
       "deep": [
         {
           "title": "不可变结果仍然是 String",
@@ -20954,7 +21001,8 @@
       "task": "对照 ClassLoader 文档写出三层现行名字；划掉 jhat 作为 21 的标配工具。",
       "answer": "对照 ClassLoader 文档，三层现行名字是引导类加载器、平台类加载器、应用类加载器。划掉 jhat 作为 Java 21 的标配工具，诊断改用 jcmd、jmap 或 MAT。查找顺序仍是先问父加载器。不要再把 ExtClassLoader 写成现行中间层的名字。",
       "keywords": "ClassLoader PlatformClassLoader 双亲委派 JDK 9 jhat",
-      "diagram": "diagrams/jvm-classloaders.svg",
+      "diagram": "library-assets/illustrated-basics/jvm-mindmap.png",
+      "origin": "本地库 Java 虚拟机思维导图扩展类加载器枝",
       "deep": [
         {
           "title": "中间层换了名字也换了目录",
@@ -21140,7 +21188,7 @@
       "answer": "划掉同义。堆外有元空间、直接内存、线程栈等。超 cgroup 常由内核 OOMKiller 杀进程，不一定先走出清晰的 Java heap OOM。",
       "keywords": "Xmx cgroup OOMKill 容器 JVM",
       "origin": "《分布式高并发.pdf》容器/JVM 内存口诀常见混淆",
-      "diagram": "diagrams/jvm-xmx-not-container-limit.svg",
+      "diagram": "library-assets/distributed-hc/p0189.png",
       "deep": [
         {
           "title": "和虚机",
@@ -21344,7 +21392,8 @@
       "task": "对照 8 以后的 GC 文档，划掉 Perm 和 MaxPermSize；写出 Survivor 在 HotSpot 里有几块。",
       "answer": "对照 JDK 8 以后的 GC 文档，划掉永久代和 MaxPermSize。Survivor 在 HotSpot 里有两块，加上 Eden 构成年轻代。类元数据在元空间，上限用 MaxMetaspaceSize。Full GC 不再有永久代被写满这一条。",
       "keywords": "PermGen Metaspace MaxPermSize Survivor Eden",
-      "diagram": "diagrams/jvm-no-permgen.svg",
+      "diagram": "library-assets/illustrated-basics/jvm-mindmap.png",
+      "origin": "本地库 Java 虚拟机思维导图仍画永久代",
       "deep": [
         {
           "title": "类的元数据不在永久代",
@@ -22063,6 +22112,8 @@
       "task": "对照 ReentrantReadWriteLock JavaDoc，写出降级三步和禁止升级的原因。",
       "answer": "读锁可以多个一起持有，写锁独占。降级三步是：已经持有写锁，再获取读锁，然后释放写锁，期间不把数据暴露成没锁。禁止升级：持有读锁时再获取写锁不会成功，必须先释放读锁，重新检查条件，再决定是否写入。放开读锁之后必须重读，不能沿用刚才读到的判断。",
       "keywords": "ReentrantReadWriteLock 降级 升级 读锁 写锁",
+      "origin": "本地库《图解系统》读者-写者问题页",
+      "diagram": "library-assets/illustrated-basics/os-p0233.png",
       "deep": [
         {
           "title": "升级会死锁的原因",
@@ -22504,6 +22555,8 @@
       "task": "对照 JEP 444，划掉“Java 没有用户态调度”；写出虚拟线程仍要锁的一种情况。",
       "answer": "对照 JEP 444，划掉 Java 没有用户态调度：虚拟线程由载体调度，载体可以用到多核。虚拟线程仍要锁的一种情况，是两个虚拟线程改同一份非线程安全的共享结构。CPU 密集任务不会因此变快。共享的 HashMap 在两条虚拟线程下仍会竞争。",
       "keywords": "进程 线程 协程 虚拟线程 JEP 444",
+      "origin": "本地库《图解系统》进程与线程调度页",
+      "diagram": "library-assets/illustrated-basics/os-p0079.png",
       "deep": [
         {
           "title": "让出载体不等于不用锁",
@@ -22544,6 +22597,8 @@
       "task": "写出什么时候加速接近线性；划掉“线程数等于倍数加速”。",
       "answer": "划掉「线程数等于倍数加速」。能拆开且不抢同一资源才加速。锁、IO、串行段都会让十线程远慢于十分之一。",
       "keywords": "Amdahl thread pool speedup contention",
+      "origin": "本地库《图解系统》CPU 如何选择线程页",
+      "diagram": "library-assets/illustrated-basics/os-p0079.png",
       "since": "JDK concurrency",
       "points": [
         "加速比受串行部分限制",
@@ -22575,7 +22630,7 @@
       "answer": "划掉定律。缺任务等待比与队列/拒绝策略。要看活跃线程、队列深度与拒绝，并用压测定。",
       "keywords": "线程池 大小 CPU 启发式",
       "origin": "《分布式高并发.pdf》常见线程池 sizing 口诀（核数倍数）",
-      "diagram": "diagrams/thread-pool-formula-not-law.svg",
+      "diagram": "library-assets/distributed-hc/p0183.png",
       "deep": [
         {
           "title": "和虚拟线程",
@@ -22799,7 +22854,7 @@
       "answer": "划掉一律 NOT NULL。必填用不变量约束；可选允许 NULL，勿用空串/0 冒充未知。默认值只表示明确的业务默认，不是填洞。",
       "keywords": "NOT NULL 默认值 NULL 三值逻辑 约束",
       "origin": "《分布式高并发.pdf》约第 104 页：必须 NOT NULL 并且提供默认值",
-      "diagram": "diagrams/mysql-not-null-default-not-absolute.svg",
+      "diagram": "library-assets/distributed-hc/p0104.png",
       "deep": [
         {
           "title": "和性能口诀",
@@ -22969,7 +23024,7 @@
       "answer": "划掉「JOIN 一律禁止」。有索引、过滤足够的小结果联结可接受。用 EXPLAIN 看是否索引探查、是否危险的 temporary/filesort。无证据时不要把联结拆成 N+1。",
       "keywords": "MySQL JOIN 临时表 EXPLAIN 规范",
       "origin": "《分布式高并发.pdf》约第 105 页：禁止使用 JOIN、禁止大表子查询",
-      "diagram": "diagrams/mysql-join-ban-not-absolute.svg",
+      "diagram": "library-assets/distributed-hc/p0105.png",
       "deep": [
         {
           "title": "和子查询",
@@ -23015,7 +23070,7 @@
       "answer": "划掉「OR 必须改 IN」。同列多值 IN 更易读，计划常相近。跨列 OR 看 EXPLAIN，必要时 UNION 或补索引。禁令不能代替现行优化器证据。",
       "keywords": "MySQL OR IN 索引 EXPLAIN",
       "origin": "《分布式高并发.pdf》约第 105 页：禁止 OR，必须改为 IN",
-      "diagram": "diagrams/mysql-or-not-must-become-in.svg",
+      "diagram": "library-assets/distributed-hc/p0105.png",
       "deep": [
         {
           "title": "和“禁止小数存货币”",
@@ -23322,7 +23377,7 @@
       "answer": "划掉禁止类型。长正文用 TEXT（或等价）合理。禁止的是热点路径投影大列、无必要的大字段进缓冲。列表与正文分离，用 EXPLAIN/列清单证明。",
       "keywords": "TEXT BLOB SELECT 缓冲池 规范",
       "origin": "《分布式高并发.pdf》约第 104 页：禁止使用 TEXT、BLOB",
-      "diagram": "diagrams/mysql-text-ban-not-absolute.svg",
+      "diagram": "library-assets/distributed-hc/p0104.png",
       "deep": [
         {
           "title": "和 ENUM 禁令",
@@ -23656,7 +23711,7 @@
       "answer": "划掉「凡小数都不能存货币」。禁 FLOAT/DOUBLE。用 DECIMAL 或整数分。钱对不上来自二进制浮点，不是 DECIMAL 的定点小数。",
       "keywords": "DECIMAL FLOAT 货币 定点 规范",
       "origin": "《分布式高并发.pdf》约第 104 页：禁止使用小数存储货币",
-      "diagram": "diagrams/mysql-money-decimal-not-ban.svg",
+      "diagram": "library-assets/distributed-hc/p0104.png",
       "deep": [
         {
           "title": "和手机号 varchar",
@@ -23702,7 +23757,7 @@
       "answer": "划掉「到一千万必须拆」。行数本身不是拆分开关。先看热页是否进得了缓冲池、查询是点查还是大扫描、复制延迟和备份是否已经超窗。这三项都健康时，保留单表。拆分后再处理跨库分页与事务。",
       "keywords": "分库分表 一千万 InnoDB 缓冲池 拆分",
       "origin": "《分布式高并发.pdf》约第 68 页：拆分原则写单表数据到一千万以内",
-      "diagram": "diagrams/mysql-split-not-ten-million.svg",
+      "diagram": "library-assets/distributed-hc/p0068.png",
       "deep": [
         {
           "title": "和 UUID 主键",
@@ -23952,7 +24007,7 @@
       "answer": "划掉一律禁止。集合小且稳定可用 ENUM。常变集合用码表/字典；TINYINT 必须有含义来源，不能只剩魔法数。内部存整数不构成禁用理由。",
       "keywords": "MySQL ENUM TINYINT DDL 字典表",
       "origin": "《分布式高并发.pdf》约第 104 页：禁止使用 ENUM，可使用 TINYINT 代替",
-      "diagram": "diagrams/mysql-enum-ban-not-absolute.svg",
+      "diagram": "library-assets/distributed-hc/p0104.png",
       "deep": [
         {
           "title": "和字符串状态列",
@@ -24042,7 +24097,7 @@
       "answer": "划掉含糊 UTF8。8.x 用 utf8mb4。历史 utf8 多是 utf8mb3。连接与列对齐，不要靠“省空间”拒绝四字节字符。",
       "keywords": "MySQL utf8mb4 utf8mb3 字符集",
       "origin": "《分布式高并发.pdf》约第 104 页：必须使用 UTF8 字符集",
-      "diagram": "diagrams/mysql-utf-eight-alias-not-mb-four.svg",
+      "diagram": "library-assets/distributed-hc/p0104.png",
       "deep": [
         {
           "title": "和行长度",
@@ -24088,7 +24143,7 @@
       "answer": "划掉一律禁止。单库强一致引用可保留外键。高并发多写者可去掉，但必须有应用校验与对账。性能借口不能等于没有完整性策略。",
       "keywords": "MySQL 外键 完整性 对账 锁",
       "origin": "《分布式高并发.pdf》约第 104 页：禁止使用外键",
-      "diagram": "diagrams/mysql-fk-ban-not-absolute.svg",
+      "diagram": "library-assets/distributed-hc/p0104.png",
       "deep": [
         {
           "title": "和分布式",
@@ -24134,7 +24189,7 @@
       "answer": "划掉钉死 20。不用数值类型。长度按最大合法形态与规范化策略定；格式与唯一性在应用/约束，不靠魔法 20。",
       "keywords": "MySQL 手机号 VARCHAR E.164",
       "origin": "《分布式高并发.pdf》约第 104 页：必须 varchar(20) 存手机号",
-      "diagram": "diagrams/mysql-phone-varchar-length-not-twenty.svg",
+      "diagram": "library-assets/distributed-hc/p0104.png",
       "deep": [
         {
           "title": "和隐式转换",
@@ -24180,7 +24235,7 @@
       "answer": "划掉语法非法。应用默认写列清单。批导仅在列序契约锁定且有校验时可例外。加列是错位的常见触发点。",
       "keywords": "MySQL INSERT 列清单 模式演进",
       "origin": "《分布式高并发.pdf》约第 105 页：禁止 INSERT VALUES 不写列",
-      "diagram": "diagrams/mysql-insert-must-name-columns.svg",
+      "diagram": "library-assets/distributed-hc/p0105.png",
       "deep": [
         {
           "title": "和 SELECT *",
@@ -24226,7 +24281,7 @@
       "answer": "划掉清零。8.x 默认 InnoDB。业务表要事务/行锁/崩溃恢复就选它。特殊引擎是例外要论证。",
       "keywords": "InnoDB 默认引擎 MySQL",
       "origin": "《分布式高并发.pdf》约第 104 页：必须使用 InnoDB",
-      "diagram": "diagrams/mysql-innodb-default-not-ban-others.svg",
+      "diagram": "library-assets/distributed-hc/p0104.png",
       "deep": [
         {
           "title": "和全文",
@@ -24272,7 +24327,7 @@
       "answer": "划掉禁类型。大文件进对象存储，库存 URI 与元数据。短二进制可论证。热点勿投影大列。",
       "keywords": "对象存储 BLOB URI 备份",
       "origin": "《分布式高并发.pdf》约第 104 页：禁止存储大文件或大照片",
-      "diagram": "diagrams/mysql-db-not-blob-store.svg",
+      "diagram": "library-assets/distributed-hc/p0104.png",
       "deep": [
         {
           "title": "和 TEXT 禁令",
@@ -24318,7 +24373,7 @@
       "answer": "划掉硬上限。500 管元数据与运维复杂度。越过就归档/合并/拆实例，或改数据模型。",
       "keywords": "MySQL 元数据 表数量 治理",
       "origin": "《分布式高并发.pdf》约第 104 页：单实例表数目必须小于 500",
-      "diagram": "diagrams/mysql-instance-table-count-not-five-hundred.svg",
+      "diagram": "library-assets/distributed-hc/p0104.png",
       "deep": [
         {
           "title": "和信息模式",
@@ -24364,7 +24419,7 @@
       "answer": "划掉硬上限。风险是宽投影与疏稀属性。用垂直拆分/侧表/JSON，热点不 SELECT *。",
       "keywords": "宽表 列数 垂直拆分",
       "origin": "《分布式高并发.pdf》约第 104 页：单表列数目必须小于 30",
-      "diagram": "diagrams/mysql-column-count-thirty-not-law.svg",
+      "diagram": "library-assets/distributed-hc/p0104.png",
       "deep": [
         {
           "title": "和行大小",
@@ -24410,7 +24465,7 @@
       "answer": "划掉一刀切。默认算力上移。视图/过程/触发器/Event 风险不同；例外要拥有者与观测。禁止藏副作用，不是禁止一切对象。",
       "keywords": "视图 触发器 Event 存储过程 扩展性",
       "origin": "《分布式高并发.pdf》约第 104 页：禁止存储过程、视图、触发器、Event",
-      "diagram": "diagrams/mysql-db-features-ban-not-absolute.svg",
+      "diagram": "library-assets/distributed-hc/p0104.png",
       "deep": [
         {
           "title": "和 Event",
@@ -24456,7 +24511,7 @@
       "answer": "划掉必须一条。合并为减少锁窗口与往返。算法冲突、风险隔离时应拆开，并用在线工具。",
       "keywords": "DDL 在线变更 元数据锁",
       "origin": "《分布式高并发.pdf》约第 105 页：同表 DDL 合并一条",
-      "diagram": "diagrams/mysql-ddl-merge-heuristic.svg",
+      "diagram": "library-assets/distributed-hc/p0105.png",
       "deep": [
         {
           "title": "和复制",
@@ -24502,7 +24557,7 @@
       "answer": "划掉形式主义 catch。瞬时可重试；冲突变业务错误；资源耗尽要降载。配合事务与幂等。",
       "keywords": "SQLException 死锁 幂等 重试",
       "origin": "《分布式高并发.pdf》约第 105 页：应用程序必须捕获 SQL 异常",
-      "diagram": "diagrams/mysql-catch-sql-exception-not-enough.svg",
+      "diagram": "library-assets/distributed-hc/p0105.png",
       "deep": [
         {
           "title": "和连接池",
@@ -24548,7 +24603,7 @@
       "answer": "划掉只能自增。要有聚簇主键且宜短宜稳宜顺。自增是常见实现，不是唯一。乱序 UUID 慎做 PK。",
       "keywords": "主键 自增 聚簇索引 雪花",
       "origin": "《分布式高并发.pdf》约第 104 页：表必须有主键例如自增",
-      "diagram": "diagrams/mysql-pk-autoinc-not-only-choice.svg",
+      "diagram": "library-assets/distributed-hc/p0104.png",
       "deep": [
         {
           "title": "和隐藏行 ID",
@@ -24594,7 +24649,7 @@
       "answer": "划掉一律禁止。危险在错误相关/大物化。用计划与改写证明。CTE/半连接是选项。",
       "keywords": "子查询 半连接 物化 EXPLAIN",
       "origin": "《分布式高并发.pdf》约第 105 页：禁止大表使用子查询",
-      "diagram": "diagrams/mysql-subquery-ban-not-absolute.svg",
+      "diagram": "library-assets/distributed-hc/p0105.png",
       "deep": [
         {
           "title": "和 CTE",
@@ -24640,7 +24695,7 @@
       "answer": "划掉绝望论。副本、缓存、分片都是路。换引擎因模型契合，不是因为口号扩展性差。",
       "keywords": "扩展性 副本 分片 NoSQL",
       "origin": "《分布式高并发.pdf》约第 57 页附近：关系数据库扩展性差",
-      "diagram": "diagrams/mysql-scalability-not-hopeless.svg",
+      "diagram": "library-assets/distributed-hc/p0057.png",
       "deep": [
         {
           "title": "和一千万拆分",
@@ -24686,7 +24741,7 @@
       "answer": "划掉唯一解。代理集中路由也集中故障；应用感知要改代码但边界清晰。跨片问题两种都躲不开。",
       "keywords": "分库 代理 读写分离",
       "origin": "《分布式高并发.pdf》约第 60 页附近：中间代理层管理数据源",
-      "diagram": "diagrams/db-proxy-layer-not-only-choice.svg",
+      "diagram": "library-assets/distributed-hc/p0060.png",
       "deep": [
         {
           "title": "和连接平方",
@@ -24732,7 +24787,7 @@
       "answer": "划掉通用比。用访问频率与合规留存定热温冷。比例是结果不是公理。",
       "keywords": "冷热分层 归档 生命周期",
       "origin": "《分布式高并发.pdf》约第 60 页附近：冷热比约 1:4",
-      "diagram": "diagrams/hot-cold-ratio-not-fixed-one-to-four.svg",
+      "diagram": "library-assets/distributed-hc/p0060.png",
       "deep": [
         {
           "title": "和分区表",
@@ -24778,7 +24833,7 @@
       "answer": "划掉终点论。业务分库清边界。单表写/数据量仍热点再水平拆。避免过碎。",
       "keywords": "业务分库 水平分片 边界",
       "origin": "《分布式高并发.pdf》约第 14 页附近：业务分库",
-      "diagram": "diagrams/business-split-db-not-only-path.svg",
+      "diagram": "library-assets/distributed-hc/p0014.png",
       "deep": [
         {
           "title": "和千万行",
@@ -24824,7 +24879,7 @@
       "answer": "划掉等价。读写分离优化读吞吐。要读到刚写的值需读主、等位点或缓存，不能默认从库。",
       "keywords": "读写分离 复制延迟 read-your-writes",
       "origin": "《分布式高并发.pdf》读写分离架构常见省略延迟",
-      "diagram": "diagrams/rw-split-not-strong-consistency.svg",
+      "diagram": "library-assets/distributed-hc/p0013.png",
       "deep": [
         {
           "title": "和分库",
@@ -25392,7 +25447,7 @@
       "answer": "划掉个数硬上限。用查询计划、选择性与写放大决定。低区分度单独索引常无效。组合列数服从谓词与最左前缀，不服从数字 5。",
       "keywords": "MySQL 索引 选择性 EXPLAIN 组合索引",
       "origin": "《分布式高并发.pdf》约第 104–105 页：单表索引 5 个以内、单索引字段不超过 5",
-      "diagram": "diagrams/mysql-index-count-five-not-law.svg",
+      "diagram": "library-assets/distributed-hc/p0104.png",
       "deep": [
         {
           "title": "和覆盖索引",
@@ -25438,7 +25493,7 @@
       "answer": "划掉一律禁止转换。坏在字符串列对数字字面量，列被转换。改为同类型字面量/绑定，或 CAST 常量侧。用 EXPLAIN 证明 key。",
       "keywords": "MySQL 隐式转换 索引 类型 手机号",
       "origin": "《分布式高并发.pdf》约第 105 页：禁止使用属性隐式转换；phone=数字字面量",
-      "diagram": "diagrams/mysql-implicit-convert-breaks-index.svg",
+      "diagram": "library-assets/distributed-hc/p0105.png",
       "deep": [
         {
           "title": "和字符集校对规则",
@@ -25484,7 +25539,7 @@
       "answer": "划掉一律禁函数。禁的是包住索引列导致无法范围匹配。把变换挪到常量侧，或用生成列/函数索引显式建模。用 EXPLAIN 核对。",
       "keywords": "MySQL sargable 函数 索引 WHERE",
       "origin": "《分布式高并发.pdf》约第 105 页：禁止在 WHERE 属性上使用函数或表达式",
-      "diagram": "diagrams/mysql-where-func-blocks-index.svg",
+      "diagram": "library-assets/distributed-hc/p0105.png",
       "deep": [
         {
           "title": "和前导模糊",
@@ -25578,7 +25633,7 @@
       "answer": "划掉一律全表扫。负向常因选择性差而慢。用 EXPLAIN/行数证明。NULL 与 NOT IN 语义另审。",
       "keywords": "MySQL NOT IN 选择性 EXPLAIN",
       "origin": "《分布式高并发.pdf》约第 105 页：禁止负向查询",
-      "diagram": "diagrams/mysql-negative-predicate-not-always-scan.svg",
+      "diagram": "library-assets/distributed-hc/p0105.png",
       "deep": [
         {
           "title": "和覆盖索引",
@@ -25624,7 +25679,7 @@
       "answer": "划掉一律全表扫。前导 % 难用 B+ 最左；尾随 % 常可范围扫。尾缀需求用冗余列或搜索引擎。",
       "keywords": "MySQL LIKE 前缀 全文 索引",
       "origin": "《分布式高并发.pdf》约第 105 页：禁止 % 开头模糊查询",
-      "diagram": "diagrams/mysql-leading-percent-like-heuristic.svg",
+      "diagram": "library-assets/distributed-hc/p0105.png",
       "deep": [
         {
           "title": "和全文索引",
@@ -25670,7 +25725,7 @@
       "answer": "划掉列名禁令。单独低基数列常废。组合索引里低基数列可靠后若前缀已筛窄。用选择性与计划证明。",
       "keywords": "选择性 写放大 组合索引",
       "origin": "《分布式高并发.pdf》约第 105 页：禁止低区分度/热更新列建索引",
-      "diagram": "diagrams/mysql-low-selectivity-index-heuristic.svg",
+      "diagram": "library-assets/distributed-hc/p0105.png",
       "deep": [
         {
           "title": "和热更新",
@@ -25716,7 +25771,7 @@
       "answer": "划掉绝对顺序。先看最左前缀与谓词，再用区分度在合法前缀内微调。范围列后置。EXPLAIN 验证。",
       "keywords": "组合索引 最左前缀 区分度",
       "origin": "《分布式高并发.pdf》约第 105 页：组合索引区分度高的在前",
-      "diagram": "diagrams/mysql-composite-selectivity-order-heuristic.svg",
+      "diagram": "library-assets/distributed-hc/p0105.png",
       "deep": [
         {
           "title": "和扩展索引",
@@ -25762,7 +25817,7 @@
       "answer": "划掉命运论。无 WHERE 的精确总数昂贵可用汇总；有 WHERE 看索引。别用旧 MyISAM 对比代替计划。",
       "keywords": "COUNT InnoDB MVCC 汇总表",
       "origin": "《分布式高并发.pdf》约第 108 页附近：InnoDB count 扫表 vs MyISAM 计数器",
-      "diagram": "diagrams/mysql-count-star-innodb-not-always-scan.svg",
+      "diagram": "library-assets/distributed-hc/p0108.png",
       "deep": [
         {
           "title": "和覆盖索引",
@@ -25808,7 +25863,7 @@
       "answer": "划掉禁止新建。共享最左前缀则扩展。无关访问路径应新建并控数量。用查询集合决策。",
       "keywords": "索引维护 最左前缀 写放大",
       "origin": "《分布式高并发.pdf》约第 106 页：尽量扩展索引不要新建",
-      "diagram": "diagrams/mysql-extend-index-before-new.svg",
+      "diagram": "library-assets/distributed-hc/p0106.png",
       "deep": [
         {
           "title": "和覆盖索引",
@@ -25854,7 +25909,7 @@
       "answer": "划掉完全无所谓。等值 AND 常可重排匹配索引。索引物理序、范围与 OR 仍关键。用 EXPLAIN 看。",
       "keywords": "优化器 最左前缀 AND",
       "origin": "《分布式高并发.pdf》约第 106 页：and 之间可以乱序",
-      "diagram": "diagrams/mysql-and-order-optimizer-reorders.svg",
+      "diagram": "library-assets/distributed-hc/p0106.png",
       "deep": [
         {
           "title": "和 OR",
@@ -25900,7 +25955,7 @@
       "answer": "划掉一刀切。前缀%（右模糊）常可范围；前导%难最左。选择性差仍可能放弃索引。",
       "keywords": "LIKE 前缀匹配 索引",
       "origin": "《分布式高并发.pdf》约第 106 页：右模糊会使用索引",
-      "diagram": "diagrams/mysql-right-fuzzy-like-can-use-index.svg",
+      "diagram": "library-assets/distributed-hc/p0106.png",
       "deep": [
         {
           "title": "和前缀索引",
@@ -26282,7 +26337,7 @@
       "answer": "划掉「表上真有两列版本号」。旧版本主要在 undo；一致性读用 Read View 判断可见性。FOR UPDATE 是锁定读，不是同一套快照故事。资料表格是直觉模型，不是 InnoDB 表结构。",
       "keywords": "InnoDB MVCC undo Read View 快照读",
       "origin": "《分布式高并发.pdf》约第 116–118 页：MVCC 两个隐藏版本列",
-      "diagram": "diagrams/mysql-mvcc-not-two-version-columns.svg",
+      "diagram": "library-assets/distributed-hc/p0116.png",
       "deep": [
         {
           "title": "和隔离级别",
@@ -26401,6 +26456,8 @@
       "task": "用两个连接反向更新两行制造死锁，记录受害事务状态和重试结果。",
       "answer": "捕获死锁错误后，按有界次数和退避重跑整笔事务：重新读取，再按同一顺序完成全部写入。不要只重放最后一条语句，因为受害事务的前面几条也已经撤销。同时把两个事务改成相同的加锁顺序，并缩短事务，减少再撞上的机会。锁等待超时的回滚范围可能不同，要按错误种类分开处理。",
       "keywords": "MySQL InnoDB deadlock retry transaction rollback 死锁",
+      "origin": "本地库《图解系统》交叉加锁死锁示例页（对照加锁顺序；重试语义以 InnoDB 文档为准）",
+      "diagram": "library-assets/illustrated-basics/os-p0245.png",
       "deep": [
         {
           "title": "整笔作废",
@@ -26642,7 +26699,7 @@
       "answer": "划掉「NoSQL=最终一致且没有 ACID」。标签不决定一致性。单键命令看该键在主上的原子性。多文档是否进一个事务看产品与版本（MongoDB 副本集事务）。从副本读要单独写能接受的延迟。MySQL 从库同样可以暂时落后。",
       "keywords": "NoSQL ACID 最终一致 MongoDB Redis 事务",
       "origin": "《分布式高并发.pdf》约第 57 页：把 NoSQL 概括为最终一致性而非 ACID",
-      "diagram": "diagrams/nosql-label-not-consistency.svg",
+      "diagram": "library-assets/distributed-hc/p0057.png",
       "deep": [
         {
           "title": "和 BASE 口诀",
@@ -27442,6 +27499,8 @@
       "task": "为会话、排行榜和审计流水各选一种结构，写出要支持的读法和为什么不用 String 包一层 JSON。",
       "answer": "会话若只是整个替换的小值，用字符串结构一次读写。要按字段改邮箱，用哈希，避免重写整份资料。排行榜要按分数取前十，用有序集合，而不是把 JSON 取回来自己排。审计流水要追加并按游标往后读，用流。过期解决不了这三种读法。三种读法对应三种结构，不能共用一段 JSON。",
       "keywords": "Redis String Hash Sorted Set Stream 数据结构",
+      "origin": "本地库《图解 redis 数据结构》键值与 value 类型总览",
+      "diagram": "library-assets/illustrated-basics/redis-ds-p0005.png",
       "deep": [
         {
           "title": "和导论",
@@ -27486,6 +27545,8 @@
       "task": "划掉“对象只能 JSON String”。写出局部改字段与整份替换各更贴近哪种结构。",
       "answer": "划掉「对象只能 JSON String」。局部字段更新用 Hash。整份替换可用 String。Hash 仍是一个键一个槽，不是表。",
       "keywords": "Redis Hash HSET JSON String",
+      "origin": "本地库《图解 redis 数据结构》哈希表页",
+      "diagram": "library-assets/illustrated-basics/redis-ds-p0020.png",
       "deep": [
         {
           "title": "和 Pipeline",
@@ -27526,6 +27587,8 @@
       "task": "写出写入比分、取 TopN、查某人名次各用哪类命令；划掉“拉回 Java sort”。",
       "answer": "划掉「拉回 Java sort」。ZADD 写分。ZREVRANGE 取 TopN。ZREVRANK 查名次。不要每次全量拉回应用排序。",
       "keywords": "Redis ZSet 排行榜 ZRANGE ZADD",
+      "origin": "本地库《图解 redis 数据结构》跳表结构设计页",
+      "diagram": "library-assets/illustrated-basics/redis-ds-p0030.png",
       "deep": [
         {
           "title": "和延时任务",
@@ -28159,6 +28222,8 @@
       "task": "对照 SET 文档写出 STRING 上限；从淘汰名单里划掉“只有六项、没有 LFU”。",
       "answer": "对照 SET 文档，STRING 上限是 512MB，不是资料前半段写的 1GB。从淘汰名单里划掉“只有六项、没有 LFU”：除 noeviction、lru、random、ttl 外还有 LFU。集群优先官方 Cluster 的 16384 槽，Codis 不是现行默认。",
       "keywords": "Redis 512MB eviction LFU Cluster Codis",
+      "origin": "本地库《图解 redis 数据结构》SDS 结构设计页（协议上限以 SET 文档为准）",
+      "diagram": "library-assets/illustrated-basics/redis-ds-p0010.png",
       "deep": [
         {
           "title": "上限和淘汰不是旧清单",
@@ -28199,6 +28264,8 @@
       "task": "写出 3.2 的 quicklist 和 7.0 的 listpack；划掉“List=链表或 ziplist”。",
       "answer": "划掉「List=链表或 ziplist」。3.2 起 List 用 quicklist。7.0 起小结构用 listpack。别再只背 3.0 的两种实现。",
       "keywords": "Redis quicklist listpack ziplist List",
+      "origin": "本地库《图解 redis 数据结构》quicklist / listpack 页",
+      "diagram": "library-assets/illustrated-basics/redis-ds-p0035.png",
       "since": "Redis 3.2/7",
       "points": [
         "3.2 之后 List 是 quicklist",
@@ -28230,7 +28297,7 @@
       "answer": "划掉单链表。哈希 O(1) 定位，链表维护次序。容量淘汰≠TTL。",
       "keywords": "LRU HashMap 链表",
       "origin": "《分布式高并发.pdf》约第 198 页附近：链表和 HashMap 实现 LRU",
-      "diagram": "diagrams/lru-needs-hash-and-list.svg",
+      "diagram": "library-assets/distributed-hc/p0198.png",
       "deep": [
         {
           "title": "和分布式缓存",
@@ -28602,7 +28669,7 @@
       "answer": "划掉「AOF 一开 RDB 就退役」。重启时若 AOF 开着就优先 AOF。复制全量和 AOF 重写仍会用到 RDB。默认也可以只开 RDB。打开 AOF 不是零丢失。",
       "keywords": "Redis AOF RDB preamble persistence dump.rdb",
       "origin": "本地库 Redis 思维导图的持久化枝",
-      "diagram": "diagrams/redis-aof-rdb.svg",
+      "diagram": "library-assets/illustrated-basics/redis-mindmap.png",
       "deep": [
         {
           "title": "启动读哪个文件",
@@ -28644,7 +28711,7 @@
       "answer": "划掉「redis-trib 和 Codis 默认」。创建用 redis-cli --cluster。哈希槽 16384。哨兵只做主从切换。3.0 起核心才有集群，这点保留。",
       "keywords": "Redis Cluster redis-cli redis-trib 16384",
       "origin": "本地库 Redis 思维导图的集群枝",
-      "diagram": "diagrams/redis-cluster-cli.svg",
+      "diagram": "library-assets/illustrated-basics/redis-mindmap.png",
       "deep": [
         {
           "title": "和第三方代理",
@@ -28686,7 +28753,7 @@
       "answer": "划掉「集群=代理+取模」。代理取模分的是独立实例，客户端常只看见代理。Cluster 分的是 16384 槽，节点互知，客户端要跟 MOVED/ASK。新部署不要把 Twemproxy 画成默认。",
       "keywords": "Redis Cluster Twemproxy Codis 16384 槽 取模",
       "origin": "本地库 Redis 思维导图把 Twemproxy、Hash 取模与集群画在一起",
-      "diagram": "diagrams/redis-proxy-hash.svg",
+      "diagram": "library-assets/illustrated-basics/redis-mindmap.png",
       "deep": [
         {
           "title": "和 Codis",
@@ -28772,7 +28839,7 @@
       "answer": "划掉「两种快照一样、随便用」。SAVE 堵住命令处理。BGSAVE 用子进程，父进程继续服务。配置自动快照走 BGSAVE。fork 仍有短停顿和内存代价，但不是整段堵死。",
       "keywords": "Redis SAVE BGSAVE RDB fork copy-on-write",
       "origin": "本地库 Redis 思维导图把 SAVE 与 BGSAVE 并列为两种产生 RDB 的方式",
-      "diagram": "diagrams/redis-save-bgsave.svg",
+      "diagram": "library-assets/illustrated-basics/redis-mindmap.png",
       "deep": [
         {
           "title": "写时拷贝不是免费的",
@@ -28818,7 +28885,7 @@
       "answer": "划掉「Cluster=五台步进发号」。同一个键只落在一台主上，故障转移继续这份计数。五段步长是五份独立计数器，客户端要钉死用哪一份，并持久化当前值。连上 Cluster 不会自动把一个 INCR 拆成五段。",
       "keywords": "Redis Cluster INCR 发号 槽 步长",
       "origin": "《分布式高并发.pdf》约第 196 页：用 Redis 集群按 1..5 初值与步长 5 发全局 ID",
-      "diagram": "diagrams/redis-cluster-incr-one-slot.svg",
+      "diagram": "library-assets/distributed-hc/p0196.png",
       "deep": [
         {
           "title": "和代理取模",
@@ -29308,7 +29375,7 @@
       "answer": "划掉当队列。Pub/Sub 适合在线广播。无持久、无积压给晚到者。要可靠投递换 Stream/MQ。",
       "keywords": "Redis Pub/Sub Stream 可靠投递",
       "origin": "《分布式高并发.pdf》约第 30 页：发布订阅时间依赖",
-      "diagram": "diagrams/redis-pubsub-not-reliable-queue.svg",
+      "diagram": "library-assets/distributed-hc/p0030.png",
       "deep": [
         {
           "title": "和键空间通知",
@@ -32056,7 +32123,7 @@
       "answer": "划掉「CDN=反代=缓存」。就近分发是 CDN。源站 TLS、选上游、限流是反向代理。缓存是两者可选能力，不是共同定义。动态写默认回源。",
       "keywords": "CDN 反向代理 缓存 边缘 源站",
       "origin": "《分布式高并发.pdf》约第 13 页：CDN 和反向代理的基本原理都是缓存",
-      "diagram": "diagrams/cdn-not-just-reverse-proxy-cache.svg",
+      "diagram": "library-assets/distributed-hc/p0013.png",
       "deep": [
         {
           "title": "和秒杀页",
@@ -33405,7 +33472,7 @@
       "answer": "划掉「凡删除都天然幂等」。物理删同一主键，终态常相同。软删与带归还/通知的取消，重放可能再改状态，要状态机或业务键。不要因为操作名叫删除就跳过幂等设计。",
       "keywords": "幂等 删除 软删除 消息重放 库存",
       "origin": "《分布式高并发.pdf》约第 32 页：删除操作也是幂等的",
-      "diagram": "diagrams/mq-delete-not-always-idempotent.svg",
+      "diagram": "library-assets/distributed-hc/p0032.png",
       "deep": [
         {
           "title": "和 HTTP DELETE",
@@ -33682,6 +33749,8 @@
       "task": "对照当前 Kafka 文档的 KRaft 说明，划掉有些资料里的两条 ZK 存活条件，改写成控制器与 ISR；并注明 acks=all 等的是 ISR。",
       "answer": "划掉“必须维持 ZooKeeper 心跳”和“follower 都要及时同步才算活着”。现行集群用 KRaft 控制器管元数据，副本是否跟上看 ISR。acks=all 等的是 ISR 中的副本，不是集群里每一个 follower。ZooKeeper 不是这套现行默认依赖。",
       "keywords": "Kafka KRaft ZooKeeper ISR acks controller",
+      "origin": "本地库 Kafka 思维导图把集群绑在 ZooKeeper",
+      "diagram": "library-assets/illustrated-basics/kafka-mindmap.png",
       "deep": [
         {
           "title": "ISR 不是全体副本",
@@ -35268,7 +35337,7 @@
       "answer": "划掉「本地缓存 + 定时轮询 = 配置中心性能方案」。盲轮询在读多写下浪费带宽与配置集群。用变更通知或长轮询驱动拉取；本地缓存保留版本与失败兜底。分钟级“自动生效”是一致性窗口，关键配置应主动推。",
       "keywords": "配置中心 轮询 长轮询 watch Nacos",
       "origin": "《分布式高并发.pdf》约第 202–205 页：配置中心 localcache 轮询与推送改进",
-      "diagram": "diagrams/config-center-poll-needs-watch.svg",
+      "diagram": "library-assets/distributed-hc/p0202.png",
       "deep": [
         {
           "title": "和 Nacos",
@@ -37101,19 +37170,19 @@
       "task": "画出两个节点失联后的写请求路径，并明确你会向用户返回成功、失败还是等待，以及恢复后如何收敛。",
       "answer": "两个节点失联后，关键库存写入应返回失败或等待，不能两侧都当成功，否则恢复时对不上同一份库存。允许暂时分歧的资料可以两侧都返回成功，但要写明恢复后如何合并。不能凭产品名称决定这次是成功、失败还是等待。恢复后的合并规则要写在路径上，不能等冲突出现再临时决定。",
       "keywords": "CAP consistency availability partition Redis MongoDB 分区 一致性 可用性",
-      "origin": "《分布式高并发.pdf》第 19 页的 CAP 讨论",
-      "diagram": "diagrams/cap-partition.svg",
+      "origin": "《分布式高并发.pdf》第 19 页",
+      "diagram": "library-assets/distributed-hc/p0019.png",
       "deep": [
         {
-          "title": "前置：什么叫网络分区",
+          "title": "什么叫网络分区",
           "body": "节点还在运行，但节点间消息无法在可接受时间内到达。分区期间，系统无法同时证明另一侧已接受什么。"
         },
         {
-          "title": "边界：一致性不是所有语境中的同一个词",
+          "title": "三种「一致」不要混",
           "body": "CAP 的 C 是分区时还能不能给出一份最新读写视图。库里的完整性约束是 ACID 的 C。过一会儿对账成功是最终一致。三个词不要合成一句，见 `distributed-consistency-three-words`。"
         },
         {
-          "title": "常见误区",
+          "title": "资料常见写法",
           "body": "“Redis 是 CP”“MongoDB 是 AP”都过于笼统。复制、确认级别、主节点选举和客户端读偏好会改变具体行为。"
         }
       ],
@@ -37144,7 +37213,7 @@
       "answer": "划掉「BASE=定理且禁事务」。口号允许部分路径放松立刻一致与接受中间态。钱货不变量、唯一约束、Outbox 仍要事务或同等强度。最终一致要有收敛与对账，不是放弃正确性。",
       "keywords": "BASE CAP 最终一致 分布式事务 Outbox",
       "origin": "《分布式高并发.pdf》约第 19–20 页：BASE 定理与不可能用分布式事务",
-      "diagram": "diagrams/base-slogan-not-ban-tx.svg",
+      "diagram": "library-assets/distributed-hc/p0019.png",
       "deep": [
         {
           "title": "和 CAP 贴标签",
@@ -37229,8 +37298,8 @@
       "task": "标出协调者崩溃在准备前、准备后和提交中的状态，说明业务何时可对外宣称成功。",
       "answer": "协调者在准备前崩溃，业务不能宣称成功，两侧都还没有最终提交。准备后崩溃，准备成功也不等于提交，要等决议持久化并恢复。提交过程中崩溃，同样要等恢复走完才知道整体结果。超时本身不能代替这次恢复。具体产品的恢复策略还要对照实现。对外宣称成功的时刻只能在决议已经恢复完成之后。",
       "keywords": "XA 2PC 3PC two phase commit transaction 分布式事务",
-      "origin": "《分布式高并发.pdf》第 71、77 页的 XA 与 3PC 说明",
-      "diagram": "diagrams/distributed-xa.svg",
+      "origin": "《分布式高并发.pdf》第 71 页（另见第 77 页）",
+      "diagram": "library-assets/distributed-hc/p0071.png",
       "deep": [
         {
           "title": "前置：原子性",
@@ -37241,7 +37310,7 @@
           "body": "准备阶段询问参与者是否可以提交，决议阶段通知参与者执行。协议解决的是协同决策，不消除网络故障和阻塞成本。"
         },
         {
-          "title": "常见误区",
+          "title": "资料常见写法",
           "body": "“XA 包括 2PC 和 3PC”及“3PC 一超时就能自动提交”都需要更正。AT 第一阶段会本地提交，不是 XA 的第三阶段，见 `distributed-at-sees-before-global`。"
         }
       ],
@@ -37359,7 +37428,7 @@
           "body": "租约可减少并发工作，但不能让已经执行中的旧工作者自动停止。需要按写入目标的能力设计防旧写措施。"
         },
         {
-          "title": "常见误区",
+          "title": "资料常见写法",
           "body": "过期时间越长不等于越安全；它影响故障恢复速度与误并发窗口。续期也需要明确工作者失联时的行为。"
         }
       ],
@@ -37390,7 +37459,7 @@
       "answer": "划掉「MAC+PID+TID=可靠持有者」。占锁写入随机 token（可附重入计数）；重入与释放都比对同一 token。租约用服务端 TTL/会话。容器与 PID 回收会让硬件/OS 身份撞车。",
       "keywords": "分布式锁 可重入 token MAC 租约",
       "origin": "《分布式高并发.pdf》约第 202 页：分布式可重入锁记录 MAC+进程+线程",
-      "diagram": "diagrams/dist-lock-owner-not-mac-pid-tid.svg",
+      "diagram": "library-assets/distributed-hc/p0202.png",
       "deep": [
         {
           "title": "和 Redisson 可重入",
@@ -37436,7 +37505,7 @@
       "answer": "划掉「可重入=避免死锁」。可重入只避免同一持有者在同一锁上把自己堵死。交叉死锁靠加锁顺序、超时、更小临界区；忘释放靠租约与持有者校验。",
       "keywords": "可重入 死锁 分布式锁 租约",
       "origin": "《分布式高并发.pdf》约第 199 页：可重入锁（避免死锁）",
-      "diagram": "diagrams/dist-lock-reentrant-not-deadlock-cure.svg",
+      "diagram": "library-assets/distributed-hc/p0199.png",
       "deep": [
         {
           "title": "和公平/阻塞",
@@ -37522,7 +37591,7 @@
       "answer": "划掉必须奇数。quorum 是过半，偶数也成立。选 2f+1 是为了用更少机器容 f 故障，属于部署习惯不是禁偶定律。",
       "keywords": "ZooKeeper quorum 奇数 2f+1",
       "origin": "《分布式高并发.pdf》约第 144 页：半数机制故适合奇数台",
-      "diagram": "diagrams/zk-odd-count-not-quorum-law.svg",
+      "diagram": "library-assets/distributed-hc/p0144.png",
       "deep": [
         {
           "title": "和观察者",
@@ -37567,6 +37636,8 @@
       "task": "画出 SETNX 成功、尚未 EXPIRE、进程被杀的时间线；对照 SET 文档写出 NX+EX 一条命令。",
       "answer": "时间线是 SETNX 成功、EXPIRE 尚未执行、进程被杀，预测键永久留下。对照 SET 文档，一条命令写成 SET key token NX EX 秒数，预测加锁和过期同时完成。TTL 到了仍只是租约，业务跑超时还要用版本拦住旧持有者。",
       "keywords": "Redis SETNX SET NX EX 分布式锁 租约",
+      "origin": "本地库蚂蚁金服面经 SETNX+EXPIRE 写法",
+      "diagram": "library-assets/illustrated-basics/redis-mindmap.png",
       "deep": [
         {
           "title": "过期必须和占位同一条命令",
@@ -37608,7 +37679,7 @@
       "answer": "划掉「getset+本机时间=更稳的锁」。过期应由 Redis 服务端的 TTL 计时，用 SET NX EX 加唯一 token。旧写法用各机系统时间比较，时钟一偏会双持有或误判未过期。getset 链修不好 SETNX 与 EXPIRE 之间的崩溃窗口。",
       "keywords": "Redis 分布式锁 GETSET 墙钟 SET NX EX NTP",
       "origin": "《分布式高并发.pdf》约第 201 页：setnx/get/getset 与本机时间比较的锁",
-      "diagram": "diagrams/redis-lock-getset-clock.svg",
+      "diagram": "library-assets/distributed-hc/p0201.png",
       "deep": [
         {
           "title": "和 Redlock",
@@ -37658,7 +37729,7 @@
       "answer": "划掉「FOR UPDATE=分布式锁」。它锁在当前事务与连接触及的行（或更糟，更大范围）上。长业务不提交会占满连接、拖住别的事务。跨机租约用令牌+TTL 或业务约束；同库短事务里保护一行才合适。宕机回滚能放行锁，不能证明握锁做远程调用是对的。",
       "keywords": "MySQL FOR UPDATE 行锁 连接池 分布式锁 事务",
       "origin": "《分布式高并发.pdf》约第 200 页：用数据库排他锁 / FOR UPDATE 做分布式锁",
-      "diagram": "diagrams/mysql-for-update-not-lease.svg",
+      "diagram": "library-assets/distributed-hc/p0200.png",
       "deep": [
         {
           "title": "和锁定读文档",
@@ -37712,7 +37783,7 @@
       "answer": "划掉等价。cron 有延迟且可能误删仍存活的持有者；也缺 fencing。真正租约要服务端过期语义与持有者令牌，不能靠盲扫表。",
       "keywords": "分布式锁 唯一索引 租约 cron",
       "origin": "《分布式高并发.pdf》约第 199–200 页：主键唯一做锁；定时任务清超时；while 重插",
-      "diagram": "diagrams/db-insert-unique-cron-not-lease.svg",
+      "diagram": "library-assets/distributed-hc/p0199.png",
       "deep": [
         {
           "title": "和 FOR UPDATE",
@@ -37758,7 +37829,7 @@
       "answer": "划掉纹身。先问分区场景与一致性定义。再谈具体部署的取舍。产品名不是标签。",
       "keywords": "CAP Redis Mongo 标签",
       "origin": "《分布式高并发.pdf》约第 19–20 页：CA/AP/CP 产品对照表",
-      "diagram": "diagrams/cap-label-not-product-tattoo.svg",
+      "diagram": "library-assets/distributed-hc/p0019.png",
       "deep": [
         {
           "title": "和 BASE",
@@ -37804,7 +37875,7 @@
       "answer": "划掉只能同步。按 RPO 选复制语义。异步有窗口；同步有延迟与可用代价。",
       "keywords": "复制 RPO 半同步",
       "origin": "《分布式高并发.pdf》约第 33 页附近：同步复制才能保证",
-      "diagram": "diagrams/sync-replication-not-only-durability.svg",
+      "diagram": "library-assets/distributed-hc/p0033.png",
       "deep": [
         {
           "title": "和消息投递",
@@ -37850,7 +37921,7 @@
       "answer": "划掉随便改。先估峰值、节点数、时钟策略与兼容。改位即改容量与风险。",
       "keywords": "雪花 ID 位分配 时钟",
       "origin": "《分布式高并发.pdf》约第 196 页附近：snowflake 可按需修改",
-      "diagram": "diagrams/snowflake-params-need-capacity-math.svg",
+      "diagram": "library-assets/distributed-hc/p0196.png",
       "deep": [
         {
           "title": "和 Redis 发号",
@@ -37896,7 +37967,7 @@
       "answer": "划掉。回拨让时间部分倒退可能撞号。要检测回拨并等待/拒发/换方案，并管好机器位。",
       "keywords": "雪花 ID 时钟回拨 NTP workerId",
       "origin": "《分布式高并发.pdf》雪花可改参数常见省略回拨",
-      "diagram": "diagrams/snowflake-clock-rollback.svg",
+      "diagram": "library-assets/distributed-hc/p0195.png",
       "deep": [
         {
           "title": "和号段",
@@ -38309,7 +38380,8 @@
       "task": "为数据库最多承受 50 个并发查询的接口选用令牌桶或并发信号量，并解释为什么。",
       "answer": "数据库最多承受 50 个并发查询时，要用信号量或连接池限制同时执行的数量，令牌桶限制的是到达速率，两者可以一起用。每秒 100 并不等于任意一小段时间都有固定上限。桶容量必须按下游能承受的突发来配，空闲后的突发可以大于这一秒的平均数。并发超过 50 时，桶仍可能认为这一秒的速率是合法的。",
       "keywords": "token bucket rate limiting burst capacity 限流 令牌桶",
-      "origin": "《分布式高并发.pdf》第 89–91 页的限流章节",
+      "origin": "《分布式高并发.pdf》第 89 页（89–91）",
+      "diagram": "library-assets/distributed-hc/p0089.png",
       "deep": [
         {
           "title": "两个独立参数",
@@ -38347,7 +38419,7 @@
       "answer": "划掉天生。漏桶限制出口平均速率；固定窗口临界是计数边界叠突发。漏桶仍有满桶溢出/排队，不能代替突发与速率两维设计。",
       "keywords": "漏桶 令牌桶 限流 临界",
       "origin": "《分布式高并发.pdf》约第 89–91 页：漏桶天生不会出现临界问题；常速处理",
-      "diagram": "diagrams/leaky-bucket-not-no-critical-edge.svg",
+      "diagram": "library-assets/distributed-hc/p0089.png",
       "deep": [
         {
           "title": "和滑动窗口",
@@ -38393,7 +38465,7 @@
       "answer": "划掉容量批复。公式联系平均吞吐、并发与延迟。还要压测曲线与资源/依赖饱和点，并看尾延迟与错误率。",
       "keywords": "QPS 利特尔法则 容量 压测",
       "origin": "《分布式高并发.pdf》性能估算口诀常见外推",
-      "diagram": "diagrams/qps-formula-not-capacity.svg",
+      "diagram": "library-assets/distributed-hc/p0026.png",
       "deep": [
         {
           "title": "和线程池",
@@ -38439,7 +38511,7 @@
       "answer": "划掉「熔断=再试一次」。熔断：暂停打故障依赖。重试：对单次调用再执行。降级：返回兜底。熔断不是更勤的重试。",
       "keywords": "熔断 重试 降级 雪崩",
       "origin": "《分布式高并发.pdf》容错口诀常把熔断与重试混写",
-      "diagram": "diagrams/circuit-breaker-not-retry.svg",
+      "diagram": "library-assets/distributed-hc/p0020.png",
       "deep": [
         {
           "title": "和舱壁",
@@ -38485,7 +38557,7 @@
       "answer": "划掉。优雅停机减少粗暴截断。零丢失还要幂等/事务与排水编排，并接受超时强制退出。",
       "keywords": "优雅停机 graceful shutdown 幂等",
       "origin": "《分布式高并发.pdf》发布与停机口诀常见夸大",
-      "diagram": "diagrams/graceful-shutdown-not-zero-loss.svg",
+      "diagram": "library-assets/distributed-hc/p0028.png",
       "deep": [
         {
           "title": "和探针",
@@ -38529,8 +38601,8 @@
       "task": "画出请求限流、资格校验、库存预扣、订单创建、支付超时和库存回补的状态机，并指出每一步重试条件。",
       "answer": "限流和资格校验可以重试或直接拒绝，它们不改库存。预扣必须是条件更新，影响行数不是 1 就停止。订单创建失败要能释放预扣。支付超时的回补也要幂等，避免加两次。真实库存的权威在这次原子扣减，缓存只是削峰。对账用来修正跨服务失败后的不一致。回补第二次若再成功，可售库存会被加穿。",
       "keywords": "秒杀 seckill inventory overselling atomic update MySQL Redis",
-      "origin": "《分布式高并发.pdf》的秒杀设计相关章节",
-      "diagram": "diagrams/seckill-flow.svg",
+      "origin": "《分布式高并发.pdf》第 51 页附近（秒杀）",
+      "diagram": "library-assets/distributed-hc/p0051.png",
       "deep": [
         {
           "title": "性能与正确性分层",
@@ -38572,7 +38644,7 @@
       "answer": "划掉「控制 JS 天生不被 CDN 缓存」。要有 Cache-Control（或等价 CDN 不缓存规则）或版本化 URL。权威开抢判断在服务端接口与库存扣减，不在浏览器里的脚本。文件小不能代替缓存头。",
       "keywords": "秒杀 CDN Cache-Control 静态化 开抢",
       "origin": "《分布式高并发.pdf》约第 51 页：防止提前下单的 JS 不会被 CDN 缓存",
-      "diagram": "diagrams/seckill-js-needs-cache-control.svg",
+      "diagram": "library-assets/distributed-hc/p0051.png",
       "deep": [
         {
           "title": "和整页静态化",
@@ -38614,7 +38686,7 @@
       "answer": "划掉「禁用按钮=不能提前下单」。活动是否已开始；用户/商品限流或资格；原子扣库存（或同等强度）。客户端门闩只减噪音，不构成安全边界。",
       "keywords": "秒杀 客户端 信任边界 限流 库存",
       "origin": "《分布式高并发.pdf》约第 49–52 页：Disable 按钮与不能信任客户端",
-      "diagram": "diagrams/seckill-client-gate-not-enough.svg",
+      "diagram": "library-assets/distributed-hc/p0049.png",
       "deep": [
         {
           "title": "和隐藏 URL",
@@ -38656,7 +38728,7 @@
       "answer": "划掉说满。消费者受连接池、锁与幂等约束。积压会打满 MQ 存储并拖垮可用性。削峰要和限流、预扣、告警一起设计。",
       "keywords": "秒杀 MQ 削峰 消费者 积压",
       "origin": "《分布式高并发.pdf》约第 53 页：MQ 顶住即可控下单与扣库存",
-      "diagram": "diagrams/seckill-mq-not-only-db-valve.svg",
+      "diagram": "library-assets/distributed-hc/p0053.png",
       "deep": [
         {
           "title": "和库存不变量",
@@ -38702,7 +38774,7 @@
       "answer": "划掉「解耦=可以不管库存」。入队只推迟扣减。还要：业务与事件同事务发出（Outbox）、消费幂等与失败补偿、对账把差额落到订单号。没有这三样，成功单可以多于库存。削峰丢弃超额请求是限流，不是写进队列就等于卖出。",
       "keywords": "消息队列 解耦 最终一致 Outbox 库存 超卖",
       "origin": "《分布式高并发.pdf》约第 27 页：库存不可用也不影响下单的解耦叙述",
-      "diagram": "diagrams/distributed-mq-not-erase.svg",
+      "diagram": "library-assets/distributed-hc/p0027.png",
       "deep": [
         {
           "title": "和用户当场失败",
@@ -38747,7 +38819,8 @@
       "task": "画出三个节点和六个键的环，加入第四节点后逐个标记迁移的键，再指定热点键保护措施。",
       "answer": "三个节点加第四个之后，只迁移新节点顺时针接管区间里的键，其余键不动。热点键即使落在这段，虚拟节点也不会把它拆开，还要复制备份、拆分、局部缓存或业务层限流。逐个标记迁移键之后，才能估计这次故障或扩容影响的范围。六个键里只应标出落在新区间的那些，热点要单独保护。",
       "keywords": "consistent hashing virtual nodes hotspot 一致性哈希 虚拟节点",
-      "origin": "《分布式高并发.pdf》第 94 页的一致性哈希讨论",
+      "origin": "《分布式高并发.pdf》第 94 页",
+      "diagram": "library-assets/distributed-hc/p0094.png",
       "deep": [
         {
           "title": "解决的问题",
@@ -38785,7 +38858,7 @@
       "answer": "划掉定律。虚拟节点改善节点弧长不均，数量要按实测调。单键热点不靠加大 32 解决。",
       "keywords": "一致性哈希 虚拟节点 倾斜",
       "origin": "《分布式高并发.pdf》约第 100 页：虚拟节点通常设为 32 甚至更大",
-      "diagram": "diagrams/consistent-hash-vnode-count-not-law.svg",
+      "diagram": "library-assets/distributed-hc/p0100.png",
       "deep": [
         {
           "title": "和一致性哈希论文",
@@ -38830,8 +38903,8 @@
       "task": "用 12 位位数组和两个哈希位置模拟插入 A、B；若两者共享一位，直接删除 A 的位会发生什么？",
       "answer": "12 位数组、两个哈希位置，插入 A 和 B。若两者共享一位，直接清掉 A 用过的位后，B 可能被错误判为不存在，这是假阴性。普通过滤器不能这样删除。要删除就重建、改用计数，或换可删除的结构，并各自评估代价。命中后仍要查权威数据。共享位被清掉之后，原来确定存在的键会变成确定没有。",
       "keywords": "Bloom filter 布隆过滤器 false positive 位图 删除 缓存穿透",
-      "origin": "《分布式高并发.pdf》第 79–82 页的布隆过滤器图解",
-      "diagram": "diagrams/bloom-filter.svg",
+      "origin": "《分布式高并发.pdf》第 80 页（79–82 图解）",
+      "diagram": "library-assets/distributed-hc/p0080.png",
       "deep": [
         {
           "title": "插入与查询",
@@ -38842,7 +38915,7 @@
           "body": "误判率受位数组长度、哈希函数数量及插入量共同影响。容量满后不能继续沿用最初的误判率估算。"
         },
         {
-          "title": "常见误区",
+          "title": "资料常见写法",
           "body": "比较两个 URL 的哈希值并不是布隆过滤器的成员测试；普通位数组上的直接清零也不是安全删除。"
         }
       ],
@@ -38875,7 +38948,8 @@
       "task": "给三种场景分别指定一个观测指标、一种主要保护手段和一个副作用。",
       "answer": "集中失效看过期时间是否挤在一起，主要手段是错开过期并限流，副作用是仍可能短暂回源。热点看单个键的并发，主要手段是单次回源或允许短暂旧值，副作用是锁等待或读到旧值。不存在的数据看命中率里的空查，用校验、空值或过滤器，副作用是误判和空值占空间。",
       "keywords": "Redis cache avalanche stampede penetration TTL 缓存雪崩 击穿 穿透",
-      "origin": "《分布式高并发.pdf》第 25 页的缓存失效方案",
+      "origin": "《分布式高并发.pdf》第 25 页",
+      "diagram": "library-assets/distributed-hc/p0025.png",
       "deep": [
         {
           "title": "先定义正确性",
@@ -38913,7 +38987,7 @@
       "answer": "划掉「讲完链表 LRU = 答完带过期」。容量满踢最久未用；TTL 到点失效即使未满。未满时过期键在 get/扫时删除并视为未命中。两维都要设计，标题有过期就不能只画链表。",
       "keywords": "LRU TTL 过期 容量淘汰 缓存",
       "origin": "《分布式高并发.pdf》约第 197–198 页：带有过期时间的 LRU 缓存",
-      "diagram": "diagrams/lru-capacity-not-ttl-expire.svg",
+      "diagram": "library-assets/distributed-hc/p0197.png",
       "deep": [
         {
           "title": "和 Redis 政策名",
@@ -38957,8 +39031,8 @@
       "task": "设计四个分区的订单事件流，说明同一订单如何保持顺序，以及失败重试时消费者如何避免后续事件越过前一事件。",
       "answer": "四个分区仍保留。同一订单用稳定的订单号进同一分区，从而保持顺序。失败时消费者应阻塞、按顺序重试或把该订单送进单独处理，避免后续事件越过前一事件。分区数若改变，键的映射会变，要重新评估同一订单是否还落在一起。重试若先跳过失败事件，取消就会跑到支付前面。",
       "keywords": "Kafka topic partition key order offset 消息顺序",
-      "origin": "《分布式高并发.pdf》第 33 页的消息顺序建议",
-      "diagram": "diagrams/kafka-order.svg",
+      "origin": "《分布式高并发.pdf》第 33 页",
+      "diagram": "library-assets/distributed-hc/p0033.png",
       "deep": [
         {
           "title": "顺序的范围",
@@ -38969,7 +39043,7 @@
           "body": "消费端如果把同一分区任务无约束并行化，或者失败后跳过消息，日志顺序也不等于副作用执行顺序。"
         },
         {
-          "title": "常见误区",
+          "title": "资料常见写法",
           "body": "“一个 Topic 只能有一个队列”并非保持单个订单顺序的必要条件；先定义究竟按订单、账户还是全局排序。"
         }
       ],
@@ -39000,6 +39074,7 @@
       "answer": "划掉「DNS=可控轮询+调小 TTL 就实时」。DNS 能多名多址与粗粒度调度。做不到可靠感知实例健康与立即全局失效。精细摘流交给 LB。TTL 极小有流量代价。",
       "keywords": "DNS 负载均衡 TTL 健康检查",
       "origin": "《分布式高并发.pdf》约第 92 页：DNS 负载均衡与调小刷新时间",
+      "diagram": "library-assets/distributed-hc/p0092.png",
       "deep": [
         {
           "title": "和反向代理",
@@ -39049,7 +39124,7 @@
       "answer": "划掉「302 分流=简单好用的主 LB」。302 LB 至少两跳，Location 常把真实主机交给浏览器，后续可能绕过调度。反代让客户端只看见 VIP，上游不暴露。主入口用反代/云 LB；302 留给明确的迁移跳转。",
       "keywords": "HTTP 302 负载均衡 Location 反向代理",
       "origin": "《分布式高并发.pdf》约第 93 页：http 重定向协议实现负载均衡",
-      "diagram": "diagrams/http-redirect-lb-two-hops.svg",
+      "diagram": "library-assets/distributed-hc/p0093.png",
       "deep": [
         {
           "title": "和 SEO、方法语义",
@@ -39095,7 +39170,7 @@
       "answer": "划掉一句本质相同。谱系相关，但微服务强调独立部署与去中心治理等。多语言/REST 不是充分条件。",
       "keywords": "微服务 SOA Fowler 独立部署",
       "origin": "《分布式高并发.pdf》约第 17 页：微服务本质还是 SOA",
-      "diagram": "diagrams/microservices-not-just-soa-relabel.svg",
+      "diagram": "library-assets/distributed-hc/p0017.png",
       "deep": [
         {
           "title": "和拆分动机",
@@ -39141,7 +39216,7 @@
       "answer": "划掉等同。拆分改边界，集群改容量/冗余。只做其一会剩单点或模糊边界。",
       "keywords": "拆分 集群 副本 RPC",
       "origin": "《分布式高并发.pdf》约第 16–17 页：拆分 VS 集群",
-      "diagram": "diagrams/split-vs-cluster-not-interchangeable.svg",
+      "diagram": "library-assets/distributed-hc/p0016.png",
       "deep": [
         {
           "title": "和负载均衡",
@@ -39187,7 +39262,7 @@
       "answer": "划掉必然。池化、代理、读写分离可降连接。拆服务要有边界收益，不单为平方公式。",
       "keywords": "连接池 代理 服务拆分",
       "origin": "《分布式高并发.pdf》约第 16 页：连接数目是服务器规模的平方",
-      "diagram": "diagrams/service-extract-not-only-connection-math.svg",
+      "diagram": "library-assets/distributed-hc/p0016.png",
       "deep": [
         {
           "title": "和配置中心",
@@ -39233,7 +39308,7 @@
       "answer": "划掉凡查询皆可。SQL SELECT 在数据不变时结果稳定，但业务读可能有副作用。写路径仍要幂等键。",
       "keywords": "幂等 SELECT 消息消费",
       "origin": "《分布式高并发.pdf》约第 32 页：select 是天然幂等操作",
-      "diagram": "diagrams/select-not-always-business-idempotent.svg",
+      "diagram": "library-assets/distributed-hc/p0032.png",
       "deep": [
         {
           "title": "和删除幂等",
@@ -39279,7 +39354,7 @@
       "answer": "划掉。服务端要用同一键查重/占位。键由客户端或网关对同一意图保持稳定，不能每次重试新建。",
       "keywords": "幂等键 Idempotency-Key UUID 去重",
       "origin": "《分布式高并发.pdf》幂等口诀常见缩写",
-      "diagram": "diagrams/idempotency-key-not-only-uuid.svg",
+      "diagram": "library-assets/distributed-hc/p0032.png",
       "deep": [
         {
           "title": "和唯一索引",
@@ -39325,7 +39400,7 @@
       "answer": "划掉万能虚拟节点。节点分布与单键热点是两问题。后者要键设计与隔离。",
       "keywords": "倾斜 热点键 一致性哈希",
       "origin": "《分布式高并发.pdf》约第 60、94 页附近：数据分配不一定均匀",
-      "diagram": "diagrams/hash-skew-not-only-virtual-nodes.svg",
+      "diagram": "library-assets/distributed-hc/p0060.png",
       "deep": [
         {
           "title": "和令牌桶",
@@ -39371,7 +39446,7 @@
       "answer": "划掉全局必须。按业务键分区有序通常够用。全局有序是极端选项。",
       "keywords": "消息顺序 分区 吞吐",
       "origin": "《分布式高并发.pdf》约第 33 页：是否必须严格有序",
-      "diagram": "diagrams/message-order-not-always-required.svg",
+      "diagram": "library-assets/distributed-hc/p0033.png",
       "deep": [
         {
           "title": "和幂等",
@@ -39537,7 +39612,7 @@
       "answer": "划掉。ThreadLocal 只在本线程。跨服务靠头/令牌/消息属性等显式传递，并注意线程池清理。",
       "keywords": "ThreadLocal 上下文 链路 传播",
       "origin": "《分布式高并发.pdf》上下文传递常见缩写",
-      "diagram": "diagrams/threadlocal-not-distributed-context.svg",
+      "diagram": "library-assets/distributed-hc/p0127.png",
       "deep": [
         {
           "title": "和虚拟线程",
@@ -39583,7 +39658,7 @@
       "answer": "划掉同义。线程池限任务并发；连接池限下游连接。相等常拖垮 DB 或浪费连接，要用超时与压测定。",
       "keywords": "连接池 线程池 Hikari 容量",
       "origin": "《分布式高并发.pdf》池化参数口诀常见绑定",
-      "diagram": "diagrams/connection-pool-not-thread-pool.svg",
+      "diagram": "library-assets/distributed-hc/p0182.png",
       "deep": [
         {
           "title": "和虚拟线程",
@@ -39669,7 +39744,7 @@
       "answer": "划掉定律。v4 近似随机无序；v7 可时间有序。存储可用 16 字节二进制。乱序键仍不宜当 InnoDB 聚簇主键。",
       "keywords": "UUID v7 RFC9562 BINARY 有序",
       "origin": "《分布式高并发.pdf》约第 193 页：UUID 无排序、往往字符串存储",
-      "diagram": "diagrams/uuid-not-only-random-string.svg",
+      "diagram": "library-assets/distributed-hc/p0193.png",
       "deep": [
         {
           "title": "和雪花",
@@ -39715,7 +39790,7 @@
       "answer": "划掉又省又连续。批量换吞吐、丢连续性；崩溃浪费未用段。要连续就别批量；要分布式唯一可接受缺口或换雪花。",
       "keywords": "sequence 乐观锁 号段 断号",
       "origin": "《分布式高并发.pdf》约第 194–195 页：sequence 表乐观锁；一次取 500 缓存",
-      "diagram": "diagrams/db-sequence-batch-not-gapless.svg",
+      "diagram": "library-assets/distributed-hc/p0194.png",
       "deep": [
         {
           "title": "和多 Master 步长",
@@ -39761,7 +39836,7 @@
       "answer": "划掉自动。这是人工互斥分段。扩缩主数要改步长/偏移并防撞。复制拓扑高可用是另一问题，不靠这两个变量单独完成。",
       "keywords": "AUTO_INCREMENT offset increment 多主",
       "origin": "《分布式高并发.pdf》约第 194 页：多 Master 不同起始、相同步长发号",
-      "diagram": "diagrams/db-autoinc-offset-step-needs-ops.svg",
+      "diagram": "library-assets/distributed-hc/p0194.png",
       "deep": [
         {
           "title": "和单主自增",
@@ -39930,7 +40005,7 @@
       "answer": "划掉同义词。CI 是频繁集成与自动验证的实践。Jenkins 只是实现该实践的一种工具；同类还有 Actions、GitLab CI 等。",
       "keywords": "CI Jenkins 持续集成 流水线",
       "origin": "《分布式高并发.pdf》约第 193 页：持续集成专节写使用 Jenkins 等工具",
-      "diagram": "diagrams/jenkins-not-only-ci-tool.svg",
+      "diagram": "library-assets/distributed-hc/p0193.png",
       "deep": [
         {
           "title": "和持续交付/部署",
@@ -40058,7 +40133,7 @@
       "answer": "划掉忽视隔离。共享内核更轻也共享攻击面。用命名空间/策略加固，强隔离看 VM。",
       "keywords": "容器 内核 命名空间 隔离",
       "origin": "《分布式高并发.pdf》约第 185 页附近：容器无自己的内核",
-      "diagram": "diagrams/container-shares-host-kernel.svg",
+      "diagram": "library-assets/distributed-hc/p0185.png",
       "deep": [
         {
           "title": "和 root",
@@ -40104,7 +40179,7 @@
       "answer": "划掉等同。镜像只读模板；容器是实例；持久化用卷。",
       "keywords": "Docker 镜像 容器 卷",
       "origin": "《分布式高并发.pdf》约第 186 页附近：镜像是只读模板",
-      "diagram": "diagrams/docker-image-template-not-container.svg",
+      "diagram": "library-assets/distributed-hc/p0186.png",
       "deep": [
         {
           "title": "和多层构建",
@@ -40150,7 +40225,7 @@
       "answer": "划掉淘汰论。容器偏密度与速度；VM 偏强隔离。按威胁模型选。",
       "keywords": "虚拟机 容器 隔离 密度",
       "origin": "《分布式高并发.pdf》约第 184–186 页：虚拟机与容器对比",
-      "diagram": "diagrams/vm-vs-container-isolation-tradeoff.svg",
+      "diagram": "library-assets/distributed-hc/p0184.png",
       "deep": [
         {
           "title": "和编排",
@@ -40196,7 +40271,7 @@
       "answer": "划掉教条单进程。一服务主容器是默认；sidecar 可共存。禁止巨石多主服务。",
       "keywords": "容器 sidecar 十二要素",
       "origin": "《分布式高并发.pdf》约第 187 页附近：一个容器运行一种服务",
-      "diagram": "diagrams/one-container-one-service-heuristic.svg",
+      "diagram": "library-assets/distributed-hc/p0187.png",
       "deep": [
         {
           "title": "和 Pod",
@@ -40242,7 +40317,7 @@
       "answer": "划掉大桶口诀。Registry 是服务端点；Repository 是镜像名空间；tag/digest 指向具体镜像内容。Hub 只是一种公开 Registry。",
       "keywords": "Docker Registry Repository tag Harbor",
       "origin": "《分布式高并发.pdf》约第 187 页：仓库与注册服务器有区别；总结混称仓储",
-      "diagram": "diagrams/docker-registry-not-just-repo-bucket.svg",
+      "diagram": "library-assets/distributed-hc/p0187.png",
       "deep": [
         {
           "title": "和镜像层",
@@ -41181,8 +41256,8 @@
       "task": "划掉「没有锁就不会因为缓存变慢」。写出伪共享的单位是缓存行，以及一种隔开字段的办法。",
       "answer": "划掉「没有锁就不会因为缓存变慢」。单位是缓存行，不是字段。相邻写仍会使整行失效。隔开用填充或 Contended。这不是数据竞争，也不是把堆调大能修好的。",
       "keywords": "false sharing cache line Contended JEP 142 CPU",
-      "origin": "本地库「计算机组成」导图里把缓存画成对程序员透明",
-      "diagram": "diagrams/cpu-cache-line.svg",
+      "origin": "图解计算机组成（计算机组成.png）",
+      "diagram": "library-assets/illustrated-basics/computer-organization.png",
       "deep": [
         {
           "title": "和可见性不是一件事",
@@ -41223,8 +41298,8 @@
       "task": "画出 L1–L3 与 DRAM/堆两列。写出 -Xmx 作用在哪一列，以及伪共享作用在哪一列。",
       "answer": "-Xmx 在 DRAM 上的堆。L1–L3 是硬件。伪共享发生在缓存行。两列不能用同一个参数调。",
       "keywords": "CPU cache L3 heap -Xmx memory hierarchy JVM",
-      "origin": "本地库「计算机组成」导图的存储层次",
-      "diagram": "diagrams/cpu-dram-heap.svg",
+      "origin": "图解计算机组成（计算机组成.png）· 存储层次",
+      "diagram": "library-assets/illustrated-basics/computer-organization.png",
       "deep": [
         {
           "title": "和运行时区域",
@@ -41524,6 +41599,8 @@
       "task": "对照现行内核锁定文档，划掉 BKL 作为必考现状；写出中断上下文为什么不能用会睡眠的信号量。",
       "answer": "对照现行内核锁定文档，划掉 BKL 作为必考现状：大内核锁已从主线移除。中断上下文不能用会睡眠的信号量，因为睡眠会把这段中断处理停住，还可能在不可调度的路径上阻塞。短临界区用自旋锁，能睡眠的路径用 mutex。内核抢占从 2.6 起就有，不是 2.4 一直占着 CPU。",
       "keywords": "BKL spinlock mutex RCU 内核抢占",
+      "origin": "本地库《图解系统》内核能力与调度页",
+      "diagram": "library-assets/illustrated-basics/os-p0111.png",
       "deep": [
         {
           "title": "按能不能睡来选锁",
@@ -41548,6 +41625,342 @@
         [
           "kernel：preempt",
           "https://docs.kernel.org/scheduler/preempt.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-virtual-memory-isolation",
+      "title": "多进程不能共用绝对物理地址，要用虚拟地址做隔离",
+      "prompt": "为什么把单片机那种“CPU 直接按物理地址读写内存”套到多进程操作系统上，会在两个程序写同一地址时说不通？",
+      "promptAnswer": "没有操作系统的直访模型里地址就是物理位置。多进程要靠虚拟地址隔离，再由操作系统映射到不同物理页。",
+      "core": "单片机等场景常让 CPU 直接使用物理地址；两个程序若都写同一个绝对地址，会互相覆盖。操作系统为每个进程提供独立的虚拟地址空间：进程只在自己的虚拟地址里访问，相同的虚拟地址可以映射到不同的物理内存。映射由操作系统维护，访存时再经硬件翻译。这样进程不必协调彼此的物理布局，也能避免直接踩到对方的数据。",
+      "why": "把物理直访当成多进程现状，就解释不了进程隔离，也解释不了为何两个进程打印出相同指针值却互不影响。区分信号是：冲突来自共用绝对物理地址；虚拟地址把“程序看到的地址”和“内存条位置”分开。",
+      "example": "进程 A 与进程 B 都在虚拟地址 0x2000 写入，物理页可以完全不同，因此不会互相覆盖。若强制共用物理地址 0x2000，后写的会毁掉先写的内容。",
+      "task": "画出「进程 → 虚拟内存 → 物理内存」三层；用一句话说明为何两个进程可以用相同虚拟地址；写出物理直访模型在多进程下的主要风险。",
+      "answer": "三层是进程、虚拟内存、物理内存。两个进程可以用相同虚拟地址，因为各自映射到不同物理位置。物理直访的主要风险是互相覆盖、无法隔离。",
+      "keywords": "虚拟内存 进程隔离 物理地址 映射",
+      "origin": "本地库《图解系统》为何需要虚拟内存页",
+      "diagram": "library-assets/illustrated-basics/os-p0121.png",
+      "deep": [
+        {
+          "title": "虚拟内存在这里解决的问题",
+          "body": "先解决隔离与独立地址空间，再谈缺页、换页和文件映射。没有这层抽象，后面的页表机制没有落点。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "对照「进程 / 虚拟内存 / 物理内存」三层图，指出程序写出的地址落在哪一层。再写一句：冲突来自绝对物理地址，不是来自“数字长得像”。"
+        }
+      ],
+      "since": "engineering",
+      "points": [
+        "多进程不能安全共用绝对物理地址",
+        "每个进程有独立虚拟地址空间",
+        "相同虚拟地址可映射到不同物理页"
+      ],
+      "references": [
+        [
+          "kernel：Memory Management",
+          "https://docs.kernel.org/admin-guide/mm/index.html"
+        ],
+        [
+          "man：mmap",
+          "https://man7.org/linux/man-pages/man2/mmap.2.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-virtual-addr-mmu",
+      "title": "程序里的地址是虚拟地址，经 MMU 才落到物理内存",
+      "prompt": "为什么把程序打印出来的指针或数组下标当成内存条上的物理地址，会在多进程、缺页时说不通？",
+      "promptAnswer": "程序用的是虚拟地址。CPU 里的 MMU 把它翻译成物理地址后再访问物理内存。",
+      "core": "虚拟地址是程序看到的地址空间；物理地址才是硬件内存里真正的位置。操作系统给每个进程一套虚拟地址空间，访存时由芯片里的内存管理单元（MMU）做地址翻译。同一虚拟地址在不同进程可以对应不同物理页；未映射或被换出时会走缺页，不是“指针数字直接等于内存条偏移”。管理虚拟与物理对应关系的常见机制是分段与分页；现行通用操作系统以分页为主，分段多作历史与兼容背景。",
+      "why": "把虚拟地址当成物理地址，就解释不了进程隔离、同一指针值在两个进程里指向不同内容，也解释不了缺页与换页。区分信号是：CPU 发出的是虚拟地址，落到内存条之前一定经过 MMU。",
+      "example": "两个进程各自把一个 int 放在看起来相同的虚拟地址上，物理页可以完全不同。进程访问尚未映射的页会触发缺页异常，由内核补页或报错，而不是直接读到别的进程的物理内存。",
+      "task": "画出「CPU → MMU → 物理内存」三步；写出虚拟地址与物理地址各一句话定义；说明分段与分页分别按什么单位做映射。",
+      "answer": "CPU 发出虚拟地址，MMU 翻译成物理地址，再访问物理内存。虚拟地址是程序使用的地址；物理地址是硬件内存中的位置。分段按逻辑段（代码、数据、栈等）映射；分页按固定大小的页映射。现行通用系统以分页为主。",
+      "keywords": "虚拟地址 物理地址 MMU 分页 分段",
+      "origin": "本地库《图解系统》虚拟地址与物理地址页",
+      "diagram": "library-assets/illustrated-basics/os-p0122.png",
+      "deep": [
+        {
+          "title": "为什么要虚拟地址",
+          "body": "每个进程看到自己的地址空间，彼此隔离；物理页可以按需映射、共享只读页或换出到磁盘。没有这层翻译，多进程就不能安全共用同一块物理内存。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "对照一张「CPU → MMU → 物理内存」图，指出程序打印的指针落在哪一侧。再写两句：虚拟地址是程序用的；物理地址是硬件位置。分段按逻辑段，分页按页，现行通用系统以分页为主。"
+        }
+      ],
+      "since": "engineering",
+      "points": [
+        "程序使用虚拟地址，不是内存条上的物理偏移",
+        "MMU 在 CPU 芯片内完成地址翻译",
+        "分段与分页是管理虚实映射的两种机制，现行系统以分页为主"
+      ],
+      "references": [
+        [
+          "kernel：Memory Management",
+          "https://docs.kernel.org/admin-guide/mm/index.html"
+        ],
+        [
+          "Intel SDM：Memory Management",
+          "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-memory-segmentation",
+      "title": "分段用段号查段表再加偏移，现行通用系统不以它做主映射",
+      "prompt": "为什么还把“程序按代码/数据/堆/栈四大段直接映射到物理内存”背成今天的主机制？",
+      "promptAnswer": "分段是早期常用做法。现行通用操作系统以分页为主；分段多作历史与兼容背景。",
+      "core": "分段机制下，虚拟地址常拆成段选择子（含段号）与段内偏移：用段号索引段表，取出段基址、段界限等，再把偏移加到基址上得到物理地址；偏移不能越过段界限。程序常按代码、数据、堆、栈等逻辑段划分，段长短不一。段大小可变，容易产生外部碎片，整段换入换出成本也高，所以后来主流转向固定大小的分页。现行 x86 仍保留段相关结构，但通用操作系统的地址翻译主路径是分页。",
+      "why": "把四大段直映物理内存当成现状，会对不上页表、缺页和按页换入换出。区分信号是：段表按可变长段映射；页表按固定页映射。",
+      "example": "访问某段内偏移 500：先用段号查段表得到基址，再基址加 500。若偏移超过段界限则非法。四个段在物理内存上可以不相邻，中间留下难以利用的空洞，这就是外部碎片的来源之一。",
+      "task": "写出分段下虚拟地址的两部分；说明物理地址怎样由基址与偏移得到；写一句现行通用系统为何不以分段做主映射。",
+      "answer": "两部分是段选择子（段号）与段内偏移。物理地址由段基址加段内偏移得到，且偏移不能越界。现行通用系统不以分段做主映射，因为可变长段易碎片、整段交换成本高，主路径改为分页。",
+      "keywords": "分段 段表 段基址 段界限 外部碎片",
+      "origin": "本地库《图解系统》分段地址翻译页",
+      "diagram": "library-assets/illustrated-basics/os-p0123.png",
+      "deep": [
+        {
+          "title": "分段解决了什么，又留下什么",
+          "body": "分段让程序按逻辑段组织，不必直接写物理地址。留下的问题是可变长占用造成外部碎片，以及整段换入换出偏慢，这些推动了分页。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "对照段选择子与段内偏移的图，用手算一次基址加偏移。再写一句：今天讲进程地址空间映射，主模型是页表而不是四大段直映。"
+        }
+      ],
+      "since": "engineering",
+      "points": [
+        "分段用段号查段表，基址加偏移得到物理地址",
+        "段长短可变，易产生外部碎片",
+        "现行通用操作系统地址翻译主路径是分页"
+      ],
+      "references": [
+        [
+          "Intel SDM：Segmentation",
+          "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html"
+        ],
+        [
+          "kernel：Memory Management",
+          "https://docs.kernel.org/admin-guide/mm/index.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-memory-paging",
+      "title": "分页把地址空间切成固定大小的页，经页表翻译成物理地址",
+      "prompt": "为什么在讲完虚拟地址和 MMU 之后，还要把“分段整段换入换出”当成现行通用做法？",
+      "promptAnswer": "现行通用操作系统以分页为主。虚拟地址拆成页号与页内偏移，用页表查出物理页再拼偏移。",
+      "core": "分页把虚拟地址空间和物理内存都切成固定大小的页（Linux 常见默认 4KB）。虚拟地址分为页号与页内偏移：页号索引页表，得到物理页号（或页帧基址），再与页内偏移拼成物理地址；翻译由 MMU 完成。相对分段，页是固定粒度，换入换出可以按页进行，不必整段搬迁。页不在物理内存时会缺页，由内核补页或换入后再继续执行。",
+      "why": "把整段换入换出当成现状，会夸大碎片与交换成本，也对不上页表、缺页这些现行机制。区分信号是：地址先按页号查表，再拼偏移。",
+      "example": "访问某个虚拟地址时，先取出页号查页表得到物理页，再加上页内偏移才落到具体字节。进程不必一次性装入全部虚拟页；首次访问未映射页会触发缺页，内核分配物理页并更新页表。",
+      "task": "写出分页下虚拟地址的两部分名称；用三步写出「页号 → 页表 → 物理地址」；说明 Linux 常见默认页大小。",
+      "answer": "两部分是页号与页内偏移。三步：拆出页号和偏移；用页号查页表得到物理页；物理页与偏移拼成物理地址。Linux 常见默认页大小是 4KB。",
+      "keywords": "分页 页表 页号 页内偏移 MMU 缺页",
+      "origin": "本地库《图解系统》分页地址翻译页",
+      "diagram": "library-assets/illustrated-basics/os-p0128.png",
+      "deep": [
+        {
+          "title": "分页相对分段在交换上的差别",
+          "body": "分段时常要搬整段，碎片和交换成本都大。分页按页换入换出，未用到的虚拟页可以先不占物理内存，靠缺页再装入。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "对照页号与页内偏移的拆分图，用手算一次：给定页号查表得到物理页，再加偏移。写出一句：翻译在 MMU，页表由操作系统维护。"
+        }
+      ],
+      "since": "engineering",
+      "points": [
+        "分页用固定大小的页映射虚拟与物理地址",
+        "页号查页表，再与页内偏移拼成物理地址",
+        "缺页时由内核补页或换入后再继续"
+      ],
+      "references": [
+        [
+          "kernel：Memory Management",
+          "https://docs.kernel.org/admin-guide/mm/index.html"
+        ],
+        [
+          "kernel：Page Table Isolation",
+          "https://docs.kernel.org/x86/pti.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-multilevel-page-table",
+      "title": "单级页表按进程占满地址空间会太大，要用多级页表按需展开",
+      "prompt": "为什么把“每个进程一张覆盖全部虚拟空间的扁平页表”背成实现现状，会在算内存开销时对不上？",
+      "promptAnswer": "32 位、4KB 页时单级页表可到约 4MB/进程。多级页表只为用到的区间建下级表。",
+      "core": "简单单级页表要为整个虚拟地址空间准备页表项。以 32 位、4KB 页为例，约 2^20 个页表项，每项 4 字节则约 4MB，且每个进程一份，进程一多就很贵。多级页表把页号再拆成多级索引：先查一级表得到二级表基址，再查二级得到物理页号，最后拼页内偏移。未使用的虚拟区间可以不建下级页表，从而省空间。64 位还会用更多级或其它压缩结构，但“按需展开、不按满地址空间常驻一张扁平表”的道理相同。",
+      "why": "按每人一张满幅扁平页表去估内存，会高估页表占用，也解释不了为什么空地址区间不必占满物理页表页。区分信号是：多级索引 + 未用区间可不建下级表。",
+      "example": "32 位常见拆分是 10 位一级页号、10 位二级页号、12 位页内偏移（对应 4KB 页）。进程只用了少量虚拟页时，一级表里大量项为空，对应二级表根本不分配。",
+      "task": "算出 32 位、4KB 页、每项 4 字节时单级页表大约多大；写出多级页表省空间的关键一句；标出 10-10-12 拆分里哪一段是页内偏移。",
+      "answer": "单级页表大约 4MB（2^20 项 × 4 字节）。多级页表省空间的关键是：未使用的虚拟区间可以不建下级页表。10-10-12 里最后 12 位是页内偏移。",
+      "keywords": "多级页表 页表项 一级页表 二级页表",
+      "origin": "本地库《图解系统》多级页表页",
+      "diagram": "library-assets/illustrated-basics/os-p0130.png",
+      "deep": [
+        {
+          "title": "多级并非永远更省",
+          "body": "若进程真的映射满整个地址空间，多级表项总数不会变少，还多了层级指针。省的是“大部分虚拟空间从未用到”这一常见情况。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "用 2^32 / 4KB 算出页数，再乘每项 4 字节得到约 4MB。对照 10-10-12 图，指出一级索引、二级索引和页内偏移各多少位。"
+        }
+      ],
+      "since": "engineering",
+      "points": [
+        "单级页表按满虚拟空间计会随进程数迅速变贵",
+        "多级页表按级索引，未用区间可不建下级表",
+        "页内偏移与页大小对应，常见 4KB 对应 12 位偏移"
+      ],
+      "references": [
+        [
+          "kernel：Memory Management",
+          "https://docs.kernel.org/admin-guide/mm/index.html"
+        ],
+        [
+          "Intel SDM：Paging",
+          "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-page-fault-swap",
+      "title": "缺页时内核补页或换入，内存紧时可以把页换出到磁盘",
+      "prompt": "为什么把“进程一启动就把全部虚拟页装进物理内存”背成现状，会在解释懒加载和 swap 时说不通？",
+      "promptAnswer": "可以先建映射、访问时再缺页补页。内存紧时把近期不用的页换出到磁盘，需要时再换入。",
+      "core": "分页下不必一次装入进程的全部虚拟页。访问到页表中尚未对应物理页（或页在磁盘上）的地址时，硬件产生缺页异常，陷入内核：分配或换入物理页、更新页表，再回到用户态继续执行。内存紧张时，操作系统可以把近期较少使用的页换出到磁盘上的交换空间（如 Linux 的 swap），需要时再换入。按页换入换出比整段搬迁粒度更小，也支持按需装入。",
+      "why": "按“启动时装满物理内存”去想，解释不了为什么进程虚拟空间可以很大却只占部分 RSS，也解释不了 swap 命中后的停顿。区分信号是：缺页路径负责补页；换出换入按页与磁盘交互。",
+      "example": "首次读到尚未分配物理页的数据页会缺页，内核分配一页并填好页表项。物理内存不够时，可能把另一个进程很久未用的脏页写到 swap，腾出页帧给当前缺页。",
+      "task": "写出缺页发生后的三步（异常 → 内核做什么 → 回到哪里）；用一句话区分换出与换入；说明为何按页交换通常比整段交换更合适。",
+      "answer": "缺页后：硬件进缺页异常；内核分配或换入物理页并更新页表；再返回用户态继续执行。换出是把页写到磁盘腾出内存，换入是从磁盘读回。按页交换粒度小，不必整段搬迁。",
+      "keywords": "缺页 换入 换出 swap 按需装入",
+      "origin": "本地库《图解系统》缺页与换入换出页",
+      "diagram": "library-assets/illustrated-basics/os-p0127.png",
+      "deep": [
+        {
+          "title": "和分段整段交换的差别",
+          "body": "分段时常要搬整段，成本高。分页只移动用到的页，未访问的虚拟页可以长期不占物理页帧。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "对照「虚拟页 → 页表 → 物理页 / 硬盘」图，标出换出与换入两条箭头。写下一句：缺页是访问路径上的补页机会，不是程序写错才会发生的唯一情况。"
+        }
+      ],
+      "since": "engineering",
+      "points": [
+        "缺页异常后由内核补页或换入并更新页表",
+        "换出把页落到磁盘交换空间，换入再读回",
+        "分页支持按需装入，不必启动时装满物理内存"
+      ],
+      "references": [
+        [
+          "kernel：Page Frame Reclamation",
+          "https://docs.kernel.org/mm/page_reclaim.html"
+        ],
+        [
+          "man：mmap",
+          "https://man7.org/linux/man-pages/man2/mmap.2.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-tlb-cache",
+      "title": "TLB 缓存近期页表翻译，未命中才走完整页表查找",
+      "prompt": "为什么多级页表省了空间之后，还把“每次访存都完整走一遍多级页表”当成没有额外代价？",
+      "promptAnswer": "多级查找要多次访存。CPU 里用 TLB（快表）缓存近期翻译，命中则不必每次走完整页表。",
+      "core": "多级页表降低了页表占用，但一次地址翻译可能要读多级表项，延迟高。利用程序局部性，CPU 芯片内用 TLB（Translation Lookaside Buffer，也称快表、页表缓存）保存近期用过的页表翻译结果。MMU 先查 TLB：命中则直接得到物理页相关信息；未命中再查内存中的页表，并通常把结果填回 TLB。进程切换或页表更新时还要考虑 TLB 失效，否则会用到过期翻译。",
+      "why": "忽略 TLB，会低估多级页表的时间成本，也解释不了为何页表更改后要刷新快表。区分信号是：TLB 在 CPU 侧缓存翻译；页表在内存里是完整映射权威来源。",
+      "example": "循环访问同一小段代码页时，TLB 命中率通常很高，地址翻译几乎不再每次穿透多级页表。修改页表映射或切换到另一进程的地址空间后，需要让旧的 TLB 项失效，避免落到错误物理页。",
+      "task": "写出 TLB 命中与未命中时 MMU 各怎么做；用一句话说明局部性为何让 TLB 有效；指出 TLB 与页表谁是完整映射的权威来源。",
+      "answer": "命中：MMU 用 TLB 里的翻译继续访问。未命中：查内存中的页表，并通常把结果写入 TLB。局部性使短期访问集中在少数页，TLB 才有高命中率。完整映射的权威来源是内存中的页表，不是 TLB。",
+      "keywords": "TLB 快表 MMU 局部性 页表缓存",
+      "origin": "本地库《图解系统》TLB 与 MMU 页",
+      "diagram": "library-assets/illustrated-basics/os-p0133.png",
+      "deep": [
+        {
+          "title": "多级页表与 TLB 各管什么",
+          "body": "多级页表主要省空间；TLB 主要补时间。两者都依赖局部性：地址空间用不满，且短期访问集中。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "对照 CPU 芯片内 MMU 与 TLB 的图，指出虚拟地址先到哪里。写两句：命中走快表；改页表或切进程要考虑 TLB 失效。"
+        }
+      ],
+      "since": "engineering",
+      "points": [
+        "TLB 缓存在 CPU 侧的近期地址翻译",
+        "未命中才查内存页表，并常回填 TLB",
+        "页表是完整映射权威；TLB 失效后必须更新或丢弃旧项"
+      ],
+      "references": [
+        [
+          "Intel SDM：Caching Translation Information",
+          "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html"
+        ],
+        [
+          "kernel：Memory Management",
+          "https://docs.kernel.org/admin-guide/mm/index.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-segmented-paging",
+      "title": "段页式先段后页：逻辑地址经线性地址再到物理地址",
+      "prompt": "为什么把“分段和分页只能二选一”背成定律，会在读 x86/Linux 地址翻译时对不上？",
+      "promptAnswer": "可以合用。段式单元先得到线性地址（虚拟地址），再由页式单元映射到物理地址。",
+      "core": "段页式把分段与分页接在一条链上：程序侧常是段号加偏移的逻辑地址；段式管理先映射出线性地址（也常称虚拟地址）；页式管理再经页表落到物理地址。地址里还可以进一步看成段号、段内页号、页内偏移。Intel 从 80386 起在分段之上叠加分页；Linux 在这种硬件模型上做内存管理，并不是“只有分页、芯片上从来没有段”。合用时一次翻译可能经过段表与页表等多级访存，开销更大，但可兼顾逻辑分段与按页分配。",
+      "why": "把二者对立成互斥选项，就读不懂逻辑地址、线性地址、物理地址三层，也解释不了为何教材仍提段寄存器。区分信号是：段的输出是线性/虚拟地址，页的输出才是物理地址。",
+      "example": "逻辑地址进入段式单元得到线性地址，再进入页式单元得到物理地址。段表项可以指向该段的页表，页表项再给出物理页号，最后拼页内偏移。",
+      "task": "按顺序列出逻辑地址、线性地址、物理地址；标明段式单元与页式单元各吃哪一种、产出哪一种；写一句 Linux 为何仍要理解这条链。",
+      "answer": "顺序是逻辑地址 → 线性地址（虚拟地址） → 物理地址。段式单元吃逻辑地址、产出线性地址；页式单元吃线性地址、产出物理地址。Linux 跑在先段后页的硬件模型上，公开课要把三层地址分清，不能背成互斥二选一。",
+      "keywords": "段页式 逻辑地址 线性地址 虚拟地址",
+      "origin": "本地库《图解系统》段页式与 Linux 内存管理页",
+      "diagram": "library-assets/illustrated-basics/os-p0135.png",
+      "deep": [
+        {
+          "title": "和“现行以分页为主”怎么同时成立",
+          "body": "主路径的灵活映射、缺页、换页按页做；硬件上仍可能先经过段式再进入页式。教学上既要说清主模型是分页，也要分清三层地址名字。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "对照「逻辑地址 → 段式 → 线性地址 → 页式 → 物理地址」图，给每一箭头写下输入输出。划掉“分段与分页只能挑一个”。"
+        }
+      ],
+      "since": "engineering",
+      "points": [
+        "分段与分页可以合用，不是互斥二选一",
+        "逻辑地址经段式得到线性地址，再经页式得到物理地址",
+        "Linux 内存管理建立在这种先段后页的硬件链上"
+      ],
+      "references": [
+        [
+          "Intel SDM：Memory Management",
+          "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html"
+        ],
+        [
+          "kernel：Memory Management",
+          "https://docs.kernel.org/admin-guide/mm/index.html"
         ]
       ]
     },
@@ -41644,6 +42057,8 @@
       "task": "对照 fork(2)，写出子进程有几条线程；说明为什么要尽快 exec。",
       "answer": "子进程只有调用 fork 的那一条线程，不会留下原来的 20 条。其他线程消失后，它们持有的锁还在，所以子进程里再要这些锁可能死锁。应尽快 exec，在此之前只做异步信号安全的调用。这条结论来自 POSIX fork，不要用 ProcessBuilder 的子进程线程数来代替。",
       "keywords": "fork thread POSIX zombie exec",
+      "origin": "本地库《图解系统》管道章中的 fork 创建子进程页",
+      "diagram": "library-assets/illustrated-basics/os-p0184.png",
       "deep": [
         {
           "title": "地址空间复制了，线程没有",
@@ -41668,6 +42083,48 @@
         [
           "pthreads：fork",
           "https://man7.org/linux/man-pages/man7/pthreads.7.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-shell-pipe-fds",
+      "title": "shell 管道是父进程建 pipe 再 fork，子进程各留一端",
+      "prompt": "为什么把 `A | B` 想成“两个无放进程凭空接到同一根管子”，会在解释匿名管道时说不通？",
+      "promptAnswer": "匿名管道靠继承文件描述符。shell 先 pipe，再 fork 出写端与读端子进程，并关掉不用的一端。",
+      "core": "shell 执行 `A | B` 时，父进程先调用 `pipe` 得到读端与写端文件描述符，再 `fork` 出两个子进程。写侧子进程保留写端、关闭读端；读侧子进程保留读端、关闭写端；父进程通常关掉两端，避免多余引用妨碍读端收到结束。匿名管道因此只适合有共同祖先、能继承描述符的进程；无亲缘关系要用命名管道等其它 IPC。双向通信通常需要两根管道。",
+      "why": "漏掉 fork 继承，就会以为任意两个进程都能接匿名管道，也对不上为何要关闭不用的一端。区分信号是：匿名管道靠描述符继承；命名管道以路径存在，可给无亲缘进程用。",
+      "example": "`ls | grep txt`：shell 建 pipe，一个子进程执行 ls 并把标准输出接到写端，另一个执行 grep 并从读端接到标准输入；各自关闭不用的那一端。",
+      "task": "按顺序列出 shell 建管道的三步；说明写端子进程与读端子进程各保留哪一端；写一句匿名管道与命名管道在亲缘关系上的差别。",
+      "answer": "三步：pipe 创建读写端；fork 出两个子进程；各进程关闭不用的一端（父进程常两端都关）。写侧保留写端，读侧保留读端。匿名管道依赖继承，适合有共同祖先的进程；命名管道以路径存在，可供无亲缘进程使用。",
+      "keywords": "pipe fork 匿名管道 文件描述符 shell",
+      "origin": "本地库《图解系统》shell 管道与匿名管道页",
+      "diagram": "library-assets/illustrated-basics/os-p0187.png",
+      "deep": [
+        {
+          "title": "和只讲 fork 复制的关系",
+          "body": "`linux-fork-copies-one-thread` 讲创建时拷什么。本课钉管道场景：描述符如何接到子进程，以及关闭策略如何影响读端结束。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "对照 shell 父进程与两个子进程的描述符图，标出谁关读端、谁关写端。写一句：匿名管道不是凭空出现的全局管子。"
+        }
+      ],
+      "since": "engineering",
+      "points": [
+        "shell 先 pipe 再 fork，用继承把管道交给子进程",
+        "写端与读端进程要关掉不用的那一端",
+        "匿名管道依赖亲缘继承；无亲缘用命名管道等"
+      ],
+      "references": [
+        [
+          "man：pipe",
+          "https://man7.org/linux/man-pages/man2/pipe.2.html"
+        ],
+        [
+          "man：pipe(7)",
+          "https://man7.org/linux/man-pages/man7/pipe.7.html"
         ]
       ]
     },
@@ -41754,6 +42211,8 @@
       "task": "写出怎样查看默认分支；划掉“初始化必有 master”。",
       "answer": "划掉「初始化必有 master」。默认分支名可配，现在常见是 main。用 HEAD 和远程默认分支，不要写死 master。",
       "keywords": "Git main master init.defaultBranch HEAD",
+      "origin": "图解 Git.pdf 第 1 页",
+      "diagram": "library-assets/illustrated-basics/git-p0001.png",
       "since": "engineering",
       "points": [
         "默认分支名可配置，常为 main",

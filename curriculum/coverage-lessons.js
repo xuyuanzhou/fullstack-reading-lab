@@ -112,6 +112,8 @@ const COVERAGE_LESSONS = [
     task:'为查询、覆盖更新、扣款三个接口分别说明方法、重试条件和服务器防重措施。',
     answer:'查询用安全方法，重复执行不应要求改服务器状态，失败后可以再读。覆盖式 PUT 按资源标识写整份表示，重复写的预期效果与一次相同。扣款不能只看 POST 这个名字，必须用业务键和持久化约束让重试返回第一次的结果，而不是再扣一次。状态码可以不同，效果不能再来一次。',
     keywords:'HTTP safe idempotent GET PUT DELETE POST 重试',
+    origin:'本地库《图解 HTTP》方法一览页',
+    diagram:'library-assets/illustrated-basics/http-p0034.png',
     deep:[
       {
         title:'语义和实现要分开',
@@ -139,6 +141,8 @@ const COVERAGE_LESSONS = [
     task:'模拟服务端分别返回 206、200 与 416，设计客户端如何保存或重启下载。',
     answer:'206 且区间、验证器都和本地文件对得上时，才把片段追加到已有字节后面。200 表示服务器给了完整表示，应丢弃旧片段，按这份重新保存。416 表示区间不被接受，先核对本地长度和资源是否还存在，再决定从头下载还是停在错误。三种都不要盲目追加。',
     keywords:'HTTP Range 206 Content-Range If-Range 断点续传',
+    origin:'本地库《图解 HTTP》Range 字节范围页',
+    diagram:'library-assets/illustrated-basics/http-p0049.png',
     deep:[
       {
         title:'三段响应三种处理',
@@ -496,6 +500,8 @@ const COVERAGE_LESSONS = [
     task:'用两个连接反向更新两行制造死锁，记录受害事务状态和重试结果。',
     answer:'捕获死锁错误后，按有界次数和退避重跑整笔事务：重新读取，再按同一顺序完成全部写入。不要只重放最后一条语句，因为受害事务的前面几条也已经撤销。同时把两个事务改成相同的加锁顺序，并缩短事务，减少再撞上的机会。锁等待超时的回滚范围可能不同，要按错误种类分开处理。',
     keywords:'MySQL InnoDB deadlock retry transaction rollback 死锁',
+    origin:'本地库《图解系统》交叉加锁死锁示例页（对照加锁顺序；重试语义以 InnoDB 文档为准）',
+    diagram:'library-assets/illustrated-basics/os-p0245.png',
     deep:[
       {
         title:'整笔作废',

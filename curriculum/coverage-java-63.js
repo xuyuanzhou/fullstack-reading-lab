@@ -12,7 +12,7 @@ const COVERAGE_JAVA_63 = [
     answer:'划掉「凡小数都不能存货币」。禁 FLOAT/DOUBLE。用 DECIMAL 或整数分。钱对不上来自二进制浮点，不是 DECIMAL 的定点小数。',
     keywords:'DECIMAL FLOAT 货币 定点 规范',
     origin:'《分布式高并发.pdf》约第 104 页：禁止使用小数存储货币',
-    diagram:'diagrams/mysql-money-decimal-not-ban.svg',
+    diagram:'library-assets/distributed-hc/p0104.png',
     points:['禁的是浮点不是定点 DECIMAL','金额用 DECIMAL 或整数分','钱对不上来自二进制表示误差'],
     deep:[
       {title:'和手机号 varchar',body:'同页“手机号必须 varchar”方向对（含区号、不做算术）。类型规范要按语义拆，不能一句“小数”打全部数值类型。'},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_63 = [
     answer:'划掉「表上真有两列版本号」。旧版本主要在 undo；一致性读用 Read View 判断可见性。FOR UPDATE 是锁定读，不是同一套快照故事。资料表格是直觉模型，不是 InnoDB 表结构。',
     keywords:'InnoDB MVCC undo Read View 快照读',
     origin:'《分布式高并发.pdf》约第 116–118 页：MVCC 两个隐藏版本列',
-    diagram:'diagrams/mysql-mvcc-not-two-version-columns.svg',
+    diagram:'library-assets/distributed-hc/p0116.png',
     points:['资料两列表格是直觉不是表结构','历史版本主要在 undo 链','快照读与锁定读规则不同'],
     deep:[
       {title:'和隔离级别',body:'RR/RC 下 Read View 建立时机不同，可见性细节以手册为准。不要用“版本号小于当前事务”一句盖所有级别。'},

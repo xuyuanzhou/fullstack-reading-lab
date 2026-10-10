@@ -12,7 +12,7 @@ const COVERAGE_JAVA_102 = [
     answer:'划掉说满。消费者受连接池、锁与幂等约束。积压会打满 MQ 存储并拖垮可用性。削峰要和限流、预扣、告警一起设计。',
     keywords:'秒杀 MQ 削峰 消费者 积压',
     origin:'《分布式高并发.pdf》约第 53 页：MQ 顶住即可控下单与扣库存',
-    diagram:'diagrams/seckill-mq-not-only-db-valve.svg',
+    diagram:'library-assets/distributed-hc/p0053.png',
     points:['MQ 削峰成立但不能说满','消费者数不是自由旋钮','积压会反噬存储与可用性'],
     deep:[
       {title:'和库存不变量',body:'入队不等于卖出；超时释放与超卖防护仍要原子扣减，见秒杀与 MQ 不变量课。'},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_102 = [
     answer:'划掉定律。虚拟节点改善节点弧长不均，数量要按实测调。单键热点不靠加大 32 解决。',
     keywords:'一致性哈希 虚拟节点 倾斜',
     origin:'《分布式高并发.pdf》约第 100 页：虚拟节点通常设为 32 甚至更大',
-    diagram:'diagrams/consistent-hash-vnode-count-not-law.svg',
+    diagram:'library-assets/distributed-hc/p0100.png',
     points:['虚拟节点减轻节点弧长不均','固定 32 只是经验起点','单键热点要另治'],
     deep:[
       {title:'和一致性哈希论文',body:'经典动机是变更时少搬数据；均匀性与 vnode 密度相关，但没有普适魔法整数。'},

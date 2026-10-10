@@ -12,7 +12,7 @@ const COVERAGE_JAVA_74 = [
     answer:"划掉清零。8.x 默认 InnoDB。业务表要事务/行锁/崩溃恢复就选它。特殊引擎是例外要论证。",
     keywords:"InnoDB 默认引擎 MySQL",
     origin:"《分布式高并发.pdf》约第 104 页：必须使用 InnoDB",
-    diagram:"diagrams/mysql-innodb-default-not-ban-others.svg",
+    diagram:'library-assets/distributed-hc/p0104.png',
     points:["8.x 默认 InnoDB","业务表优先事务引擎","其它引擎是例外需论证"],
     deep:[
       {title:"和全文",body:"勿再背 InnoDB 无全文；见引擎对比课。"},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_74 = [
     answer:"划掉禁类型。大文件进对象存储，库存 URI 与元数据。短二进制可论证。热点勿投影大列。",
     keywords:"对象存储 BLOB URI 备份",
     origin:"《分布式高并发.pdf》约第 104 页：禁止存储大文件或大照片",
-    diagram:"diagrams/mysql-db-not-blob-store.svg",
+    diagram:'library-assets/distributed-hc/p0104.png',
     points:["库不适合当网盘","URI+对象存储是常路","短二进制另议"],
     deep:[
       {title:"和 TEXT 禁令",body:"同属体量与投影问题，见 text-ban 课。"},

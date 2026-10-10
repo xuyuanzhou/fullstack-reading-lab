@@ -12,7 +12,7 @@ const COVERAGE_JAVA_100 = [
     answer:'划掉同义。堆外有元空间、直接内存、线程栈等。超 cgroup 常由内核 OOMKiller 杀进程，不一定先走出清晰的 Java heap OOM。',
     keywords:'Xmx cgroup OOMKill 容器 JVM',
     origin:'《分布式高并发.pdf》容器/JVM 内存口诀常见混淆',
-    diagram:'diagrams/jvm-xmx-not-container-limit.svg',
+    diagram:'library-assets/distributed-hc/p0189.png',
     points:['Xmx 只限堆','容器还有 cgroup 总上限','非堆与原生内存要留白'],
     deep:[
       {title:'和虚机',body:'虚机有另一套隔离；容器共享内核，限额靠 cgroup，见 vm-vs-container-isolation-tradeoff。'},

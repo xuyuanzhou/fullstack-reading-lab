@@ -12,7 +12,7 @@ const COVERAGE_JAVA_72 = [
     answer:"划掉钉死 20。不用数值类型。长度按最大合法形态与规范化策略定；格式与唯一性在应用/约束，不靠魔法 20。",
     keywords:"MySQL 手机号 VARCHAR E.164",
     origin:"《分布式高并发.pdf》约第 104 页：必须 varchar(20) 存手机号",
-    diagram:"diagrams/mysql-phone-varchar-length-not-twenty.svg",
+    diagram:'library-assets/distributed-hc/p0104.png',
     points:["电话别用数值类型","20 不是国际硬上限","规范化与显示要分开"],
     deep:[
       {title:"和隐式转换",body:"字符串列对数字字面量会挡索引，见隐式转换课。"},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_72 = [
     answer:"划掉语法非法。应用默认写列清单。批导仅在列序契约锁定且有校验时可例外。加列是错位的常见触发点。",
     keywords:"MySQL INSERT 列清单 模式演进",
     origin:"《分布式高并发.pdf》约第 105 页：禁止 INSERT VALUES 不写列",
-    diagram:"diagrams/mysql-insert-must-name-columns.svg",
+    diagram:'library-assets/distributed-hc/p0105.png',
     points:["VALUES 依赖列序","加列会导致静默错位","应用代码应写列名"],
     deep:[
       {title:"和 SELECT *",body:"都是暗含表结构的味道，见 select-star 课。"},

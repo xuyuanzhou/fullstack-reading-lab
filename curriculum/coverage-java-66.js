@@ -12,7 +12,7 @@ const COVERAGE_JAVA_66 = [
     answer:'划掉一律 NOT NULL。必填用不变量约束；可选允许 NULL，勿用空串/0 冒充未知。默认值只表示明确的业务默认，不是填洞。',
     keywords:'NOT NULL 默认值 NULL 三值逻辑 约束',
     origin:'《分布式高并发.pdf》约第 104 页：必须 NOT NULL 并且提供默认值',
-    diagram:'diagrams/mysql-not-null-default-not-absolute.svg',
+    diagram:'library-assets/distributed-hc/p0104.png',
     points:['必填用 NOT NULL 挡脏写','可选未知应允许 NULL','魔法默认值会伪造已知'],
     deep:[
       {title:'和性能口诀',body:'NULL 比较要用 IS NULL，索引与统计确实要多考虑。这是写对 SQL 的理由，不是把所有列改成假值的理由。'},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_66 = [
     answer:'划掉禁止类型。长正文用 TEXT（或等价）合理。禁止的是热点路径投影大列、无必要的大字段进缓冲。列表与正文分离，用 EXPLAIN/列清单证明。',
     keywords:'TEXT BLOB SELECT 缓冲池 规范',
     origin:'《分布式高并发.pdf》约第 104 页：禁止使用 TEXT、BLOB',
-    diagram:'diagrams/mysql-text-ban-not-absolute.svg',
+    diagram:'library-assets/distributed-hc/p0104.png',
     points:['TEXT 适合真正的长内容','危险是热点查询拖出大列','拆列表字段，不要禁用类型名'],
     deep:[
       {title:'和 ENUM 禁令',body:'同页禁 ENUM 改 TINYINT：DDL 增枚举值痛苦是真问题，但 TINYINT 无含义时要靠字典表。同样是启发式，不是语法禁令。'},

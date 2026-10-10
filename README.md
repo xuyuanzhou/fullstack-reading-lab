@@ -2,7 +2,7 @@
 
 在线阅读：[全栈学习实验室](https://xuyuanzhou.github.io/fullstack-reading-lab/) · [GitHub 仓库](https://github.com/xuyuanzhou/fullstack-reading-lab)
 
-面向前端和 Java 开发者的公开学习网站。以本机题库的主题分布作为选题线索，重新编写中文解释、具体例子、主动回忆练习与参考答案。除原创回答框架课 `design-review` 外，每节公开课附官方文档、标准或固定版本源码依据。当前有 **949 节原创课程、2855 个具体知识点**（前端 326 课、Java 623 课）。另有一条 AI 公开阅读路线（入门 → 基础 → 手册 → 项目 → 精通 → 面试口述 → 工具）和练习台，不计入上述课数；面向小白讲清机制，并按网上常见的大模型 / RAG / Agent 追问准备口述。前端在技术选型之后增加「微前端」专章（独立发版边界、选型对照、Module Federation / single-spa / qiankun / 无界 / iframe 落地、路由与样式隔离、发布契约）。Java 侧已按 Spring、JPA、MyBatis、缓存、Nginx、Netty、网关、搜索、JVM 分章；Spring Cloud Alibaba 按 Nacos、调用、Sentinel、Seata 展开。学习从「全栈主线」开始：一条功能怎样从页面交到数据库，再进入语言、框架和失败场景。
+面向前端和 Java 开发者的公开学习网站。以本机题库的主题分布作为选题线索，重新编写中文解释、具体例子、主动回忆练习与参考答案。除原创回答框架课 `design-review` 外，每节公开课附官方文档、标准或固定版本源码依据。当前有 **958 节原创课程、2882 个具体知识点**（前端 326 课、Java 632 课）。另有一条 AI 公开阅读路线（入门 → 基础 → 手册 → 项目 → 精通 → 面试口述 → 工具）和练习台，不计入上述课数；面向小白讲清机制，并按网上常见的大模型 / RAG / Agent 追问准备口述。前端在技术选型之后增加「微前端」专章（独立发版边界、选型对照、Module Federation / single-spa / qiankun / 无界 / iframe 落地、路由与样式隔离、发布契约）。Java 侧已按 Spring、JPA、MyBatis、缓存、Nginx、Netty、网关、搜索、JVM 分章；Spring Cloud Alibaba 按 Nacos、调用、Sentinel、Seata 展开。学习从「全栈主线」开始：一条功能怎样从页面交到数据库，再进入语言、框架和失败场景。
 
 公开站使用 **React + TypeScript + Vite + Ant Design**（目录 `web/`）。左侧课程路径、中间阅读、右侧进度。React / Vue 知识卡分别打开 [React Mastery Lab](https://xuyuanzhou.github.io/react-mastery-lab/) 与 [Vue 3 Mastery Lab](https://xuyuanzhou.github.io/vue3-mastery-lab/#/) 的对应章节。
 

@@ -11,6 +11,8 @@ const COVERAGE_JAVA_53 = [
     task:'划掉“对象只能 JSON String”。写出局部改字段与整份替换各更贴近哪种结构。',
     answer:'局部字段更新用 Hash。整份替换可用 String。Hash 仍是一个键一个槽，不是表。',
     keywords:'Redis Hash HSET JSON String',
+    origin:'本地库《图解 redis 数据结构》哈希表页',
+    diagram:'library-assets/illustrated-basics/redis-ds-p0020.png',
     points:['Hash 可按字段读写','整份 JSON String 改一字段要整键重写','一个 Hash 键在 Cluster 里仍在一个槽'],
     deep:[
       {title:'和 Pipeline',body:'多个 HGET 可用 pipeline 少 RTT，见 `redis-pipeline`。不要把 N 次网络往返当成 Hash 的错。'},
@@ -29,6 +31,8 @@ const COVERAGE_JAVA_53 = [
     task:'写出写入比分、取 TopN、查某人名次各用哪类命令；划掉“拉回 Java sort”。',
     answer:'ZADD 写分。ZREVRANGE 取 TopN。ZREVRANK 查名次。不要每次全量拉回应用排序。',
     keywords:'Redis ZSet 排行榜 ZRANGE ZADD',
+    origin:'本地库《图解 redis 数据结构》跳表结构设计页',
+    diagram:'library-assets/illustrated-basics/redis-ds-p0030.png',
     points:['ZSet 按 score 有序','TopN 与名次用范围/排名命令','同分再按成员序，成员必须唯一'],
     deep:[
       {title:'和延时任务',body:'分用执行时间戳，定时 ZRANGEBYSCORE 取出到期成员。仍要处理重复消费。'},
@@ -104,6 +108,7 @@ const COVERAGE_JAVA_53 = [
     answer:'DNS 能多名多址与粗粒度调度。做不到可靠感知实例健康与立即全局失效。精细摘流交给 LB。TTL 极小有流量代价。',
     keywords:'DNS 负载均衡 TTL 健康检查',
     origin:'《分布式高并发.pdf》约第 92 页：DNS 负载均衡与调小刷新时间',
+    diagram:'library-assets/distributed-hc/p0092.png',
     points:['DNS 多记录受解析缓存约束','TTL 调极小不能保证立刻摘掉死 IP','实例级健康摘流应在 LB，不是只靠 DNS'],
     deep:[
       {title:'和反向代理',body:'反向代理在 HTTP 层选上游，能做主动/被动健康检查。DNS 在更外层，两者职责不同。'},

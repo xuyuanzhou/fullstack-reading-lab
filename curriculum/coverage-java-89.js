@@ -12,7 +12,7 @@ const COVERAGE_JAVA_89 = [
     answer:"划掉淘汰论。容器偏密度与速度；VM 偏强隔离。按威胁模型选。",
     keywords:"虚拟机 容器 隔离 密度",
     origin:"《分布式高并发.pdf》约第 184–186 页：虚拟机与容器对比",
-    diagram:"diagrams/vm-vs-container-isolation-tradeoff.svg",
+    diagram:'library-assets/distributed-hc/p0184.png',
     points:["隔离与密度权衡","不是全面取代","按威胁模型选"],
     deep:[
       {title:"和编排",body:"K8s 调度容器，节点仍可能是 VM。"},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_89 = [
     answer:"划掉教条单进程。一服务主容器是默认；sidecar 可共存。禁止巨石多主服务。",
     keywords:"容器 sidecar 十二要素",
     origin:"《分布式高并发.pdf》约第 187 页附近：一个容器运行一种服务",
-    diagram:"diagrams/one-container-one-service-heuristic.svg",
+    diagram:'library-assets/distributed-hc/p0187.png',
     points:["主服务一容器便于运维","sidecar 合法","禁止巨石多主服务"],
     deep:[
       {title:"和 Pod",body:"K8s Pod 内多容器共享网络命名空间，是正式组合单位。"},

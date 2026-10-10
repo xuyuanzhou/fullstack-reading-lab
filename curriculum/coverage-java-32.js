@@ -46,6 +46,8 @@ const COVERAGE_JAVA_32 = [
     task:'对照 fork(2)，写出子进程有几条线程；说明为什么要尽快 exec。',
     answer:'子进程只有调用 fork 的那一条线程，不会留下原来的 20 条。其他线程消失后，它们持有的锁还在，所以子进程里再要这些锁可能死锁。应尽快 exec，在此之前只做异步信号安全的调用。这条结论来自 POSIX fork，不要用 ProcessBuilder 的子进程线程数来代替。',
     keywords:'fork thread POSIX zombie exec',
+    origin:'本地库《图解系统》管道章中的 fork 创建子进程页',
+    diagram:'library-assets/illustrated-basics/os-p0184.png',
     points:['子进程只保留调用 fork 的线程','其他线程的锁可能留在子进程里','多线程里 fork 之后应尽快 exec'],
     deep:[
       {title:'地址空间复制了，线程没有',body:'子进程拿到的是调用瞬间的内存副本，所以锁变量的“已锁定”也被复制了。线程是内核调度的执行流，fork 不把其他执行流带进子进程。于是子进程看见锁，看不见会解锁的人。exec 换成新程序之后，旧地址空间连同这些锁一起消失。'},

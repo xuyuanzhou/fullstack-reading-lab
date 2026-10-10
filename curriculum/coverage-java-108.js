@@ -12,7 +12,7 @@ const COVERAGE_JAVA_108 = [
     answer:'划掉容量批复。公式联系平均吞吐、并发与延迟。还要压测曲线与资源/依赖饱和点，并看尾延迟与错误率。',
     keywords:'QPS 利特尔法则 容量 压测',
     origin:'《分布式高并发.pdf》性能估算口诀常见外推',
-    diagram:'diagrams/qps-formula-not-capacity.svg',
+    diagram:'library-assets/distributed-hc/p0026.png',
     points:['关系式只做粗估','不是峰值容量保证','以压测与饱和点批复'],
     deep:[
       {title:'和线程池',body:'池大小口诀同样是启发式，见 thread-pool-formula-not-law。'},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_108 = [
     answer:'熔断：暂停打故障依赖。重试：对单次调用再执行。降级：返回兜底。熔断不是更勤的重试。',
     keywords:'熔断 重试 降级 雪崩',
     origin:'《分布式高并发.pdf》容错口诀常把熔断与重试混写',
-    diagram:'diagrams/circuit-breaker-not-retry.svg',
+    diagram:'library-assets/distributed-hc/p0020.png',
     points:['熔断是止损隔离','重试可能放大故障','降级给兜底结果'],
     deep:[
       {title:'和舱壁',body:'舱壁限制资源池互拖；熔断按失败信号切断调用。可并存。'},

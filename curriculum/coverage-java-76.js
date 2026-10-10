@@ -12,7 +12,7 @@ const COVERAGE_JAVA_76 = [
     answer:"划掉列名禁令。单独低基数列常废。组合索引里低基数列可靠后若前缀已筛窄。用选择性与计划证明。",
     keywords:"选择性 写放大 组合索引",
     origin:"《分布式高并发.pdf》约第 105 页：禁止低区分度/热更新列建索引",
-    diagram:"diagrams/mysql-low-selectivity-index-heuristic.svg",
+    diagram:'library-assets/distributed-hc/p0105.png',
     points:["低区分度单独索引常废","写放大是真实成本","组合位置与计划说了算"],
     deep:[
       {title:"和热更新",body:"热点计数器列每次 UPDATE 都改索引，代价高于区分度问题。"},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_76 = [
     answer:"划掉绝对顺序。先看最左前缀与谓词，再用区分度在合法前缀内微调。范围列后置。EXPLAIN 验证。",
     keywords:"组合索引 最左前缀 区分度",
     origin:"《分布式高并发.pdf》约第 105 页：组合索引区分度高的在前",
-    diagram:"diagrams/mysql-composite-selectivity-order-heuristic.svg",
+    diagram:'library-assets/distributed-hc/p0105.png',
     points:["列序先服从查询","区分度是微调不是唯一规则","范围条件截断后续列"],
     deep:[
       {title:"和扩展索引",body:"已有 a 索引时改成 (a,b) 常优于再挂一条 b。"},

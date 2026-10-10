@@ -471,6 +471,24 @@
   }
 }
 
+.ai-figure-library {
+  img {
+    display: block;
+    width: 100%;
+    max-width: 52rem;
+    height: auto;
+    margin: 0 auto;
+    border-radius: 0.5rem;
+  }
+
+  figcaption {
+    margin-top: 0.65rem;
+    color: var(--text-muted, #5c6570);
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+}
+
 .ai-figure {
   margin: 0;
   padding: 16px;

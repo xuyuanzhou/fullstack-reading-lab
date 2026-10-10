@@ -11,8 +11,8 @@ const COVERAGE_JAVA_42 = [
     task:'划掉「没有锁就不会因为缓存变慢」。写出伪共享的单位是缓存行，以及一种隔开字段的办法。',
     answer:'单位是缓存行，不是字段。相邻写仍会使整行失效。隔开用填充或 Contended。这不是数据竞争，也不是把堆调大能修好的。',
     keywords:'false sharing cache line Contended JEP 142 CPU',
-    origin:'本地库「计算机组成」导图里把缓存画成对程序员透明',
-    diagram:'diagrams/cpu-cache-line.svg',
+    origin:'图解计算机组成（计算机组成.png）',
+    diagram:'library-assets/illustrated-basics/computer-organization.png',
     points:['缓存按行移动，常见 64 字节，不是按字段','相邻字段的无锁写入仍可能伪共享','间隔或 Contended 隔开行，不要靠加大堆'],
     deep:[
       {title:'和可见性不是一件事',body:'volatile 保证可见性和有序性，不把两个字段拆到不同缓存行。伪共享是性能，不是 JMM 正确性。没有 volatile 的并发写字段仍可能是数据竞争，那是另一课。'},
@@ -31,8 +31,8 @@ const COVERAGE_JAVA_42 = [
     task:'画出 L1–L3 与 DRAM/堆两列。写出 -Xmx 作用在哪一列，以及伪共享作用在哪一列。',
     answer:'-Xmx 在 DRAM 上的堆。L1–L3 是硬件。伪共享发生在缓存行。两列不能用同一个参数调。',
     keywords:'CPU cache L3 heap -Xmx memory hierarchy JVM',
-    origin:'本地库「计算机组成」导图的存储层次',
-    diagram:'diagrams/cpu-dram-heap.svg',
+    origin:'图解计算机组成（计算机组成.png）· 存储层次',
+    diagram:'library-assets/illustrated-basics/computer-organization.png',
     points:['L1 L2 L3 是硬件缓存，没有 JVM 参数可改容量','-Xmx 限制的是主存里的堆','热点字段进缓存行，不等于堆容量等于缓存容量'],
     deep:[
       {title:'和运行时区域',body:'程序计数器、虚拟机栈、堆、方法区是 JVM 规范里的逻辑区域。L1–L3 是芯片上的存储器。不要把 PC 画成 CPU 寄存器，也不要把方法区画进 L3。'},

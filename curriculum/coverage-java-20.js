@@ -11,7 +11,8 @@ const COVERAGE_JAVA_20 = [
     task:'对照 ClassLoader 文档写出三层现行名字；划掉 jhat 作为 21 的标配工具。',
     answer:'对照 ClassLoader 文档，三层现行名字是引导类加载器、平台类加载器、应用类加载器。划掉 jhat 作为 Java 21 的标配工具，诊断改用 jcmd、jmap 或 MAT。查找顺序仍是先问父加载器。不要再把 ExtClassLoader 写成现行中间层的名字。',
     keywords:'ClassLoader PlatformClassLoader 双亲委派 JDK 9 jhat',
-    diagram:'diagrams/jvm-classloaders.svg',
+    diagram:'library-assets/illustrated-basics/jvm-mindmap.png',
+    origin:'本地库 Java 虚拟机思维导图扩展类加载器枝',
     points:['常见查找仍先委派给父加载器','JDK 9+ 是 Platform ClassLoader 不是 Extension','jhat 已移除，存活判定不是引用计数'],
     deep:[
       {title:'中间层换了名字也换了目录',body:'双亲委派的查找顺序还在。JDK 9 起不再用扩展目录那一套，平台类加载器负责平台模块。把 jhat 写进运维手册会在现行 JDK 上找不到命令。lib/ext 那套目录已经不该出现在步骤里。'},
@@ -138,6 +139,8 @@ const COVERAGE_JAVA_20 = [
     task:'画出五层里 TCP 与 HTTP 的位置；划掉“HTTP 七层实现叫三次握手”。',
     answer:'五层里 TCP 在传输层，HTTP 在应用层。划掉 HTTP 七层实现叫三次握手：三次握手建立的是 TCP 连接，发生在请求行之前。OSI 的七层是另一套模型，不能当成 HTTP 的别名。握手失败时，预测还没有任何 HTTP 状态码可以看。',
     keywords:'TCP 三次握手 OSI 五层 HTTP',
+    origin:'本地库《图解网络》分层封装（应用 HTTP / 传输 TCP）',
+    diagram:'library-assets/illustrated-basics/network-p0046.png',
     points:['TCP 是传输层协议','三次握手建立 TCP 连接，不是 HTTP 语义','OSI 七层与教学五层不要混成 HTTP 的别名'],
     deep:[
       {title:'先有连接，才有请求行',body:'教学上的五层把 TCP 放在传输层，把 HTTP 放在应用层。三次握手和四次挥手都属于这条连接。TLS 夹在中间。没有连接时，应用层的状态码还不存在。TLS 也在请求行之前，不属于 HTTP 方法。'},

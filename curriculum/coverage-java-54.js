@@ -12,7 +12,7 @@ const COVERAGE_JAVA_54 = [
     answer:'过期应由 Redis 服务端的 TTL 计时，用 SET NX EX 加唯一 token。旧写法用各机系统时间比较，时钟一偏会双持有或误判未过期。getset 链修不好 SETNX 与 EXPIRE 之间的崩溃窗口。',
     keywords:'Redis 分布式锁 GETSET 墙钟 SET NX EX NTP',
     origin:'《分布式高并发.pdf》约第 201 页：setnx/get/getset 与本机时间比较的锁',
-    diagram:'diagrams/redis-lock-getset-clock.svg',
+    diagram:'library-assets/distributed-hc/p0201.png',
     points:['过期时间写进 value 再和本机时间比，依赖墙钟','时钟偏差会导致双持有或误判超时','应用 SET key token NX EX，由服务端 TTL 计时'],
     deep:[
       {title:'和 Redlock',body:'多节点算法另有争议与前提，见 Redis 文档分布式锁章节。单实例锁先把 NX+EX 与 token 释放做对，再讨论多主。'},
@@ -33,7 +33,7 @@ const COVERAGE_JAVA_54 = [
     answer:'它锁在当前事务与连接触及的行（或更糟，更大范围）上。长业务不提交会占满连接、拖住别的事务。跨机租约用令牌+TTL 或业务约束；同库短事务里保护一行才合适。宕机回滚能放行锁，不能证明握锁做远程调用是对的。',
     keywords:'MySQL FOR UPDATE 行锁 连接池 分布式锁 事务',
     origin:'《分布式高并发.pdf》约第 200 页：用数据库排他锁 / FOR UPDATE 做分布式锁',
-    diagram:'diagrams/mysql-for-update-not-lease.svg',
+    diagram:'library-assets/distributed-hc/p0200.png',
     points:['FOR UPDATE 锁在当前事务的连接上','长临界区会占满连接池并扩大锁范围风险','跨机互斥用租约或短事务约束，不要握锁调远程'],
     deep:[
       {title:'和锁定读文档',body:'InnoDB 锁定读是为事务内一致性读改服务的。秒杀库存的权威扣减可以是带条件的 UPDATE，见 `distributed-seckill`，不必把整段用户旅程放进一个 FOR UPDATE。'},

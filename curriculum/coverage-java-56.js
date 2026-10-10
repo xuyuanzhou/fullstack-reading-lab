@@ -12,7 +12,7 @@ const COVERAGE_JAVA_56 = [
     answer:'划掉「控制 JS 天生不被 CDN 缓存」。要有 Cache-Control（或等价 CDN 不缓存规则）或版本化 URL。权威开抢判断在服务端接口与库存扣减，不在浏览器里的脚本。文件小不能代替缓存头。',
     keywords:'秒杀 CDN Cache-Control 静态化 开抢',
     origin:'《分布式高并发.pdf》约第 51 页：防止提前下单的 JS 不会被 CDN 缓存',
-    diagram:'diagrams/seckill-js-needs-cache-control.svg',
+    diagram:'library-assets/distributed-hc/p0051.png',
     points:['控制脚本默认仍可能被 CDN 缓存','要用响应头或 CDN 规则显式禁止/缩短缓存','开抢权威在服务端，不在脚本内容'],
     deep:[
       {title:'和整页静态化',body:'HTML/CSS/图片适合长缓存。门闩接口更适合短缓存或 no-store。不要把整站“都上 CDN”当成一种缓存策略。'},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_56 = [
     answer:'划掉「禁用按钮=不能提前下单」。活动是否已开始；用户/商品限流或资格；原子扣库存（或同等强度）。客户端门闩只减噪音，不构成安全边界。',
     keywords:'秒杀 客户端 信任边界 限流 库存',
     origin:'《分布式高并发.pdf》约第 49–52 页：Disable 按钮与不能信任客户端',
-    diagram:'diagrams/seckill-client-gate-not-enough.svg',
+    diagram:'library-assets/distributed-hc/p0049.png',
     points:['按钮与脚本不是准入控制','服务端校验开始时间、限流与原子扣减','客户端优化只削峰，不守库存不变量'],
     deep:[
       {title:'和隐藏 URL',body:'把下单地址藏在开始后才下发的 JS 里，只能提高一点发现成本。URL 一旦泄露或被猜到，仍靠服务端。'},

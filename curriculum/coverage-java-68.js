@@ -12,7 +12,7 @@ const COVERAGE_JAVA_68 = [
     answer:'划掉一律禁止。集合小且稳定可用 ENUM。常变集合用码表/字典；TINYINT 必须有含义来源，不能只剩魔法数。内部存整数不构成禁用理由。',
     keywords:'MySQL ENUM TINYINT DDL 字典表',
     origin:'《分布式高并发.pdf》约第 104 页：禁止使用 ENUM，可使用 TINYINT 代替',
-    diagram:'diagrams/mysql-enum-ban-not-absolute.svg',
+    diagram:'library-assets/distributed-hc/p0104.png',
     points:['ENUM 内部是整数下标加映射','新增成员常要 DDL，大表成本高','禁令是启发式；TINYINT 要有字典含义'],
     deep:[
       {title:'和字符串状态列',body:'VARCHAR 状态码免 DDL，但缺引擎级枚举约束，要靠 CHECK（8.0.16+）或应用校验。权衡写入灵活性与非法值。'},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_68 = [
     answer:'划掉个数硬上限。用查询计划、选择性与写放大决定。低区分度单独索引常无效。组合列数服从谓词与最左前缀，不服从数字 5。',
     keywords:'MySQL 索引 选择性 EXPLAIN 组合索引',
     origin:'《分布式高并发.pdf》约第 104–105 页：单表索引 5 个以内、单索引字段不超过 5',
-    diagram:'diagrams/mysql-index-count-five-not-law.svg',
+    diagram:'library-assets/distributed-hc/p0104.png',
     points:['5 是团队启发式不是引擎上限','加索引看计划与选择性','低区分度与错最左前缀才是常见废索引'],
     deep:[
       {title:'和覆盖索引',body:'为了 Using index 加长组合索引会加重写。覆盖收益要用 EXPLAIN Extra 证明，不能用“还没到 5 列”当理由。'},

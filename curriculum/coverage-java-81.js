@@ -12,7 +12,7 @@ const COVERAGE_JAVA_81 = [
     answer:"划掉完全无所谓。等值 AND 常可重排匹配索引。索引物理序、范围与 OR 仍关键。用 EXPLAIN 看。",
     keywords:"优化器 最左前缀 AND",
     origin:"《分布式高并发.pdf》约第 106 页：and 之间可以乱序",
-    diagram:"diagrams/mysql-and-order-optimizer-reorders.svg",
+    diagram:'library-assets/distributed-hc/p0106.png',
     points:["等值 AND 常可重排","索引物理序仍重要","范围/OR/函数不靠乱序拯救"],
     deep:[
       {title:"和 OR",body:"资料也写 OR 会遍历全表——过绝对，见 OR 课。"},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_81 = [
     answer:"划掉一刀切。前缀%（右模糊）常可范围；前导%难最左。选择性差仍可能放弃索引。",
     keywords:"LIKE 前缀匹配 索引",
     origin:"《分布式高并发.pdf》约第 106 页：右模糊会使用索引",
-    diagram:"diagrams/mysql-right-fuzzy-like-can-use-index.svg",
+    diagram:'library-assets/distributed-hc/p0106.png',
     points:["前缀匹配可走 B+ 范围","前导 % 另案","选择性仍可能放弃索引"],
     deep:[
       {title:"和前缀索引",body:"列很长时用前缀索引长度权衡，见前缀索引课。"},

@@ -24,6 +24,8 @@ const COVERAGE_JAVA_36 = [
     task:'写出什么时候加速接近线性；划掉“线程数等于倍数加速”。',
     answer:'能拆开且不抢同一资源才加速。锁、IO、串行段都会让十线程远慢于十分之一。',
     keywords:'Amdahl thread pool speedup contention',
+    origin:'本地库《图解系统》CPU 如何选择线程页',
+    diagram:'library-assets/illustrated-basics/os-p0079.png',
     points:['加速比受串行部分限制','共享锁和 IO 会抵消线程数','创建和切换本身有成本'],
     refs:[['Amdahl 定律','https://en.wikipedia.org/wiki/Amdahl%27s_law'],['JLS 17 Threads and Locks','https://docs.oracle.com/javase/specs/jls/se21/html/jls-17.html']]
   },

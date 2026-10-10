@@ -12,7 +12,7 @@ const COVERAGE_JAVA_99 = [
     answer:'划掉天生。漏桶限制出口平均速率；固定窗口临界是计数边界叠突发。漏桶仍有满桶溢出/排队，不能代替突发与速率两维设计。',
     keywords:'漏桶 令牌桶 限流 临界',
     origin:'《分布式高并发.pdf》约第 89–91 页：漏桶天生不会出现临界问题；常速处理',
-    diagram:'diagrams/leaky-bucket-not-no-critical-edge.svg',
+    diagram:'library-assets/distributed-hc/p0089.png',
     points:['漏桶约束出水速率','满桶仍会溢出或排队','突发与速率要分开选型'],
     deep:[
       {title:'和滑动窗口',body:'滑动窗口降低固定窗口边界误差，仍是计数窗口族；与漏/令牌桶的整形模型不同。'},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_99 = [
     answer:'划掉必须奇数。quorum 是过半，偶数也成立。选 2f+1 是为了用更少机器容 f 故障，属于部署习惯不是禁偶定律。',
     keywords:'ZooKeeper quorum 奇数 2f+1',
     origin:'《分布式高并发.pdf》约第 144 页：半数机制故适合奇数台',
-    diagram:'diagrams/zk-odd-count-not-quorum-law.svg',
+    diagram:'library-assets/distributed-hc/p0144.png',
     points:['可用要过半法定人数','偶数集群也有 quorum','奇数是性价比习惯'],
     deep:[
       {title:'和观察者',body:'有的部署用观察者/旁路节点不进 quorum，那是角色分工，不是“偶数非法”的补丁口诀。'},

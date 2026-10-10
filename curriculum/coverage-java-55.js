@@ -12,7 +12,7 @@ const COVERAGE_JAVA_55 = [
     answer:'物理删同一主键，终态常相同。软删与带归还/通知的取消，重放可能再改状态，要状态机或业务键。不要因为操作名叫删除就跳过幂等设计。',
     keywords:'幂等 删除 软删除 消息重放 库存',
     origin:'《分布式高并发.pdf》约第 32 页：删除操作也是幂等的',
-    diagram:'diagrams/mq-delete-not-always-idempotent.svg',
+    diagram:'library-assets/distributed-hc/p0032.png',
     points:['物理删同一主键终态常可幂等','软删或带副作用的取消重放可能再改状态','按业务效果设计键与状态机，不按操作中文名'],
     deep:[
       {title:'和 HTTP DELETE',body:'规范里对同一资源重复 DELETE，预期是资源不在；第二次状态码可以是 404。业务 API 若把 DELETE 映射成“退款+加库存”，规范帮不上忙，仍要幂等键。'},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_55 = [
     answer:'就近分发是 CDN。源站 TLS、选上游、限流是反向代理。缓存是两者可选能力，不是共同定义。动态写默认回源。',
     keywords:'CDN 反向代理 缓存 边缘 源站',
     origin:'《分布式高并发.pdf》约第 13 页：CDN 和反向代理的基本原理都是缓存',
-    diagram:'diagrams/cdn-not-just-reverse-proxy-cache.svg',
+    diagram:'library-assets/distributed-hc/p0013.png',
     points:['CDN 在边缘就近，主攻可缓存内容','反向代理在源站侧，常做 TLS 与选上游','缓存是可选能力，不能把两层说成同一种东西'],
     deep:[
       {title:'和秒杀页',body:'活动页静态资源可上 CDN；开抢标记若放在“声称不被 CDN 缓存”的 JS 里，仍要靠 Cache-Control/URL 版本，不能只靠口头约定。'},

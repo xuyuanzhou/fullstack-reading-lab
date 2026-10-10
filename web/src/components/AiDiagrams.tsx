@@ -1,5 +1,70 @@
 import type { ReactElement } from 'react'
 
+/** Handbook page images under web/public/library-assets (exported from curriculum/). */
+const LIBRARY: Record<string, { src: string; label: string; caption: string }> = {
+  transformer: {
+    src: 'library-assets/ai-handbook/transformer-001.png',
+    label: 'Transformer 编码器、解码器与注意力流程',
+    caption: '来源：本机《大模型 Transformer 架构》手册配图。行为事实以论文与现行文档为准。',
+  },
+  rag: {
+    src: 'library-assets/ai-handbook/rag-002.png',
+    label: 'RAG：检索、增强提示、生成',
+    caption: '来源：本机《RAG 技术》手册配图。切块与查询编码可以不同，见课文。',
+  },
+  agent: {
+    src: 'library-assets/ai-handbook/agent-005.png',
+    label: 'Agent 组成部分：感知、规划、工具、记忆',
+    caption: '来源：本机《AI Agent 知识》手册配图。有副作用的动作仍要程序确认。',
+  },
+  langchain: {
+    src: 'library-assets/ai-handbook/langchain-001.png',
+    label: 'LangChain：提示、模型、工具与记忆',
+    caption: '来源：本机 LangChain 手册配图。框架换组件，不代替业务边界。',
+  },
+  langgraph: {
+    src: 'library-assets/ai-handbook/langgraph-001.png',
+    label: 'LangGraph：节点、边与共享状态',
+    caption: '来源：本机 LangGraph 手册配图。循环上限写在运行配置里。',
+  },
+  'agent-practice': {
+    src: 'library-assets/ai-handbook/agent-practice-002.png',
+    label: 'Agent 工作流程：观察、决策、行动、反馈',
+    caption: '来源：本机《Agent 实战》手册配图。停止条件写在运行时，不只写在提示词里。',
+  },
+  harness: {
+    src: 'library-assets/ai-handbook/harness-002.png',
+    label: '从纯聊天到工程化 Harness 的阶段',
+    caption: '来源：本机《AI Harness》手册配图。规则与权限在壳里，不靠模型自觉。',
+  },
+  'rag-assistant': {
+    src: 'library-assets/ai-handbook/rag-assistant-003.png',
+    label: 'RAG 项目：索引与检索问答分流',
+    caption: '来源：本机 RAG 知识库助手项目配图。具体供应商与脚本名以你仓库为准。',
+  },
+  'travel-agent': {
+    src: 'library-assets/ai-handbook/travel-agent-003.png',
+    label: '出行 Agent：ReAct 与工具服务分层',
+    caption: '来源：本机智能出行 Agent 项目配图。工具执行与确认仍在程序侧。',
+  },
+  'office-agents': {
+    src: 'library-assets/ai-handbook/office-agents-002.png',
+    label: '多 Agent 办公：前端、工作流与工具层',
+    caption: '来源：本机多 Agent 协同项目配图。只作结构对照，不宣称已部署该产品。',
+  },
+  'rag-interview': {
+    src: 'library-assets/ai-handbook/rag-002.png',
+    label: 'RAG 流程对照（手册）',
+    caption: '来源：本机《RAG 技术》手册配图。上方示意保留；此处作手册对照。',
+  },
+  'agent-interview': {
+    src: 'library-assets/ai-handbook/interview-agent-rag-002.png',
+    label: 'Agent 面试高频结构对照',
+    caption: '来源：本机 Agent/RAG 面试题库配图。上方示意保留；考点以课文与官方文档为准。',
+  },
+}
+
+/** Inline teaching figures (CSS). Library PNGs render separately and do not replace these. */
 const FIGURES: Record<string, () => ReactElement> = {
   'three-parts': ThreeParts,
   'next-piece': NextPiece,
@@ -34,8 +99,23 @@ const FIGURES: Record<string, () => ReactElement> = {
 
 export function AiDiagram({ name }: { name: string }) {
   const Figure = FIGURES[name]
-  if (!Figure) return null
-  return <Figure />
+  const library = LIBRARY[name]
+  if (!Figure && !library) return null
+  return (
+    <>
+      {Figure ? <Figure /> : null}
+      {library ? <LibraryFigure entry={library} /> : null}
+    </>
+  )
+}
+
+function LibraryFigure({ entry }: { entry: { src: string; label: string; caption: string } }) {
+  return (
+    <figure className="ai-figure ai-figure-library" aria-label={entry.label}>
+      <img src={`${import.meta.env.BASE_URL}${entry.src}`} alt={entry.label} loading="lazy" />
+      <figcaption>{entry.caption}</figcaption>
+    </figure>
+  )
 }
 
 function ThreeParts() {

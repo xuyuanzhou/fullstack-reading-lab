@@ -30,6 +30,8 @@ const COVERAGE_JAVA_33 = [
     task:'划掉“TCP 一定不丢不重”；写出连接失败时应用还要做什么。',
     answer:'划掉“TCP 一定不丢不重，并且一定按序到达”。连接存活时，TCP 用校验和、序号、确认和重传，把字节流按顺序交给应用。连接会复位或超时，应用会看到错误，在途的数据可能到不了业务。应用仍要设超时，失败后的重试要能认出已经处理过的同一次请求。UDP 没有这套重传。',
     keywords:'TCP retransmission ACK UDP reliability',
+    origin:'本地库《图解网络》TCP 首部与序号确认页',
+    diagram:'library-assets/illustrated-basics/network-p0025.png',
     points:['可靠是校验、序号、ACK、重传，不是物理永不丢','连接失败时应用仍看到错误','UDP 无这套重传，丢了就是丢了'],
     deep:[
       {title:'重传补的是段，不是业务只执行一次',body:'没收到确认，TCP 会把同一个段再发出去。这可能让对端协议栈只交付一次，也可能让已经超时的应用再发一整个请求。前者是连接内的去重，后者是应用上看见的第二次调用。订单号要挡的是第二种。'},

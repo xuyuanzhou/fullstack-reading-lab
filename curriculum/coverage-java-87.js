@@ -12,7 +12,7 @@ const COVERAGE_JAVA_87 = [
     answer:"划掉全局必须。按业务键分区有序通常够用。全局有序是极端选项。",
     keywords:"消息顺序 分区 吞吐",
     origin:"《分布式高并发.pdf》约第 33 页：是否必须严格有序",
-    diagram:"diagrams/message-order-not-always-required.svg",
+    diagram:'library-assets/distributed-hc/p0033.png',
     points:["全局有序极贵","业务键有序常见","可乱序则补偿"],
     deep:[
       {title:"和幂等",body:"乱序时更要幂等与版本号。"},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_87 = [
     answer:"划掉只能同步。按 RPO 选复制语义。异步有窗口；同步有延迟与可用代价。",
     keywords:"复制 RPO 半同步",
     origin:"《分布式高并发.pdf》约第 33 页附近：同步复制才能保证",
-    diagram:"diagrams/sync-replication-not-only-durability.svg",
+    diagram:'library-assets/distributed-hc/p0033.png',
     points:["异步有丢失窗口","同步有延迟代价","用 RPO 选型"],
     deep:[
       {title:"和消息投递",body:"MQ 的 at-least-once 与复制确认是另一层。"},

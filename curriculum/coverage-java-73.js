@@ -12,7 +12,7 @@ const COVERAGE_JAVA_73 = [
     answer:"划掉一律全表扫。负向常因选择性差而慢。用 EXPLAIN/行数证明。NULL 与 NOT IN 语义另审。",
     keywords:"MySQL NOT IN 选择性 EXPLAIN",
     origin:"《分布式高并发.pdf》约第 105 页：禁止负向查询",
-    diagram:"diagrams/mysql-negative-predicate-not-always-scan.svg",
+    diagram:'library-assets/distributed-hc/p0105.png',
     points:["负向常慢但不是定律","选择性与计划说了算","NOT IN 与 NULL 语义独立"],
     deep:[
       {title:"和覆盖索引",body:"即便 type=range，若回表太多仍慢。看 rows 与 Extra。"},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_73 = [
     answer:"划掉一律全表扫。前导 % 难用 B+ 最左；尾随 % 常可范围扫。尾缀需求用冗余列或搜索引擎。",
     keywords:"MySQL LIKE 前缀 全文 索引",
     origin:"《分布式高并发.pdf》约第 105 页：禁止 % 开头模糊查询",
-    diagram:"diagrams/mysql-leading-percent-like-heuristic.svg",
+    diagram:'library-assets/distributed-hc/p0105.png',
     points:["前导 % 难用 B+ 最左","尾随 % 常可范围","尾缀需求换引擎或冗余列"],
     deep:[
       {title:"和全文索引",body:"InnoDB FULLTEXT 解决的是分词检索，不是给所有 LIKE 垫背。"},

@@ -12,7 +12,7 @@ const COVERAGE_JAVA_93 = [
     answer:'划掉定律。v4 近似随机无序；v7 可时间有序。存储可用 16 字节二进制。乱序键仍不宜当 InnoDB 聚簇主键。',
     keywords:'UUID v7 RFC9562 BINARY 有序',
     origin:'《分布式高并发.pdf》约第 193 页：UUID 无排序、往往字符串存储',
-    diagram:'diagrams/uuid-not-only-random-string.svg',
+    diagram:'library-assets/distributed-hc/p0193.png',
     points:['常见痛点来自随机 v4 与宽字符串','v7 可带时间有序','可用十六字节二进制存储'],
     deep:[
       {title:'和雪花',body:'雪花也是时间+机器+序列；与 v7 同属“有序唯一”家族，运维契约不同（位分配 vs UUID 布局）。'},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_93 = [
     answer:'划掉自动。这是人工互斥分段。扩缩主数要改步长/偏移并防撞。复制拓扑高可用是另一问题，不靠这两个变量单独完成。',
     keywords:'AUTO_INCREMENT offset increment 多主',
     origin:'《分布式高并发.pdf》约第 194 页：多 Master 不同起始、相同步长发号',
-    diagram:'diagrams/db-autoinc-offset-step-needs-ops.svg',
+    diagram:'library-assets/distributed-hc/p0194.png',
     points:['offset/increment 是运维分段','扩缩主数要重算契约','不代替复制与冲突设计'],
     deep:[
       {title:'和单主自增',body:'单主简单但有单点；多主分段换来协调成本。选之前先写清 RPO 与发号可用性目标。'},

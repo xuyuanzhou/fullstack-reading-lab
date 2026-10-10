@@ -12,7 +12,7 @@ const COVERAGE_JAVA_51 = [
     answer:'入队只推迟扣减。还要：业务与事件同事务发出（Outbox）、消费幂等与失败补偿、对账把差额落到订单号。没有这三样，成功单可以多于库存。削峰丢弃超额请求是限流，不是写进队列就等于卖出。',
     keywords:'消息队列 解耦 最终一致 Outbox 库存 超卖',
     origin:'《分布式高并发.pdf》约第 27 页：库存不可用也不影响下单的解耦叙述',
-    diagram:'diagrams/distributed-mq-not-erase.svg',
+    diagram:'library-assets/distributed-hc/p0027.png',
     points:['入队只推迟库存动作，不删掉卖出上限','最终一致靠 Outbox、幂等、补偿与对账','削峰丢请求是限流，不是写队列即售出'],
     deep:[
       {title:'和用户当场失败',body:'库存够不够若必须在下单页可见，应同步校验或本地原子扣减。消息适合「已发生事实」的传播，不适合把「是否允许卖」也推迟到用户离开之后。'},
@@ -33,7 +33,7 @@ const COVERAGE_JAVA_51 = [
     answer:'服务分配 id 的创建用 POST 到集合，返回新 URI。客户端已知最终 URI 时，可对该 URI 做 PUT，效果是创建或覆盖且宜幂等。只用 JSON 做前后端分离，不代替方法语义，也不能解释成只用 GET/POST。',
     keywords:'HTTP POST PUT REST 创建 幂等 JSON',
     origin:'《分布式高并发.pdf》约第 17–18 页 REST 叙述：插入写成 PUT，实践收成只回 JSON',
-    diagram:'diagrams/http-create-post-not-put.svg',
+    diagram:'library-assets/distributed-hc/p0017.png',
     points:['PUT 是对已知 URI 的整份替换','服务分配 id 的创建常用 POST','JSON 前后端分离不等于 REST 方法语义'],
     deep:[
       {title:'和 PATCH',body:'只改部分字段用 PATCH，不要用错当成“小 PUT”。覆盖整份表示才是 PUT。状态码与错误体约定见 `api-error-contract`。'},

@@ -171,6 +171,13 @@ export function LessonPage() {
               alt={`${lesson.title} 机制图`}
               preview={{ cover: '放大' }}
             />
+            {lesson.origin ? (
+              <figcaption>
+                {lesson.diagram.startsWith('library-assets/')
+                  ? `来源：${lesson.origin}`
+                  : `来源：${lesson.origin}（教学重绘）`}
+              </figcaption>
+            ) : null}
           </figure>
         ) : null}
         <div className="lesson-core">
@@ -230,7 +237,9 @@ export function LessonPage() {
           </div>
           {lesson.origin ? (
             <Typography.Paragraph type="secondary" style={{ marginTop: 16, marginBottom: 0 }}>
-              选题线索：{lesson.origin}。讲解与示意图均重新编写。
+              {lesson.diagram?.startsWith('library-assets/')
+                ? `来源：${lesson.origin}。`
+                : `来源：${lesson.origin}。示意图为教学重绘。`}
             </Typography.Paragraph>
           ) : null}
         </section>

@@ -87,6 +87,8 @@ window.LESSONS.push(
     task:'为带内容哈希的 JS 文件和入口 HTML 分别提出缓存策略，并解释回滚时的影响。',
     answer:'带内容哈希的 JS 可以长缓存，因为内容变了文件名就变。入口 HTML 用 no-cache 或很短的新鲜期，让用户尽快拿到新文件名。回滚时旧 HTML 指向的哈希文件必须还在，否则页面缺资源。no-cache 仍会保存，只是复用前要验证；不保存的是 no-store。',
     keywords:'HTTP Cache-Control ETag 304 cache',
+    origin:'本地库《图解 HTTP》客户端缓存与重新验证页',
+    diagram:'library-assets/illustrated-basics/http-p0069.png',
     deep:[
       {
         title:'304 仍是命中',

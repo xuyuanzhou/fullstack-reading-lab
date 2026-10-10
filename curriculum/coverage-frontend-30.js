@@ -29,6 +29,8 @@ const COVERAGE_FRONTEND_30 = [
     task:'写出 HttpOnly、Secure、SameSite=Lax 各防止或限制什么；再写一条误把会话放进 localStorage 的后果。',
     answer:'HttpOnly 挡脚本读取。Secure 限 HTTPS。Lax 限制多数跨站带 Cookie。会话进 localStorage 可被 XSS 直接读走。',
     keywords:'Set-Cookie HttpOnly Secure SameSite CSRF',
+    origin:'本地库《图解 HTTP》Set-Cookie 回传示例页（现代属性以 MDN 为准）',
+    diagram:'library-assets/illustrated-basics/http-p0040.png',
     points:['HttpOnly 禁止 document.cookie 读取','Secure 限制只在 HTTPS 发送','SameSite 限制跨站附带，None 必须配 Secure'],
     deep:[
       {title:'和 credentials',body:'浏览器有 Cookie 不等于 fetch 跨源会带。跨源还要 `credentials:\"include\"` 且 CORS 允许。'},

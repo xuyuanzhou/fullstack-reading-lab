@@ -12,7 +12,7 @@ const COVERAGE_JAVA_96 = [
     answer:'划掉同义词。CI 是频繁集成与自动验证的实践。Jenkins 只是实现该实践的一种工具；同类还有 Actions、GitLab CI 等。',
     keywords:'CI Jenkins 持续集成 流水线',
     origin:'《分布式高并发.pdf》约第 193 页：持续集成专节写使用 Jenkins 等工具',
-    diagram:'diagrams/jenkins-not-only-ci-tool.svg',
+    diagram:'library-assets/distributed-hc/p0193.png',
     points:['CI 是实践不是产品名','Jenkins 只是工具之一','流水线目标跨工具共通'],
     deep:[
       {title:'和持续交付/部署',body:'CI 停在可验证产物；CD 再谈自动晋升环境。资料标题写「持续发布」时，仍要把构建验证与发布策略分开讲。'},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_96 = [
     answer:'划掉等价。cron 有延迟且可能误删仍存活的持有者；也缺 fencing。真正租约要服务端过期语义与持有者令牌，不能靠盲扫表。',
     keywords:'分布式锁 唯一索引 租约 cron',
     origin:'《分布式高并发.pdf》约第 199–200 页：主键唯一做锁；定时任务清超时；while 重插',
-    diagram:'diagrams/db-insert-unique-cron-not-lease.svg',
+    diagram:'library-assets/distributed-hc/p0199.png',
     points:['唯一插入只演示互斥','定时清表不是服务端租约','忙等重插会打爆库'],
     deep:[
       {title:'和 FOR UPDATE',body:'排他锁握在事务连接上，长事务撑池，见 mysql-for-update-not-dist-lease；同样不是跨机租约。'},

@@ -12,7 +12,7 @@ const COVERAGE_JAVA_75 = [
     answer:"划掉硬上限。500 管元数据与运维复杂度。越过就归档/合并/拆实例，或改数据模型。",
     keywords:"MySQL 元数据 表数量 治理",
     origin:"《分布式高并发.pdf》约第 104 页：单实例表数目必须小于 500",
-    diagram:"diagrams/mysql-instance-table-count-not-five-hundred.svg",
+    diagram:'library-assets/distributed-hc/p0104.png',
     points:["500 是治理红线不是上限","表过多伤元数据运维","模型与拆分比改数字重要"],
     deep:[
       {title:"和信息模式",body:"元数据查询本身也会变慢，监控要分开。"},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_75 = [
     answer:"划掉硬上限。风险是宽投影与疏稀属性。用垂直拆分/侧表/JSON，热点不 SELECT *。",
     keywords:"宽表 列数 垂直拆分",
     origin:"《分布式高并发.pdf》约第 104 页：单表列数目必须小于 30",
-    diagram:"diagrams/mysql-column-count-thirty-not-law.svg",
+    diagram:'library-assets/distributed-hc/p0104.png',
     points:["30 是审查阈值","宽表风险在投影与疏稀","拆分比背数字重要"],
     deep:[
       {title:"和行大小",body:"列类型与字符集比列数更能触发行大小上限。"},

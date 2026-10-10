@@ -640,8 +640,8 @@
         "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/getPrototypeOf"
       ]
     ],
-    "diagram": "diagrams/js-null-end.svg",
-    "origin": "本地库「原型链流程图」上的万物皆对象口诀"
+    "diagram": "library-assets/illustrated-basics/prototype-chain-flow.png",
+    "origin": "本地库「原型链流程图」：万物皆对象口诀"
   },
   "js-arrow-has-no-prototype": {
     "core": "能 `new` 的普通函数和 class 才有 `prototype`，实例的内部原型指向它。箭头函数没有 `prototype`，`new (() => {})` 抛 TypeError。`Function.prototype.bind` 得到的函数同样没有 `prototype`。`Function.prototype` 自己是函数，不是 `new Object()` 出来的普通对象；它的原型才是 `Object.prototype`。函数对象的内部原型通常是 `Function.prototype`，但不要写成「所有函数都是 Function 构造出来的」——箭头函数、方法简写和绑定函数走的是不同创建路径。见 `js-prototype-chain`、`js-this-callsite`。",
@@ -673,8 +673,8 @@
         "https://tc39.es/ecma262/multipage/ordinary-and-exotic-objects-behaviours.html#sec-ordinary-function-objects"
       ]
     ],
-    "diagram": "diagrams/js-arrow-no-prototype.svg",
-    "origin": "本地库「原型链流程图」上的构造函数与原型对象口诀"
+    "diagram": "library-assets/illustrated-basics/prototype-chain-flow.png",
+    "origin": "本地库「原型链流程图」：构造函数与原型对象口诀"
   },
   "js-class-extends-super": {
     "core": "`class Child extends Parent` 让 `Child.prototype` 的原型指向 `Parent.prototype`，实例查找沿这条链，见 `js-prototype-chain`。派生类的构造函数在使用 `this` 之前必须调用 `super(...)`，以便先完成父类对实例的初始化。`super.method()` 在子类方法里调用父类原型上的方法。静态成员挂在构造函数自身，`super` 在静态方法里指向父类构造函数。不要把 extends 理解成“把父类源码粘进子类”。",
@@ -1194,7 +1194,7 @@
         "https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout"
       ]
     ],
-    "diagram": "diagrams/js-timer-fn-not-string.svg",
+    "diagram": "library-assets/frontend-local/js-mindmap-2.png",
     "origin": "本地库 JavaScript 思维导图 BOM 枝里的 setInterval(\"clock()\", 1000)"
   },
   "js-regex-dot-not-newline": {
@@ -1514,7 +1514,7 @@
         "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html"
       ]
     ],
-    "diagram": "diagrams/react-flow-ts.svg",
+    "diagram": "library-assets/frontend-local/react-roadmap-2019.png",
     "origin": "本地库 2019 React 开发者路线图把 Flow 与 TypeScript 并列"
   },
   "ts-narrowing": {
@@ -2527,7 +2527,8 @@
         "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Caching"
       ]
     ],
-    "diagram": "diagrams/http-cache.svg"
+    "diagram": "library-assets/illustrated-basics/http-p0069.png",
+    "origin": "本地库《图解 HTTP》客户端缓存与重新验证页"
   },
   "bfcache-pageshow": {
     "core": "往返缓存把整页快照留下来，后退时直接恢复，滚动和表单往往还在。顺序是离开页面、快照被保留、后退时 pageshow 触发且 persisted 为真，这时不是重新加载。边界是 load 不会再走一遍。页面若绑了 unload，或占用未关的连接，可能进不了这层缓存，后退就变成普通加载。恢复后要检查登录和数据是否过期，不要假设启动代码一定会再跑。刷新和后退不是同一条路径。沿顺序看，前一步的输出是后一步的输入。边界不满足就停在这一步，不要把失败算到旁边的组件上，也不要几处一起改。改之前先写下这一步单独的预测。只改对得上的那一步。现象对不上就停在这一步，不要把邻接的配置一起改掉。",
@@ -2801,7 +2802,9 @@
         "RFC 9110：HTTP Semantics",
         "https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/http-p0034.png",
+    "origin": "本地库《图解 HTTP》方法一览页"
   },
   "http-create-post-not-put": {
     "core": "HTTP 里 **PUT** 表示对**已知 URI** 的整份替换，重复提交的预期效果与一次相同；**POST** 常用于在集合下**创建**由服务分配标识的资源，默认不幂等，见 `http-methods`。资料把 CRUD 的「插入」直接写成 PUT，会和「按 id 覆盖更新」搅在一起。客户端若已选定最终 URI（例如按约定的订单号），创建也可以设计成对该 URI 的 PUT；那是显式约定，不是默认口诀。前后端用 JSON 交换、模板改由前端渲染，是分离部署的常见做法，**不等于** REST 规范本身，更不能用来解释「所以只用 GET/POST」。",
@@ -2833,7 +2836,7 @@
         "https://www.rfc-editor.org/rfc/rfc9110.html"
       ]
     ],
-    "diagram": "diagrams/http-create-post-not-put.svg",
+    "diagram": "library-assets/distributed-hc/p0017.png",
     "origin": "《分布式高并发.pdf》约第 17–18 页 REST 叙述：插入写成 PUT，实践收成只回 JSON"
   },
   "http-content-type-body": {
@@ -2888,7 +2891,9 @@
         "MDN：403",
         "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/403"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/http-p0059.png",
+    "origin": "本地库《图解 HTTP》401 / 403 状态码页"
   },
   "fetch-credentials": {
     "core": "fetch 的 credentials 默认是 same-origin，只在同源请求上带 Cookie。include 才会在跨源请求里带上。浏览器要读到这个跨源响应，服务器必须返回 Access-Control-Allow-Credentials: true，并且 Access-Control-Allow-Origin 是具体源，不能是星号。预检请求也要允许这一点。只改前端、不改响应头，脚本仍然读不到响应。",
@@ -3000,7 +3005,9 @@
         "MDN：503",
         "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/503"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/http-p0061.png",
+    "origin": "本地库《图解 HTTP》503 与状态码不一致提醒页"
   },
   "cookie-set-attributes": {
     "core": "`Set-Cookie` 属性决定浏览器**何时自动附带** Cookie。`HttpOnly`：脚本读不到，降低 XSS 偷票。`Secure`：只在 HTTPS 发送。`SameSite`（Lax/Strict/None）：限制跨站请求是否带上；`None` 必须配 `Secure`。这和「口令怎么存、凭证模式怎么开」是 complementary：`cookie-credential` 讲凭证与 CSRF 面，本课讲属性开关。前端 `credentials` 与 CORS 见 `fetch-credentials`、`cors-credentials-allowlist`。不要把 Token 再抄进 localStorage 抵消 HttpOnly。",
@@ -3035,7 +3042,9 @@
         "MDN：SameSite cookies",
         "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Cookies#controlling_third-party_cookies_with_samesite"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/http-p0040.png",
+    "origin": "本地库《图解 HTTP》Set-Cookie 回传示例页（现代属性以 MDN 为准）"
   },
   "cookie-prefix-partitioned": {
     "core": "**名称前缀**是约定约束：`__Host-` 要求 `Secure`、无 `Domain`、`Path=/`，防止子域乱种；`__Secure-` 要求至少 `Secure`。不满足时浏览器**拒绝收下**。**Partitioned**（CHIPS）把第三方上下文里的 Cookie 按顶层站点分区存放，减轻跨站追踪，和 `SameSite` 互补而非替代，见 `cookie-set-attributes`。第三方嵌入场景要同时考虑 SameSite=None; Secure、分区与浏览器逐步禁用第三方 Cookie 的政策。不要以为“有 Secure 就能当稳定第三方登录态”。",
@@ -3325,7 +3334,9 @@
         "MDN：HTTP/2",
         "https://developer.mozilla.org/en-US/docs/Glossary/HTTP_2"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/network-p0080.png",
+    "origin": "本地库《图解网络》HTTP/1.0 短连接与 1.1 长连接（含三次握手）"
   },
   "http-compression": {
     "core": "客户端用 Accept-Encoding 声明可接受的内容编码，服务端用 Content-Encoding 说明实际响应编码。若同一 URL 按该请求头变化，缓存应依据 Vary: Accept-Encoding 区分表示。顺序是：客户端用 Accept-Encoding 说出能接受的编码，服务器选一种并写上 Content-Encoding，缓存根据 Vary 决定哪些请求头参与区分表示。边界是：没有 Vary 时，同一 URL 的不同编码可能被当成同一份缓存。已经压缩的图片再套一层通用压缩往往收益很小。HTML 这类文本更适合压缩，但缓存键必须把编码算进去。",
@@ -3375,7 +3386,9 @@
         "RFC 9110：Range Requests",
         "https://www.rfc-editor.org/rfc/rfc9110.html#section-14"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/http-p0049.png",
+    "origin": "本地库《图解 HTTP》Range 字节范围页"
   },
   "http2-multiplex": {
     "core": "HTTP/1.1 同一条连接上通常要等前一个响应完。HTTP/2 在一条 TCP 连接上用流并行，小请求不再等一张大图的整段 HTTP/1 队头。TCP 丢包仍会卡住这条连接上的所有流，这是更下层的队头阻塞。HTTP/3 改走 QUIC/UDP，把这个问题再往下解。更多连接不一定更快，浏览器对同一主机连接数也有限。缓存、压缩、优先级仍然要做。",
@@ -3429,7 +3442,9 @@
         "MDN：混合内容",
         "https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/network-p0095.png",
+    "origin": "本地库《图解网络》证书信任链页"
   },
   "tcp-is-l4-not-http-handshake": {
     "core": "TCP 属于传输层。常见教学用四层或五层（物理、链路、网络、传输、应用）把 HTTP 放在应用层；OSI 才是七层，且 HTTP 不是第七层的别名。三次握手是 TCP 连接建立，四次挥手是断开，发生在 HTTP 请求之前。TLS 在传输之上再包一层。不要把 OSI 七层、TCP 握手和 HTTP 方法背成同一件事。有些资料里“TCP 属于传输层、HTTP 在应用层”那句是对的。",
@@ -3456,7 +3471,9 @@
         "MDN：OSI model vs TCP/IP",
         "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Protocol_overview"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/network-p0046.png",
+    "origin": "本地库《图解网络》分层封装（应用 HTTP / 传输 TCP）"
   },
   "https-tls13-not-12-packets": {
     "core": "HTTPS 是 HTTP over TLS。端口常见 443，证书要校验主机名，见 `tls-hostname-verify`。TLS 1.3 是 1-RTT 握手，会话恢复还可以 0-RTT，不是固定 9 个包。应用数据加密会增加 CPU 和一点体积，但延迟差主要来自握手和证书，不是“12 减 3”。HTTP/2 和 HTTP/3 几乎都跑在加密连接上。明文 HTTP 没有机密性。免费证书早已普及，不再是“一定要花钱才有 HTTPS”。",
@@ -3483,7 +3500,9 @@
         "MDN：HTTPS",
         "https://developer.mozilla.org/en-US/docs/Glossary/HTTPS"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/http-p0149.png",
+    "origin": "本地库《图解 HTTP》HTTPS/SSL 握手示意（现行包数以 TLS 1.3 为准）"
   },
   "tcp-stream-needs-framing": {
     "core": "上一课把 TCP 放在传输层：先三次握手，才有后面的 HTTP。握手成功之后，应用每次 read 到的并不是你某一次 send。TCP 保证字节按顺序、不重复地交到对方，不保留发送边界。两次小的 send 可能被一次 read 一起读出，一次大的 write 也可能要多次 read 才读完。少读了是半包，多读了是把下一条的开头也拿进来了，处理是同一件事：字节放进自己的缓冲区，按规则切出完整的一条，剩下的留到下一次 read。帧由应用划定。长度前缀是双方先约定用几个字节表示后面正文有多长，以及高位在前还是低位在前。高位在前常叫大端，数字 5 若用 4 字节，就是 00 00 00 05。接收端凑够这个长度再交给业务；长度超过约定上限就断开，避免按一个恶意数字去分配内存。分隔符只适合能保证那个字节不会出现在正文里的文本。二进制正文里如果出现同一个字节，一条会被切成两条，除非先把正文转义。定长只适合每条消息都是这个长度，短的要填充，长的这条规则本身不成立。UDP 一次接收对应一个数据报，所以通常不会把两次发送并成一条业务消息。接收缓冲区比数据报小，多出来的部分会被截掉。UDP 仍会丢、会乱序。",
@@ -3510,7 +3529,9 @@
         "MDN：TCP",
         "https://developer.mozilla.org/en-US/docs/Glossary/TCP"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/network-p0066.png",
+    "origin": "本地库《图解网络》HTTP 与 TCP 字节流分界页（Content-Length / 粘包）"
   },
   "https-port-443-not-80": {
     "core": "上一课已经把三次握手放在 TCP：先连上，才有后面的 TLS 和 HTTP。这一课对的是默认端口。IANA 里 http 是 TCP 80，https 是 TCP 443。浏览器或 curl 看到 https:// 且没写端口，连的就是 443；看到 http://，连的才是 80。连上 443 之后才是 TLS 的 ClientHello，不是 HTTP 请求行里再做三次握手。把 HTTPS 服务开在 80 上，对端仍按明文 HTTP 去讲，TLS 记录对不上。把明文服务开在 443 上，客户端会先发 ClientHello，服务端若当 HTTP 来读，同样对不上。握手失败时抓包应先看到 TCP 建连，再看有没有 ClientHello，而不是在 HTTP 头里找 SYN。",
@@ -3537,7 +3558,9 @@
         "IANA Service Name and Transport Protocol Port Number Registry",
         "https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/network-p0028.png",
+    "origin": "本地库《图解网络》TCP 报文与默认端口页"
   },
   "tcp-reliable-not-never-lose": {
     "core": "连接还活着的时候，TCP 用校验和发现损坏，用序号把字节排好，用确认和重传补上没被确认的段。交给接收方应用的是这一条连接上的有序字节流，不会因为网络丢了一个段就在流里留一个洞。这不是“线路上从不丢包”。段会丢，TCP 再传。也不是“应用最终一定拿到”。对端复位、本端超时、链路断开，read 或 write 会失败，已经交给本地协议栈、还没被对端应用读走的字节，应用层可以再也看不到。按序只保证这一条连接里的字节顺序，不保证两个 HTTP 请求谁的业务先做完。应用自己超时重试时，服务端可能已经处理过第一次，所以仍要幂等。UDP 没有这套重传，数据报可以丢、可以乱序。",
@@ -3564,7 +3587,9 @@
         "RFC 768 UDP",
         "https://www.rfc-editor.org/rfc/rfc768.html"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/network-p0025.png",
+    "origin": "本地库《图解网络》TCP 首部与序号确认页"
   },
   "cookie-credential": {
     "core": "Cookie 按域、路径、Secure、HttpOnly 和 SameSite 决定是否自动附在后续请求上。HttpOnly 的 Cookie 不能通过 document.cookie 读取。没有 Max-Age 或 Expires 时，它是会话 Cookie，会话结束即删除。SameSite=None 必须同时标记 Secure。localStorage 只留在该源的页面存储里，不会自动随请求发送，但同源脚本可以读到它。",
@@ -3591,7 +3616,9 @@
         "MDN：localStorage",
         "https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/http-p0039.png",
+    "origin": "本地库《图解 HTTP》Cookie 签发与回传页"
   },
   "auth-session-vs-jwt": {
     "core": "浏览器应用的默认登录态是服务端会话：登录成功后 Set-Cookie，后续请求由浏览器自动带上，Cookie 标 HttpOnly、Secure、SameSite。脚本读不到这份 Cookie，XSS 不能直接把会话令牌抄走。JWT 作为访问令牌出现在 Authorization 头时，前端必须自己存放。放进 localStorage 或普通 JS 可读的 Cookie，任何 XSS 都能偷走并在别处重放，直到过期。JWT 适合服务与服务之间，或原生应用自己保管令牌。刷新令牌若也落到 JS 可读存储，危害比短时访问令牌更大。对象级授权仍在服务端按这条身份检查资源，登录成功不等于能读任意 id。",
@@ -8854,7 +8881,7 @@
         "https://testing-library.com/docs/queries/about/"
       ]
     ],
-    "diagram": "diagrams/react-enzyme-rtl.svg",
+    "diagram": "library-assets/frontend-local/react-roadmap-2019.png",
     "origin": "本地库 2019 React 开发者路线图把 Enzyme 列为组件测试"
   },
   "playwright-user-journey": {
@@ -9123,7 +9150,7 @@
         "https://vite.dev/config/build-options.html#build-sourcemap"
       ]
     ],
-    "diagram": "diagrams/webpack-eval-sourcemap.svg",
+    "diagram": "library-assets/frontend-local/webpack-devtool-2.png",
     "origin": "本地库 webpack improve_build 文档里的 devtool 对照表"
   },
   "angular-ngonchanges-primitives": {

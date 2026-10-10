@@ -83,7 +83,8 @@ const COVERAGE_JAVA_21 = [
     task:'对照 8 以后的 GC 文档，划掉 Perm 和 MaxPermSize；写出 Survivor 在 HotSpot 里有几块。',
     answer:'对照 JDK 8 以后的 GC 文档，划掉永久代和 MaxPermSize。Survivor 在 HotSpot 里有两块，加上 Eden 构成年轻代。类元数据在元空间，上限用 MaxMetaspaceSize。Full GC 不再有永久代被写满这一条。',
     keywords:'PermGen Metaspace MaxPermSize Survivor Eden',
-    diagram:'diagrams/jvm-no-permgen.svg',
+    diagram:'library-assets/illustrated-basics/jvm-mindmap.png',
+    origin:'本地库 Java 虚拟机思维导图仍画永久代',
     points:['JDK 8 起没有永久代','类元数据在 Metaspace，用 MaxMetaspaceSize','HotSpot 年轻代是 Eden 和两个 Survivor'],
     deep:[
       {title:'类的元数据不在永久代',body:'永久代去掉之后，类元数据默认可以使用本地内存，所以要单独设 MaxMetaspaceSize。年轻代的布局仍是一块 Eden 和两块 Survivor。旧的增量收集口诀不能拿来描述现在的收集器。'},

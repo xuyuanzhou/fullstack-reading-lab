@@ -977,9 +977,18 @@
         "spring-boot-devtools-restarts",
         "git-restore-over-checkout",
         "linux-bkl-gone",
+        "linux-virtual-memory-isolation",
+        "linux-virtual-addr-mmu",
+        "linux-memory-segmentation",
+        "linux-memory-paging",
+        "linux-multilevel-page-table",
+        "linux-page-fault-swap",
+        "linux-tlb-cache",
+        "linux-segmented-paging",
         "k8s-runtime-not-only-docker",
         "linux-root-group-not-root",
         "linux-fork-copies-one-thread",
+        "linux-shell-pipe-fds",
         "docker-root-not-host-root",
         "etcd-v3-grpc-not-rest",
         "git-default-branch-not-master",
@@ -2942,9 +2951,18 @@
             "spring-boot-devtools-restarts",
             "git-restore-over-checkout",
             "linux-bkl-gone",
+            "linux-virtual-memory-isolation",
+            "linux-virtual-addr-mmu",
+            "linux-memory-segmentation",
+            "linux-memory-paging",
+            "linux-multilevel-page-table",
+            "linux-page-fault-swap",
+            "linux-tlb-cache",
+            "linux-segmented-paging",
             "k8s-runtime-not-only-docker",
             "linux-root-group-not-root",
             "linux-fork-copies-one-thread",
+            "linux-shell-pipe-fds",
             "docker-root-not-host-root",
             "etcd-v3-grpc-not-rest",
             "git-default-branch-not-master",
@@ -16925,6 +16943,126 @@
     {
       "track": "java",
       "group": "工程实践",
+      "id": "linux-virtual-memory-isolation",
+      "title": "多进程不能共用绝对物理地址，要用虚拟地址做隔离",
+      "prompt": "为什么把单片机那种“CPU 直接按物理地址读写内存”套到多进程操作系统上，会在两个程序写同一地址时说不通？",
+      "promptAnswer": "没有操作系统的直访模型里地址就是物理位置。多进程要靠虚拟地址隔离，再由操作系统映射到不同物理页。",
+      "keywords": "虚拟内存 进程隔离 物理地址 映射",
+      "points": [
+        "多进程不能安全共用绝对物理地址",
+        "每个进程有独立虚拟地址空间",
+        "相同虚拟地址可映射到不同物理页"
+      ],
+      "since": "engineering"
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-virtual-addr-mmu",
+      "title": "程序里的地址是虚拟地址，经 MMU 才落到物理内存",
+      "prompt": "为什么把程序打印出来的指针或数组下标当成内存条上的物理地址，会在多进程、缺页时说不通？",
+      "promptAnswer": "程序用的是虚拟地址。CPU 里的 MMU 把它翻译成物理地址后再访问物理内存。",
+      "keywords": "虚拟地址 物理地址 MMU 分页 分段",
+      "points": [
+        "程序使用虚拟地址，不是内存条上的物理偏移",
+        "MMU 在 CPU 芯片内完成地址翻译",
+        "分段与分页是管理虚实映射的两种机制，现行系统以分页为主"
+      ],
+      "since": "engineering"
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-memory-segmentation",
+      "title": "分段用段号查段表再加偏移，现行通用系统不以它做主映射",
+      "prompt": "为什么还把“程序按代码/数据/堆/栈四大段直接映射到物理内存”背成今天的主机制？",
+      "promptAnswer": "分段是早期常用做法。现行通用操作系统以分页为主；分段多作历史与兼容背景。",
+      "keywords": "分段 段表 段基址 段界限 外部碎片",
+      "points": [
+        "分段用段号查段表，基址加偏移得到物理地址",
+        "段长短可变，易产生外部碎片",
+        "现行通用操作系统地址翻译主路径是分页"
+      ],
+      "since": "engineering"
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-memory-paging",
+      "title": "分页把地址空间切成固定大小的页，经页表翻译成物理地址",
+      "prompt": "为什么在讲完虚拟地址和 MMU 之后，还要把“分段整段换入换出”当成现行通用做法？",
+      "promptAnswer": "现行通用操作系统以分页为主。虚拟地址拆成页号与页内偏移，用页表查出物理页再拼偏移。",
+      "keywords": "分页 页表 页号 页内偏移 MMU 缺页",
+      "points": [
+        "分页用固定大小的页映射虚拟与物理地址",
+        "页号查页表，再与页内偏移拼成物理地址",
+        "缺页时由内核补页或换入后再继续"
+      ],
+      "since": "engineering"
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-multilevel-page-table",
+      "title": "单级页表按进程占满地址空间会太大，要用多级页表按需展开",
+      "prompt": "为什么把“每个进程一张覆盖全部虚拟空间的扁平页表”背成实现现状，会在算内存开销时对不上？",
+      "promptAnswer": "32 位、4KB 页时单级页表可到约 4MB/进程。多级页表只为用到的区间建下级表。",
+      "keywords": "多级页表 页表项 一级页表 二级页表",
+      "points": [
+        "单级页表按满虚拟空间计会随进程数迅速变贵",
+        "多级页表按级索引，未用区间可不建下级表",
+        "页内偏移与页大小对应，常见 4KB 对应 12 位偏移"
+      ],
+      "since": "engineering"
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-page-fault-swap",
+      "title": "缺页时内核补页或换入，内存紧时可以把页换出到磁盘",
+      "prompt": "为什么把“进程一启动就把全部虚拟页装进物理内存”背成现状，会在解释懒加载和 swap 时说不通？",
+      "promptAnswer": "可以先建映射、访问时再缺页补页。内存紧时把近期不用的页换出到磁盘，需要时再换入。",
+      "keywords": "缺页 换入 换出 swap 按需装入",
+      "points": [
+        "缺页异常后由内核补页或换入并更新页表",
+        "换出把页落到磁盘交换空间，换入再读回",
+        "分页支持按需装入，不必启动时装满物理内存"
+      ],
+      "since": "engineering"
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-tlb-cache",
+      "title": "TLB 缓存近期页表翻译，未命中才走完整页表查找",
+      "prompt": "为什么多级页表省了空间之后，还把“每次访存都完整走一遍多级页表”当成没有额外代价？",
+      "promptAnswer": "多级查找要多次访存。CPU 里用 TLB（快表）缓存近期翻译，命中则不必每次走完整页表。",
+      "keywords": "TLB 快表 MMU 局部性 页表缓存",
+      "points": [
+        "TLB 缓存在 CPU 侧的近期地址翻译",
+        "未命中才查内存页表，并常回填 TLB",
+        "页表是完整映射权威；TLB 失效后必须更新或丢弃旧项"
+      ],
+      "since": "engineering"
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-segmented-paging",
+      "title": "段页式先段后页：逻辑地址经线性地址再到物理地址",
+      "prompt": "为什么把“分段和分页只能二选一”背成定律，会在读 x86/Linux 地址翻译时对不上？",
+      "promptAnswer": "可以合用。段式单元先得到线性地址（虚拟地址），再由页式单元映射到物理地址。",
+      "keywords": "段页式 逻辑地址 线性地址 虚拟地址",
+      "points": [
+        "分段与分页可以合用，不是互斥二选一",
+        "逻辑地址经段式得到线性地址，再经页式得到物理地址",
+        "Linux 内存管理建立在这种先段后页的硬件链上"
+      ],
+      "since": "engineering"
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
       "id": "k8s-runtime-not-only-docker",
       "title": "节点上跑的不必是 Docker，kubelet 才对接 CRI",
       "prompt": "为什么还把 Node 背成一定跑 Docker，且 Master 默认完全不干活？",
@@ -16964,6 +17102,21 @@
         "子进程只保留调用 fork 的线程",
         "其他线程的锁可能留在子进程里",
         "多线程里 fork 之后应尽快 exec"
+      ],
+      "since": "engineering"
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-shell-pipe-fds",
+      "title": "shell 管道是父进程建 pipe 再 fork，子进程各留一端",
+      "prompt": "为什么把 `A | B` 想成“两个无放进程凭空接到同一根管子”，会在解释匿名管道时说不通？",
+      "promptAnswer": "匿名管道靠继承文件描述符。shell 先 pipe，再 fork 出写端与读端子进程，并关掉不用的一端。",
+      "keywords": "pipe fork 匿名管道 文件描述符 shell",
+      "points": [
+        "shell 先 pipe 再 fork，用继承把管道交给子进程",
+        "写端与读端进程要关掉不用的那一端",
+        "匿名管道依赖亲缘继承；无亲缘用命名管道等"
       ],
       "since": "engineering"
     },

@@ -12,7 +12,7 @@ const COVERAGE_JAVA_112 = [
     answer:'划掉。优雅停机减少粗暴截断。零丢失还要幂等/事务与排水编排，并接受超时强制退出。',
     keywords:'优雅停机 graceful shutdown 幂等',
     origin:'《分布式高并发.pdf》发布与停机口诀常见夸大',
-    diagram:'diagrams/graceful-shutdown-not-zero-loss.svg',
+    diagram:'library-assets/distributed-hc/p0028.png',
     points:['优雅停机减少粗暴断开','有超时仍可能截断','零丢失靠幂等与排水'],
     deep:[
       {title:'和探针',body:'readiness 摘流与进程退出要编排；只靠 JVM shutdown hook 不够。'},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_112 = [
     answer:'划掉同义。线程池限任务并发；连接池限下游连接。相等常拖垮 DB 或浪费连接，要用超时与压测定。',
     keywords:'连接池 线程池 Hikari 容量',
     origin:'《分布式高并发.pdf》池化参数口诀常见绑定',
-    diagram:'diagrams/connection-pool-not-thread-pool.svg',
+    diagram:'library-assets/distributed-hc/p0182.png',
     points:['连接池限下游连接','线程池限任务并发','两者不必等大'],
     deep:[
       {title:'和虚拟线程',body:'可多挂起等待，更要防止把连接池打满；连接仍是稀缺资源。'},

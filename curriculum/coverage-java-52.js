@@ -12,7 +12,7 @@ const COVERAGE_JAVA_52 = [
     answer:'同一个键只落在一台主上，故障转移继续这份计数。五段步长是五份独立计数器，客户端要钉死用哪一份，并持久化当前值。连上 Cluster 不会自动把一个 INCR 拆成五段。',
     keywords:'Redis Cluster INCR 发号 槽 步长',
     origin:'《分布式高并发.pdf》约第 196 页：用 Redis 集群按 1..5 初值与步长 5 发全局 ID',
-    diagram:'diagrams/redis-cluster-incr-one-slot.svg',
+    diagram:'library-assets/distributed-hc/p0196.png',
     points:['INCR 的原子性只覆盖一个键','Cluster 把该键放在一个槽、一台主上','五段步长要独立计数器并钉死客户端，故障转移不重置初值'],
     deep:[
       {title:'和代理取模',body:'Twemproxy 一类代理也不是 Cluster 协议，见 `redis-proxy-hash-not-cluster`。发号若走代理，仍要问清键落在哪一台，以及宕机后计数是否还在。'},
@@ -33,7 +33,7 @@ const COVERAGE_JAVA_52 = [
     answer:'标签不决定一致性。单键命令看该键在主上的原子性。多文档是否进一个事务看产品与版本（MongoDB 副本集事务）。从副本读要单独写能接受的延迟。MySQL 从库同样可以暂时落后。',
     keywords:'NoSQL ACID 最终一致 MongoDB Redis 事务',
     origin:'《分布式高并发.pdf》约第 57 页：把 NoSQL 概括为最终一致性而非 ACID',
-    diagram:'diagrams/nosql-label-not-consistency.svg',
+    diagram:'library-assets/distributed-hc/p0057.png',
     points:['NoSQL 是接口与模型的分类，不是一致性级别','MongoDB 多文档事务与 Redis 单键原子都存在','从副本读的延迟要单独约定，SQL 库也一样'],
     deep:[
       {title:'和 BASE 口诀',body:'BASE 描述的是有些系统用放松「立刻一致」换吞吐，它不是禁令，也不是一种可执行算法。能不能开事务，以你锁定的数据库版本文档为准。'},
@@ -53,7 +53,7 @@ const COVERAGE_JAVA_52 = [
     answer:'行数本身不是拆分开关。先看热页是否进得了缓冲池、查询是点查还是大扫描、复制延迟和备份是否已经超窗。这三项都健康时，保留单表。拆分后再处理跨库分页与事务。',
     keywords:'分库分表 一千万 InnoDB 缓冲池 拆分',
     origin:'《分布式高并发.pdf》约第 68 页：拆分原则写单表数据到一千万以内',
-    diagram:'diagrams/mysql-split-not-ten-million.svg',
+    diagram:'library-assets/distributed-hc/p0068.png',
     points:['没有「一千万行必须拆」的服务器限制','先测热数据、查询形态、复制与备份窗口','拆分的代价是跨库查询和事务，不是行计数器'],
     deep:[
       {title:'和 UUID 主键',body:'随机主键让插入落在叶子中间，页分裂在行数不大时就会出现，见 `mysql-uuid-not-clustered-pk`。那是键的分布问题，不是「到了一千万」。'},

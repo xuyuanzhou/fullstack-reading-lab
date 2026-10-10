@@ -12,7 +12,7 @@ const COVERAGE_JAVA_60 = [
     answer:'划掉「讲完链表 LRU = 答完带过期」。容量满踢最久未用；TTL 到点失效即使未满。未满时过期键在 get/扫时删除并视为未命中。两维都要设计，标题有过期就不能只画链表。',
     keywords:'LRU TTL 过期 容量淘汰 缓存',
     origin:'《分布式高并发.pdf》约第 197–198 页：带有过期时间的 LRU 缓存',
-    diagram:'diagrams/lru-capacity-not-ttl-expire.svg',
+    diagram:'library-assets/distributed-hc/p0197.png',
     points:['容量 LRU 与 per-entry TTL 是两维','只画链表满删尾不等于实现了过期','未满时过期键仍应失效并视为未命中'],
     deep:[
       {title:'和 Redis 政策名',body:'allkeys-lru 在满内存时近似 LRU；键的 TTL 由 EXPIRE 另管。volatile-lru 只在带 TTL 的集合里挑牺牲品。不要把政策名里的 lru 当成“已经有过期语义”。'},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_60 = [
     answer:'划掉「BASE=定理且禁事务」。口号允许部分路径放松立刻一致与接受中间态。钱货不变量、唯一约束、Outbox 仍要事务或同等强度。最终一致要有收敛与对账，不是放弃正确性。',
     keywords:'BASE CAP 最终一致 分布式事务 Outbox',
     origin:'《分布式高并发.pdf》约第 19–20 页：BASE 定理与不可能用分布式事务',
-    diagram:'diagrams/base-slogan-not-ban-tx.svg',
+    diagram:'library-assets/distributed-hc/p0019.png',
     points:['BASE 是实践口号不是形式化定理','放松立刻一致不等于禁止事务','最终一致仍要收敛条件与对账'],
     deep:[
       {title:'和 CAP 贴标签',body:'同页把库分成 CA/CP/AP 也过粗，见 distributed-cap。BASE 不能用来给产品盖永久 AP 章。'},

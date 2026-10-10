@@ -52,6 +52,8 @@ const COVERAGE_JAVA_35 = [
     task:'写出怎样查看默认分支；划掉“初始化必有 master”。',
     answer:'默认分支名可配，现在常见是 main。用 HEAD 和远程默认分支，不要写死 master。',
     keywords:'Git main master init.defaultBranch HEAD',
+    origin:'图解 Git.pdf 第 1 页',
+    diagram:'library-assets/illustrated-basics/git-p0001.png',
     points:['默认分支名可配置，常为 main','HEAD 指向当前分支，不绑定名字 master','origin 是远程名，不是分支名'],
     refs:[['Git 2.28：init.defaultBranch','https://github.blog/2020-07-27-highlights-from-git-2-28/'],['GitHub：renaming master to main','https://github.com/github/renaming']]
   }

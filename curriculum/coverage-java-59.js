@@ -12,7 +12,7 @@ const COVERAGE_JAVA_59 = [
     answer:'划掉「MAC+PID+TID=可靠持有者」。占锁写入随机 token（可附重入计数）；重入与释放都比对同一 token。租约用服务端 TTL/会话。容器与 PID 回收会让硬件/OS 身份撞车。',
     keywords:'分布式锁 可重入 token MAC 租约',
     origin:'《分布式高并发.pdf》约第 202 页：分布式可重入锁记录 MAC+进程+线程',
-    diagram:'diagrams/dist-lock-owner-not-mac-pid-tid.svg',
+    diagram:'library-assets/distributed-hc/p0202.png',
     points:['可重入要比对锁上的持有者令牌','MAC/PID/TID 在容器与回收下会撞车','租约仍由服务端 TTL 或会话管理'],
     deep:[
       {title:'和 Redisson 可重入',body:'客户端库常见做法是 value 里带 UUID 与线程级计数，并用看门狗续租；身份仍是随机 UUID，不是网卡地址。细节以所用库文档为准，不要手写 MAC 拼接。'},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_59 = [
     answer:'划掉「可重入=避免死锁」。可重入只避免同一持有者在同一锁上把自己堵死。交叉死锁靠加锁顺序、超时、更小临界区；忘释放靠租约与持有者校验。',
     keywords:'可重入 死锁 分布式锁 租约',
     origin:'《分布式高并发.pdf》约第 199 页：可重入锁（避免死锁）',
-    diagram:'diagrams/dist-lock-reentrant-not-deadlock-cure.svg',
+    diagram:'library-assets/distributed-hc/p0199.png',
     points:['可重入避免同持有者在同锁上自堵','交叉死锁与忘释放不靠重入计数解决','分布式锁先互斥、租约与持有者校验'],
     deep:[
       {title:'和公平/阻塞',body:'资料并列写阻塞锁、公平锁“按需考虑”是对的。可重入同样是按需：调用不会重入同一 key 时，强行可重入只增加协议复杂度。'},

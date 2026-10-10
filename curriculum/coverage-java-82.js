@@ -12,7 +12,7 @@ const COVERAGE_JAVA_82 = [
     answer:"划掉等同。拆分改边界，集群改容量/冗余。只做其一会剩单点或模糊边界。",
     keywords:"拆分 集群 副本 RPC",
     origin:"《分布式高并发.pdf》约第 16–17 页：拆分 VS 集群",
-    diagram:"diagrams/split-vs-cluster-not-interchangeable.svg",
+    diagram:'library-assets/distributed-hc/p0016.png',
     points:["拆分是异质边界","集群是同质副本","常组合但不可替代"],
     deep:[
       {title:"和负载均衡",body:"集群需要调度；拆分需要服务发现与契约。"},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_82 = [
     answer:"划掉必然。池化、代理、读写分离可降连接。拆服务要有边界收益，不单为平方公式。",
     keywords:"连接池 代理 服务拆分",
     origin:"《分布式高并发.pdf》约第 16 页：连接数目是服务器规模的平方",
-    diagram:"diagrams/service-extract-not-only-connection-math.svg",
+    diagram:'library-assets/distributed-hc/p0016.png',
     points:["连接平方是动机不是证明","池化与代理可先治","拆分要有边界收益"],
     deep:[
       {title:"和配置中心",body:"连接参数与池大小要可观测，见配置课。"},

@@ -12,7 +12,7 @@ const COVERAGE_JAVA_78 = [
     answer:"划掉必须一条。合并为减少锁窗口与往返。算法冲突、风险隔离时应拆开，并用在线工具。",
     keywords:"DDL 在线变更 元数据锁",
     origin:"《分布式高并发.pdf》约第 105 页：同表 DDL 合并一条",
-    diagram:"diagrams/mysql-ddl-merge-heuristic.svg",
+    diagram:'library-assets/distributed-hc/p0105.png',
     points:["合并为缩短变更窗口","不是语法强制","在线工具与算法优先"],
     deep:[
       {title:"和复制",body:"从库应用 DDL 的方式影响延迟，变更窗口要双边看。"},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_78 = [
     answer:"划掉形式主义 catch。瞬时可重试；冲突变业务错误；资源耗尽要降载。配合事务与幂等。",
     keywords:"SQLException 死锁 幂等 重试",
     origin:"《分布式高并发.pdf》约第 105 页：应用程序必须捕获 SQL 异常",
-    diagram:"diagrams/mysql-catch-sql-exception-not-enough.svg",
+    diagram:'library-assets/distributed-hc/p0105.png',
     points:["捕获是底线不是完成","按错误类决策","事务与幂等更关键"],
     deep:[
       {title:"和连接池",body:"异常路径也要归还连接，否则比不捕获更快炸池。"},

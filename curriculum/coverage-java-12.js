@@ -65,6 +65,8 @@ const COVERAGE_JAVA_12 = [
     task:'对照当前 Kafka 文档的 KRaft 说明，划掉资料里的两条 ZK 存活条件，改写成控制器与 ISR；并注明 acks=all 等的是 ISR。',
     answer:'划掉“必须维持 ZooKeeper 心跳”和“follower 都要及时同步才算活着”。现行集群用 KRaft 控制器管元数据，副本是否跟上看 ISR。acks=all 等的是 ISR 中的副本，不是集群里每一个 follower。ZooKeeper 不是这套现行默认依赖。',
     keywords:'Kafka KRaft ZooKeeper ISR acks controller',
+    origin:'本地库 Kafka 思维导图把集群绑在 ZooKeeper',
+    diagram:'library-assets/illustrated-basics/kafka-mindmap.png',
     points:['KRaft 用内置元数据仲裁替代 ZooKeeper','ISR 描述同步副本，不是 ZK 心跳','acks=all 等到 ISR，不是全部 follower'],
     deep:[
       {title:'ISR 不是全体副本',body:'落后太多的副本会留在 ISR 外面。acks=all 不会等它们。把“所有 follower 都写完”当成成功条件，会把正常的落后说成集群不健康。落后副本不在成功条件里。'},

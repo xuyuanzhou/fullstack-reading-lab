@@ -12,7 +12,7 @@ const COVERAGE_JAVA_58 = [
     answer:'302 LB 至少两跳，Location 常把真实主机交给浏览器，后续可能绕过调度。反代让客户端只看见 VIP，上游不暴露。主入口用反代/云 LB；302 留给明确的迁移跳转。',
     keywords:'HTTP 302 负载均衡 Location 反向代理',
     origin:'《分布式高并发.pdf》约第 93 页：http 重定向协议实现负载均衡',
-    diagram:'diagrams/http-redirect-lb-two-hops.svg',
+    diagram:'library-assets/distributed-hc/p0093.png',
     points:['302/Location 让浏览器再请求一次真实地址','后端 URL 易暴露，后续可绕过调度机','主 LB 用反代或云 LB，302 适合迁移'],
     deep:[
       {title:'和 SEO、方法语义',body:'资料提 302 可能被搜索引擎判作弊。永久迁域应用 301/308；临时用 302/307。API 客户端对重定向跟随规则与页面导航不同，见 `http-503-unavailable` 邻接说明。'},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_58 = [
     answer:'盲轮询在读多写下浪费带宽与配置集群。用变更通知或长轮询驱动拉取；本地缓存保留版本与失败兜底。分钟级“自动生效”是一致性窗口，关键配置应主动推。',
     keywords:'配置中心 轮询 长轮询 watch Nacos',
     origin:'《分布式高并发.pdf》约第 202–205 页：配置中心 localcache 轮询与推送改进',
-    diagram:'diagrams/config-center-poll-needs-watch.svg',
+    diagram:'library-assets/distributed-hc/p0202.png',
     points:['配置读多写少，定时盲拉多半空跑','变更通知或长轮询驱动拉取','本地缓存要版本与兜底，分钟延迟是窗口'],
     deep:[
       {title:'和 Nacos',body:'Nacos 配置是 dataId + group + namespace；客户端订阅后由服务端推变更再拉内容，见 sca-nacos-config。不要自建“每进程扫全表”代替订阅。'},

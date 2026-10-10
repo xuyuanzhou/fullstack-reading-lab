@@ -12,7 +12,7 @@ const COVERAGE_JAVA_86 = [
     answer:"划掉终点论。业务分库清边界。单表写/数据量仍热点再水平拆。避免过碎。",
     keywords:"业务分库 水平分片 边界",
     origin:"《分布式高并发.pdf》约第 14 页附近：业务分库",
-    diagram:"diagrams/business-split-db-not-only-path.svg",
+    diagram:'library-assets/distributed-hc/p0014.png',
     points:["业务分库清边界","热点再水平拆","过碎引入分布式事务"],
     deep:[
       {title:"和千万行",body:"行数不是唯一扳机，见拆分课。"},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_86 = [
     answer:"划掉万能虚拟节点。节点分布与单键热点是两问题。后者要键设计与隔离。",
     keywords:"倾斜 热点键 一致性哈希",
     origin:"《分布式高并发.pdf》约第 60、94 页附近：数据分配不一定均匀",
-    diagram:"diagrams/hash-skew-not-only-virtual-nodes.svg",
+    diagram:'library-assets/distributed-hc/p0060.png',
     points:["分布倾斜≠单键热点","虚拟节点管节点分布","热点键要另治"],
     deep:[
       {title:"和令牌桶",body:"热点入口还要限流，见 token-bucket。"},

@@ -12,7 +12,7 @@ const COVERAGE_JAVA_50 = [
     answer:'代理取模分的是独立实例，客户端常只看见代理。Cluster 分的是 16384 槽，节点互知，客户端要跟 MOVED/ASK。新部署不要把 Twemproxy 画成默认。',
     keywords:'Redis Cluster Twemproxy Codis 16384 槽 取模',
     origin:'本地库 Redis 思维导图把 Twemproxy、Hash 取模与集群画在一起',
-    diagram:'diagrams/redis-proxy-hash.svg',
+    diagram:'library-assets/illustrated-basics/redis-mindmap.png',
     points:['代理取模后面是多台互不知晓的 Redis','Cluster 用 16384 槽和客户端重定向','加减节点时取模几乎整表搬家，槽迁移只动受影响的键'],
     deep:[
       {title:'和 Codis',body:'Codis 也是旧分片代理路线。官方文档讲集群时不再把它当默认。看见「代理用户读写」要先问是不是 Cluster 协议。'},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_50 = [
     answer:'SAVE 堵住命令处理。BGSAVE 用子进程，父进程继续服务。配置自动快照走 BGSAVE。fork 仍有短停顿和内存代价，但不是整段堵死。',
     keywords:'Redis SAVE BGSAVE RDB fork copy-on-write',
     origin:'本地库 Redis 思维导图把 SAVE 与 BGSAVE 并列为两种产生 RDB 的方式',
-    diagram:'diagrams/redis-save-bgsave.svg',
+    diagram:'library-assets/illustrated-basics/redis-mindmap.png',
     points:['SAVE 在服务线程写完快照，期间不接命令','BGSAVE fork 子进程，父进程继续服务','配置里的 save 规则触发的是 BGSAVE'],
     deep:[
       {title:'写时拷贝不是免费的',body:'子进程与父进程共享页，父进程一改页就复制。大实例上 BGSAVE 仍要盯内存和 fork 耗时，只是不必用 SAVE 堵死流量。'},

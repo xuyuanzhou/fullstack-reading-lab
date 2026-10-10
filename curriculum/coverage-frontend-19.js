@@ -12,7 +12,7 @@ const COVERAGE_FRONTEND_19 = [
     answer:'按角色和名称查询。内部字段名不是契约。Enzyme 的 shallow/instance 不是 React 19 的默认答案。Jest 可以留，断言目标换成用户能看见的控件。',
     keywords:'Enzyme Testing Library getByRole React 组件测试',
     origin:'本地库 2019 React 开发者路线图把 Enzyme 列为组件测试',
-    diagram:'diagrams/react-enzyme-rtl.svg',
+    diagram:'library-assets/frontend-local/react-roadmap-2019.png',
     points:['现行组件测试按用户能感知的角色查询','Enzyme 绑在实例和内部状态上，函数组件对不上','Jest 仍可用，断言目标不要写成 wrapper.state'],
     deep:[
       {title:'shallow 不是更快的用户',body:'shallow 故意不渲染子树，测到的是当前文件的实现边界。用户点的是整棵树画出来的按钮。需要隔离子组件时用假模块，而不是回到 Enzyme。'},
@@ -32,7 +32,7 @@ const COVERAGE_FRONTEND_19 = [
     answer:'新代码用 TypeScript，跟文档示例走。Flow 只留在已经在用的仓库。PropTypes 是运行时，不能代替类型检查。不要为了 2019 图再装一套 Flow。',
     keywords:'React TypeScript Flow PropTypes 类型检查',
     origin:'本地库 2019 React 开发者路线图把 Flow 与 TypeScript 并列',
-    diagram:'diagrams/react-flow-ts.svg',
+    diagram:'library-assets/frontend-local/react-roadmap-2019.png',
     points:['react.dev 的类型示例是 TypeScript','Flow 不是现行默认，遗留仓库可以暂留','PropTypes 是运行时检查，不是编译期类型'],
     deep:[
       {title:'和 JSDoc',body:'不想上 TS 时，编辑器也能读 JSDoc。那仍不是 Flow。选一种工具链，不要三种注释一起写。'},

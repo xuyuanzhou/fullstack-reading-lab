@@ -32,7 +32,7 @@ const COVERAGE_JAVA_110 = [
     answer:'划掉。ThreadLocal 只在本线程。跨服务靠头/令牌/消息属性等显式传递，并注意线程池清理。',
     keywords:'ThreadLocal 上下文 链路 传播',
     origin:'《分布式高并发.pdf》上下文传递常见缩写',
-    diagram:'diagrams/threadlocal-not-distributed-context.svg',
+    diagram:'library-assets/distributed-hc/p0127.png',
     points:['ThreadLocal 绑当前线程','不跨进程与随意切线程','全链路要显式传播'],
     deep:[
       {title:'和虚拟线程',body:'仍是每任务自己的线程局部；不代替跨服务传播。'},

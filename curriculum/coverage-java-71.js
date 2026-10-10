@@ -12,7 +12,7 @@ const COVERAGE_JAVA_71 = [
     answer:"划掉含糊 UTF8。8.x 用 utf8mb4。历史 utf8 多是 utf8mb3。连接与列对齐，不要靠“省空间”拒绝四字节字符。",
     keywords:"MySQL utf8mb4 utf8mb3 字符集",
     origin:"《分布式高并发.pdf》约第 104 页：必须使用 UTF8 字符集",
-    diagram:"diagrams/mysql-utf-eight-alias-not-mb-four.svg",
+    diagram:'library-assets/distributed-hc/p0104.png',
     points:["utf8 历史别名常是 utf8mb3","现行推荐 utf8mb4","库表连接列要字符集一致"],
     deep:[
       {title:"和行长度",body:"utf8mb4 按最多 4 字节计入 VARCHAR 行预算，见行大小课。换字符集要重算索引前缀长度。"},
@@ -32,7 +32,7 @@ const COVERAGE_JAVA_71 = [
     answer:"划掉一律禁止。单库强一致引用可保留外键。高并发多写者可去掉，但必须有应用校验与对账。性能借口不能等于没有完整性策略。",
     keywords:"MySQL 外键 完整性 对账 锁",
     origin:"《分布式高并发.pdf》约第 104 页：禁止使用外键",
-    diagram:"diagrams/mysql-fk-ban-not-absolute.svg",
+    diagram:'library-assets/distributed-hc/p0104.png',
     points:["外键有写入与锁成本","禁令是启发式不是完整性过时","去掉外键必须补校验与对账"],
     deep:[
       {title:"和分布式",body:"跨服务外键本来就不成立。那是边界问题，不能用来证明单库内也不该有外键。"},
