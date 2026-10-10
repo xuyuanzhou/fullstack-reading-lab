@@ -45,7 +45,7 @@ node scripts/export-curriculum.mjs && node scripts/verify_content.mjs
 
 - [ ] 下一空闲文件是 `coverage-frontend-59.js`、`coverage-java-123.js`。
 - [ ] 不要把这些定义课收成对照表，也不要改回从机制纠偏开头。
-- [ ] 原有机制课的回链可在空闲时补一行 `deep`，不改结论。
+- [x] 原有机制课的回链可在空闲时补一行 `deep`，不改结论。——见 `2026-10-10-chapter-intro-backlinks.md`
 
 ## 给下一模型
 
