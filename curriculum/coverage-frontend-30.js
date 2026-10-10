@@ -53,10 +53,12 @@ const COVERAGE_FRONTEND_30 = [
     task:'给「偶发通知 / 高频双向 / 仅 HTTP 可用」各选一种机制，并写一句不选另外两种的原因。',
     answer:'偶发且仅 HTTP：长轮询。高频双向：WebSocket。极低频：短轮询即可。不要把三种名字混成一种。',
     keywords:'长轮询 WebSocket 短轮询 实时',
+    origin:'本地库《图解 HTTP》WebSocket 握手与双工通信页',
+    diagram:'library-assets/illustrated-basics/http-p0171.png',
     points:['短轮询是定时新请求','长轮询把 HTTP 请求挂到有事件或超时','WebSocket 是握手后的双工长连接'],
     deep:[
-      {title:'和 SSE',body:'Server-Sent Events 是服务端到客户端的单向流，仍走 HTTP。机制与选型见 sse-one-way-http-stream。只要下行推送时可比 WS 简单。'},
-      {title:'怎样自己验证',body:'在 Network 里区分：反复短请求、单请求 pending 很久、还是 101 Switching Protocols。'}
+      {title:'和 SSE',body:'Server-Sent Events 是服务端到客户端的单向流，仍走 HTTP。机制与选型见 `sse-one-way-http-stream`。只要下行推送时可比 WS 简单。'},
+      {title:'怎样自己验证',body:'在 Network 里区分：反复短请求、单请求 pending 很久、还是 101 Switching Protocols。'},
     ],
     refs:[['MDN：WebSocket','https://developer.mozilla.org/en-US/docs/Web/API/WebSocket'],['MDN：Server-sent events','https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events']]
   }

@@ -11,6 +11,8 @@
 | `tcp-stream-needs-framing` | 图解网络 亮白 p66（粘包/Content-Length） | `network-p0066.png` | 已挂（专页换封面） |
 | `tcp-reliable-not-never-lose` | 图解网络 亮白 p25（TCP 首部） | `network-p0025.png` | 已挂 |
 | `tcp-is-l4-not-http-handshake` | 图解 HTTP 持久连接时序（先握手） | `http-p0037.png` | 已挂 |
+| `http-what-it-is` | 图解 HTTP.pdf p43（请求/响应报文结构） | `http-p0043.png` | 已挂 |
+| `long-poll-vs-websocket` | 图解 HTTP.pdf p171（WebSocket 握手与双工） | `http-p0171.png` | 已挂 |
 | `http-methods` | 图解 HTTP.pdf p34（方法一览） | `http-p0034.png` | 已挂（专页换封面） |
 | `http-connection-reuse` | 图解 HTTP 持久连接 | `http-p0037.png` | 已挂 |
 | `http-cache` | 图解 HTTP 客户端缓存 | `http-p0069.png` | 已挂 |
@@ -62,6 +64,6 @@
 | `linux-nic-mtu-rx-errors` | 图解系统 p381（MTU/接口计数） | `os-p0381.png` | 已挂（新建定义课） |
 | `redis-aof-keeps-rdb` 等 4 课 | 大数据热门技术思维导图 Redis.png | `redis-mindmap.png` | 已挂 |
 
-另导出备用：OS `os-p0005`/`p0012`/`p0020`/`p0124`～`p0126`/`p0129`/`p0131`/`p0132`/`p0134`/`p0291`（连续存放弱导言）；HTTP `http-p0028`～`p0033`/`p0038`/`p0051`/`p0066`～`p0068`/`p0070`/`p0093`～`p0095`/`p0115`/`p0116`/`p0119`；网络 `network-p0026`/`p0027`/`p0067`；Redis `redis-ds-p0021`/`p0031`/`p0034`/`p0036`；封面级 `http-p0001`/`network-p0001`/`redis-ds-p0001` 可弃用。跳过：`os-p0001`、`os-p0231`、`os-p0377`（公众号推广插页）。
+另导出备用：OS `os-p0005`/`p0012`/`p0020`/`p0124`～`p0126`/`p0129`/`p0131`/`p0132`/`p0134`/`p0291`（连续存放弱导言）；HTTP `http-p0028`～`p0033`/`p0038`/`p0051`/`p0066`～`p0068`/`p0070`/`p0093`～`p0095`/`p0115`/`p0116`/`p0119`/`p0167`（Comet；长轮询对照）/`p0170`；网络 `network-p0026`/`p0027`/`p0067`；Redis `redis-ds-p0021`/`p0031`/`p0034`/`p0036`；封面级 `http-p0001`/`network-p0001`/`redis-ds-p0001` 可弃用。跳过：`os-p0001`、`os-p0231`、`os-p0377`（公众号推广插页）；HTTP `http-p0168`～`p0169`/`p0173`（SPDY / 2012 年 HTTP/2 讨论稿，勿硬挂到 `http2-multiplex`）。
 
-后续可续：Redis embstr（本亮白卷未单独成页）；`distributed-outbox` 仍无专页。握手对比见 `network-p0080`；HTTPS 示意见 `http-p0149`（现行以 TLS 1.3 为准）。跳过：`network-p0049`（推广插页）。
+后续可续：Redis embstr（本亮白卷未单独成页）；`distributed-outbox` 仍无专页；`http2-multiplex` 待现行 HTTP/2 机制图。握手对比见 `network-p0080`；HTTPS 示意见 `http-p0149`（现行以 TLS 1.3 为准）。跳过：`network-p0049`（推广插页）。

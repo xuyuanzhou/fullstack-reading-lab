@@ -3129,7 +3129,9 @@
         "RFC 9110：HTTP Semantics",
         "https://www.rfc-editor.org/rfc/rfc9110"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/http-p0043.png",
+    "origin": "本地库《图解 HTTP》请求报文与响应报文结构页"
   },
   "http-request-enters": {
     "core": "页面脚本发出 HTTP 请求，用的是平台提供的 fetch。调用时写上方法、路径和需要的头字段。服务器返回 Response 之后，用 response.json() 或 response.text() 读正文。正文能当 JSON 读，是因为 Content-Type 对得上，见 `http-content-type-body`。带上 Cookie 要写 credentials，见 `fetch-credentials`。fetch 本身见 `fetch-platform-client`。",
@@ -3518,7 +3520,9 @@
         "MDN：Server-sent events",
         "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events"
       ]
-    ]
+    ],
+    "diagram": "library-assets/illustrated-basics/http-p0171.png",
+    "origin": "本地库《图解 HTTP》WebSocket 握手与双工通信页"
   },
   "sse-one-way-http-stream": {
     "core": "**Server-Sent Events（SSE）** 用普通 HTTP 响应保持打开，服务端按 `text/event-stream` 持续推事件；浏览器 **`EventSource`** 自动重连（可带 `Last-Event-ID`）。方向是**服务端 → 客户端**。客户端要上行仍走另一次 HTTP 或改用 **WebSocket** 双工，见 `long-poll-vs-websocket`。用 `fetch` 读流式正文（`getReader` / `for await`）也能做自定义下行流，但要自己处理重连与事件分帧，见 `fetch-response-body-once`、`js-async-generator-for-await`。SSE 不是“更轻的 WebSocket”，也替代不了需要客户端高频上送的场景。",

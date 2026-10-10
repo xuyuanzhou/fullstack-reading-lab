@@ -7869,6 +7869,8 @@
       "task": "用文档里的说法说明 HTTP 是什么。一次交换的两边各叫什么？请求里至少有哪三样？",
       "answer": "HTTP 是传输超文本的应用层协议。一次交换是请求和响应。请求里至少有方法、目标和头字段。",
       "keywords": "HTTP request response application protocol",
+      "origin": "本地库《图解 HTTP》请求报文与响应报文结构页",
+      "diagram": "library-assets/illustrated-basics/http-p0043.png",
       "deep": [
         {
           "title": "HTTPS 是套上 TLS 的 HTTP",
@@ -8423,6 +8425,8 @@
       "task": "给「偶发通知 / 高频双向 / 仅 HTTP 可用」各选一种机制，并写一句不选另外两种的原因。",
       "answer": "偶发且仅 HTTP：长轮询。高频双向：WebSocket。极低频：短轮询即可。不要把三种名字混成一种。",
       "keywords": "长轮询 WebSocket 短轮询 实时",
+      "origin": "本地库《图解 HTTP》WebSocket 握手与双工通信页",
+      "diagram": "library-assets/illustrated-basics/http-p0171.png",
       "deep": [
         {
           "title": "和 SSE",

@@ -37,7 +37,8 @@ node scripts/export-curriculum.mjs && node scripts/verify_content.mjs
 ## 后续
 
 - [ ] Outbox / embstr / AI 工具篇仍无机制图则跳过
-- [ ] 勿硬挂 `os-p0291` / `os-p0377`
+- [x] 勿硬挂 `os-p0291` / `os-p0377`
+- [x] HTTP 导论 / WebSocket 专页 ——见 `2026-10-11-library-sync-http-what-websocket.md`
 
 ## 给下一模型
 

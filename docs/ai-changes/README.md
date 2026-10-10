@@ -11,6 +11,7 @@
 
 | 日期 | 状态 | 标题 |
 | --- | --- | --- |
+| 2026-10-11 | 已完成 | [HTTP 导论与 WebSocket 课挂图解专页](2026-10-11-library-sync-http-what-websocket.md) |
 | 2026-10-11 | 已完成 | [OS 续挂：扇区/块、ss 队列列、四指标与 MTU](2026-10-11-library-sync-os-fs-net-ops.md) |
 | 2026-10-11 | 已完成 | [inode/dentry 换挂关系图 os-p0286](2026-10-11-inode-dentry-diagram-p0286.md) |
 | 2026-10-10 | 已完成 | [OS inode 与网络：dentry、多级索引、协议栈、accept 队列](2026-10-10-library-sync-os-inode-net.md) |

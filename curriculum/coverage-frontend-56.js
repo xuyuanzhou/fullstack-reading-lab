@@ -214,6 +214,8 @@ const COVERAGE_FRONTEND_56 = [
     task:'用文档里的说法说明 HTTP 是什么。一次交换的两边各叫什么？请求里至少有哪三样？',
     answer:'HTTP 是传输超文本的应用层协议。一次交换是请求和响应。请求里至少有方法、目标和头字段。',
     keywords:'HTTP request response application protocol',
+    origin:'本地库《图解 HTTP》请求报文与响应报文结构页',
+    diagram:'library-assets/illustrated-basics/http-p0043.png',
     points:['HTTP 是传输超文本的应用层协议','一次交换是请求加响应','请求里有方法、目标和头字段'],
     deep:[
       {title:'HTTPS 是套上 TLS 的 HTTP',body:'地址写成 https:// 时，仍是 HTTP 的请求和响应，只是先在传输上加上 TLS。证书和主机名核对见 `tls-hostname-verify`。'},

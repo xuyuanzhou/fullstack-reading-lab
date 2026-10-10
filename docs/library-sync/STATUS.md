@@ -23,14 +23,15 @@
 | OS `os-p0231` | 哲学家就餐代码摘录，无独立机制图；勿硬挂 |
 | 网络 `network-p0049` | 公众号推广插页，非机制图 |
 | OS `os-p0377` | 公众号推广插页（Linux 命令章前），非机制图 |
+| HTTP `http-p0168`～`p0169` / `p0173` | SPDY / 2012 年 HTTP/2 讨论稿，勿硬挂到现行 `http2-multiplex` |
 
 ## 指标（最近一次 verify）
 
-- 公开课约 1055 课 / 3173 知识点（以 `verify_content.mjs` 为准）
+- 公开课约 1055 课 / 3173 知识点（以 `verify_content.mjs` 为准；本轮只换图不增课）
 - curriculum 带 `origin` 且未挂库图：上表 2 课（binlog / cache-db 双写）
 
 ## 下一刀（有需要再开）
 
 1. AI 工具篇若日后出现机制架构图再挂
 2. 可选：Redis embstr（亮白数据结构本未单独成页）；`distributed-outbox` 仍无专页
-3. `os-p0291` 连续存放弱导言暂不挂；跳过表勿碰
+3. `http2-multiplex` 待现行 HTTP/2 机制图；`os-p0291` 弱导言与跳过表勿碰
