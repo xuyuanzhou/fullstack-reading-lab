@@ -36,7 +36,7 @@
 node scripts/export-curriculum.mjs && node scripts/verify_content.mjs
 ```
 
-- 结果：见本次导出后的课数。这次没有新开课。
+- 结果：`verify_content` 通过，949 lessons / 2855 knowledge points。课数含同期已接入的其它课，这次没有新开课。导出正文和图里不再出现职责位、缓存主人、更新模型、四层归属表。
 
 ## 后续
 
