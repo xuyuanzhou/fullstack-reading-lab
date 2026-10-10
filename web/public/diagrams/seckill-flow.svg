@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 330" role="img" aria-labelledby="title desc">
- <title id="title">秒杀请求与库存不变量</title><desc id="desc">请求经过限流和资格校验，再进行原子库存扣减和幂等订单创建，失败路径进入补偿与对账。</desc>
- <rect width="900" height="330" rx="18" fill="#f1f5f9"/><text x="38" y="47" font-family="sans-serif" font-size="21" font-weight="700" fill="#102a43">性能保护与库存正确性分层</text>
- <g font-family="sans-serif" font-size="16" text-anchor="middle"><rect x="39" y="91" width="147" height="66" rx="10" fill="#e0e7ff"/><text x="112" y="131" fill="#26368a">入口限流</text><rect x="217" y="91" width="147" height="66" rx="10" fill="#e0e7ff"/><text x="290" y="131" fill="#26368a">资格校验</text><rect x="395" y="91" width="147" height="66" rx="10" fill="#dbeafe"/><text x="468" y="131" fill="#1e40af">原子扣库存</text><rect x="573" y="91" width="147" height="66" rx="10" fill="#dcfce7"/><text x="646" y="131" fill="#166534">幂等建单</text><rect x="751" y="91" width="112" height="66" rx="10" fill="#dcfce7"/><text x="807" y="131" fill="#166534">支付</text></g>
- <g stroke="#64748b" stroke-width="3"><path d="M187 124 H216"/><path d="M365 124 H394"/><path d="M543 124 H572"/><path d="M721 124 H750"/><path d="M646 158 V208"/></g>
- <rect x="457" y="209" width="378" height="56" rx="9" fill="#fff7ed" stroke="#fdba74"/><text x="478" y="243" font-family="sans-serif" font-size="15" fill="#9a3412">失败 / 超时 → 有条件补偿与对账</text>
- <rect x="39" y="210" width="373" height="56" rx="9" fill="#fff" stroke="#cbd5e1"/><text x="59" y="243" font-family="sans-serif" font-size="15" fill="#334155">不变量：成功订单数 ≤ 可售库存</text>
- <text x="40" y="305" font-family="sans-serif" font-size="14" fill="#475569">限流减少压力；原子更新与唯一约束维护业务正确性。</text>
-</svg>
