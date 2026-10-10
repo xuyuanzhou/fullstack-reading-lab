@@ -11,6 +11,7 @@
 
 | 日期 | 状态 | 标题 |
 | --- | --- | --- |
+| 2026-10-10 | 已完成 | [各章补「是什么」导论](2026-10-10-chapter-what-it-is.md) |
 | 2026-10-10 | 已完成 | [分布式锁挂图；用户态 / 进程五态 / 上下文切换](2026-10-10-library-sync-lock-process-os.md) |
 | 2026-10-10 | 已完成 | [契约写明库图上公网；外部碎片课挂 os-p0125](2026-10-10-library-assets-public-and-os-frag.md) |
 | 2026-10-10 | 已完成 | [HTTP 压缩与 Content-Type 专页挂图](2026-10-10-library-sync-http-compress-ctype.md) |
