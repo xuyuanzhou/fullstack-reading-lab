@@ -12,7 +12,7 @@
 | 日期 | 状态 | 标题 |
 | --- | --- | --- |
 | 2026-10-11 | 已完成 | [OS 续挂：扇区/块、ss 队列列、四指标与 MTU](2026-10-11-library-sync-os-fs-net-ops.md) |
-| 2026-10-11 | 已完成 | [OS 文件/网络续挂：inode 图、扇区块、ss 与网卡指标](2026-10-11-inode-dentry-diagram-p0286.md) |
+| 2026-10-11 | 已完成 | [inode/dentry 换挂关系图 os-p0286](2026-10-11-inode-dentry-diagram-p0286.md) |
 | 2026-10-10 | 已完成 | [OS inode 与网络：dentry、多级索引、协议栈、accept 队列](2026-10-10-library-sync-os-inode-net.md) |
 | 2026-10-10 | 已完成 | [移动端样式：主线下一节与壳层溢出](2026-10-10-mobile-style-polish.md) |
 | 2026-10-10 | 已完成 | [OS 文件/IO：VFS、select/epoll、零拷贝与 ET](2026-10-10-library-sync-os-io-epoll.md) |
