@@ -230,6 +230,9 @@
         "ts-template-literal-types"
       ],
       "React": [
+        "react-what-it-is",
+        "react-dom-mount",
+        "react-app-around-library",
         "react-function-component",
         "react-props-argument",
         "react-usestate-pair",
@@ -358,6 +361,9 @@
         "node-worker-cluster"
       ],
       "Vue": [
+        "vue-what-it-is",
+        "vue-create-app-mount",
+        "vue-app-around-core",
         "vue-sfc-template",
         "vue-ref-value",
         "vue-reactivity",
@@ -1421,6 +1427,14 @@
       ],
       "React": [
         {
+          "title": "是什么",
+          "ids": [
+            "react-what-it-is",
+            "react-dom-mount",
+            "react-app-around-library"
+          ]
+        },
+        {
           "title": "组件",
           "ids": [
             "react-function-component",
@@ -1466,6 +1480,14 @@
         }
       ],
       "Vue": [
+        {
+          "title": "是什么",
+          "ids": [
+            "vue-what-it-is",
+            "vue-create-app-mount",
+            "vue-app-around-core"
+          ]
+        },
         {
           "title": "起步",
           "ids": [
@@ -5370,6 +5392,49 @@
     {
       "track": "frontend",
       "group": "React",
+      "id": "react-what-it-is",
+      "title": "React 是渲染用户界面的 JavaScript 库",
+      "prompt": "页面上的按钮和整页，在 React 里由什么拼起来？",
+      "promptAnswer": "由组件拼起来。组件是一段有自己的逻辑和外观的界面，在代码里是返回标记的函数。标记用 JSX 写。",
+      "keywords": "React library component JSX user interface",
+      "points": [
+        "React 是渲染用户界面的 JavaScript 库",
+        "界面由组件拼成",
+        "组件是返回标记的函数，标记用 JSX 写"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "React",
+      "id": "react-dom-mount",
+      "title": "react-dom 把组件放进已有的页面节点",
+      "prompt": "组件写好之后，怎样出现在浏览器页面上已经存在的那个节点里？",
+      "promptAnswer": "从 react-dom/client 取出 createRoot，对这个节点建根，再调用 root.render，把组件画进节点内部。",
+      "keywords": "react-dom createRoot root.render DOM",
+      "points": [
+        "createRoot 给已有的 DOM 节点建立根",
+        "root.render 把组件画进该节点内部",
+        "整页应用通常只调用一次 createRoot"
+      ],
+      "since": "React 18"
+    },
+    {
+      "track": "frontend",
+      "group": "React",
+      "id": "react-app-around-library",
+      "title": "新的网站从框架开始，react 包负责界面",
+      "prompt": "只装了 react 和 react-dom，页面地址和向服务器取数要自己找哪一类工具？",
+      "promptAnswer": "文档建议新的网站或应用从框架开始。列出的是 Next.js，以及配上 Vite 的 React Router 框架模式。手机原生界面用 Expo。",
+      "keywords": "Next.js React Router Expo React Native framework",
+      "points": [
+        "react 与 react-dom 负责组件和页面节点",
+        "新应用文档建议从 Next.js 或 React Router 开始",
+        "手机原生界面用基于 React Native 的 Expo"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "React",
       "id": "react-function-component",
       "title": "函数组件返回要显示的元素",
       "prompt": "页面上的一段价格，在 React 里写成什么？",
@@ -5927,6 +5992,49 @@
         "createStore 手写样板视为过时入口"
       ],
       "since": "Redux Toolkit"
+    },
+    {
+      "track": "frontend",
+      "group": "Vue",
+      "id": "vue-what-it-is",
+      "title": "Vue 是构建用户界面的 JavaScript 框架",
+      "prompt": "Vue 用什么描述要显示的 HTML，数据变了之后谁去改 DOM？",
+      "promptAnswer": "模板按当前的 JavaScript 状态描述要输出的 HTML。Vue 跟踪这些状态，状态变了就更新 DOM。",
+      "keywords": "Vue framework declarative rendering reactivity",
+      "points": [
+        "Vue 是构建用户界面的 JavaScript 框架",
+        "模板按当前状态描述要输出的 HTML",
+        "状态变化时 Vue 更新 DOM"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "Vue",
+      "id": "vue-create-app-mount",
+      "title": "createApp 把应用挂到已有的页面节点",
+      "prompt": "一个 Vue 应用挂到页面上的哪一块？",
+      "promptAnswer": "createApp 创建应用实例，mount 把它挂到页面上已经写好的元素，例如 id 为 app 的节点。之后这一块内部由 Vue 更新。",
+      "keywords": "Vue createApp mount application",
+      "points": [
+        "createApp 创建应用实例",
+        "mount 挂到页面上已有的元素",
+        "Vue 更新的是这个元素内部"
+      ],
+      "since": "Vue 3"
+    },
+    {
+      "track": "frontend",
+      "group": "Vue",
+      "id": "vue-app-around-core",
+      "title": "换地址和跨页状态用 Vue 旁边的库",
+      "prompt": "换页面地址、多个页面共用的状态、正文要出现在服务端发出的 HTML 里，各用什么？",
+      "promptAnswer": "地址用 Vue Router，多个页面共用的状态用 Pinia。正文要出现在服务端发出的 HTML 里，用 Nuxt 这一类框架。vue 包负责组件、模板和响应式。",
+      "keywords": "Vue Router Pinia Nuxt VitePress",
+      "points": [
+        "vue 包负责组件、模板和响应式",
+        "换地址用 Vue Router，跨页状态用 Pinia",
+        "服务端 HTML 用 Nuxt 这一类框架"
+      ]
     },
     {
       "track": "frontend",

@@ -6,7 +6,7 @@
 | --- | --- |
 | 0 政策与管道 | 原图可进站；`export_page_asset`（含 `docx!/`）；LessonPage 来源 |
 | 1 分布式高并发 | 机制课 + D8 有页可映射课已挂库图 |
-| 2 图解基础 | OS + HTTP/网络/Redis 专页；含分层、握手对比、HTTPS、证书链、Range |
+| 2 图解基础 | OS + HTTP/网络/Redis 专页；含分层、握手、HTTPS、证书链、Range、压缩、Content-Type |
 | 3 Java 专题 | MySQL 口诀页、8 图解、Redis/Kafka/JVM 导图等 |
 | 4 前端 | 原型链、React 路线图、BOM 定时器、webpack devtool |
 | 5 面经/AI | 面经导图；AI 走 `/ai` 挂 `ai-handbook`（非 curriculum track） |
@@ -25,11 +25,11 @@
 
 ## 指标（最近一次 verify）
 
-- 公开课约 958 课 / 2882 知识点（以 `verify_content.mjs` 为准）
+- 公开课约 964 课 / 2900 知识点（以 `verify_content.mjs` 为准）
 - curriculum 带 `origin` 且未挂库图：上表 2 课（binlog / cache-db 双写）
 
 ## 下一刀（有需要再开）
 
 1. AI 工具篇若日后出现机制架构图再挂
-2. 可选：HTTP 压缩/Content-Type；Redis embstr（亮白数据结构本未单独成页）；OS 碎片算例备用页
+2. 可选：Redis embstr（亮白数据结构本未单独成页）；OS 碎片算例备用页
 3. 图解 OS 其它章按已有课选题；跳过表勿碰

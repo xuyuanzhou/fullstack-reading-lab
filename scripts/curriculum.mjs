@@ -71,6 +71,7 @@ export const publishedSources = [
   'coverage-frontend-52.js',
   'coverage-frontend-53.js',
   'coverage-frontend-54.js',
+  'coverage-frontend-55.js',
   'coverage-java-10.js',
   'coverage-java-11.js',
   'coverage-java-12.js',
@@ -344,12 +345,14 @@ export const OUTLINE = {
       { title: '同源与跨域', ids: ['cors', 'cors-credentials-allowlist', 'cors-preflight-max-age', 'same-origin-script-still-runs', 'html-form-cross-origin-navigate', 'fetch-abort'] },
     ],
     React: [
+      { title: '是什么', ids: ['react-what-it-is', 'react-dom-mount', 'react-app-around-library'] },
       { title: '组件', ids: ['react-function-component', 'react-props-argument', 'react-usestate-pair'] },
       { title: '状态', ids: ['linked-list', 'state-queue', 'react-setstate-batch', 'controlled-input', 'identity', 'effects', 'react-effect-timing', 'context', 'react-context-stable', 'react-props-state-sync', 'react-gdsfp-copy', 'react-hooks-over-hoc'] },
       { title: '渲染', ids: ['event-system', 'react-event-root', 'react-memo-when', 'react-fiber-interrupt', 'react-vdom-perf-bound', 'suspense', 'react-error-boundary'] },
       { title: '旧版', ids: ['react-version-checklist', 'react-createclass-gone'] },
     ],
     Vue: [
+      { title: '是什么', ids: ['vue-what-it-is', 'vue-create-app-mount', 'vue-app-around-core'] },
       { title: '起步', ids: ['vue-sfc-template', 'vue-ref-value'] },
       { title: '响应式', ids: ['vue-reactivity', 'vue-defineproperty-proxy', 'vue-proxy-null-guard', 'vue-array-raw-proxy', 'vue-computed-watch', 'vue-nexttick'] },
       { title: '组件', ids: ['vue-props-one-way', 'vue-list-key', 'vue-composition-options', 'vue-modal-programmatic', 'vue-vnode-not-fragment'] },
@@ -602,7 +605,7 @@ export const PATH_LEAD = {
       'ts-narrowing',
       'ts-generics',
     ],
-    React: ['react-function-component', 'react-props-argument', 'react-usestate-pair', 'identity', 'linked-list', 'react-memo-when'],
+    React: ['react-what-it-is', 'react-dom-mount', 'react-app-around-library', 'react-function-component', 'react-props-argument', 'react-usestate-pair', 'identity', 'linked-list', 'react-memo-when'],
     'React 生态': ['react-rsc-vs-client', 'react-router-loader', 'query-server-state'],
     测试: [
       'frontend-testing',
@@ -937,6 +940,7 @@ export const LESSON_SINCE = {
   // TypeScript
   'ts-satisfies': 'TS 4.9',
   // React
+  'react-dom-mount': 'React 18',
   'react-hooks-over-hoc': 'React 16.8',
   'react-event-root': 'React 17',
   'react-setstate-batch': 'React 18',
@@ -949,6 +953,7 @@ export const LESSON_SINCE = {
   'react-gdsfp-copy': 'React 16.3',
   'react-fiber-interrupt': 'React 16',
   // Vue
+  'vue-create-app-mount': 'Vue 3',
   'vue-defineproperty-proxy': 'Vue 3',
   'vue-reactivity': 'Vue 3',
   'vue-composition-options': 'Vue 3',

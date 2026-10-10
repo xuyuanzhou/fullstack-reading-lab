@@ -291,6 +291,8 @@ const COVERAGE_LESSONS = [
     task:'对比浏览器发送 Accept-Encoding、服务端的 Content-Encoding 与 Vary，解释缓存键。',
     answer:'Accept-Encoding 是客户端声明能收的编码，Content-Encoding 是这份响应实际用的编码。缓存若按 URL 区分，必须再看 Vary 里列出的请求头。Vary 包含 Accept-Encoding 时，gzip 和未压缩是两个表示，不能混用。编码是表示的一部分，不是可选的传输装饰。',
     keywords:'HTTP compression gzip br Accept-Encoding Content-Encoding Vary',
+    origin:'本地库《图解 HTTP》内容编码（gzip 等）页；Vary 缓存区分以 MDN / RFC 为准',
+    diagram:'library-assets/illustrated-basics/http-p0045.png',
     deep:[
       {
         title:'表示不止 URL',

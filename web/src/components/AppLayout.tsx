@@ -205,7 +205,8 @@ export function AppLayout() {
           className="group-label"
           onClick={(event) => {
             if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return
-            event.preventDefault()
+            event.stopPropagation()
+            setMenuCollapsed(false)
           }}
         >
           <span className="group-index">{String(index + 1).padStart(2, '0')}</span>

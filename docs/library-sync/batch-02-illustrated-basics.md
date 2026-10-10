@@ -25,6 +25,8 @@
 | `https-tls13-not-12-packets` | 图解 HTTP HTTPS 握手示意（包数以 TLS 1.3 为准） | `http-p0149.png` | 已挂 |
 | `tls-hostname-verify` | 图解网络证书信任链 | `network-p0095.png` | 已挂 |
 | `http-range` | 图解 HTTP Range | `http-p0049.png` | 已挂 |
+| `http-compression` | 图解 HTTP 内容编码（gzip 等；Vary 以 MDN 为准） | `http-p0045.png` | 已挂 |
+| `http-content-type-body` | 图解 HTTP Content-Type 媒体类型（现代 JSON/multipart 以 MDN 为准） | `http-p0120.png` | 已挂 |
 | `redis-data-types` | 图解 redis 键值类型总览 | `redis-ds-p0005.png` | 已挂 |
 | `java-loom-not-absent-coroutine` | 图解系统-亮白 p79（进程/线程调度） | `os-p0079.png` | 已挂 |
 | `java-threads-not-linear-speedup` | 同上 p79 | `os-p0079.png` | 已挂 |
@@ -43,6 +45,6 @@
 | `linux-shell-pipe-fds` | 图解系统 p187（shell 管道描述符） | `os-p0187.png` | 已挂（新建定义课） |
 | `redis-aof-keeps-rdb` 等 4 课 | 大数据热门技术思维导图 Redis.png | `redis-mindmap.png` | 已挂 |
 
-另导出备用：OS `os-p0005`/`p0012`/`p0020`/`p0124`～`p0126`/`p0129`/`p0131`/`p0132`/`p0134`；HTTP `http-p0028`～`p0033`/`p0038`/`p0066`～`p0068`/`p0070`；网络 `network-p0026`/`p0027`/`p0067`；Redis `redis-ds-p0021`/`p0031`/`p0034`/`p0036`；封面级 `http-p0001`/`network-p0001`/`redis-ds-p0001` 可弃用。跳过：`os-p0001`、`os-p0231`。
+另导出备用：OS `os-p0005`/`p0012`/`p0020`/`p0124`～`p0126`/`p0129`/`p0131`/`p0132`/`p0134`；HTTP `http-p0028`～`p0033`/`p0038`/`p0051`/`p0066`～`p0068`/`p0070`/`p0093`～`p0095`/`p0115`/`p0116`/`p0119`；网络 `network-p0026`/`p0027`/`p0067`；Redis `redis-ds-p0021`/`p0031`/`p0034`/`p0036`；封面级 `http-p0001`/`network-p0001`/`redis-ds-p0001` 可弃用。跳过：`os-p0001`、`os-p0231`。
 
-后续可续：HTTP 压缩/Content-Type；Redis embstr（本亮白卷未单独成页）；碎片/局部性算例（勿硬挂 JVM 运行时区课）。握手对比见 `network-p0080`；HTTPS 示意见 `http-p0149`（现行以 TLS 1.3 为准）。跳过：`network-p0049`（推广插页）。
+后续可续：Redis embstr（本亮白卷未单独成页）；碎片/局部性算例（勿硬挂 JVM 运行时区课）。握手对比见 `network-p0080`；HTTPS 示意见 `http-p0149`（现行以 TLS 1.3 为准）。跳过：`network-p0049`（推广插页）。

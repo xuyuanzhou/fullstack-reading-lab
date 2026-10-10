@@ -11,6 +11,8 @@ const COVERAGE_FRONTEND_30 = [
     task:'给 JSON、urlencoded、带文件的 multipart 各写一对：头（或谁来设头）与 body 构造方式。',
     answer:'JSON：application/json + stringify。表单字段：urlencoded + URLSearchParams。带文件：FormData，头交给浏览器带 boundary。',
     keywords:'Content-Type JSON FormData URLSearchParams fetch',
+    origin:'本地库《图解 HTTP》Content-Type 媒体类型页（现代 JSON / multipart 以 MDN 为准）',
+    diagram:'library-assets/illustrated-basics/http-p0120.png',
     points:['Content-Type 必须匹配正文语法','fetch 不会自动把对象变成 JSON','multipart 的 boundary 交给 FormData/浏览器'],
     deep:[
       {title:'和 charset',body:'JSON 常用 utf-8；表单也可能带 charset。乱码先查编码声明，再查是否拿错了解析器。'},
