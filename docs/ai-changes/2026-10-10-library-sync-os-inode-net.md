@@ -14,8 +14,8 @@
 
 ## 决策
 
-- 采用：新建 `linux-inode-dentry`←`os-p0285`、`linux-inode-block-pointers`←`os-p0299`、`linux-network-stack-layers`←`os-p0378`、`linux-tcp-listen-queues`←`os-p0383`。
-- 不采用：硬挂 `os-p0377`（公众号推广）；`os-p0291`/`p0379`/`p0381`/`p0382` 暂作备用。
+- 采用：新建 `linux-inode-dentry`←`os-p0286`（关系图；`p0285` 文案页改备用）、`linux-inode-block-pointers`←`os-p0299`、`linux-network-stack-layers`←`os-p0378`、`linux-tcp-listen-queues`←`os-p0383`。
+- 不采用：硬挂 `os-p0377`（公众号推广）；`os-p0285`/`p0291`/`p0379`/`p0381`/`p0382` 暂作备用。
 
 ## 改动清单
 
@@ -37,7 +37,7 @@ node scripts/export-curriculum.mjs && node scripts/verify_content.mjs
 ## 后续
 
 - [ ] Outbox / embstr / AI 工具篇仍无机制图则跳过
-- [ ] 备用 OS 页有专课再挂
+- [x] 备用 OS 页有专课再挂——见 `2026-10-11-library-sync-os-fs-net-ops.md`
 
 ## 给下一模型
 

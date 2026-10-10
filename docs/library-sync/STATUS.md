@@ -6,7 +6,7 @@
 | --- | --- |
 | 0 政策与管道 | 原图可进站；`export_page_asset`（含 `docx!/`）；LessonPage 来源 |
 | 1 分布式高并发 | 机制课 + D8 + 分布式锁页；Outbox 仍无专页 |
-| 2 图解基础 | OS + HTTP/网络/Redis；含用户态/进程/内存、VFS/inode、select/epoll、零拷贝、协议栈/accept 队列、压缩、Content-Type |
+| 2 图解基础 | OS + HTTP/网络/Redis；含用户态/进程/内存、VFS/inode/扇区块、select/epoll、零拷贝、协议栈/accept/`ss`/四指标/MTU、压缩、Content-Type |
 | 3 Java 专题 | MySQL 口诀页、8 图解、Redis/Kafka/JVM 导图等 |
 | 4 前端 | 原型链、React 路线图、BOM 定时器、webpack devtool |
 | 5 面经/AI | 面经导图；AI 走 `/ai` 挂 `ai-handbook`（非 curriculum track） |
@@ -26,11 +26,11 @@
 
 ## 指标（最近一次 verify）
 
-- 公开课约 1051 课 / 3161 知识点（以 `verify_content.mjs` 为准）
+- 公开课约 1055 课 / 3173 知识点（以 `verify_content.mjs` 为准）
 - curriculum 带 `origin` 且未挂库图：上表 2 课（binlog / cache-db 双写）
 
 ## 下一刀（有需要再开）
 
 1. AI 工具篇若日后出现机制架构图再挂
 2. 可选：Redis embstr（亮白数据结构本未单独成页）；`distributed-outbox` 仍无专页
-3. 备用页 `os-p0291`/`p0379`/`p0381`/`p0382` 有专课再挂；跳过表勿碰
+3. `os-p0291` 连续存放弱导言暂不挂；跳过表勿碰

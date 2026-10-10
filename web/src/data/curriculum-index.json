@@ -1069,9 +1069,13 @@
         "linux-vfs-unified-api",
         "linux-epoll-vs-select",
         "linux-inode-dentry",
+        "linux-fs-sector-block",
         "linux-inode-block-pointers",
         "linux-network-stack-layers",
         "linux-tcp-listen-queues",
+        "linux-ss-recvq-sendq",
+        "linux-net-four-metrics",
+        "linux-nic-mtu-rx-errors",
         "docker-root-not-host-root",
         "etcd-v3-grpc-not-rest",
         "git-default-branch-not-master",
@@ -3276,9 +3280,13 @@
             "linux-vfs-unified-api",
             "linux-epoll-vs-select",
             "linux-inode-dentry",
+            "linux-fs-sector-block",
             "linux-inode-block-pointers",
             "linux-network-stack-layers",
             "linux-tcp-listen-queues",
+            "linux-ss-recvq-sendq",
+            "linux-net-four-metrics",
+            "linux-nic-mtu-rx-errors",
             "docker-root-not-host-root",
             "etcd-v3-grpc-not-rest",
             "git-default-branch-not-master",
@@ -18708,6 +18716,21 @@
     {
       "track": "java",
       "group": "工程实践",
+      "id": "linux-fs-sector-block",
+      "title": "文件系统按逻辑块读写，扇区是更小的物理单位",
+      "prompt": "为什么不能把“磁盘一次至少读 512 字节”理解成文件系统每次也只按 512 字节分配？",
+      "promptAnswer": "扇区是磁盘 I/O 的物理最小单位；文件系统通常把多个扇区合成逻辑块（常见 4KB）再分配与缓存。",
+      "keywords": "扇区 逻辑块 超级块 4KB inode",
+      "points": [
+        "扇区是物理 I/O 最小单位",
+        "文件系统常按更大的逻辑块分配与读写",
+        "超级块/inode 区/数据块区是盘上布局，勿与页框混称"
+      ],
+      "since": "engineering"
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
       "id": "linux-inode-block-pointers",
       "title": "inode 用直接与多级间接指针找数据块",
       "prompt": "为什么小文件和大文件都能用同一套 inode 结构描述，却不能假设每次读都只跟一次指针？",
@@ -18747,6 +18770,51 @@
         "SYN 先入半连接队列，完成握手后进全连接队列",
         "accept 从全连接队列取连接",
         "LISTEN 与 ESTABLISHED 下 Recv-Q 含义不同"
+      ],
+      "since": "engineering"
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-ss-recvq-sendq",
+      "title": "ss 的 Recv-Q/Send-Q 在 LISTEN 与已连接含义不同",
+      "prompt": "为什么在 LISTEN 行上看到 Recv-Q=10、Send-Q=128，不能理解成“还有 10 字节没读完”？",
+      "promptAnswer": "LISTEN 下这两列常表示全连接（accept）队列的当前长度与上限；已连接状态下才多表示未读字节与未确认发送字节。",
+      "keywords": "ss netstat Recv-Q Send-Q LISTEN backlog accept",
+      "points": [
+        "Recv-Q/Send-Q 含义随套接字状态变化",
+        "LISTEN 下常表示 accept 队列长度与上限",
+        "排障优先 ss，并先看 State 再读队列列"
+      ],
+      "since": "engineering"
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-net-four-metrics",
+      "title": "带宽、延时、吞吐与 PPS 不是同一个数",
+      "prompt": "为什么链路标称 1Gbps，却不能直接说应用一定有 1Gbps 吞吐？",
+      "promptAnswer": "带宽是链路能力上限；吞吐是单位时间实际传成功的数据量，还受延时、丢包、CPU 与应用限制；PPS 看的是包个数转发能力。",
+      "keywords": "带宽 延时 吞吐 PPS RTT",
+      "points": [
+        "带宽是链路能力上限，吞吐是实际传输量",
+        "延时关注时间，PPS 关注包个数",
+        "四类指标不要合成一个“网速”"
+      ],
+      "since": "engineering"
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-nic-mtu-rx-errors",
+      "title": "MTU 限制单帧载荷，接口计数区分丢包原因",
+      "prompt": "为什么 IP 包很大时要分片，而 ifconfig 里 dropped 又不能直接当成“网线坏了”？",
+      "promptAnswer": "链路有 MTU，超长 IP 包要在 IP 层分片。接口上的 errors/dropped/overruns 等计数指向不同故障面，要分开读。",
+      "keywords": "MTU 分片 errors dropped overruns ss",
+      "points": [
+        "MTU 限制单帧载荷，超长可能分片",
+        "接口计数列含义不同，不能都叫网线坏",
+        "接口统计之外还要看 ss 等协议栈视图"
       ],
       "since": "engineering"
     },

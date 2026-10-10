@@ -18951,7 +18951,7 @@
     "deep": [
       {
         "title": "和 VFS 课的关系",
-        "body": "`linux-vfs-unified-api` 讲统一接口。本课钉接口背后的 inode / 目录项模型。多级索引指针见 `linux-inode-block-pointers`。"
+        "body": "`linux-vfs-unified-api` 讲统一接口。本课钉接口背后的 inode / 目录项模型。多级索引指针见 `linux-inode-block-pointers`；扇区与逻辑块见 `linux-fs-sector-block`。"
       },
       {
         "title": "怎样自己验证",
@@ -18968,8 +18968,37 @@
         "https://docs.kernel.org/filesystems/vfs.html"
       ]
     ],
+    "diagram": "library-assets/illustrated-basics/os-p0286.png",
+    "origin": "本地库《图解系统》目录项与索引节点关系页"
+  },
+  "linux-fs-sector-block": {
+    "core": "磁盘物理上常以扇区为最小读写单位（历史上多见 512 字节）。文件系统为减少次数、提高吞吐，常把若干扇区合成逻辑块（数据块），在 Linux 上常见 4KB，再以块为单位分配、读写与缓存。inode 里记的数据位置也按块寻址，见 `linux-inode-dentry`、`linux-inode-block-pointers`。格式化后的盘区通常还有超级块（文件系统全局信息）、inode 区与数据块区；超级块在挂载时进内存，具体 inode 多在访问对应文件时再装入。不要把扇区、逻辑块、页框三个“块”混成一个词。",
+    "why": "把扇区大小当成文件分配粒度，就对不上块设备和页缓存的常见路径，也解释不清为何小文件仍可能占满一个逻辑块。",
+    "example": "写一个远小于 4KB 的配置文件时，文件系统仍可能为它分配至少一个逻辑块；底层对磁盘的读写则按扇区对齐完成。",
+    "task": "分别写出扇区与逻辑块各回答什么问题；举一个常见逻辑块大小；点名 inode 寻址按哪一层。",
+    "answer": "扇区是磁盘物理 I/O 最小单位；逻辑块是文件系统分配与读写的单位。常见逻辑块 4KB。inode 按块（逻辑块）记数据位置。",
+    "deep": [
+      {
+        "title": "和 inode 课的关系",
+        "body": "`linux-inode-dentry` 讲名字与 inode。本课钉块设备上的扇区与文件系统逻辑块。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对照页里扇区与逻辑块的定义，写出 8 个 512 字节扇区如何合成一个 4KB 块。"
+      }
+    ],
+    "references": [
+      [
+        "man：stat",
+        "https://man7.org/linux/man-pages/man2/stat.2.html"
+      ],
+      [
+        "kernel：VFS",
+        "https://docs.kernel.org/filesystems/vfs.html"
+      ]
+    ],
     "diagram": "library-assets/illustrated-basics/os-p0285.png",
-    "origin": "本地库《图解系统》inode 与目录项页"
+    "origin": "本地库《图解系统》扇区与逻辑块页"
   },
   "linux-inode-block-pointers": {
     "core": "文件数据按逻辑块存放。经典 Ext2/3 风格的 inode 带一组块指针：多数是直接指向数据块；其余指向一级、二级乃至三级间接索引块。小文件常用直接指针，少一次跳转；大文件靠多级索引扩展可寻址范围，但读数据前可能要先读索引块。Ext4 等现代布局还会用更高效的映射（如 extent），细节随文件系统而变，不要把某一代指针个数当成所有 Linux 文件系统的固定常数。空闲块另有空闲表、空闲链表、位图等管理方式，与「文件内如何寻址」不是同一题。",
@@ -19041,6 +19070,10 @@
         "body": "`linux-network-stack-layers` 讲数据如何下栈。本课钉监听套接字上握手与 accept 的队列边界。"
       },
       {
+        "title": "和 ss 列含义课的关系",
+        "body": "`linux-ss-recvq-sendq` 专讲 LISTEN 与 ESTABLISHED 下 Recv-Q/Send-Q 各表示什么。"
+      },
+      {
         "title": "怎样自己验证",
         "body": "对照握手与双队列时序图，标出 SYN、SYN+ACK、ACK 以及 accept 各落在哪一段。再用 `ss -ltn` 看 LISTEN 行的 Recv-Q/Send-Q。"
       }
@@ -19061,6 +19094,93 @@
     ],
     "diagram": "library-assets/illustrated-basics/os-p0383.png",
     "origin": "本地库《图解系统》TCP 半连接与全连接队列页"
+  },
+  "linux-ss-recvq-sendq": {
+    "core": "`ss`/`netstat` 都会列出 Recv-Q 与 Send-Q，但含义随套接字状态变化。ESTABLISHED：Recv-Q 多为应用尚未从套接字缓冲读走的字节数，Send-Q 多为已写出、对端尚未确认的字节数。LISTEN：Recv-Q 多为全连接队列当前长度，Send-Q 多为该队列允许的最大长度（与 listen backlog 相关）。生产排障优先 `ss`：同类信息下通常比 `netstat` 开销更小。半连接与全连接队列机制见 `linux-tcp-listen-queues`。",
+    "why": "不看状态就读 Recv-Q，会把 accept 堆积误判成应用读慢，或反过来。区分信号是：这一行的 State 是 LISTEN 还是 ESTABLISHED。",
+    "example": "`ss -ltnp` 显示某 HTTP 端口 `LISTEN 120 128`：更像 accept 队列已接近上限，应查应用是否还在 accept，而不是先查“谁没读 120 字节”。",
+    "task": "写出 ESTABLISHED 与 LISTEN 下 Recv-Q 各表示什么；说明 LISTEN 下 Send-Q 常见含义；点名队列机制去哪一课。",
+    "answer": "ESTABLISHED：Recv-Q 多为未读字节。LISTEN：Recv-Q 多为 accept 队列长度，Send-Q 多为队列上限。队列机制见 `linux-tcp-listen-queues`。",
+    "deep": [
+      {
+        "title": "和 listen 队列课的关系",
+        "body": "`linux-tcp-listen-queues` 讲半连接/全连接。本课钉工具列怎么读。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对同一服务分别跑 `ss -ltn` 与对已连接行看 `ss -tn`，对照两行 Recv-Q 的释义是否套用了正确状态。"
+      }
+    ],
+    "references": [
+      [
+        "man：ss",
+        "https://man7.org/linux/man-pages/man8/ss.8.html"
+      ],
+      [
+        "man：netstat",
+        "https://man7.org/linux/man-pages/man8/netstat.8.html"
+      ]
+    ],
+    "diagram": "library-assets/illustrated-basics/os-p0382.png",
+    "origin": "本地库《图解系统》ss/netstat 队列列含义页"
+  },
+  "linux-net-four-metrics": {
+    "core": "看 Linux 网络表现时常分四类指标，不要并成一句。带宽是链路最大传输速率（常用 b/s）。延时是发出到收到响应的时间，可指建连耗时或 RTT。吞吐是单位时间实际传成功的数据量（b/s 或 B/s），上限受带宽约束，但常低于标称带宽。PPS（Packet Per Second）看每秒包数，小包场景下往往先撞上包处理能力而不是带宽字节数。另有可用性等指标。配置与接口计数见 `linux-nic-mtu-rx-errors`；套接字队列见 `linux-ss-recvq-sendq`。",
+    "why": "把带宽当吞吐，或把慢页面只怪“网速不够”，会对不上小包 PPS 打满、队列堆积或应用读慢等根因。",
+    "example": "千兆网卡上跑大量 64 字节小包时，PPS 先到上限，字节吞吐远低于 1Gbps；换大包后字节吞吐上升，PPS 压力下降。",
+    "task": "用一句话区分带宽与吞吐；说明 PPS 主要评估什么；举一个“带宽够但吞吐上不去”的原因方向。",
+    "answer": "带宽是上限能力，吞吐是实际成功传输量。PPS 评估包转发能力。原因方向如小包 PPS 打满、丢包重传、应用或 CPU 跟不上。",
+    "deep": [
+      {
+        "title": "和网卡计数课的关系",
+        "body": "接口 errors/dropped 等见 `linux-nic-mtu-rx-errors`。本课先分清要看哪一类指标。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "列出带宽/延时/吞吐/PPS 各用什么单位；再举一个只改善其中一项仍不够的场景。"
+      }
+    ],
+    "references": [
+      [
+        "man：ip",
+        "https://man7.org/linux/man-pages/man8/ip.8.html"
+      ],
+      [
+        "man：ping",
+        "https://man7.org/linux/man-pages/man8/ping.8.html"
+      ]
+    ],
+    "diagram": "library-assets/illustrated-basics/os-p0379.png",
+    "origin": "本地库《图解系统》网络性能指标页"
+  },
+  "linux-nic-mtu-rx-errors": {
+    "core": "网卡与链路有最大传输单元（MTU）；以太网常见默认 1500 字节。IP 数据报超过链路 MTU 时，IP 层可能分片（路径上也可能禁止分片而返回错误）。接口还需正确配置地址、掩码、MAC、网关等才能通信。`ip`/`ifconfig` 上的 RX/TX 计数：errors 多与校验或帧同步等问题相关；dropped 常表示已进驱动环形缓冲后被丢（例如内存压力）；overruns 多表示处理跟不上导致环形缓冲溢出；carrier/collisions 更偏物理或双工等链路问题。这些只是接口与驱动侧统计，协议栈与套接字细节还要靠 `ss` 等，见 `linux-ss-recvq-sendq`。",
+    "why": "只看“有丢包”却不看是哪一列，会把驱动溢出、内存压力与网线故障混成一类。区分信号是：非零的是 errors、dropped 还是 overruns/carrier。",
+    "example": "压测小包时 RX overruns 上升，多像接收处理跟不上；若主要是 carrier 增加，应先查线缆或双工，而不是先调应用线程数。",
+    "task": "写出 MTU 的作用与常见默认值；列出至少三个接口计数并各用一句话说明偏向；点名套接字队列去哪一课。",
+    "answer": "MTU 限制单帧可承载大小，以太网常见 1500。errors/dropped/overruns（或 carrier）分别偏校验帧错误、缓冲后丢弃、处理跟不上溢出等。套接字队列见 `linux-ss-recvq-sendq`。",
+    "deep": [
+      {
+        "title": "和四指标课的关系",
+        "body": "`linux-net-four-metrics` 分带宽/延时/吞吐/PPS。本课钉 MTU 与接口计数怎么读。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对一块网卡执行 `ip -s link`，标出 errors/dropped 等列；再对照是否超过该链路 MTU。"
+      }
+    ],
+    "references": [
+      [
+        "man：ip",
+        "https://man7.org/linux/man-pages/man8/ip.8.html"
+      ],
+      [
+        "man：ifconfig",
+        "https://man7.org/linux/man-pages/man8/ifconfig.8.html"
+      ]
+    ],
+    "diagram": "library-assets/illustrated-basics/os-p0381.png",
+    "origin": "本地库《图解系统》MTU 与接口计数页"
   },
   "docker-root-not-host-root": {
     "core": "容器里 whoami 是 root，只说明这个进程在自己的用户命名空间里 uid 是 0。没有做用户命名空间重映射时，这个 0 就是宿主机上的 uid 0，身份确实大。即便如此，默认仍会丢掉一批 Linux capabilities，并套上 seccomp。容器有自己的挂载命名空间，里面的 /etc/shadow 是镜像里的文件，不是宿主机那一份，除非你把宿主机路径挂进去。--privileged 会把能力加回来，并放宽隔离，那才是“提升权限”之后危险的那种跑法。打开 userns-remap 后，容器里的 uid 0 映射到 /etc/subuid 里的一段普通号，例如从 231072 起，在宿主机上没有 root 特权。rootless 更进一步：守护进程本身就不是宿主机 root。两种映射都不是 2016 年“容器 root 等于宿主机 root”那一句能概括的。",
