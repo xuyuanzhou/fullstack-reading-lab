@@ -38,7 +38,7 @@ node scripts/export-curriculum.mjs && node scripts/verify_content.mjs
 ## 后续
 
 - [ ] Outbox / embstr / AI 工具篇仍无机制图则跳过
-- [ ] OS 网络发包章可按已有课再选题
+- [x] OS 网络发包 / inode ——见 `2026-10-10-library-sync-os-inode-net.md`
 
 ## 给下一模型
 

@@ -388,6 +388,7 @@ const COVERAGE_JAVA_23 = [
     points:['VFS 向用户提供统一文件接口','下面再接到具体文件系统实现','一切皆文件是统一视图，不是单一存储格式'],
     deep:[
       {title:'和管道课的关系',body:'管道、套接字也常以文件描述符出现，仍经 VFS/描述符表管理。`linux-shell-pipe-fds` 讲管道两端如何接到子进程。'},
+      {title:'和 inode 课的关系',body:'统一接口背后的名字与元数据分工见 `linux-inode-dentry`；数据块指针见 `linux-inode-block-pointers`。'},
       {title:'怎样自己验证',body:'对照 VFS 分层图，标出用户接口层与具体文件系统层。再各举一个磁盘文件与 /proc 文件的例子。'},
     ],
     refs:[['kernel：VFS','https://docs.kernel.org/filesystems/vfs.html'],['man：path_resolution','https://man7.org/linux/man-pages/man7/path_resolution.7.html']]
@@ -411,6 +412,86 @@ const COVERAGE_JAVA_23 = [
       {title:'怎样自己验证',body:'对照对比页，列出 select 的两次遍历/拷贝与 epoll 的就绪链表。划掉“多路复用都一样贵”。'},
     ],
     refs:[['man：epoll','https://man7.org/linux/man-pages/man7/epoll.7.html'],['man：select','https://man7.org/linux/man-pages/man2/select.2.html']]
+  },
+  {
+    track:'java', group:'工程实践', id:'linux-inode-dentry',
+    title:'inode 记元数据与数据位置，dentry 记名字',
+    prompt:'为什么同一个文件可以有多个名字，却仍是一份数据？',
+    promptAnswer:'名字在目录项（dentry）里；元数据与数据块位置在 inode 里。多个 dentry 可以指向同一个 inode，这就是硬链接。',
+    core:'Linux 上「一切皆文件」指统一用文件接口管理普通文件、目录、设备、管道和套接字等，不是说它们磁盘布局相同。每个文件对应一个 inode：存权限、大小、时间戳，以及数据在盘上的位置；inode 号是这份文件的身份。目录项（dentry）存文件名，并指向对应 inode；多个名字可以指向同一 inode，形成硬链接。目录本身也是一种文件，其数据是子项列表。dentry 常在内存里做路径查找缓存；持久落盘的是目录文件内容与 inode，二者不要混成「目录就是 dentry」。',
+    why:'把「文件名」当成唯一身份，就解释不了硬链接，也会把内存里的 dentry 缓存当成盘上的目录文件。区分信号是：改名或加硬链接改的是名字到 inode 的映射，不是另起一份数据。',
+    example:'对同一文件执行 `ln a.txt b.txt` 后，两个名字对应同一 inode 号；删掉其中一个名字，只要链接计数仍大于零，数据还在。',
+    task:'分别写出 inode 与 dentry 各记什么；说明硬链接是几对几；用一句话区分「目录文件」与「dentry 缓存」。',
+    answer:'inode 记元数据与数据位置；dentry 记名字并指向 inode。硬链接是多个 dentry 对一个 inode。目录是盘上的文件；dentry 是内核里加速查找的目录项缓存。',
+    keywords:'inode dentry 硬链接 目录项 一切皆文件',
+    origin:'本地库《图解系统》inode 与目录项页',
+    diagram:'library-assets/illustrated-basics/os-p0285.png',
+    points:['inode 存元数据与数据块位置，是文件身份','dentry 存名字并指向 inode；多对一即硬链接','目录是文件；dentry 缓存不要当成盘上的目录本身'],
+    deep:[
+      {title:'和 VFS 课的关系',body:'`linux-vfs-unified-api` 讲统一接口。本课钉接口背后的 inode / 目录项模型。多级索引指针见 `linux-inode-block-pointers`。'},
+      {title:'怎样自己验证',body:'`ls -i` 看两个硬链接是否同 inode；再对照图标出名字在哪一层、数据块指针在哪一层。'},
+    ],
+    refs:[['man：inode','https://man7.org/linux/man-pages/man7/inode.7.html'],['kernel：VFS','https://docs.kernel.org/filesystems/vfs.html']]
+  },
+  {
+    track:'java', group:'工程实践', id:'linux-inode-block-pointers',
+    title:'inode 用直接与多级间接指针找数据块',
+    prompt:'为什么小文件和大文件都能用同一套 inode 结构描述，却不能假设每次读都只跟一次指针？',
+    promptAnswer:'inode 里既有直接指向数据块的指针，也有一到三级间接索引。小文件走直接指针；大文件要多查几级索引块。',
+    core:'文件数据按逻辑块存放。经典 Ext2/3 风格的 inode 带一组块指针：多数是直接指向数据块；其余指向一级、二级乃至三级间接索引块。小文件常用直接指针，少一次跳转；大文件靠多级索引扩展可寻址范围，但读数据前可能要先读索引块。Ext4 等现代布局还会用更高效的映射（如 extent），细节随文件系统而变，不要把某一代指针个数当成所有 Linux 文件系统的固定常数。空闲块另有空闲表、空闲链表、位图等管理方式，与「文件内如何寻址」不是同一题。',
+    why:'只背「inode 存位置」却不分直接/间接，就解释不清大文件为何多几次盘访问。区分信号是：这次读有没有先经过索引块。',
+    example:'读一个只占几个直接指针就能覆盖的小文件时，inode 里就能拿到数据块号；读超大文件时，可能先读间接索引块，再拿到真正的数据块号。',
+    task:'写出直接指针与间接索引各自解决什么问题；说明大文件路径上可能多一次什么访问；点名不要把某一代指针个数当成所有文件系统的常数。',
+    answer:'直接指针让小文件少跳转；间接索引扩大可寻址范围。大文件可能先读索引块再读数据。指针个数与级数随文件系统演变，不能当全站常数。',
+    keywords:'inode 间接索引 Ext 数据块 extent',
+    origin:'本地库《图解系统》inode 多级索引与空闲空间页',
+    diagram:'library-assets/illustrated-basics/os-p0299.png',
+    points:['inode 可同时有直接指针与多级间接索引','小文件偏直接指针，大文件可能多读索引块','具体级数与 Ext4 extent 等随文件系统变化'],
+    deep:[
+      {title:'和 inode/dentry 课的关系',body:'`linux-inode-dentry` 讲名字与元数据分工。本课钉「数据块怎么从 inode 找到」。'},
+      {title:'怎样自己验证',body:'对照多级索引图，从 inode 走到一个间接块再走到数据块，数清多了几次读。'},
+    ],
+    refs:[['kernel：ext4','https://docs.kernel.org/filesystems/ext4/index.html'],['man：inode','https://man7.org/linux/man-pages/man7/inode.7.html']]
+  },
+  {
+    track:'java', group:'工程实践', id:'linux-network-stack-layers',
+    title:'发包要经套接字进入内核协议栈逐层加头',
+    prompt:'应用调用 send 之后，数据是直接交给网卡，还是先在内核里走完协议栈？',
+    promptAnswer:'先经套接字进入内核协议栈，按传输层、网络层、网络接口层逐层加头（必要时加尾），再交给网卡发出。',
+    core:'应用通常通过套接字接口发起系统调用，把数据从用户态拷到内核套接字侧，再进入网络协议栈。发送路径自上而下：传输层加 TCP/UDP 头，网络层加 IP 头，网络接口层加帧头/帧尾，最后由网卡送出。接收路径相反，自下而上剥头直到交给应用。这与「HTTP 是应用层协议、TCP 是传输层」的分层一致，见 `tcp-is-l4-not-http-handshake`；字节流上的应用消息边界仍要自己定，见 `tcp-stream-needs-framing`。',
+    why:'以为 send 等于网卡立刻发出，就对不上内核缓冲、排队与分层封装，也解释不清抓包为何先看到以太网/IP/TCP 头。区分信号是：系统调用之后还有协议栈加工。',
+    example:'浏览器发 HTTPS：应用写出的是 TLS 密文载荷；内核仍要加上 TCP、IP 与链路层头，才能在以太网上出现完整帧。',
+    task:'按发送方向列出从应用到网卡经过的主要层次；说明接收方向如何；点名应用层消息边界去哪一课。',
+    answer:'发送：套接字 → 传输层 → 网络层 → 网络接口层 → 网卡。接收自下而上。应用消息边界见 tcp-stream-needs-framing。',
+    keywords:'协议栈 套接字 TCP IP 帧 系统调用',
+    origin:'本地库《图解系统》Linux 网络协议栈封装页',
+    diagram:'library-assets/illustrated-basics/os-p0378.png',
+    points:['send 先进入内核套接字与协议栈','发送自上而下加头，接收自下而上剥头','分层与 HTTP/TCP 边界课一致，消息边界另见 framing'],
+    deep:[
+      {title:'和 TCP 传输层课的关系',body:'`tcp-is-l4-not-http-handshake` 钉 HTTP 不是传输层。本课钉数据在 Linux 内核里怎样逐层封装。'},
+      {title:'怎样自己验证',body:'对照封装图，从应用数据向下标出 TCP 头、IP 头、帧头帧尾各加在哪一层。'},
+    ],
+    refs:[['man：socket','https://man7.org/linux/man-pages/man7/socket.7.html'],['man：ip','https://man7.org/linux/man-pages/man7/ip.7.html']]
+  },
+  {
+    track:'java', group:'工程实践', id:'linux-tcp-listen-queues',
+    title:'listen 后握手先入半连接队列，完成后再进全连接队列',
+    prompt:'三次握手成功了，为什么应用还没 accept 时连接可能已经在内核里排队？',
+    promptAnswer:'服务端 listen 之后，内核用半连接队列承接 SYN，握手完成的连接进入全连接（accept）队列，等应用 accept 取走。',
+    core:'服务端 `bind`/`listen` 之后，客户端 `connect` 发来 SYN：连接先进入半连接队列（SYN 队列），服务端回 SYN+ACK；收到最终 ACK 后，连接进入全连接队列（accept 队列），状态为已建立但尚未交给应用。应用调用 `accept` 才从全连接队列取走一个连接。LISTEN 状态下用 `ss`/`netstat` 看时，Recv-Q/Send-Q 常表示全连接队列当前长度与上限，与 ESTABLISHED 下表示未读/未确认字节不是同一含义。队列满时，新握手可能失败或重试，表现为客户端超时或连接被拒，根因要分清是半连接还是 accept 队列。',
+    why:'只背三次握手包序、不看两级队列，就会把「握手成功」等同于「应用已经拿到连接」，排障时对不上 Recv-Q 与 accept 堆积。',
+    example:'服务端业务线程卡住不再 accept：客户端仍可能完成握手，但连接堆在全连接队列；`ss -ltn` 上 Recv-Q 接近 Send-Q 所示上限。',
+    task:'按顺序列出 SYN 之后连接经过的两个队列；说明 accept 从哪一个取连接；写出 LISTEN 下 Recv-Q 与 ESTABLISHED 下 Recv-Q 的差别要点。',
+    answer:'先半连接队列，握手完成进全连接队列。accept 取全连接队列。LISTEN 下 Recv-Q 多表示 accept 队列长度；ESTABLISHED 下表示应用尚未读走的字节。',
+    keywords:'listen accept 半连接队列 全连接队列 SYN queue backlog ss',
+    origin:'本地库《图解系统》TCP 半连接与全连接队列页',
+    diagram:'library-assets/illustrated-basics/os-p0383.png',
+    points:['SYN 先入半连接队列，完成握手后进全连接队列','accept 从全连接队列取连接','LISTEN 与 ESTABLISHED 下 Recv-Q 含义不同'],
+    deep:[
+      {title:'和协议栈封装课的关系',body:'`linux-network-stack-layers` 讲数据如何下栈。本课钉监听套接字上握手与 accept 的队列边界。'},
+      {title:'怎样自己验证',body:'对照握手与双队列时序图，标出 SYN、SYN+ACK、ACK 以及 accept 各落在哪一段。再用 `ss -ltn` 看 LISTEN 行的 Recv-Q/Send-Q。'},
+    ],
+    refs:[['man：listen','https://man7.org/linux/man-pages/man2/listen.2.html'],['man：accept','https://man7.org/linux/man-pages/man2/accept.2.html'],['man：ss','https://man7.org/linux/man-pages/man8/ss.8.html']]
   }
 ];
 

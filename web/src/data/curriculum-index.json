@@ -1068,6 +1068,10 @@
         "linux-process-context-switch",
         "linux-vfs-unified-api",
         "linux-epoll-vs-select",
+        "linux-inode-dentry",
+        "linux-inode-block-pointers",
+        "linux-network-stack-layers",
+        "linux-tcp-listen-queues",
         "docker-root-not-host-root",
         "etcd-v3-grpc-not-rest",
         "git-default-branch-not-master",
@@ -3271,6 +3275,10 @@
             "linux-process-context-switch",
             "linux-vfs-unified-api",
             "linux-epoll-vs-select",
+            "linux-inode-dentry",
+            "linux-inode-block-pointers",
+            "linux-network-stack-layers",
+            "linux-tcp-listen-queues",
             "docker-root-not-host-root",
             "etcd-v3-grpc-not-rest",
             "git-default-branch-not-master",
@@ -18679,6 +18687,66 @@
         "select/poll 常要拷贝并扫描整份关注集合",
         "epoll 在内核登记关注，wait 取就绪项",
         "ET/LT 行为见 `epoll-et-must-drain`"
+      ],
+      "since": "engineering"
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-inode-dentry",
+      "title": "inode 记元数据与数据位置，dentry 记名字",
+      "prompt": "为什么同一个文件可以有多个名字，却仍是一份数据？",
+      "promptAnswer": "名字在目录项（dentry）里；元数据与数据块位置在 inode 里。多个 dentry 可以指向同一个 inode，这就是硬链接。",
+      "keywords": "inode dentry 硬链接 目录项 一切皆文件",
+      "points": [
+        "inode 存元数据与数据块位置，是文件身份",
+        "dentry 存名字并指向 inode；多对一即硬链接",
+        "目录是文件；dentry 缓存不要当成盘上的目录本身"
+      ],
+      "since": "engineering"
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-inode-block-pointers",
+      "title": "inode 用直接与多级间接指针找数据块",
+      "prompt": "为什么小文件和大文件都能用同一套 inode 结构描述，却不能假设每次读都只跟一次指针？",
+      "promptAnswer": "inode 里既有直接指向数据块的指针，也有一到三级间接索引。小文件走直接指针；大文件要多查几级索引块。",
+      "keywords": "inode 间接索引 Ext 数据块 extent",
+      "points": [
+        "inode 可同时有直接指针与多级间接索引",
+        "小文件偏直接指针，大文件可能多读索引块",
+        "具体级数与 Ext4 extent 等随文件系统变化"
+      ],
+      "since": "engineering"
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-network-stack-layers",
+      "title": "发包要经套接字进入内核协议栈逐层加头",
+      "prompt": "应用调用 send 之后，数据是直接交给网卡，还是先在内核里走完协议栈？",
+      "promptAnswer": "先经套接字进入内核协议栈，按传输层、网络层、网络接口层逐层加头（必要时加尾），再交给网卡发出。",
+      "keywords": "协议栈 套接字 TCP IP 帧 系统调用",
+      "points": [
+        "send 先进入内核套接字与协议栈",
+        "发送自上而下加头，接收自下而上剥头",
+        "分层与 HTTP/TCP 边界课一致，消息边界另见 framing"
+      ],
+      "since": "engineering"
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-tcp-listen-queues",
+      "title": "listen 后握手先入半连接队列，完成后再进全连接队列",
+      "prompt": "三次握手成功了，为什么应用还没 accept 时连接可能已经在内核里排队？",
+      "promptAnswer": "服务端 listen 之后，内核用半连接队列承接 SYN，握手完成的连接进入全连接（accept）队列，等应用 accept 取走。",
+      "keywords": "listen accept 半连接队列 全连接队列 SYN queue backlog ss",
+      "points": [
+        "SYN 先入半连接队列，完成握手后进全连接队列",
+        "accept 从全连接队列取连接",
+        "LISTEN 与 ESTABLISHED 下 Recv-Q 含义不同"
       ],
       "since": "engineering"
     },
