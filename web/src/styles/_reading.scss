@@ -93,6 +93,8 @@
   border: 1px solid var(--lab-line);
   border-radius: 12px;
   background: var(--lab-panel);
+  min-width: 0;
+  overflow-x: clip;
 
   h2 {
     margin: 0 0 10px;
@@ -142,6 +144,31 @@
   a { color: inherit; }
 
   .ant-btn { margin-top: 16px; }
+}
+
+.path-next-btn.ant-btn {
+  display: inline-flex !important;
+  flex-direction: column;
+  align-items: flex-start !important;
+  gap: 2px;
+  width: 100%;
+  max-width: 100%;
+  height: auto !important;
+  padding: 10px 14px !important;
+  white-space: normal;
+  line-height: 1.4;
+  text-align: left;
+
+  .path-next-kicker {
+    font-weight: 650;
+  }
+
+  .path-next-title {
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0.92;
+    overflow-wrap: anywhere;
+  }
 }
 
 .path-lessons {
@@ -233,9 +260,14 @@
 
   .path-rest-head {
     display: grid;
-    grid-template-columns: 2rem 1fr auto auto;
-    gap: 10px;
+    grid-template-columns: 2rem minmax(0, 1fr) auto auto;
+    gap: 8px 10px;
     align-items: baseline;
+
+    strong {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
   }
 
   em { font-style: normal; font-size: 12px; }
@@ -847,6 +879,7 @@
   gap: 22px;
   width: 100%;
   max-width: var(--lab-measure);
+  min-width: 0;
   margin-inline: auto;
 
   &:has(.lab-grid) {
@@ -926,13 +959,58 @@
 
 @media (max-width: 720px) {
   .compact-outline .lesson-outline { grid-template-columns: 1fr; }
+
+  .hero-actions.ant-space {
+    display: flex !important;
+    width: 100%;
+
+    .ant-space-item {
+      flex: 1 1 calc(50% - 6px);
+      min-width: 0;
+    }
+
+    .ant-btn {
+      width: 100%;
+    }
+  }
+
+  .path-now {
+    padding: 16px;
+  }
+
+  .path-next-btn.ant-btn {
+    margin-top: 12px;
+  }
+
+  .path-rest .path-rest-head {
+    grid-template-columns: 2rem minmax(0, 1fr);
+    gap: 4px 10px;
+
+    em {
+      grid-column: 2;
+      justify-self: start;
+    }
+  }
+
+  .core-panel,
+  .example-box {
+    padding: 14px;
+  }
+
+  .lesson-hero h1 {
+    font-size: 1.35rem;
+    overflow-wrap: anywhere;
+  }
+
+  .prompt-box {
+    padding-left: 12px;
+  }
 }
 
 .lesson-hero {
   .eyebrow {
     font-size: 12px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    letter-spacing: 0.04em;
     color: var(--lab-muted);
   }
 
@@ -1242,7 +1320,9 @@
 .lesson-code {
   margin: 0;
   padding: 12px 14px;
-  overflow: auto;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
   border: 1px solid var(--lab-line);
   border-radius: 10px;
   background: color-mix(in srgb, var(--lab-ink) 6%, var(--lab-panel));
@@ -1250,6 +1330,7 @@
   font-size: 0.9em;
   line-height: 1.55;
   white-space: pre;
+  -webkit-overflow-scrolling: touch;
 
   code {
     font-family: inherit;

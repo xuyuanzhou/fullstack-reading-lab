@@ -312,7 +312,7 @@ html[data-theme='dark'] .brand-mark {
     line-height: 1.35 !important;
     margin-block: 0 !important;
     padding-block: 5px !important;
-    padding-inline-start: 14px !important;
+    padding-inline-start: 18px !important;
     padding-inline-end: 28px !important;
     font-size: 13px;
     font-weight: 600;
@@ -341,7 +341,7 @@ html[data-theme='dark'] .brand-mark {
   }
 
   .ant-menu-sub .ant-menu-sub .ant-menu-item {
-    padding-inline-start: 18px !important;
+    padding-inline-start: 26px !important;
   }
 
   .ant-menu-sub .ant-menu-sub {
@@ -576,11 +576,15 @@ html[data-theme='dark'] .brand-mark {
   .app-content {
     margin-left: 0;
     width: 100%;
+    max-width: 100%;
   }
 
   .app-header {
     grid-template-columns: auto auto minmax(0, 1fr) auto;
     grid-template-areas: 'menu brand nav tools';
+    padding-top: env(safe-area-inset-top, 0px);
+    min-height: var(--lab-header);
+    height: auto;
   }
 
   .mobile-only {
@@ -605,10 +609,29 @@ html[data-theme='dark'] .brand-mark {
 
   .app-header {
     padding-inline: 10px;
+    column-gap: 8px;
+  }
+
+  .top-nav {
+    justify-content: flex-end;
+    gap: 0;
+    mask-image: linear-gradient(to right, transparent, #000 8px, #000 calc(100% - 8px), transparent);
   }
 
   .top-nav-btn.ant-btn {
-    width: 36px;
+    width: 40px;
+    min-width: 40px;
+    height: 40px !important;
     padding-inline: 0 !important;
+  }
+
+  .header-tools .ant-btn.ant-btn-text {
+    width: 40px;
+    height: 40px;
+  }
+
+  .mobile-only.ant-btn {
+    width: 40px;
+    height: 40px;
   }
 }

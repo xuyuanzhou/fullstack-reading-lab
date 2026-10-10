@@ -98,9 +98,11 @@ function StageDetail({
   const slots = slotsOf(stage.lessons)
   const readSlots = slots.filter((slot) => slot.some((id) => done.has(id))).length
   const lessonsDone = slots.length === 0 || readSlots === slots.length
+  const nextTitle = shortTitle(findLesson(nextId || '')?.title || '')
   const nextControl = onOpenNext ? (
-    <Button type="primary" onClick={onOpenNext}>
-      下一节 · {shortTitle(findLesson(nextId || '')?.title || '')}
+    <Button type="primary" className="path-next-btn" onClick={onOpenNext}>
+      <span className="path-next-kicker">下一节</span>
+      {nextTitle ? <span className="path-next-title">{nextTitle}</span> : null}
     </Button>
   ) : null
   const handInNote = onOpenNext ? null : (

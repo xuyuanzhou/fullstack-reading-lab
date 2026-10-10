@@ -12,8 +12,8 @@
 | `distributed-bloom` | 80 | `p0080.png` | 已挂 |
 | `distributed-token-bucket` | 89 | `p0089.png` | 已挂 |
 | `distributed-consistent-hash` | 94 | `p0094.png` | 已挂 |
-| `distributed-outbox` | — | 仍无专页图 | 仅 origin 文字 |
-| `distributed-lock` | — | 仍无专页图 | 仅 origin 文字 |
+| `distributed-outbox` | — | 仍无专页图（卷内无 Outbox/本地消息表专页） | 仅 origin 文字 |
+| `distributed-lock` | 201 | `p0201.png` | 已挂（注明现行 SET NX PX；旧 getset 勿当默认） |
 
 课源：`curriculum/distributed-lessons.js` 与 `coverage-java-*.js` 中带《分布式高并发》`origin` 的课。自绘 SVG 仍留在 `curriculum/diagrams/`，课页优先库图。
 

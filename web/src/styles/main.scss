@@ -51,6 +51,46 @@ textarea {
 
 .ant-breadcrumb {
   font-size: 13px;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+
+  ol {
+    flex-wrap: nowrap;
+    max-width: 100%;
+  }
+
+  .ant-breadcrumb-item {
+    min-width: 0;
+  }
+
+  .ant-breadcrumb-link {
+    display: inline-block;
+    max-width: 12em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: bottom;
+  }
+
+  li:last-child .ant-breadcrumb-link {
+    max-width: 16em;
+  }
+}
+
+@media (max-width: 720px) {
+  html,
+  body {
+    overflow-x: clip;
+  }
+
+  .ant-breadcrumb .ant-breadcrumb-link {
+    max-width: 7.5em;
+  }
+
+  .ant-breadcrumb li:last-child .ant-breadcrumb-link {
+    max-width: 10em;
+  }
 }
 
 .ant-btn-primary {

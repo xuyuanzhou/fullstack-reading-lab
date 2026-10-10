@@ -31,6 +31,9 @@
 | `java-loom-not-absent-coroutine` | 图解系统-亮白 p79（进程/线程调度） | `os-p0079.png` | 已挂 |
 | `java-threads-not-linear-speedup` | 同上 p79 | `os-p0079.png` | 已挂 |
 | `linux-bkl-gone` | 图解系统 p111（内核能力） | `os-p0111.png` | 已挂 |
+| `linux-user-kernel-syscall` | 图解系统 p112（用户态/内核态与系统调用） | `os-p0112.png` | 已挂（新建定义课） |
+| `linux-process-states` | 图解系统 p148（进程五态；≠ Thread.State） | `os-p0148.png` | 已挂（新建定义课） |
+| `linux-process-context-switch` | 图解系统 p154（进程上下文切换） | `os-p0154.png` | 已挂（新建定义课） |
 | `linux-fork-copies-one-thread` | 图解系统 p184（管道章 fork） | `os-p0184.png` | 已挂 |
 | `java-rwlock-no-upgrade` | 图解系统 p233（读者-写者） | `os-p0233.png` | 已挂 |
 | `mysql-deadlock` | 图解系统 p245（交叉加锁示例） | `os-p0245.png` | 已挂 |

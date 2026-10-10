@@ -107,6 +107,84 @@
       ]
     ]
   },
+  "js-what-it-is": {
+    "core": "JavaScript（JS）是给网页加行为的编程语言。HTML 描述文档里有哪些元素，CSS 描述这些元素长什么样，JavaScript 描述用户点了什么、数据变了要改哪一块。语言的标准名字是 ECMAScript。浏览器里的 JavaScript 由引擎执行，常见的是 V8、SpiderMonkey、JavaScriptCore。值分成原始值和对象，见 `js-value-kinds`。",
+    "example": "按钮上的字来自脚本，不是写死在 HTML 里：\n\n```html\n<button id=\"pay\">Pay</button>\n<script>\ndocument.getElementById(\"pay\").textContent = \"Pay 100\";\n</script>\n```",
+    "task": "用文档里的说法说明 JavaScript 是什么。HTML、CSS、JavaScript 各管哪一件事？语言标准叫什么？",
+    "answer": "JavaScript 是给网页加行为的编程语言。HTML 管结构，CSS 管样子，JavaScript 管行为。语言标准叫 ECMAScript。",
+    "deep": [
+      {
+        "title": "引擎执行的是这门语言",
+        "body": "页面上的 script 交给浏览器里的引擎。引擎实现的是 ECMAScript。页面上另外还有 DOM、fetch 这些由浏览器提供的接口，不是语言正文里的每一种值。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开 MDN 的 JavaScript 技术概览，对上它是编程语言、用在网页上。再打开一份只含 HTML 和 CSS 的页面，确认按钮上的字不会自己变；加上 script 之后才会变。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：JavaScript",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript"
+      ],
+      [
+        "ECMA-262",
+        "https://tc39.es/ecma262/"
+      ]
+    ]
+  },
+  "js-run-in-page": {
+    "core": "浏览器打开的是一份 HTML 文档。脚本要进入这份文档，用 script 元素。内联脚本写在标签中间。外部脚本把地址写在 src 上。type=\"module\" 的脚本按 ECMAScript 模块加载，可以用 import。script 出现在文档里之后，引擎才开始跑。模块怎么导出，见 `esm`。页面上的元素怎样被脚本找到，见 `dom-event-flow`。",
+    "example": "外部模块脚本：\n\n```html\n<script type=\"module\" src=\"/pay.js\"></script>\n```\n\n```javascript\n// pay.js\nconst button = document.getElementById(\"pay\");\nbutton.textContent = \"Pay 100\";\n```",
+    "task": "说明脚本进入文档的两种写法。模块脚本要把 type 写成什么？",
+    "answer": "一种写在 script 标签中间，一种用 src 指向 .js 文件。模块脚本把 type 写成 module。脚本出现在文档里之后，引擎才开始跑。",
+    "deep": [
+      {
+        "title": "先有文档再有脚本",
+        "body": "getElementById 找到的是这份 HTML 已经解析出来的节点。脚本在节点之前执行，会拿到 null。把 script 放在要找的元素后面，或等 DOMContentLoaded。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "写一个带 id 的按钮和一段改 textContent 的脚本。先把 script 放在按钮前面，确认拿到 null。再放到按钮后面，确认字变了。"
+      }
+    ],
+    "references": [
+      [
+        "HTML：The script element",
+        "https://html.spec.whatwg.org/multipage/scripting.html#the-script-element"
+      ],
+      [
+        "MDN：<script>",
+        "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script"
+      ]
+    ]
+  },
+  "js-not-java-around": {
+    "core": "JavaScript 和 Java 名字接近，但语法、类型和运行环境都不是同一套。网页上和它一起出现的是 HTML 与 CSS。要在编写时标类型，用 TypeScript：它是带类型语法的 JavaScript，编译后类型被拿掉，见 `ts-what-it-is`。在服务器或工具里跑同一门语言，用 Node.js，见 `node-what-it-is`。原始值和对象的分法见 `js-value-kinds`。",
+    "example": "三份文件各做一件事：\n\n```html\n<button id=\"pay\">Pay</button>\n```\n\n```css\n#pay { font-size: 16px; }\n```\n\n```javascript\ndocument.getElementById(\"pay\").onclick = () => { /* 付款 */ };\n```",
+    "task": "说明 JavaScript 和 Java 是不是同一门语言。类型标注、页面结构、样式各写在哪一层？",
+    "answer": "不是同一门语言。类型标注写在 TypeScript 里。页面结构写在 HTML 里，样式写在 CSS 里。JavaScript 写行为。",
+    "deep": [
+      {
+        "title": "Node 里也没有网页那一套",
+        "body": "同一门语言可以在 Node.js 里跑。那里没有 document，也没有 CSS。文件和网络用 Node 自己的模块。不要把浏览器接口当成语言的一部分。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开 MDN 的 JavaScript 概览，对上它和 Java 没有实现关系。再看一份前端工程：.html / .css / .js 或 .ts 分开。TypeScript 文件编译产物里没有类型标注。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：JavaScript 技术概览",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Language_overview"
+      ],
+      [
+        "ECMA-262",
+        "https://tc39.es/ecma262/"
+      ]
+    ]
+  },
   "js-value-kinds": {
     "core": "语言里的值分成原始值（primitive value）和对象。原始值有七种：undefined、null、boolean、number、bigint、string、symbol。数组、函数和 { } 写出来的都是对象。typeof 运算的结果是一个字符串，用来看大类，例如 typeof 1 是 \"number\"，typeof {} 是 \"object\"。typeof null 也得到 \"object\"，这是早期留下的结果，null 并不是对象，见 `js-not-everything-object`。=== 和 Object.is 的差别见 `js-equality`。",
     "example": "typeof 看大类：\n\n```javascript\ntypeof 1;          // \"number\"\ntypeof \"CNY\";      // \"string\"\ntypeof {};         // \"object\"\ntypeof null;       // \"object\"，null 仍不是对象\n```",
@@ -1279,6 +1357,84 @@
     ],
     "react": "hooks"
   },
+  "ts-what-it-is": {
+    "core": "TypeScript 是带类型语法的 JavaScript。文档第一句写的是：TypeScript is JavaScript with syntax for types。你在参数、返回值和对象上写下类型，编译器在转换成 JavaScript 之前检查它们。检查通过的文件，运行时仍是 JavaScript。类型标注怎么写，见 `ts-type-annotation`。联合类型见 `ts-union-annotation`。",
+    "example": "给参数标上类型：\n\n```typescript\nfunction price(cents: number): string {\n  return (cents / 100).toFixed(2);\n}\n```",
+    "task": "用文档里的说法说明 TypeScript 是什么。类型是在哪一步检查的？跑起来还是不是 JavaScript？",
+    "answer": "TypeScript 是带类型语法的 JavaScript。类型在编译时检查。跑起来仍是 JavaScript，类型标注不会留在运行时的值上。",
+    "deep": [
+      {
+        "title": "类型描述的是编写时的约定",
+        "body": "function price(cents: number) 告诉编译器：调用时应当传入数字。运行时如果从 JSON 里读到字符串，类型标注拦不住，见 `ts-unknown`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开 TypeScript 手册 The TypeScript Handbook 的开头，对上 JavaScript with syntax for types。把上面的函数存成 .ts，用 tsc 编译，打开生成的 .js，确认没有 number。"
+      }
+    ],
+    "references": [
+      [
+        "TypeScript：The TypeScript Handbook",
+        "https://www.typescriptlang.org/docs/handbook/intro.html"
+      ],
+      [
+        "TypeScript：What is TypeScript",
+        "https://www.typescriptlang.org/docs/handbook/typescript-from-scratch.html"
+      ]
+    ]
+  },
+  "ts-compile-to-js": {
+    "core": "浏览器和 Node 执行的是 JavaScript，不是 .ts 源文件本身。tsc 是 TypeScript 编译器：读入 .ts 或 .tsx，做类型检查，再写出 .js。类型标注、接口和类型别名在这一步消失。工程里也可以让构建工具调用同一套检查，例如 Vite 配上 typescript。模块怎么解析，见 `ts-module-resolution`。",
+    "example": "一行命令把当前目录的 .ts 编成 .js：\n\n```bash\nnpx tsc pay.ts --target es2020\n```",
+    "task": "指出 tsc 读入什么、写出什么。类型标注在写出的文件里还在不在？",
+    "answer": "tsc 读入 .ts，写出 .js。类型标注在写出的文件里被拿掉。浏览器和 Node 执行的是这份 JavaScript。",
+    "deep": [
+      {
+        "title": "检查和写出可以分开",
+        "body": "tsc --noEmit 只检查不写文件。构建工具可以只转译语法、把类型检查留给 CI。两种安排都还是「先 TypeScript，再 JavaScript」。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "写一个带类型标注的函数，运行 tsc。打开生成的 .js，确认标注消失、函数还在。把参数类型改错再编译，确认报错且可以加上 --noEmit 只看检查。"
+      }
+    ],
+    "references": [
+      [
+        "TypeScript：tsc CLI",
+        "https://www.typescriptlang.org/docs/handbook/compiler-options.html"
+      ],
+      [
+        "TypeScript：Intro",
+        "https://www.typescriptlang.org/docs/handbook/intro.html"
+      ]
+    ]
+  },
+  "ts-not-runtime-check": {
+    "core": "TypeScript 的类型不进入运行时。编译后的 JavaScript 里没有 User 这个类型对象，JSON.parse 的结果也不会自动变成你标的形状。不可信的输入先当成 unknown，再在运行时检查字段，见 `ts-unknown`。和 Java 不同：Java 的基本类型和类在虚拟机里还在。TypeScript 站在 JavaScript 旁边，不替换它。",
+    "example": "编译前后对照：\n\n```typescript\nfunction id(user: { id: string }) {\n  return user.id;\n}\n```\n\n```javascript\nfunction id(user) {\n  return user.id;\n}\n```",
+    "task": "说明类型标注在运行时还在不在。从接口拿到的 JSON 要先当成哪种类型再检查？",
+    "answer": "类型标注在运行时不在。从接口拿到的 JSON 要先当成 unknown，再检查字段。标成 User 不会在运行时拦住错误字段。",
+    "deep": [
+      {
+        "title": "接口和类型别名都不会变成值",
+        "body": "interface User { id: string } 只给编译器看。不能写 new User()，也不能用 typeof 在运行时问它是不是 User。要保留一份形状，另写运行时的检查函数。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "把 JSON.parse 的结果标成 User，传入缺 id 的对象。编译通过，运行时读 id 得到 undefined。改成 unknown 并先检查 id，缺字段时停在检查函数里。"
+      }
+    ],
+    "references": [
+      [
+        "TypeScript：Type Erasure",
+        "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html"
+      ],
+      [
+        "TypeScript：unknown",
+        "https://www.typescriptlang.org/docs/handbook/2/functions.html#unknown"
+      ]
+    ]
+  },
   "ts-type-annotation": {
     "core": "类型标注（type annotation）写在名字后面的冒号之后。let n: number = 1 表示 n 的值按 number 检查。函数的参数和返回值同样写：function cents(n: number): number { return n }。把字符串赋给 n，编译失败。编译通过之后，生成的 JavaScript 里这些标注会被擦掉，运行时不再按它们检查。any 会关掉这一处检查。还不能确定类型时用 unknown，见 `ts-unknown`。",
     "example": "对不上的赋值在编译时失败：\n\n```typescript\nlet n: number = 1;\nn = 2;\nfunction cents(n: number): number {\n  return n;\n}\n// n = \"a\" 编译失败\n```",
@@ -1644,6 +1800,84 @@
       ]
     ]
   },
+  "css-what-it-is": {
+    "core": "CSS（Cascading Style Sheets，层叠样式表）是描述文档怎么呈现的样式语言。文档通常是 HTML。一条规则左边是选择器，右边是一组声明（declaration）：属性名和值。浏览器按选择器找到元素，再按层叠算出每个属性的值。选择器怎么写，见 `css-selector-simple`。规则的写法见 `css-rule-syntax`。",
+    "example": "选中按钮并设定字号：\n\n```css\nbutton {\n  font-size: 16px;\n  color: black;\n}\n```",
+    "task": "用文档里的说法说明 CSS 是什么。一条规则左边和右边各是什么？",
+    "answer": "CSS 是描述文档怎么呈现的样式语言。左边是选择器，右边是一组声明，每条声明是属性名和值。",
+    "deep": [
+      {
+        "title": "呈现不是另写一套 HTML",
+        "body": "结构仍在 HTML 里。CSS 不负责说出页面上有没有这个按钮，只负责这个按钮看起来多大、什么颜色、排在哪一条轴上。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开 MDN 的 CSS 入门，对上 stylesheet language。写一份只有 HTML 的按钮，再挂上上面那条规则，确认字号变了、按钮还是同一个元素。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：CSS",
+        "https://developer.mozilla.org/en-US/docs/Web/CSS"
+      ],
+      [
+        "CSS Snapshot：CSS",
+        "https://www.w3.org/TR/CSS/"
+      ]
+    ]
+  },
+  "css-attach-to-document": {
+    "core": "CSS 必须挂到文档上才生效。常见写法是 link 的 rel=\"stylesheet\" 指向一个 .css 文件，或在文档里放 style 元素。挂上之后，选择器在这份文档的元素上匹配。元素上的 style 属性只作用于那一个元素。选择器怎么写，见 `css-selector-simple`。层叠谁赢，见 `css-cascade`。",
+    "example": "外部样式表：\n\n```html\n<link rel=\"stylesheet\" href=\"/pay.css\">\n<button>Pay</button>\n```",
+    "task": "写出把样式表挂到文档上的两种办法。选择器匹配的是哪一份文档里的元素？",
+    "answer": "用 link 引入外部文件，或用 style 元素写在文档里。选择器匹配的是已经挂上这份样式表的文档里的元素。",
+    "deep": [
+      {
+        "title": "没有挂上就没有规则",
+        "body": "CSS 文件放在工程里但没有 link，页面上的按钮不会读到这些分量。开发工具的 Network 面板能看到样式表有没有作为文档的一部分被请求。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "同一份 HTML 先不写 link，确认按钮是浏览器默认样子。加上 link 后再刷新，确认字号变成规则里的值。把 href 改成不存在的路径，确认样式消失。"
+      }
+    ],
+    "references": [
+      [
+        "HTML：The link element",
+        "https://html.spec.whatwg.org/multipage/semantics.html#the-link-element"
+      ],
+      [
+        "MDN：Getting started with CSS",
+        "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics/Getting_started"
+      ]
+    ]
+  },
+  "css-not-the-engine": {
+    "core": "CSS 写出元素应当怎样呈现：用哪种布局、多大、什么颜色。真正算出盒子宽高的是浏览器的布局（layout），画到屏幕上的是绘制（paint）。这两步不是另一门要你手写的语言。Flex 与 Grid 是 CSS 里的布局方式，见 `css-flex`、`css-grid-flex`。布局和绘制的时机见 `layout`、`rendering`。JavaScript 改的是文档或样式，随后仍由浏览器再走布局和绘制。",
+    "example": "规则只描述要用 Flexbox：\n\n```css\n.row {\n  display: flex;\n  gap: 8px;\n}\n```",
+    "task": "说明 CSS、布局、绘制各负责哪一步。display:flex 有没有代替浏览器去算宽高？",
+    "answer": "CSS 描述呈现。布局算出盒子宽高，绘制画到屏幕。display:flex 只声明用 Flexbox，不算也不画。",
+    "deep": [
+      {
+        "title": "和 JavaScript 的分工",
+        "body": "脚本可以改 className 或 element.style。改完之后，仍是浏览器按新的 CSS 做布局和绘制。脚本不是第二套排版引擎。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开开发工具的 Performance，点一次改 class 的按钮。确认有 Recalculate Style，随后才是 Layout 和 Paint。CSS 文件本身不会出现「算出 120px」这一行代码。"
+      }
+    ],
+    "references": [
+      [
+        "CSS Display Module",
+        "https://www.w3.org/TR/css-display-3/"
+      ],
+      [
+        "MDN：CSS 布局",
+        "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout"
+      ]
+    ]
+  },
   "css-rule-syntax": {
     "core": "样式表由规则（style rule）组成。选择器（selector）决定这条规则用到哪些元素。花括号里是声明（declaration）：属性、冒号、值，分号结束这一条。p { color: blue; } 把 p 元素的 color 设为 blue。同一元素被多条规则设了同一个属性时，谁生效由层叠（cascade）决定，见 `css-cascade`。width 包不包括 padding，见 `css-box-sizing`。",
     "example": "选择器加上声明：\n\n```css\np {\n  color: blue;\n}\n```",
@@ -1960,6 +2194,84 @@
       [
         "web.dev：Optimize Cumulative Layout Shift",
         "https://web.dev/articles/optimize-cls"
+      ]
+    ]
+  },
+  "browser-what-it-is": {
+    "core": "浏览器是一种用户代理（user agent）：按网址取出资源，把 HTML 解析成文档对象模型（DOM），把 CSS 套到这份文档上，执行脚本，再把结果画到窗口里。它还提供会话、存储和权限这些页面之外的能力。文档里的事件怎么冒泡，见 `dom-event-flow`。一帧里布局和绘制的顺序见 `rendering`。",
+    "example": "地址栏里的一次打开：\n\n```text\nhttps://shop.example/pay\n  → 取出 HTML\n  → 解析成 DOM\n  → 套上 CSS，执行脚本\n  → 窗口里出现页面\n```",
+    "task": "用文档里的说法说明浏览器是什么。取回 HTML 之后，还要经过哪三步才出现可以点的页面？",
+    "answer": "浏览器是取出文档并呈现它的用户代理。取回 HTML 之后，要解析成 DOM，套上 CSS 并执行脚本，再画到窗口里。",
+    "deep": [
+      {
+        "title": "一个窗口里可以有多份文档",
+        "body": "iframe 和打开的标签页各有自己的文档。脚本默认只能碰同一源的文档。跨源请求见 `cors`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开任意页面的开发工具 Elements，确认看到的是解析后的 DOM。再看 Network，确认第一份文档是这次导航取回的 HTML。"
+      }
+    ],
+    "references": [
+      [
+        "HTML：Browsing the web",
+        "https://html.spec.whatwg.org/multipage/browsing-the-web.html"
+      ],
+      [
+        "MDN：How browsers work",
+        "https://developer.mozilla.org/en-US/docs/Web/Performance/How_browsers_work"
+      ]
+    ]
+  },
+  "browser-document-enters": {
+    "core": "点链接或改地址栏会开始一次导航（navigation）。浏览器按网址取回 HTML，解析器一边读字节一边造出 DOM。随后才加载样式表和脚本。脚本里的 document 指向这棵树。地址变化但不要整页替换时，用 history.pushState，见 `html5-pushstate-popstate`。表单提交也会导航，见 `html-form-semantics`。",
+    "example": "一次导航的入口是网址：\n\n```text\nGET /pay HTTP/1.1\nHost: shop.example\n```\n\n响应体是 HTML，解析后才有 document.getElementById(\"pay\") 能找到的节点。",
+    "task": "说明导航、HTML、DOM 的顺序。脚本里的 document 指向什么？",
+    "answer": "先按网址导航并取出 HTML，再解析成 DOM。脚本里的 document 指向这棵解析出来的树。",
+    "deep": [
+      {
+        "title": "刷新会再走一遍导航",
+        "body": "刷新不是「只再跑一遍脚本」。浏览器会按缓存策略再取文档，再解析。bfcache 恢复的是整页快照，见 `bfcache-pageshow`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开 Network，勾选 Preserve log，点一个站内链接。确认有一次文档请求，Elements 里的树随之换成新文档。"
+      }
+    ],
+    "references": [
+      [
+        "HTML：Navigating across documents",
+        "https://html.spec.whatwg.org/multipage/browsing-the-web.html#navigate"
+      ],
+      [
+        "MDN：Document",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Document"
+      ]
+    ]
+  },
+  "browser-not-node": {
+    "core": "浏览器给脚本的是窗口（window）和文档（document），以及 fetch、DOM 这些页面接口。Node.js 是另一套运行时：默认没有 window 和 document，有的是 process、fs 和 http。同一门 JavaScript 语言可以在两边跑，接口不同。Node 是什么见 `node-what-it-is`。浏览器里的事件循环还要迁就一帧的绘制，见 `browser-event-loop-frame`。",
+    "example": "两边各自的入口：\n\n```javascript\n// 浏览器\ndocument.getElementById(\"pay\");\n\n// Node.js\nimport { readFile } from \"node:fs/promises\";\nawait readFile(\"pay.json\", \"utf8\");\n```",
+    "task": "说明浏览器脚本能用、Node 默认没有的两样东西。读文件该去哪一边？",
+    "answer": "浏览器有 window 和 document，Node 默认没有。读文件用 Node 的 fs。两边跑的是同一门 JavaScript，接口不同。",
+    "deep": [
+      {
+        "title": "不要用浏览器接口去写服务端",
+        "body": "在 Node 里调用 document 会报 document is not defined。要在服务端渲染 HTML，用框架提供的渲染函数，不要假装自己在窗口里。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "把 document.getElementById(\"pay\") 存成文件，用 node 跑，确认报错。同一段放进页面的 script，确认能找到元素。"
+      }
+    ],
+    "references": [
+      [
+        "HTML：The Window object",
+        "https://html.spec.whatwg.org/multipage/nav-history-apis.html#the-window-object"
+      ],
+      [
+        "Node.js：About",
+        "https://nodejs.org/docs/latest/api/documentation.html"
       ]
     ]
   },
@@ -2774,6 +3086,84 @@
       [
         "MDN：Fetch API",
         "https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch"
+      ]
+    ]
+  },
+  "http-what-it-is": {
+    "core": "HTTP（Hypertext Transfer Protocol）是传输超文本的应用层协议。客户端发出请求，服务器返回响应。请求里有方法、目标、头字段，需要时还有消息体。响应里有状态码、头字段和消息体。方法怎么选，见 `http-methods`。状态码里的认证失败见 `http-status-auth`。",
+    "example": "取回付款页：\n\n```http\nGET /pay HTTP/1.1\nHost: shop.example\n\nHTTP/1.1 200 OK\nContent-Type: text/html; charset=utf-8\n```",
+    "task": "用文档里的说法说明 HTTP 是什么。一次交换的两边各叫什么？请求里至少有哪三样？",
+    "answer": "HTTP 是传输超文本的应用层协议。一次交换是请求和响应。请求里至少有方法、目标和头字段。",
+    "deep": [
+      {
+        "title": "HTTPS 是套上 TLS 的 HTTP",
+        "body": "地址写成 https:// 时，仍是 HTTP 的请求和响应，只是先在传输上加上 TLS。证书和主机名核对见 `tls-hostname-verify`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开 MDN 的 HTTP 概述，对上 application-layer protocol。再在开发工具 Network 里点一条文档请求，对照方法、状态码和头字段。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：HTTP",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP"
+      ],
+      [
+        "RFC 9110：HTTP Semantics",
+        "https://www.rfc-editor.org/rfc/rfc9110"
+      ]
+    ]
+  },
+  "http-request-enters": {
+    "core": "页面脚本发出 HTTP 请求，用的是平台提供的 fetch。调用时写上方法、路径和需要的头字段。服务器返回 Response 之后，用 response.json() 或 response.text() 读正文。正文能当 JSON 读，是因为 Content-Type 对得上，见 `http-content-type-body`。带上 Cookie 要写 credentials，见 `fetch-credentials`。fetch 本身见 `fetch-platform-client`。",
+    "example": "取回订单 JSON：\n\n```javascript\nconst response = await fetch(\"/api/orders/1\", {\n  method: \"GET\",\n  credentials: \"same-origin\",\n});\nconst order = await response.json();\n```",
+    "task": "说明页面脚本用什么发出 HTTP 请求。读 JSON 之前要看响应上的哪一类字段？",
+    "answer": "用 fetch 发出请求。读 JSON 之前看 Content-Type。credentials 决定这次请求带不带 Cookie。",
+    "deep": [
+      {
+        "title": "方法和路径都在请求里",
+        "body": "创建资源用 POST，不要把创建写成 PUT，见 `http-create-post-not-put`。路径是资源的标识，不是方法的别名。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "在页面里对一个会返回 JSON 的路径调用 fetch。在 Network 里确认方法和状态码。把接收改成 response.text() 再 JSON.parse，对照 Content-Type。"
+      }
+    ],
+    "references": [
+      [
+        "Fetch Standard",
+        "https://fetch.spec.whatwg.org/"
+      ],
+      [
+        "MDN：fetch()",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Window/fetch"
+      ]
+    ]
+  },
+  "http-not-tcp": {
+    "core": "TCP 在传输层提供可靠的字节流，见 `tcp-is-l4-not-http-handshake`。HTTP 在应用层规定这些字节怎么读成方法、目标、头字段和正文。TLS 握手也不是 HTTP 握手，见 `https-tls13-not-12-packets`。一条 TCP 连接上可以复用多次 HTTP 交换，见 `http-connection-reuse`、`http2-multiplex`。可靠不等于应用层消息一定到达业务，见 `tcp-reliable-not-never-lose`。",
+    "example": "层次不要写反：\n\n```text\nHTTP  GET /pay   应用层\nTLS   记录层     保护字节\nTCP   字节流     传输层\n```",
+    "task": "说明 TCP 和 HTTP 各在哪一层。方法与状态码属于哪一层？HTTP 是不是 TCP 握手？",
+    "answer": "TCP 在传输层，HTTP 在应用层。方法与状态码属于 HTTP。HTTP 不是 TCP 握手。",
+    "deep": [
+      {
+        "title": "QUIC 上仍是 HTTP",
+        "body": "HTTP/3 跑在 QUIC 上，不再用 TCP。请求和响应的语义仍是 HTTP。不要把「换了传输」写成「没有 HTTP 了」。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开开发工具 Network，点一条请求。Headers 里看到的是 HTTP 字段。在 Wireshark 或浏览器的协议列里，同一条还叠着 TLS 和 TCP 或 QUIC。"
+      }
+    ],
+    "references": [
+      [
+        "RFC 9110：HTTP Semantics",
+        "https://www.rfc-editor.org/rfc/rfc9110"
+      ],
+      [
+        "MDN：OSI 模型里的 HTTP",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview"
       ]
     ]
   },
@@ -3594,6 +3984,32 @@
     ],
     "diagram": "library-assets/illustrated-basics/network-p0025.png",
     "origin": "本地库《图解网络》TCP 首部与序号确认页"
+  },
+  "browser-security-what": {
+    "core": "浏览器安全这一章不讲操作系统补丁，而讲页面里的两问：谁能读到 Cookie 或令牌，谁能在页面里执行脚本。Cookie 怎么当凭证，见 `cookie-credential`。会话和 JWT 的差别见 `auth-session-vs-jwt`。别人的站点怎样借你的登录态发请求，见 `csrf-boundary`。不信任的字符串进了页面，见 `xss`。限制脚本从哪来，见 `csp-script-src`。",
+    "example": "三句对照：\n\n```text\nCookie  HttpOnly  脚本读不到凭证\n同源     别人的站点不能读你的文档\nCSP      页面只能跑你允许的脚本\n```",
+    "task": "写出这一章共同回答的两问。HttpOnly、同源、CSP 各挡住哪一问？",
+    "answer": "两问是谁能读凭证、谁能跑脚本。HttpOnly 挡住脚本读凭证。同源挡住别人读你的文档。CSP 限制脚本从哪来。",
+    "deep": [
+      {
+        "title": "构建时写进前端的值都是公开的",
+        "body": "VITE_ 这类前缀会进浏览器，见 `client-env-public`。密钥不能靠「藏在前端代码里」保密。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开开发工具 Application 看 Cookie 是否 HttpOnly。再看一份会执行的脚本，对照 CSP 的 script-src 是否允许它的来源。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：Cookie",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies"
+      ],
+      [
+        "MDN：Content Security Policy",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP"
+      ]
+    ]
   },
   "cookie-credential": {
     "core": "Cookie 按域、路径、Secure、HttpOnly 和 SameSite 决定是否自动附在后续请求上。HttpOnly 的 Cookie 不能通过 document.cookie 读取。没有 Max-Age 或 Expires 时，它是会话 Cookie，会话结束即删除。SameSite=None 必须同时标记 Secure。localStorage 只留在该源的页面存储里，不会自动随请求发送，但同源脚本可以读到它。",
@@ -5276,6 +5692,32 @@
     ],
     "react": "components"
   },
+  "react-eco-chapter-aim": {
+    "core": "react 与 react-dom 负责组件和页面节点，见 `react-what-it-is`。这一章补三块旁边的工具。地址和渲染前取数用 React Router，见 `react-router-loader`。客户端界面状态和服务器返回的列表不是同一个家，见 `state-kind-picks-home`、`query-server-state`。不要在这一章里重做技术选型对照。",
+    "example": "三句话：\n\n```text\n地址    React Router\n界面状态  useState / reducer\n列表数据  TanStack Query 这一类缓存\n```",
+    "task": "说明 react 包不管哪两件事。这一章的路由、界面状态、服务器列表各指向哪一类工具？",
+    "answer": "react 包不管地址和向服务器取数。路由用 React Router，界面状态用组件状态或 reducer，服务器列表用 Query 这一类缓存。",
+    "deep": [
+      {
+        "title": "先认模式再抄 loader",
+        "body": "loader 只在数据模式和框架模式里生效，见 `rr-mode-gates-data`。入口仍是 BrowserRouter 时，先换入口，不要先改 fetch。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开 package.json。只有 react 和 react-dom 时，地址切换还没有对应的库。有 react-router 或 @tanstack/react-query 时，回到对应的一课。"
+      }
+    ],
+    "references": [
+      [
+        "React Router：安装",
+        "https://reactrouter.com/start/framework/installation"
+      ],
+      [
+        "TanStack Query：Overview",
+        "https://tanstack.com/query/latest/docs/framework/react/overview"
+      ]
+    ]
+  },
   "react-router-loader": {
     "core": "React Router 的数据路由（**6.4** 起的 loader 模式）在进入路由、渲染对应元素之前加载数据。组件用 useLoaderData 读取结果，而不是先画出空页面再在 effect 里请求。客户端切换路由时，框架可以在导航完成前知道成功或失败，并用 errorElement 接住 loader 抛出的错误。useEffect 请求发生在提交之后，首屏必然先空再填，取消和过期响应还要自己处理。链接用 Link 或 navigate，这样导航走路由，而不是整页刷新。搜索参数属于 URL，刷新和分享要能还原，不要只放在组件 state 里。",
     "why": "学习者会把每个页面的请求都放进 effect，以为和路由装数据只是写法不同。刷新、后退或直接打开带查询串的地址时，筛选条件丢了，错误也要等空白页之后才出现。数据在进入页面之前就失败并进到错误元素，才说明装载发生在渲染之前。",
@@ -6238,6 +6680,32 @@
     ],
     "diagram": "diagrams/vue-patch-hoist.svg",
     "vue": "optimization"
+  },
+  "vue-eco-chapter-aim": {
+    "core": "vue 包负责组件、模板和响应式，见 `vue-what-it-is`。这一章展开旁边的库。路由复用与守卫见 `vue-router-reuse`、`vue-router-guard`。Pinia 和 Vuex 怎么选见 `pinia-not-vuex`。Nuxt 随首屏交给浏览器的数据见 `nuxt-payload`。",
+    "example": "三个依赖各管一件事：\n\n```json\n{\n  \"vue-router\": \"地址\",\n  \"pinia\": \"跨页状态\",\n  \"nuxt\": \"首屏 HTML 里的数据\"\n}\n```",
+    "task": "指出 vue 包负责什么。换地址、跨页状态、首屏 HTML 数据各用哪个名字？",
+    "answer": "vue 包负责组件、模板和响应式。换地址用 Vue Router，跨页状态用 Pinia，首屏 HTML 数据常见于 Nuxt。",
+    "deep": [
+      {
+        "title": "可以先只挂一块",
+        "body": "后端已经输出大部分 HTML 时，不必先上路由和 Nuxt。应用要自己管整页导航时，再进这一章。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "看 package.json 有没有 vue-router 或 pinia。只有 vue 时，地址栏变化还没有对应的库。"
+      }
+    ],
+    "references": [
+      [
+        "Vue Router：入门",
+        "https://router.vuejs.org/guide/"
+      ],
+      [
+        "Pinia：Introduction",
+        "https://pinia.vuejs.org/introduction.html"
+      ]
+    ]
   },
   "vue-router-reuse": {
     "core": "Vue Router 用路径和组件记录页面。从 /orders/1 到 /orders/2 如果命中同一个路由记录和同一个组件，Vue 会复用该实例，setup 不会重新跑。params.id 已经变了，但只在 setup 里读一次的话，页面仍显示第一张订单。要 watch 路由参数，或在路由上设置 key 为完整路径迫使重建。导航守卫 beforeEach 和 beforeEnter 在确认导航时运行，适合登录检查。它们不能代替组件内部对参数变化的响应。查询参数同样在 route.query 上，刷新后还在，不要只写在 ref 里。",
@@ -7255,6 +7723,33 @@
     ],
     "diagram": "diagrams/fe-flutter-slots.svg"
   },
+  "mfe-what-it-is": {
+    "core": "微前端（micro-frontends）是一种把前端产品拆成多个可独立构建、独立发布的应用，再在运行时或构建时组合起来的做法。webpack 的 Module Federation、single-spa、qiankun、无界和 iframe 都是组合手段，不是「拆目录」本身。动手前先写清谁独立发版，见 `mfe-when-to-split`。不必拆的情况见 `mfe-not-for-everything`。",
+    "why": "仓库变大就被写成必须上微前端。拆完仍同一次打镜像，用户却多付了首屏和治理成本。",
+    "example": "结算组单独构建 remote，壳应用只负责登录和导航。商品组发版时不必等结算组。",
+    "task": "用一句话说明微前端是什么。只拆目录、仍同一次发版，算不算？",
+    "answer": "微前端是多个可独立构建、独立发布的前端，再拼成一个产品。只拆目录、仍同一次发版，不算。",
+    "deep": [
+      {
+        "title": "先问发版，再问框架",
+        "body": "独立发版写不清时，先不要选 Module Federation 或 qiankun。选型见 `mfe-pick-by-constraint`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "画出最近四次发版。两个目录总是同一 commit 上线，就还不是微前端。某一目录曾单独回滚，才具备拆分信号。"
+      }
+    ],
+    "references": [
+      [
+        "webpack：Module Federation",
+        "https://webpack.js.org/concepts/module-federation/"
+      ],
+      [
+        "single-spa：Getting started",
+        "https://single-spa.js.org/docs/getting-started-overview"
+      ]
+    ]
+  },
   "mfe-when-to-split": {
     "core": "微前端解决的是「多个前端应用要能独立构建、独立发布，再在运行时或构建时拼成一个产品」，不是把目录拆成 src/orders 就算完成。动手前先写下三句：谁拥有哪一块页面、谁可以在别人不发版时上线、失败时用户看见什么。若答案是「同一支小队、同一流水线、同一发版窗口」，拆应用只会换来重复依赖、路由打架和联调成本，见 `mfe-not-for-everything`。若答案是「订单组与营销组各有发版节奏，或必须允许不同框架长期并存」，才进入组合方式，见 `mfe-composition-models`。选型课里「同一产品留一套界面库」仍然成立：微前端是多应用边界，不是在同一按钮里混四套状态库，见 `fe-ecosystem-follows-model`。",
     "why": "把「仓库变大了」当成必须拆壳。拆完之后仍同一次打镜像、同一次回滚，用户却多付了首屏和治理成本。",
@@ -7881,6 +8376,84 @@
       ]
     ]
   },
+  "rn-what-it-is": {
+    "core": "React Native 是用 React 做原生应用的框架。组件仍是返回标记的函数，但这份标记不是 HTML。框架把它画成各平台的原生视图：iOS 上常见的是 UIView 一类，Android 上是 View 一类。文档写的是 Learn once, write anywhere：同一套 React，不是把一份网页塞进 WebView。容器和文字用 View、Text，见 `rn-view-not-div`。",
+    "example": "一个原生文本组件：\n\n```jsx\nimport { Text, View } from \"react-native\";\n\nfunction Price() {\n  return (\n    <View>\n      <Text>100</Text>\n    </View>\n  );\n}\n```",
+    "task": "用文档里的说法说明 React Native 是什么。View 和 Text 落到的是 HTML 还是原生视图？",
+    "answer": "React Native 是用 React 做原生应用的框架。View 和 Text 落到平台原生视图，不是 HTML 元素。",
+    "deep": [
+      {
+        "title": "Learn once 不是 Write once 的网页",
+        "body": "同一套组件思想可以在 iOS 和 Android 上用。样式、导航和原生模块仍要按平台核对。整页嵌网页用 WebView，那是另一条路。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开 React Native 文档 Introduction，对上它用 React 创建原生应用。在示例里确认导入来自 react-native，而不是 react-dom。"
+      }
+    ],
+    "references": [
+      [
+        "React Native：Introduction",
+        "https://reactnative.dev/docs/getting-started"
+      ],
+      [
+        "React Native：View",
+        "https://reactnative.dev/docs/view"
+      ]
+    ]
+  },
+  "rn-enter-app": {
+    "core": "React 文档和 React Native 文档都把 Expo 列为新应用的起点。Expo 提供创建命令、开发客户端，以及常用原生模块。入口组件仍是 React 函数，只是注册到 AppRegistry 或 Expo 的入口，而不是 createRoot。手机上的导航见 `rn-navigate-not-push`。取数用 fetch，没有 document，见 `rn-fetch-not-document`。",
+    "example": "文档给出的创建命令：\n\n```bash\nnpx create-expo-app@latest\n```",
+    "task": "说明新的 React Native 应用文档建议从哪一个框架开始。入口还是不是 createRoot？",
+    "answer": "文档建议从 Expo 开始。入口不是浏览器里的 createRoot，而是原生应用的注册入口。",
+    "deep": [
+      {
+        "title": "可以只用 React Native CLI",
+        "body": "需要自己管原生工程时，可以用社区 CLI。那是另一条创建路径，不是「不用 React Native 了」。日常新项目先走 Expo。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开 React Native 的 Set up your environment，对上 Expo 作为推荐起点。再看 React 文档 Creating a React App 里的 Expo 一条。"
+      }
+    ],
+    "references": [
+      [
+        "React Native：Set up your environment",
+        "https://reactnative.dev/docs/set-up-your-environment"
+      ],
+      [
+        "Expo：Create a project",
+        "https://docs.expo.dev/get-started/create-a-project/"
+      ]
+    ]
+  },
+  "rn-not-webview-app": {
+    "core": "WebView 显示的是一份网页。React Native 的 View 是原生容器，没有 DOM，也没有 CSS 选择器。样式是 StyleSheet 里的数字对象。只有某一块要嵌网址时才用 WebView，见 `rn-view-not-div`。和 Flutter 的差别是：这边组件落到平台视图，那边由引擎自己画像素，见 `flutter-what-it-is`。",
+    "example": "卡片用 View，帮助页才嵌网址：\n\n```jsx\n<View>\n  <Text>订单</Text>\n</View>\n<WebView source={{ uri: \"https://help.example\" }} />\n```",
+    "task": "说明 View 和 WebView 各显示什么。整页网站要不要写成 React Native？",
+    "answer": "View 是原生容器。WebView 显示网页。整页只是打开网址时，不必写成 React Native。",
+    "deep": [
+      {
+        "title": "和浏览器分工",
+        "body": "同一套业务如果已经是网站，继续做网站。要状态栏、推送、文件系统这些平台能力，并且界面要跟系统控件一致，再进 React Native。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "在应用里搜 document 和 className，界面文件里不应有落点。帮助页单独用 WebView，订单卡片仍是 View 和 Text。"
+      }
+    ],
+    "references": [
+      [
+        "React Native：WebView",
+        "https://github.com/react-native-webview/react-native-webview"
+      ],
+      [
+        "React Native：Style",
+        "https://reactnative.dev/docs/style"
+      ]
+    ]
+  },
   "rn-view-not-div": {
     "core": "React Native 把 React 组件画成各平台的原生视图，不是把一份 DOM 放进手机浏览器。文档说 View 和 Text 像 div 和 p，那只是对照：iOS 上 View 落到 UIView 一类原生容器，Android 上落到 ViewGroup 一类容器，子节点由 Yoga 按 Flexbox 排，不是你手写 LinearLayout。没有 HTML 元素、className、全局 CSS，也没有 document。样式是 StyleSheet 里的数字对象，不是 CSS 字符串。要嵌一个网址才用 WebView，那是另一个组件，和排卡片的 View 不是同一条路。setState 改完这棵 React 树之后，还要经过渲染、提交、挂载，原生视图才更新，见 `rn-jsi-not-json-bridge`。",
     "why": "把网页组件原样搬进来，div 不是宿主组件，className 没有落点。空白或打包失败不是少装了 CSS 框架，是运行时没有文档树。",
@@ -8217,6 +8790,84 @@
     ],
     "diagram": "diagrams/rn-fetch-not-document.svg"
   },
+  "flutter-what-it-is": {
+    "core": "Flutter 是用一份代码库做多平台应用的框架。界面用 Dart 写成 Widget。引擎（当前默认 Impeller）把这些 Widget 画到自己的像素表面上，不是把一个 Button 交给系统去当原生控件。没有 HTML，也没有 DOM。Widget 是什么见 `flutter-widget-not-html`。像素由谁画见 `flutter-impeller-own-pixels`。",
+    "example": "一个自绘文本：\n\n```dart\nclass Price extends StatelessWidget {\n  Widget build(BuildContext context) {\n    return const Text(\"100\");\n  }\n}\n```",
+    "task": "用文档里的说法说明 Flutter 是什么。按钮是系统原生控件，还是引擎画出来的？语言是哪一门？",
+    "answer": "Flutter 是用一份代码库做多平台应用的框架。语言是 Dart。按钮由引擎画在自绘表面上，不是系统原生控件。",
+    "deep": [
+      {
+        "title": "和 React Native 的落点不同",
+        "body": "React Native 的 View 落到平台原生视图。Flutter 的 Widget 是配置，像素由引擎画。两边都可以做手机应用，不要写成同一种宿主。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开 Flutter 文档 Introduction，对上 multi-platform 和 Dart。在示例里确认导入的是 package:flutter/material.dart，而不是 react-native。"
+      }
+    ],
+    "references": [
+      [
+        "Flutter：Introduction",
+        "https://docs.flutter.dev/get-started/install"
+      ],
+      [
+        "Flutter：Widget intro",
+        "https://docs.flutter.dev/ui"
+      ]
+    ]
+  },
+  "flutter-enter-app": {
+    "core": "官方入门从安装 Flutter SDK 开始，再用 flutter create 生成工程。lib/main.dart 里的 main 调用 runApp，把根 Widget 交给引擎。随后 flutter run 把它跑到连接的设备、模拟器或 Chrome。导航用 go_router 这一类包，见 `flutter-gorouter-not-named`。约束怎么往下传，见 `flutter-constraints-down`。",
+    "example": "创建并运行：\n\n```bash\nflutter create pay\ncd pay\nflutter run\n```",
+    "task": "写出创建工程和跑起来的两条命令。入口函数要把根 Widget 交给谁？",
+    "answer": "创建用 flutter create，跑起来用 flutter run。main 里调用 runApp，把根 Widget 交给引擎。",
+    "deep": [
+      {
+        "title": "平台目录是宿主，不是界面",
+        "body": "android/ 和 ios/ 是打包用的宿主工程。日常改的是 lib/ 里的 Dart。不要在这些目录里用 XML 布局去代替 Widget。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "按官方 Get started 建一个工程，确认 lib/main.dart 里有 runApp。flutter run 之后设备上出现计数示例，而不是一个空的原生 Activity 布局。"
+      }
+    ],
+    "references": [
+      [
+        "Flutter：Get started",
+        "https://docs.flutter.dev/get-started/install"
+      ],
+      [
+        "Flutter：runApp",
+        "https://api.flutter.dev/flutter/widgets/runApp.html"
+      ]
+    ]
+  },
+  "flutter-not-html": {
+    "core": "Flutter 的界面文件里没有 HTML 元素。build 返回新的 Widget 配置，状态在 Element 上，像素在 RenderObject 上，见 `flutter-widget-not-html`。和 React Native 比，那边 View 是原生视图，这边是自绘。跨端四套谁在画，见 `cross-four-who-paints`。",
+    "example": "文字写成 Text，不是 p：\n\n```dart\nColumn(\n  children: const [Text(\"订单号\")],\n)\n```",
+    "task": "说明 build 返回的是什么。div 和 className 在 Flutter 里有没有落点？",
+    "answer": "build 返回 Widget。div 和 className 没有落点。没有 document。",
+    "deep": [
+      {
+        "title": "主题也不是全局 CSS",
+        "body": "字体和颜色从 Theme 或构造参数走进 Widget，不会因为外层写了字号就沿一棵文档继承下去。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "在 lib/ 里搜 div 和 className，不应有编译得过的界面用法。把 Text 改成 HTML 标签，确认分析器报错。"
+      }
+    ],
+    "references": [
+      [
+        "Flutter：Introduction to widgets",
+        "https://docs.flutter.dev/ui/widgets-intro"
+      ],
+      [
+        "Flutter：FAQ",
+        "https://docs.flutter.dev/resources/faq"
+      ]
+    ]
+  },
   "flutter-widget-not-html": {
     "core": "一次界面要经过三层。build 返回的 Widget 是不可变配置，描述这一帧该长什么样。框架用 Element 把新旧 Widget 对上，State 挂在 Element 上，所以 Widget 重建不等于状态丢失。真正布局、绘制、命中测试在 RenderObject 上。文字要写成 Text，它背后是负责排字的渲染对象；排孩子用 Row、Column 这类布局 Widget。没有 div，没有 className，没有 document，也没有沿文档继承的全局 CSS。样式要从 Theme 或显式参数走进 Widget，不会因为外层写了字体就自动落到里面的文字上。和 React Native 的差别见 `rn-view-not-div`：那边 View 会变成平台原生视图，这边 Widget 只是配置，像素由引擎再画。",
     "why": "把网页组件原样搬进来，div 不是 Widget，编译直接失败。空白不是少装了一个 CSS 框架，是运行时根本没有文档树。",
@@ -8411,6 +9062,84 @@
       [
         "uni-app：pages.json",
         "https://uniapp.dcloud.net.cn/collocation/pages.html"
+      ]
+    ]
+  },
+  "uniapp-what-it-is": {
+    "core": "uni-app 是用 Vue 写一套代码、再编译到多个端的框架。新项目的页面是 .vue，运行时仍是 Vue。编译器按目标端出不同产物：H5 是网页，微信等小程序是该端的模板和脚本，App 走对应的原生容器。条件编译和页面入口见 `uniapp-pages-json-entry`、`uniapp-ifdef-stripped`。uni-app x 是另一套工程，见 `uniapp-x-uts-not-vue-page`。",
+    "example": "一份 Vue 页面：\n\n```vue\n<template>\n  <view>{{ price }}</view>\n</template>\n```",
+    "task": "说明 uni-app 是什么。源码页面常用哪一种文件？编译到各端之后运行时还一样吗？",
+    "answer": "uni-app 用 Vue 写一套代码再编译到各端。源码常用 .vue。各端产物的运行时不同，不是把同一份 Vue 原样塞进所有端。",
+    "deep": [
+      {
+        "title": "标签要写成各端认识的那一套",
+        "body": "小程序里常见 view、text，不是浏览器的 div、span。框架会在编译时对上目标端。不要假设 document 在所有端都存在。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开 DCloud 的 uni-app 介绍，对上 Vue 和多端。看 pages.json 里的页面路径，再分别打到 H5 和微信开发者工具，确认一份源码两套产物。"
+      }
+    ],
+    "references": [
+      [
+        "uni-app：介绍",
+        "https://uniapp.dcloud.net.cn/"
+      ],
+      [
+        "uni-app：页面",
+        "https://uniapp.dcloud.net.cn/tutorial/page.html"
+      ]
+    ]
+  },
+  "taro-what-it-is": {
+    "core": "Taro 是用 React（也可以用 Vue）写一套代码、再编译到多个端的框架。小程序端并不是浏览器。React 的更新要经过框架桥到 setData，见 `taro-react-setdata-bridge`。页面列在 app.config 里，见 `taro-pages-in-app-config`。Taro 4 的编译器选择见 `taro-4-compiler-choice`。",
+    "example": "一个 React 组件被编译到小程序：\n\n```jsx\nfunction Price() {\n  return <View>{price}</View>;\n}\n```",
+    "task": "说明 Taro 是什么。小程序端是不是 React DOM？更新要经过哪一步？",
+    "answer": "Taro 用 React 写一套代码再编译到各端。小程序端不是 React DOM。更新要经过框架桥到 setData。",
+    "deep": [
+      {
+        "title": "和 uni-app 的源码习惯不同",
+        "body": "uni-app 默认 Vue，Taro 默认 React。两边都是编译到各端，不是同一个运行时。层次对照见 `taro-and-uniapp-layers`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开 Taro 文档介绍，对上多端 React。在微信开发者工具里看编译产物，确认是 wxml / js，而不是一份 react-dom。"
+      }
+    ],
+    "references": [
+      [
+        "Taro：介绍",
+        "https://docs.taro.zone/docs/"
+      ],
+      [
+        "Taro：React",
+        "https://docs.taro.zone/docs/react"
+      ]
+    ]
+  },
+  "uniapp-taro-not-same-runtime": {
+    "core": "uni-app 和 Taro 都把一份前端源码编译到小程序、H5 或 App，但源码习惯不同：一边默认 Vue 和 pages.json，一边默认 React 和 app.config。编译之后各端仍用该端的运行时。不要把它们写成「同一个跨端运行时换了个名字」。层次见 `taro-and-uniapp-layers`。原生自绘或平台视图见 Flutter、React Native。",
+    "example": "同一张订单页：\n\n```text\nuni-app  pages/order/order.vue   + pages.json\nTaro     pages/order/index.jsx   + app.config\n```",
+    "task": "说明两个框架相同的是哪一层、不同的是哪一层。它们是不是同一个运行时？",
+    "answer": "相同的是「源码编译到各端」。不同的是源码习惯和桥接方式。不是同一个运行时。",
+    "deep": [
+      {
+        "title": "不要跨框架复制页面后缀",
+        "body": "把 .vue 丢进 Taro，或把 React 页丢进 uni-app，都过不了该框架的入口配置。先认页面清单，再写组件。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对照两份官方介绍的「支持的端」表格。再看各自工程里的页面清单文件名字，确认不是同一套配置。"
+      }
+    ],
+    "references": [
+      [
+        "uni-app：介绍",
+        "https://uniapp.dcloud.net.cn/"
+      ],
+      [
+        "Taro：介绍",
+        "https://docs.taro.zone/docs/"
       ]
     ]
   },
@@ -8627,6 +9356,84 @@
       [
         "Taro：Hooks",
         "https://docs.taro.zone/docs/hooks"
+      ]
+    ]
+  },
+  "node-what-it-is": {
+    "core": "Node.js 是在浏览器外执行 JavaScript 的运行时（runtime）。它嵌入 V8 引擎，再加上文件、网络、进程这些模块。文档把它写成 asynchronous event-driven JavaScript runtime。常见用途是 HTTP 服务、命令行工具和构建脚本。事件循环的阶段见 `node-event-loop-phases`。用它收 HTTP 请求见 `node-http-cookie`。",
+    "example": "命令行里跑一份脚本：\n\n```bash\nnode pay.js\n```\n\n```javascript\nimport { createServer } from \"node:http\";\ncreateServer((req, res) => {\n  res.end(\"ok\");\n}).listen(3000);\n```",
+    "task": "用文档里的说法说明 Node.js 是什么。它建立在哪一个引擎上？有没有窗口？",
+    "answer": "Node.js 是在浏览器外执行 JavaScript 的运行时，建立在 V8 上。没有窗口，也没有文档。用来写服务和工具。",
+    "deep": [
+      {
+        "title": "运行时不是另一门语言",
+        "body": "pay.js 里仍是 JavaScript。换的是宿主提供的接口：process、fs、http，而不是 window。语言本身的值、函数和模块规则见语言基础。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开 Node.js About 文档，对上 JavaScript runtime。写一份只调用 console.log 的文件用 node 跑通。再写 document.getElementById，确认报错。"
+      }
+    ],
+    "references": [
+      [
+        "Node.js：About this documentation",
+        "https://nodejs.org/docs/latest/api/documentation.html"
+      ],
+      [
+        "Node.js：Introduction",
+        "https://nodejs.org/en/learn/getting-started/introduction-to-nodejs"
+      ]
+    ]
+  },
+  "node-run-process": {
+    "core": "命令行里的 node 启动一个操作系统进程，入口是你给出的脚本。进程里有 event loop，把回调、定时器和 I/O 排进不同阶段，见 `node-event-loop-phases`。没有处理的 Promise 拒绝会进 unhandledRejection，见 `node-unhandled-rejection`。要停掉正在听端口的服务，先停接受新连接，见 `node-http-close`。",
+    "example": "启动入口：\n\n```bash\nnode server.js\n```\n\n```javascript\n// server.js\nimport { createServer } from \"node:http\";\nconst server = createServer((req, res) => res.end(\"ok\"));\nserver.listen(3000);\n```",
+    "task": "写出启动一份入口脚本的命令。这个命令会启动哪一种操作系统对象？",
+    "answer": "命令是 node 加上文件路径。它启动一个进程，从这份入口脚本开始执行。",
+    "deep": [
+      {
+        "title": "监听端口的是这个进程",
+        "body": "server.listen(3000) 让这个进程接受连接。多个终端各跑一次 node，就是多个进程，端口不能重复占用。关掉终端却没停进程时，端口仍被占着。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "把上面的服务存成 server.js，运行 node server.js。用 curl http://127.0.0.1:3000 看到 ok。再开一个终端跑同一条命令，确认端口占用失败。"
+      }
+    ],
+    "references": [
+      [
+        "Node.js：Command-line API",
+        "https://nodejs.org/docs/latest/api/cli.html"
+      ],
+      [
+        "Node.js：http.Server",
+        "https://nodejs.org/docs/latest/api/http.html#class-httpserver"
+      ]
+    ]
+  },
+  "node-not-browser": {
+    "core": "Node.js 没有 document、window，也没有浏览器里的 Cookie 罐。读文件用 fs，开服务用 http 或 fetch。请求里的 Cookie 是头字段，见 `node-http-cookie`。全局 fetch 在 Node 18 之后可用，见 `node-global-fetch`。和浏览器的分工见 `browser-not-node`。",
+    "example": "服务端读 Cookie 头：\n\n```javascript\nimport { createServer } from \"node:http\";\ncreateServer((req, res) => {\n  const cookie = req.headers.cookie ?? \"\";\n  res.end(cookie);\n}).listen(3000);\n```",
+    "task": "说明 Node.js 里有没有 document.cookie。登录态的 Cookie 写在哪一类字段上？",
+    "answer": "没有 document.cookie。登录态的 Cookie 写在 HTTP 请求和响应的头字段上。读文件用 fs，不在文档里。",
+    "deep": [
+      {
+        "title": "同一段语言，不要混宿主",
+        "body": "可以把校验函数写成两边都能 import 的纯函数。碰到 document 或 fs 的代码，按宿主拆开，不要在一份文件里同时假设两种环境。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "在 Node 里打印 typeof document，确认是 undefined。写一个只读 req.headers.cookie 的服务，用 curl -H \"Cookie: a=1\" 打过去，确认读到的是头字段。"
+      }
+    ],
+    "references": [
+      [
+        "Node.js：http.IncomingMessage",
+        "https://nodejs.org/docs/latest/api/http.html#class-httpincomingmessage"
+      ],
+      [
+        "Node.js：File system",
+        "https://nodejs.org/docs/latest/api/fs.html"
       ]
     ]
   },
@@ -9122,6 +9929,32 @@
       [
         "MSW：HTTP",
         "https://mswjs.io/docs/basics/intercepting-requests"
+      ]
+    ]
+  },
+  "fe-eng-chapter-aim": {
+    "core": "这一章不教新的界面库。构建看模块图和拆包，见 `vite-module-graph`、`build-code-splitting`。用户看见的快慢用 Web Vitals，见 `web-vitals`。慢在哪一层见 `fe-slow-page-where`。环境变量进不进浏览器见 `vite-env-client-prefix`。CI 不能只看构建通过，见 `ci-gate-not-only-build`。",
+    "example": "三句：\n\n```text\n构建   模块图和拆包\n度量   LCP / INP / CLS\n发布   环境变量前缀和 CI 门禁\n```",
+    "task": "说明这一章不回答哪一类问题。构建、用户指标、发布各回到哪一类课？",
+    "answer": "不回答该用 React 还是 Vue。构建回模块图和拆包，用户指标回 Web Vitals，发布回环境变量和 CI 门禁。",
+    "deep": [
+      {
+        "title": "先定位再调",
+        "body": "同一慢页可能在网络、渲染或脚本。先看 `fe-slow-page-where`，再只调一层，见 `fe-tune-one-layer`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开一次构建的模块图或统计，确认最大的包从哪来。再用开发工具 Performance 对上 LCP 元素，而不是先换框架。"
+      }
+    ],
+    "references": [
+      [
+        "Vite：Features",
+        "https://vite.dev/guide/features.html"
+      ],
+      [
+        "web.dev：Web Vitals",
+        "https://web.dev/articles/vitals"
       ]
     ]
   },

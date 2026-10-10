@@ -105,6 +105,9 @@
         "fs-frontend-done"
       ],
       "CSS 与布局": [
+        "css-what-it-is",
+        "css-attach-to-document",
+        "css-not-the-engine",
         "css-rule-syntax",
         "css-selector-simple",
         "css-box-sizing",
@@ -119,6 +122,9 @@
         "css-aspect-ratio"
       ],
       "浏览器": [
+        "browser-what-it-is",
+        "browser-document-enters",
+        "browser-not-node",
         "dom-event-flow",
         "html-dialog-modal",
         "html-form-semantics",
@@ -151,6 +157,9 @@
         "fetch-abort"
       ],
       "网络与安全": [
+        "http-what-it-is",
+        "http-request-enters",
+        "http-not-tcp",
         "http-methods",
         "http-create-post-not-put",
         "http-content-type-body",
@@ -181,6 +190,7 @@
         "tcp-reliable-not-never-lose"
       ],
       "安全": [
+        "browser-security-what",
         "cookie-credential",
         "auth-session-vs-jwt",
         "csrf-boundary",
@@ -214,6 +224,9 @@
         "bot-mitigation-not-only-widget"
       ],
       "TypeScript": [
+        "ts-what-it-is",
+        "ts-compile-to-js",
+        "ts-not-runtime-check",
         "ts-type-annotation",
         "ts-object-array-type",
         "ts-union-annotation",
@@ -259,6 +272,7 @@
         "react-createclass-gone"
       ],
       "React 生态": [
+        "react-eco-chapter-aim",
         "react-router-loader",
         "react-router-element-api",
         "react-router-error-element",
@@ -285,6 +299,7 @@
         "msw-http-mock"
       ],
       "工程实践": [
+        "fe-eng-chapter-aim",
         "vite-module-graph",
         "build-code-splitting",
         "build-cache",
@@ -303,6 +318,9 @@
         "retired-frontend-stack"
       ],
       "语言基础": [
+        "js-what-it-is",
+        "js-run-in-page",
+        "js-not-java-around",
         "js-value-kinds",
         "js-let-const-decl",
         "js-number-ieee",
@@ -348,6 +366,9 @@
         "closure"
       ],
       "Node.js": [
+        "node-what-it-is",
+        "node-run-process",
+        "node-not-browser",
         "node-http-cookie",
         "node-unhandled-rejection",
         "node-emitter",
@@ -383,6 +404,7 @@
         "vue-patch-hoist"
       ],
       "Vue 生态": [
+        "vue-eco-chapter-aim",
         "vue-router-reuse",
         "vue-router-guard",
         "vue-router-scroll",
@@ -392,6 +414,9 @@
         "nuxt-payload"
       ],
       "UniApp 与 Taro": [
+        "uniapp-what-it-is",
+        "taro-what-it-is",
+        "uniapp-taro-not-same-runtime",
         "uniapp-x-uts-not-vue-page",
         "uniapp-pages-json-entry",
         "uniapp-onload-vs-onshow",
@@ -423,6 +448,7 @@
         "fe-flutter-state-one-approach"
       ],
       "微前端": [
+        "mfe-what-it-is",
         "mfe-when-to-split",
         "mfe-not-for-everything",
         "mfe-composition-models",
@@ -446,6 +472,9 @@
         "mfe-contract-version"
       ],
       "React Native": [
+        "rn-what-it-is",
+        "rn-enter-app",
+        "rn-not-webview-app",
         "rn-view-not-div",
         "rn-text-not-under-view",
         "rn-flex-defaults",
@@ -460,6 +489,9 @@
         "rn-fetch-not-document"
       ],
       "Flutter": [
+        "flutter-what-it-is",
+        "flutter-enter-app",
+        "flutter-not-html",
         "flutter-widget-not-html",
         "flutter-impeller-own-pixels",
         "flutter-constraints-down",
@@ -477,6 +509,9 @@
         "fs-ship-bar"
       ],
       "Java 基础": [
+        "java-what-it-is",
+        "java-enter-main",
+        "java-not-javascript",
         "java-eight-primitives",
         "java-reference-and-null",
         "java-field-default-var",
@@ -563,6 +598,9 @@
         "algo-topo-kahn"
       ],
       "JVM": [
+        "jvm-what-it-is",
+        "jvm-enter-class",
+        "jvm-not-the-language",
         "jvm-areas",
         "java-classloading",
         "java-memory",
@@ -587,6 +625,9 @@
         "jvm-thread-vs-heap-dump"
       ],
       "并发": [
+        "java-concurrency-what",
+        "java-thread-enter",
+        "java-concurrency-not-distributed",
         "java-thread-start-run",
         "java-concurrency",
         "java-happens-before",
@@ -652,6 +693,7 @@
         "activemq-queue-competing-consumers"
       ],
       "系统设计": [
+        "arch-chapter-aim",
         "arch-evolution-stages",
         "arch-monolith-when",
         "arch-modular-boundary",
@@ -783,6 +825,9 @@
         "mysql-autoinc-persists-8"
       ],
       "Spring": [
+        "spring-what-it-is",
+        "spring-enter-boot",
+        "spring-not-the-business",
         "spring-ioc-wiring",
         "spring-bean-lifecycle",
         "spring-scopes",
@@ -807,6 +852,9 @@
         "spring-propagation"
       ],
       "JPA": [
+        "jpa-what-it-is",
+        "jpa-enter-entity",
+        "jpa-not-mybatis",
         "jpa-entity-identity",
         "jpa-session-nplus1",
         "jpa-flush-transaction",
@@ -819,6 +867,9 @@
         "jpa-entity-graph"
       ],
       "MyBatis": [
+        "mybatis-what-it-is",
+        "mybatis-enter-mapper",
+        "mybatis-not-jpa",
         "mybatis-mapper-bound",
         "mybatis-parameters",
         "mybatis-resultmap",
@@ -889,6 +940,9 @@
         "redis-sharded-pubsub-not-cluster-queue"
       ],
       "Nginx": [
+        "nginx-what-and-when",
+        "nginx-tradeoffs-capacity",
+        "nginx-vs-gateway",
         "nginx-request-phases",
         "nginx-upstream-passive",
         "nginx-proxy-timeout",
@@ -904,6 +958,9 @@
         "nginx-limit-req-not-iptables-loop"
       ],
       "Netty": [
+        "netty-what-it-is",
+        "netty-enter-bootstrap",
+        "netty-not-spring-mvc",
         "netty-event-loop",
         "netty-pipeline-handler",
         "netty-bytebuf-leak",
@@ -916,6 +973,9 @@
         "netty-file-region"
       ],
       "网关": [
+        "gateway-what-and-when",
+        "gateway-tradeoffs-capacity",
+        "gateway-vs-proxy",
         "mw-proxy-lb-gateway",
         "gateway-route-predicate",
         "gateway-one-hop",
@@ -941,6 +1001,9 @@
         "es-custom-routing"
       ],
       "安全": [
+        "spring-security-what",
+        "spring-security-enter-chain",
+        "spring-security-not-only-login",
         "spring-security-filter-chain",
         "spring-authn-authz",
         "object-level-authz",
@@ -954,6 +1017,9 @@
         "jwt-payload-not-encrypted"
       ],
       "测试": [
+        "junit-what-it-is",
+        "junit-enter-test",
+        "junit-not-the-app",
         "junit-instance-lifecycle",
         "test-one-behavior",
         "test-observable-result",
@@ -963,6 +1029,7 @@
         "spring-dirties-context"
       ],
       "工程实践": [
+        "java-eng-chapter-aim",
         "request-trace-one-hop",
         "otel-three-signals",
         "java-http-timeout",
@@ -983,6 +1050,7 @@
         "spring-boot-devtools-restarts",
         "git-restore-over-checkout",
         "linux-bkl-gone",
+        "linux-user-kernel-syscall",
         "linux-virtual-memory-isolation",
         "linux-virtual-addr-mmu",
         "linux-memory-segmentation",
@@ -996,6 +1064,8 @@
         "linux-root-group-not-root",
         "linux-fork-copies-one-thread",
         "linux-shell-pipe-fds",
+        "linux-process-states",
+        "linux-process-context-switch",
         "docker-root-not-host-root",
         "etcd-v3-grpc-not-rest",
         "git-default-branch-not-master",
@@ -1067,6 +1137,7 @@
         "sca-sms-intro"
       ],
       "分布式与高并发": [
+        "dist-chapter-aim",
         "distributed-cap",
         "base-slogan-not-ban-tx",
         "distributed-consistency-three-words",
@@ -1131,6 +1202,15 @@
         "db-autoinc-offset-step-needs-ops"
       ],
       "交付与运行": [
+        "gha-what-it-is",
+        "gha-workflow-enter",
+        "gha-not-the-runtime",
+        "docker-what-it-is",
+        "docker-image-run",
+        "docker-not-a-vm",
+        "k8s-what-it-is",
+        "k8s-cluster-enter",
+        "k8s-not-docker-engine",
         "gha-workflow-in-dot-github",
         "gha-job-needs-success",
         "gha-artifact-between-jobs",
@@ -1170,6 +1250,14 @@
         }
       ],
       "语言基础": [
+        {
+          "title": "是什么",
+          "ids": [
+            "js-what-it-is",
+            "js-run-in-page",
+            "js-not-java-around"
+          ]
+        },
         {
           "title": "值",
           "ids": [
@@ -1256,6 +1344,14 @@
       ],
       "TypeScript": [
         {
+          "title": "是什么",
+          "ids": [
+            "ts-what-it-is",
+            "ts-compile-to-js",
+            "ts-not-runtime-check"
+          ]
+        },
+        {
           "title": "标注",
           "ids": [
             "ts-type-annotation",
@@ -1286,6 +1382,14 @@
         }
       ],
       "CSS 与布局": [
+        {
+          "title": "是什么",
+          "ids": [
+            "css-what-it-is",
+            "css-attach-to-document",
+            "css-not-the-engine"
+          ]
+        },
         {
           "title": "规则",
           "ids": [
@@ -1325,6 +1429,14 @@
         }
       ],
       "网络与安全": [
+        {
+          "title": "是什么",
+          "ids": [
+            "http-what-it-is",
+            "http-request-enters",
+            "http-not-tcp"
+          ]
+        },
         {
           "title": "HTTP",
           "ids": [
@@ -1370,6 +1482,14 @@
         }
       ],
       "浏览器": [
+        {
+          "title": "是什么",
+          "ids": [
+            "browser-what-it-is",
+            "browser-document-enters",
+            "browser-not-node"
+          ]
+        },
         {
           "title": "DOM 与事件",
           "ids": [
@@ -1529,8 +1649,9 @@
       ],
       "Vue 生态": [
         {
-          "title": "路由",
+          "title": "这一章",
           "ids": [
+            "vue-eco-chapter-aim",
             "vue-router-reuse",
             "vue-router-guard",
             "vue-router-scroll"
@@ -1547,6 +1668,14 @@
         }
       ],
       "UniApp 与 Taro": [
+        {
+          "title": "是什么",
+          "ids": [
+            "uniapp-what-it-is",
+            "taro-what-it-is",
+            "uniapp-taro-not-same-runtime"
+          ]
+        },
         {
           "title": "uni-app",
           "ids": [
@@ -1616,6 +1745,7 @@
         {
           "title": "边界",
           "ids": [
+            "mfe-what-it-is",
             "mfe-when-to-split",
             "mfe-not-for-everything",
             "mfe-composition-models"
@@ -1667,8 +1797,9 @@
       ],
       "React 生态": [
         {
-          "title": "路由",
+          "title": "这一章",
           "ids": [
+            "react-eco-chapter-aim",
             "react-router-loader",
             "react-router-element-api",
             "react-router-error-element",
@@ -1697,6 +1828,14 @@
         }
       ],
       "React Native": [
+        {
+          "title": "是什么",
+          "ids": [
+            "rn-what-it-is",
+            "rn-enter-app",
+            "rn-not-webview-app"
+          ]
+        },
         {
           "title": "界面",
           "ids": [
@@ -1727,6 +1866,14 @@
       ],
       "Flutter": [
         {
+          "title": "是什么",
+          "ids": [
+            "flutter-what-it-is",
+            "flutter-enter-app",
+            "flutter-not-html"
+          ]
+        },
+        {
           "title": "界面",
           "ids": [
             "flutter-widget-not-html",
@@ -1748,6 +1895,7 @@
         {
           "title": "登录",
           "ids": [
+            "browser-security-what",
             "cookie-credential",
             "auth-session-vs-jwt",
             "csrf-boundary"
@@ -1809,6 +1957,14 @@
       ],
       "Node.js": [
         {
+          "title": "是什么",
+          "ids": [
+            "node-what-it-is",
+            "node-run-process",
+            "node-not-browser"
+          ]
+        },
+        {
           "title": "请求",
           "ids": [
             "node-http-cookie",
@@ -1834,6 +1990,7 @@
         {
           "title": "构建",
           "ids": [
+            "fe-eng-chapter-aim",
             "vite-module-graph",
             "build-code-splitting",
             "build-cache",
@@ -1887,6 +2044,14 @@
         }
       ],
       "Java 基础": [
+        {
+          "title": "是什么",
+          "ids": [
+            "java-what-it-is",
+            "java-enter-main",
+            "java-not-javascript"
+          ]
+        },
         {
           "title": "类型",
           "ids": [
@@ -2089,6 +2254,14 @@
       ],
       "Spring": [
         {
+          "title": "是什么",
+          "ids": [
+            "spring-what-it-is",
+            "spring-enter-boot",
+            "spring-not-the-business"
+          ]
+        },
+        {
           "title": "容器",
           "ids": [
             "spring-ioc-wiring",
@@ -2133,6 +2306,14 @@
       ],
       "JPA": [
         {
+          "title": "是什么",
+          "ids": [
+            "jpa-what-it-is",
+            "jpa-enter-entity",
+            "jpa-not-mybatis"
+          ]
+        },
+        {
           "title": "实体",
           "ids": [
             "jpa-entity-identity",
@@ -2159,6 +2340,14 @@
         }
       ],
       "MyBatis": [
+        {
+          "title": "是什么",
+          "ids": [
+            "mybatis-what-it-is",
+            "mybatis-enter-mapper",
+            "mybatis-not-jpa"
+          ]
+        },
         {
           "title": "SQL",
           "ids": [
@@ -2265,6 +2454,14 @@
       ],
       "Nginx": [
         {
+          "title": "导论",
+          "ids": [
+            "nginx-what-and-when",
+            "nginx-tradeoffs-capacity",
+            "nginx-vs-gateway"
+          ]
+        },
+        {
           "title": "反向代理",
           "ids": [
             "nginx-request-phases",
@@ -2289,6 +2486,14 @@
         }
       ],
       "Netty": [
+        {
+          "title": "是什么",
+          "ids": [
+            "netty-what-it-is",
+            "netty-enter-bootstrap",
+            "netty-not-spring-mvc"
+          ]
+        },
         {
           "title": "线程",
           "ids": [
@@ -2316,6 +2521,14 @@
         }
       ],
       "网关": [
+        {
+          "title": "导论",
+          "ids": [
+            "gateway-what-and-when",
+            "gateway-tradeoffs-capacity",
+            "gateway-vs-proxy"
+          ]
+        },
         {
           "title": "路由",
           "ids": [
@@ -2522,6 +2735,14 @@
       ],
       "并发": [
         {
+          "title": "是什么",
+          "ids": [
+            "java-concurrency-what",
+            "java-thread-enter",
+            "java-concurrency-not-distributed"
+          ]
+        },
+        {
           "title": "锁",
           "ids": [
             "java-thread-start-run",
@@ -2559,6 +2780,14 @@
         }
       ],
       "JVM": [
+        {
+          "title": "是什么",
+          "ids": [
+            "jvm-what-it-is",
+            "jvm-enter-class",
+            "jvm-not-the-language"
+          ]
+        },
         {
           "title": "结构",
           "ids": [
@@ -2599,6 +2828,14 @@
       ],
       "安全": [
         {
+          "title": "是什么",
+          "ids": [
+            "spring-security-what",
+            "spring-security-enter-chain",
+            "spring-security-not-only-login"
+          ]
+        },
+        {
           "title": "鉴权",
           "ids": [
             "spring-security-filter-chain",
@@ -2621,6 +2858,14 @@
         }
       ],
       "测试": [
+        {
+          "title": "是什么",
+          "ids": [
+            "junit-what-it-is",
+            "junit-enter-test",
+            "junit-not-the-app"
+          ]
+        },
         {
           "title": "用例",
           "ids": [
@@ -2773,8 +3018,9 @@
       ],
       "系统设计": [
         {
-          "title": "拆分",
+          "title": "这一章",
           "ids": [
+            "arch-chapter-aim",
             "arch-evolution-stages",
             "arch-monolith-when",
             "arch-modular-boundary",
@@ -2814,9 +3060,15 @@
       ],
       "分布式与高并发": [
         {
+          "title": "这一章",
+          "ids": [
+            "dist-chapter-aim",
+            "distributed-cap"
+          ]
+        },
+        {
           "title": "一致性",
           "ids": [
-            "distributed-cap",
             "base-slogan-not-ban-tx",
             "distributed-consistency-three-words",
             "distributed-xa",
@@ -2898,6 +3150,30 @@
       ],
       "交付与运行": [
         {
+          "title": "CI 是什么",
+          "ids": [
+            "gha-what-it-is",
+            "gha-workflow-enter",
+            "gha-not-the-runtime"
+          ]
+        },
+        {
+          "title": "容器是什么",
+          "ids": [
+            "docker-what-it-is",
+            "docker-image-run",
+            "docker-not-a-vm"
+          ]
+        },
+        {
+          "title": "编排是什么",
+          "ids": [
+            "k8s-what-it-is",
+            "k8s-cluster-enter",
+            "k8s-not-docker-engine"
+          ]
+        },
+        {
           "title": "CI",
           "ids": [
             "gha-workflow-in-dot-github",
@@ -2942,8 +3218,9 @@
       ],
       "工程实践": [
         {
-          "title": "可观测性",
+          "title": "这一章",
           "ids": [
+            "java-eng-chapter-aim",
             "request-trace-one-hop",
             "otel-three-signals",
             "java-http-timeout",
@@ -2974,6 +3251,7 @@
             "spring-boot-devtools-restarts",
             "git-restore-over-checkout",
             "linux-bkl-gone",
+            "linux-user-kernel-syscall",
             "linux-virtual-memory-isolation",
             "linux-virtual-addr-mmu",
             "linux-memory-segmentation",
@@ -2987,6 +3265,8 @@
             "linux-root-group-not-root",
             "linux-fork-copies-one-thread",
             "linux-shell-pipe-fds",
+            "linux-process-states",
+            "linux-process-context-switch",
             "docker-root-not-host-root",
             "etcd-v3-grpc-not-rest",
             "git-default-branch-not-master",
@@ -3055,6 +3335,48 @@
         "答不出时回到对应的一课，而不是换组件库"
       ],
       "since": "path"
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
+      "id": "js-what-it-is",
+      "title": "JavaScript 是给网页加行为的编程语言",
+      "prompt": "HTML 画出结构、CSS 画出样子之后，按钮被点、列表被改，是哪一门语言在做？",
+      "promptAnswer": "是 JavaScript。它是网页里用来写行为的编程语言。语言标准叫 ECMAScript。",
+      "keywords": "JavaScript ECMAScript HTML CSS scripting",
+      "points": [
+        "JavaScript 是给网页加行为的编程语言",
+        "HTML 管结构，CSS 管样子，脚本管行为",
+        "语言标准叫 ECMAScript"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
+      "id": "js-run-in-page",
+      "title": "脚本通过 script 进入已经打开的文档",
+      "prompt": "一段 JavaScript 怎样出现在浏览器已经打开的那份 HTML 里？",
+      "promptAnswer": "写在 script 元素里，或用 src 指向一个 .js 文件。模块脚本把 type 写成 module。",
+      "keywords": "script src module HTML document",
+      "points": [
+        "脚本通过 script 元素进入文档",
+        "src 指向外部文件，中间可以写内联脚本",
+        "type 为 module 时按模块加载"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "语言基础",
+      "id": "js-not-java-around",
+      "title": "JavaScript 不是 Java，旁边是 HTML、CSS 和 TypeScript",
+      "prompt": "名字里有 Java，是不是同一门语言？类型标注要写在哪一层？",
+      "promptAnswer": "不是。JavaScript 和 Java 是两门语言。类型标注写在 TypeScript 里，编译后仍是 JavaScript。",
+      "keywords": "JavaScript Java TypeScript HTML CSS",
+      "points": [
+        "JavaScript 和 Java 不是同一门语言",
+        "旁边是 HTML 与 CSS",
+        "类型标注属于 TypeScript，编译后仍是 JavaScript"
+      ]
     },
     {
       "track": "frontend",
@@ -3691,6 +4013,48 @@
     {
       "track": "frontend",
       "group": "TypeScript",
+      "id": "ts-what-it-is",
+      "title": "TypeScript 是带类型语法的 JavaScript",
+      "prompt": "要在编写时标出参数和返回值的类型，用的是哪一层？",
+      "promptAnswer": "用 TypeScript。它是带类型语法的 JavaScript。类型在编译时检查，不代替运行时的值。",
+      "keywords": "TypeScript JavaScript types compiler",
+      "points": [
+        "TypeScript 是带类型语法的 JavaScript",
+        "类型在编译时检查",
+        "运行时仍是 JavaScript"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "TypeScript",
+      "id": "ts-compile-to-js",
+      "title": "tsc 把 TypeScript 编译成 JavaScript",
+      "prompt": "浏览器和 Node 要执行的是哪一种文件？.ts 怎样变成它？",
+      "promptAnswer": "执行的是 JavaScript。tsc 读取 .ts，检查类型，写出 .js。类型标注在这一步被拿掉。",
+      "keywords": "tsc compiler emit JavaScript",
+      "points": [
+        "浏览器和 Node 执行的是 JavaScript",
+        "tsc 读入 .ts 并写出 .js",
+        "类型标注在编译时被拿掉"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "TypeScript",
+      "id": "ts-not-runtime-check",
+      "title": "类型在编译后消失，旁边仍是 JavaScript",
+      "prompt": "接口返回的 JSON 已经标成 User，运行时还会不会按这个类型拦住错误字段？",
+      "promptAnswer": "不会。类型在编译后消失。不可信的数据要在运行时自己检查，常用 unknown 再收窄。",
+      "keywords": "TypeScript type erasure unknown JavaScript",
+      "points": [
+        "类型在编译后消失",
+        "不可信数据要运行时检查",
+        "TypeScript 站在 JavaScript 旁边，不替换它"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "TypeScript",
       "id": "ts-type-annotation",
       "title": "冒号后面写类型，编译器按它检查赋值",
       "prompt": "怎样让一个变量只能放数字，放字符串时在运行前就失败？",
@@ -3894,6 +4258,48 @@
     {
       "track": "frontend",
       "group": "CSS 与布局",
+      "id": "css-what-it-is",
+      "title": "CSS 是描述文档怎么呈现的样式语言",
+      "prompt": "一份 HTML 已经有标题和按钮，字号、颜色和排列写在哪一种语言里？",
+      "promptAnswer": "写在 CSS 里。CSS 是描述文档怎么呈现的样式语言。一条规则由选择器和一组声明组成。",
+      "keywords": "CSS stylesheet selector declaration",
+      "points": [
+        "CSS 是描述文档怎么呈现的样式语言",
+        "规则由选择器和声明组成",
+        "声明是属性名和值"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "CSS 与布局",
+      "id": "css-attach-to-document",
+      "title": "样式表挂到文档上，选择器才找得到元素",
+      "prompt": "写好的 CSS 怎样作用到已经打开的那份 HTML 上？",
+      "promptAnswer": "用 link 引入外部样式表，或用 style 元素写在文档里。选择器按这份文档里的元素匹配。",
+      "keywords": "link stylesheet style element",
+      "points": [
+        "样式表通过 link 或 style 挂到文档",
+        "选择器匹配这份文档里的元素",
+        "style 属性只作用于那一个元素"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "CSS 与布局",
+      "id": "css-not-the-engine",
+      "title": "CSS 描述呈现，排版和绘制由浏览器做",
+      "prompt": "写了 display:flex 之后，谁去算每个盒子的宽高，谁去画到屏幕上？",
+      "promptAnswer": "CSS 只写出要用 Flexbox。算宽高是布局，画到屏幕是绘制。这两步由浏览器做。",
+      "keywords": "CSS layout paint browser Flexbox",
+      "points": [
+        "CSS 描述呈现，不算盒子也不画像素",
+        "布局和绘制由浏览器做",
+        "Flex 与 Grid 是 CSS 里的布局方式"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "CSS 与布局",
       "id": "css-rule-syntax",
       "title": "一条规则用选择器选中元素，用声明设置属性",
       "prompt": "想把段落文字改成蓝色，样式表里要写哪几部分？",
@@ -4068,6 +4474,48 @@
         "占位不代替压缩和懒加载"
       ],
       "since": "CSS Sizing 4"
+    },
+    {
+      "track": "frontend",
+      "group": "浏览器",
+      "id": "browser-what-it-is",
+      "title": "浏览器是取出文档、交给引擎呈现的用户代理",
+      "prompt": "地址栏里输入网址之后，谁去取回 HTML，谁把它变成可以点的页面？",
+      "promptAnswer": "浏览器作为用户代理发出请求、取回文档，再解析成 DOM，套上 CSS，跑脚本，画到窗口里。",
+      "keywords": "browser user agent DOM CSS HTML",
+      "points": [
+        "浏览器是取出并呈现文档的用户代理",
+        "HTML 被解析成 DOM",
+        "CSS 和脚本在这份文档上生效，再画到窗口"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "浏览器",
+      "id": "browser-document-enters",
+      "title": "导航取出文档，解析之后才有 DOM",
+      "prompt": "点开一个链接之后，页面上的元素从哪来？",
+      "promptAnswer": "浏览器按网址导航，取出 HTML，解析成 DOM。脚本和样式都作用在这棵树上。",
+      "keywords": "navigation HTML parse DOM",
+      "points": [
+        "导航按网址取出 HTML",
+        "解析之后才有 DOM",
+        "脚本里的 document 指向这棵树"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "浏览器",
+      "id": "browser-not-node",
+      "title": "浏览器里有文档和窗口，Node.js 里没有",
+      "prompt": "同一段调用 document.getElementById 的脚本，放到 node 命令下跑，会怎样？",
+      "promptAnswer": "会失败。Node.js 没有窗口，也没有文档。文件和 HTTP 服务用 Node 自己的模块。",
+      "keywords": "browser window document Node.js",
+      "points": [
+        "浏览器给脚本窗口和文档",
+        "Node.js 默认没有 DOM",
+        "同一门语言，两套接口"
+      ]
     },
     {
       "track": "frontend",
@@ -4516,6 +4964,48 @@
     {
       "track": "frontend",
       "group": "网络与安全",
+      "id": "http-what-it-is",
+      "title": "HTTP 是传输超文本的应用层协议",
+      "prompt": "浏览器要拿回一份 HTML 或一段 JSON，和服务器之间用的是哪一种协议？",
+      "promptAnswer": "用 HTTP。它是传输超文本的应用层协议。一次交换是请求加响应。",
+      "keywords": "HTTP request response application protocol",
+      "points": [
+        "HTTP 是传输超文本的应用层协议",
+        "一次交换是请求加响应",
+        "请求里有方法、目标和头字段"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "网络与安全",
+      "id": "http-request-enters",
+      "title": "fetch 发出请求，响应体按 Content-Type 读",
+      "prompt": "页面脚本要向服务器要一段 JSON，调用的是哪一个平台接口？",
+      "promptAnswer": "调用 fetch。它发出 HTTP 请求，返回响应。读正文之前先看 Content-Type。",
+      "keywords": "fetch request Content-Type response",
+      "points": [
+        "页面脚本用 fetch 发出 HTTP 请求",
+        "响应体按 Content-Type 来读",
+        "带 Cookie 要写 credentials"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "网络与安全",
+      "id": "http-not-tcp",
+      "title": "HTTP 在应用层，TCP 只保证这一层下面的字节流",
+      "prompt": "TCP 已经可靠传输，是不是就不需要再谈 HTTP 的方法、状态码和头字段？",
+      "promptAnswer": "不是。TCP 管的是字节流。方法、状态码和头字段属于 HTTP。HTTP 不是 TCP 握手。",
+      "keywords": "HTTP TCP TLS application layer",
+      "points": [
+        "HTTP 在应用层，TCP 在传输层",
+        "方法、状态码和头字段属于 HTTP",
+        "HTTP 不是 TCP 握手"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "网络与安全",
       "id": "http-methods",
       "title": "HTTP 方法：安全与幂等",
       "prompt": "POST 一定不幂等，而 DELETE 一定能无条件重试吗？",
@@ -4928,6 +5418,20 @@
         "UDP 无这套重传，丢了就是丢了"
       ],
       "since": "HTTP"
+    },
+    {
+      "track": "frontend",
+      "group": "安全",
+      "id": "browser-security-what",
+      "title": "浏览器安全管的是谁能读凭证、谁能跑脚本",
+      "prompt": "Cookie、XSS 和 CSP 这几课，共同在回答哪一件事？",
+      "promptAnswer": "谁能读到登录凭证，谁能在页面里跑脚本。同源、Cookie 属性和内容安全策略都围着这两问。",
+      "keywords": "Cookie XSS CSP credential script",
+      "points": [
+        "浏览器安全回答谁读凭证、谁跑脚本",
+        "Cookie 属性和同源管凭证",
+        "CSP 限制脚本从哪来"
+      ]
     },
     {
       "track": "frontend",
@@ -5790,6 +6294,20 @@
     {
       "track": "frontend",
       "group": "React 生态",
+      "id": "react-eco-chapter-aim",
+      "title": "React 生态章回答地址、客户端状态和服务器状态各放哪",
+      "prompt": "react 包本身不管地址和取数，这一章补的是哪三类工具？",
+      "promptAnswer": "补路由、客户端状态和服务器状态。react 包只负责组件和把组件放进页面。",
+      "keywords": "React Router server state TanStack Query",
+      "points": [
+        "react 包不管地址和取数",
+        "路由用 React Router",
+        "服务器列表和界面状态不是同一个家"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "React 生态",
       "id": "react-router-loader",
       "title": "路由数据在渲染前装好（RR 6.4）",
       "prompt": "每个页面都在 useEffect 里请求，和路由的 loader 有什么不同？",
@@ -6293,6 +6811,20 @@
     {
       "track": "frontend",
       "group": "Vue 生态",
+      "id": "vue-eco-chapter-aim",
+      "title": "Vue 生态章回答换地址、跨页状态和首屏数据各用谁",
+      "prompt": "vue 包负责组件和响应式，换地址和跨页状态要去哪一章？",
+      "promptAnswer": "去这一章。换地址用 Vue Router，跨页状态用 Pinia，首屏 HTML 里的数据常见于 Nuxt。",
+      "keywords": "Vue Router Pinia Nuxt",
+      "points": [
+        "vue 包不管地址和跨页状态",
+        "换地址用 Vue Router",
+        "跨页状态用 Pinia，首屏数据常见于 Nuxt"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "Vue 生态",
       "id": "vue-router-reuse",
       "title": "只改路由参数时，组件可能不会重建",
       "prompt": "从 /orders/1 进到 /orders/2，为什么 setup 没有再次执行？",
@@ -6682,6 +7214,20 @@
     {
       "track": "frontend",
       "group": "微前端",
+      "id": "mfe-what-it-is",
+      "title": "微前端是多个可独立发布的前端，在运行时或构建时拼成一个产品",
+      "prompt": "把仓库拆成 src/orders 和 src/pay，算不算已经做了微前端？",
+      "promptAnswer": "不算。微前端要能独立构建、独立发布，再拼成一个产品。只拆目录、仍同一次发版，还不是。",
+      "keywords": "micro-frontends independent deploy Module Federation",
+      "points": [
+        "微前端是可独立发布的多个前端再组合",
+        "拆目录本身不是微前端",
+        "组合手段和要不要拆是两件事"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "微前端",
       "id": "mfe-when-to-split",
       "title": "先写清谁独立发版，再决定要不要拆应用",
       "prompt": "为什么两个业务线共用一个仓库、同一次发版，却要上微前端？",
@@ -6994,6 +7540,48 @@
     {
       "track": "frontend",
       "group": "React Native",
+      "id": "rn-what-it-is",
+      "title": "React Native 用 React 组件画出平台原生界面",
+      "prompt": "同一套 React 组件，在手机上落到的是网页，还是平台自己的视图？",
+      "promptAnswer": "落到平台自己的视图。React Native 用 React 组件描述界面，再画成 iOS、Android 上的原生视图。",
+      "keywords": "React Native native views React",
+      "points": [
+        "React Native 用 React 组件描述原生界面",
+        "落到的是平台视图，不是网页",
+        "View 和 Text 不是 HTML 元素"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "React Native",
+      "id": "rn-enter-app",
+      "title": "新的原生应用从 Expo 开始",
+      "prompt": "文档建议新的 React Native 应用用哪一套工具创建？",
+      "promptAnswer": "用 Expo。它是建立在 React Native 上的框架，负责创建、运行和一部分原生能力。",
+      "keywords": "Expo create-expo-app React Native",
+      "points": [
+        "新应用文档建议从 Expo 开始",
+        "Expo 建立在 React Native 上",
+        "入口不是 createRoot"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "React Native",
+      "id": "rn-not-webview-app",
+      "title": "React Native 不是把网站装进 WebView",
+      "prompt": "手机里已经能用 WebView 打开现有网站，还要不要 React Native？",
+      "promptAnswer": "要原生控件、原生导航和平台能力时才用。只是打开一个网址，用 WebView 就够，不必整页都当 React Native。",
+      "keywords": "React Native WebView native StyleSheet",
+      "points": [
+        "View 是原生容器，不是网页",
+        "WebView 只用来嵌网址",
+        "没有 DOM 和 CSS 选择器"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "React Native",
       "id": "rn-view-not-div",
       "title": "View 只是让人想起 div，它不是浏览器里的元素",
       "prompt": "为什么把网页卡片里的 div 原样写进组件，打包过不去，document.getElementById 也没有节点可查？",
@@ -7174,6 +7762,48 @@
     {
       "track": "frontend",
       "group": "Flutter",
+      "id": "flutter-what-it-is",
+      "title": "Flutter 用一份 Dart 代码在多平台上自绘界面",
+      "prompt": "Flutter 的按钮是平台原生控件，还是引擎自己画出来的？",
+      "promptAnswer": "引擎自己画出来的。Flutter 用 Dart 写出 Widget，由引擎画到一块自绘表面上。",
+      "keywords": "Flutter Dart Widget Impeller",
+      "points": [
+        "Flutter 用一份 Dart 代码做多平台应用",
+        "界面是 Widget，由引擎自绘",
+        "不是 HTML，也不是系统原生控件"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "Flutter",
+      "id": "flutter-enter-app",
+      "title": "flutter create 做出可以跑起来的工程",
+      "prompt": "要把一份 Flutter 应用在设备上跑起来，先用哪一条命令建工程？",
+      "promptAnswer": "用 flutter create。它生成 Dart 工程和各平台目录。再用 flutter run 跑在连接的设备或模拟器上。",
+      "keywords": "flutter create runApp Dart",
+      "points": [
+        "flutter create 生成工程",
+        "runApp 把根 Widget 交给引擎",
+        "flutter run 跑到设备或模拟器"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "Flutter",
+      "id": "flutter-not-html",
+      "title": "Flutter 没有文档树，也不是 React Native",
+      "prompt": "把网页里的 div 和 className 写进 build，能不能当成 Flutter 界面？",
+      "promptAnswer": "不能。build 返回的是 Widget。没有 div，没有 className，也没有 document。",
+      "keywords": "Flutter Widget HTML React Native",
+      "points": [
+        "build 返回 Widget，不是 HTML",
+        "没有 document 和 className",
+        "和 React Native 的宿主不是同一套"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "Flutter",
       "id": "flutter-widget-not-html",
       "title": "Flutter 的界面是 Widget，不是 HTML 元素",
       "prompt": "为什么 build 里写了 div 和 className，卡片既编不过，也没有一棵文档可以查？",
@@ -7275,6 +7905,48 @@
         "返回刷新分别查 onShow、useDidShow 加 setData、setState、以及原生视图那次提交"
       ],
       "since": "cross-end"
+    },
+    {
+      "track": "frontend",
+      "group": "UniApp 与 Taro",
+      "id": "uniapp-what-it-is",
+      "title": "uni-app 用 Vue 写出一套代码，再编译到各端",
+      "prompt": "uni-app 的页面在源码里是哪一种文件，编译之后还是不是同一套运行时？",
+      "promptAnswer": "常用 Vue 的 .vue 页面。不是同一套运行时：编译器按目标端出小程序、H5 或 App 的产物。",
+      "keywords": "uni-app Vue 小程序 H5",
+      "points": [
+        "uni-app 用 Vue 写一套代码再编译到各端",
+        "源码页面常用 .vue",
+        "各端产物运行时不同"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "UniApp 与 Taro",
+      "id": "taro-what-it-is",
+      "title": "Taro 用 React 写出一套代码，再编译到各端",
+      "prompt": "Taro 里写的 JSX，在微信小程序里直接跑 React DOM 吗？",
+      "promptAnswer": "不直接跑 React DOM。Taro 把 React 树桥到小程序的 setData 和模板上。",
+      "keywords": "Taro React 小程序 setData",
+      "points": [
+        "Taro 用 React 写一套代码再编译到各端",
+        "小程序端不是 React DOM",
+        "更新要桥到 setData"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "UniApp 与 Taro",
+      "id": "uniapp-taro-not-same-runtime",
+      "title": "uni-app 和 Taro 都是编译层，不是同一种运行时",
+      "prompt": "两个框架都能出微信小程序，是不是选一个就等于另一个？",
+      "promptAnswer": "不是。源码习惯、页面配置和桥到原生或小程序的方式都不同。它们是两条编译层。",
+      "keywords": "uni-app Taro 编译 小程序",
+      "points": [
+        "两者都是编译到各端的框架",
+        "源码习惯分别是 Vue 和 React",
+        "各端仍用该端运行时"
+      ]
     },
     {
       "track": "frontend",
@@ -7395,6 +8067,48 @@
         "编成 Android 的 Kotlin 是 uni-app x 的 uts，不和 Taro 的 React 树混用"
       ],
       "since": "Taro"
+    },
+    {
+      "track": "frontend",
+      "group": "Node.js",
+      "id": "node-what-it-is",
+      "title": "Node.js 是在浏览器外执行 JavaScript 的运行时",
+      "prompt": "没有窗口、也没有文档的时候，同一门 JavaScript 在哪一套环境里跑？",
+      "promptAnswer": "在 Node.js 里跑。它是浏览器外的 JavaScript 运行时，建立在 V8 上，用来写服务和工具。",
+      "keywords": "Node.js runtime V8 JavaScript",
+      "points": [
+        "Node.js 是浏览器外的 JavaScript 运行时",
+        "建立在 V8 上，并提供文件和网络模块",
+        "没有窗口和文档"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "Node.js",
+      "id": "node-run-process",
+      "title": "node 命令启动一个进程，入口是一份脚本",
+      "prompt": "要把一份 .js 在 Node.js 里跑起来，命令行里写什么？",
+      "promptAnswer": "写 node 加上文件路径。这会启动一个进程，从这份入口脚本开始执行。",
+      "keywords": "node process listen event loop",
+      "points": [
+        "node 命令启动一个进程",
+        "入口是命令行里的那份脚本",
+        "进程里有事件循环"
+      ]
+    },
+    {
+      "track": "frontend",
+      "group": "Node.js",
+      "id": "node-not-browser",
+      "title": "Node.js 提供进程和文件，不提供页面文档",
+      "prompt": "在 Node.js 里写登录态，是不是也可以用 document.cookie？",
+      "promptAnswer": "不是。Node.js 没有 document。HTTP 服务里的 Cookie 写在请求和响应的头字段上。",
+      "keywords": "Node.js document cookie fs http",
+      "points": [
+        "Node.js 没有 document 和 window",
+        "Cookie 是 HTTP 头字段",
+        "文件用 fs，服务用 http"
+      ]
     },
     {
       "track": "frontend",
@@ -7674,6 +8388,20 @@
         "不要用它冒充整套后端规则"
       ],
       "since": "MSW"
+    },
+    {
+      "track": "frontend",
+      "group": "工程实践",
+      "id": "fe-eng-chapter-aim",
+      "title": "前端工程实践章回答构建、度量和发布各停在哪一层",
+      "prompt": "页面慢或发布失败时，这一章先让你分清哪三件事？",
+      "promptAnswer": "构建怎样拆包、用户看见的指标是什么、发布和密钥停在哪一层。不要先换框架。",
+      "keywords": "Vite Web Vitals CI sourcemap",
+      "points": [
+        "这一章不换界面库",
+        "构建看模块图和拆包",
+        "用户指标用 Web Vitals，发布看门禁"
+      ]
     },
     {
       "track": "frontend",
@@ -7967,6 +8695,48 @@
         "中间件和框架是在保护这条路径"
       ],
       "since": "path"
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "java-what-it-is",
+      "title": "Java 是一门语言，也是一套能跑字节码的平台",
+      "prompt": "写好的 .java 文件，最后是在哪一层上跑起来的？",
+      "promptAnswer": "先编译成字节码，再交给 Java 虚拟机执行。Java 既指这门语言，也指这套平台。",
+      "keywords": "Java language platform bytecode JVM",
+      "points": [
+        "Java 既是语言也是平台",
+        "javac 把源文件编成字节码",
+        "JVM 执行这些字节码"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "java-enter-main",
+      "title": "java 命令从 main 启动一个进程",
+      "prompt": "要把一个类跑起来，命令行里写什么？从哪一个方法开始？",
+      "promptAnswer": "先 javac 编译，再 java 加上类名。虚拟机从 public static void main(String[]) 开始。",
+      "keywords": "javac java main JVM process",
+      "points": [
+        "javac 编译，java 启动虚拟机",
+        "入口是 main",
+        "main 必须是 public static void"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Java 基础",
+      "id": "java-not-javascript",
+      "title": "Java 不是 JavaScript，旁边是 JVM 和类库",
+      "prompt": "名字里都有 Java，这两门语言是不是在同一个虚拟机里跑？",
+      "promptAnswer": "不是。Java 编译成字节码，在 JVM 里跑。JavaScript 在浏览器引擎或 Node.js 里跑。",
+      "keywords": "Java JavaScript JVM class library",
+      "points": [
+        "Java 和 JavaScript 不是同一门语言",
+        "字节码在 JVM 里跑",
+        "类库和并发是旁边的章"
+      ]
     },
     {
       "track": "java",
@@ -9591,6 +10361,48 @@
     {
       "track": "java",
       "group": "JVM",
+      "id": "jvm-what-it-is",
+      "title": "JVM 是执行 Java 字节码的虚拟机",
+      "prompt": "已经编好的 .class，是操作系统直接执行，还是先交给另一层？",
+      "promptAnswer": "先交给 Java 虚拟机。JVM 加载字节码，管理内存，再在这条操作系统进程里执行。",
+      "keywords": "JVM bytecode HotSpot class file",
+      "points": [
+        "JVM 执行字节码，不是源文件",
+        "它是规范，也有 HotSpot 这类实现",
+        "加载类、管理内存、执行方法"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "JVM",
+      "id": "jvm-enter-class",
+      "title": "类加载器把 .class 装进正在跑的虚拟机",
+      "prompt": "java Pay 的时候，Pay.class 怎样变成虚拟机里可以调用的类？",
+      "promptAnswer": "类加载器按名字找到字节码，加载、链接，再初始化。main 所在的类先被装进来。",
+      "keywords": "class loader loading linking initialization",
+      "points": [
+        "类加载器按名字找到字节码",
+        "步骤是加载、链接、初始化",
+        "启动时先装 main 所在的类"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "JVM",
+      "id": "jvm-not-the-language",
+      "title": "JVM 不管业务语法，只管字节码和内存",
+      "prompt": "if 和泛型这些语法问题，是不是该在 JVM 章里查？",
+      "promptAnswer": "不是。语法在 Java 语言里。JVM 章管运行时数据区、垃圾收集和诊断。",
+      "keywords": "JVM JLS language GC heap",
+      "points": [
+        "语法回 Java 基础",
+        "JVM 管字节码、内存和收集器",
+        "JMM 不是运行时数据区的别名"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "JVM",
       "id": "jvm-areas",
       "title": "JVM 运行时数据区：规范与实现",
       "prompt": "JVM 的程序计数器是不是 CPU 寄存器里“下一条机器指令地址”？",
@@ -9913,6 +10725,48 @@
         "不要用堆转储去查超时原因"
       ],
       "since": "JVM"
+    },
+    {
+      "track": "java",
+      "group": "并发",
+      "id": "java-concurrency-what",
+      "title": "Java 并发是同一进程里多条线程一起执行",
+      "prompt": "main 已经在跑，再要同时做下载和计算，用的是哪一套能力？",
+      "promptAnswer": "用线程。Java 并发指同一进程里多条线程一起执行，以及 java.util.concurrent 里的工具。",
+      "keywords": "Java concurrency thread Executor",
+      "points": [
+        "并发首先是同一进程里的多条线程",
+        "start 才启动新线程",
+        "分布式协作是另一章"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "并发",
+      "id": "java-thread-enter",
+      "title": "新线程从 start 开始，任务也可以交给执行器",
+      "prompt": "有一份要在后台跑的任务，怎样让它不占用 main 这条线程？",
+      "promptAnswer": "new Thread(任务).start()，或交给 ExecutorService。直接调用 run 不会换线程。",
+      "keywords": "Thread.start ExecutorService Future",
+      "points": [
+        "start 之后才有新线程",
+        "任务常交给执行器",
+        "结果用 Future 接"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "并发",
+      "id": "java-concurrency-not-distributed",
+      "title": "线程共享同一进程的内存，不是另一台机器",
+      "prompt": "两个服务各跑在自己的进程里，用 Thread 能不能让它们看见同一块内存？",
+      "promptAnswer": "不能。线程只共享同一进程的内存。跨进程要靠网络、数据库或消息，那是分布式章。",
+      "keywords": "thread heap process distributed",
+      "points": [
+        "线程共享同一进程的堆",
+        "另一进程没有这块内存",
+        "跨服务是分布式，不是线程课"
+      ]
     },
     {
       "track": "java",
@@ -12651,6 +13505,48 @@
     {
       "track": "java",
       "group": "Spring",
+      "id": "spring-what-it-is",
+      "title": "Spring 是给 Java 应用装配对象的应用框架",
+      "prompt": "订单服务、库存客户端这些对象，是谁在启动时创建并接上依赖的？",
+      "promptAnswer": "是 Spring 容器。Spring 是给 Java 应用装配对象的应用框架，核心是控制反转。",
+      "keywords": "Spring IoC container dependency injection",
+      "points": [
+        "Spring 是装配对象的应用框架",
+        "核心是控制反转",
+        "容器在启动时创建并注入依赖"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Spring",
+      "id": "spring-enter-boot",
+      "title": "Spring Boot 启动一个已经装配好的应用",
+      "prompt": "现在新建一个 Web 应用，文档建议用哪一套来启动 Spring 容器？",
+      "promptAnswer": "用 Spring Boot。主类上的 SpringApplication.run 启动容器，并按类路径自动配置。",
+      "keywords": "Spring Boot SpringApplication autoconfiguration",
+      "points": [
+        "新应用用 Spring Boot 启动容器",
+        "主类调用 SpringApplication.run",
+        "自动配置看 classpath 和条件"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Spring",
+      "id": "spring-not-the-business",
+      "title": "Spring 装配对象，不代替业务规则和 SQL",
+      "prompt": "容器启动成功了，是不是订单能不能超卖也已经由框架保证？",
+      "promptAnswer": "不是。容器只保证对象被接上。超卖、库存和事务边界仍要你写清楚。",
+      "keywords": "Spring container transaction business rule",
+      "points": [
+        "容器只管装配",
+        "业务规则仍在你的方法里",
+        "SQL 去 JPA 或 MyBatis"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Spring",
       "id": "spring-ioc-wiring",
       "title": "容器先造对象，再按类型或名字注入依赖",
       "prompt": "写了 @Autowired，为什么启动时报找不到 Bean？",
@@ -12976,6 +13872,48 @@
     {
       "track": "java",
       "group": "JPA",
+      "id": "jpa-what-it-is",
+      "title": "JPA 是管理关系数据与实体的持久化规范",
+      "prompt": "对象上的字段要和表上的列对上，Java 这边用的是哪一份规范？",
+      "promptAnswer": "用 Jakarta Persistence，也就是 JPA。它规定实体、持久化上下文和怎样把对象与表对应起来。",
+      "keywords": "JPA Jakarta Persistence entity Hibernate",
+      "points": [
+        "JPA 是持久化规范",
+        "实体身份靠主键",
+        "Hibernate 是常见实现"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "JPA",
+      "id": "jpa-enter-entity",
+      "title": "实体进持久化上下文，才被会话管理",
+      "prompt": "new 出来的 Order 什么时候才会被当成这张表上的一行来管？",
+      "promptAnswer": "persist 或由查询加载之后。它进入持久化上下文，会话结束前的改动会被刷到数据库。",
+      "keywords": "persist persistence context flush",
+      "points": [
+        "new 出来的对象还不是托管实体",
+        "进入持久化上下文后才被会话管理",
+        "提交时 flush 生成 SQL"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "JPA",
+      "id": "jpa-not-mybatis",
+      "title": "JPA 管实体，MyBatis 管你写的 SQL",
+      "prompt": "要把一条手写的复杂报表 SQL 原样发出去，该先找 JPA 还是 MyBatis？",
+      "promptAnswer": "先找 MyBatis。JPA 的主模型是实体和持久化上下文。原样写 SQL 是 MyBatis 的路。",
+      "keywords": "JPA MyBatis SQL entity",
+      "points": [
+        "JPA 主模型是实体",
+        "MyBatis 主模型是 SQL",
+        "不要把两套当成同一条会话"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "JPA",
       "id": "jpa-entity-identity",
       "title": "实体身份靠主键，不等于数据库里的一行快照",
       "prompt": "两个字段完全一样的实体，为什么 equals 仍可能不相等？",
@@ -13121,6 +14059,48 @@
         "列表和详情用不同的图，而不是改映射默认值"
       ],
       "since": "JPA"
+    },
+    {
+      "track": "java",
+      "group": "MyBatis",
+      "id": "mybatis-what-it-is",
+      "title": "MyBatis 把你写的 SQL 映射到对象",
+      "prompt": "接口方法一调用，谁去执行那条 SQL，并把列填进对象？",
+      "promptAnswer": "是 MyBatis。它是 SQL 映射框架：语句写在映射里，运行时绑定参数并映射结果。",
+      "keywords": "MyBatis SQL mapper ResultMap",
+      "points": [
+        "MyBatis 是 SQL 映射框架",
+        "语句写在映射里，经映射器调用",
+        "结果按映射填进对象"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "MyBatis",
+      "id": "mybatis-enter-mapper",
+      "title": "映射器接口绑到一条语句，调用才执行",
+      "prompt": "只写了一个 Java 接口，没有写实现类，谁在运行时执行 SQL？",
+      "promptAnswer": "MyBatis 给这个接口做绑定。方法对应一条语句，调用时才执行。",
+      "keywords": "mapper interface binding SQL",
+      "points": [
+        "映射器是接口不是实现类",
+        "方法绑到一条语句",
+        "调用时才执行"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "MyBatis",
+      "id": "mybatis-not-jpa",
+      "title": "MyBatis 不托管实体生命周期",
+      "prompt": "查出一个对象、改了字段还没 update，MyBatis 会不会在提交时自动写出 UPDATE？",
+      "promptAnswer": "不会。MyBatis 没有 JPA 那样的脏检查。要改库，再调用一条更新语句。",
+      "keywords": "MyBatis dirty checking update SQL",
+      "points": [
+        "MyBatis 没有脏检查",
+        "改库要再写更新语句",
+        "一级缓存不是持久化上下文"
+      ]
     },
     {
       "track": "java",
@@ -13379,6 +14359,48 @@
     {
       "track": "java",
       "group": "安全",
+      "id": "spring-security-what",
+      "title": "Spring Security 是认证和授权的框架",
+      "prompt": "HTTP 请求进应用之后，谁先问「你是谁」和「你能不能做这件事」？",
+      "promptAnswer": "是 Spring Security。它用过滤器链做认证和授权，不是只提供一个登录页。",
+      "keywords": "Spring Security authentication authorization filter",
+      "points": [
+        "Spring Security 是认证和授权框架",
+        "请求走过滤器链",
+        "认证和授权是两问"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "安全",
+      "id": "spring-security-enter-chain",
+      "title": "过滤器链在控制器之前拦住请求",
+      "prompt": "没带登录态的请求，是在控制器方法里才失败，还是更早？",
+      "promptAnswer": "更早。Security 过滤器链在 DispatcherServlet 之前处理，未认证就回 401 或登录页。",
+      "keywords": "SecurityFilterChain DispatcherServlet 401 403",
+      "points": [
+        "过滤器链在控制器之前",
+        "未认证到不了 @GetMapping",
+        "401 和 403 不是同一问"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "安全",
+      "id": "spring-security-not-only-login",
+      "title": "Spring Security 不管口令存哪一种哈希以外的业务",
+      "prompt": "框架接上了，是不是用户表、对象级权限和前端 Cookie 都已经自动正确？",
+      "promptAnswer": "不是。框架提供过滤器和 API。口令怎么存、这条记录谁能改、浏览器怎么带 Cookie，仍要分开写清。",
+      "keywords": "PasswordEncoder object authorization CSRF",
+      "points": [
+        "框架提供过滤器不是整套业务安全",
+        "口令要自适应哈希",
+        "对象级权限和 Cookie 要另写"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "安全",
       "id": "spring-security-filter-chain",
       "title": "认证发生在过滤链上，控制器里的 if 登录不能代替这一层",
       "prompt": "控制器第一行写了 if (user == null) return 401，为什么未登录请求仍可能进到业务方法？",
@@ -13540,6 +14562,48 @@
         "Redis token 与 JWT 是两套会话"
       ],
       "since": "RFC 7519"
+    },
+    {
+      "track": "java",
+      "group": "Nginx",
+      "id": "nginx-what-and-when",
+      "title": "Nginx 是事件驱动的 HTTP 服务器和反向代理",
+      "prompt": "为什么静态文件和把请求转到后面的应用，资料常先写 Nginx，而不是再写一个 Java 服务？",
+      "promptAnswer": "Nginx 擅长接连接、回静态文件、把请求转到上游。应用进程留给业务。",
+      "keywords": "Nginx reverse proxy HTTP server",
+      "points": [
+        "Nginx 是 HTTP 服务器和反向代理",
+        "擅长静态文件和转到上游",
+        "不是 Java 应用容器"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Nginx",
+      "id": "nginx-tradeoffs-capacity",
+      "title": "Nginx 的容量看连接和工作进程，不看一句全站并发",
+      "prompt": "为什么很难用一句话回答「这台 Nginx 能抗多少 QPS」？",
+      "promptAnswer": "没有固定全站并发。看工作进程、连接、上游超时和响应体大小，用压测。",
+      "keywords": "Nginx worker connection timeout capacity",
+      "points": [
+        "优点是连接和静态响应",
+        "代价是不管业务、配错影响面大",
+        "容量看进程、连接和上游，没有万能 QPS"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Nginx",
+      "id": "nginx-vs-gateway",
+      "title": "Nginx 转上游，网关问这个接口让不让过",
+      "prompt": "已经用 Nginx 把请求转到后面，还要不要 API 网关？",
+      "promptAnswer": "还要看第三问：这个接口让不让过。只转上游、只选实例，还不是接口级鉴权和限流。",
+      "keywords": "Nginx reverse proxy load balancer API gateway",
+      "points": [
+        "反代回答转到哪",
+        "均衡回答选哪一台",
+        "网关回答接口让不让过"
+      ]
     },
     {
       "track": "java",
@@ -13737,6 +14801,48 @@
     {
       "track": "java",
       "group": "网关",
+      "id": "gateway-what-and-when",
+      "title": "API 网关按接口做路由、鉴权和限流",
+      "prompt": "为什么入口除了反向代理，还常再放一个网放进程？",
+      "promptAnswer": "网关问的是这个 API 让不让过：按路径路由、校验令牌、按接口限流。不是只转到一台机器。",
+      "keywords": "API gateway routing auth rate-limit",
+      "points": [
+        "网关按接口处理入口请求",
+        "典型是路由、鉴权、限流",
+        "不是只做选实例"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "网关",
+      "id": "gateway-tradeoffs-capacity",
+      "title": "网关的代价是多一跳，容量按路由和过滤器估",
+      "prompt": "是不是入口加上网关就一定更快、更安全？",
+      "promptAnswer": "不是。多一跳就多一次超时和失败面。安全取决于过滤器和令牌校验，不是进程名字。",
+      "keywords": "API gateway hop timeout filter capacity",
+      "points": [
+        "优点是集中路由鉴权",
+        "代价是多一跳和读正文",
+        "容量看路由和过滤器，没有万能 QPS"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "网关",
+      "id": "gateway-vs-proxy",
+      "title": "代理转连接，网关问接口，服务内还要问对象",
+      "prompt": "Nginx 已经转到订单服务，网关也校验了令牌，对象级权限还要不要问？",
+      "promptAnswer": "还要问。代理回答转到哪，网关回答这个接口让不让过，对象是不是你的仍在服务内。",
+      "keywords": "reverse proxy API gateway object authorization",
+      "points": [
+        "代理转连接",
+        "网关问接口",
+        "对象级权限在服务内"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "网关",
       "id": "mw-proxy-lb-gateway",
       "title": "入口先分清三问：转到哪、选哪台、允不允许",
       "prompt": "Nginx、负载均衡和 API 网关是不是必须买三套？",
@@ -13852,6 +14958,48 @@
         "长连接的重试和选路不能当幂等 GET"
       ],
       "since": "RFC 6455"
+    },
+    {
+      "track": "java",
+      "group": "Netty",
+      "id": "netty-what-it-is",
+      "title": "Netty 是异步事件驱动的网络应用框架",
+      "prompt": "要在 Java 里自己管连接、字节和编解码，而不是先上一个 HTTP 框架，用的是哪一套？",
+      "promptAnswer": "用 Netty。它是异步、事件驱动的网络应用框架，用来写协议和连接，不是现成的业务 HTTP 服务器。",
+      "keywords": "Netty event loop pipeline ByteBuf",
+      "points": [
+        "Netty 是异步事件驱动的网络框架",
+        "事件循环处理连接",
+        "管道上的处理器做编解码"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Netty",
+      "id": "netty-enter-bootstrap",
+      "title": "Bootstrap 绑定事件循环和管道，才开始接连接",
+      "prompt": "写好了 Handler，怎样让它开始在某个端口上收连接？",
+      "promptAnswer": "用 ServerBootstrap 配上 EventLoopGroup、Channel 类型和管道，再 bind 端口。",
+      "keywords": "ServerBootstrap EventLoopGroup ChannelPipeline",
+      "points": [
+        "ServerBootstrap 绑定端口",
+        "Handler 挂在管道上",
+        "事件循环处理连接上的事件"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Netty",
+      "id": "netty-not-spring-mvc",
+      "title": "Netty 不管控制器和事务，Spring MVC 不管字节流",
+      "prompt": "已经有 Spring MVC，是不是就不需要理解 Netty？反过来能不能用 Netty 代替 @GetMapping？",
+      "promptAnswer": "不是一回事。MVC 处理 HTTP 请求和控制器。Netty 处理连接和字节。多数业务先用 MVC；要自己写协议再下到 Netty。",
+      "keywords": "Netty Spring MVC HTTP protocol",
+      "points": [
+        "MVC 处理 HTTP 请求",
+        "Netty 处理连接和字节",
+        "业务 API 默认不直接上 Netty"
+      ]
     },
     {
       "track": "java",
@@ -15204,6 +16352,20 @@
     {
       "track": "java",
       "group": "系统设计",
+      "id": "arch-chapter-aim",
+      "title": "系统设计章先写一条路径，再谈拆分和容量",
+      "prompt": "这一章是先报中间件名单，还是先写清一条读写路径？",
+      "promptAnswer": "先写一条路径：用户动作、读写量、权威数据和失败时用户看见什么。中间件在这些句子之后。",
+      "keywords": "system design monolith split SLO",
+      "points": [
+        "先写路径再拆分",
+        "单体可以是正确选择",
+        "中间件出现在六句话之后"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
       "id": "arch-evolution-stages",
       "title": "按瓶颈决定停在哪一级，不是必走四级",
       "prompt": "为什么不能把“上微服务”当成架构演进的第一句？",
@@ -15477,6 +16639,20 @@
         "别的模块调用对方的应用服务，不写对方的表"
       ],
       "since": "system design"
+    },
+    {
+      "track": "java",
+      "group": "分布式与高并发",
+      "id": "dist-chapter-aim",
+      "title": "分布式章回答多进程之间怎样看见同一份事实",
+      "prompt": "线程课已经讲过共享内存，这一章还要回答哪一类问题？",
+      "promptAnswer": "多进程、多机器之间怎样达成一致、怎样做事务和怎样挡流量。它们没有同一块堆。",
+      "keywords": "distributed consistency lock rate-limit",
+      "points": [
+        "分布式是跨进程协作",
+        "没有同一块堆",
+        "一致、事务、流量、隔离是四块"
+      ]
     },
     {
       "track": "java",
@@ -16403,6 +17579,132 @@
     {
       "track": "java",
       "group": "交付与运行",
+      "id": "gha-what-it-is",
+      "title": "GitHub Actions 是跟着仓库走的 CI 服务",
+      "prompt": "代码推进 GitHub 之后，谁按你写的步骤去构建和跑测试？",
+      "promptAnswer": "GitHub Actions。工作流写在仓库的 YAML 里，事件触发后在 runner 上执行作业。",
+      "keywords": "GitHub Actions workflow YAML runner",
+      "points": [
+        "GitHub Actions 是仓库上的 CI 服务",
+        "工作流是 .github/workflows 里的 YAML",
+        "runner 执行作业"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "交付与运行",
+      "id": "gha-workflow-enter",
+      "title": "工作流由事件触发，作业按 needs 排队",
+      "prompt": "怎样让测试通过之后才开始构建镜像？",
+      "promptAnswer": "写成两个 job，构建那个 job 写 needs: test。test 失败时构建不会开始。",
+      "keywords": "on jobs needs artifact",
+      "points": [
+        "事件写在 on 上",
+        "needs 让后一个作业等前一个成功",
+        "失败的作业会挡住依赖它的作业"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "交付与运行",
+      "id": "gha-not-the-runtime",
+      "title": "Actions 跑的是 CI 作业，不是线上进程",
+      "prompt": "工作流绿了，是不是生产里的应用已经在集群里跑着？",
+      "promptAnswer": "不是。绿了只说明这次作业过了。线上进程在容器或集群里，要另一次部署。",
+      "keywords": "GitHub Actions runner deploy Kubernetes",
+      "points": [
+        "CI 绿了不是生产已启动",
+        "线上进程在容器或集群",
+        "runner 不是长期服务"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "交付与运行",
+      "id": "docker-what-it-is",
+      "title": "Docker 用镜像启动容器，容器共享主机内核",
+      "prompt": "要把同一份应用在另一台机器上按同样的文件系统跑起来，打包的是什么？",
+      "promptAnswer": "打包的是镜像。容器是镜像跑起来的进程。容器和主机共享内核，不是一台完整的虚拟机。",
+      "keywords": "Docker image container kernel",
+      "points": [
+        "镜像是模板，容器是跑起来的进程",
+        "容器共享主机内核",
+        "不是完整虚拟机"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "交付与运行",
+      "id": "docker-image-run",
+      "title": "Dockerfile 写出镜像，docker run 启动容器",
+      "prompt": "怎样把当前目录的应用变成一个可以 docker run 的镜像？",
+      "promptAnswer": "写 Dockerfile，用 docker build 打标签，再用 docker run 启动。",
+      "keywords": "Dockerfile docker build docker run",
+      "points": [
+        "Dockerfile 描述镜像",
+        "build 生成镜像，run 启动容器",
+        "标签用来引用这次构建"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "交付与运行",
+      "id": "docker-not-a-vm",
+      "title": "容器不是虚拟机，也不是集群",
+      "prompt": "一台机器上的 Docker 已经能跑容器，是不是就已经有了 Kubernetes？",
+      "promptAnswer": "不是。Docker 管这台机器上的镜像和容器。多机调度、服务和 Ingress 是 Kubernetes。",
+      "keywords": "container VM Kubernetes Docker",
+      "points": [
+        "容器共享主机内核",
+        "Docker 管单机上的容器",
+        "集群调度是 Kubernetes"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "交付与运行",
+      "id": "k8s-what-it-is",
+      "title": "Kubernetes 是调度容器工作负载的集群",
+      "prompt": "多台机器上都要跑同一份应用的几个副本，谁来放这些容器并让它们被访问？",
+      "promptAnswer": "是 Kubernetes。它调度 Pod，用 Service 给出集群内地址，用 Ingress 把外部流量引进来。",
+      "keywords": "Kubernetes Pod Deployment Service",
+      "points": [
+        "Kubernetes 调度容器工作负载",
+        "Pod 是最小调度对象",
+        "Deployment 管副本，Service 给地址"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "交付与运行",
+      "id": "k8s-cluster-enter",
+      "title": "kubectl 对上控制面，节点才跑你的 Pod",
+      "prompt": "写好一份 Deployment YAML，怎样让集群里真的出现这些 Pod？",
+      "promptAnswer": "kubectl apply 把它交给 API。控制器在节点上创建 Pod。只写文件、不 apply，集群不会变。",
+      "keywords": "kubectl apply kubelet scheduler",
+      "points": [
+        "kubectl apply 把期望状态交给 API",
+        "调度器选节点，kubelet 启动容器",
+        "只写 YAML 不会改变集群"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "交付与运行",
+      "id": "k8s-not-docker-engine",
+      "title": "Kubernetes 不是 Docker 引擎，也不是 Ingress 本身",
+      "prompt": "集群已经能跑 Pod，浏览器怎样打到这些副本？是不是 Docker 自己在做调度？",
+      "promptAnswer": "集群内用 Service。从外面进来通常要 Ingress 和它的控制器。调度的是 Kubernetes，不是本机 Docker 引擎。",
+      "keywords": "Kubernetes Service Ingress containerd",
+      "points": [
+        "调度的是 Kubernetes 不是本机 Docker",
+        "集群内地址是 Service",
+        "Ingress 需要控制器"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "交付与运行",
       "id": "gha-workflow-in-dot-github",
       "title": "流水线写在 .github/workflows，靠 on 触发",
       "prompt": "为什么仓库根目录放了 build.yml，推代码却看不到这次运行？",
@@ -16658,6 +17960,48 @@
     {
       "track": "java",
       "group": "测试",
+      "id": "junit-what-it-is",
+      "title": "JUnit 是在 JVM 上跑断言的测试框架",
+      "prompt": "要验证一段 Java 代码的结果，常用哪一个框架来发现和执行测试方法？",
+      "promptAnswer": "用 JUnit。它发现测试方法，在 JVM 上执行，并用断言对照结果。",
+      "keywords": "JUnit Jupiter @Test assertion",
+      "points": [
+        "JUnit 是 Java 测试框架",
+        "@Test 标出要执行的方法",
+        "断言对照可观察结果"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "测试",
+      "id": "junit-enter-test",
+      "title": "构建工具发现测试类，JUnit 执行方法",
+      "prompt": "写好 @Test 方法之后，谁去找到它并在 JVM 里跑起来？",
+      "promptAnswer": "Maven 或 Gradle 的测试任务发现测试类，再把执行交给 JUnit 平台。",
+      "keywords": "Maven Gradle JUnit Platform src/test",
+      "points": [
+        "构建工具发现并启动测试",
+        "JUnit 平台执行 @Test 方法",
+        "测试源码在 src/test/java"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "测试",
+      "id": "junit-not-the-app",
+      "title": "测试验证行为，不代替应用进程",
+      "prompt": "测试绿了，是不是生产里的 Spring 进程和数据库也已经在跑？",
+      "promptAnswer": "不是。JUnit 跑的是测试进程。生产进程、真实库和容器要另起，或用切片和 Testcontainers。",
+      "keywords": "JUnit Spring test slice Testcontainers",
+      "points": [
+        "JUnit 跑的是测试进程",
+        "绿条不表示生产已启动",
+        "真实库要用切片或容器"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "测试",
       "id": "junit-instance-lifecycle",
       "title": "测试要能单独跑、换序也能跑（JUnit 5）",
       "prompt": "第二个测试方法为什么看得到第一个测试放进 List 的数据？",
@@ -16757,6 +18101,20 @@
         "清数据不要用重建容器代替"
       ],
       "since": "Spring"
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "java-eng-chapter-aim",
+      "title": "工程实践章回答一次请求怎样被看见、变慢时调哪一段",
+      "prompt": "线上慢了或失败了，这一章先让你抓住哪三件事？",
+      "promptAnswer": "这一次请求的跟踪、三类信号、以及慢在哪一种资源。不要先换框架。",
+      "keywords": "OpenTelemetry trace metrics logs",
+      "points": [
+        "这一章不换业务框架",
+        "先能看见一次请求",
+        "慢了先定位资源再调一段"
+      ]
     },
     {
       "track": "java",
@@ -17053,6 +18411,21 @@
     {
       "track": "java",
       "group": "工程实践",
+      "id": "linux-user-kernel-syscall",
+      "title": "用户态只能访问局部地址空间，进内核靠系统调用陷入",
+      "prompt": "为什么普通业务代码不能直接改页表，却又能通过 open、read、mmap 碰到内核能力？",
+      "promptAnswer": "用户态只能碰自己的用户空间。要特权操作时发系统调用，CPU 陷入内核态执行后再返回。",
+      "keywords": "用户态 内核态 系统调用 陷入",
+      "points": [
+        "用户态只能访问本进程用户空间",
+        "系统调用经陷入进入内核再返回",
+        "特权操作走固定入口，不是业务代码直改内核结构"
+      ],
+      "since": "engineering"
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
       "id": "linux-virtual-memory-isolation",
       "title": "多进程不能共用绝对物理地址，要用虚拟地址做隔离",
       "prompt": "为什么把单片机那种“CPU 直接按物理地址读写内存”套到多进程操作系统上，会在两个程序写同一地址时说不通？",
@@ -17242,6 +18615,36 @@
         "shell 先 pipe 再 fork，用继承把管道交给子进程",
         "写端与读端进程要关掉不用的那一端",
         "匿名管道依赖亲缘继承；无亲缘用命名管道等"
+      ],
+      "since": "engineering"
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-process-states",
+      "title": "教材进程五态是调度模型，不是 Java Thread.State",
+      "prompt": "为什么把“创建、就绪、运行、阻塞、结束”背成 Java 线程只有这五种，读 jstack 会对不上？",
+      "promptAnswer": "那是操作系统教材里的进程调度模型。Java 用 Thread.State 六个值；两者名字相近但不是同一套枚举。",
+      "keywords": "进程五态 就绪 运行 阻塞 Thread.State",
+      "points": [
+        "教材五态描述调度与阻塞，不是 JVM 枚举",
+        "就绪经调度才运行；等事件走阻塞",
+        "Java 线程状态见 Thread.State 六个值"
+      ],
+      "since": "engineering"
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-process-context-switch",
+      "title": "进程上下文切换要保存 CPU 上下文，并换上另一进程的地址空间等资源",
+      "prompt": "为什么把“换一个线程跑一下”想成只改程序计数器，会低估进程切换成本？",
+      "promptAnswer": "CPU 上下文包括寄存器与 PC。进程切换还要换虚拟内存等用户态资源，以及内核栈等内核态资源，且在内核态完成。",
+      "keywords": "上下文切换 寄存器 PC 虚拟内存 内核态",
+      "points": [
+        "切换前保存寄存器与 PC，再装入下一任务",
+        "进程切换在内核态，含用户态与内核态资源",
+        "同进程线程切换通常不必换整份地址空间"
       ],
       "since": "engineering"
     },

@@ -71,7 +71,7 @@ export function HomePage() {
       <div>
         <h1 className="hero-title">{TRACK_LABEL[track]}，从入门到能独立交付</h1>
         <p className="hero-lead">{TRACK_INTRO[track]}</p>
-        <Space wrap size={12}>
+        <Space className="hero-actions" wrap size={12}>
           <Button
             type="primary"
             size="middle"

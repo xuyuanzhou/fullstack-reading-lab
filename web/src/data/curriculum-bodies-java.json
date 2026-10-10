@@ -107,6 +107,84 @@
       ]
     ]
   },
+  "java-what-it-is": {
+    "core": "Java 是一门编程语言，也是一套平台。源文件是 .java。编译器 javac 把它变成 .class 里的字节码（bytecode）。Java 虚拟机（JVM）加载这些字节码并执行。语言规范里的基本类型见 `java-eight-primitives`。虚拟机自己的结构见 `jvm-what-it-is`。",
+    "example": "最小的入口：\n\n```java\nclass Pay {\n  public static void main(String[] args) {\n    System.out.println(\"ok\");\n  }\n}\n```",
+    "task": "用文档里的说法说明 Java 是什么。源文件、字节码、虚拟机各是哪一步？",
+    "answer": "Java 是一门语言，也是一套能跑字节码的平台。源文件是 .java，编译成 .class 字节码，由 JVM 执行。",
+    "deep": [
+      {
+        "title": "类库也是平台的一部分",
+        "body": "String、List、线程这些类型来自标准类库，不是语言正文里的基本类型。集合见 `java-list-set-map`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开 JLS 的 Introduction，对上 language 和 platform。把上面的类存成 Pay.java，运行 javac Pay.java 再 java Pay，确认先有 .class 再有输出。"
+      }
+    ],
+    "references": [
+      [
+        "JLS：Introduction",
+        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-1.html"
+      ],
+      [
+        "Java 教程：Getting Started",
+        "https://docs.oracle.com/javase/tutorial/getStarted/index.html"
+      ]
+    ]
+  },
+  "java-enter-main": {
+    "core": "javac 读入 .java，写出 .class。java 命令启动一个 JVM 进程，加载你给出的类，调用它的 main。main 的签名必须是 public static void main(String[])。启动失败常见于类名和文件名不一致，或 main 写错，见 `java-main-launcher`。包和访问见 `java-package-access`。",
+    "example": "编译并运行：\n\n```bash\njavac Pay.java\njava Pay\n```",
+    "task": "写出编译和运行的两条命令。虚拟机从哪一个方法开始？这个方法要满足哪三个修饰？",
+    "answer": "javac Pay.java 然后 java Pay。从 main 开始。它必须是 public、static、返回 void，参数是 String[]。",
+    "deep": [
+      {
+        "title": "一个进程里可以有许多线程",
+        "body": "main 所在的线程是第一条用户线程。随后 new Thread 或线程池会再启动别的线程，见 `java-thread-start-run`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "把 main 改成小写或拿掉 static，再 java Pay，确认启动失败。改回正确签名后看到 ok。"
+      }
+    ],
+    "references": [
+      [
+        "JLS：Program Execution",
+        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-12.html"
+      ],
+      [
+        "Java 教程：A Closer Look at the Hello World Application",
+        "https://docs.oracle.com/javase/tutorial/getStarted/application/index.html"
+      ]
+    ]
+  },
+  "java-not-javascript": {
+    "core": "Java 和 JavaScript 是两门语言。Java 的基本类型、类和空引用见后面的类型课。JavaScript 的值见 `js-what-it-is`。这一章学语言和类库。字节码怎么被虚拟机管，去 JVM 章。多线程怎么启动，去并发章。",
+    "example": "两边各自的入口：\n\n```java\npublic static void main(String[] args) {}\n```\n\n```javascript\n// 浏览器或 Node.js\nconsole.log(\"ok\");\n```",
+    "task": "说明 Java 和 JavaScript 是不是同一门语言。Java 的字节码在哪一层跑？",
+    "answer": "不是同一门语言。Java 的字节码在 JVM 里跑。JavaScript 在浏览器引擎或 Node.js 里跑。",
+    "deep": [
+      {
+        "title": "类型在运行时还在",
+        "body": "Java 的基本类型和类在虚拟机里还在。TypeScript 的类型编译后消失，见 `ts-not-runtime-check`。不要用另一门语言的擦除来理解 Java。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对同一段「打印 ok」分别写 Java 和 JavaScript。Java 必须先有 class 和 main，并且先 javac。JavaScript 没有这一步。"
+      }
+    ],
+    "references": [
+      [
+        "JLS：Introduction",
+        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-1.html"
+      ],
+      [
+        "JVMS：Introduction",
+        "https://docs.oracle.com/javase/specs/jvms/se21/html/jvms-1.html"
+      ]
+    ]
+  },
   "java-eight-primitives": {
     "core": "语言规范里的基本类型（primitive type）一共八种。整数是 byte、short、int、long，浮点是 float、double，另外还有 char 和 boolean。变量里放的是值本身。整数字面量默认是 int，末尾加 L 才是 long。小数字面量默认是 double，末尾加 F 才是 float。两个整数相除按整数除法（integer division），商向零截断：5 / 2 是 2，(-5) / 2 是 -2。要留下小数，至少有一边是浮点，例如 5.0 / 2。",
     "example": "整数相除丢掉小数：\n\n```java\nint q = 5 / 2;          // 2\nint nq = (-5) / 2;      // -2，向零截断\ndouble d = 5.0 / 2;     // 2.5\nlong n = 5L;\nboolean ok = true;\n```",
@@ -2840,6 +2918,84 @@
     ],
     "diagram": "diagrams/spring-constructor-deps.svg"
   },
+  "jvm-what-it-is": {
+    "core": "Java 虚拟机（Java Virtual Machine，JVM）是执行字节码的规范，也是具体实现，常见的是 HotSpot。它加载 .class，校验字节码，在堆和方法区里放对象和类元数据，再执行方法。运行时数据区见 `jvm-areas`。类怎么装进来见 `java-classloading`。",
+    "example": "一条命令启动虚拟机：\n\n```bash\njava -version\njava Pay\n```",
+    "task": "用文档里的说法说明 JVM 是什么。它执行的是源文件还是字节码？常见实现叫什么？",
+    "answer": "JVM 是执行 Java 字节码的虚拟机。它执行的是字节码，不是 .java。常见实现是 HotSpot。",
+    "deep": [
+      {
+        "title": "其它语言也可以编译到字节码",
+        "body": "Kotlin、Scala 也可以出 .class。这一章按 Java 平台和 JVMS 讲。语言语法仍回 Java 基础。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开 JVMS 的 Introduction，对上 virtual machine 和 class file。运行 javap -c Pay，确认看到的是字节码，不是操作系统的机器指令。"
+      }
+    ],
+    "references": [
+      [
+        "JVMS：Introduction",
+        "https://docs.oracle.com/javase/specs/jvms/se21/html/jvms-1.html"
+      ],
+      [
+        "HotSpot：Virtual Machine",
+        "https://openjdk.org/groups/hotspot/"
+      ]
+    ]
+  },
+  "jvm-enter-class": {
+    "core": "虚拟机启动后，类加载器（class loader）按全名找 .class。加载读入字节，链接做校验和解析，初始化跑静态初始化。应用类由平台类加载器和系统类加载器分工，见 `java-classloading`、`jvm-platform-classloader-not-ext`。方法区在 HotSpot 里是元空间，见 `jvm-method-area-metaspace`。",
+    "example": "看一个类的字节码：\n\n```bash\njavap -c -p Pay\n```",
+    "task": "说明类进入虚拟机要经过哪三步。main 所在的类什么时候被装进来？",
+    "answer": "经过加载、链接、初始化。java 命令启动时先装 main 所在的类。",
+    "deep": [
+      {
+        "title": "同一全名在同一加载器里只装一次",
+        "body": "两个加载器可以各装一份同名类。日常应用里先认清是哪一个加载器找不到文件，再谈热加载。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "把 Pay.class 挪出 classpath 再 java Pay，确认是类加载失败。用 javap 打开存在的 .class，对照方法字节码。"
+      }
+    ],
+    "references": [
+      [
+        "JVMS：Loading, Linking, and Initializing",
+        "https://docs.oracle.com/javase/specs/jvms/se21/html/jvms-5.html"
+      ],
+      [
+        "JLS：Execution",
+        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-12.html"
+      ]
+    ]
+  },
+  "jvm-not-the-language": {
+    "core": "语言里的基本类型、类和异常回 Java 基础。JVM 章回答字节码跑起来之后：堆和栈在哪，垃圾收集选哪一种，OOM 和转储怎么看。运行时数据区见 `jvm-areas`。收集器见 `jvm-gc-choice`。JMM 是内存模型，不是运行时数据区的别名，见 `jvm-jmm-not-runtime-areas`。",
+    "example": "两章各管一句：\n\n```text\nJava 基础   5 / 2 为什么是 2\nJVM        这个 int 在栈帧还是堆上\n```",
+    "task": "说明 JVM 章不回答哪一类问题。堆、垃圾收集、转储各属于哪一章？",
+    "answer": "不回答 if、泛型和基本类型这些语法。堆、垃圾收集和转储属于 JVM 章。",
+    "deep": [
+      {
+        "title": "容器内存不是 -Xmx 的别名",
+        "body": "进程能用的内存还受容器限制，见 `jvm-xmx-not-container-limit`。调堆之前先认清哪一层在限制。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "用 jcmd 或 jtool 看正在跑的进程的 GC 名字和堆大小。这些数字不会出现在 JLS 的类型章节里。"
+      }
+    ],
+    "references": [
+      [
+        "JVMS：Run-Time Data Areas",
+        "https://docs.oracle.com/javase/specs/jvms/se21/html/jvms-2.html#jvms-2.5"
+      ],
+      [
+        "HotSpot：Garbage Collection",
+        "https://docs.oracle.com/en/java/javase/21/gctuning/"
+      ]
+    ]
+  },
   "jvm-areas": {
     "core": "JVM 规范定义每个线程有自己的 pc 寄存器：执行非 native 方法时记录当前 JVM 指令地址；执行 native 方法时其值未定义。它是抽象机的运行时数据区，不应直接等同 CPU 物理程序计数器。虚拟机栈、堆和方法区也需按规范与具体实现区分。顺序是：先按规范画出线程私有的 pc 和虚拟机栈、线程共享的堆和方法区，再对照正在用的虚拟机说明这些区域落在哪里。边界是：pc 在执行 Java 方法时指向 JVM 指令，执行 native 方法时未定义，它不是 CPU 的程序计数器。调优参数和溢出报错必须绑定具体实现，不能把一张混合了硬件和抽象机的图当成诊断依据。",
     "why": "错把 JVM 的 pc 寄存器当成 CPU 里的下一条机器指令地址，排障时会去看硬件计数器，而栈帧和堆才是这次失败所在的抽象区域。能分开的信号是：这个名字来自规范里的逻辑区域，还是来自某个虚拟机的实现布局。",
@@ -3402,6 +3558,84 @@
       ]
     ],
     "diagram": "diagrams/jvm-dumps.svg"
+  },
+  "java-concurrency-what": {
+    "core": "并发（concurrency）在 Java 里首先是线程（thread）：同一进程里多条控制流。Thread.start 才真正启动一条线程，见 `java-thread-start-run`。共享变量怎样看见对方的写入，见 `java-happens-before`。线程池见 `java-executor`。这不是多台机器上的分布式协作，那一章见 `dist-chapter-aim`。",
+    "example": "启动第二条线程：\n\n```java\nThread t = new Thread(() -> System.out.println(\"work\"));\nt.start();\n```",
+    "task": "说明 Java 并发首先指什么。start 和直接调用 run 有什么差别？这是不是多台机器？",
+    "answer": "首先指同一进程里的多条线程。start 才启动新线程，直接调用 run 仍在当前线程。这不是多台机器。",
+    "deep": [
+      {
+        "title": "工具在 java.util.concurrent",
+        "body": "锁、队列、线程池和并发容器在这个包里。synchronized 是语言关键字。先认线程，再认这些工具。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打印 Thread.currentThread().getName()。在 run 里直接调用和 start 各做一次，确认只有 start 出现新的线程名。"
+      }
+    ],
+    "references": [
+      [
+        "JLS：Threads and Locks",
+        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-17.html"
+      ],
+      [
+        "Java 教程：Concurrency",
+        "https://docs.oracle.com/javase/tutorial/essential/concurrency/index.html"
+      ]
+    ]
+  },
+  "java-thread-enter": {
+    "core": "Thread 对象造出来还没有第二条线程。调用 start 之后，虚拟机才创建操作系统线程去执行 run。许多任务应交给执行器（ExecutorService），由线程池复用线程，见 `java-executor`。结果和异常用 Future 接，见 `java-future-errors`。虚拟线程见 `java-virtual-threads`。",
+    "example": "交给线程池：\n\n```java\ntry (var exec = Executors.newVirtualThreadPerTaskExecutor()) {\n  exec.submit(() -> System.out.println(\"work\"));\n}\n```",
+    "task": "说明什么时候才出现第二条线程。许多任务为什么更适合交给执行器？",
+    "answer": "调用 start 之后才出现第二条线程。许多任务交给执行器，由池复用线程，并用 Future 接结果。",
+    "deep": [
+      {
+        "title": "打断不是立刻停",
+        "body": "interrupt 只设标志。sleep 或阻塞点会响应。自己写的循环要查 isInterrupted，见 `java-interrupt`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "分别调用 run 和 start，打印线程名。再用 Executors.newFixedThreadPool(1) 提交两个任务，确认复用同一条池线程。"
+      }
+    ],
+    "references": [
+      [
+        "Java：Thread.start",
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Thread.html#start()"
+      ],
+      [
+        "Java：ExecutorService",
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/ExecutorService.html"
+      ]
+    ]
+  },
+  "java-concurrency-not-distributed": {
+    "core": "同一 JVM 进程里的线程共享堆。happens-before 决定什么时候能看见对方的写入，见 `java-happens-before`。另一个进程、另一台机器没有这块堆。跨服务的一致性和锁见分布式章。数据库事务见 `mysql-isolation`。",
+    "example": "分界：\n\n```text\n同一进程   synchronized / j.u.c\n两个进程   网络、数据库、消息\n```",
+    "task": "说明线程共享的是什么。两个进程要不要用 Thread 来同步？跨服务去哪一章？",
+    "answer": "线程共享同一进程的堆。两个进程不能靠 Thread 看见同一块内存。跨服务去分布式章。",
+    "deep": [
+      {
+        "title": "ThreadLocal 也出不了进程",
+        "body": "ThreadLocal 只绑在当前线程上，见 `java-thread-local-leak`。不能把它当成分布式上下文，见 `threadlocal-not-distributed-context`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "启动两个 java 进程，各打印 System.identityHashCode(一个静态对象)。两边的数字对不上，因为堆不共享。"
+      }
+    ],
+    "references": [
+      [
+        "JLS：Threads and Locks",
+        "https://docs.oracle.com/javase/specs/jls/se21/html/jls-17.html"
+      ],
+      [
+        "Java 教程：Memory Consistency",
+        "https://docs.oracle.com/javase/tutorial/essential/concurrency/memconsist.html"
+      ]
+    ]
   },
   "java-thread-start-run": {
     "core": "对用 Runnable 创建的平台线程，直接调用 run() 是一次普通方法调用：任务会在当前调用线程中同步执行，不会启动新线程。start() 才会安排该 Thread 独立执行；同一个 Thread 实例不能启动两次。Java 21 之后的虚拟线程有额外边界：直接调用其 run() 不会运行任务，应按对应版本 API 分别讨论。",
@@ -8800,6 +9034,84 @@
       ]
     ]
   },
+  "spring-what-it-is": {
+    "core": "Spring Framework 是给 Java 应用提供编程和配置模型的应用框架。核心是控制反转（Inversion of Control，IoC）：容器创建对象，再按类型或名字注入依赖。你写的是业务类和配置，对象图由容器在启动时接好。装配见 `spring-ioc-wiring`。Bean 的生命周期见 `spring-bean-lifecycle`。",
+    "example": "一个会被容器创建的服务：\n\n```java\n@Service\nclass OrderService {\n  OrderService(InventoryClient inventory) {}\n}\n```",
+    "task": "用文档里的说法说明 Spring 是什么。谁在启动时创建对象并注入依赖？",
+    "answer": "Spring 是给 Java 应用装配对象的应用框架。容器在启动时创建对象并按类型或名字注入依赖。",
+    "deep": [
+      {
+        "title": "模块按需用",
+        "body": "Web 请求用 Spring MVC，切面用 AOP，事务用声明式事务。它们建立在同一套容器上，不是另三个框架。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开 Spring Framework 概述，对上 programming and configuration model。写一个带构造器依赖的 @Service，启动后确认依赖已经被注入，而不是在请求里自己 new。"
+      }
+    ],
+    "references": [
+      [
+        "Spring Framework：Overview",
+        "https://docs.spring.io/spring-framework/reference/overview.html"
+      ],
+      [
+        "Spring：IoC 容器",
+        "https://docs.spring.io/spring-framework/reference/core/beans.html"
+      ]
+    ]
+  },
+  "spring-enter-boot": {
+    "core": "日常新应用用 Spring Boot 启动。@SpringBootApplication 标在主类上，SpringApplication.run 创建容器、刷新，并按 classpath 上的 starter 自动配置。内嵌 Tomcat 默认用 NIO，见 `tomcat-nio-not-bio-default`。外部配置见 `spring-external-config`。容器装配本身见 `spring-what-it-is`。",
+    "example": "入口：\n\n```java\n@SpringBootApplication\nclass PayApplication {\n  public static void main(String[] args) {\n    SpringApplication.run(PayApplication.class, args);\n  }\n}\n```",
+    "task": "说明谁启动容器。自动配置根据什么来决定装哪些 Bean？",
+    "answer": "SpringApplication.run 启动容器。自动配置根据 classpath 上的 starter 和条件来装 Bean。",
+    "deep": [
+      {
+        "title": "Boot 不是另一套容器",
+        "body": "跑起来的仍是 Spring 容器。Boot 负责启动、自动配置和默认约定。手工 new AnnotationConfigApplicationContext 也能装配，只是现在不是默认入口。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "用 start.spring.io 生成一个 Web 项目，运行主类。确认日志里出现 Tomcat started，并在 /actuator 或一个 @GetMapping 上看到容器已经响应。"
+      }
+    ],
+    "references": [
+      [
+        "Spring Boot：Getting Started",
+        "https://docs.spring.io/spring-boot/reference/using/index.html"
+      ],
+      [
+        "Spring Boot：SpringApplication",
+        "https://docs.spring.io/spring-boot/reference/using/spring-boot-applications.html"
+      ]
+    ]
+  },
+  "spring-not-the-business": {
+    "core": "容器解决的是谁创建对象、依赖从哪来。请求怎么进控制器见 `spring-mvc-dispatch`。事务边界见 `spring-transaction`。对象怎么落到表上，去 JPA 或 MyBatis。业务规则不在 @Service 这三个音节里。",
+    "example": "装配成功，规则仍在你的方法里：\n\n```java\n@Transactional\npublic void pay(Order order) {\n  if (order.paid()) throw new IllegalStateException();\n}\n```",
+    "task": "说明容器保证什么、不保证什么。超卖和 SQL 该去哪一类课？",
+    "answer": "容器保证对象被创建并注入。不保证超卖和 SQL 正确。事务回 Spring 事务课，SQL 回 JPA 或 MyBatis。",
+    "deep": [
+      {
+        "title": "注解不是魔法",
+        "body": "@Transactional 要经过代理才生效，见 `spring-aop-self-invocation`。自己类里 this.pay() 不会开事务，不是容器没启动。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "写一个 @Service 方法里故意抛业务异常。启动成功，调用失败。说明装配和业务是两步。"
+      }
+    ],
+    "references": [
+      [
+        "Spring：Data Access",
+        "https://docs.spring.io/spring-framework/reference/data-access.html"
+      ],
+      [
+        "Spring：Transaction Management",
+        "https://docs.spring.io/spring-framework/reference/data-access/transaction.html"
+      ]
+    ]
+  },
   "spring-ioc-wiring": {
     "core": "Spring 容器负责创建对象并注入依赖。组件扫描找到带注解的类，按类型或名字放进容器。注入发生在对象创建之后、业务方法调用之前。找不到 Bean，通常是没被扫描到、类型不匹配，或同一类型有多个候选却没有资格说明。构造器注入让依赖在创建时就齐，字段注入会让测试更难看出缺什么。容器解决的是装配，不是业务规则。顺序是先扫描谁该进容器，再创建对象，然后按类型或名字注入，最后才初始化。边界是同一类型有多个候选时必须标明用哪一个，否则启动失败；字段注入会把这个缺失推迟到测试或第一次调用才看见。容器不负责业务规则是否正确。找不到类型时停在扫描，多个候选时停在注入，这两步都不应拖到请求进来之后。",
     "why": "学习者会把注解一贴就当成依赖已经接上。启动报找不到对象时，他反复再加注解，实现类其实还在扫描包外面。报错出现在扫描或注入这一步、第一次请求还没发出，才说明装配失败在启动期，不是业务方法里缺了判断。",
@@ -9371,6 +9683,84 @@
       ]
     ]
   },
+  "jpa-what-it-is": {
+    "core": "Jakarta Persistence（JPA）是管理关系数据的持久化规范。实体（entity）是有主键的对象，身份靠主键，见 `jpa-entity-identity`。Hibernate 是常见实现。你操作的是持久化上下文里的实体，不是随手拼的一行 SQL 快照。会话里为什么会 N+1，见 `jpa-session-nplus1`。",
+    "example": "一个实体：\n\n```java\n@Entity\nclass Order {\n  @Id Long id;\n  String status;\n}\n```",
+    "task": "用文档里的说法说明 JPA 是什么。实体的身份靠什么？它是规范还是某一种实现？",
+    "answer": "JPA 是管理关系数据与实体的持久化规范。实体身份靠主键。Hibernate 是常见实现，不是规范本身。",
+    "deep": [
+      {
+        "title": "持久化上下文不是连接本身",
+        "body": "同一上下文里同一个主键是同一个对象。提交时按脏检查生成 SQL，见 `jpa-dirty-check`、`jpa-flush-transaction`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开 Jakarta Persistence 规范概述，对上 entity 和 persistence context。用同一主键在一次会话里查两次，确认得到同一个 Java 对象。"
+      }
+    ],
+    "references": [
+      [
+        "Jakarta Persistence",
+        "https://jakarta.ee/specifications/persistence/3.2/"
+      ],
+      [
+        "Spring Data JPA",
+        "https://docs.spring.io/spring-data/jpa/reference/"
+      ]
+    ]
+  },
+  "jpa-enter-entity": {
+    "core": "new Order() 只是普通对象。persist、merge 或查询把它放进持久化上下文（persistence context）之后，才由会话管理。提交时 flush 对照快照生成 SQL，见 `jpa-flush-transaction`。OSIV 把会话拉到请求结束，见 `jpa-osiv-boundary`。",
+    "example": "保存一个新订单：\n\n```java\norderRepository.save(order);\n```",
+    "task": "说明 new 出来的对象什么时候被会话管理。提交时谁去生成 SQL？",
+    "answer": "persist 或查询加载之后进入持久化上下文，才被会话管理。提交时 flush 按脏检查生成 SQL。",
+    "deep": [
+      {
+        "title": "会话关闭后再点关联会失败",
+        "body": "懒加载要在会话还在时发生。把实体当 DTO 传出层外，关联可能在渲染时才被点到，见 `jpa-session-nplus1`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "persist 一个新实体，不提交就查同一主键，确认会话里能看见。关掉会话再点懒关联，确认失败。"
+      }
+    ],
+    "references": [
+      [
+        "Jakarta Persistence：Entity Operations",
+        "https://jakarta.ee/specifications/persistence/3.2/jakarta-persistence-spec-3.2#entity-operations"
+      ],
+      [
+        "Hibernate：Flushing",
+        "https://docs.jboss.org/hibernate/orm/6.6/userguide/html_single/Hibernate_User_Guide.html#flushing"
+      ]
+    ]
+  },
+  "jpa-not-mybatis": {
+    "core": "JPA 让你操作实体，由实现生成或配合 JPQL 访问表。MyBatis 让你写 SQL，再把结果映射到对象，见 `mybatis-what-it-is`。两者都可以接 Spring 事务，但对象模型和 SQL 的归属不同。不要在同一张订单表上同时用两套当成同一条会话。",
+    "example": "分工：\n\n```text\n改订单状态、维护关联   JPA 实体\n报表、复杂 JOIN 列表   MyBatis SQL\n```",
+    "task": "说明 JPA 和 MyBatis 各把什么当作主模型。手写报表 SQL 去哪一边？",
+    "answer": "JPA 的主模型是实体和持久化上下文。MyBatis 的主模型是你写的 SQL。手写报表 SQL 去 MyBatis。",
+    "deep": [
+      {
+        "title": "可以在一个应用里并存",
+        "body": "事务仍由 Spring 管。并存时按用例选模型：写聚合用实体，读报表用手写 SQL。不要在同一次 flush 里混两套脏检查。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开两个官方首页：一边是 entity / persistence context，一边是 SQL mapping。对照你要写的那条语句落在哪一句定义里。"
+      }
+    ],
+    "references": [
+      [
+        "Jakarta Persistence",
+        "https://jakarta.ee/specifications/persistence/3.2/"
+      ],
+      [
+        "MyBatis：Introduction",
+        "https://mybatis.org/mybatis-3/index.html"
+      ]
+    ]
+  },
   "jpa-entity-identity": {
     "core": "JPA 用主键在持久化上下文里识别实体。同一事务里按同一主键加载两次，拿到的是同一个 Java 对象。字段被改了还没 flush，内存里的值和表里的行可以暂时不同。equals 若按全部字段比较，集合里会乱；若在主键还是 null 时用业务字段比较，持久化前后身份会变。常见稳妥做法是：只在主键非空时按主键比较，并保证 hashCode 稳定。",
     "why": "学习者会把两个字段一样的实体当成同一个对象。集合去重和合并更新因此悄悄错掉：会话里改一处备注，另一处引用也变了，事务外 new 出来的同号对象却对不上。同一事务里两次加载用双等号为真、事务外按全部字段比较却不稳定，才说明身份在主键和会话，不在字段快照。",
@@ -9638,6 +10028,84 @@
       [
         "Jakarta Persistence：EntityGraph",
         "https://jakarta.ee/specifications/persistence/3.1/jakarta-persistence-spec-3.1#entity-graph"
+      ]
+    ]
+  },
+  "mybatis-what-it-is": {
+    "core": "MyBatis 是 SQL 映射框架。你写出语句，再通过映射器（mapper）接口调用。参数怎么进 SQL 见 `mybatis-parameters`。列怎么进对象见 `mybatis-resultmap`。它不维护 JPA 那样的持久化上下文，也不是把实体当主模型。",
+    "example": "一个映射器方法：\n\n```java\n@Select(\"SELECT id, status FROM orders WHERE id = #{id}\")\nOrder findById(long id);\n```",
+    "task": "用文档里的说法说明 MyBatis 是什么。SQL 写在哪？谁把列填进对象？",
+    "answer": "MyBatis 是 SQL 映射框架。SQL 写在映射里，通过映射器接口调用。框架绑定参数并把列填进对象。",
+    "deep": [
+      {
+        "title": "#{} 和字符串拼接不是一回事",
+        "body": "参数占位由框架绑定，见 `mybatis-parameters`。自己拼字符串会走到 SQL 注入。动态 SQL 有专门的写法，见 `mybatis-dynamic-sql`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开 MyBatis 介绍，对上 SQL mapping。调用一个 @Select 方法，在日志里看 Preparing 和 Parameters，确认语句是你写的那条。"
+      }
+    ],
+    "references": [
+      [
+        "MyBatis：Introduction",
+        "https://mybatis.org/mybatis-3/index.html"
+      ],
+      [
+        "MyBatis：Mapper XML",
+        "https://mybatis.org/mybatis-3/sqlmap-xml.html"
+      ]
+    ]
+  },
+  "mybatis-enter-mapper": {
+    "core": "映射器是接口。XML 或注解把方法绑到一条语句，见 `mybatis-mapper-bound`。Spring 里把接口声明为 Bean，业务代码注入接口。本地缓存和执行器见 `mybatis-local-cache`、`mybatis-batch-executor`。",
+    "example": "接口与语句同名：\n\n```java\ninterface OrderMapper {\n  Order findById(long id);\n}\n```",
+    "task": "说明映射器是类还是接口。方法什么时候才执行 SQL？谁提供实现？",
+    "answer": "映射器是接口。调用方法时才执行 SQL。MyBatis 按映射提供运行时绑定，不是你手写实现类。",
+    "deep": [
+      {
+        "title": "命名空间要对上",
+        "body": "XML 的 namespace 是接口全名，id 是方法名。对不上就不是这条语句，见 `mybatis-mapper-bound`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "把 XML 里的 id 改错，调用时确认绑定失败。改回之后日志里出现你写的 SQL。"
+      }
+    ],
+    "references": [
+      [
+        "MyBatis：Mapper Interfaces",
+        "https://mybatis.org/mybatis-3/java-api.html"
+      ],
+      [
+        "MyBatis：Getting started",
+        "https://mybatis.org/mybatis-3/getting-started.html"
+      ]
+    ]
+  },
+  "mybatis-not-jpa": {
+    "core": "MyBatis 执行你写出的语句。没有持久化上下文，也没有按快照自动生成 UPDATE。脏检查和 flush 属于 JPA，见 `jpa-dirty-check`。本地一级缓存只缓存同一会话里的查询结果，见 `mybatis-local-cache`。",
+    "example": "改状态要写更新：\n\n```java\norderMapper.updateStatus(id, \"PAID\");\n```",
+    "task": "说明 MyBatis 会不会在提交时按字段变化自动 UPDATE。要改库该怎么办？",
+    "answer": "不会自动 UPDATE。要改库再调用一条更新语句。脏检查属于 JPA。",
+    "deep": [
+      {
+        "title": "二级缓存更要小心",
+        "body": "跨会话的二级缓存容易和对象身份缠在一起，见 `mybatis-second-cache`。默认先把一级缓存和语句本身搞清楚。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "查出对象，改字段，提交，再查库。没有 update 语句时库里的值不变。JPA 托管实体在同一次事务里改字段，提交后库会变。"
+      }
+    ],
+    "references": [
+      [
+        "MyBatis：Introduction",
+        "https://mybatis.org/mybatis-3/index.html"
+      ],
+      [
+        "MyBatis：Mapper XML update",
+        "https://mybatis.org/mybatis-3/sqlmap-xml.html"
       ]
     ]
   },
@@ -10089,6 +10557,84 @@
     ],
     "diagram": "diagrams/mybatis-middleware-layers.svg"
   },
+  "spring-security-what": {
+    "core": "Spring Security 是给 Java 应用做认证（authentication）和授权（authorization）的框架。请求经过过滤器链，先确认主体，再看这个主体能不能访问这个资源。过滤器链见 `spring-security-filter-chain`。认证和授权不是同一个词，见 `spring-authn-authz`。对象级授权见 `object-level-authz`。",
+    "example": "一条链上的两问：\n\n```text\n认证   这个请求的主体是谁\n授权   这个主体能不能访问 /orders/1\n```",
+    "task": "用文档里的说法说明 Spring Security 是什么。认证和授权各问哪一句？",
+    "answer": "Spring Security 是认证和授权框架。认证问你是谁，授权问你能不能访问这个资源。",
+    "deep": [
+      {
+        "title": "登录页只是认证的一种入口",
+        "body": "表单、HTTP Basic、OAuth2 资源服务器都是在回答「你是谁」。不要把框架理解成「自带一个 /login」。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开 Spring Security 概述，对上 authentication 和 authorization。访问一个受保护路径不带凭证，确认被过滤器拦下，还没进控制器。"
+      }
+    ],
+    "references": [
+      [
+        "Spring Security：Introduction",
+        "https://docs.spring.io/spring-security/reference/servlet/getting-started.html"
+      ],
+      [
+        "Spring Security：Architecture",
+        "https://docs.spring.io/spring-security/reference/servlet/architecture.html"
+      ]
+    ]
+  },
+  "spring-security-enter-chain": {
+    "core": "Spring Security 的过滤器排在 Servlet 过滤器链里，通常在 MVC 的 DispatcherServlet 之前。未认证的请求到不了 @GetMapping。授权失败是 403，不是 401，见 `http-status-auth` 的语义。CSRF 对浏览器会话见 `spring-csrf-spa`。",
+    "example": "顺序：\n\n```text\n过滤器链 → 认证 / 授权 → DispatcherServlet → 控制器\n```",
+    "task": "说明未认证请求停在哪一层。401 和 403 哪一个是「没通过认证」？",
+    "answer": "停在 Security 过滤器链，到不了控制器。401 是没通过认证，403 是已认证但没权限。",
+    "deep": [
+      {
+        "title": "方法上的注解是第二道",
+        "body": "@PreAuthorize 在进入方法前再问一次。对象级授权不能只靠 URL，见 `object-level-authz`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "给一个接口加上认证要求，不带 Cookie 访问。确认响应在过滤器阶段返回，控制器里的日志没有出现。"
+      }
+    ],
+    "references": [
+      [
+        "Spring Security：Filter Chain",
+        "https://docs.spring.io/spring-security/reference/servlet/architecture.html#servlet-securityfilterchain"
+      ],
+      [
+        "Spring Security：Authorization",
+        "https://docs.spring.io/spring-security/reference/servlet/authorization/index.html"
+      ]
+    ]
+  },
+  "spring-security-not-only-login": {
+    "core": "口令要用自适应哈希，见 `password-adaptive-hash`。对象是不是当前用户的，见 `object-level-authz`。前端 Cookie 和 CSRF 见 `cookie-credential`、`spring-csrf-spa`。JWT 的载荷默认不是加密，见 `jwt-payload-not-encrypted`。",
+    "example": "三件仍然要你写：\n\n```text\n口令     PasswordEncoder\n对象权限  这条订单的 userId\n浏览器   Cookie 属性与 CSRF\n```",
+    "task": "说明框架自动保证什么。口令、对象级权限、浏览器 Cookie 各回哪一类课？",
+    "answer": "框架自动提供过滤器和 API，不自动保证这三件。口令回哈希课，对象权限回对象级授权，Cookie 回浏览器安全与 CSRF。",
+    "deep": [
+      {
+        "title": "资源服务器不是登录页",
+        "body": "OAuth2 资源服务器校验访问令牌，见 `spring-oauth2-resource`。它不问浏览器表单，也不代替对象级检查。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "登录成功后用另一个用户的 id 打 /orders/1。若只靠「已认证」就 200，对象级授权还没写。"
+      }
+    ],
+    "references": [
+      [
+        "Spring Security：Password Storage",
+        "https://docs.spring.io/spring-security/reference/features/authentication/password-storage.html"
+      ],
+      [
+        "Spring Security：Authorization Architecture",
+        "https://docs.spring.io/spring-security/reference/servlet/authorization/architecture.html"
+      ]
+    ]
+  },
   "spring-security-filter-chain": {
     "core": "Spring Security 的过滤链包在 Servlet 过滤器里，在到达控制器之前运行。链上的过滤器依次处理安全上下文、认证、CSRF、授权。请求通过链之后，控制器用 SecurityContext 里的身份，而不是自己再解析一个头。漏配的路径会直接进控制器，这时你在方法里写的检查才是最后一道，而且很容易忘。授权规则应按路径和方法声明：哪些匿名可访问，哪些要角色，哪些要到对象级。对象级授权仍在拥有数据的服务里，过滤链不能根据订单 id 知道这张订单属不属于该用户。",
     "why": "学习者会在控制器第一行判断用户是否为空来代替登录。新增一个接口忘了这行判断，未登录请求仍进入业务方法并写库。新接口在配规则之前就被匿名拒绝、配上规则后才进入方法，才说明默认拒绝在过滤链上，不在某一行 if。",
@@ -10375,6 +10921,87 @@
       [
         "MDN：CORS credentials",
         "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS#requests_with_credentials"
+      ]
+    ]
+  },
+  "nginx-what-and-when": {
+    "core": "Nginx 是事件驱动的 HTTP 服务器，也常用作反向代理（reverse proxy）。它接住客户端连接，按配置把请求回给本地文件，或转到后面的上游。请求阶段见 `nginx-request-phases`。上游超时见 `nginx-proxy-timeout`。它不是 Java 应用容器，也不代替业务里的鉴权规则。",
+    "why": "把页面和接口都丢给应用去接连接，静态文件和应用超时缠在一起。或反过来以为装了 Nginx 就不需要应用。",
+    "example": "静态页由 Nginx 回，/api 转到后面的 Spring 进程。TLS 可以在这一层结束。",
+    "task": "用两句话说明 Nginx 是什么、典型两件事。它是不是 Java 应用容器？",
+    "answer": "Nginx 是事件驱动的 HTTP 服务器和反向代理。典型是回静态文件、把请求转到上游。它不是 Java 应用容器。",
+    "deep": [
+      {
+        "title": "同一进程可以兼任几问",
+        "body": "反向代理、负载均衡和一部分限速可以写在同一份配置的不同段。三问仍要分开，见 `mw-proxy-lb-gateway`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开 nginx 文档的 What is nginx，对上 HTTP server 和 reverse proxy。写一段 root 和一段 proxy_pass，分别打静态路径和 /api，确认两段配置各回各的。"
+      }
+    ],
+    "references": [
+      [
+        "nginx：What is nginx",
+        "https://nginx.org/en/docs/beginners_guide.html"
+      ],
+      [
+        "nginx：反向代理",
+        "https://nginx.org/en/docs/http/ngx_http_proxy_module.html"
+      ]
+    ]
+  },
+  "nginx-tradeoffs-capacity": {
+    "core": "优点：事件驱动，适合大量连接和静态响应；配置把 TLS、静态和上游分开。代价：业务规则不在这里；配置错误会让所有流量一起偏；缓冲和超时要按上游调，见 `nginx-proxy-timeout`、`nginx-buffer-body`。容量没有万能 QPS。粗框架是：worker 进程 × 每进程连接，再减去上游变慢和响应体变大的部分。限速见 `nginx-limit-req`。",
+    "why": "背一个「几万并发」上线，大响应体和慢上游把工作进程占满；或不敢用 Nginx 只因说不清一个数字。",
+    "example": "静态页和 20 KB 的 JSON 不是同一条容量曲线。先定响应体和上游 P99，再压测，数字写在容量表里。",
+    "task": "写出优点两条、代价两条。容量要测量的两个变量是什么？",
+    "answer": "优点如大量连接和静态响应。代价如不管业务规则、超时配错影响整站。容量看连接与上游形态，用压测，不背口号。",
+    "deep": [
+      {
+        "title": "限速不是防火墙循环",
+        "body": "limit_req 在 HTTP 层按键限速，见 `nginx-limit-req-not-iptables-loop`。它不代替上游自己的配额。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对同一条 proxy_pass 分别回 1 KB 和 1 MB，看活跃连接和工作进程 CPU。数字应写进容量表，不写进面试口号。"
+      }
+    ],
+    "references": [
+      [
+        "nginx：Connections",
+        "https://nginx.org/en/docs/ngx_core_module.html#worker_connections"
+      ],
+      [
+        "nginx：proxy 超时",
+        "https://nginx.org/en/docs/http/ngx_http_proxy_module.html"
+      ]
+    ]
+  },
+  "nginx-vs-gateway": {
+    "core": "反向代理回答转到哪。负载均衡回答选哪一台。API 网关回答这个接口让不让过。三问可以写在同一个程序的不同配置里，也可以拆开，见 `mw-proxy-lb-gateway`。CDN 是边缘缓存，不是源站反代的别名，见 `cdn-not-just-reverse-proxy-cache`。网关章展开路由和鉴权，见 `gateway-what-and-when`。",
+    "why": "装了 Nginx 就被写成已经有网关。鉴权失败和实例不健康缠在同一段配置里，排障时对不上。",
+    "example": "TLS 和静态文件在 Nginx。令牌校验和按路径限流在网关。实例健康检查在均衡器。",
+    "task": "写出三问各是什么。Nginx 默认先回答哪一问？接口级鉴权去哪一章？",
+    "answer": "三问是转到哪、选哪一台、接口让不让过。Nginx 默认先回答转到哪，也可以兼任后两问。接口级鉴权展开见网关章。",
+    "deep": [
+      {
+        "title": "一个程序兼任时仍要两段配置",
+        "body": "答了两问的盒子要写得出两段配置名，不能只写产品名，见 `mw-proxy-lb-gateway`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "画当前入口。静态 404、上游 502、令牌 401 应能标到不同段。标不到就还没把三问分开。"
+      }
+    ],
+    "references": [
+      [
+        "nginx：负载均衡",
+        "https://nginx.org/en/docs/http/load_balancing.html"
+      ],
+      [
+        "Spring Cloud Gateway",
+        "https://docs.spring.io/spring-cloud-gateway/reference/"
       ]
     ]
   },
@@ -10715,6 +11342,87 @@
       ]
     ]
   },
+  "gateway-what-and-when": {
+    "core": "API 网关是入口上按接口处理请求的那一跳。它按路径或谓词选路由，做鉴权、限流，再转到后面的服务。Spring Cloud Gateway 的谓词见 `gateway-route-predicate`。一跳不要既当网关又当服务内授权的全部，见 `gateway-one-hop`。和反代、均衡的三问见 `mw-proxy-lb-gateway`。",
+    "why": "把网关当成「又一个 Nginx」。超时、鉴权和选实例缠在一起，401 和 502 对不上。",
+    "example": "/orders/** 校验令牌后转到订单服务。静态 /assets 仍由前面的 Nginx 回。",
+    "task": "用两句话说明网关是什么、典型三件事。它是不是只负责选一台机器？",
+    "answer": "网关按接口做路由、鉴权和限流。典型是按路径选服务、校验令牌、按接口配额。不只是选一台机器。",
+    "deep": [
+      {
+        "title": "网关不在 SCA 组件清单里",
+        "body": "Spring Cloud Gateway 是独立进程。Spring Cloud Alibaba 的 BOM 不会把它装进业务服务，见 `sca-what`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开 Spring Cloud Gateway 参考首页，对上 predicates 和 filters。打一条不带令牌的 /orders，确认拦在网关，订单服务日志没有这次请求。"
+      }
+    ],
+    "references": [
+      [
+        "Spring Cloud Gateway",
+        "https://docs.spring.io/spring-cloud-gateway/reference/"
+      ],
+      [
+        "Spring Cloud Gateway：Routing",
+        "https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway/request-predicates-factories.html"
+      ]
+    ]
+  },
+  "gateway-tradeoffs-capacity": {
+    "core": "优点：鉴权、限流和路由集中在入口；服务可以少重复写这些。代价：多一跳延迟；过滤器读 body 会缓冲，见 `gateway-body-buffer`；重试必须幂等，见 `gateway-retry-idempotent`；超时要和上下游串起来，见 `gateway-timeout-chain`。容量没有全站万能 QPS，看路由数、过滤器是否读正文、WebSocket 升级，见 `gateway-websocket-upgrade`。",
+    "why": "把网关画上去就当容量和安全完成。读 body 的过滤器把内存打满，或重试把写请求执行两次。",
+    "example": "只校验头字段的路由和必须读正文做验签的路由，不是同一条容量曲线。",
+    "task": "写出优点两条、代价两条。容量要看的两个变量是什么？",
+    "answer": "优点是集中路由和鉴权。代价是多一跳、读正文和重试。容量看路由形态和过滤器是否读 body，用压测。",
+    "deep": [
+      {
+        "title": "鉴权仍可能要在服务内再问一次",
+        "body": "网关能拦未登录。这条订单是不是当前用户的，仍是对象级授权，见 `object-level-authz`、`gateway-auth-where`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "给一条路由加上读 body 的过滤器，对比延迟和内存。再给 POST 打开重试，确认只对幂等方法打开。"
+      }
+    ],
+    "references": [
+      [
+        "Spring Cloud Gateway：Global Filters",
+        "https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway/global-filters.html"
+      ],
+      [
+        "Spring Cloud Gateway：Timeout",
+        "https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway/http-timeouts.html"
+      ]
+    ]
+  },
+  "gateway-vs-proxy": {
+    "core": "三层不要并成一句。反向代理和均衡见 Nginx 章与 `mw-proxy-lb-gateway`。网关做接口级决定。服务内授权看这条记录，见 `object-level-authz`、`gateway-one-hop`。WebSocket 升级必须在同一跳完成，见 `gateway-websocket-upgrade`。",
+    "why": "入口 200 就被写成「权限已经做完」。别人的订单 id 仍能读到。",
+    "example": "未带令牌 401 在网关。令牌有效但订单属于别人，403 在订单服务。上游挂了 502 在代理或网关的上游段。",
+    "task": "写出 401、403、502 各应出现在哪一问。对象级权限能不能只放在网关？",
+    "answer": "401 在接口鉴权，403 常在服务内对象权限，502 在转到上游失败。对象级权限不能只放在网关。",
+    "deep": [
+      {
+        "title": "小系统可以兼任，三问仍要标得出",
+        "body": "一个 Nginx 或一个 Gateway 进程可以答两问。配置段必须对得上，见 `mw-proxy-lb-gateway`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "用别人的订单 id 带自己的令牌打接口。网关 200、服务 403，才说明两问分开了。两边都 200，对象级还没写。"
+      }
+    ],
+    "references": [
+      [
+        "Spring Cloud Gateway",
+        "https://docs.spring.io/spring-cloud-gateway/reference/"
+      ],
+      [
+        "Spring Security：Authorization",
+        "https://docs.spring.io/spring-security/reference/servlet/authorization/index.html"
+      ]
+    ]
+  },
   "mw-proxy-lb-gateway": {
     "core": "三个名字问的是三件事。反向代理把外部请求转到内部上游，常顺便做 TLS 和静态文件。负载均衡在多台里选一台，并跳过不健康的实例。API 网关按接口做鉴权、限流和路由，它看的是“这个 API 让不让过”，不是“这台机器活着没有”。小系统里一个 Nginx 可以同时干这三件，配置段仍然要能对上这三问。大系统里网关和代理分开，是为了让鉴权规则不要和静态文件、上游超时缠在一起。",
     "why": "学习者会把代理、均衡和网关当成必须买的三套产品。一个程序同时干了两件事，排障时却说不清超时和鉴权各在哪一段。每一跳只回答一问、答了两问的盒子能指出两段配置，才说明问题不能并成一句采购。",
@@ -10929,6 +11637,84 @@
       [
         "MDN：Writing WebSocket servers",
         "https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers"
+      ]
+    ]
+  },
+  "netty-what-it-is": {
+    "core": "Netty 是异步事件驱动的网络应用框架。它用事件循环处理连接，用管道上的处理器做编解码和业务，用 ByteBuf 管字节。事件循环见 `netty-event-loop`。管道见 `netty-pipeline-handler`。NIO 不是一条线程一个请求，见 `nio-not-one-thread-per-request`。",
+    "example": "管道上先解码、再处理：\n\n```text\nEventLoop → Pipeline：LengthField → 业务 Handler\n```",
+    "task": "用文档里的说法说明 Netty 是什么。它是不是一个开箱即用的 HTTP 业务服务器？",
+    "answer": "Netty 是异步事件驱动的网络应用框架。它用来写连接和协议。不是开箱即用的业务 HTTP 服务器。",
+    "deep": [
+      {
+        "title": "很多中间件底下是它",
+        "body": "HTTP 客户端、部分 RPC 和部分消息客户端会嵌入 Netty。业务应用通常先用 Spring 的 HTTP，而不是直接 Bootstrap。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开 Netty 项目介绍，对上 asynchronous event-driven network application framework。看一份示例的 ServerBootstrap，确认先有 EventLoopGroup 再有 Channel。"
+      }
+    ],
+    "references": [
+      [
+        "Netty：Introduction",
+        "https://netty.io/wiki/user-guide-for-4.x.html"
+      ],
+      [
+        "Netty 项目",
+        "https://netty.io/"
+      ]
+    ]
+  },
+  "netty-enter-bootstrap": {
+    "core": "服务端用 ServerBootstrap：指定 boss 和 worker 两组事件循环、Channel 类型，以及 ChannelInitializer 里的管道。bind 之后才接连接。事件循环线程见 `netty-event-loop`。ByteBuf 要释放，见 `netty-bytebuf-leak`。空闲检测见 `netty-idle-heartbeat`。",
+    "example": "绑定端口：\n\n```text\nServerBootstrap\n  group(boss, worker)\n  channel(NioServerSocketChannel)\n  childHandler(initializer)\n  bind(8080)\n```",
+    "task": "说明谁绑定端口。Handler 要挂在什么结构上？事件循环是什么？",
+    "answer": "ServerBootstrap.bind 绑定端口。Handler 挂在管道上。事件循环是处理这条连接上事件的线程。",
+    "deep": [
+      {
+        "title": "编解码器不要共享可变状态",
+        "body": "标注 @Sharable 的处理器必须线程安全，见 `netty-codec-shareable`。每个连接一份的解码器不要标成可共享。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "按用户指南跑一个 echo 服务。bind 之后用客户端连上，确认 Handler 被调用。不 bind 只 new Handler，确认端口没被占用。"
+      }
+    ],
+    "references": [
+      [
+        "Netty：User guide",
+        "https://netty.io/wiki/user-guide-for-4.x.html"
+      ],
+      [
+        "Netty：ServerBootstrap",
+        "https://netty.io/4.1/api/io/netty/bootstrap/ServerBootstrap.html"
+      ]
+    ]
+  },
+  "netty-not-spring-mvc": {
+    "core": "Spring MVC 的 DispatcherServlet 处理的是已经成帧的 HTTP 请求，见 `spring-mvc-dispatch`。Netty 从字节开始：拆包、心跳、水位，见 `netty-length-field-frame`、`netty-watermark-backpressure`。Tomcat 的 I/O 模型见 `tomcat-nio-not-bio-default`。不要在控制器里直接操作 ByteBuf。",
+    "example": "分工：\n\n```text\n订单 HTTP API     Spring MVC\n自定义二进制协议  Netty\n```",
+    "task": "说明 MVC 和 Netty 各从哪一层开始。业务 HTTP API 默认用哪一边？",
+    "answer": "MVC 从已成帧的 HTTP 请求开始。Netty 从连接和字节开始。业务 HTTP API 默认用 MVC。",
+    "deep": [
+      {
+        "title": "WebFlux 底下可以是 Netty",
+        "body": "反应式栈会嵌入 Netty。那是运行时选择，控制器仍按 WebFlux 的模型写，不是让你在业务方法里管 EventLoop。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "在一个 @GetMapping 里搜 ByteBuf，不应出现。在 Netty 示例里搜 @GetMapping，也不应出现。"
+      }
+    ],
+    "references": [
+      [
+        "Spring Web MVC",
+        "https://docs.spring.io/spring-framework/reference/web/webmvc.html"
+      ],
+      [
+        "Netty：User guide",
+        "https://netty.io/wiki/user-guide-for-4.x.html"
       ]
     ]
   },
@@ -13550,6 +14336,32 @@
       ]
     ]
   },
+  "arch-chapter-aim": {
+    "core": "这一章回答何时拆、怎样拆、容量怎样估。演进阶段见 `arch-evolution-stages`。单体仍可能是对的，见 `arch-monolith-when`。拆分前先看规模，见 `arch-scale-before-split`。一条路径的六句话见 `arch-design-one-path`。幂等、缓存、消息、限流是通用能力，不是架构图上的装饰。",
+    "example": "先写六句，再出现方框：\n\n```text\n动作、写多少、读多少、时限、权威数据、一种失败\n```",
+    "task": "说明这一章先回答什么。中间件名单能不能代替那六句？",
+    "answer": "先写一条路径的读写、权威数据和失败可见结果。中间件名单不能代替这六句。",
+    "deep": [
+      {
+        "title": "容量是预算不是口号",
+        "body": "SLO 和排队见 `arch-slo-budget`、`arch-queue-wait`。不要把一个固定 QPS 写成架构完成。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "拿一张现有架构图，拿掉中间件方框。仍能说出读写量和失败时用户看见什么，这张图才站得住。"
+      }
+    ],
+    "references": [
+      [
+        "Google SRE：Service Level Objectives",
+        "https://sre.google/sre-book/service-level-objectives/"
+      ],
+      [
+        "Microsoft：Architecture styles",
+        "https://learn.microsoft.com/en-us/azure/architecture/guide/architecture-styles/"
+      ]
+    ]
+  },
   "arch-evolution-stages": {
     "core": "单体、模块化单体、水平扩展、微服务是四种形态，不是必经的分数阶梯。没有发布冲突、库打满或必须独立扩缩的信号，就停在现在这一级。\n\n单体：一个进程、一个库、一次部署。模块化单体：仍是一个进程，包和表的归属要清楚。水平扩展：多副本加负载均衡，会话外置；瓶颈若在共享库，加副本会更差。微服务：按业务能力独立部署、尽量独立数据，同时接受网络故障和跨库一致性。跳级会把还没划清的模块边界变成分布式事务。",
     "why": "学习者会把“上微服务”当成演进的第一句，中间件清单就成了架构。没有延迟、发布冲突或库负载这些信号，拆开之后只是把没理清的边界变成分布式事务。项目先标在当前这一级、下一级有可量化信号才进入，才说明升级是按瓶颈而不是按名词。",
@@ -14059,6 +14871,32 @@
       ]
     ]
   },
+  "dist-chapter-aim": {
+    "core": "这一章的对象是跨进程的协作。一致性词汇见 `distributed-cap`、`distributed-consistency-three-words`。跨库事实用 Outbox 或协调器，见 `distributed-outbox`。锁和租约见 `distributed-lock`。限流和熔断见 `distributed-token-bucket`、`circuit-breaker-not-retry`。同一进程的线程回并发章，见 `java-concurrency-not-distributed`。",
+    "example": "四块：\n\n```text\n一致性   分区时保哪一边\n事务     两个库怎样一起成功或一起补偿\n流量     配额、熔断、秒杀\n隔离     时钟、ID、舱壁\n```",
+    "task": "说明这一章不回答哪一类问题。一致、跨库、配额各回哪一组课？",
+    "answer": "不回答同一进程里的线程同步。一致回 CAP 和一致性词汇，跨库回 Outbox 或协调器，配额回限流和熔断。",
+    "deep": [
+      {
+        "title": "先能在一个库里做对",
+        "body": "一个库能放下的事实不要先拆，见 `distributed-one-db-first`。分布式事务盖不住一次 RPC 的全部副作用。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "画出两个服务。若箭头只靠 Thread 或 ThreadLocal，回到并发章。若箭头靠消息、锁或协调器，留在这一章。"
+      }
+    ],
+    "references": [
+      [
+        "PostgreSQL：事务",
+        "https://www.postgresql.org/docs/current/tutorial-transactions.html"
+      ],
+      [
+        "Kafka：Semantics",
+        "https://kafka.apache.org/documentation/#semantics"
+      ]
+    ]
+  },
   "distributed-cap": {
     "core": "CAP 讨论的是分布式系统发生网络分区时，一致性与可用性的取舍。一致性在这里指单一、最新的读写视图；可用性指非故障节点对请求给出响应。不能把一个产品永久贴成“CP”或“AP”，还要看具体操作、部署和故障策略。顺序是先确认分区已经发生，再为这一次读写选择拒绝、等待或继续接受，最后写恢复后的收敛。边界是没有分区时，主从延迟和普通超时不要套进这组取舍；把产品永久标成某一种，也会掩盖同一次部署里读和写可以有不同策略。用户看见的成功必须和恢复后仍成立的那一份数据一致，等待则要有超时后的失败，而不是一直挂着。分区恢复前不要用另一侧的读来证明这一侧已经写入。没有分区的普通超时不要写成这组取舍，否则等待和拒绝会用错地方。",
     "why": "学习者会把分区时的取舍背成三选二，于是任何写入都选等待或都选成功。库存一侧拒绝、资料一侧继续写，恢复后的冲突处理完全不同，他却用产品名字一次说完。先看节点是否还能互通，再看这次操作能不能接受分歧，才分得清该返回成功、失败还是等待。",
@@ -14248,7 +15086,7 @@
       },
       {
         "title": "资料常见写法",
-        "body": "过期时间越长不等于越安全；它影响故障恢复速度与误并发窗口。续期也需要明确工作者失联时的行为。"
+        "body": "过期时间越长不等于越安全；它影响故障恢复速度与误并发窗口。续期也需要明确工作者失联时的行为。旧卷里的 setnx+expire 两步与 getset 时钟方案，不能当成今天唯一正确写法。"
       }
     ],
     "references": [
@@ -14257,7 +15095,8 @@
         "https://redis.io/docs/latest/develop/clients/patterns/distributed-locks/"
       ]
     ],
-    "origin": "《分布式高并发.pdf》的分布式锁相关章节"
+    "diagram": "library-assets/distributed-hc/p0201.png",
+    "origin": "本地库《分布式高并发》Redis 锁与过期/释放页（现行常用 SET NX PX + 令牌比对，以 Redis 文档为准；旧 getset 时钟方案勿当现行默认）"
   },
   "dist-lock-owner-not-mac-pid-tid": {
     "core": "可重入需要知道**还是不是同一个持有者**，并维护重入计数；身份应是**锁服务端存下的随机令牌**（UUID 等），释放与重入都比对令牌，见 `distributed-lock`、`redis-lock-setnx-expire-race`。资料用 MAC + PID + TID 拼身份，在云与容器里会翻车：MAC 可虚拟、可漂移、可撞车；PID/TID 会回收复用；多网卡、无 MAC 的命名空间更对不上。进程崩溃后旧身份若被新人拼出相同串，可能误当成“自己重入”而不真正互斥。数据库方案里写“主机信息 + 线程信息即可再分配锁”，是同一类错误。正确做法：占锁时写入唯一 token（可附 count），同 token 才允许 count+1；租约仍由服务端 TTL/会话管，不要靠墙钟，见 `redis-lock-getset-wall-clock`。",
@@ -15971,6 +16810,240 @@
     "diagram": "library-assets/distributed-hc/p0194.png",
     "origin": "《分布式高并发.pdf》约第 194 页：多 Master 不同起始、相同步长发号"
   },
+  "gha-what-it-is": {
+    "core": "GitHub Actions 是 GitHub 提供的持续集成和持续交付服务。工作流（workflow）是一份 YAML，放在 .github/workflows 里，见 `gha-workflow-in-dot-github`。事件触发后，作业（job）在 runner 上跑。作业之间的成功关系见 `gha-job-needs-success`。",
+    "example": "仓库里的工作流：\n\n```yaml\n# .github/workflows/test.yml\non: [push]\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: mvn test\n```",
+    "task": "说明 GitHub Actions 是什么。工作流文件放在哪？谁去执行里面的步骤？",
+    "answer": "GitHub Actions 是跟着仓库走的 CI 服务。工作流放在 .github/workflows。事件触发后由 runner 执行作业。",
+    "deep": [
+      {
+        "title": "它不是唯一的 CI",
+        "body": "Jenkins 等也可以跑同样的构建。Actions 的特点是工作流和仓库在一起，见 `jenkins-not-only-ci-tool`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开 GitHub Actions 文档 Understanding GitHub Actions。在仓库里放一份 workflow，推上去，确认 Actions 页出现这次 run。"
+      }
+    ],
+    "references": [
+      [
+        "GitHub Actions：Understanding GitHub Actions",
+        "https://docs.github.com/en/actions/get-started/understand-github-actions"
+      ],
+      [
+        "GitHub Actions：Workflow syntax",
+        "https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions"
+      ]
+    ]
+  },
+  "gha-workflow-enter": {
+    "core": "on 决定什么事件启动工作流。jobs 里的每个作业默认可以并行。要用前一个作业的成功当前提，写 needs，见 `gha-job-needs-success`。作业之间传文件用 artifact，见 `gha-artifact-between-jobs`。",
+    "example": "测试过了再构建：\n\n```yaml\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps: [{ run: mvn test }]\n  build:\n    needs: test\n    runs-on: ubuntu-latest\n    steps: [{ run: mvn -DskipTests package }]\n```",
+    "task": "说明谁触发工作流。怎样让构建等测试成功？测试失败时构建会不会跑？",
+    "answer": "on 里的事件触发工作流。构建 job 写 needs: test。测试失败时构建不会开始。",
+    "deep": [
+      {
+        "title": "artifact 不是仓库本身",
+        "body": "作业之间要传文件，先 upload artifact 再 download。不要假设两个 job 共享同一台机器的磁盘。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "把 test 写成必失败。确认 build 显示为 skipped。改绿之后，确认 artifact 能在下一个 job 里被下载。"
+      }
+    ],
+    "references": [
+      [
+        "GitHub Actions：jobs.<job_id>.needs",
+        "https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idneeds"
+      ],
+      [
+        "GitHub Actions：Storing artifacts",
+        "https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts"
+      ]
+    ]
+  },
+  "gha-not-the-runtime": {
+    "core": "runner 是执行作业的机器，用完就丢掉。生产进程在镜像和集群里，见 `docker-what-it-is`、`k8s-what-it-is`。CI 门禁不能只看构建通过，见前端的 `ci-gate-not-only-build`。密钥不要写进镜像，见 `secrets-not-in-image`。",
+    "example": "两段不要并成一句：\n\n```text\nmvn test 绿了     CI 作业\nkubectl 里的 Pod  线上进程\n```",
+    "task": "说明工作流绿了代表什么。线上进程在哪一层？runner 会不会一直留着？",
+    "answer": "绿了只代表这次 CI 作业过了。线上进程在容器或集群里。runner 用完就丢掉。",
+    "deep": [
+      {
+        "title": "部署是另一步",
+        "body": "可以把部署写成后续 job，但仍要认清那是在改集群，不是测试作业的副作用。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "只跑测试工作流，确认集群里的副本数没有变。另一次手动或后续 job 才改 Deployment。"
+      }
+    ],
+    "references": [
+      [
+        "GitHub Actions：About jobs",
+        "https://docs.github.com/en/actions/using-jobs/using-jobs-in-a-workflow"
+      ],
+      [
+        "GitHub Actions：Runners",
+        "https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners"
+      ]
+    ]
+  },
+  "docker-what-it-is": {
+    "core": "Docker 用来构建镜像（image）并启动容器（container）。镜像是只读模板，容器是它跑起来的进程，见 `docker-image-template-not-container`。容器共享主机内核，见 `container-shares-host-kernel`。和虚拟机的隔离差别见 `vm-vs-container-isolation-tradeoff`。",
+    "example": "构建并运行：\n\n```bash\ndocker build -t pay:1 .\ndocker run --rm -p 8080:8080 pay:1\n```",
+    "task": "说明镜像和容器的差别。容器有没有自己的内核？",
+    "answer": "镜像是只读模板，容器是它跑起来的进程。容器共享主机内核，没有自己的内核。",
+    "deep": [
+      {
+        "title": "一层一层叠",
+        "body": "Dockerfile 每一步生成一层。COPY 的顺序影响缓存，见 `docker-layer-cache-copy`。多阶段构建见 `docker-multistage`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开 Docker 文档 Get started，对上 image 和 container。docker image ls 和 docker ps 看到的不是同一份清单。"
+      }
+    ],
+    "references": [
+      [
+        "Docker：Get started",
+        "https://docs.docker.com/get-started/"
+      ],
+      [
+        "Docker：Images and containers",
+        "https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-an-image/"
+      ]
+    ]
+  },
+  "docker-image-run": {
+    "core": "Dockerfile 描述从基础镜像开始复制文件、安装依赖和启动命令。docker build 生成镜像。docker run 从镜像启动容器。编排多个容器的服务名即 DNS，见 `compose-service-name-dns`。镜像仓库不是随便一个文件桶，见 `docker-registry-not-just-repo-bucket`。",
+    "example": "最小 Dockerfile：\n\n```dockerfile\nFROM eclipse-temurin:21-jre\nCOPY app.jar /app.jar\nENTRYPOINT [\"java\",\"-jar\",\"/app.jar\"]\n```",
+    "task": "说明 Dockerfile、build、run 各做一步什么。镜像打上标签是为了什么？",
+    "answer": "Dockerfile 描述怎么做镜像。build 生成镜像。run 启动容器。标签用来引用这一次构建的结果。",
+    "deep": [
+      {
+        "title": "一个容器一件主进程",
+        "body": "把数据库和应用塞进同一容器会让健康检查和扩缩容缠在一起，见 `one-container-one-service-heuristic`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "build 一个带标签的镜像，run 起来后 curl 端口。再 docker rm 容器，确认镜像还在，容器进程已经没了。"
+      }
+    ],
+    "references": [
+      [
+        "Docker：Dockerfile",
+        "https://docs.docker.com/reference/dockerfile/"
+      ],
+      [
+        "Docker：docker run",
+        "https://docs.docker.com/reference/cli/docker/container/run/"
+      ]
+    ]
+  },
+  "docker-not-a-vm": {
+    "core": "虚拟机有自己的内核和更强隔离，容器共享主机内核，见 `vm-vs-container-isolation-tradeoff`。Docker 解决打包和在一台主机上运行。多机副本、ClusterIP 和 Ingress 见 `k8s-what-it-is`。容器里的 root 也不是主机 root 的别名，见 `docker-root-not-host-root`。",
+    "example": "三层：\n\n```text\n虚拟机     自己的内核\n容器       这台主机上的进程\nKubernetes 多机上的工作负载\n```",
+    "task": "说明容器和虚拟机在内核上的差别。Docker 和 Kubernetes 各管哪一层？",
+    "answer": "虚拟机有自己的内核，容器共享主机内核。Docker 管镜像和这台机器上的容器。Kubernetes 管多机上的工作负载。",
+    "deep": [
+      {
+        "title": "运行时可以不是 Docker",
+        "body": "Kubernetes 用容器运行时接口，不一定是 Docker 引擎，见 `k8s-runtime-not-only-docker`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "在只有 Docker 的机器上 docker run。确认没有 kube-apiserver。装了集群之后，Pod 才出现在 kubectl get pods。"
+      }
+    ],
+    "references": [
+      [
+        "Docker：What is a container",
+        "https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-a-container/"
+      ],
+      [
+        "Kubernetes：What is Kubernetes",
+        "https://kubernetes.io/docs/concepts/overview/"
+      ]
+    ]
+  },
+  "k8s-what-it-is": {
+    "core": "Kubernetes 是调度容器工作负载的集群。控制面保存期望状态，节点跑 kubelet 和工作负载。最小可调度对象是 Pod，见 `k8s-pod-share-localhost`。长期跑的应用用 Deployment，见 `k8s-deploy-not-lone-pod`。集群内地址是 Service，见 `k8s-service-clusterip`。",
+    "example": "三件套：\n\n```text\nPod          一组共享网络的容器\nDeployment   管副本\nService      给出稳定地址\n```",
+    "task": "用文档里的说法说明 Kubernetes 是什么。Pod、Deployment、Service 各做什么？",
+    "answer": "Kubernetes 是调度容器工作负载的集群。Pod 是一组容器，Deployment 管副本，Service 给出稳定地址。",
+    "deep": [
+      {
+        "title": "先有网络插件，CoreDNS 才起来",
+        "body": "kubeadm 装完后要先装 CNI，见 `kubeadm-cni-before-coredns`。没有网络插件，DNS 不会好。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开 Kubernetes 的 What is Kubernetes。kubectl get nodes 能列出节点，再 kubectl get pods -A 看到控制面组件。"
+      }
+    ],
+    "references": [
+      [
+        "Kubernetes：What is Kubernetes",
+        "https://kubernetes.io/docs/concepts/overview/"
+      ],
+      [
+        "Kubernetes：Pods",
+        "https://kubernetes.io/docs/concepts/workloads/pods/"
+      ]
+    ]
+  },
+  "k8s-cluster-enter": {
+    "core": "kubectl 是和 API 说话的客户端。apply 把期望状态交给控制面。kube-scheduler 选节点，kubelet 拉镜像并启动容器。单独一个 Pod 清单缺少副本和滚动，见 `k8s-deploy-not-lone-pod`。探活见 `k8s-probes`。内存限制见 `k8s-memory-limit`。",
+    "example": "发布：\n\n```bash\nkubectl apply -f deploy.yaml\nkubectl get pods\n```",
+    "task": "说明谁接收 YAML。什么东西在节点上把容器跑起来？只写文件会不会出现 Pod？",
+    "answer": "API 接收 YAML。kubelet 在节点上启动容器。只写文件、不 apply，不会出现 Pod。",
+    "deep": [
+      {
+        "title": "控制面节点默认不跑业务",
+        "body": "kubeadm 会给控制面打污点，见 `kubeadm-control-plane-taint`。业务 Pod 要跑在工作节点，或明确容忍。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "apply 一份 Deployment，kubectl get pods -o wide 看节点。delete 之后副本应被控制器再拉起来，而不是永远消失。"
+      }
+    ],
+    "references": [
+      [
+        "Kubernetes：Deployments",
+        "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/"
+      ],
+      [
+        "Kubernetes：kubectl apply",
+        "https://kubernetes.io/docs/reference/kubectl/generated/kubectl_apply/"
+      ]
+    ]
+  },
+  "k8s-not-docker-engine": {
+    "core": "运行时可以是 containerd 等，不必是 Docker 引擎，见 `k8s-runtime-not-only-docker`。ClusterIP 只在集群内，见 `k8s-service-clusterip`。Ingress 需要控制器，见 `k8s-ingress-needs-controller`。Docker 只解释单机上的镜像和容器，见 `docker-not-a-vm`。",
+    "example": "从外到内：\n\n```text\n浏览器 → Ingress → Service → Pod\n```",
+    "task": "说明谁做调度。集群内地址和从外进来各用什么？运行时必须是 Docker 吗？",
+    "answer": "Kubernetes 做调度。集群内用 Service，从外进来常用 Ingress 加控制器。运行时不必是 Docker。",
+    "deep": [
+      {
+        "title": "密钥不要打进镜像",
+        "body": "Secret 和镜像层是两件事，见 `secrets-not-in-image`。apply 了 Deployment 不等于密钥管理完成。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "kubectl get svc 看到 ClusterIP。没有 Ingress 控制器时，Ingress 对象不会变成可访问的外部入口。"
+      }
+    ],
+    "references": [
+      [
+        "Kubernetes：Service",
+        "https://kubernetes.io/docs/concepts/services-networking/service/"
+      ],
+      [
+        "Kubernetes：Ingress",
+        "https://kubernetes.io/docs/concepts/services-networking/ingress/"
+      ]
+    ]
+  },
   "gha-workflow-in-dot-github": {
     "core": "GitHub Actions 的工作流是仓库里的 YAML。文件必须放在 `.github/workflows`。一次运行由事件触发：仓库内的 push、issue，仓库外的 repository_dispatch，定时，或手动。匹配发生在这次事件对应的提交和引用上：GitHub 在该提交的 `.github/workflows` 里找文件，`on` 对得上才开跑。这次运行使用的是那一次提交里的工作流内容，不是你后来在默认分支改过、但这次提交里还没有的版本。部分事件还要求文件已经在默认分支上才触发。",
     "why": "把 YAML 放在 docs 或仓库根目录，推送永远对不上。改了工作流却在旧提交上重跑，跑的仍是那次提交里的旧文件。",
@@ -16477,6 +17550,84 @@
     ],
     "diagram": "diagrams/kube-ingress-controller.svg"
   },
+  "junit-what-it-is": {
+    "core": "JUnit 是 Java 的测试框架。JUnit 5 的编程模型在 jupiter：用 @Test 标方法，用断言对照可观察的结果。测试实例的生命周期见 `junit-instance-lifecycle`。一条测试只验证一种行为，见 `test-one-behavior`。",
+    "example": "一个测试方法：\n\n```java\n@Test\nvoid priceKeepsCents() {\n  assertEquals(\"1.00\", Price.format(100));\n}\n```",
+    "task": "用文档里的说法说明 JUnit 是什么。测试方法用什么注解标出？断言对照的是什么？",
+    "answer": "JUnit 是在 JVM 上跑测试的框架。方法用 @Test 标出。断言对照可观察的结果。",
+    "deep": [
+      {
+        "title": "JUnit 不是 Spring",
+        "body": "它负责发现和执行测试。要装一部分 Spring 容器，用切片测试，见 `spring-test-slice`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开 JUnit 5 用户指南的 Overview。写一个会失败的断言，确认构建失败信息指向这个方法，而不是主类。"
+      }
+    ],
+    "references": [
+      [
+        "JUnit 5：Overview",
+        "https://docs.junit.org/current/user-guide/#overview"
+      ],
+      [
+        "JUnit 5：Writing Tests",
+        "https://docs.junit.org/current/user-guide/#writing-tests"
+      ]
+    ]
+  },
+  "junit-enter-test": {
+    "core": "src/test/java 里的测试类由构建工具编译。mvn test 或 gradle test 启动 JUnit 平台，按引擎发现 @Test 方法并执行。默认生命周期里，每个测试方法常对应一个新实例，见 `junit-instance-lifecycle`。可观察结果见 `test-observable-result`。",
+    "example": "跑全部测试：\n\n```bash\nmvn test\n```",
+    "task": "说明谁发现测试类、谁执行方法。测试源码通常放在哪一个目录？",
+    "answer": "构建工具的测试任务发现测试类。JUnit 平台执行方法。源码通常在 src/test/java。",
+    "deep": [
+      {
+        "title": "IDE 里的绿条也是同一套",
+        "body": "IDE 调用的仍是 JUnit 平台。不要把「点一下运行」理解成另一套不走断言的魔法。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "写一个必失败的测试，运行 mvn test。确认报告里有这个方法名和断言信息。删掉 @Test 后再跑，确认它不再被执行。"
+      }
+    ],
+    "references": [
+      [
+        "JUnit 5：Running Tests",
+        "https://docs.junit.org/current/user-guide/#running-tests"
+      ],
+      [
+        "Maven Surefire",
+        "https://maven.apache.org/surefire/maven-surefire-plugin/"
+      ]
+    ]
+  },
+  "junit-not-the-app": {
+    "core": "测试进程里可以只测纯函数，也可以用 Spring 切片装一部分容器，见 `spring-test-slice`。要真实数据库方言，用 Testcontainers，见 `testcontainers-real-db`。绿条只说明被执行的那些断言过了，不说明线上进程已经启动。",
+    "example": "三层不要并成一句：\n\n```text\n单元     纯函数 + JUnit\n切片     @WebMvcTest\n真实引擎  Testcontainers\n```",
+    "task": "说明测试绿了代表什么。生产进程和真实库分别要什么？",
+    "answer": "绿了只代表被执行的断言过了。生产进程要另起。真实库用 Testcontainers 或外部实例，不是 JUnit 自带的。",
+    "deep": [
+      {
+        "title": "事务回滚是测试夹具",
+        "body": "切片测试里的回滚避免弄脏库，见 `spring-test-transaction-rollback`。它不是生产事务策略。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "只跑纯函数测试，确认没有 Tomcat started。再跑一个 @SpringBootTest，确认这次才在测试进程里起了容器。"
+      }
+    ],
+    "references": [
+      [
+        "Spring：Testing",
+        "https://docs.spring.io/spring-framework/reference/testing.html"
+      ],
+      [
+        "Testcontainers：Java",
+        "https://java.testcontainers.org/"
+      ]
+    ]
+  },
   "junit-instance-lifecycle": {
     "core": "**JUnit Jupiter（JUnit 5）** 默认对每个测试方法创建新的测试实例，实例字段因此不会自动带到下一个方法。静态字段、单例、没关闭的外部资源和静态替换过的依赖仍然跨方法保留。若把生命周期改成每个类一个实例，实例字段也会在方法之间留下来。测试应能单独运行，也能按任意顺序运行。顺序是每个测试方法开始前创建新实例，方法结束就丢弃，所以实例字段不会带到下一个方法。静态字段、单例和没关掉的外部资源不在这条生命周期里。边界是若改成每个类一个实例，实例字段也会留下来；单独运行第二个方法时没有第一次写入，依赖顺序的断言就会失败。全量通过而单跑失败，说明断言依赖了别的方法留下的静态数据。",
     "why": "学习者会以为测试按类从上到下跑，后一个方法可以接着用前一个放进列表的数据。单独重跑第二个时列表是空的，断言失败，全量却能通过，失败也指不出是哪条规格坏了。第二个方法单独运行仍失败，改成方法内数据后换序也通过，才说明泄漏的是静态状态。",
@@ -16655,6 +17806,32 @@
       [
         "Spring：Context caching",
         "https://docs.spring.io/spring-framework/reference/testing/testcontext-framework/ctx-management/caching.html"
+      ]
+    ]
+  },
+  "java-eng-chapter-aim": {
+    "core": "这一章不教新的业务框架。一次请求跨几跳要能串起来，见 `request-trace-one-hop`。指标、日志、跟踪是三类信号，见 `otel-three-signals`。慢在 CPU、库连接还是下游，见 `server-slow-which-resource`。发布和探活见 `k8s-probes`。密钥不要进镜像，见 `secrets-not-in-image`。",
+    "example": "三句：\n\n```text\n看见   同一条跟踪穿过网关和服务\n信号   指标、日志、跟踪\n调优   先定位资源，再只调这一段\n```",
+    "task": "说明这一章不回答哪一类问题。跟踪、三类信号、慢在哪各回哪一课？",
+    "answer": "不回答该用 JPA 还是 MyBatis。跟踪回 request-trace-one-hop，三类信号回 otel-three-signals，慢在哪回 server-slow-which-resource。",
+    "deep": [
+      {
+        "title": "超时也是工程",
+        "body": "HTTP 客户端超时和连接池超时不是同一层，见 `java-http-timeout`、`hikari-pool-timeout`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对一次下单找出同一条 trace id 穿过的跳数。对不上的跳回到这一章，而不是先加机器。"
+      }
+    ],
+    "references": [
+      [
+        "OpenTelemetry：Signals",
+        "https://opentelemetry.io/docs/concepts/signals/"
+      ],
+      [
+        "OpenTelemetry：Traces",
+        "https://opentelemetry.io/docs/concepts/signals/traces/"
       ]
     ]
   },
@@ -17169,6 +18346,35 @@
     "diagram": "library-assets/illustrated-basics/os-p0111.png",
     "origin": "本地库《图解系统》内核能力与调度页"
   },
+  "linux-user-kernel-syscall": {
+    "core": "用户态代码只能访问本进程的用户空间；内核态代码可以访问内核空间与完整特权。需要建文件、映射内存、发网络包时，用户程序发起系统调用：CPU 产生陷入/中断，切到内核执行对应服务，完成后返回用户态。这不是“业务代码自己跑进内核”，而是经过固定入口把特权工作交给内核。用户态与内核态、系统调用边界仍在；BKL 等历史锁见 `linux-bkl-gone`。",
+    "why": "把用户程序当成随时能改任意物理内存，会对不上权限与隔离；把系统调用当成普通函数调用，又解释不了为何会陷入内核。区分信号是：有没有经过系统调用入口切换特权级。",
+    "example": "`read` 从用户缓冲读数据时，内核在内核态完成设备或页缓存访问，再把结果拷回用户缓冲并返回。业务线程自己写页表项会失败或被保护。",
+    "task": "写出用户态与内核态在可访问范围上的差别；用三步描述一次系统调用（发请求 → CPU 做什么 → 返回哪里）。",
+    "answer": "用户态只能访问本进程用户空间；内核态可访问内核空间并做特权操作。系统调用：用户程序发起调用；CPU 陷入内核执行；完成后返回用户态。",
+    "deep": [
+      {
+        "title": "和虚拟内存隔离的关系",
+        "body": "`linux-virtual-memory-isolation` 讲进程地址空间分开。本课钉特权级：即使有虚拟地址，改映射仍要进内核。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对照「用户程序 → 系统调用 → 中断/陷入 → 内核执行 → 返回」图，标出哪一段在用户态、哪一段在内核态。"
+      }
+    ],
+    "references": [
+      [
+        "man：syscalls",
+        "https://man7.org/linux/man-pages/man2/syscalls.2.html"
+      ],
+      [
+        "kernel：User-space API",
+        "https://docs.kernel.org/userspace-api/index.html"
+      ]
+    ],
+    "diagram": "library-assets/illustrated-basics/os-p0112.png",
+    "origin": "本地库《图解系统》用户态与内核态、系统调用页"
+  },
   "linux-virtual-memory-isolation": {
     "core": "单片机等场景常让 CPU 直接使用物理地址；两个程序若都写同一个绝对地址，会互相覆盖。操作系统为每个进程提供独立的虚拟地址空间：进程只在自己的虚拟地址里访问，相同的虚拟地址可以映射到不同的物理内存。映射由操作系统维护，访存时再经硬件翻译。这样进程不必协调彼此的物理布局，也能避免直接踩到对方的数据。",
     "why": "把物理直访当成多进程现状，就解释不了进程隔离，也解释不了为何两个进程打印出相同指针值却互不影响。区分信号是：冲突来自共用绝对物理地址；虚拟地址把“程序看到的地址”和“内存条位置”分开。",
@@ -17541,6 +18747,64 @@
     ],
     "diagram": "library-assets/illustrated-basics/os-p0187.png",
     "origin": "本地库《图解系统》shell 管道与匿名管道页"
+  },
+  "linux-process-states": {
+    "core": "操作系统教材常用进程五态：创建、就绪、运行、阻塞、结束。就绪被调度才进入运行；时间片用完回到就绪；等事件进入阻塞，事件完成回到就绪。这是理解调度与阻塞的模型。Java 的 `Thread.State`（JDK 5 起）是 `NEW`、`RUNNABLE`、`BLOCKED`、`WAITING`、`TIMED_WAITING`、`TERMINATED`，见 `java-thread-six-states`。不要把教材五态直接当成 JVM 线程枚举，也不要在五态里找“挂起”当现行 API。",
+    "why": "两套状态机混背，会把 TIMED_WAITING 说成阻塞、把 BLOCKED 说成挂起，排障时读错 jstack。区分信号是：在讲内核调度还是在讲 `Thread.getState()`。",
+    "example": "进程等磁盘完成：教材里是阻塞；事件完成后回就绪再被调度。Java 里 `Thread.sleep` 是 TIMED_WAITING，抢不到监视器是 BLOCKED，都不是教材里的“挂起”。",
+    "task": "列出教材五态各在什么事件下迁移；写一句它和 Thread.State 的关系；划掉“Java 线程就是这五种”。",
+    "answer": "划掉「Java 线程就是这五种」。五态：创建→就绪→运行，运行可因时间片回就绪、因等待进阻塞、因结束进结束；阻塞事件完成回就绪。它是 OS 调度模型，不是 Thread.State。Java 线程状态看六个枚举值。",
+    "deep": [
+      {
+        "title": "和 java-thread-six-states",
+        "body": "那一课钉 JDK 枚举。本课钉 OS 教材模型，并写明不要混背。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对照五态图说出时间片用完、等待事件、事件完成三条边。再打开 Thread.State，确认没有“挂起”。"
+      }
+    ],
+    "references": [
+      [
+        "kernel：scheduler",
+        "https://docs.kernel.org/scheduler/index.html"
+      ],
+      [
+        "Thread.State",
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Thread.State.html"
+      ]
+    ],
+    "diagram": "library-assets/illustrated-basics/os-p0148.png",
+    "origin": "本地库《图解系统》进程状态变迁页（Java 状态以 Thread.State 为准）"
+  },
+  "linux-process-context-switch": {
+    "core": "多任务靠快速切换制造“同时在跑”的效果。CPU 上下文至少包括寄存器与程序计数器（PC）：切走前要保存，切来时再装入并跳到新的 PC。进程上下文切换在内核态进行，除 CPU 上下文外，还涉及用户态资源（如虚拟地址空间、用户栈）与内核态资源（如内核栈）。同进程内的线程切换通常不必换整个地址空间，成本往往更低，见线程与虚拟线程相关课。切换太频繁会吃掉有效工作时间。",
+    "why": "只背“改一下 PC”，解释不了为何进程切换比同进程线程切换更贵，也解释不了页表/地址空间与切换的关系。区分信号是：有没有换地址空间等进程级资源。",
+    "example": "从进程 A 切到进程 B：内核保存 A 的寄存器与 PC，装入 B 的，并让 MMU 使用 B 的地址空间映射。同进程两个线程切换时，虚拟地址空间通常仍是这份。",
+    "task": "写出 CPU 上下文至少包含什么；说明进程切换为何在内核态；用一句话对比进程切换与同进程线程切换。",
+    "answer": "CPU 上下文至少含寄存器与 PC。进程由内核调度，切换在内核态完成。进程切换还要换地址空间等进程级资源；同进程线程切换通常不必换整份地址空间。",
+    "deep": [
+      {
+        "title": "和调度五态",
+        "body": "`linux-process-states` 讲何时从运行回到就绪。本课钉切换时内核实际保存与装入什么。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对照上下文切换页，列出要保存的 CPU 上下文，再标出进程切换多换了哪些资源。"
+      }
+    ],
+    "references": [
+      [
+        "kernel：Context switching",
+        "https://docs.kernel.org/scheduler/sched-design-CFS.html"
+      ],
+      [
+        "Intel SDM：Context",
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html"
+      ]
+    ],
+    "diagram": "library-assets/illustrated-basics/os-p0154.png",
+    "origin": "本地库《图解系统》进程上下文切换页"
   },
   "docker-root-not-host-root": {
     "core": "容器里 whoami 是 root，只说明这个进程在自己的用户命名空间里 uid 是 0。没有做用户命名空间重映射时，这个 0 就是宿主机上的 uid 0，身份确实大。即便如此，默认仍会丢掉一批 Linux capabilities，并套上 seccomp。容器有自己的挂载命名空间，里面的 /etc/shadow 是镜像里的文件，不是宿主机那一份，除非你把宿主机路径挂进去。--privileged 会把能力加回来，并放宽隔离，那才是“提升权限”之后危险的那种跑法。打开 userns-remap 后，容器里的 uid 0 映射到 /etc/subuid 里的一段普通号，例如从 231072 起，在宿主机上没有 root 特权。rootless 更进一步：守护进程本身就不是宿主机 root。两种映射都不是 2016 年“容器 root 等于宿主机 root”那一句能概括的。",
