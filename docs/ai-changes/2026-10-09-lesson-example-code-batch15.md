@@ -37,7 +37,8 @@ cd web && npm run export:curriculum && node ../scripts/verify_content.mjs
 
 ## 后续
 
-- [ ] 继续润色：剩余模板（优先 MySQL 族共用 `SHOW ENGINE`、Spring/并发共用片段）
+- [x] MySQL `SHOW ENGINE` / VARCHAR 错配簇（见 [batch16](2026-10-10-lesson-example-code-batch16.md)）
+- [ ] 继续润色：MyBatis / Spring Boot / 并发 / Node 共用片段
 - [ ] 新课入库勿再用「对照本课断言」套话生成器
 
 ## 给下一模型

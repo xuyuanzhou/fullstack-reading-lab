@@ -830,7 +830,7 @@ const EXAMPLE_CODE_BLOCKS = {
   ].join('\n'),
 
   'java-record-accessor': [
-    'record 访问器是分量名()，不是 getXxx：',
+    '取值方法是括号里的名字，不是 getXxx：',
     '',
     '```java',
     'public record Money(long cents, String currency) {}',
@@ -2751,12 +2751,12 @@ const EXAMPLE_CODE_BLOCKS = {
   ].join('\n'),
 
   'sca-dubbo-or-feign': [
-    '对外 HTTP；内部高密 Java 调用才评估 Dubbo：',
+    '已经是 HTTP 的调用先留下：',
     '',
     '```text',
-    '浏览器 / 网关 / 回调 / 上传 → HTTP（Feign 或 MVC）',
-    '订单↔库存：两边 Java、调用极多 → 可评估 Dubbo',
-    '不要「全站只剩一种 RPC」',
+    '浏览器 / 网关 / 回调 / 上传：继续 HTTP。Nacos 不是改 Dubbo 的理由。',
+    '订单调库存：只有 HTTP 已测出是瓶颈、且两侧都是 Java，才评估 Dubbo。',
+    '不要两个栈调同一种业务。',
     '```',
   ].join('\n'),
 
@@ -3690,7 +3690,7 @@ const EXAMPLE_CODE_BLOCKS = {
     "对照本课断言，先写出最小可观察片段：",
     "",
     "```js",
-    "// 选定更新模型之后，生态跟着这一套走",
+    "// 选定界面库之后，生态跟着这一套走",
     "```"
   ].join('\n'),
 
@@ -7668,12 +7668,12 @@ const EXAMPLE_CODE_BLOCKS = {
   ].join('\n'),
 
   'arch-evolution-stages': [
-    '小流量模块化单体；库打满先副本与优化：',
+    '停在现在这一级，除非有你们自己的线上数字：',
     '',
     '```text',
-    '日订单一千、团队小 → 模块化单体一次部署',
-    '峰值一万且库存库 CPU 满 → 先加应用副本 + 优化库',
-    '不是一上来拆三个仓',
+    '现在：一个仓库，一次部署。没有多团队抢发布。停在这里。',
+    '库 CPU 或锁等待打满 → 先优化 SQL。加应用副本可能更差。',
+    '拆服务：订单和库存要各自发布、各自的库。没有这条就不拆。',
     '```',
   ].join('\n'),
 
@@ -8112,7 +8112,7 @@ const EXAMPLE_CODE_BLOCKS = {
   ].join('\n'),
 
   'fs-four-layers': [
-    '页面 → 契约 → 服务 → 库，一层一件事：',
+    '页面、接口契约、用例、持久化，各守一件事：',
     '',
     '```text',
     '下单页提交 sku/qty',
@@ -8122,11 +8122,11 @@ const EXAMPLE_CODE_BLOCKS = {
   ].join('\n'),
 
   'fs-page-feature': [
-    '路由 id 拉服务器状态；输入是草稿：',
+    'URL 上的 id 拉服务器状态；输入是表单状态：',
     '',
     '```js',
     '// GET /orders/42 → 服务器状态',
-    '// 备注输入 = 本地草稿；保存才 PATCH',
+    '// 备注输入 = 表单状态；保存才 PATCH',
     '```',
   ].join('\n'),
 
@@ -8833,31 +8833,32 @@ const EXAMPLE_CODE_BLOCKS = {
   ].join('\n'),
 
   'mfe-pick-by-constraint': [
-    '约束对齐再选型，不是先选时髦词：',
+    '仓库已经是 qiankun，菜单跟路径走：',
     '',
     '```text',
-    '全员 React 19、菜单=路径 → Module Federation',
-    '多技术栈遗留 → qiankun / iframe',
+    '已有加载方式：qiankun。不因为 Federation 更新就换。',
+    '做不到的事：第三方报表必须是独立 document。这一块用 iframe。',
+    '不引入 Module Federation。共享同一份 React 单例这件事，现有 HTML 入口做得到，就不加。',
     '```',
   ].join('\n'),
 
   'mfe-compare-matrix': [
-    '按场景对照，不要一张表盖所有：',
+    '已有 qiankun 时，表用来核对它做不到什么，不用来换名字：',
     '',
     '```text',
-    'React 中台共享设计系统 → Federation',
-    '已有多 Webpack 应用要渐进 → single-spa',
-    '强隔离报表 → iframe',
+    'qiankun 做得到：路径激活一整页 HTML。菜单继续用它。',
+    '它做不到：第三方页的独立 document。这一块才写 iframe。',
+    'Federation 的主缝是 shared 单例。这次不需要，就不装。',
     '```',
   ].join('\n'),
 
   'mfe-pick-one-path': [
-    '决议写清主路径与例外，避免三套并行：',
+    '主路径留下已有的加载方式，例外写范围：',
     '',
     '```text',
-    '中台主路径：Module Federation',
-    '报表子域：iframe',
-    '不新开第三条运行时',
+    '中台主路径：继续 qiankun',
+    '报表子域：iframe，仅这一块',
+    '不新开 Module Federation',
     '```',
   ].join('\n'),
 
@@ -9032,11 +9033,11 @@ const EXAMPLE_CODE_BLOCKS = {
   ].join('\n'),
 
   'table-design-from-facts': [
-    '只持久化已发生的事实，草稿不入库：',
+    '只持久化已发生的事实，未提交的输入不入库：',
     '',
     '```text',
     '提交后：订单 + 明细 + 幂等键',
-    '未提交备注草稿 / 按钮是否灰 → 不入库',
+    '未提交的备注 / 按钮是否灰 → 不入库',
     '```',
   ].join('\n'),
 
@@ -9825,6 +9826,1846 @@ const EXAMPLE_CODE_BLOCKS = {
     '}',
     '// 勿为校验 setter 再引入已过时的 @Required',
     '```',
+  ].join('\n'),
+
+  // batch16: polish MySQL SHOW ENGINE / varchar-heuristic template cluster
+  'mysql-innodb-tablespace': [
+    '页大小决定内部表空间上限，不是「表空间=2GB」：',
+    '',
+    '```sql',
+    'SHOW VARIABLES LIKE "innodb_page_size";  -- 常见 16384',
+    '-- 16KB 页 → 内部上限约 64TB（手册）',
+    '-- 文件系统单文件 16TB 可能先撞上',
+    '```',
+  ].join('\n'),
+
+  'mysql-fk-redundancy': [
+    '计数冗余要对账；去掉外键就要有同等严格的应用规则：',
+    '',
+    '```text',
+    '帖子 reply_count：事务内更新或异步重建',
+    '定期 COUNT(*) 校准',
+    '无 FK 的父子订单：删父时挡并发插子',
+    '```',
+  ].join('\n'),
+
+  'mysql-wide-column-split': [
+    '列表不取正文才值得拆宽列；先 EXPLAIN 再拆：',
+    '',
+    '```sql',
+    '-- 列表：id, title, summary 留主表',
+    'SELECT id, title, summary FROM article WHERE ...;',
+    '-- 若仍 SELECT 正文 → 拆子表前后都要读，还多一次回表',
+    '```',
+  ].join('\n'),
+
+  'mysql-datetime-vs-timestamp': [
+    'DATETIME 存字面值；TIMESTAMP 按会话时区转 UTC：',
+    '',
+    '```sql',
+    '-- DATETIME 无小数秒约 5 字节；2039-01-01 可存',
+    '-- TIMESTAMP 约 4 字节；传统上限 ~2038-01-19 UTC',
+    'SET time_zone = "+08:00";',
+    'INSERT ... TIMESTAMP ...;  -- 按会话时区解释',
+    '```',
+  ].join('\n'),
+
+  'mysql-replica-parallel-applier': [
+    '并行回放能降延迟；大事务与读己之写另说：',
+    '',
+    '```sql',
+    'SET GLOBAL replica_parallel_workers = 4;',
+    '-- 主库可并行的小事务 → 从库延迟下降',
+    '-- 主库一次改几百万行 → 延迟再拉大',
+    '-- 「我的订单」仍读主，不读还在追的从库',
+    '```',
+  ].join('\n'),
+
+  'mysql-redo-undo-binlog': [
+    'redo / undo / binlog / relay 四本日志不能互相代替：',
+    '',
+    '```text',
+    'redo：崩溃后重做已提交变更',
+    'undo：回滚 + MVCC 读旧版本',
+    'binlog：逻辑事件（复制/恢复）',
+    'relay：从库 IO 线程落地后再由 applier 回放',
+    '```',
+  ].join('\n'),
+
+  'mysql-pt-checksum-pk': [
+    '校验按主键切块；修复语句从主库复制出去：',
+    '',
+    '```bash',
+    'pt-table-checksum ...  # 按 PK chunk，主从各算',
+    'pt-table-sync ...      # 修复在主库产生再复制',
+    '# 无主键 → 切块窗口变大',
+    '```',
+  ].join('\n'),
+
+  'mysql-initialize-not-install-db': [
+    '8.x 用 mysqld --initialize，不是 mysql_install_db：',
+    '',
+    '```bash',
+    'mysqld --initialize --datadir=/var/lib/mysql-3306',
+    'mysqld --defaults-file=3307.cnf  # 另一 datadir/port/socket/server_id',
+    '# 客户端连各自 socket，勿写进对方数据目录',
+    '```',
+  ].join('\n'),
+
+  'mysql-innodb-no-user-hash': [
+    'InnoDB 二级索引是 B+ 树，不要写 USING HASH：',
+    '',
+    '```sql',
+    'KEY (email)  -- B+：等值与 BETWEEN 同一有序叶子',
+    '-- USING HASH 不会让范围查询变快',
+    '-- 自适应哈希不是这条 DDL 能声明的',
+    '```',
+  ].join('\n'),
+
+  'mysql-autoinc-persists-8': [
+    '8.0+ Auto_increment 持久化，删行重启不会捡回空洞：',
+    '',
+    '```sql',
+    '-- 插入 1..17，删掉 ≥15',
+    'SHOW TABLE STATUS LIKE "t";  -- Auto_increment 仍为 18',
+    '-- 重启后再 INSERT → id=18（5.7 重启才可能捡回 15）',
+    '```',
+  ].join('\n'),
+
+  'mysql-float-ieee-not-8-digits': [
+    'FLOAT 列累加会漂；钱用 DECIMAL / 分：',
+    '',
+    '```sql',
+    'INSERT INTO t(f) VALUES (0.1),...(×10);',
+    'SELECT SUM(f) FROM t;           -- 常 ≠ 1',
+    'SELECT SUM(d) FROM t_dec;       -- DECIMAL(10,1) → 1.0',
+    '-- 客户端里 0.1 连加十次可能显示 1（未进 FLOAT 列）',
+    '```',
+  ].join('\n'),
+
+  'mysql-acid-c-is-consistency': [
+    '一致性是不变量；隔离不是「全局单线程」：',
+    '',
+    '```text',
+    '转账结束：余额非负、收支相抵 → Consistency',
+    'RR 下两会话改不同订单 → 都可提交',
+    '勿把隔离做成「同一时间只有一个请求」',
+    '```',
+  ].join('\n'),
+
+  'mysql-split-not-at-ten-million': [
+    '行数不是拆分阈值；看访问形态与运维指标：',
+    '',
+    '```text',
+    'WHERE id=? 且热数据在缓冲池 → 两千万行也可不拆',
+    '大范围扫描 / 复制延迟升 / 备份超窗 → 再谈按时间或键拆',
+    '```',
+  ].join('\n'),
+
+  'mysql-inner-join-match': [
+    'INNER 只要匹配行；要全用户加计数用 LEFT JOIN：',
+    '',
+    '```sql',
+    'SELECT u.id FROM users u',
+    'INNER JOIN orders o ON u.id = o.user_id;  -- 只下过单的',
+    'SELECT u.id, COUNT(o.id) FROM users u',
+    'LEFT JOIN orders o ON u.id = o.user_id',
+    'GROUP BY u.id;',
+    '```',
+  ].join('\n'),
+
+  'mysql-for-update-not-dist-lease': [
+    'FOR UPDATE 是同库短保护，不是跨机租约：',
+    '',
+    '```sql',
+    'SELECT * FROM stock WHERE sku=? FOR UPDATE;',
+    '-- 本地减库存后立刻 COMMIT',
+    '-- 持锁调支付网关 → 连接随 RTT 线性涨',
+    'UPDATE stock SET qty=qty-1 WHERE sku=? AND qty>=1;',
+    '```',
+  ].join('\n'),
+
+  'mysql-money-decimal-not-ban': [
+    '金额用 DECIMAL 或按分 BIGINT，别用 FLOAT：',
+    '',
+    '```sql',
+    'amount DECIMAL(12,2)  -- 19.90 ×10 → 199.00',
+    '-- 或 BIGINT 存分：1990，展示 /100',
+    '-- FLOAT 再 SUM 常对不上',
+    '```',
+  ].join('\n'),
+
+  'mysql-mvcc-not-two-version-columns': [
+    'MVCC 靠 Read View + undo，不是表上多一列版本：',
+    '',
+    '```text',
+    'A 开启后普通 SELECT 见价格 10',
+    'B 提交改成 12 → A 在 RR 仍可能见 10',
+    '靠 undo 链，不是 delete_version 业务列',
+    'A 若 SELECT … FOR UPDATE → 锁定读，行为不同',
+    '```',
+  ].join('\n'),
+
+  'mysql-fk-ban-not-absolute': [
+    '外键按场景：单库可挡悬空；热点表可去掉并加对账：',
+    '',
+    '```text',
+    '订单/明细单库 → FK 挡悬空明细',
+    '秒杀库存热点 → 可无 FK + 对账任务',
+    '不要用「禁止」代替这两种设计',
+    '```',
+  ].join('\n'),
+
+  'mysql-innodb-default-not-ban-others': [
+    '新建默认 InnoDB；迁 MyISAM 前确认表级依赖：',
+    '',
+    '```sql',
+    'CREATE TABLE orders (...);  -- 不写 ENGINE → InnoDB',
+    '-- 遗留 MyISAM：先确认表级特性，再 ALTER ENGINE=InnoDB',
+    '```',
+  ].join('\n'),
+
+  'mysql-db-features-ban-not-absolute': [
+    '视图/触发器/Event 按职责放行，不是一刀切禁令：',
+    '',
+    '```text',
+    '允许：报表只读 VIEW',
+    '禁止：触发器维护库存',
+    'Event：若用则当生产任务管理，不是默认首选',
+    '```',
+  ].join('\n'),
+
+  'mysql-ddl-merge-heuristic': [
+    '无关 DDL 评估能否合并；冲突就分发并看延迟：',
+    '',
+    '```sql',
+    '-- 加索引 + 改无关列：评估 ALGORITHM=INPLACE 一条做完',
+    '-- 冲突 → 分开发布，观察复制延迟',
+    '```',
+  ].join('\n'),
+
+  'mysql-count-star-innodb-not-always-scan': [
+    '带条件的 COUNT 应走索引；全局精确总数用汇总表：',
+    '',
+    '```sql',
+    'SELECT COUNT(*) FROM orders WHERE shop_id=?;  -- 应走索引',
+    '-- 全表精确总数 → 汇总表定时刷新，勿每次扫堆',
+    '```',
+  ].join('\n'),
+
+  'mysql-pk-autoinc-not-only-choice': [
+    '聚簇主键可选雪花或代理自增，避免无序 UUID：',
+    '',
+    '```text',
+    '雪花 / 号段 BIGINT 作 PK',
+    '或 AUTO_INCREMENT 代理键 + 业务 UNIQUE',
+    '避免无序 UUID 直接当聚簇主键',
+    '```',
+  ].join('\n'),
+
+  'mysql-subquery-ban-not-absolute': [
+    '可索引 IN 子查询可能 semi-join；相关子查询按行要改写：',
+    '',
+    '```sql',
+    'WHERE id IN (SELECT id FROM t WHERE ...可索引...)',
+    '-- EXPLAIN 看是否 semi-join',
+    '-- 坏的相关子查询：按外层行执行 → 改 JOIN/派生表',
+    '```',
+  ].join('\n'),
+
+  'mysql-scalability-not-hopeless': [
+    '读多先副本与缓存；写热点再分片：',
+    '',
+    '```text',
+    '读多 → 副本 + 缓存',
+    '写热点 → 再谈分片',
+    '文档模型适合稀疏属性，不是「MySQL 差所以换」',
+    '```',
+  ].join('\n'),
+
+  'mysql-replica-lag': [
+    '延迟估计为 0 仍可能读不到刚写的行：',
+    '',
+    '```text',
+    '暂停从库应用 → 主库 INSERT 订单',
+    '主立刻可见；从库行数 0（Seconds_Behind 仍可能显示 0）',
+    '恢复并追上位点后从库才有行',
+    '列表若要读己之写 → 查主',
+    '```',
+  ].join('\n'),
+
+  'mysql-slow-sql-locate': [
+    '先按累计耗时找摘要，不是只盯单次最慢：',
+    '',
+    '```text',
+    'A：3s × 10 次 ≈ 30s',
+    'B：50ms × 100000 ≈ 5000s  → 先开 B',
+    '看检查行数与摘要文本',
+    '```',
+  ].join('\n'),
+
+  'mysql-slow-sql-optimize': [
+    '等值+排序用联合索引左前缀，ANALYZE 看实扫行数：',
+    '',
+    '```sql',
+    '-- WHERE status=? ORDER BY created_at',
+    'INDEX (status, created_at)',
+    'EXPLAIN ANALYZE ...;  -- 实扫接近该状态行数',
+    '-- 只有 created_at → 等值用不上左前缀，行数仍大',
+    '```',
+  ].join('\n'),
+
+  'mysql-group-by-having': [
+    'WHERE 先滤行，HAVING 滤分组后的聚合：',
+    '',
+    '```sql',
+    'SELECT user_id, COUNT(*) c FROM orders',
+    'WHERE status = "paid"',
+    'GROUP BY user_id',
+    'HAVING c > 10;',
+    '```',
+  ].join('\n'),
+
+  'mysql-varchar-length': [
+    '同 VARCHAR(50)，字符集不同字节占用不同：',
+    '',
+    '```sql',
+    'SELECT CHAR_LENGTH(col), LENGTH(col) FROM t;',
+    '-- ASCII 与 utf8mb4 汉字：字符数可同，字节数不同',
+    '```',
+  ].join('\n'),
+
+  'mysql-varchar-row-max': [
+    '单行 65535 预算含字符集与长度前缀：',
+    '',
+    '```text',
+    'latin1 NOT NULL：65533 成功、65535 失败（手册对照）',
+    'utf8mb3 VARCHAR(255)：255×3 超 255 → 2 字节长度前缀',
+    'utf8mb4 按 4 字节计入同一预算',
+    '```',
+  ].join('\n'),
+
+  'mysql-unique-change-buffer': [
+    '普通二级索引可进 change buffer；唯一索引每次要查重：',
+    '',
+    '```text',
+    '日志表 INDEX(user_id) 批量插入 → 可进 change buffer',
+    'UNIQUE(email) → 每次插入都要确认无重复，不能先缓冲再返回',
+    '```',
+  ].join('\n'),
+
+  'mysql-prefix-index-and-cost': [
+    '前缀太短没选择性；ORDER BY 列不在索引里会 filesort：',
+    '',
+    '```sql',
+    '-- email 前 8 字符都落在同一域名 → 区分度差',
+    'UNIQUE (email)  -- 整列才有选择性',
+    '-- INDEX(name, created_at) + WHERE name=? ORDER BY id',
+    '-- id 不在索引 → filesort',
+    '```',
+  ].join('\n'),
+
+  'mysql-covering-not-index-kind': [
+    '覆盖是「查询列都在索引里」，不是一种索引类型：',
+    '',
+    '```sql',
+    '-- INDEX(email)；InnoDB 叶子带主键',
+    'SELECT id, email FROM user WHERE email=?;  -- Using index',
+    'SELECT * FROM user WHERE email=?;          -- 回表，非覆盖',
+    '-- 没有 CREATE COVERING INDEX',
+    '```',
+  ].join('\n'),
+
+  'mysql-text-ban-not-absolute': [
+    '大文本可页外存；列表勿 SELECT 正文：',
+    '',
+    '```sql',
+    '-- 正文 TEXT/页外：列表只取摘要列',
+    'SELECT id, title FROM article;',
+    '-- 「禁止 TEXT」是启发式，不是语法禁令',
+    '```',
+  ].join('\n'),
+
+  'mysql-enum-ban-not-absolute': [
+    '稳定短枚举可用；常变状态更宜表或字符串+约束：',
+    '',
+    '```sql',
+    'status ENUM("draft","paid")  -- 很少变时可',
+    '-- 业务状态常增删 → 字典表 / VARCHAR + CHECK',
+    '```',
+  ].join('\n'),
+
+  'mysql-phone-varchar-length-not-twenty': [
+    '电话长度按实际格式与区号，不是背「必须 20」：',
+    '',
+    '```sql',
+    'phone VARCHAR(32)  -- E.164 / 分机按产品定',
+    '-- 「电话=VARCHAR(20)」是口诀不是规范',
+    '```',
+  ].join('\n'),
+
+  'mysql-db-not-blob-store': [
+    '库存元数据与对象键；大文件放对象存储：',
+    '',
+    '```text',
+    'orders.avatar_key = "u/9/a.png"',
+    '文件本体 → OSS / S3',
+    '勿把多 MB BLOB 当默认附件方案',
+    '```',
+  ].join('\n'),
+  'storage-access-api-not-cookie-restore': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```js',
+    '// 嵌入第三方 iframe 内，需用户手势',
+    'await document.requestStorageAccess()',
+    '// 成功后才能读本第三方的存储；不是宿主代读',
+    '```'
+  ].join('\n'),
+  'fedcm-not-oauth-popup': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```js',
+    '// FedCM：浏览器中介账户选择（示意）',
+    "const cred = await navigator.credentials.get({ identity: { providers: [...] } })",
+    '// ≠ window.open(idp/authorize) 自管弹窗',
+    '```'
+  ].join('\n'),
+  'mysql-histogram-not-index': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```sql',
+    'ANALYZE TABLE t UPDATE HISTOGRAM ON status;',
+    'EXPLAIN SELECT * FROM t WHERE status = \'closed\';',
+    '-- 统计更准 ≠ 自动变成索引查找',
+    '```'
+  ].join('\n'),
+  'redis-sharded-pubsub-not-cluster-queue': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```redis',
+    'SSUBSCRIBE orders:events',
+    'SPUBLISH orders:events "{...}"',
+    '# 无订阅者仍丢；可靠投递看 Stream/MQ',
+    '```'
+  ].join('\n'),
+  'qps-formula-not-capacity': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```text',
+    '心算：吞吐 ≈ 并发 / 平均延迟',
+    '批复：压测拐点 + P99 + 错误率 + 依赖饱和',
+    '```'
+  ].join('\n'),
+  'circuit-breaker-not-retry': [
+    '熔断打开应快速失败；不要在打开态疯狂重试：',
+    '',
+    '```text',
+    '熔断打开 → 快速失败 / 降级',
+    '重试 → 单次调用再执行（有预算）',
+    '# 不要在打开态疯狂重试同一依赖',
+    '```',
+  ].join('\n'),
+
+  // batch17: polish MyBatis / Spring / Java concurrency / Node / JPA template clusters
+  'mybatis-rowbounds-memory': [
+    '小表可用 RowBounds；大列表用 LIMIT / 键集分页：',
+    '',
+    '```sql',
+    '-- 小字典：RowBounds(0,20) 尚可',
+    'SELECT ... WHERE id > #{lastId} ORDER BY id LIMIT 20',
+    '-- 或插件改写 LIMIT；勿对大结果集先全载再截断',
+    '```',
+  ].join('\n'),
+
+  'mybatis-lazy-javassist-not-cglib': [
+    '懒加载默认触发方法含 toString；aggressive 会更凶：',
+    '',
+    '```text',
+    'lazyLoadingEnabled=true, aggressiveLazyLoading=false',
+    'user.getName() → 只有用户 SQL',
+    'log.print(user) → toString 触发订单 SQL',
+    '只调 getOrders() → 订单 SQL 应出现在这次调用',
+    '```',
+  ].join('\n'),
+
+  'mybatis-jdbc-log-inlines': [
+    '分页 LIMIT 可能出在 JDBC 可执行日志，不在 XML 原文：',
+    '',
+    '```text',
+    'XML 无 LIMIT；p6spy/Druid 见 ... limit ?, ?',
+    '关掉分页插件 → limit 消失',
+    'Preparing 打在哪一层，决定你看到的是原文还是改写后',
+    '```',
+  ].join('\n'),
+
+  'mybatis-debug-boundsql': [
+    '断在带 BoundSql 的 query，再单步到 setXxx：',
+    '',
+    '```java',
+    '// 条件：ms.getId().endsWith("OrderMapper.findById")',
+    'boundSql.getSql(); // 含 ?',
+    '// 再步进 PreparedStatement.setLong(...)',
+    '// 分页查询：此处 SQL 末尾可能已有 LIMIT',
+    '```',
+  ].join('\n'),
+
+  'mybatis-plus-page-argument': [
+    'MP 的 Page 参数自带 COUNT+LIMIT；勿再叠 PageHelper：',
+    '',
+    '```java',
+    'orderMapper.selectPage(new Page<>(1, 20), wrapper);',
+    '// 日志：数据 SQL + COUNT，一段 LIMIT',
+    '// 再 PageHelper.startPage → 可能出现两次 limit',
+    '```',
+  ].join('\n'),
+
+  'mybatis-middleware-layers': [
+    '一次请求可叠数据源、分页、分片；Generator 不在链上：',
+    '',
+    '```text',
+    '@DS("slave") → 分页 LIMIT → Sharding 改表名',
+    'Druid 慢日志见最终语句',
+    '同一事务里先主库再 @DS("slave") → 常仍走已开事务连接',
+    '```',
+  ].join('\n'),
+
+  'mybatis-mapper-bound': [
+    '复杂读归映射文件；写聚合归有会话的领域对象：',
+    '',
+    '```text',
+    '三表联接列表 → Mapper XML 定列与排序',
+    '改库存聚合 → 实体 + 事务，会话跟踪脏状态',
+    '两边各改同一行 → 后提交盖前，无统一脏检查',
+    '```',
+  ].join('\n'),
+
+  'mybatis-resultmap': [
+    '一对多要折叠；别名错了字段仍空：',
+    '',
+    '```xml',
+    '<resultMap id="OrderMap" type="Order">',
+    '  <id property="id" column="oid"/>',
+    '  <collection property="items" ofType="Item">',
+    '    <id property="id" column="iid"/>',
+    '  </collection>',
+    '</resultMap>',
+    '<!-- 三行同一订单 → 折成 1 订单 + 3 明细 -->',
+    '```',
+  ].join('\n'),
+
+  'mybatis-dynamic-sql': [
+    '动态条件用标签+占位符；排序列必须白名单：',
+    '',
+    '```xml',
+    '<where>',
+    '  <if test="name != null">AND name = #{name}</if>',
+    '  <if test="status != null">AND status = #{status}</if>',
+    '</where>',
+    '<!-- ORDER BY 只允许枚举列名，勿拼用户字符串 -->',
+    '```',
+  ].join('\n'),
+
+  'mybatis-local-cache': [
+    '一级缓存在同一 SqlSession/事务内；提交后失效：',
+    '',
+    '```text',
+    '同一事务按 id 查两次 → 一条 SELECT',
+    '提交后再查 → 再发 SELECT',
+    '不在事务里连续两次调用 → 通常各一条',
+    '```',
+  ].join('\n'),
+
+  'mybatis-batch-executor': [
+    'BATCH 减少往返；flush 才抛错；中途 select 会打断：',
+    '',
+    '```java',
+    '// ExecutorType.BATCH，每 500 行 flush',
+    '// 往返远少于 1000 次单条 insert',
+    '// 中途 select 刚插入的 id → 批处理被打断',
+    '// 重复键异常常出现在 flush，不是 insert 返回时',
+    '```',
+  ].join('\n'),
+
+  'mybatis-plugin-interceptor': [
+    '拦截签名要对上；插件里勿再开会话查库：',
+    '',
+    '```java',
+    '@Intercepts(@Signature(type = Executor.class,',
+    '  method = "update", args = {MappedStatement.class, Object.class}))',
+    '// 只打 UPDATE；SELECT 不进',
+    '// 插件里再 openSession 查询 → 递归进拦截',
+    '```',
+  ].join('\n'),
+
+  'mybatis-second-cache': [
+    '二级缓存在 namespace；别的 mapper 改数不会自动清它：',
+    '',
+    '```text',
+    '订单 namespace 开二级缓存',
+    '会话 A 提交 → 详情进缓存',
+    '库存 mapper 改库存并提交 → 再查订单详情仍可能旧',
+    '直到过期或同 namespace 写入清掉',
+    '```',
+  ].join('\n'),
+
+  'mybatis-type-handler': [
+    'TypeHandler 管读写映射；未知码应显式失败：',
+    '',
+    '```java',
+    '// PAID ↔ TINYINT 1；null → setNull / wasNull',
+    '// 库里出现未知 code 9 → 显式失败',
+    '// 不要变成 "9" 或枚举 toString()',
+    '```',
+  ].join('\n'),
+
+  'spring-scope-catalog': [
+    '无状态用 singleton；请求里的表单数据用 request 或局部变量：',
+    '',
+    '```text',
+    '@Service → 默认 singleton',
+    '每请求的表单数据 → request 作用域或方法局部',
+    '勿拿已淡出的 global-session 解释普通浏览器会话',
+    '```',
+  ].join('\n'),
+
+  'spring-boot-war-still-ok': [
+    '默认可执行 jar；外置 Tomcat 用 war + ServletInitializer：',
+    '',
+    '```java',
+    '// java -jar → 内嵌 Tomcat',
+    'public class ServletInit extends SpringBootServletInitializer {',
+    '  @Override protected SpringApplicationBuilder configure(...) { ... }',
+    '}',
+    '// 自动配置仍可用 exclude 关掉',
+    '```',
+  ].join('\n'),
+
+  'spring-boot3-autoconfig-imports': [
+    'Boot 3 用 AutoConfiguration.imports，不是只看 factories：',
+    '',
+    '```text',
+    'META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports',
+    'com.example.FooAutoConfiguration',
+    '@ConditionalOnClass → 缺类则条件报告未匹配',
+    '// 2.6 及更早才只看 spring.factories',
+    '```',
+  ].join('\n'),
+
+  'spring-xmlbeanfactory-removed': [
+    'singleton 默认急加载；@Lazy / prototype 启动时不创建：',
+    '',
+    '```java',
+    '@Service class Eager { Eager() { log("创建"); } }',
+    '// run 返回前已打印',
+    '@Lazy @Service class LazyS { ... } // 首次注入才创建',
+    '// prototype：每次 getBean 各创建一次',
+    '```',
+  ].join('\n'),
+
+  'spring-factorybean-product': [
+    'getBean(name) 是产品；&name 才是 FactoryBean：',
+    '',
+    '```java',
+    'getBean("client");   // Client（getObject 产品）',
+    'getBean("&client");  // 那个 FactoryBean',
+    '// 构造器参数写 Client → 注入的是产品',
+    '```',
+  ].join('\n'),
+
+  'spring-event-sync-default': [
+    '默认同步派发；@Async 才换线程且调用方不等：',
+    '',
+    '```java',
+    'publishEvent(new OrderPlaced(...));',
+    '// 无 @Async：监听器在 publishEvent 返回前跑完',
+    '// 监听器抛错 → placeOrder 能看见',
+    '// @Async → 别的线程，placeOrder 不再等',
+    '```',
+  ].join('\n'),
+
+  'spring-jdbctemplate-callback': [
+    'JdbcTemplate 把 SQLException 翻成 DataAccessException：',
+    '',
+    '```java',
+    'jdbcTemplate.query(sql, rowMapper);',
+    '// 方法签名无 SQLException',
+    '// SQL 写错 → DataAccessException',
+    '// rowMapper 只取字段；无 Connection try/finally',
+    '```',
+  ].join('\n'),
+
+  'spring-getbean-hides-deps': [
+    '构造器注入可测；方法里 getBean 把依赖藏进容器：',
+    '',
+    '```java',
+    '// 好：OrderService(InventoryClient c)',
+    '// 坏：context.getBean("inventory", InventoryClient.class)',
+    '// 测试必须先有装好该名的容器，失败在 getBean 而非构造',
+    '```',
+  ].join('\n'),
+
+  'spring-bean-lifecycle': [
+    '构造器参数在创建时已可用；字段注入构造期仍是 null：',
+    '',
+    '```java',
+    'OrderService(Config c) { Objects.requireNonNull(c); }',
+    '// @Autowired Config c; 构造器里 c 仍可能 null',
+    '// 两构造器互相依赖 → 启动失败，不会交半成品',
+    '```',
+  ].join('\n'),
+
+  'spring-graceful-shutdown': [
+    '先摘流再排空；超时才打断；无关后台任务不在等待里收尾：',
+    '',
+    '```text',
+    '就绪失败 → 新请求不再进来',
+    '停机等待内：慢请求写完响应',
+    '超时仍在跑 → 中断',
+    '未绑本次请求的后台任务 ≠ 这段等待的职责',
+    '```',
+  ].join('\n'),
+
+  'spring-test-slice': [
+    'Web 切片缺 DB Bean 仍可测 400；整容器缺配置起不来：',
+    '',
+    '```java',
+    '@WebMvcTest // 只装 Web：校验 400 可通过',
+    '// @SpringBootTest 缺配置 → 上下文起不来，路由未执行',
+    '// 真写入另用带库测试；切片绿 ≠ 表里有行',
+    '```',
+  ].join('\n'),
+
+  'spring-test-transaction-rollback': [
+    '测试事务结束回滚；afterCommit 不会跑：',
+    '',
+    '```java',
+    '@Transactional',
+    '@Test void save() {',
+    '  repo.save(...); // 同事务能查到',
+    '} // 结束回滚；库干净；afterCommit 发消息未跑',
+    '// 真提交另开测试 + 另一连接才能看见行',
+    '```',
+  ].join('\n'),
+
+  'spring-session-stateless': [
+    'STATELESS 不写会话 Cookie；JWT 主体仍在 SecurityContext：',
+    '',
+    '```java',
+    'http.sessionManagement(s ->',
+    '  s.sessionCreationPolicy(SessionCreationPolicy.STATELESS));',
+    '// 默认链可能 Set-Cookie；STATELESS 后不再写',
+    '// 表单登录要会话 → 另一条过滤器链',
+    '```',
+  ].join('\n'),
+
+  'java-lock-flexibility': [
+    '按场景选锁：超时失败、读写锁、或 CHM 原子方法：',
+    '',
+    '```java',
+    'if (!lock.tryLock(200, MILLISECONDS)) failFast();',
+    'ReentrantReadWriteLock // 多读少写',
+    'map.computeIfAbsent(k, this::load); // 勿手持写锁 get/put',
+    '```',
+  ].join('\n'),
+
+  'java-aqs-not-futuretask': [
+    'AQS 用 state+队列；FutureTask 是另一套状态机：',
+    '',
+    '```java',
+    '// 自定义锁：state 0→1，tryAcquire CAS，失败进等待队列',
+    '// CountDownLatch / Semaphore / ReentrantLock 同模板',
+    '// FutureTask：看自己的状态枚举，勿在里面找 AQS 内部类',
+    '```',
+  ].join('\n'),
+
+  'java-rwlock-no-upgrade': [
+    '不能持读锁直接升级写锁；先放读再抢写并复查：',
+    '',
+    '```java',
+    'r.unlock();',
+    'w.lock();',
+    'try {',
+    '  if (stillMissing) fill();',
+    '  r.lock(); // 降级：先拿读再放写',
+    '} finally { w.unlock(); }',
+    '```',
+  ].join('\n'),
+
+  'java-cas-aba-stamp': [
+    'ABA 要版本戳；单 AtomicInteger 代替不了业务约束：',
+    '',
+    '```java',
+    'AtomicStampedReference<Node> top;',
+    '// 期望 (A,1)；他线程弹 A 再压回 → (A,2)',
+    '// compareAndSet(A, next, 1, 2) 失败',
+    '// 余额 AtomicInteger 只管这一个 int',
+    '```',
+  ].join('\n'),
+
+  'java-linked-blocking-unbounded': [
+    '无界 LinkedBlockingQueue 会先 OOM；有界才背压：',
+    '',
+    '```java',
+    'new LinkedBlockingQueue<>(); // put 一直涨 → OOM',
+    'new ArrayBlockingQueue<>(256);',
+    '// 第 257 次 put 阻塞；offer 立刻 false 可拒绝',
+    '```',
+  ].join('\n'),
+
+  'java-tpe-execute-order': [
+    '先填满 core，再进队列，队列满才扩到 max，再拒绝：',
+    '',
+    '```text',
+    'core=2, queue=10, max=4',
+    '1–2 → 建线程；3–12 → 进队列',
+    '13–14 → 队列满且 <max → 再建线程',
+    '15 → 拒绝（未 prestart）',
+    '```',
+  ].join('\n'),
+
+  'java-threads-not-linear-speedup': [
+    '抢同一锁不会线性加速；独立 I/O 才可能并行：',
+    '',
+    '```text',
+    '10 线程 synchronized 写同一计数器 → 往往更慢',
+    '10 个独立 HTTP 调用 → 才可能接近十路并行',
+    '```',
+  ].join('\n'),
+
+  'java-vector-cme-not-because-sync': [
+    'Vector 同步挡不住单线程 for-each 里 add 的 CME：',
+    '',
+    '```java',
+    'for (String x : vector) {',
+    '  vector.add("y"); // 单线程也可 CME',
+    '}',
+    '// Hashtable 的 Enumeration 不走这套 fail-fast',
+    '```',
+  ].join('\n'),
+
+  'java-sync-not-all-methods': [
+    'synchronized 方法只护这一把实例锁上的入口：',
+    '',
+    '```java',
+    '// A 在 synchronized set() 里',
+    '// B 仍可调未加锁的 get()',
+    '// 两个 Foo 实例可同时进各自的 synchronized 方法',
+    '```',
+  ].join('\n'),
+
+  'java-thread-six-states': [
+    'sleep / 抢锁 / wait 对应不同状态：',
+    '',
+    '```java',
+    'Thread.sleep(1000);     // TIMED_WAITING',
+    '// 抢不到 synchronized → BLOCKED',
+    'lock.wait();            // WAITING（无超时）',
+    '```',
+  ].join('\n'),
+
+  'java-fork-join-pool': [
+    '公共池别塞阻塞 I/O；阻塞任务应离开 parallelStream：',
+    '',
+    '```java',
+    'list.parallelStream().forEach(this::httpCall);',
+    '// 下游慢 → 公共池线程堵在网络读',
+    '// 纯 CPU 计算才适合；阻塞 I/O 换专用池',
+    '```',
+  ].join('\n'),
+
+  'node-unhandled-rejection': [
+    '未捕获的 Promise 拒绝会拖垮进程：',
+    '',
+    '```js',
+    '// 坏：查询失败无 catch → 未处理拒绝、退出码非 0',
+    'try {',
+    '  await db.query(...)',
+    '} catch (e) {',
+    '  res.status(500).end()',
+    '}',
+    '// 只这条 500；其它请求仍 200',
+    '```',
+  ].join('\n'),
+
+  'node-worker-cluster': [
+    '主线程死循环堵事件循环；重活丢 Worker：',
+    '',
+    '```js',
+    '// 主线程 while(true) → HTTP 一直挂起',
+    'const { Worker } = require("node:worker_threads")',
+    'new Worker("./heavy.js").on("message", send200)',
+    '// cluster 多进程：各进程死循环只堵自己',
+    '```',
+  ].join('\n'),
+
+  'node-http-cookie': [
+    '会话用 HttpOnly Cookie；/me 不从 Authorization 读前端 JWT：',
+    '',
+    '```http',
+    'HTTP/1.1 200',
+    'Set-Cookie: session=...; HttpOnly; Secure; SameSite=Lax',
+    '```',
+    '',
+    '```js',
+    '// GET /me → 解析 Cookie 会话，不是 Authorization Bearer',
+    '```',
+  ].join('\n'),
+
+  'node-event-loop-phases': [
+    'I/O 回调里 setImmediate 通常先于 setTimeout(0)：',
+    '',
+    '```js',
+    'fs.readFile(path, () => {',
+    '  setTimeout(() => console.log("timeout"), 0)',
+    '  setImmediate(() => console.log("immediate"))',
+    '})',
+    '// 通常 immediate 先；顶层两者顺序不稳定',
+    '// nextTick 插在阶段之间，更早',
+    '```',
+  ].join('\n'),
+
+  'node-libuv-threadpool': [
+    '默认线程池排满后 CPU 型异步会排队：',
+    '',
+    '```js',
+    '// 大量 crypto.pbkdf2 → 池满后延迟升',
+    '// 短网络回调仍可被循环处理',
+    '// 同步大计算堵的是循环本身，不是线程池',
+    '```',
+  ].join('\n'),
+
+  'node-global-fetch': [
+    'fetch 要绝对 URL；长时间等待用 AbortSignal：',
+    '',
+    '```js',
+    'await fetch(url, { signal: AbortSignal.timeout(100) })',
+    '// 无 signal：慢接口可让进程挂在 await',
+    '// 相对地址无网页基址 → 必须绝对 URL',
+    '```',
+  ].join('\n'),
+
+  'node-http-close': [
+    'SIGTERM 先 server.close 排空，再关库退出：',
+    '',
+    '```js',
+    'process.on("SIGTERM", () => {',
+    '  server.close(async () => {',
+    '    await db.end()',
+    '    process.exit(0)',
+    '  })',
+    '})',
+    '// 直接 exit → 客户端半截正文',
+    '```',
+  ].join('\n'),
+
+  'jpa-session-nplus1': [
+    '列表序列化关联会 N+1；一次取出或 DTO：',
+    '',
+    '```text',
+    'GET /orders → 50 单',
+    '序列化 items → 1 + 50 条 SQL',
+    '→ join fetch / 按 id 批量明细 / 列表 DTO',
+    '```',
+  ].join('\n'),
+
+  'jpa-entity-identity': [
+    '同持久化上下文同一主键是同一实例：',
+    '',
+    '```java',
+    'Order a = em.find(Order.class, 1L);',
+    'Order b = em.find(Order.class, 1L);',
+    'a == b; // true（托管）',
+    'a.setNote("x"); // b 也看见',
+    '// 事务外 new 两个同主键 → == 为 false',
+    '```',
+  ].join('\n'),
+
+  'jpa-flush-transaction': [
+    'persist 不等于对别的连接已提交：',
+    '',
+    '```text',
+    '@Transactional 内 save 后',
+    '另一连接 COUNT → 0',
+    '方法正常结束提交 → 另一连接见 1',
+    '抛错回滚 → 又没有',
+    '```',
+  ].join('\n'),
+
+  'jpa-osiv-boundary': [
+    '关掉 OSIV 后懒加载不能拖到视图：',
+    '',
+    '```text',
+    'OSIV 关 → 模板碰 items → LazyInitializationException',
+    '服务里 join fetch / DTO 取完再返回',
+    'SQL 只出现在服务方法，不在渲染阶段',
+    '```',
+  ].join('\n'),
+
+  'jpa-dirty-check': [
+    '托管实体改字段，提交时自动 UPDATE：',
+    '',
+    '```java',
+    '@Transactional',
+    'void rename(Long id) {',
+    '  Order o = repo.findById(id).orElseThrow();',
+    '  o.setNote("x"); // 可不调 save',
+    '} // 提交出现 UPDATE',
+    '// 提交后再 set → 游离，表不更新',
+    '```',
+  ].join('\n'),
+
+  'jpa-optimistic-lock': [
+    '版本对不上则更新 0 行 / 抛乐观锁冲突：',
+    '',
+    '```text',
+    'A、B 都读到 version=3',
+    'A 先提交 → version=4',
+    'B 仍带 3 更新 → 影响 0 或 OptimisticLockException',
+    'B 盖不掉 A',
+    '```',
+  ].join('\n'),
+
+  'jpa-page-vs-slice': [
+    'Page 带 COUNT；Slice 多取一行判有无下一页：',
+    '',
+    '```java',
+    'Page<Order> p = repo.findAll(PageRequest.of(0, 20));',
+    '// 数据 SQL + COUNT',
+    'Slice<Order> s = repo.findSlice(...);',
+    '// 取 21 行判 hasNext，无总数；无限滚动用 Slice',
+    '```',
+  ].join('\n'),
+
+  'jpa-entity-graph': [
+    '按需 EntityGraph；列表勿全局 EAGER：',
+    '',
+    '```java',
+    '@EntityGraph(attributePaths = "items")',
+    'Optional<Order> findById(Long id);',
+    '// findAll 不挂图 → 只有订单头',
+    '// 列表改全局 EAGER → 每单多一次明细',
+    '```',
+  ].join('\n'),
+  'topics-api-not-cookie-segments': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```js',
+    '// Topics：少量粗粒度兴趣主题（示意）',
+    'const topics = await document.browsingTopics?.()',
+    '// ≠ 第三方 Cookie 精细人群包',
+    '```'
+  ].join('\n'),
+  'shared-storage-not-third-party-cookie': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```js',
+    '// Shared Storage：受限写入 + selectURL 等出口',
+    'await window.sharedStorage.set("bucket", "a")',
+    '// ≠ document.cookie 跨站开放读写',
+    '```'
+  ].join('\n'),
+  'mysql-descending-index-not-sort-law': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```sql',
+    'CREATE INDEX idx_created ON t (created_at DESC);',
+    'EXPLAIN SELECT * FROM t ORDER BY created_at DESC LIMIT 20;',
+    '-- 看是否 Using filesort，勿背定律',
+    '```'
+  ].join('\n'),
+  'redis-acl-dryrun-not-enforce': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```redis',
+    'ACL DRYRUN order GET order:1',
+    '# 演练通过 ≠ 应用已用该用户连接',
+    'AUTH order ***',
+    '```'
+  ].join('\n'),
+  'binlog-not-change-event-bus': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```text',
+    'binlog/CDC → 缓存失效、索引同步（行级）',
+    'Outbox + MQ → OrderPaid 领域事件（契约）',
+    '# 能订变更 ≠ 事件总线',
+    '```'
+  ].join('\n'),
+  'threadlocal-not-distributed-context': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```java',
+    'UserContext.set(uid); // 仅当前线程',
+    '// 调下游：Header / token；MQ：消息属性',
+    '// 线程池复用：finally remove',
+    '```'
+  ].join('\n'),
+  'private-state-tokens-not-cookie': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```text',
+    '发行方签发 Private State Token（有限信任）',
+    '验证方赎回 → 得到“通过检查”类信号',
+    '# ≠ 跨站登录 Cookie / 稳定用户 id',
+    '```'
+  ].join('\n'),
+  'protected-audience-not-cookie-remarketing': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```text',
+    '加入 interest group（设备侧）',
+    '发布商页：浏览器侧竞价 → fencedframe 展示',
+    '# ≠ 第三方 Cookie 再营销名单',
+    '```'
+  ].join('\n'),
+  'mysql-multi-valued-index-not-json-db': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```sql',
+    'CREATE INDEX idx_tags ON t ((CAST(tags AS CHAR(32) ARRAY)));',
+    'EXPLAIN SELECT * FROM t WHERE \'red\' MEMBER OF (tags);',
+    '-- 仍是 InnoDB 索引，不是文档库',
+    '```'
+  ].join('\n'),
+  'redis-command-getkeys-not-acl': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```redis',
+    'COMMAND GETKEYS DEL a b',
+    'ACL DRYRUN app DEL a   # 授权另看 ACL',
+    '```'
+  ].join('\n'),
+  'graceful-shutdown-not-zero-loss': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```text',
+    '摘流 → 等在途（超时）→ 退出',
+    '超时强杀仍可能截断；业务靠幂等/Outbox',
+    '```'
+  ].join('\n'),
+  'connection-pool-not-thread-pool': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```text',
+    '线程池 100 ≠ 连接池必须 100',
+    '连接池按 DB max_connections 与持有时长定',
+    '```'
+  ].join('\n'),
+
+  // batch18: polish Kafka/RocketMQ/Redis/CSP/EXPLAIN/MQ shared templates
+  'mysql-spatial-index-not-full-gis': [
+    "SPATIAL 索引粗筛几何谓词；精细行政区仍查 PostGIS：",
+    '',
+    "```sql",
+    "CREATE SPATIAL INDEX idx_g ON shop (g);",
+    "SELECT id FROM shop WHERE ST_Contains(area, point);",
+    "-- EXPLAIN 看是否走 spatial；不规则边界 → PostGIS / 外置 GIS",
+    "```",
+  ].join('\n'),
+
+  'mysql-index-count-five-not-law': [
+    "索引条数看 EXPLAIN 与写放大，不是背「≤5」：",
+    '',
+    "```sql",
+    "-- 已有 PK、(shop_id,created_at)、order_no UNIQUE",
+    "CREATE INDEX idx_mobile ON orders (mobile);  -- 客服按手机查",
+    "EXPLAIN SELECT * FROM orders WHERE mobile = ?;",
+    "-- 六列组合却从不最左匹配 → 应删，不是「刚好 5」保留",
+    "```",
+  ].join('\n'),
+
+  'mysql-implicit-convert-breaks-index': [
+    "错类型比较挡索引；绑同类型字符串：",
+    '',
+    "```sql",
+    "-- phone VARCHAR(20)",
+    "EXPLAIN SELECT * FROM t WHERE phone = 13800000000;  -- 坏：隐式转换",
+    "EXPLAIN SELECT * FROM t WHERE phone = '13800000000'; -- 好",
+    "-- 对比 key 是否命中 phone 索引",
+    "```",
+  ].join('\n'),
+
+  'mysql-where-func-blocks-index': [
+    "函数包住索引列会挡范围；把常量侧改写或建生成列：",
+    '',
+    "```sql",
+    "-- 坏：WHERE from_unixtime(day) >= '2017-01-15'",
+    "WHERE day >= unix_timestamp('2017-01-15 00:00:00')",
+    "-- 或 day_date DATE AS (...) STORED + INDEX(day_date)",
+    "```",
+  ].join('\n'),
+
+  'mysql-generated-column-not-where-wrap': [
+    "生成列是显式建模；WHERE 里 DATE() 包列仍可能扫表：",
+    '',
+    "```sql",
+    "-- 坏：WHERE DATE(created_at) = '2026-10-09'",
+    "WHERE created_at >= '2026-10-09' AND created_at < '2026-10-10'",
+    "-- 或 created_day DATE AS (DATE(created_at)) STORED + INDEX",
+    "```",
+  ].join('\n'),
+
+  'mysql-negative-predicate-not-always-scan': [
+    "负向谓词看选择性；短列表 NOT IN 主键仍可能合理：",
+    '',
+    "```sql",
+    "EXPLAIN SELECT * FROM t WHERE status != 'deleted';  -- 低基数列常扫",
+    "EXPLAIN SELECT * FROM t WHERE id NOT IN (1,2,3);   -- 高基数短列表",
+    "-- 用 EXPLAIN 对比改写前后，勿背「负向必全表」",
+    "```",
+  ].join('\n'),
+
+  'mysql-leading-percent-like-heuristic': [
+    "前缀 LIKE 可走 B+ 树；域名尾缀应倒排/冗余列：",
+    '',
+    "```sql",
+    "EXPLAIN SELECT * FROM u WHERE name LIKE 'alex%';  -- 可范围",
+    "EXPLAIN SELECT * FROM u WHERE email LIKE '%@gmail.com'; -- 前导 %",
+    "-- 尾缀搜 → ES / email_domain 列索引",
+    "```",
+  ].join('\n'),
+
+  'mysql-low-selectivity-index-heuristic': [
+    "低区分度单列常无用；组合里靠后可以：",
+    '',
+    "```sql",
+    "CREATE INDEX idx_gender ON u (gender);  -- 常无用",
+    "CREATE INDEX idx_shop_st_ct ON orders (shop_id, status, created_at);",
+    "-- 查询总带 shop_id 时 status 可靠后；用 count(distinct)/count(*) 估",
+    "```",
+  ].join('\n'),
+
+  'mysql-composite-selectivity-order-heuristic': [
+    "组合列序服从查询形态，不是「乱的列必须在前」：",
+    '',
+    "```sql",
+    "WHERE shop_id = ? AND created_at > ?",
+    "-- → INDEX (shop_id, created_at)",
+    "-- 勿只因 created_at「更乱」就颠倒",
+    "```",
+  ].join('\n'),
+
+  'mysql-extend-index-before-new': [
+    "能扩展就扩展；等值另一路径仍要独立索引：",
+    '',
+    "```sql",
+    "-- 已有 (shop_id)，常查 (shop_id, created_at) → 扩展",
+    "ALTER TABLE orders DROP INDEX idx_shop, ADD INDEX idx_shop_ct (shop_id, created_at);",
+    "-- 按 order_no 等值 → 单独 UNIQUE，勿塞进 shop 索引末尾",
+    "```",
+  ].join('\n'),
+
+  'mysql-and-order-optimizer-reorders': [
+    "AND 等值常可乱序；范围形态仍看最左：",
+    '',
+    "```sql",
+    "INDEX (a, b)",
+    "WHERE b = 1 AND a = 1;   -- 常仍能用 (a,b)",
+    "WHERE a > 1 AND b = 1;   -- 对 (a,b) 利用不同于双等值",
+    "```",
+  ].join('\n'),
+
+  'mysql-right-fuzzy-like-can-use-index': [
+    "右模糊（前缀%）常可走索引；左模糊另方案：",
+    '',
+    "```sql",
+    "EXPLAIN SELECT * FROM u WHERE mobile LIKE '138%';  -- 友好",
+    "EXPLAIN SELECT * FROM u WHERE mobile LIKE '%138';  -- 换方案",
+    "```",
+  ].join('\n'),
+
+  'kafka-model': [
+    "主题分区 + 消费组各自位点；跨分区无全局顺序：",
+    '',
+    "```text",
+    "topic orders → P0 P1 P2",
+    "group A / group B 各维护位点；同条记录每组各处理一次",
+    "把 A 位点拨回昨天 → 只有 A 重放，B 不动",
+    "跨分区两条记录 → 无全局先后",
+    "```",
+  ].join('\n'),
+
+  'kafka-producer-acks': [
+    "acks=1 领导写本地即成功；acks=all 等 ISR：",
+    '',
+    "```text",
+    "acks=1 → leader 本地落盘即 OK；follower 未复制前宕机可能丢",
+    "acks=all → 等 ISR 确认；失败以错误返回，不是静默丢",
+    "```",
+  ].join('\n'),
+
+  'kafka-isr-hwm': [
+    "消费者只读到高水位；新追随者不在 ISR：",
+    '',
+    "```text",
+    "ISR = leader + 两追随者；acks=all 等这三份",
+    "刚加入尚未追上 → 不在 ISR，暂时没有最新记录正常",
+    "水位之外切换后可能被截断",
+    "```",
+  ].join('\n'),
+
+  'kafka-rebalance': [
+    "再平衡暂停拉取；未提交位点会至少再消费一次：",
+    '',
+    "```text",
+    "两人分四分区 → 第三人加入 → 某分区甲→丙",
+    "丙从甲最后 commit 继续；甲已处理未 commit → 丙再做一遍",
+    "处理过长被踢组 → 再次再平衡，拉取暂停",
+    "```",
+  ].join('\n'),
+
+  'kafka-kraft-not-zk': [
+    "现行 Kafka 用 KRaft 管元数据，不靠 ZooKeeper 活着：",
+    '',
+    "```text",
+    "KRaft 格式化存储 → 启 controller + broker；无 ZK",
+    "看 ISR 是否够副本，不是看 ZK 临时节点",
+    "acks=all 只等 ISR，不要求每个 follower 都跟上",
+    "```",
+  ].join('\n'),
+
+  'kafka-producer-does-batch': [
+    "客户端攒批提吞吐；运维用发行包命令即可：",
+    '',
+    "```text",
+    "batch.size ↑ + linger.ms → 同分区多条客户端攒批再送",
+    "看消费组滞后：发行包 CLI，不必写 Scala",
+    "广播：加另一个消费者组，不是换产品才叫批量",
+    "```",
+  ].join('\n'),
+
+  'kafka-isr-lag-time-not-count': [
+    "踢出 ISR 看落后时间，不是数差了四千条：",
+    '',
+    "```text",
+    "落后 5000 条但两秒追上末端 → 仍可留在 ISR",
+    "超过 replica.lag.time.ms 仍没消费到末端 → 移出 ISR",
+    "超过时间根本不 fetch → 同样离开；acks=all 不再等它",
+    "```",
+  ].join('\n'),
+
+  'kafka-partitions-increase-only': [
+    "分区能加不能减；加完键的映射会变：",
+    '',
+    "```text",
+    "3 分区 → 6 分区",
+    "订单号哈希换组 → 同单后续消息可能进新分区",
+    "与旧消息不在同一分区顺序里；规划宽度时要想到键迁移",
+    "```",
+  ].join('\n'),
+
+  'redis-data-types': [
+    "先选结构：Hash 改字段、ZSet 排行、List 流水：",
+    '',
+    "```redis",
+    "HSET user:1 email a@x.com          # 只改邮箱，名字仍在",
+    "ZADD rank 100 u1 200 u2",
+    "ZREVRANGE rank 0 9 WITHSCORES      # 按分数",
+    "LPUSH audit e1  /  LRANGE audit 0 0",
+    "```",
+  ].join('\n'),
+
+  'redis-client-side-cache-invalidate': [
+    "本地缓存省往返；改价要删 Redis + 通知各实例：",
+    '',
+    "```text",
+    "读：本地 → miss → Redis",
+    "写库成功 → DEL cache:sku → tracking/广播丢本地副本",
+    "只删 Redis、不通知 → 其它实例本地仍可能旧值到 TTL",
+    "```",
+  ].join('\n'),
+
+  'redis-big-hot-key': [
+    "大 key 拖单次；热 key 打满一个分片：",
+    '',
+    "```text",
+    "时间线 LIST 8MB → 大键；拆小后单次字节下降",
+    "秒杀计数器 QPS 十万、值很小 → 热键打满一分片 CPU",
+    "只加机器而键仍落同槽 → 热键 CPU 不散",
+    "```",
+  ].join('\n'),
+
+  'redis-eviction-policy-menu': [
+    "淘汰不止旧六名；无 TTL 键不参与 volatile-*：",
+    '',
+    "```redis",
+    "CONFIG SET maxmemory-policy allkeys-lru",
+    "# 配置键不能丢 → 别指望 volatile-lru 腾无 TTL 键",
+    "# 拼写：noeviction（不是 no-enviction）",
+    "```",
+  ].join('\n'),
+
+  'redis-fifo-not-maxmemory': [
+    "官方策略没有 FIFO；无 TTL 时 volatile-lru 腾不出空间：",
+    '',
+    "```redis",
+    "CONFIG SET maxmemory-policy allkeys-lfu",
+    "# 名单无 FIFO",
+    "CONFIG SET maxmemory-policy volatile-lru",
+    "# 全键无过期 → 像 noeviction，写入失败",
+    "```",
+  ].join('\n'),
+
+  'redis-string-max-512mb': [
+    "STRING 上限 512MB；淘汰名单要含 LFU：",
+    '',
+    "```redis",
+    "SET blob:<id> <bytes>   # 远小于 512MB；勿按 1GB 预留",
+    "# 分片：Cluster 哈希槽",
+    "# 淘汰：含 allkeys-lfu 等，勿只背旧六项",
+    "```",
+  ].join('\n'),
+
+  'redis-list-quicklist-listpack': [
+    "短 List 多段 listpack；不是一根双向链表：",
+    '',
+    "```redis",
+    "LRANGE shortlist 0 -1",
+    "# 内部：几段 listpack（quicklist）",
+    "# 超长 List 分段，不是从头链表走到尾",
+    "```",
+  ].join('\n'),
+
+  'mq-why-decouple': [
+    "消息先解耦时间：下游宕机下单仍可成功：",
+    '',
+    "```text",
+    "下单 OK → 发 OrderCreated",
+    "发货宕机 → 消息留通道；恢复后再消费",
+    "同步调用发货 → 下单失败/超时",
+    "若必须当场拿发货单号 → 不能改事后消费",
+    "```",
+  ].join('\n'),
+
+  'mq-delivery-semantics': [
+    "投递三种说法；业务仍要幂等：",
+    '',
+    "```text",
+    "生产者事务/幂等 → 分区较少重复写",
+    "消费写积分后、提交位点前崩溃 → 至少再处理一次",
+    "积分表无订单号唯一 → 多一行",
+    "确认后再崩 → 不应再写同一笔积分",
+    "```",
+  ].join('\n'),
+
+  'mq-compare-matrix': [
+    "仓库已经在运维 Kafka。表只用来核对它做不到什么：",
+    '',
+    "```text",
+    "Kafka 做得到：按位点重放流水。新流水继续进它。",
+    "发邮件、到点关单：用现有消费者和订单表上的到期时间。不为此新装 RabbitMQ 或 RocketMQ。",
+    "它做不到：已有 JMS 客户端只能认 javax.jms。这一段才评估 ActiveMQ 或适配层。",
+    "```",
+  ].join('\n'),
+
+  'mq-pick-workload': [
+    "仓库已经在运维 Kafka：",
+    '',
+    "```text",
+    "行为流水：继续进 Kafka。不另起 Pulsar。",
+    "发邮件：现有消费者处理，用业务键挡住重复。不新装 RabbitMQ。",
+    "30 分钟关单：订单表加到期时间，定时任务扫描。不新装 RocketMQ。",
+    "第二套：这次没有「现有集群和任务表都做不到」的那一条。不加。",
+    "```",
+  ].join('\n'),
+
+  'mq-backpressure-producer': [
+    "分区/队列宽度封顶；生产端也要限速：",
+    '',
+    "```text",
+    "12 分区 + 30 消费者 → 仍只有 12 在干活",
+    "非关键埋点限生产速率 → 消费 > 生产，积压年龄降",
+    "下游库跟不上 → 加消费者只是把压力打到库",
+    "```",
+  ].join('\n'),
+
+  'mq-dlq-backlog': [
+    "必失败进死信；主队列不被堵死：",
+    '',
+    "```text",
+    "1 条必失败 + 9 条成功",
+    "必失败重试几次 → DLQ；主队列吞完 9 条",
+    "死信无人处理 → 年龄仍涨，超阈值告警",
+    "重试期间业务键幂等仍有效",
+    "```",
+  ].join('\n'),
+
+  'mq-backlog-expand-queues': [
+    "堆积加消费者受队列/分区数上限：",
+    '',
+    "```text",
+    "RocketMQ 8 队列、堆积 3 千万；消费者 8→64 → 只有 8 干活",
+    "临时主题 64 队列转发 → 64 消费者都能领",
+    "追上后缩回；Kafka 同理受分区数限制",
+    "```",
+  ].join('\n'),
+
+  'cors-preflight-max-age': [
+    "Max-Age 只缓存预检；实际响应仍要带允许 Origin：",
+    '',
+    "```http",
+    "Access-Control-Allow-Methods: PUT",
+    "Access-Control-Allow-Headers: X-Request-Id",
+    "Access-Control-Max-Age: 600",
+    "# 十分钟内可跳过 OPTIONS；PUT 响应仍须允许 Origin",
+    "```",
+  ].join('\n'),
+
+  'csp-script-src': [
+    "CSP 限制脚本来源；评论 HTML 仍要转义：",
+    '',
+    "```http",
+    "Content-Security-Policy: script-src 'self'",
+    "# 外源 <script src=https://evil/x.js> → 控制台拒绝、不执行",
+    "# 评论尖括号 → textContent/转义，不是靠 CSP 代替",
+    "```",
+  ].join('\n'),
+
+  'csp-report-only-not-enforce': [
+    "Report-Only 只上报；改成强制 CSP 才拦住：",
+    '',
+    "```http",
+    "Content-Security-Policy-Report-Only: script-src 'self'",
+    "# evil/x.js 仍执行，可能出现违例报告",
+    "Content-Security-Policy: script-src 'self'",
+    "# 脚本被拒",
+    "```",
+  ].join('\n'),
+
+  'trusted-types-sink-guard': [
+    "Trusted Types 卡住危险汇点；默认用 textContent：",
+    '',
+    "```js",
+    "// require-trusted-types-for 'script'",
+    "el.innerHTML = userInput  // TypeError",
+    "el.textContent = userInput",
+    "policy.createHTML(sanitized)  // 富文本经净化库",
+    "```",
+  ].join('\n'),
+
+  'reporting-nel-not-csp-enforce': [
+    "Reporting / NEL 是遥测，不是强制 CSP：",
+    '',
+    "```http",
+    "Reporting-Endpoints: csp-endpoint=\"https://reports.example/csp\"",
+    "Content-Security-Policy-Report-Only: script-src 'self'",
+    "# 外源脚本仍执行；NEL 记 CDN TLS 失败",
+    "# 页面逻辑错误仍看应用日志",
+    "```",
+  ].join('\n'),
+
+  'corp-embed-gate-not-cors': [
+    "CORP 管嵌入；fetch 读 JSON 仍看 CORS：",
+    '',
+    "```http",
+    "Cross-Origin-Resource-Policy: cross-origin",
+    "# require-corp 页才能嵌字体等资源",
+    "# 无 CORP 且不可 CORS 用 → COEP 页加载失败",
+    "# fetch JSON 放行读体靠 CORS，不靠 CORP",
+    "```",
+  ].join('\n'),
+
+  'mysql-json-not-document-db': [
+    "JSON 仍是关系行上一列；JOIN/事务照旧：",
+    '',
+    "```sql",
+    "ALTER TABLE user ADD profile JSON;",
+    "SELECT * FROM user WHERE profile->>'$.city' = 'SH';",
+    "-- 用户行仍与订单 JOIN/事务；≠ 无固定表的文档集合",
+    "```",
+  ].join('\n'),
+
+  'mysql-view-is-stored-query': [
+    "VIEW 是存起来的查询，默认不物化：",
+    '',
+    "```sql",
+    "CREATE VIEW v_paid AS SELECT * FROM orders WHERE status='paid';",
+    "INSERT INTO orders (...) VALUES (..., 'paid', ...);",
+    "SELECT * FROM v_paid;  -- 立刻可见，无「刷新视图」",
+    "-- 昨日冻结报表 → 报表表/导出，不是普通 VIEW",
+    "```",
+  ].join('\n'),
+
+  'mysql-procedure-not-auto-txn': [
+    "存储过程不会自动包一整段事务：",
+    '',
+    "```sql",
+    "-- 过程内：扣库存 → 抛错 → 写订单",
+    "-- autocommit=1 且无显式事务 → 库存已扣、订单没有",
+    "START TRANSACTION; ...; ROLLBACK;  -- 过程或调用方显式开",
+    "```",
+  ].join('\n'),
+
+  'mysql-trigger-side-effect-hidden': [
+    "触发器是隐蔽副作用；异常要查 SHOW TRIGGERS：",
+    '',
+    "```sql",
+    "-- INSERT orders 触发器里 UPDATE stock",
+    "-- 应用日志只有 insertOrder",
+    "SHOW TRIGGERS LIKE 'orders';",
+    "-- 禁用触发器时：库存扣减写在同一应用事务",
+    "```",
+  ].join('\n'),
+
+  'mysql-cte-named-subquery': [
+    "WITH 是命名结果；RECURSIVE 要限深度：",
+    '',
+    "```sql",
+    "WITH paid AS (SELECT * FROM orders WHERE status='paid')",
+    "SELECT * FROM paid JOIN ...;",
+    "-- 与直接子查询语义相近，不是自动物化加速",
+    "WITH RECURSIVE tree AS (...)  -- 限制深度/边条件",
+    "```",
+  ].join('\n'),
+
+  'mysql-temp-table-vs-cte': [
+    "临时表跨语句可见；CTE 只活在这一条语句：",
+    '',
+    "```sql",
+    "CREATE TEMPORARY TABLE t AS SELECT ...;",
+    "SELECT * FROM t;  -- 仍可见",
+    "WITH t AS (SELECT ...) SELECT * FROM t;",
+    "-- 结束后 SELECT * FROM t → 不存在（除非另有基表）",
+    "```",
+  ].join('\n'),
+
+  'redis-legacy-vm-limits': [
+    "无 VM 换页；STRING 上限 512MB，大文件放对象存储：",
+    '',
+    "```redis",
+    "SET session:u1 \"{...}\"   # KB 级",
+    "# 大文件 → 对象存储/DB，不进 Redis",
+    "# 勿指望冷数据换到 Redis 自有 VM 文件",
+    "# 命令原子 ≠ RDBMS 失败回滚事务",
+    "```",
+  ].join('\n'),
+
+  'redis-functions-not-just-eval': [
+    "Functions 注册一次；对照每次 EVAL 贴长脚本：",
+    '',
+    "```redis",
+    "FUNCTION LOAD \"#!lua name=stock\\n...\"",
+    "FCALL stock_decr 1 key:sku",
+    "# 重启后若已持久，不必每次塞整段源码",
+    "EVAL \"…很长…\" 1 key   # 旧路径",
+    "```",
+  ].join('\n'),
+
+  'redis-acl-not-just-requirepass': [
+    "ACL 按用户裁命令与键；不只一个 requirepass：",
+    '',
+    "```redis",
+    "ACL SETUSER order on >*** ~order:* +@read +@write -@dangerous",
+    "# 订单服务用 order；运维另用管理用户",
+    "# 仅 requirepass → 同一密码可 FLUSHALL",
+    "```",
+  ].join('\n'),
+
+  'redis-keyspace-notify-not-queue': [
+    "键空间通知是 Pub/Sub；可靠到期用 ZSet/Stream：",
+    '',
+    "```redis",
+    "SET order:9 1 EX 60",
+    "PSUBSCRIBE __keyevent@0__:expired",
+    "# 消费者宕机期间过期 → 不补发",
+    "# 到期：ZADD due <ts> order:9 或 Stream + 组 + XACK",
+    "```",
+  ].join('\n'),
+
+  'redis-lock-getset-wall-clock': [
+    "锁过期看 Redis TTL；勿用本机墙钟 GETSET：",
+    '',
+    "```redis",
+    "# 坏：value=now+30s，B 时钟快 → GETSET 误抢",
+    "SET lock:order:9 <uuid> NX EX 30",
+    "# 释放：脚本确认 uuid 再 DEL",
+    "```",
+  ].join('\n'),
+
+  'rocketmq-model': [
+    "事务消息、延迟关单、同单进同队列：",
+    '',
+    "```text",
+    "事务消息：本地库提交后消息才可见",
+    "延迟消息：30 分钟未支付 → 到点关单检查",
+    "创建/支付/关闭按订单号固定队列 → 顺序一致",
+    "三种都可能重复 → 下游业务键幂等",
+    "```",
+  ].join('\n'),
+
+  'rocketmq-queue-order': [
+    "顺序只存在于同一队列；按订单号固定：",
+    '',
+    "```text",
+    "队列数=4；轮询发送创建/支付/关闭 → 可能不同队列",
+    "按订单号固定队列 → 三条同队列、消费顺序=发送顺序",
+    "统计消费组单独读，不推进交易组位点",
+    "```",
+  ].join('\n'),
+
+  'rocketmq-flush-ha': [
+    "同步刷盘+同步复制才扛主立刻断电：",
+    '',
+    "```text",
+    "支付通知：同步刷盘 + 同步复制 → 主断电从仍可读",
+    "点击日志：异步刷盘 → 未刷下可能不可读",
+    "从断电、主在：同步复制发送失败/等待；异步成功仅主侧",
+    "```",
+  ].join('\n'),
+
+  'rocketmq-store-not-ram-buffer': [
+    "消息落 CommitLog；不是堆里无限 Buffer：",
+    '',
+    "```text",
+    "保留 3 天 → 磁盘 CommitLog",
+    "失败未 ack → 重试主题再来",
+    "关单：固定 delay level，非任意毫秒",
+    "磁盘满 → 发送挡住，不是继续堆内存",
+    "```",
+  ].join('\n'),
+
+  'rocketmq-send-oneway-may-drop': [
+    "oneway 可不达；同步成功仍可能未刷盘：",
+    '',
+    "```text",
+    "访问日志 sendOneway → 立刻返回，Broker 未答应可丢",
+    "积分：异步发送，成功回调才标已发送",
+    "订单：同步 send OK + 异步刷盘 → 断电仍可能不在盘上",
+    "```",
+  ].join('\n'),
+  'fe-pick-decision-order': [
+    '帮助中心《如何退款》。仓库已经是 Vue，没有人维护 React：',
+    '',
+    '```text',
+    '仓库和团队：继续 Vue。不因为问卷里 React 用过的人更多就换。',
+    '谁打开：浏览器。不做小程序，不做 App。',
+    '源代码：要有标题「如何退款」。用 Nuxt，不用 Next。',
+    '路由和数据：useAsyncData。登录态用 Pinia。不装 react-router。',
+    '```',
+  ].join('\n'),
+  'captcha-challenge-not-authn': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```text',
+    '验证码通过 ≠ 已认证 ≠ 已授权',
+    '删除订单仍要验「是不是所有者」',
+    '```'
+  ].join('\n'),
+  'bot-mitigation-not-only-widget': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```text',
+    '挂件挑战 token：短时、单次、交给服务端校验',
+    '≠ localStorage 长期登录态',
+    '防刷还要限流 / WAF / 风险分',
+    '```'
+  ].join('\n'),
+  'mysql-skip-locked-not-queue': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```sql',
+    'SELECT id FROM jobs WHERE status=\'ready\' LIMIT 1',
+    '  FOR UPDATE SKIP LOCKED;',
+    '-- 并发领取行；不是 Kafka/ACK 队列',
+    '```'
+  ].join('\n'),
+  'redis-client-no-touch-not-expire-off': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```redis',
+    'CLIENT NO-TOUCH ON',
+    'GET key   # 不刷新空闲/热度',
+    'TTL key   # 过期仍在倒计时',
+    '```'
+  ].join('\n'),
+  'idempotency-key-not-only-uuid': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```http',
+    'Idempotency-Key: checkout:user:req:978',
+    '# 服务端 UNIQUE/占位去重；重试必须同一键',
+    '```'
+  ].join('\n'),
+  'snowflake-clock-rollback': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```text',
+    'if (now < lastTs) wait or refuse',
+    '# 回拨可能撞号；改位段不能代替检测',
+    '```'
+  ].join('\n'),
+  'related-website-sets-not-cookie-restore': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```js',
+    '// 同 RWS 内嵌入方仍要申请，不会自动合并 Cookie',
+    'await document.requestStorageAccess()',
+    '// ≠ brandA Cookie 自动出现在 brandB 请求里',
+    '```'
+  ].join('\n'),
+  'bounce-tracking-mitigation-not-session-bug': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```text',
+    '短访 bounce 域种状态 → 缓解可清理',
+    '≠ 浏览器随机 session bug',
+    '一等登录落在用户停留的站点',
+    '```'
+  ].join('\n'),
+  'mysql-clone-not-backup': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```sql',
+    'CLONE INSTANCE FROM \'user\'@\'donor:3306\';',
+    '-- 供给 InnoDB 副本；≠ 可回档备份',
+    '-- 不带 binlog / 完整配置；日常备份另做',
+    '```'
+  ].join('\n'),
+  'redis-repl-link-down-not-fatal': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```text',
+    'INFO replication → master_link_status:down',
+    '# 断连/重同步窗口；进程常仍在',
+    '# ≠ FATAL 配置错误退出',
+    '```'
+  ].join('\n'),
+  'ua-client-hints-need-accept-ch': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```http',
+    'Accept-CH: Sec-CH-UA-Platform-Version',
+    '# 高熵要声明；浏览器仍可拒绝',
+    '# ≠ 每次必带完整 User-Agent 细节',
+    '```'
+  ].join('\n'),
+  'reduced-ua-not-stable-device-id': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```text',
+    'hash(userAgent) 当设备主键 → 削减后易撞车',
+    '身份：服务端会话 / 登录 Cookie',
+    '细节：可选 Client Hints（可缺）',
+    '```'
+  ].join('\n'),
+  'mysql-resource-group-not-os-cgroup': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```sql',
+    'SET RESOURCE GROUP batch_low;',
+    'SELECT /*+ RESOURCE_GROUP(batch_low) */ ...;',
+    '-- mysqld 内线程 CPU/优先级；≠ 容器 cgroup',
+    '```'
+  ].join('\n'),
+  'redis-cluster-slots-not-app-shard-key': [
+    '对照本课断言，先写出最小可观察片段：',
+    '',
+    '```redis',
+    'CLUSTER SLOTS          # 槽→节点拓扑',
+    'CLUSTER KEYSLOT user:{42}:cart',
+    '# 同槽靠 hash tag；≠ 业务分片方案本身',
+    '```'
   ].join('\n'),
 };
 

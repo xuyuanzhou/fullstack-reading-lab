@@ -102,6 +102,7 @@ export function structureCore(core: string): StructuredCore {
 ```
 开始 → 读 AGENTS.md（若尚未加载）与 docs/ai-changes/README.md（最近 3～5 条）
      → 若有进行中主题，优先续写同一条，勿另起炉灶互相打架
+     → 若改公开课正文，先对照本文件「公开课用词」
      → 实现代码
      → 更新/新建 YYYY-MM-DD-*.md（模板含「作者工具」）
      → 把该条链到 README 索引顶部
@@ -142,6 +143,7 @@ export function structureCore(core: string): StructuredCore {
 - [ ] 「改动清单」与工作区 diff 大致一致
 - [ ] 「后续 / 给下一模型」写清了下一步（不依赖本产品的聊天历史）
 - [ ] 未把秘密或私人原件写进 MD
+- [ ] 若改了课标题、提问或正文：技术名词用的是规范或官方文档里已有的说法，没有新的分类名
 
 未勾完 = 任务未完成。
 
@@ -157,3 +159,20 @@ export function structureCore(core: string): StructuredCore {
 2. 各工具入口文件保持短指针，避免分叉；
 3. 在 `docs/ai-changes/` 新增一条说明改了哪几节；
 4. 更新 `docs/ai-changes/README.md` 索引。
+
+## 11. 公开课用词
+
+改 `curriculum/`、学习路线、课上能看见的图和文案时遵守。变更记录本身仍按第 6 节写。
+
+- 技术概念用该领域的规范、官方文档或已经通行的中文说法。英文原词可以留在括号或代码里。
+- 不要自造分类名、层次名、状态名来代替已有术语，也不要用导出脚本把一个自造词自动换成另一个自造词。
+- 已经用错过、不要再写回的说法：
+  - record 的 component 不叫「分量」
+  - form state 不叫「草稿」；草稿只保留本义：未发出的文稿、未确认的订单行、离线草稿
+  - request status 不叫「请求过程」，用「请求状态」
+  - 各留一个库不叫「槽位」或「职责位」；Redis 哈希槽、HTML `sizes` 的布局宽度除外，那是规范里的说法
+  - 缓存只放一处不叫「缓存主人」
+  - 页面、接口契约、用例、持久化不要并成自拟的「四层」
+  - React、Vue、Angular、Svelte 叫界面库或框架，不叫「更新模型」
+- 可以继续用的已有说法：接口契约、用例、持久化、URL 状态、表单状态、服务器状态（server state）、请求状态、幂等键、不变量、竖切、哈希槽。
+- 讲数据和契约没有对上时用「不一致」。不要把「对不齐」当成术语。

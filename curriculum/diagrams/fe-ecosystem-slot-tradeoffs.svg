@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 240" role="img" aria-labelledby="title desc">
+  <title id="title">三处各留一个地方</title>
+  <desc id="desc">地址、订单列表、登录态不要存两份。</desc>
+  <rect width="960" height="240" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">地址、订单列表、登录态，各只留一处</text>
+  <rect x="32" y="64" width="280" height="110" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+  <text x="48" y="104" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2e3330">地址</text>
+  <text x="48" y="140" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">一个路由实现</text>
+  <rect x="340" y="64" width="280" height="110" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+  <text x="356" y="104" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2e3330">订单列表</text>
+  <text x="356" y="140" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">useQuery 或 useAsyncData</text>
+  <rect x="648" y="64" width="280" height="110" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+  <text x="664" y="104" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2e3330">登录态</text>
+  <text x="664" y="140" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">不要再存同一份订单</text>
+  <text x="32" y="210" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="600" fill="#2d4f41">表格只读其中一处。两处都存，筛选后仍会看到旧订单。</text>
+</svg>

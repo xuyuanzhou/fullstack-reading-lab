@@ -3,7 +3,8 @@ const COVERAGE_FRONTEND_28 = [
   {
     track:'frontend', group:'语言基础', id:'js-timer-fn-not-string',
     title:'定时器第一个参数传函数，不要传代码字符串',
-    prompt:'为什么旧图还写 setInterval("clock()", 1000)，现在一跑就被规范或打包拦住？',
+    prompt:'旧图还写 setInterval("clock()", 1000)。为什么现在一跑就被规范或打包拦住？',
+    promptAnswer:'定时器第一个参数传函数，不要传可执行字符串。',
     core:'`setTimeout` / `setInterval` 的第一个参数应是**函数**（或实现了回调约定的对象）。传入字符串时，实现会把这段文本再当脚本求值，行为和 `eval` 一类，作用域难料，也容易撞上 CSP。正确写法是 `setInterval(clock, 1000)` 或 `setInterval(() => clock(), 1000)`。取消要用同一次调用返回的句柄做 `clearInterval` / `clearTimeout`。测试里用假时钟推进，见 `test-fake-timers`。',
     why:'照图抄字符串，严格 CSP 下定时器根本不跑；能跑时闭包变量也对不上，调试像「函数没定义」。',
     example:'`setInterval("clock()", 1000)` 依赖到点再解析全局名 `clock`。改成 `const id = setInterval(() => clock(), 1000)`，卸载时 `clearInterval(id)`。',
@@ -24,6 +25,7 @@ const COVERAGE_FRONTEND_28 = [
     track:'frontend', group:'工程实践', id:'webpack-eval-sourcemap-dev-only',
     title:'带 eval 的 source map 只给开发重建，不要上生产',
     prompt:'为什么优化表里 eval 一列「重建速度」很高，有人就把它写进生产配置？',
+    promptAnswer:'eval 系只给开发。生产不要公开它们。',
     core:'Webpack 的 `eval`、`cheap-module-eval-source-map` 一类用 `eval` 包模块，**重建快**，官方对照表里「生产环境」一列是 **no**。生产若公开 map，等于交出源码，见 `vite-sourcemap-prod`（Vite 的 hidden / 私有上传同一道理）。线上要堆栈时用 `hidden-source-map` 或把 `.map` 只交给错误监控，不要图重建速度把 eval 系带到 CDN。',
     why:'生产开了 eval-source-map，包体积和解析方式都按开发来，还可能把源码路径暴露给匿名用户。',
     example:'开发 `devtool: "cheap-module-eval-source-map"`。生产 `devtool: false` 或 `hidden-source-map`，`.map` 只上传监控。不要 `production` 模式仍写 `eval`。',

@@ -9,5 +9,6 @@
 3. **单一真相源**：细则只在契约正文；本文件与 `CODEX.md`、`CLAUDE.md`、`GEMINI.md`、`.github/copilot-instructions.md`、`.cursor/rules/*`、`.cursorrules` 仅为指针，勿另写一套规则。
 4. **给下一模型**：变更记录里的「后续」必须可脱离当前聊天窗口执行。
 5. **Codex**：除本文件外见 [CODEX.md](CODEX.md)；写变更记录时作者工具填 `Codex`。
+6. **公开课用词**：写课标题、提问和正文时遵守契约 [公开课用词](docs/AI契约-变更记录规范.md)。技术概念用规范或官方文档里已有的说法，不自造分类名。
 
 未完成对应 MD = 未完成交付。

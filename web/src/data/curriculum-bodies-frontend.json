@@ -1,18 +1,18 @@
 {
   "fs-four-layers": {
-    "core": "全栈指的是你能让同一件业务在四层里说的是同一件事。这里的「契约」就是前后端约定好的 HTTP 接口：方法、路径、成功时的字段、失败时的状态码，以及一个稳定的失败类型（type）。页面负责这次交互：路由上是哪一条资源，用户正在编辑什么，成功和失败各自画成什么。契约负责双方约定，服务和页面都只认这一份约定。服务负责这次用例：身份够不够、规则过不过、事务里哪些写入必须一起提交。数据负责最后的事实：表、唯一约束、索引，以及必要时的缓存副本。库存数属于数据和事务，不属于按钮的 disabled。按钮只减少双击。幂等键属于契约，唯一约束负责在并发下保住同一次业务只有一行。改一个字段时，先指出它属于哪一层，再改那一层，并让相邻层跟着契约变。后面章节程都是这四层里的一种失败方式。",
-    "why": "学习者会以为前端和后端都会写，一个下单功能自然就对齐了。联调时按钮可点、接口字段和表上的约束各说各的话，库存不够却显示成功。按钮状态、库存结果和失败类型分别落在不同层，才说明四层不能互相代替。",
-    "example": "页面 → 契约 → 服务 → 库，一层一件事：\n\n```text\n下单页提交 sku/qty\nPOST /orders → 201+订单号 / 409 inventory-exhausted\n应用服务事务写订单+扣库存\n```",
-    "task": "选一个你熟悉的功能，写出四层各守的一句话，并标出三个事实分别属于哪一层：按钮是否可点、库存是否够、失败文案用哪一个 type。",
-    "answer": "以下单为例。页面守这次交互：请求进行中按钮不可再点，这只减少连发。契约守双方字段和失败类型：库存不足对应某一个 type。服务守用例和事务：库存够不够在事务里判断。数据守最终的行和约束：同一个幂等键只能有一行。三个事实的归属是：按钮是否可点属于页面，库存是否够属于服务加数据，失败文案用的 type 属于契约。按钮状态代替不了唯一约束。",
+    "core": "全栈指的是同一件业务在页面、接口契约、用例和持久化里说的是同一件事。接口契约就是前后端约定好的 HTTP 接口：方法、路径、成功时的字段、失败时的状态码，以及一个稳定的失败类型（type）。页面负责这次交互：URL 上是哪一条资源，用户正在编辑什么，成功和失败各自渲染成什么。用例和页面都只认这一份契约。用例负责这次业务：身份够不够、规则过不过、事务里哪些写入必须一起提交。持久化负责最后的事实：表、唯一约束、索引，以及必要时的缓存副本。库存数属于持久化和事务，不属于按钮的 disabled。按钮只减少双击。幂等键属于契约，唯一约束负责在并发下保住同一次业务只有一行。改一个字段时，先指出它属于哪一件，再改那一件，并让相邻的部分跟着契约变。之后的每一节都是这四件事里的一种失败方式。",
+    "why": "学习者会以为前端和后端都会写，同一个下单自然就一致了。联调时按钮可点、接口字段和表上的约束各说各的话，库存不够却显示成功。按钮状态、库存结果和失败类型分别落在页面、用例和契约上，才说明这四件事不能互相代替。",
+    "example": "页面、接口契约、用例、持久化，各守一件事：\n\n```text\n下单页提交 sku/qty\nPOST /orders → 201+订单号 / 409 inventory-exhausted\n应用服务事务写订单+扣库存\n```",
+    "task": "选一个你熟悉的功能，写出页面、接口契约、用例、持久化各守的一句话，并标出三个事实分别属于哪一件：按钮是否可点、库存是否够、失败文案用哪一个 type。",
+    "answer": "以下单为例。页面守这次交互：请求进行中按钮不可再点，这只减少连发。接口契约守双方字段和失败类型：库存不足对应某一个 type。用例守事务：库存够不够在事务里判断。持久化守最终的行和约束：同一个幂等键只能有一行。三个事实的归属是：按钮是否可点属于页面，库存是否够属于用例和持久化，失败文案用的 type 属于接口契约。按钮状态代替不了唯一约束。",
     "deep": [
       {
         "title": "学完这一组要能交付什么",
-        "body": "一条从页面提交到数据库提交的写路径，加一条按标识读取的路径。你能说出成功、校验失败、业务冲突和网络超时在四层分别是什么。后面的框架课、数据库课和中间件课是在给这条路径补失败场景，不是另起一套系统。"
+        "body": "一条从页面提交到数据库提交的写路径，加一条按标识读取的路径。你能说出成功、校验失败、业务冲突和网络超时分别落在这四件事的哪一件。后面的框架课、数据库课和中间件课是在给这条路径补失败场景，不是另起一套系统。"
       },
       {
         "title": "和后面课程的关系",
-        "body": "错误契约、Cookie 会话、React 的服务器状态、Spring 的过滤链和事务、JPA 的 N+1、幂等和 Outbox，都挂在这四层上。读到某一课时，先问它在保护哪一层。"
+        "body": "错误契约、Cookie 会话、React 的服务器状态、Spring 的过滤链和事务、JPA 的 N+1、幂等和 Outbox，都挂在这四件事上。读到某一课时，先问它在保护哪一件。"
       }
     ],
     "references": [
@@ -27,19 +27,19 @@
     ]
   },
   "fs-page-feature": {
-    "core": "一个功能页同时有四种数据，混在一个 state 里就会互相覆盖。路由决定正在看哪一条资源，标识放在地址里，刷新和分享才还是这一条。服务器状态是上次成功的响应：列表、详情、订单号。它的权威在服务端，页面只是这份响应的视图；重新请求或缓存失效后，以新的响应为准，不要在本地把列表改成“应该已经成功”的样子。草稿是用户还没提交的输入，只活在这次编辑里。请求过程是 loading、成功、失败、已取消，它描述这一次 fetch，不是业务数据本身。提交成功后，用响应替换对应的服务器状态，并清掉草稿。提交失败时保留草稿，按契约的 type 显示原因。组件卸载或路由换了标识，要取消过期请求，避免旧响应写进新页面。",
-    "why": "学习者会把接口结果和输入放进同一份状态，以为刷新后仍和服务器一致。请求还没回来时用户改了输入，响应一到就把输入盖掉，刷新后两边对不上。输入框里仍是用户刚打的字、服务器状态另存一份，才说明草稿和响应不是同一种数据。",
-    "example": "路由 id 拉服务器状态；输入是草稿：\n\n```js\n// GET /orders/42 → 服务器状态\n// 备注输入 = 本地草稿；保存才 PATCH\n```",
-    "task": "给“编辑昵称”标出四种数据各在哪。再预测：请求还没回来时用户已经改了输入，响应该不该覆盖输入框。",
-    "answer": "编辑昵称时，地址里的用户标识是路由，GET 回来的昵称是服务器状态，输入框里正在改的字是草稿，按钮旁的转圈是这一次请求的过程。详情还没回来时用户已经打了字，响应该写入服务器状态，不应该覆盖输入框。晚到的响应若把 setDraft 设成服务器昵称，会抹掉未提交的草稿。切到另一个用户后，上一个响应也不能写进新页面。",
+    "core": "一个功能页同时有四种状态，混在一个 state 里就会互相覆盖。URL 状态决定正在看哪一条资源，标识放在地址里，刷新和分享才还是这一条。服务器状态是上次成功的响应：列表、详情、订单号。它的权威在服务端，页面只是这份响应的视图；重新请求或缓存失效后，以新的响应为准，不要在本地把列表改成“应该已经成功”的样子。表单状态是用户还没提交的输入，只活在这次编辑里。请求状态是这一次 fetch 的 status：pending、success、error，以及已取消。它不是业务数据本身。提交成功后，用响应替换对应的服务器状态，并清掉表单状态。提交失败时保留表单状态，按契约的 type 显示原因。组件卸载或 URL 换了标识，要取消过期请求，避免旧响应写进新页面。",
+    "why": "学习者会把接口结果和输入放进同一份状态，以为刷新后仍和服务器一致。请求还没回来时用户改了输入，响应一到就把输入盖掉，刷新后两边不一致。输入框里仍是用户刚打的字、服务器状态另存一份，才说明表单状态和响应不是同一种数据。",
+    "example": "URL 上的 id 拉服务器状态；输入是表单状态：\n\n```js\n// GET /orders/42 → 服务器状态\n// 备注输入 = 表单状态；保存才 PATCH\n```",
+    "task": "给“编辑昵称”标出四种状态各在哪。再预测：请求还没回来时用户已经改了输入，响应该不该覆盖输入框。",
+    "answer": "编辑昵称时，地址里的用户标识是 URL 状态，GET 回来的昵称是服务器状态，输入框里正在改的字是表单状态，按钮旁的转圈是这一次请求的 status。详情还没回来时用户已经打了字，响应该写入服务器状态，不应该覆盖输入框。晚到的响应若把表单状态设成服务器昵称，会抹掉未提交的输入。切到另一个用户后，上一个响应也不能写进新页面。",
     "deep": [
       {
         "title": "和缓存库的关系",
-        "body": "用查询库保存服务器状态时，仍然不要把草稿写进那份缓存。草稿留在表单。成功后再更新缓存或让对应查询失效。"
+        "body": "用查询库保存服务器状态时，仍然不要把表单状态写进那份缓存。表单状态留在表单里。成功后再更新缓存或让对应查询失效。"
       },
       {
         "title": "怎样自己验证",
-        "body": "打开慢网速，先改输入，再等上一次详情返回。输入框里应仍是草稿。切到另一条资源后，上一次响应不应改变这一条的标题。"
+        "body": "打开慢网速，先改输入，再等上一次详情返回。输入框里应仍是表单状态。切到另一条资源后，上一次响应不应改变这一条的标题。"
       }
     ],
     "references": [
@@ -54,11 +54,11 @@
     ]
   },
   "fs-write-ui": {
-    "core": "写操作的界面跟着契约走，不跟着“没有抛异常”走。fetch 在 HTTP 4xx 和 5xx 时默认不抛错，必须先看 response.ok 或状态码，再解析约定的问题详情。2xx 且响应里有契约规定的字段，才进入成功界面，并用这份响应更新服务器状态。4xx 按 type 显示用户能处理的原因，例如字段不合法或库存不足，草稿保留。5xx 显示这次没做成，并允许按原幂等键重试。没有响应体的失败，例如断网、超时、取消，显示没送到，不要套用业务文案。按钮在请求进行中不可再次点击，这只避免同一次界面连发；超时后的重试仍要带同一个幂等键，由服务端认出是同一次业务。成功后把路由带到新资源或刷新当前服务器状态，使用户刷新页面仍能看到结果。",
-    "why": "学习者会在成功回调里一律提示保存成功。接口已经返回冲突，页面仍显示成功，网关的 HTML 也被画成同一句。冲突分支按类型保留草稿、断网才进传输失败，才说明成功界面只留给契约规定的那一种结果。",
+    "core": "写操作的界面跟着契约走，不跟着“没有抛异常”走。fetch 在 HTTP 4xx 和 5xx 时默认不抛错，必须先看 response.ok 或状态码，再解析约定的问题详情。2xx 且响应里有契约规定的字段，才进入成功界面，并用这份响应更新服务器状态。4xx 按 type 显示用户能处理的原因，例如字段不合法或库存不足，表单状态保留。5xx 显示这次没做成，并允许按原幂等键重试。没有响应体的失败，例如断网、超时、取消，显示没送到，不要套用业务文案。按钮在请求进行中不可再次点击，这只避免同一次界面连发；超时后的重试仍要带同一个幂等键，由服务端认出是同一次业务。成功后把路由带到新资源或刷新当前服务器状态，使用户刷新页面仍能看到结果。",
+    "why": "学习者会在成功回调里一律提示保存成功。接口已经返回冲突，页面仍显示成功，网关的 HTML 也被画成同一句。冲突分支按类型保留表单状态、断网才进传输失败，才说明成功界面只留给契约规定的那一种结果。",
     "example": "按状态码分流跳转与错误展示：\n\n```js\nif (res.status === 201) navigate(`/orders/${body.id}`)\nelse if (body.type === \"inventory-exhausted\") toast(\"库存不足\")\n```",
-    "task": "用一张表写下 201、400、409、500 和断网五种结果：页面文案、草稿留不留、能不能用原键重试。确认 409 的分支没有写在 catch 里靠 message 字符串判断。",
-    "answer": "201 且响应里有契约规定的 id：进入成功界面，并让刷新后仍能打开这条资源。400：字段不合法，草稿留下，文案指向字段。409：按 type 显示业务冲突，草稿留下；这个分支看状态码，不写在 catch 里用 message 字符串判断，因为 4xx 不会让 fetch 抛错。500：没做成，草稿留下，允许用原来的幂等键重试。断网没有 HTTP 响应，fetch 拒绝，单独显示没送到，重试仍带原键。",
+    "task": "用一张表写下 201、400、409、500 和断网五种结果：页面文案、表单状态留不留、能不能用原键重试。确认 409 的分支没有写在 catch 里靠 message 字符串判断。",
+    "answer": "201 且响应里有契约规定的 id：进入成功界面，并让刷新后仍能打开这条资源。400：字段不合法，表单状态留下，文案指向字段。409：按 type 显示业务冲突，表单状态留下；这个分支看状态码，不写在 catch 里用 message 字符串判断，因为 4xx 不会让 fetch 抛错。500：没做成，表单状态留下，允许用原来的幂等键重试。断网没有 HTTP 响应，fetch 拒绝，单独显示没送到，重试仍带原键。",
     "deep": [
       {
         "title": "成功的界面标准",
@@ -81,15 +81,15 @@
     ]
   },
   "fs-frontend-done": {
-    "core": "离开资料完成一个前端功能，至少能回答六件事。资源标识在哪，刷新后是否还在。请求发出去的方法、路径和字段是什么。成功响应的哪些字段会进入界面。每一种业务失败的 type 对应哪句文案，草稿还在不在。断网和超时怎样显示，重试是否带同一个幂等键。登录态是 Cookie 会话还是可读存储里的令牌，XSS 能偷到什么。答得出这六件，再去看组件拆分、列表 key 和性能，那些是把页面做稳的技术，不是功能本身。答不出时，回到四层、页面状态和写操作这三课，不要先换一个组件库。",
-    "why": "学习者会把一次能点通当成这一侧已经会做。盖住笔记后说不出失败类型和登录态放在哪，刷新或重试就对不上。六件事都能指到具体字段或存储、而不必翻源码，才说明不是碰巧赶上一次成功请求，而且六件事对不上时不能把这次点击记成已经会做。",
+    "core": "离开资料完成一个前端功能，至少能回答六件事。资源标识在哪，刷新后是否还在。请求发出去的方法、路径和字段是什么。成功响应的哪些字段会进入界面。每一种业务失败的 type 对应哪句文案，表单状态还在不在。断网和超时怎样显示，重试是否带同一个幂等键。登录态是 Cookie 会话还是可读存储里的令牌，XSS 能偷到什么。答得出这六件，再去看组件拆分、列表 key 和性能，那些是把页面做稳的技术，不是功能本身。答不出时，回到这四件事、页面上的四种状态和写操作这三课，不要先换一个组件库。",
+    "why": "学习者会把一次能点通当成这一侧已经会做。盖住笔记后说不出失败类型和登录态放在哪，刷新或重试就和服务器不一致。六件事都能指到具体字段或存储、而不必翻源码，才说明不是碰巧赶上一次成功请求，而且六件事有一件说不清时不能把这次点击记成已经会做。",
     "example": "成功用响应刷新 UI；4xx/5xx 保留输入：\n\n```text\nPATCH 昵称 200 → 标题换成响应里的昵称\n400 → 标字段；500 → 保留输入可重试\n```",
     "task": "盖住笔记，用自己的话回答这六件。任何一件要查页面源码才能想起来，就把那一件写成下一轮的练习，而不是记成已会。",
-    "answer": "六件都要能指到具体位置才算会。资源标识在地址或当前用户，刷新后还在。请求能说出方法、路径和字段。成功时界面用响应里的哪几个字段。每种业务失败的 type 对应哪句文案，草稿还在不在。断网和超时没有 JSON，重试带同一个幂等键。登录态若在 HttpOnly Cookie，页面脚本读不到；若在可读存储里，要能说出 XSS 能偷到什么。有一件要对着源码现查，那一件就还没会。",
+    "answer": "六件都要能指到具体位置才算会。资源标识在地址或当前用户，刷新后还在。请求能说出方法、路径和字段。成功时界面用响应里的哪几个字段。每种业务失败的 type 对应哪句文案，表单状态还在不在。断网和超时没有 JSON，重试带同一个幂等键。登录态若在 HttpOnly Cookie，页面脚本读不到；若在可读存储里，要能说出 XSS 能偷到什么。有一件要对着源码现查，那一件就还没会。",
     "deep": [
       {
         "title": "和 Java 侧的交接",
-        "body": "把这六件事里的路径、字段和 type 写给服务端。服务端的交付标准是同一份清单：校验、事务、唯一约束和问题详情。两边各背各的框架，清单对不上，功能就还没完成。"
+        "body": "把这六件事里的路径、字段和 type 写给服务端。服务端的交付标准是同一份清单：校验、事务、唯一约束和问题详情。两边各背各的框架，清单不一致，功能就还没完成。"
       },
       {
         "title": "接下来读什么",
@@ -104,6 +104,292 @@
       [
         "MDN：Cookie",
         "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Cookies"
+      ]
+    ]
+  },
+  "js-value-kinds": {
+    "core": "语言里的值分成原始值（primitive value）和对象。原始值有七种：undefined、null、boolean、number、bigint、string、symbol。数组、函数和 { } 写出来的都是对象。typeof 运算的结果是一个字符串，用来看大类，例如 typeof 1 是 \"number\"，typeof {} 是 \"object\"。typeof null 也得到 \"object\"，这是早期留下的结果，null 并不是对象，见 `js-not-everything-object`。=== 和 Object.is 的差别见 `js-equality`。",
+    "example": "typeof 看大类：\n\n```javascript\ntypeof 1;          // \"number\"\ntypeof \"CNY\";      // \"string\"\ntypeof {};         // \"object\"\ntypeof null;       // \"object\"，null 仍不是对象\n```",
+    "task": "列出七种原始值。写出 typeof 1、typeof {} 和 typeof null 的结果。",
+    "answer": "七种原始值是 undefined、null、boolean、number、bigint、string、symbol。typeof 1 是 \"number\"，typeof {} 是 \"object\"。typeof null 也是 \"object\"，但 null 不是对象，见 `js-not-everything-object`。",
+    "deep": [
+      {
+        "title": "函数的 typeof 是 function",
+        "body": "函数属于对象，但 typeof function () {} 得到 \"function\"，不是 \"object\"。这是 typeof 多出来的一个结果，不表示函数不是对象。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "在控制台对 1、\"a\"、true、undefined、null、{} 和 function () {} 打印 typeof。确认 null 的结果是 object。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：JavaScript data types",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures"
+      ],
+      [
+        "ECMA-262：ECMAScript Data Types and Values",
+        "https://tc39.es/ecma262/multipage/ecmascript-data-types-and-values.html"
+      ]
+    ]
+  },
+  "js-let-const-decl": {
+    "core": "let 和 const 都声明块级绑定。let count = 1 之后可以写 count = 2。const name = \"a\" 必须在声明时赋值，之后不能再把 name 指到别的值，再赋值会抛出 TypeError。const 锁住的是这个名字，对象里的字段仍能改，见 `es6-const-binding`。名字在声明之前不能读，见 `js-scope-tdz`。var 是函数作用域里的旧写法，新代码用 let 或 const。",
+    "example": "let 能改，const 不能换绑定：\n\n```javascript\nlet count = 1;\ncount = 2;\nconst name = \"a\";\n// name = \"b\" 抛出 TypeError\n```",
+    "task": "说明计数器该用 let 还是 const。const 声明的对象，改一个字段会不会抛错。",
+    "answer": "计数器要再赋值，用 let。const 不能把名字再指到新值，再赋值抛出 TypeError。const 对象的字段仍能改，见 `es6-const-binding`。",
+    "deep": [
+      {
+        "title": "var 不要再当默认声明",
+        "body": "var 的作用域是函数，而且声明会被抬到函数顶部。let 和 const 的作用域是一对花括号，声明前读取会失败，见 `js-scope-tdz`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "用 let 把 1 改成 2，确认可以。用 const 声明字符串后再赋值，确认抛出 TypeError。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：let",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let"
+      ],
+      [
+        "MDN：const",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const"
+      ]
+    ]
+  },
+  "js-number-ieee": {
+    "core": "没有单独的 int。1 和 1.5 的类型都是 number，按 IEEE 754 双精度浮点存放。5 / 2 得到 2.5。运算得不出数字时，结果是 NaN（Not-a-Number）。NaN 用 === 和自己比较并不为真，见 `js-equality`。超过这种浮点能精确表示的整数时，用 bigint，字面量写成 1n，bigint 和 number 不能直接相加。",
+    "example": "除法留下小数：\n\n```javascript\n5 / 2;            // 2.5\ntypeof 1;         // \"number\"\nNumber(\"x\");      // NaN\n1n + 1n;          // 2n\n```",
+    "task": "预测 5 / 2 和 typeof 1。说明 NaN 是什么时候出现的结果。",
+    "answer": "5 / 2 是 2.5。typeof 1 是 \"number\"，整数和小数是同一种类型。NaN 表示这次运算没有得到数字，例如 Number(\"x\")。bigint 的字面量带 n，不能和 number 直接相加。",
+    "deep": [
+      {
+        "title": "很大的整数会不再精确",
+        "body": "number 能精确表示的整数有上限。超过之后两个相邻整数可能变成同一个 number。需要精确的大整数时用 bigint。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打印 5 / 2 和 typeof 1.5。再打印 Number(\"x\")，确认结果是 NaN。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：Number",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number"
+      ],
+      [
+        "MDN：BigInt",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt"
+      ]
+    ]
+  },
+  "js-string-length": {
+    "core": "字符串是原始值，不是字符数组。单引号和双引号都可以写出它，\"CNY\" 和 'CNY' 是同一种值。length 给出 UTF-16 码元的个数，\"CNY\".length 是 3。用 + 把字符串和别的值连起来，会得到一个新字符串，\"CNY\" + 1 是 \"CNY1\"。反引号里可以嵌入表达式，见 `es6-template-expression`。",
+    "example": "引号写出字符串：\n\n```javascript\nconst currency = \"CNY\";\ncurrency.length;          // 3\ncurrency + 1;             // \"CNY1\"\n```",
+    "task": "说明 \"CNY\" 的类型和 length。预测 \"CNY\" + 1。",
+    "answer": "\"CNY\" 是 string 原始值，不是对象。length 是 3。\"CNY\" + 1 得到新字符串 \"CNY1\"。模板字符串见 `es6-template-expression`。",
+    "deep": [
+      {
+        "title": "引号要成对",
+        "body": "字符串从引号开始，到同一种引号结束。里面要出现这种引号，就换另一种引号包住，或者在前面加反斜杠。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打印 \"CNY\".length 和 \"CNY\" + 1。再用 typeof 确认结果是 string。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：String",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String"
+      ],
+      [
+        "MDN：String length",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/length"
+      ]
+    ]
+  },
+  "js-array-grows": {
+    "core": "数组是对象，用从 0 开始的下标存放值。length 是数组自己报告的长度。push 把值加到末尾，length 随之变大。读取 a[a.length] 得到 undefined，不会抛出异常。按顺序取出每个元素可以用 for...of，见 `es6-for-of-iterable`。",
+    "example": "长度会变：\n\n```javascript\nconst lines = [];\nlines.push(\"a\");\nlines[0];          // \"a\"\nlines.length;      // 1\nlines[1];          // undefined\n```",
+    "task": "写出空数组放入一个字符串之后的 length，以及再下一个下标读到什么。",
+    "answer": "push 一次之后 length 是 1，下标 0 是这个字符串。下标 1 读到 undefined，不抛异常。for...of 见 `es6-for-of-iterable`。",
+    "deep": [
+      {
+        "title": "length 可以人为改小",
+        "body": "把 length 设成更小的数，后面的元素就不再从数组里读到。这和 push 加长是同一字段的两种改法。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "创建 []，push 一个字符串，打印 length 和下标 0。再读下一个下标，确认是 undefined。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：Array",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array"
+      ],
+      [
+        "MDN：Array.prototype.push",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push"
+      ]
+    ]
+  },
+  "js-object-property": {
+    "core": "对象字面量写成 { amount: 100 }。点号 order.amount 读取名字是合法标识符的属性。方括号 order[\"amount\"] 用一个表达式当属性名，名字来自变量时必须用方括号。对象上没有这个属性时，读取得到 undefined。两次写出的 { } 是两个对象，=== 比的是不是同一个对象，见 `js-equality`。属性在自己身上找不到时，还会沿原型链找，见 `js-prototype-chain`。",
+    "example": "点号和方括号读的是同一属性：\n\n```javascript\nconst order = { amount: 100 };\norder.amount;            // 100\norder[\"amount\"];         // 100\norder.missing;           // undefined\n```",
+    "task": "用对象写下金额。说明点号和方括号何时都能用，缺失的属性读到什么。",
+    "answer": "{ amount: 100 } 把金额放在 amount 上。属性名是固定标识符时，点号和方括号结果相同。名字存在变量里时用方括号。没有的属性读到 undefined。两个字面量是不是同一个对象，见 `js-equality`。",
+    "deep": [
+      {
+        "title": "方括号用于算出来的名字",
+        "body": "const key = \"amount\"; 之后要写 order[key]。order.key 找的是名字就叫 key 的属性，不会把变量的内容当成名字。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "创建 { amount: 100 }，用点号和方括号各读一次。再读一个没写过的属性，确认是 undefined。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：Object initializer",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer"
+      ],
+      [
+        "MDN：Property accessors",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Property_accessors"
+      ]
+    ]
+  },
+  "js-function-return": {
+    "core": "function 声明一个函数。调用时，圆括号里的值按顺序成为参数。return 把一个值交回调用处；函数如果执行到末尾还没有 return，结果是 undefined。函数本身也是值，可以放进变量。箭头函数的 this 和这种 function 不一样，见 `js-arrow-has-no-prototype`。",
+    "example": "return 交回调用处：\n\n```javascript\nfunction cents(n) {\n  return n;\n}\ncents(100);          // 100\n```",
+    "task": "写一个函数接收金额并 return 它。不写 return 时，调用结果是什么？",
+    "answer": "function cents(n) { return n } 在 cents(100) 时得到 100。没有 return 的函数，调用结果是 undefined。箭头函数见 `js-arrow-has-no-prototype`。",
+    "deep": [
+      {
+        "title": "return 会立刻结束函数",
+        "body": "return 后面的语句不再执行。需要先算完再交回，就把计算写在 return 之前。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "调用一个有 return 的函数和一个没有 return 的函数，打印两个结果。后者应为 undefined。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：function",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function"
+      ],
+      [
+        "MDN：return",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/return"
+      ]
+    ]
+  },
+  "js-if-falsy": {
+    "core": "if 会把条件转成布尔值再决定走哪一支。算假的值（falsy）有 false、0、空字符串、null、undefined 和 NaN。其余值算真，包括空对象和空数组。0 是一个有效数字，但在 if 里算假。要区分 0 和缺失，就写成 count === 0，不要只写 if (count)。== 会先转换类型，见 `js-equality`。",
+    "example": "0 会走进 else：\n\n```javascript\nconst count = 0;\nif (count) {\n  // 不执行\n} else {\n  // count === 0 时走这里\n}\n```",
+    "task": "列出算假的值。说明 count 为 0 时怎样写条件才能走进“等于 0”的分支。",
+    "answer": "算假的是 false、0、空字符串、null、undefined、NaN。if (count) 在 0 时走 else。要认出 0，写成 count === 0。== 的类型转换见 `js-equality`。",
+    "deep": [
+      {
+        "title": "空数组算真",
+        "body": "[] 和 {} 不是 falsy。if ([]) 会走进真的那一支。缺元素和空容器不是同一件事。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "用 if 分别测试 0、\"\"、null、undefined、NaN、1 和 []。前五个进 else，后两个进 if。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：if...else",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/if...else"
+      ],
+      [
+        "MDN：Falsy",
+        "https://developer.mozilla.org/en-US/docs/Glossary/Falsy"
+      ]
+    ]
+  },
+  "js-for-while-break": {
+    "core": "while (条件) 在条件为真时重复后面的语句。for (let i = 0; i < n; i = i + 1) 先做一次初始化，之后每轮先看条件，循环体结束再做更新。break 离开它所在的这一层循环。continue 跳过这一轮剩下的语句，for 会先做更新再看条件。按数组元素遍历用 for...of，见 `es6-for-of-iterable`。",
+    "example": "continue 跳过 1：\n\n```javascript\nlet sum = 0;\nfor (let i = 0; i < 3; i = i + 1) {\n  if (i === 1) continue;\n  sum = sum + i;\n}\n// sum 是 2\n```",
+    "task": "说明 continue 和 break 的差别。预测上面这段的 sum。",
+    "answer": "continue 只结束这一轮，循环还在。break 离开整个循环。i 为 0 时加上 0，i 为 1 时跳过，i 为 2 时加上 2，sum 是 2。for...of 见 `es6-for-of-iterable`。",
+    "deep": [
+      {
+        "title": "条件每次都会重看",
+        "body": "循环体里如果改了条件用到的变量，下一轮用的是改完之后的值。for 的更新在循环体之后执行，continue 也会先走到更新。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "跑上面的 for，打印 sum，应为 2。把 continue 改成 break，确认加到 0 就停。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：for",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for"
+      ],
+      [
+        "MDN：break",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/break"
+      ],
+      [
+        "MDN：continue",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/continue"
+      ]
+    ]
+  },
+  "js-try-catch-throw": {
+    "core": "throw 抛出一个值，并离开当前这段代码。写在 try 里时，后面的 catch 会接到这个值，括号里的参数就是它。finally 里的代码无论是否抛出都会执行。习惯上抛出 Error 对象，这样有消息和调用栈。函数声明上没有 throws，调用方不会因为你没写 catch 而在解析阶段失败。",
+    "example": "catch 接到抛出的 Error：\n\n```javascript\ntry {\n  throw new Error(\"read\");\n} catch (err) {\n  err.message;       // \"read\"\n} finally {\n  // 两条路都会执行\n}\n```",
+    "task": "说明 throw 和 catch 各做什么。不写 catch 时，抛出会不会在解析阶段就被拒绝？",
+    "answer": "throw 抛出值并离开当前代码。catch 的参数就是这个值。finally 无论是否抛出都会执行。没有 throws 要声明，不写 catch 不会在解析阶段失败，抛出时才会中断。",
+    "deep": [
+      {
+        "title": "抛出的不一定是 Error",
+        "body": "throw 1 也合法，catch 接到的就是 1。需要消息和栈时，抛 new Error(\"...\")。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "在 try 里 throw new Error(\"read\")，在 catch 里打印 message。再在 finally 里加一条打印，确认抛出时它仍执行。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：try...catch",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/try...catch"
+      ],
+      [
+        "MDN：throw",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/throw"
+      ]
+    ]
+  },
+  "js-switch-strict": {
+    "core": "switch 把表达式和每个 case 用严格相等（===）比较。匹配上之后，会继续执行后面的语句，直到 break，或者这个 switch 结束。这种继续和冒号形式的落入是同一件事。default 在没有 case 匹配时执行。case 的值要和表达式用 === 比得上，字符串 \"1\" 对不上数字 1。",
+    "example": "没有 break 会继续：\n\n```javascript\nlet name = \"\";\nswitch (1) {\n  case 1:\n    name = \"a\";\n  case 2:\n    name = \"b\";\n    break;\n  default:\n    break;\n}\n// name 是 \"b\"\n```",
+    "task": "说明 case 不写 break 时后面的 case 会不会执行。字符串 \"1\" 能不能匹配数字 1。",
+    "answer": "匹配之后继续往下，直到 break。上面的例子里 name 最后是 \"b\"。switch 用 ===，\"1\" 不等于 1，不会匹配。",
+    "deep": [
+      {
+        "title": "default 的位置不改变匹配规则",
+        "body": "default 写在中间时，落入仍从匹配的 case 往后走。它不是“最后才检查”的特殊步骤，只是没有 case 匹配时的入口。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "用数字 1 跑上面的 switch，确认 name 是 \"b\"。在 case 1 末尾加上 break，确认 name 变成 \"a\"。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：switch",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/switch"
       ]
     ]
   },
@@ -977,8 +1263,8 @@
         "body": "在点击函数开头打印 count，连续点两次。第一次打印 0 且屏幕变成 1，第二次打印的才是 1。打印发生在调用时，屏幕更新发生在之后的渲染。"
       },
       {
-        "title": "和草稿的关系",
-        "body": "全栈页面里的草稿如果放在 state，提交函数也只能看见创建它那次渲染的草稿。提交时要读这次渲染的值，或用函数式更新基于最新队列计算。"
+        "title": "和表单状态的关系",
+        "body": "全栈页面里的表单状态如果放在 state，提交函数也只能看见创建它那次渲染的表单状态。提交时要读这次渲染的值，或用函数式更新基于最新队列计算。"
       }
     ],
     "references": [
@@ -992,6 +1278,84 @@
       ]
     ],
     "react": "hooks"
+  },
+  "ts-type-annotation": {
+    "core": "类型标注（type annotation）写在名字后面的冒号之后。let n: number = 1 表示 n 的值按 number 检查。函数的参数和返回值同样写：function cents(n: number): number { return n }。把字符串赋给 n，编译失败。编译通过之后，生成的 JavaScript 里这些标注会被擦掉，运行时不再按它们检查。any 会关掉这一处检查。还不能确定类型时用 unknown，见 `ts-unknown`。",
+    "example": "对不上的赋值在编译时失败：\n\n```typescript\nlet n: number = 1;\nn = 2;\nfunction cents(n: number): number {\n  return n;\n}\n// n = \"a\" 编译失败\n```",
+    "task": "给金额变量和函数参数写上 number。说明标注在生成的 JavaScript 里还在不在。",
+    "answer": "变量、参数和返回值都用冒号写上 number。把字符串赋给 number 会编译失败。生成的 JavaScript 不再保留这些标注。unknown 见 `ts-unknown`。",
+    "deep": [
+      {
+        "title": "有初值时可以省略",
+        "body": "let n = 1 时，编译器把 n 推断为 number。写出 : number 是在声明处把这个决定固定下来。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "写 let n: number = 1，再赋一个字符串。确认报错出现在编译，而不是页面打开之后。"
+      }
+    ],
+    "references": [
+      [
+        "TypeScript：Everyday Types",
+        "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html"
+      ],
+      [
+        "TypeScript：The Basics",
+        "https://www.typescriptlang.org/docs/handbook/2/basic-types.html"
+      ]
+    ]
+  },
+  "ts-object-array-type": {
+    "core": "对象类型把字段名和类型写在花括号里。{ amount: number } 表示这个值要有 amount，而且 amount 是 number。数组类型把元素类型写在方括号前面，string[] 表示每一项按 string 检查。把数字放进 string[] 会编译失败。对象字面量如果多写了类型里没有的字段，编译也会拒绝；这个值若先放进变量再传，检查会少一层，见 `ts-structural`。interface 和 type 怎么选，见 `ts-type-vs-interface`。",
+    "example": "字段和元素分开写：\n\n```typescript\nconst order: { amount: number } = { amount: 100 };\nconst lines: string[] = [\"a\"];\n// lines.push(1) 编译失败\n```",
+    "task": "写出带 amount 的订单类型，以及字符串数组类型。数字推进 string[] 会在什么时候失败？",
+    "answer": "订单类型是 { amount: number }，数组类型是 string[]。推进数字会编译失败。字面量多出来的字段见 `ts-structural`。interface 和 type 见 `ts-type-vs-interface`。",
+    "deep": [
+      {
+        "title": "字段可以标成可选",
+        "body": "name?: string 表示这个字段可以不写。读到它时，类型里会带上 undefined。和“必须有、值可以是 null”不是同一种写法。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "声明 { amount: number } 和 string[]。给 amount 赋字符串，或给数组 push 数字，确认都是编译错误。"
+      }
+    ],
+    "references": [
+      [
+        "TypeScript：Object Types",
+        "https://www.typescriptlang.org/docs/handbook/2/objects.html"
+      ],
+      [
+        "TypeScript：Everyday Types",
+        "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html"
+      ]
+    ]
+  },
+  "ts-union-annotation": {
+    "core": "联合类型（union type）用竖线把几种可能写在一起。number | null 表示这个值可以是 number，也可以是 null。把它赋成字符串会编译失败。在还没判断是哪一种之前，不能直接把它当 number 做运算。判断之后只留下一种类型，这叫收窄，见 `ts-narrowing`。可选字段 name?: string 读出来的类型是 string | undefined。",
+    "example": "只接受列出来的类型：\n\n```typescript\nlet amount: number | null = 100;\namount = null;\n// amount = \"x\" 编译失败\n```",
+    "task": "把“可能还没有的金额”写成联合类型。说明和可选字段读出来的 undefined 差在哪里。",
+    "answer": "可能没有的金额写成 number | null，null 是这个值自己的一种可能。可选字段不存在时，读出来是 string | undefined，见标注里的问号。使用联合类型前要收窄，见 `ts-narrowing`。",
+    "deep": [
+      {
+        "title": "null 和 undefined 都要写进去才允许",
+        "body": "number 不包含 null，也不包含 undefined。需要缺席时，把 null 或 undefined 写进联合类型，或者把字段标成可选。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "声明 number | null，依次赋数字和 null，确认可以通过。再赋字符串，确认编译失败。"
+      }
+    ],
+    "references": [
+      [
+        "TypeScript：Union Types",
+        "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#union-types"
+      ],
+      [
+        "TypeScript：Narrowing",
+        "https://www.typescriptlang.org/docs/handbook/2/narrowing.html"
+      ]
+    ]
   },
   "ts-unknown": {
     "core": "any 会绕过许多静态检查；**unknown（TS 3.0）** 可接收任意值，但在读取属性或调用前必须缩小类型。JSON 解析结果即使语法正确，也不代表符合业务对象结构。顺序是：入口收 unknown，先判断非 null 对象，再逐个检查必需字段的类型，通过后才收窄成 User。边界是：any 会让后面的属性访问全部跳过检查，风险从边界扩散到所有调用方。JSON.parse 只保证文本合法，不保证有 id，更不保证 id 是字符串。缺少字段和类型不对都要停在 parseUser 里。调用方拿到的要么是 User，要么是错误，不能是一个还可以点出任意属性的值。不要把未知值传进去。",
@@ -1280,6 +1644,58 @@
       ]
     ]
   },
+  "css-rule-syntax": {
+    "core": "样式表由规则（style rule）组成。选择器（selector）决定这条规则用到哪些元素。花括号里是声明（declaration）：属性、冒号、值，分号结束这一条。p { color: blue; } 把 p 元素的 color 设为 blue。同一元素被多条规则设了同一个属性时，谁生效由层叠（cascade）决定，见 `css-cascade`。width 包不包括 padding，见 `css-box-sizing`。",
+    "example": "选择器加上声明：\n\n```css\np {\n  color: blue;\n}\n```",
+    "task": "指出 p { color: blue; } 里哪一段是选择器，哪一段是声明。两条规则设置同一个属性时去看哪一课。",
+    "answer": "p 是选择器，color: blue 是声明。属性是 color，值是 blue。谁盖过谁见 `css-cascade`。盒模型见 `css-box-sizing`。",
+    "deep": [
+      {
+        "title": "一条规则里可以有多条声明",
+        "body": "花括号里可以写 color 和 margin。每条声明用分号分开。少写分号时，下一条声明可能被吃进上一条的值里。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "给一个 p 写上 color: blue，在开发者工具里确认计算后的颜色来自这条声明。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：CSS syntax",
+        "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_syntax/Syntax"
+      ],
+      [
+        "CSS Syntax Module",
+        "https://drafts.csswg.org/css-syntax-3/#style-rules"
+      ]
+    ]
+  },
+  "css-selector-simple": {
+    "core": "类型选择器写出元素名，p 匹配所有 p。类选择器在名字前加点，.price 匹配 class 里含有 price 的元素。id 选择器在名字前加 #，#order 匹配 id 为 order 的那一个元素。写在一起且没有空格的 p.price 必须同时是 p 并且带有这个类。中间有空格的 .card p 匹配 .card 里面的 p。同一元素被多条选择器命中时，谁的声明生效见 `css-cascade`。",
+    "example": "类选择器只命中带这个类的元素：\n\n```css\np.price {\n  color: blue;\n}\n.card p {\n  margin: 0;\n}\n```",
+    "task": "写出匹配所有 p、匹配 class 为 price、匹配 id 为 order 的三个选择器。p.price 和 .card p 差在哪里？",
+    "answer": "三个选择器是 p、.price、#order。p.price 没有空格，元素要同时满足两边。 .card p 有空格，匹配的是 .card 后代里的 p。优先级见 `css-cascade`。",
+    "deep": [
+      {
+        "title": "一个元素可以有多个类",
+        "body": "class=\"price sale\" 同时带有 price 和 sale。 .price 和 .sale 都能命中它。id 在一个文档里应只出现一次。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "给两个 p 中的一个加上 class=\"price\"，只写 .price { color: blue }。确认只有带类的那个变色。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：CSS selectors",
+        "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_selectors"
+      ],
+      [
+        "MDN：Class selectors",
+        "https://developer.mozilla.org/en-US/docs/Web/CSS/Class_selectors"
+      ]
+    ]
+  },
   "css-box-sizing": {
     "core": "CSS 的初始 box-sizing 是 content-box。这时 width 和 height 只约束内容盒，padding 和 border 加在外面，margin 再在更外面。改成 border-box 后，width 和 height 把内容和内边距、边框一起算进去，margin 仍然不算。百分比宽度相对于包含块的宽度，不是相对于视口。",
     "why": "学习者会把 width 当成边框外沿。100% 宽的输入加上 16px 内边距后，父级出现横向滚动条，于是去改 overflow。开发者工具里内容宽加上 padding 和 border 超过设定宽度，才说明内边距加在内容盒外面。",
@@ -1467,19 +1883,19 @@
     ]
   },
   "css-container-query": {
-    "core": "@media 看的是视口。卡片嵌在窄侧栏里时，页面仍可能很宽，媒体查询不会改卡片内部。容器查询先给祖先设容器类型，再用 @container 按这个容器的宽度改子项。组件在主栏和侧栏各出现一次时，可以各走一套布局。没有容器祖先时，查询对不上。容器查询解决的是组件所处所在位置，不是用户屏幕尺寸。落地顺序是：先把所在位置上的祖先标成容器，再让后代按这个容器的 inline 宽度写条件，宽度跨过阈值才换子项布局。同一张卡片放进宽主栏和窄侧栏时，两处宽度不同，规则各自匹配。边界是：查询改的是后代，改不了容器自己，也看不到视口；没有容器祖先时条件对不上，卡片保持默认排法。整页按屏幕断开时，仍用媒体查询。",
-    "why": "误以为宽度断点只看整页视口就够了。侧栏里的窄卡片仍会拿到宽屏的横排，文字被挤出所在位置。区分信号是同一张卡片在宽主栏和窄侧栏是否各走一套布局，整页明明很宽时，窄槽里的卡片仍会被排成横排。",
+    "core": "@media 看的是视口。卡片嵌在窄侧栏里时，页面仍可能很宽，媒体查询不会改卡片内部。容器查询先给祖先设容器类型，再用 @container 按这个容器的宽度改子项。组件在主栏和侧栏各出现一次时，可以各走一套布局。没有容器祖先时，查询对不上。容器查询解决的是组件所在的容器，不是用户屏幕尺寸。落地顺序是：先把这块区域上的祖先标成容器，再让后代按这个容器的 inline 宽度写条件，宽度跨过阈值才换子项布局。同一张卡片放进宽主栏和窄侧栏时，两处宽度不同，规则各自匹配。边界是：查询改的是后代，改不了容器自己，也看不到视口；没有容器祖先时条件对不上，卡片保持默认排法。整页按屏幕断开时，仍用媒体查询。",
+    "why": "误以为宽度断点只看整页视口就够了。侧栏里的窄卡片仍会拿到宽屏的横排，文字被挤出卡片。区分信号是同一张卡片在宽主栏和窄侧栏是否各走一套布局，整页明明很宽时，窄侧栏里的卡片仍会被排成横排。",
     "example": "按容器宽度改内部布局，不是只看视口：\n\n```css\n.card { container-type: inline-size; }\n@container (min-width: 400px) {\n  .meta { display: flex; }\n}\n```",
     "task": "同一卡片组件放进宽主栏和窄侧栏。分别用媒体查询和容器查询，对比两处布局。",
-    "answer": "两处都用媒体查询时，主栏和侧栏的卡片跟着视口一起变，窄侧栏里也会横排。改成容器查询后，宽主栏里的卡片横排，窄于阈值的侧栏仍上下排。可复用卡片要看所在槽的宽度。媒体查询的两处布局会一起变；容器查询只让跨过所在位置阈值的那一张卡片换排法。没有容器祖先时，后一种条件对不上。",
+    "answer": "两处都用媒体查询时，主栏和侧栏的卡片跟着视口一起变，窄侧栏里也会横排。改成容器查询后，宽主栏里的卡片横排，窄于阈值的侧栏仍上下排。可复用卡片要看所在容器的宽度。媒体查询的两处布局会一起变；容器查询只让跨过容器宽度阈值的那一张卡片换排法。没有容器祖先时，后一种条件对不上。",
     "deep": [
       {
-        "title": "条件读的是所在位置宽度",
+        "title": "条件读的是容器宽度",
         "body": "媒体查询在视口宽度上判断，侧栏变窄不会单独触发它。容器查询要先有一个容器祖先，子项再按这个祖先的宽度选规则。没有这样的祖先时，条件没有宽度可读，布局保持默认，不会偷偷改用视口。"
       },
       {
         "title": "怎样自己验证",
-        "body": "把同一张卡片放进宽主栏和窄侧栏。先只写媒体查询，看两处是否一起变成横排；再改成容器查询，看窄槽是否仍保持上下排列，宽槽是否单独横排。没有容器祖先时，两处都应保持默认排法。"
+        "body": "把同一张卡片放进宽主栏和窄侧栏。先只写媒体查询，看两处是否一起变成横排；再改成容器查询，看窄侧栏是否仍保持上下排列，宽主栏是否单独横排。没有容器祖先时，两处都应保持默认排法。"
       }
     ],
     "references": [
@@ -1822,7 +2238,7 @@
     "why": "把 jpg 的 source 写在 avif 前面，支持 avif 的浏览器也只请求 jpg。或者 type 写成 image/jpg，没有这种类型，候选被跳过。",
     "example": "按 type 协商格式，浏览器选第一个能解码的：\n\n```html\n<picture>\n  <source type=\"image/avif\" srcset=\"a.avif\" />\n  <source type=\"image/webp\" srcset=\"a.webp\" />\n  <img src=\"a.jpg\" alt=\"\" />\n</picture>\n```",
     "task": "调换 avif 和 jpeg 两个 source 的顺序，各刷新一次，记下网络里的文件。再把 type 改错一次。最后用带 sizes 的 srcset，在宽屏和窄屏各看选中的宽度。",
-    "answer": "顺序在前且 media、type 都匹配的 source 被选中，后面的不请求。type 写错则跳过该 source。都不匹配时用 img 的 src。w 描述符按 sizes 给出的所在位置选文件，不按元素最后被拉成的像素。",
+    "answer": "顺序在前且 media、type 都匹配的 source 被选中，后面的不请求。type 写错则跳过该 source。都不匹配时用 img 的 src。w 描述符按 sizes 给出的布局宽度选文件，不按元素最后被拉成的像素。",
     "deep": [
       {
         "title": "img 仍然是那个被布局的元素",
@@ -1830,7 +2246,7 @@
       },
       {
         "title": "怎样自己验证",
-        "body": "在支持 avif 的浏览器里把 avif source 放第一，网络面板应只有 avif。对调后应只有 jpeg。把 type 改成 image/jpg，这个 source 应被跳过。改 sizes 后再看选中的文件名是否跟着所在位置变，而不是跟着 CSS 放大变。"
+        "body": "在支持 avif 的浏览器里把 avif source 放第一，网络面板应只有 avif。对调后应只有 jpeg。把 type 改成 image/jpg，这个 source 应被跳过。改 sizes 后再看选中的文件名是否跟着布局宽度变，而不是跟着 CSS 放大变。"
       }
     ],
     "references": [
@@ -2251,7 +2667,7 @@
   "cors-preflight-max-age": {
     "core": "非简单跨源请求会先发 **OPTIONS 预检**。服务器用 `Access-Control-Allow-Methods` / `Allow-Headers` / `Allow-Origin` 等回答；**`Access-Control-Max-Age`** 告诉浏览器这份预检结果可以缓存多久，从而少打 OPTIONS。它**不**代替实际响应上的 CORS 头，也**不**放宽同源策略。缓存过期或方法/自定义头变化后仍会再预检。带凭据时的源规则仍见 `cors`、`cors-credentials-allowlist`。Max-Age 过大时，策略收紧后客户端可能短期内仍按旧预检行事，排障要清缓存或改头触发重预检。",
     "why": "把 Max-Age 当成“永久允许跨域”，实际请求缺 Allow-Origin 时脚本照样读不到；或收紧策略后旧预检缓存导致误判。",
-    "example": "对照本课断言，先写出最小可观察片段：\n\n```http\nContent-Security-Policy: script-src 'self'\nCross-Origin-Resource-Policy: cross-origin\nReporting-Endpoints: csp=\"https://reports.example/r\"\n```\n\nAccess-Control-Max-Age 只缓存预检结果，不是跨域通行证",
+    "example": "Max-Age 只缓存预检；实际响应仍要带允许 Origin：\n\n```http\nAccess-Control-Allow-Methods: PUT\nAccess-Control-Allow-Headers: X-Request-Id\nAccess-Control-Max-Age: 600\n# 十分钟内可跳过 OPTIONS；PUT 响应仍须允许 Origin\n```",
     "task": "划掉“Max-Age=跨域永久放行”。写出它缓存的是什么；实际读响应还靠什么。",
     "answer": "划掉「Max-Age=跨域永久放行」。Max-Age 只缓存预检（OPTIONS）结论。实际响应仍要正确的 CORS 允许头。过期或头变化会再预检。",
     "deep": [
@@ -2631,6 +3047,10 @@
       {
         "title": "和 HttpOnly",
         "body": "前缀管“谁能种、种在哪”；HttpOnly 管脚本能不能读。会话 Cookie 常一起用。"
+      },
+      {
+        "title": "和 Private State Tokens / PA",
+        "body": "有限信任凭证与设备侧竞价见 `private-state-tokens-not-cookie`、`protected-audience-not-cookie-remarketing`；不要把 Partitioned Cookie 当成这些 API 的同义词。"
       },
       {
         "title": "怎样自己验证",
@@ -3276,7 +3696,7 @@
   "csp-script-src": {
     "core": "CSP 告诉浏览器：脚本、样式、连接允许从哪些源加载。默认拦截未列出的脚本，能挡住很多注入的外挂脚本。它不把已经进 DOM 的 HTML 变回文本。用户评论仍要在输出时编码。inline 脚本和 javascript: 地址常被禁掉，内联事件处理也会失效。开发时用 report-only 先看误伤。nonce 或 hash 允许指定的内联，不要为了省事 script-src *。",
     "why": "误以为配了脚本来源白名单，就可以把用户评论直接写进 HTML。策略一松，或内容本身就是标记，危险节点仍会出现。区分信号是控制台里的加载拦截，和评论是否仍按文本转义，两件事都要在，标记一旦被当成 HTML 解析，策略不会把它变回纯文本。",
-    "example": "对照本课断言，先写出最小可观察片段：\n\n```http\nContent-Security-Policy: script-src 'self'\nCross-Origin-Resource-Policy: cross-origin\nReporting-Endpoints: csp=\"https://reports.example/r\"\n```\n\nCSP 白名单限制脚本从哪来，不是代替转义 HTML",
+    "example": "CSP 限制脚本来源；评论 HTML 仍要转义：\n\n```http\nContent-Security-Policy: script-src 'self'\n# 外源 <script src=https://evil/x.js> → 控制台拒绝、不执行\n# 评论尖括号 → textContent/转义，不是靠 CSP 代替\n```",
     "task": "加一条只允许同源脚本的 CSP。再尝试插入外源 script，看控制台报告。同时确认评论转义仍然存在。",
     "answer": "只允许同源脚本之后，插入外源脚本会被拒绝，控制台有策略报告，脚本不执行。评论转义仍然要留着，尖括号应显示成文本而不是节点。不要用通配符把脚本来源放空，那会把这条限制掏空。开发时可以先用只报告的模式看有没有误伤，但评论编码不能省，通配符也会把限制掏空。",
     "deep": [
@@ -3315,7 +3735,7 @@
   "csp-report-only-not-enforce": {
     "core": "**`Content-Security-Policy-Report-Only`** 让浏览器按策略**计算**会违例什么，并（在支持时）发到 `report-to` / `report-uri`，但**不拦截**加载与执行。真正挡住脚本要用强制头 **`Content-Security-Policy`**。开发期用 Report-Only 收误伤数据，上线收紧要切到强制策略，见 `csp-script-src`。两套头可以并存：一边观察新草案，一边维持旧强制策略。不要把“控制台有 CSP 报告”当成“攻击已被挡住”。",
     "why": "安全扫报告说“已配 CSP”，实际只有 Report-Only，XSS 注入的脚本照样跑。",
-    "example": "对照本课断言，先写出最小可观察片段：\n\n```http\nContent-Security-Policy: script-src 'self'\nCross-Origin-Resource-Policy: cross-origin\nReporting-Endpoints: csp=\"https://reports.example/r\"\n```\n\nReport-Only 只上报违例，不会替你拦住脚本",
+    "example": "Report-Only 只上报；改成强制 CSP 才拦住：\n\n```http\nContent-Security-Policy-Report-Only: script-src 'self'\n# evil/x.js 仍执行，可能出现违例报告\nContent-Security-Policy: script-src 'self'\n# 脚本被拒\n```",
     "task": "划掉“有 CSP 报告=已防护”。写出 Report-Only 与强制 CSP 对脚本执行的差别。",
     "answer": "划掉「有 CSP 报告=已防护」。Report-Only 只报告不拦截。强制 CSP 才拒绝未允许的脚本。观察期结束后必须切到强制头。",
     "deep": [
@@ -3346,7 +3766,7 @@
   "trusted-types-sink-guard": {
     "core": "**Trusted Types** 让浏览器要求：写入 `innerHTML`、`eval`、脚本 URL 等**危险汇点**时，必须是经策略创建的 `TrustedHTML` / `TrustedScript` 等类型，而不是随意字符串。它把“谁有权造可信值”收到策略回调里，降低 DOM XSS 面。它**不**自动净化用户内容：策略若直接 `createHTML(s)` 原样返回，等于没防护。输出编码、CSP、Trusted Types 是叠层，见 `xss`、`csp-script-src`。未支持的浏览器不会靠它独自兜底。",
     "why": "以为开了 Trusted Types 就能把用户 HTML 塞进 innerHTML；或策略写了透传，线上仍被 XSS。",
-    "example": "对照本课断言，先写出最小可观察片段：\n\n```http\nContent-Security-Policy: script-src 'self'\nCross-Origin-Resource-Policy: cross-origin\nReporting-Endpoints: csp=\"https://reports.example/r\"\n```\n\nTrusted Types 卡住危险汇点，不是替你洗掉评论 HTML",
+    "example": "Trusted Types 卡住危险汇点；默认用 textContent：\n\n```js\n// require-trusted-types-for 'script'\nel.innerHTML = userInput  // TypeError\nel.textContent = userInput\npolicy.createHTML(sanitized)  // 富文本经净化库\n```",
     "task": "划掉“Trusted Types=自动消毒”。写出它卡住什么；策略透传为什么等于没开。",
     "answer": "划掉「Trusted Types=自动消毒」。卡住未经策略包装的危险汇点赋值。策略若原样 createHTML，等于没防护。仍要编码或可信净化。",
     "deep": [
@@ -3559,7 +3979,7 @@
   "reporting-nel-not-csp-enforce": {
     "core": "**Reporting API**（`Reporting-Endpoints` / 旧 `Report-To`）规定浏览器把**各类报告**（CSP 违例、弃用、干预等）POST 到哪些端点。**NEL（Network Error Logging）**在策略允许时上报网络层失败样本。它们解决的是**可观测性**：你能看见违例与故障，**不会**像强制 `Content-Security-Policy` 那样拦住脚本执行，见 `csp-report-only-not-enforce`、`csp-script-src`。Report-Only CSP 可把违例送进同一套端点，但“有报告”仍≠“已拦截”。端点要 HTTPS、注意隐私与采样；不要把上报配置当成安全控制清单打勾就完事。",
     "why": "把 Reporting/NEL 写进安全基线，却迟迟不上强制 CSP；或以为 NEL 能代替 APM/日志排查业务错误。",
-    "example": "对照本课断言，先写出最小可观察片段：\n\n```http\nContent-Security-Policy: script-src 'self'\nCross-Origin-Resource-Policy: cross-origin\nReporting-Endpoints: csp=\"https://reports.example/r\"\n```\n\nReporting / NEL 是遥测管道，不是又一道强制 CSP",
+    "example": "Reporting / NEL 是遥测，不是强制 CSP：\n\n```http\nReporting-Endpoints: csp-endpoint=\"https://reports.example/csp\"\nContent-Security-Policy-Report-Only: script-src 'self'\n# 外源脚本仍执行；NEL 记 CDN TLS 失败\n# 页面逻辑错误仍看应用日志\n```",
     "task": "划掉“接了上报=已防护”。写出 Reporting/NEL 提供什么；真正挡脚本靠什么。",
     "answer": "划掉「接了上报=已防护」。Reporting/NEL 提供违例与网络失败的遥测。挡未允许脚本靠强制 CSP。有报告只说明看见了，不说明拦住了。",
     "deep": [
@@ -3590,7 +4010,7 @@
   "corp-embed-gate-not-cors": {
     "core": "**`Cross-Origin-Resource-Policy`（CORP）**声明**本响应**允许被哪些上下文**嵌入/加载**（如 `same-origin`、`same-site`、`cross-origin`）。它挡的是“谁可以把我当成图片、脚本、worker 等嵌进去”，与 **CORS**（脚本能否**读**跨源响应体）不是同一层，见 `cors`。开了 **COEP** 的页面要求跨源嵌资源带合适 CORP（或可 CORS 的等价路径），否则嵌入失败，见 `coop-coep-cross-origin-isolated`。CDN 只开 CORS、忘了 CORP，isolated 场景会大面积裂图。不要把 `Allow-Origin: *` 当成“谁嵌都行”。",
     "why": "业务开了宽松 CORS 就以为 COEP 页能嵌 CDN；或误以为 CORP 能代替 CORS 让前端读 JSON。",
-    "example": "对照本课断言，先写出最小可观察片段：\n\n```http\nContent-Security-Policy: script-src 'self'\nCross-Origin-Resource-Policy: cross-origin\nReporting-Endpoints: csp=\"https://reports.example/r\"\n```\n\nCORP 管别人能不能嵌你的资源，不是 CORS 读响应的换皮",
+    "example": "CORP 管嵌入；fetch 读 JSON 仍看 CORS：\n\n```http\nCross-Origin-Resource-Policy: cross-origin\n# require-corp 页才能嵌字体等资源\n# 无 CORP 且不可 CORS 用 → COEP 页加载失败\n# fetch JSON 放行读体靠 CORS，不靠 CORP\n```",
     "task": "划掉“CORS=* 就能被任意页嵌”。写出 CORP 与 CORS 各管什么；和 COEP 的关系。",
     "answer": "划掉「CORS=* 就能被任意页嵌」。CORP 管嵌入/加载许可。CORS 管脚本读跨源响应。COEP 页会要求嵌资源满足 CORP（或等价）。两者叠层，不互相替代。",
     "deep": [
@@ -3711,6 +4131,472 @@
       ]
     ]
   },
+  "storage-access-api-not-cookie-restore": {
+    "core": "**Storage Access API**（`document.requestStorageAccess()` 等）让**嵌入的第三方上下文**在用户手势与浏览器策略允许时，**临时申请**访问本该被分区/拦截的存储（常含 Cookie）。它解决的是「嵌入小组件在用户明确互动后能否读到自己的登录态」这类场景，不是把第三方 Cookie 政策改回全站畅通。申请可能被拒、需手势、且作用域受分区与浏览器实现约束。Clear-Site-Data、Cookie 前缀/分区见相关课。不要把 SAA 背成“追踪又可以了”。邻接 `cookie-prefix-partitioned`、`pna-private-network-access`。",
+    "why": "嵌入支付/评论组件在无互动时直接 requestStorageAccess；或以为一次授权等于永久跨站标识。",
+    "example": "对照本课断言，先写出最小可观察片段：\n\n```js\n// 嵌入第三方 iframe 内，需用户手势\nawait document.requestStorageAccess()\n// 成功后才能读本第三方的存储；不是宿主代读\n```",
+    "task": "划掉“SAA=第三方 Cookie 恢复键”。写出：谁申请、通常要什么用户信号；相对旧第三方 Cookie 少了什么。",
+    "answer": "划掉「SAA=第三方 Cookie 恢复键」。嵌入第三方在用户手势等条件下申请自己的存储访问。不是宿主代读，也不是无约束的跨站追踪复辟。",
+    "deep": [
+      {
+        "title": "和 FedCM",
+        "body": "身份联合另见 `fedcm-not-oauth-popup`；SAA 管存储门闩，FedCM 管账户选择器流程。"
+      },
+      {
+        "title": "和 Shared Storage",
+        "body": "跨站写入且带输出门闩的是 Shared Storage，不是 SAA，见 `shared-storage-not-third-party-cookie`。"
+      },
+      {
+        "title": "和 Related Website Sets",
+        "body": "同组可降低 SAA 提示摩擦，不是自动复辟第三方 Cookie，见 `related-website-sets-not-cookie-restore`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "第三方 iframe 无手势调用应失败或无效；用户点击后再申请，对照 Cookie 是否仅在该嵌入上下文可用。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：Storage Access API",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Storage_Access_API"
+      ],
+      [
+        "Chrome：Storage Access API",
+        "https://developer.chrome.com/docs/privacy-sandbox/storage-access"
+      ],
+      [
+        "MDN：requestStorageAccess",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Document/requestStorageAccess"
+      ]
+    ]
+  },
+  "fedcm-not-oauth-popup": {
+    "core": "**FedCM（Federated Credential Management）**让浏览器作为**中介**协调身份提供方（IdP）与依赖方（RP）：账户选择、令牌传递走浏览器提供的 UI/协议，减少第三方 Cookie 与随意跨站追踪面。传统 **OAuth/ID 弹窗或整页重定向**仍是常见集成，但那是应用自己开的窗口与回调，不是 FedCM。两者都可能完成“用 Google/某 IdP 登录”，协议、权限提示与 Cookie 依赖不同。不要把 FedCM 背成“又一种 popup OAuth”；也不要在未支持的浏览器上只接 FedCM 却无降级。邻接 `storage-access-api-not-cookie-restore`、`cookie-credential`。",
+    "why": "只改 SDK 名称为 FedCM 仍用旧弹窗回调；或忽略用户取消/无账户时的降级路径。",
+    "example": "对照本课断言，先写出最小可观察片段：\n\n```js\n// FedCM：浏览器中介账户选择（示意）\nconst cred = await navigator.credentials.get({ identity: { providers: [...] } })\n// ≠ window.open(idp/authorize) 自管弹窗\n```",
+    "task": "划掉“FedCM=OAuth 弹窗新名字”。写出：多出来的中介是谁；相对自管弹窗少依赖什么。",
+    "answer": "划掉「FedCM=OAuth 弹窗新名字」。FedCM 由浏览器中介联合登录流程。它不是应用自管 OAuth 弹窗的别名，对第三方 Cookie 的依赖模型也不同。",
+    "deep": [
+      {
+        "title": "和 Passkey",
+        "body": "通行密钥是另一条认证器路径；与联合登录可并存，不要混成同一个 API。"
+      },
+      {
+        "title": "和 Topics",
+        "body": "广告兴趣主题见 `topics-api-not-cookie-segments`；与联合登录不是同一条隐私沙盒能力。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "在支持 FedCM 的浏览器走一遍账户选择；对照旧 popup 方案的 Cookie/第三方存储请求差异。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：FedCM",
+        "https://developer.mozilla.org/en-US/docs/Web/API/FedCM_API"
+      ],
+      [
+        "Chrome：FedCM",
+        "https://developer.chrome.com/docs/privacy-sandbox/fedcm"
+      ],
+      [
+        "W3C FedCM",
+        "https://fedidcg.github.io/FedCM/"
+      ]
+    ]
+  },
+  "topics-api-not-cookie-segments": {
+    "core": "**Topics API** 让浏览器根据近期浏览信号，向调用方提供**少量、粗粒度、有噪音与轮转**的兴趣主题标签，用于兴趣广告等场景，减少跨站稳定标识依赖。它不是把第三方 Cookie 的精细人群包、频次与转化路径原样搬回来：主题集合有限、会过期/轮转，且受用户控制与浏览器策略约束。Attribution Reporting、FedCM 见相关课。不要把 Topics 背成「还能精准到人」。邻接 `attribution-reporting-not-cookie`、`cookie-prefix-partitioned`。",
+    "why": "关掉第三方 Cookie 后仍用旧 DMP 字段验收 Topics；或把主题 ID 当成稳定用户主键存库。",
+    "example": "对照本课断言，先写出最小可观察片段：\n\n```js\n// Topics：少量粗粒度兴趣主题（示意）\nconst topics = await document.browsingTopics?.()\n// ≠ 第三方 Cookie 精细人群包\n```",
+    "task": "划掉“Topics=Cookie 人群包”。写出：它交付什么形态；相对旧跨站 Cookie 少了什么。",
+    "answer": "划掉「Topics=Cookie 人群包」。Topics 交付粗粒度、受约束的兴趣主题。它不复刻跨站稳定用户标识与精细行为明细。",
+    "deep": [
+      {
+        "title": "和 ARA",
+        "body": "Topics 偏兴趣；Attribution Reporting 偏转化归因。不要混成同一个报告。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "读现行 Chrome Topics 文档的 epoch/拓扑与调用结果字段，对照旧第三方 Cookie 画像字段哪些消失。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：Topics API",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Topics_API"
+      ],
+      [
+        "Chrome：Topics API",
+        "https://developer.chrome.com/docs/privacy-sandbox/topics"
+      ],
+      [
+        "WICG Topics",
+        "https://patcg.github.io/topics/"
+      ]
+    ]
+  },
+  "shared-storage-not-third-party-cookie": {
+    "core": "**Shared Storage API** 允许在严格门闩下做有限的跨站存储与**聚合/选择类**计算（如 URL 选择、报告），输出受隐私预算与操作集合约束，不能当通用键值库给任意脚本读写用户标识。第三方 Cookie 是浏览器自动附带的跨站凭据模型；Shared Storage 是另一套**显式、能力受限**的 API。不要用它存「用户 id 永久画像」；清站与分区策略仍要单独看。邻接 `storage-access-api-not-cookie-restore`、`clear-site-data-not-full-logout`。",
+    "why": "把 Shared Storage 当 localStorage 跨站版；或忽略 selectURL 等输出限制硬读明文标识。",
+    "example": "对照本课断言，先写出最小可观察片段：\n\n```js\n// Shared Storage：受限写入 + selectURL 等出口\nawait window.sharedStorage.set(\"bucket\", \"a\")\n// ≠ document.cookie 跨站开放读写\n```",
+    "task": "划掉“Shared Storage=跨站 Cookie”。写出：它允许多做什么；禁止把什么当成通用读写。",
+    "answer": "划掉「Shared Storage=跨站 Cookie」。Shared Storage 是受限跨站存储与选择/聚合工作台。不是第三方 Cookie 或开放 KV。不能当稳定用户标识通道。",
+    "deep": [
+      {
+        "title": "和 Storage Access",
+        "body": "SAA 是嵌入方申请自己的存储访问；Shared Storage 是另一套跨站工作台 API。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对照文档可写操作与可读回路径：不能像 Cookie 一样在任意第三方上下文直接读出明文用户键。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：Shared Storage API",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Shared_Storage_API"
+      ],
+      [
+        "Chrome：Shared Storage",
+        "https://developer.chrome.com/docs/privacy-sandbox/shared-storage"
+      ],
+      [
+        "WICG Shared Storage",
+        "https://github.com/WICG/shared-storage"
+      ]
+    ]
+  },
+  "private-state-tokens-not-cookie": {
+    "core": "**Private State Tokens**（原 Trust Tokens）让发行方在用户通过某种检查后签发**不可随意关联的短时信任凭证**，赎回时向验证方证明「近期通过过检查」，用于反欺诈等，同时限制跨站追踪面。它不是通用登录态、不是可读写的 Cookie 键值，也不能当稳定用户 id。会话与分区 Cookie 见 `cookie-prefix-partitioned`、`cookie-set-attributes`。不要把 PST 背成“第三方 Cookie 替代登录”。邻接 `fedcm-not-oauth-popup`、`storage-access-api-not-cookie-restore`。",
+    "why": "用 PST 当 SSO；或以为赎回能还原「是哪一个具体用户」。",
+    "example": "对照本课断言，先写出最小可观察片段：\n\n```text\n发行方签发 Private State Token（有限信任）\n验证方赎回 → 得到“通过检查”类信号\n# ≠ 跨站登录 Cookie / 稳定用户 id\n```",
+    "task": "划掉“PST=跨站登录 Cookie”。写出：它证明什么；相对会话 Cookie 少了什么。",
+    "answer": "划掉「PST=跨站登录 Cookie」。PST 证明有限的信任/检查结果。它不是通用会话，也不能当稳定跨站用户标识。",
+    "deep": [
+      {
+        "title": "和 CHIPS",
+        "body": "Partitioned Cookie 仍是 Cookie 模型，见 `cookie-prefix-partitioned`；PST 是另一套签发/赎回协议。"
+      },
+      {
+        "title": "和人机挑战",
+        "body": "可见 CAPTCHA 挂件也不是登录，见 `captcha-challenge-not-authn`；挑战令牌也不是会话，见 `bot-mitigation-not-only-widget`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对照现行 Chrome PST 文档的发行与赎回字段，确认拿不到邮箱级标识。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：Private State Token API",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Private_State_Token_API"
+      ],
+      [
+        "Chrome：Private State Tokens",
+        "https://developer.chrome.com/docs/privacy-sandbox/trust-tokens"
+      ],
+      [
+        "WICG Trust Token API",
+        "https://wicg.github.io/trust-token-api/"
+      ]
+    ]
+  },
+  "protected-audience-not-cookie-remarketing": {
+    "core": "**Protected Audience API**（原 FLEDGE）把**兴趣群组**与部分竞价逻辑放在设备/浏览器侧运行，结合 fenced frame 等展示路径，减少把用户名单交给任意第三方随意拼接的模型。它不是把旧「像素打点 → 第三方 Cookie 人群包 → 全网追着投」原样复刻：群组加入、竞价与报告受 API 与隐私预算约束，见 `fenced-frame-embed-boundary`、`attribution-reporting-not-cookie`。产品要接受：可控性与精度变化，不是 DMP 导出表换皮。",
+    "why": "仍按旧再营销 CRM 字段验收 PA；或把 interest group 名当成全球用户主键。",
+    "example": "对照本课断言，先写出最小可观察片段：\n\n```text\n加入 interest group（设备侧）\n发布商页：浏览器侧竞价 → fencedframe 展示\n# ≠ 第三方 Cookie 再营销名单\n```",
+    "task": "划掉“PA=再营销 Cookie”。写出：名单/竞价主要在哪一侧；相对旧第三方 Cookie 再营销少了什么。",
+    "answer": "划掉「PA=再营销 Cookie」。PA 以设备侧兴趣群组与受限竞价为核心。它不复刻第三方任意读写的跨站再营销 Cookie 模型。",
+    "deep": [
+      {
+        "title": "和 Topics",
+        "body": "Topics 是粗兴趣主题；PA 是群组+竞价路径。用途不同。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "读现行 PA 加入群组与竞价文档，对照旧第三方再营销像素链路哪些权限消失。"
+      }
+    ],
+    "references": [
+      [
+        "Chrome：Protected Audience",
+        "https://developer.chrome.com/docs/privacy-sandbox/protected-audience"
+      ],
+      [
+        "MDN：Protected Audience API",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Protected_Audience_API"
+      ],
+      [
+        "WICG Protected Audience",
+        "https://wicg.github.io/turtledove/"
+      ]
+    ]
+  },
+  "related-website-sets-not-cookie-restore": {
+    "core": "**Related Website Sets（RWS）**让组织声明一组相关站点，浏览器可在**同组嵌入上下文**里对 **Storage Access API** 的申请**少弹/免弹**权限提示，从而有限恢复跨站存储访问。它**不**自动合并各站 Cookie、不把第三方 Cookie 政策改回全站畅通，也不做跨站数据广播；嵌入方仍要调用 `requestStorageAccess()`（或顶层 `requestStorageAccessFor`，实现相关），见 `storage-access-api-not-cookie-restore`。分区 Cookie、CHIPS 见 `cookie-prefix-partitioned`。Chrome 已宣布弃用 RWS 轨迹，选型勿当长期默认。不要把「进了同一 Set」写成追踪 Cookie 又回来了。",
+    "why": "只交一份 RWS 清单就关掉 SameSite/分区改造；或以为 A 站 Cookie 会自动出现在同组 B 站请求里。",
+    "example": "对照本课断言，先写出最小可观察片段：\n\n```js\n// 同 RWS 内嵌入方仍要申请，不会自动合并 Cookie\nawait document.requestStorageAccess()\n// ≠ brandA Cookie 自动出现在 brandB 请求里\n```",
+    "task": "划掉“RWS=第三方 Cookie 复辟”。写出：它改变的是哪一步摩擦；仍必须调用什么 API。",
+    "answer": "划掉「RWS=第三方 Cookie 复辟」。RWS 降低同组内 Storage Access 申请的提示摩擦。仍要显式申请；不自动共享或合并 Cookie。",
+    "deep": [
+      {
+        "title": "和 CHIPS",
+        "body": "Partitioned Cookie 是分区存放；RWS/SAA 是申请未分区访问的另一条路径，见 `cookie-prefix-partitioned`。"
+      },
+      {
+        "title": "弃用信号",
+        "body": "Chrome 对 RWS 有弃用/移除计划；新产品优先 SAA 与一等登录/FedCM，勿把 RWS 当永久依赖。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "同组嵌入：不调 requestStorageAccess 应仍读不到未分区 Cookie；调用后对照权限与 Cookie 是否出现。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：Related website sets",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Storage_Access_API/Related_website_sets"
+      ],
+      [
+        "Chrome：Related Website Sets",
+        "https://developers.google.com/privacy-sandbox/3pcd/related-website-sets"
+      ],
+      [
+        "MDN：Storage Access API",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Storage_Access_API"
+      ]
+    ]
+  },
+  "bounce-tracking-mitigation-not-session-bug": {
+    "core": "浏览器的 **bounce tracking mitigations（跳转/弹射追踪缓解）**会识别「短访、主要为跨站带状态再跳走」一类站点，并在适当时机**删除或限制其存储**（Cookie、localStorage 等），削弱用跳转链做跨站追踪的能力。用户感知常是「刚跳过去又回来，登录/偏好没了」。这是**隐私策略**，不是随机 session 丢失，也不是 Clear-Site-Data 的同义词（见 `clear-site-data-not-full-logout`）。正经登录应落在用户真正停留的一等站点会话上，见 `cookie-credential`、`fedcm-not-oauth-popup`。不要把跳转追踪缓解背成「Chrome 坏了」。",
+    "why": "把鉴权态种在只会 bounce 的中间域；或客服把「跳转后 Cookie 没了」一律当缺陷而不查是否命中缓解。",
+    "example": "对照本课断言，先写出最小可观察片段：\n\n```text\n短访 bounce 域种状态 → 缓解可清理\n≠ 浏览器随机 session bug\n一等登录落在用户停留的站点\n```",
+    "task": "划掉“跳完就掉登录=浏览器 bug”。写出：缓解针对什么行为；一等站点会话应落在哪。",
+    "answer": "划掉「跳完就掉登录=浏览器 bug」。缓解针对短访跳转追踪链上的状态。一等登录应落在用户停留的站点会话，不靠 bounce 域当跨站 id。",
+    "deep": [
+      {
+        "title": "和 Storage Access",
+        "body": "嵌入场景申请存储见 `storage-access-api-not-cookie-restore`；bounce 缓解针对的是跳转链追踪模式。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对照：只 bounce 的中间域存储是否在策略触发后消失；用户停留的主站会话是否仍在。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：Bounce tracking mitigations",
+        "https://developer.mozilla.org/en-US/docs/Web/Privacy/Guides/Bounce_tracking_mitigations"
+      ],
+      [
+        "Chrome：Bounce tracking mitigations",
+        "https://developer.chrome.com/blog/bounce-tracking-mitigations"
+      ],
+      [
+        "MDN：Storage Access API",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Storage_Access_API"
+      ]
+    ]
+  },
+  "ua-client-hints-need-accept-ch": {
+    "core": "**User-Agent Client Hints**（`Sec-CH-UA*`）把设备/浏览器信息拆成可请求的提示：低熵提示可能默认发送，**高熵**（完整版本、架构、型号等）通常要服务器用 **`Accept-CH`**（及跨源时的 Permissions-Policy）声明后，浏览器才可能在后续请求里附带，且用户/策略仍可拒绝。它不是「旧 `User-Agent` 字符串原样拆字段必达」。客户端 JS 侧看 `navigator.userAgentData`（若有）同样受权限与熵约束。邻接 `permissions-policy-feature-gate`、`referrer-policy-leak-bound`。不要把 UA-CH 背成稳定指纹接口。",
+    "why": "只读一次首页响应就假设后续必有 `Sec-CH-UA-Model`；或把缺失提示当成「浏览器坏了」。",
+    "example": "对照本课断言，先写出最小可观察片段：\n\n```http\nAccept-CH: Sec-CH-UA-Platform-Version\n# 高熵要声明；浏览器仍可拒绝\n# ≠ 每次必带完整 User-Agent 细节\n```",
+    "task": "划掉“有 Sec-CH-UA=每次都有完整 UA 细节”。写出：高熵靠什么声明；仍可能拿不到时怎么办。",
+    "answer": "划掉「有 Sec-CH-UA=每次都有完整 UA 细节」。高熵 Client Hints 通常要 Accept-CH 声明且浏览器可拒绝。缺省只当可选信号，关键路径要有降级。",
+    "deep": [
+      {
+        "title": "和 Permissions-Policy",
+        "body": "跨源要附加提示时，策略名常去掉 sec- 前缀再小写，见 `permissions-policy-feature-gate`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "有/无 Accept-CH 对照后续请求头；高熵头缺失时业务是否仍可用。"
+      }
+    ],
+    "references": [
+      [
+        "MDN：Client hints",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Client_hints"
+      ],
+      [
+        "Chrome：User-Agent Client Hints",
+        "https://developer.chrome.com/docs/privacy-security/user-agent-client-hints"
+      ],
+      [
+        "MDN：Accept-CH",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Accept-CH"
+      ]
+    ]
+  },
+  "reduced-ua-not-stable-device-id": {
+    "core": "**UA reduction** 冻结/粗化传统 `User-Agent`（及部分 `navigator.userAgent`）里的小版本与细节，降低被动指纹面；字符串**不会立刻消失**，但信息变少、跨版本更不稳定。需要差异化时迁到 **UA Client Hints**（见 `ua-client-hints-need-accept-ch`），并接受提示可缺。设备/会话标识应靠服务端签发的会话、登录态或一等业务 id，见 `cookie-credential`、`auth-session-vs-jwt`。不要把「还能读到 UA」写成指纹策略不变。",
+    "why": "用完整 UA 哈希当防刷设备键，削减后大面积碰撞或失效；或解析 frozen 小版本做漏洞利用判断却读到固定值。",
+    "example": "对照本课断言，先写出最小可观察片段：\n\n```text\nhash(userAgent) 当设备主键 → 削减后易撞车\n身份：服务端会话 / 登录 Cookie\n细节：可选 Client Hints（可缺）\n```",
+    "task": "划掉“还能读 UA=还能当设备主键”。写出：削减改变什么；身份应落在哪。",
+    "answer": "划掉「还能读 UA=还能当设备主键」。削减后 UA 仍可能存在但更粗、更不适合当设备主键。身份与会话靠服务端凭证；细节用可缺的 Client Hints。",
+    "deep": [
+      {
+        "title": "和 navigator.userAgentData",
+        "body": "现代接口同样受熵与权限约束，不是秘密完整指纹通道。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "对照现行 Chrome UA reduction 冻结字段；同一“设备”字符串是否跨大版本仍变。"
+      }
+    ],
+    "references": [
+      [
+        "Chrome：User-Agent reduction",
+        "https://developer.chrome.com/docs/privacy-security/user-agent/"
+      ],
+      [
+        "MDN：User-Agent",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/User-Agent"
+      ],
+      [
+        "MDN：Navigator.userAgentData",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Navigator/userAgentData"
+      ]
+    ]
+  },
+  "captcha-challenge-not-authn": {
+    "core": "**CAPTCHA / 人机挑战**（含 reCAPTCHA、Turnstile 一类）用来提高**自动化滥用**成本：刷注册、撞库、刷接口。它回答的是「当前操作更像人不像脚本」，**不**回答「主体是谁、可否访问该资源」。身份认证与对象级授权见 `spring-authn-authz`、`object-level-authz`；CSRF、Cookie 会话是另一层。过了验证码仍可能是被盗号或未授权角色。不要把「有验证码」写成权限模型完成。邻接 `csrf`、`rate-limit` 相关课若有则交叉。",
+    "why": "管理接口只挂验证码不验角色；或验证码通过后把 admin 接口暴露给任意已登录用户。",
+    "example": "对照本课断言，先写出最小可观察片段：\n\n```text\n验证码通过 ≠ 已认证 ≠ 已授权\n删除订单仍要验「是不是所有者」\n```",
+    "task": "划掉“有验证码=已登录/已授权”。写出：验证码挡什么；认证与授权还要看什么。",
+    "answer": "划掉「有验证码=已登录/已授权」。验证码提高机器滥用成本。登录认证与对象授权另做。验证码不代替 authn/authz。",
+    "deep": [
+      {
+        "title": "和登录",
+        "body": "登录是认证；验证码可挂在登录前减撞库，通过≠已是管理员。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "绕过或模拟验证码通过后，未授权用户调管理接口应仍 403。"
+      }
+    ],
+    "references": [
+      [
+        "OWASP：Authentication Cheat Sheet",
+        "https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html"
+      ],
+      [
+        "MDN：CSP 与第三方脚本",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP"
+      ],
+      [
+        "Cloudflare：Turnstile",
+        "https://developers.cloudflare.com/turnstile/"
+      ]
+    ]
+  },
+  "bot-mitigation-not-only-widget": {
+    "core": "**防刷要叠层**：限流、WAF、风险评分、挑战；页面上的验证码挂件只是其中一环，见邻接 `captcha-challenge-not-authn`。人机挑战成功后，前端通常拿到**短时、单用途**的 token，交给后端校验「这次表单/请求通过了挑战」。它**不是**会话 Cookie、不是 refresh token，也不应长期存放当登录态。站点会话仍靠服务端签发的会话/JWT 与 Cookie 属性，见 `cookie-set-attributes`、`cookie-credential`。把挑战 token 当 session，会过期混乱、可被重放（若服务端未绑次），且绕过真正的认证流程。邻接 `captcha-challenge-not-authn`。",
+    "why": "localStorage 长期存 captcha token；或后端只验挑战 token 不验用户会话。",
+    "example": "对照本课断言，先写出最小可观察片段：\n\n```text\n挂件挑战 token：短时、单次、交给服务端校验\n≠ localStorage 长期登录态\n防刷还要限流 / WAF / 风险分\n```",
+    "task": "划掉“挑战 token=登录态”。写出：它证明哪一次动作；会话仍靠什么。",
+    "answer": "划掉「挑战 token=登录态」。挑战 token 证明单次反滥用通过。会话靠服务端登录凭证。不要把挑战令牌当长期登录。",
+    "deep": [
+      {
+        "title": "和 CSRF",
+        "body": "已登录会话改状态仍要 CSRF/同源策略；挑战令牌不替代。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "只用挑战 token、不带会话访问需登录接口应失败；带会话不带挑战在需挑战的接口应失败。"
+      }
+    ],
+    "references": [
+      [
+        "OWASP：Session Management",
+        "https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html"
+      ],
+      [
+        "MDN：Cookie",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Cookies"
+      ],
+      [
+        "Cloudflare：Turnstile 服务端校验",
+        "https://developers.cloudflare.com/turnstile/get-started/server-side-validation/"
+      ]
+    ]
+  },
+  "react-function-component": {
+    "core": "函数组件是一个函数，返回 React 元素。JSX 里的 <p>100</p> 会编译成创建元素的调用，浏览器拿到的不是这串标签文本。组件名要以大写字母开头，JSX 才把它当成组件；小写开头会被当成 HTML 标签。页面这次显示的，就是函数这次返回的元素。组件里的 Hook 按调用顺序记在链表上，见 `linked-list`。",
+    "example": "大写函数返回元素：\n\n```jsx\nfunction Price() {\n  return <p>100</p>;\n}\n```",
+    "task": "说明函数组件返回什么，以及组件名为什么要大写。JSX 是不是直接交给浏览器的 HTML 字符串？",
+    "answer": "函数返回 React 元素。组件名大写，JSX 才把它当成组件。JSX 会变成创建元素的调用，不是交给浏览器的 HTML 字符串。Hook 的顺序见 `linked-list`。",
+    "deep": [
+      {
+        "title": "一次返回就是这一次的界面",
+        "body": "函数再执行一次，就会用新的返回值描述界面。不要在函数外面改已经返回的那个元素来指望下次还是旧对象。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "写 function Price() { return <p>100</p> }，把它放进应用里。把名字改成小写再编译，确认它不再被当成组件。"
+      }
+    ],
+    "references": [
+      [
+        "React：Your First Component",
+        "https://react.dev/learn/your-first-component"
+      ],
+      [
+        "React：Writing Markup with JSX",
+        "https://react.dev/learn/writing-markup-with-jsx"
+      ]
+    ]
+  },
+  "react-props-argument": {
+    "core": "调用组件时写在标签上的 cents={100}，会放进函数的第一个参数，习惯上叫 props。props.cents 就是 100。props 按只读使用，组件里不要给 props.cents 重新赋值。父组件传入新的值时，这个函数会再用新参数执行一次。列表里每个子组件需要稳定的 key，身份见 `identity`。",
+    "example": "标签上的值进 props：\n\n```jsx\nfunction Price(props) {\n  return <p>{props.cents}</p>;\n}\n// <Price cents={100} />\n```",
+    "task": "说明 <Price cents={100} /> 里的 100 在函数里从哪个名字读到。组件里能不能把 props.cents 改成别的数？",
+    "answer": "从 props.cents 读到 100。props 不要在组件里改。父组件传入新值时，函数会再用新参数执行。列表身份见 `identity`。",
+    "deep": [
+      {
+        "title": "花括号里是表达式",
+        "body": "cents={100} 的花括号里是 JavaScript 表达式。cents=\"100\" 则是字符串。数字要用花括号。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "渲染 <Price cents={100} /> 和 <Price cents={200} />。确认两处文字不同，而且函数读的是 props.cents。"
+      }
+    ],
+    "references": [
+      [
+        "React：Passing Props to a Component",
+        "https://react.dev/learn/passing-props-to-a-component"
+      ]
+    ]
+  },
+  "react-usestate-pair": {
+    "core": "useState(0) 返回两项：当前状态，以及用来安排更新的函数。const [count, setCount] = useState(0) 里，count 是这次执行读到的值。调用 setCount(count + 1) 会安排组件再执行，这次执行过程中的 count 仍是调用前的值。同一个组件里，useState 的调用次数和顺序要保持稳定，见 `linked-list`。多次更新怎样并到同一次渲染，见 `react-setstate-batch`。输入框的值要不要跟 state 走，见 `controlled-input`。",
+    "example": "更新安排下一次执行：\n\n```jsx\nfunction Counter() {\n  const [count, setCount] = useState(0);\n  return (\n    <button onClick={() => setCount(count + 1)}>\n      {count}\n    </button>\n  );\n}\n```",
+    "task": "说明 useState 返回的两项各做什么。setCount 之后，这一次函数里的 count 变了没有？",
+    "answer": "第一项是这次的状态，第二项用来安排更新。setCount 不会改掉这次执行里的 count，组件会再用新值执行一次。调用顺序见 `linked-list`。",
+    "deep": [
+      {
+        "title": "初值只在第一次使用",
+        "body": "useState(0) 的 0 只在这个状态第一次创建时使用。之后每次执行读到的是已经保存的值，不会反复把 count 重置成 0。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "渲染 Counter，点一次按钮，确认文字从 0 变成 1。在 setCount 下一行打印 count，确认打印出来的仍是更新前的值。"
+      }
+    ],
+    "references": [
+      [
+        "React：useState",
+        "https://react.dev/reference/react/useState"
+      ],
+      [
+        "React：State: A Component's Memory",
+        "https://react.dev/learn/state-a-components-memory"
+      ]
+    ]
+  },
   "linked-list": {
     "core": "Hook 节点通过 next 串联，Fiber.memoizedState 指向链表头。更新时 React 依次读取旧节点，调用顺序提供了位置身份。Lane 用不同二进制位表达更新集合。顺序是：渲染时按调用次序创建或对上 Hook 节点，提交后这些节点留在 Fiber 上；下次渲染再从头沿 next 读取。边界是：条件里增减 Hook 会让链表错位，类型相同但位置不同的节点不能靠变量名找回。child、sibling、return 描述树的遍历，alternate 才指向同一身份的另一版本。Lane 的某一二进制位表示一批更新，不是节点在树上的位置。遍历用 child 走到第一个孩子，再用 sibling 走向兄弟。",
     "why": "错把 Hook 当成按变量名保存，就会以为多写一个 useState 只是多一个字段。实际调用顺序变了，后面的状态会读到别人的节点。能分开的信号是：组件函数里 Hook 的调用次序有没有在各分支间保持一致。",
@@ -3792,15 +4678,15 @@
     "react": "state"
   },
   "controlled-input": {
-    "core": "受控输入的屏幕值来自 React state。用户打字只产生一次 onChange，如果你不把事件里的值写回 state，下一次渲染会把原来的 value 再放进输入框，所以看起来打不进去。标准写法是 value 来自草稿 state，onChange 把事件目标的值设回去。非受控输入不传 value，DOM 自己记着字，React 用 ref 或表单数据在提交时读取。重置受控输入只要把草稿设回空字符串或服务器上的原值。重置非受控输入要清 DOM。不要一会儿传 value、一会儿改成不传，那会在受控和非受控之间切换。全栈表单里，草稿用受控或非受控都可以，但提交时读到的必须是用户当前的字，成功后用响应更新服务器状态，而不是把响应写回一个还在编辑的无关字段。",
-    "why": "学习者会以为输入框绑了值就一定打得进字，提交上去的也一定是屏幕上那一串。空的变更函数让字打不进去，晚到的详情又把已经输入的草稿盖掉。值停在给定的空、详情返回不再写入正在编辑的草稿，才说明权威是这一份状态而不是键盘。",
+    "core": "受控输入的屏幕值来自 React state。用户打字只产生一次 onChange，如果你不把事件里的值写回 state，下一次渲染会把原来的 value 再放进输入框，所以看起来打不进去。标准写法是 value 来自表单状态，onChange 把事件目标的值设回去。非受控输入不传 value，DOM 自己记着字，React 用 ref 或表单数据在提交时读取。重置受控输入只要把表单状态设回空字符串或服务器上的原值。重置非受控输入要清 DOM。不要一会儿传 value、一会儿改成不传，那会在受控和非受控之间切换。全栈表单里，表单状态用受控或非受控都可以，但提交时读到的必须是用户当前的字，成功后用响应更新服务器状态，而不是把响应写回一个还在编辑的无关字段。",
+    "why": "学习者会以为输入框绑了值就一定打得进字，提交上去的也一定是屏幕上那一串。空的变更函数让字打不进去，晚到的详情又把已经输入的表单状态盖掉。值停在给定的空、详情返回不再写入正在编辑的表单状态，才说明权威是这一份状态而不是键盘。",
     "example": "受控输入的权威在 state，不在 DOM：\n\n```jsx\n<input\n  value={draft}\n  onChange={(e) => setDraft(e.target.value)}\n/>\n// 提交用 draft；成功后 setDraft(响应值) 或离开编辑态\n```",
-    "task": "初始草稿是空。用户输入 a 但 onChange 是空函数，预测输入框里的字。再预测：服务器详情晚到，setDraft(响应昵称) 发生时，用户已经继续输入，字会变成什么。",
-    "answer": "初始草稿是空，用户输入 a 但变更函数是空的，输入框仍停在值所给的空，字不会留下来。服务器详情晚到并把它写成响应里的昵称时，会覆盖用户已经继续输入的草稿，屏幕变成响应里的字。所以详情返回不应写入正在编辑的草稿，提交时读的才是用户看见的那一串。",
+    "task": "初始表单状态是空。用户输入 a 但 onChange 是空函数，预测输入框里的字。再预测：服务器详情晚到，setDraft(响应昵称) 发生时，用户已经继续输入，字会变成什么。",
+    "answer": "初始表单状态是空，用户输入 a 但变更函数是空的，输入框仍停在值所给的空，字不会留下来。服务器详情晚到并把它写成响应里的昵称时，会覆盖用户已经继续输入的表单状态，屏幕变成响应里的字。所以详情返回不应写入正在编辑的表单状态，提交时读的才是用户看见的那一串。",
     "deep": [
       {
-        "title": "和四种数据",
-        "body": "输入框是草稿。详情响应是服务器状态。两者各用各的 state，提交时才把草稿送出，成功后再用响应替换服务器状态。"
+        "title": "和四种状态",
+        "body": "输入框是表单状态。详情响应是服务器状态。两者各用各的 state，提交时才把表单状态送出，成功后再用响应替换服务器状态。"
       },
       {
         "title": "怎样自己验证",
@@ -3847,8 +4733,8 @@
     "answer": "有清理时，离开 42 就 abort 或忽略那次响应，后到的 42 不能 setState，屏幕停在 43。没有清理时，42 更慢也会后写进状态，屏幕变成已经离开的那条。依赖数组写成空，effect 只在挂载时请求一次，地址换成 43 也不会再请求，屏幕停在第一次的 id。",
     "deep": [
       {
-        "title": "和四种页面数据",
-        "body": "effect 负责把路由标识变成一次请求，请求的结果写入服务器状态。草稿不要放进这个 effect 的 setState，否则切换或重新请求会抹掉未提交的输入。"
+        "title": "和四种页面状态",
+        "body": "effect 负责把 URL 里的标识变成一次请求，请求的结果写入服务器状态。表单状态不要放进这个 effect 的 setState，否则切换或重新请求会抹掉未提交的输入。"
       },
       {
         "title": "怎样自己验证",
@@ -3896,11 +4782,11 @@
     "react": "effects"
   },
   "context": {
-    "core": "Context 让后代读取最近的 Provider 值，适合跨层传递共同数据。Provider 的 value 改变会影响读取该 Context 的组件；需要按数据变化频率和职责划分边界。顺序是：渲染 Provider 时确定 value，后代 useContext 向上找到最近的那一个，value 按 Object.is 变化后这些读者再渲染。边界是：Context 不跳过没读它的组件，也挡不住读者自己的 state。每次渲染都新建 value 对象，会让所有读者更新。高频草稿和很少变的主题应分成两个 Provider。按变化频率拆开 Provider。",
-    "why": "错把 Context 当成既少传参又少渲染，高频 value 一变，所有读取它的组件都会跟着更新。输入草稿放进主题上下文时，整个子树被拖着渲染。能分开的信号是：消费者读的是哪一个 Provider，以及这个 value 的引用变不变。",
+    "core": "Context 让后代读取最近的 Provider 值，适合跨层传递共同数据。Provider 的 value 改变会影响读取该 Context 的组件；需要按数据变化频率和职责划分边界。顺序是：渲染 Provider 时确定 value，后代 useContext 向上找到最近的那一个，value 按 Object.is 变化后这些读者再渲染。边界是：Context 不跳过没读它的组件，也挡不住读者自己的 state。每次渲染都新建 value 对象，会让所有读者更新。高频输入和很少变的主题应分成两个 Provider。按变化频率拆开 Provider。",
+    "why": "错把 Context 当成既少传参又少渲染，高频 value 一变，所有读取它的组件都会跟着更新。表单输入放进主题上下文时，整个子树被拖着渲染。能分开的信号是：消费者读的是哪一个 Provider，以及这个 value 的引用变不变。",
     "example": "内层 Provider value 换新对象，只惊动读它的消费者：\n\n```jsx\n<Theme.Provider value=\"light\">\n  <Draft.Provider value={draftObj}>\n    <Editor /> {/* 只订 Draft 时，Theme 不变不重渲 */}\n  </Draft.Provider>\n</Theme.Provider>\n```",
     "task": "画出两个 Provider 和三个消费者，预测各自依赖哪个值。",
-    "answer": "每个消费者读取组件树上方最近的对应 Provider，不读取更远处的同名 Provider。主题消费者只依赖主题值，草稿消费者只依赖草稿值。value 引用变了，读取该 Context 的组件会重渲染；没读这个 Context 的组件不会因为这次 value 变化而重渲染，但它自己的 state 仍会让它渲染。",
+    "answer": "每个消费者读取组件树上方最近的对应 Provider，不读取更远处的同名 Provider。主题消费者只依赖主题值，输入的消费者只依赖输入值。value 引用变了，读取该 Context 的组件会重渲染；没读这个 Context 的组件不会因为这次 value 变化而重渲染，但它自己的 state 仍会让它渲染。",
     "deep": [
       {
         "title": "和 props",
@@ -3908,7 +4794,7 @@
       },
       {
         "title": "怎样自己验证",
-        "body": "在两个消费者里打印渲染。让草稿的 Provider 每秒换一个新对象，看只订阅主题的那个是否也打印。"
+        "body": "在两个消费者里打印渲染。让表单输入的 Provider 每秒换一个新对象，看只订阅主题的那个是否也打印。"
       }
     ],
     "references": [
@@ -3920,7 +4806,7 @@
     "react": "architecture"
   },
   "react-context-stable": {
-    "core": "现行 Context（**React 16.3** 起的 `createContext`）是 Provider 与 useContext（类组件用 Context.Consumer 或 contextType）。它用来把主题、当前用户、路由一类跨层数据交给任意深层消费者，而不必逐层传 props。官方仍建议：能用 props 说清楚就先用 props；Context 适合许多组件都要读的稳定数据，不是实验开关。旧的 childContextTypes / getChildContext 是遗留 API。createContext 出现后，中间祖先即使 shouldComponentUpdate 返回 false，消费者仍会在 Provider 的 value 变化时更新——有些资料里“不可靠、会被 SCU 挡掉”描述的是更早的旧 Context。不要把 Context 当成全局 Redux：value 用新对象字面量会导致所有消费者重渲染；高频草稿仍应留在局部 state。Provider 边界与重渲染见既有 `context` 课。",
+    "core": "现行 Context（**React 16.3** 起的 `createContext`）是 Provider 与 useContext（类组件用 Context.Consumer 或 contextType）。它用来把主题、当前用户、路由一类跨层数据交给任意深层消费者，而不必逐层传 props。官方仍建议：能用 props 说清楚就先用 props；Context 适合许多组件都要读的稳定数据，不是实验开关。旧的 childContextTypes / getChildContext 是遗留 API。createContext 出现后，中间祖先即使 shouldComponentUpdate 返回 false，消费者仍会在 Provider 的 value 变化时更新——有些资料里“不可靠、会被 SCU 挡掉”描述的是更早的旧 Context。不要把 Context 当成全局 Redux：value 用新对象字面量会导致所有消费者重渲染；高频输入仍应留在局部 state。Provider 边界与重渲染见既有 `context` 课。",
     "why": "误以为 Context 仍是实验功能，中间组件一旦跳过更新就会丢掉。新项目会避开主题这类官方用法，或继续写已经退役的子上下文方法。区分信号是消费者跟的是 Provider 的 value，不跟中间组件是否跳过更新。",
     "example": "稳定 value，避免无意义重渲染：\n\n```jsx\nconst ThemeContext = createContext(\"light\")\n// 坏：value={{ theme }} 每次新对象\n// 好：value={theme} 或 memo 后的对象\n```",
     "task": "对照 Passing Data Deeply with Context，划掉有些资料里“实验阶段、app 不要用”；再用一个 SCU 返回 false 的中间组件，确认 useContext 消费者仍能收到新 theme。",
@@ -4290,7 +5176,7 @@
     "deep": [
       {
         "title": "和组件状态的分工",
-        "body": "对话框是否打开、输入框草稿，属于这一次界面，用 state。订单号、页码、筛选，属于地址，用路由。把后者放进 state，复制链接的人看不到同一页。"
+        "body": "对话框是否打开、输入框里还没提交的内容，属于这一次界面，用 state。订单号、页码、筛选，属于地址，用路由。把后者放进 state，复制链接的人看不到同一页。"
       },
       {
         "title": "不要两套一起拉",
@@ -4447,7 +5333,7 @@
     "diagram": "diagrams/rr-redirect-before-render.svg"
   },
   "state-kind-picks-home": {
-    "core": "能在渲染时算出来的值不要再存一份。React 把互相矛盾、重复保存的状态当成结构问题。只传几层的数据用 props；中间层完全不用、只负责转发时，可以把 JSX 当 children 传下去。这两种都做不到，才用 Context。文档列出的用途包括主题和当前账号。服务端状态放在你不拥有的地方，要异步读取，别人也会改，并且会过期。TanStack Query 管的是这一类。Redux 管的是多处都要的客户端状态，而且更新频繁、逻辑复杂、代码库已经由很多人一起改。文档同时写明：不是每个应用都需要 Redux。选定 Redux 之后，新代码用 Toolkit，见 `redux-rtk-today`。订单列表的缓存主人见 `query-server-state`。",
+    "core": "能在渲染时算出来的值不要再存一份。React 把互相矛盾、重复保存的状态当成结构问题。只传几层的数据用 props；中间层完全不用、只负责转发时，可以把 JSX 当 children 传下去。这两种都做不到，才用 Context。文档列出的用途包括主题和当前账号。服务端状态放在你不拥有的地方，要异步读取，别人也会改，并且会过期。TanStack Query 管的是这一类。Redux 管的是多处都要的客户端状态，而且更新频繁、逻辑复杂、代码库已经由很多人一起改。文档同时写明：不是每个应用都需要 Redux。选定 Redux 之后，新代码用 Toolkit，见 `redux-rtk-today`。订单列表只放一处，见 `query-server-state`。",
     "why": "开发者把「要共享」理解成都放进一个 store。订单数组进了 slice 之后，没有过期和重新请求。另一台机器改了备注，这边侧栏仍是旧的。弹层开关并不被很多页面读取，它只是被一起放进来了。",
     "example": "UI 本地态、服务器态、主题分家：\n\n```text\n主题 → Context\n弹层开关 → 页面 useState\n订单列表 → queryKey [\"orders\", status]\n```",
     "task": "拿一个真实页面写出四个值各住在哪：主题、弹层、订单列表、购物车规则。订单数组在 slice 里出现时删掉，只保留查询缓存。",
@@ -4588,11 +5474,11 @@
     ]
   },
   "query-server-state": {
-    "core": "TanStack Query 把服务器数据按 query key 缓存。key 必须包含所有会影响结果的参数，例如资源名、id 和筛选。staleTime 决定多久之内认为数据新鲜、切换页面不必马上重取。组件渲染时读 useQuery 的 data、isPending 和 error，不要再复制进 useState，否则缓存更新了，复制品还是旧的。变更用 useMutation，成功后按 key 让相关查询失效或写入返回值。只存在于界面的状态，例如未提交的表单草稿，继续用 useState 或表单库，不要塞进 Query。",
+    "core": "TanStack Query 把服务器数据按 query key 缓存。key 必须包含所有会影响结果的参数，例如资源名、id 和筛选。staleTime 决定多久之内认为数据新鲜、切换页面不必马上重取。组件渲染时读 useQuery 的 data、isPending 和 error，不要再复制进 useState，否则缓存更新了，复制品还是旧的。变更用 useMutation，成功后按 key 让相关查询失效或写入返回值。只存在于界面的状态，例如未提交的表单内容，继续用 useState 或表单库，不要塞进 Query。",
     "why": "学习者会把请求结果再抄进一份 state，以为组件读起来更直接。一处变更并失效后，另一处仍显示旧列表，重试和窗口聚焦时两份各走各的。两处同时换成新数据、而且没有第二份本地数组，才说明服务器结果只留在查询缓存里。",
     "example": "服务器状态放进查询缓存，不要另抄一份数组：\n\n```js\nuseQuery({\n  queryKey: [\"orders\", status],\n  queryFn: () => api.listOrders(status),\n})\n// mutation 成功后 invalidate [\"orders\"]，而不是 push 进本地 state\n```",
     "task": "用同一 key 打开两个显示订单的组件，在一处完成变更并失效查询。确认两处一起更新，且没有第二份 useState 列表。",
-    "answer": "两个组件用同一个 key 读取订单，都不要再 setState 存一份列表。一处变更成功并失效该 key 后，两处一起重新取，显示同一份结果。切换筛选就是另一个 key，不能把返回值推进一个平行数组。界面草稿才用 state。两处显示的列表应来自同一次失效后的重新获取。",
+    "answer": "两个组件用同一个 key 读取订单，都不要再 setState 存一份列表。一处变更成功并失效该 key 后，两处一起重新取，显示同一份结果。切换筛选就是另一个 key，不能把返回值推进一个平行数组。只存在于界面的输入才用 state。两处显示的列表应来自同一次失效后的重新获取。",
     "deep": [
       {
         "title": "新鲜时间和缓存时间",
@@ -4665,6 +5551,58 @@
       [
         "Redux：configureStore",
         "https://redux-toolkit.js.org/api/configureStore"
+      ]
+    ]
+  },
+  "vue-sfc-template": {
+    "core": "单文件组件（SFC）把一个组件的模板和脚本放在同一个 .vue 文件里。template 里写要显示的结构，{{ count }} 这种插值（interpolation）会显示 count 当前的值。script 使用 setup 时，里面顶层声明的名字可以直接在模板里用，这是 Vue 3 的写法。选项式 API 把数据和函数分开放进 data 和 methods，它仍然可用。两种写法怎样组织复杂组件，见 `vue-composition-options`。",
+    "example": "模板读取脚本里的名字：\n\n```vue\n<script setup>\nconst count = 0;\n</script>\n\n<template>\n  <p>{{ count }}</p>\n</template>\n```",
+    "task": "指出数字显示在文件的哪一段，脚本里的 count 怎样出现在模板里。复杂组件选哪种 API，去看哪一课。",
+    "answer": "数字写在 template 的插值里。script setup 的顶层名字可以直接放进 {{ }}。选项式和组合式的组织方式见 `vue-composition-options`。",
+    "deep": [
+      {
+        "title": "模板不是字符串拼接",
+        "body": "{{ count }} 在渲染时读取这个名字的当前值。不要把它理解成写文件时就已经拼进 HTML 的一段固定文字。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "写一个 script setup，声明 const count = 0，模板里放 {{ count }}。确认页面上出现 0。"
+      }
+    ],
+    "references": [
+      [
+        "Vue：Template Syntax",
+        "https://vuejs.org/guide/essentials/template-syntax.html"
+      ],
+      [
+        "Vue：Single-File Components",
+        "https://vuejs.org/guide/scaling-up/sfc.html"
+      ]
+    ]
+  },
+  "vue-ref-value": {
+    "core": "ref(0) 返回一个响应式引用（ref），当前值放在 value 上。脚本里要写 count.value = 1，读也用 count.value。模板里的 {{ count }} 会自动拆开这个引用，不要写成 count.value。改 value 之后，用到它的模板会再渲染。这个通知发生在 Vue 包过的值上；直接改一个普通对象，页面不会跟着变，见 `vue-reactivity`。",
+    "example": "脚本用 .value，模板不用：\n\n```vue\n<script setup>\nimport { ref } from \"vue\";\nconst count = ref(0);\nfunction add() {\n  count.value = count.value + 1;\n}\n</script>\n\n<template>\n  <button @click=\"add\">{{ count }}</button>\n</template>\n```",
+    "task": "说明脚本和模板里分别怎样读到 ref 里的数字。把 count 换成普通的 0 再加 1，模板会不会变？",
+    "answer": "脚本读写 count.value。模板写 count，会自动拆开。普通数字加 1 不会通知模板。代理和原始对象的差别见 `vue-reactivity`。",
+    "deep": [
+      {
+        "title": "替换整个 value 也会通知",
+        "body": "count.value = count.value + 1 换的是里面的数字。把 value 设成一个新对象，同样会通知模板。不要去改 ref 外面的另一个普通变量。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "用 ref(0) 和按钮把 value 加 1，确认按钮文字跟着变。再改成 let count = 0，在点击时只做 count = count + 1，确认文字停在 0。"
+      }
+    ],
+    "references": [
+      [
+        "Vue：ref",
+        "https://vuejs.org/api/reactivity-core.html#ref"
+      ],
+      [
+        "Vue：Reactivity Fundamentals",
+        "https://vuejs.org/guide/essentials/reactivity-fundamentals.html"
       ]
     ]
   },
@@ -5197,7 +6135,7 @@
     ]
   },
   "pinia-not-vuex": {
-    "core": "Pinia 是 Vue 官方现在的状态库。store 用 defineStore 定义，状态、计算属性和方法都在其中，没有 Vuex 的 mutations。组件用 storeToRefs 解构状态，才能保持响应；直接解构会丢掉响应连接。Vuex 仍能用于已有的 Vue 3 项目，但官方说明它处于维护状态，新应用应使用 Pinia。服务器返回的列表若只用一次，放在页面里请求即可，不必先搬进全局 store。多个页面共享、而且客户端会改的会话和未提交草稿，才放进 store。",
+    "core": "Pinia 是 Vue 官方现在的状态库。store 用 defineStore 定义，状态、计算属性和方法都在其中，没有 Vuex 的 mutations。组件用 storeToRefs 解构状态，才能保持响应；直接解构会丢掉响应连接。Vuex 仍能用于已有的 Vue 3 项目，但官方说明它处于维护状态，新应用应使用 Pinia。服务器返回的列表若只用一次，放在页面里请求即可，不必先搬进全局 store。多个页面共享、而且客户端会改的会话和未提交的表单，才放进 store。",
     "why": "学习者会在新的 Vue 3 项目里再建一套 Vuex 的 mutation 和模块。笔记和脚手架都停在只维护的默认选择上，解构 store 后视图还不更新。两个组件改同一个计数能同步、页面内的请求结果却不进 store，才说明该进全局的只有跨页面状态。",
     "example": "共享客户端状态用 Pinia；列表请求可留页面：\n\n```js\nconst counter = useCounterStore()\ncounter.inc() // 另一组件立刻见新值\n// 订单页自己的列表 → 页面状态，离开可丢\n```",
     "task": "写一个计数 store，在两个组件里修改并确认同步。再把一个只属于当前页的请求结果留在页面内，不放进 store。",
@@ -5306,12 +6244,70 @@
     ],
     "vue": "ssr"
   },
+  "fe-pick-decision-order": {
+    "core": "没有一张表能算出该选谁。会议按下面四条写事实，不要把它们乘成一个分数。\n\n1. 仓库和团队。产品已经用 Vue 交付，新的浏览器页面就留 Vue。没有人交付过的库，不要因为一份全球问卷里「用过的人更多」就换。问卷的样本和城市每年都在变，不能当成系数。仓库还是空的、也没有人维护过这四者时，才留下团队招得到人、也能维护的一种。招人看你们城市最近的职位，不看仓库星数。\n\n2. 谁打开。浏览器、微信小程序、手机 App 是不同运行时。对不上时换 uni-app、Taro、Flutter 或 React Native，见 `fe-pick-by-surface`。不要为了小程序把已经在用的 Web 界面库改成另一种。\n\n3. 源代码里要不要正文。登录后的表格可以是浏览器里的空壳。文章标题必须出现在「查看网页源代码」里时，用第 1 步那个库自己的方案：Vue 的应用页用 Nuxt，文档站可以用 VitePress；React 用文档列出的 Next.js 或 React Router 框架模式；Svelte 用 SvelteKit；Angular 默认在浏览器里渲染，要 HTML 时执行 ng add @angular/ssr，按路由选 RenderMode。交互很少的内容站，Astro 文档把自己定位成内容站。见 `fe-meta-framework-tradeoffs`。\n\n4. 路由和数据只装这一套。Vue 就是 Vue Router 和 Pinia，不要再装 react-router。这是装包规则，不是给四个库打分。见 `fe-ecosystem-slot-tradeoffs`。\n\n改数字时要写的那一行，是选定之后的写法，见 `fe-ui-update-model`。它不参与上面四条。",
+    "why": "把「谁更流行」和「要不要服务端渲染」乘在一起，空仓库会同时建出 Next 和 Nuxt。已经用 Vue 的仓库，会为了一篇帮助文章改去 React。",
+    "example": "帮助中心《如何退款》。仓库已经是 Vue，没有人维护 React：\n\n```text\n仓库和团队：继续 Vue。不因为问卷里 React 用过的人更多就换。\n谁打开：浏览器。不做小程序，不做 App。\n源代码：要有标题「如何退款」。用 Nuxt，不用 Next。\n路由和数据：useAsyncData。登录态用 Pinia。不装 react-router。\n```",
+    "task": "拿一个真实需求写四行：仓库里已有的界面库、谁打开、源代码里要不要标题、路由和数据用哪个包。不要写分数。",
+    "answer": "四行都是事实。已有仓库继续用原来的界面库。小程序和 App 换运行时。标题要进源代码时，用这个库自己的服务端方案。路由和数据只装这一套。没有可乘的分数。",
+    "deep": [
+      {
+        "title": "问卷为什么不能当系数",
+        "body": "Stack Overflow 2025 向站内渠道招募，约 4.9 万份答卷，问的是过去一年用过哪些技术。它不是各公司选型会议的记录，也不能乘上「要不要服务端渲染」。State of JavaScript 同样是自愿填写的满意度，留名字时不看那份排名。"
+      },
+      {
+        "title": "后面几课各讲什么",
+        "body": "谁打开见 `fe-pick-by-surface`。源代码里的标题见 `fe-meta-framework-tradeoffs`。选定之后官方带什么包见 `fe-framework-tradeoffs`。路由和列表各留一处见 `fe-ecosystem-slot-tradeoffs`。改数字的那一行见 `fe-ui-update-model`，那是写法，不是打分项。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "结论里如果出现分数、星数，或「因为用过的人更多所以换库」，就还没写完。已有 Vue 仓库的文章页应写 Nuxt 或 VitePress，不应写 Next。"
+      }
+    ],
+    "map": [
+      {
+        "title": "1 仓库和团队",
+        "body": "已经在交付的界面库继续用；问卷使用率不是系数"
+      },
+      {
+        "title": "2 谁打开",
+        "body": "小程序和 App 换运行时，不换已有的 Web 界面库"
+      },
+      {
+        "title": "3 源代码",
+        "body": "要标题时用这个库自己的服务端方案"
+      },
+      {
+        "title": "4 装包",
+        "body": "路由和数据只装这一套，不给四个库打分"
+      }
+    ],
+    "references": [
+      [
+        "Vue：怎么用",
+        "https://vuejs.org/guide/extras/ways-of-using-vue.html"
+      ],
+      [
+        "React：创建应用",
+        "https://react.dev/learn/creating-a-react-app"
+      ],
+      [
+        "Angular：服务端渲染",
+        "https://angular.dev/guide/ssr"
+      ],
+      [
+        "Stack Overflow 2025：方法",
+        "https://survey.stackoverflow.co/2025/methodology/"
+      ]
+    ],
+    "diagram": "diagrams/fe-pick-decision-order.svg"
+  },
   "fe-pick-by-surface": {
-    "core": "选型先定这次交到哪一端：浏览器里的后台或工具页、要在「查看网页源码」里就有正文的内容页、微信小程序，还是手机 App。再写下第一屏 HTML 里要不要有正文，以及团队已经会调试哪一种界面更新方式。第一屏 HTML 是浏览器菜单「查看网页源代码」里的那份，脚本还没把数据请求回来。正文是人要读的段落、标题和价格。浏览器后台可以做成纯客户端应用，首屏允许先是空壳。文章、商品页要在源码里就有正文，用会在服务端取数的框架（如 Nuxt、Next），或用 Astro 的岛屿架构：整页先是这份静态 HTML，只有标了 client:load 的组件才把脚本送到浏览器。微信小程序要单独登记页面并交出该端模板，见 `uniapp-pages-json-entry`、`taro-pages-in-app-config`。没有 DOM 的手机界面分两支：自己画像素、两端外观一致时用 Flutter，见 `flutter-widget-not-html`；要系统原生控件时用 React Native，见 `rn-view-not-div`。四个目标端可以是四个产品；同一个页面不要同时承诺四种运行时。谁负责画这一帧，见 `cross-four-who-paints`。",
-    "why": "「公司都在用 React」只确定了界面库。人从浏览器、微信还是手机 App 打开，这句话没有写。Nuxt 是 Vue 的内容站，也不是从 React 推出来的。先按热度选定框架，再发现正文不在 HTML 里、小程序没有页面登记、手机上还在找 div。目标端写在前面时，框架只是该端的实现，换一句需求才会换框架。",
+    "core": "仓库里已经在用的界面库先留下，见 `fe-pick-decision-order`。这一课只写人从哪打开，以及源代码里要不要正文。打开方式对不上时，换的是运行时，不是把会用的 Vue 换成 React。\n\n浏览器里的后台或工具页、要在「查看网页源码」里就有正文的内容页、微信小程序、手机 App，是四个入口。第一屏 HTML 是浏览器菜单「查看网页源代码」里的那份，脚本还没把数据请求回来。正文是人要读的段落、标题和价格。浏览器后台可以做成纯客户端应用，首屏允许先是空壳。文章、商品页要在源码里就有正文时，用已经选定的那个库自己的服务端方案：Vue 用 Nuxt，React 用 Next 或 React Router 框架模式，Svelte 用 SvelteKit，Angular 用 @angular/ssr。交互很少的内容站可以用 Astro：整页先是这份 HTML，只有标了 client:load 的组件才把脚本送到浏览器。微信小程序要单独登记页面并交出该端模板，见 `uniapp-pages-json-entry`、`taro-pages-in-app-config`。没有 DOM 的手机界面分两支：自己画像素、两端外观一致时用 Flutter，见 `flutter-widget-not-html`；要系统原生控件时用 React Native，见 `rn-view-not-div`。四个目标端可以是四个产品；同一个页面不要同时承诺四种运行时。谁负责画这一帧，见 `cross-four-who-paints`。",
+    "why": "「公司都在用 React」只确定了浏览器里的界面库。人从浏览器、微信还是手机 App 打开，这句话没有写。先按热度选定框架，再发现小程序没有页面登记、手机上还在找 div。Nuxt 是 Vue 的内容站，不是从 React 推出来的。",
     "example": "这是 src/pages 里的 .astro。上方 --- 在产出 HTML 时跑完，浏览器不执行它：\n\n```html\n---\nconst title = '如何退款'\nconst body = '打开订单，点退款。'\n---\n<article>\n  <h1>{title}</h1>\n  <p>{body}</p>\n</article>\n<Search client:load />\n```\n\n默认在构建时预渲染。该页写了 prerender = false 且装了适配器时，改成每次请求再跑。浏览器「查看网页源代码」收到的是填好的 HTML。Search 变成 astro-island：\n\n```html\n<article>\n  <h1>如何退款</h1>\n  <p>打开订单，点退款。</p>\n</article>\n<astro-island\n  client=\"load\"\n  component-url=\"/_astro/Search.xxxx.js\"\n  component-export=\"default\"\n  renderer-url=\"/_astro/client.xxxx.js\"\n  props=\"{}\"\n  ssr\n>\n  <form action=\"/search\"><input type=\"search\" name=\"q\" /></form>\n  <!--astro:end-->\n</astro-island>\n```\n\nclient=\"load\" 是 client:load 编译后的写法，表示页面一加载就去取 component-url 里的 Search 脚本，再用 renderer-url 里的框架挂到这个 form 上。form 随 Search 的内容变化。xxxx 是这次构建的文件名。旁边还可能有 uid、opts、before-hydration-url。后台整页都是表格时，写成 Vue 或 React 应用。\n\n同一个 .astro 可以再引入第二种界面框架，两份运行时都会下载：\n\n```html\n---\nimport Search from '../components/Search.vue'\nimport Vote from '../components/Vote.jsx'\n---\n<Search client:load />\n<Vote client:load />\n```\n\n这样写能编译。新岛只留团队会调试的那一种，另一种在记录里写成旧组件保留。.vue 文件里不能再 import 这个 .jsx。",
     "task": "给手上的功能写四格：谁打开、首屏 HTML 要不要正文、有没有小程序页面、有没有原生视图。每一格只留一个框架名，空着的格写「这次不做」。",
-    "answer": "四格示例：谁打开写成浏览器后台，框架留 Vue 或 React 客户端应用；小程序和原生两格写「这次不做」。首屏 HTML 要正文时换成 Nuxt、Next 或 Astro。有小程序页面时留 uni-app 或 Taro，浏览器格写这次不做。有原生视图时留 React Native 或 Flutter。每一格只一个名字。",
+    "answer": "四格示例：谁打开写成浏览器后台，界面库留下仓库里已有的那一种，小程序和原生两格写「这次不做」。首屏 HTML 要正文时，用这个库自己的服务端方案，不另起一个别的库的脚手架。有小程序页面时留 uni-app 或 Taro。有原生视图时留 React Native 或 Flutter。",
     "deep": [
       {
         "title": "第一屏 HTML 里的正文",
@@ -5327,7 +6323,7 @@
       },
       {
         "title": "混用停在 .astro",
-        "body": "同一个 .astro 可以同时放 React、Preact、Vue、Svelte、Solid、Alpine，官方包是 @astrojs/react、@astrojs/vue、@astrojs/svelte、@astrojs/solid-js、@astrojs/preact、@astrojs/alpinejs。按文件后缀选择渲染器。React 和 Preact 都是 JSX 时，要在集成配置里分开。两座 Vue 岛只下载一份 Vue。一座 Vue 再加一座 React，两份运行时都下载。\n\n.vue 里不能 import .jsx，.jsx 里不能 import .astro。.astro 组件不能写 client:。新岛只留一种更新模型，见 `fe-ui-update-model`。已有的另一种写成「旧组件保留」。小程序和手机 App 不写进这个文件。"
+        "body": "同一个 .astro 可以同时放 React、Preact、Vue、Svelte、Solid、Alpine，官方包是 @astrojs/react、@astrojs/vue、@astrojs/svelte、@astrojs/solid-js、@astrojs/preact、@astrojs/alpinejs。按文件后缀选择渲染器。React 和 Preact 都是 JSX 时，要在集成配置里分开。两座 Vue 岛只下载一份 Vue。一座 Vue 再加一座 React，两份运行时都下载。\n\n.vue 里不能 import .jsx，.jsx 里不能 import .astro。.astro 组件不能写 client:。新岛只留一种界面库，见 `fe-ui-update-model`。已有的另一种写成「旧组件保留」。小程序和手机 App 不写进这个文件。"
       },
       {
         "title": "怎样自己验证",
@@ -5400,30 +6396,172 @@
     ],
     "diagram": "diagrams/fe-pick-surface.svg"
   },
-  "fe-ui-update-model": {
-    "core": "React 里界面是状态的函数，下一次画面要等你提交的更新，状态队列见 `state-queue`。Vue 用代理拦截读写，模板在编译期绑好依赖，改数据就会通知用到它的效果，见 `vue-defineproperty-proxy`。Angular 从 v21 起新应用默认无 Zone，模板里读到的信号变化会安排检查，见 `fe-angular-first-party`。Svelte 5 的 $state、$derived、$effect 是编译器指令，编译结果直接更新对应 DOM，应用框架是 SvelteKit。四种模型都能做表格。选型留下团队能指出「这次赋值为什么会或不会重画」的那一种。星数、招聘广告和去年的路线图不参与这句判断。",
-    "why": "按先进程度各装一套之后，同一个字段在仓库里既有 setState，又有代理，又有信号。线上少画一次时，没有人知道该打断点的是哪一种通知。",
-    "example": "对照本课断言，先写出最小可观察片段：\n\n```js\n// 框架之间比的是谁负责更新界面\n```",
-    "task": "选一个已经会讲清楚的更新模型，用它实现计数。另外三种只写出「这次不引入」和对应的官方应用框架名字，不新建工程。",
-    "answer": "留下一种更新模型，并留下它的官方应用框架。React 看提交的更新，Vue 看代理通知，Angular 新应用看信号，Svelte 看编译期标出的依赖。同一个组件不混四种赋值方式。",
+  "fe-meta-framework-tradeoffs": {
+    "core": "「查看网页源代码」是浏览器菜单里的那份文字，脚本还没跑。它用来核对需求，不能单独算出脚手架的名字。\n\nVite 加上只在浏览器里渲染的 React 或 Vue：HTML 里通常只有一个空的 div，id 是 root 或 app。标题是脚本请求数据之后才画出来的。登录后的后台可以接受这样。Angular 新应用默认也是在浏览器里渲染。\n\n已经是 React，标题要在 HTML 里：用 Next.js，或 React Router 的框架模式。服务端组件和客户端组件的边界见 `react-rsc-vs-client`。\n\n已经是 Vue：应用页用 Nuxt，useAsyncData 或 useFetch 的结果会放进随 HTML 交给浏览器的那份数据，见 `fe-vue-data-one-slot`。文档站可以用 VitePress。\n\n已经是 Svelte：用 SvelteKit。数据从 load 返回，页面读 data，见 `fe-svelte-load-not-store`。\n\n已经是 Angular：执行 ng add @angular/ssr。一条路由可以是 RenderMode.Prerender（构建时生成 HTML）或 RenderMode.Server（请求进来时生成）。不要为此新建 Next。\n\n交互很少的文章站：Astro 文档把自己定位成内容站。整页先是 HTML，只有写了 client:load 的组件才把脚本送到浏览器。岛上的组件留仓库已经在用的那一种。见 `fe-pick-by-surface`。\n\n已经选定 Vue，就不要再初始化一个 Next 工程。",
+    "why": "口头要服务端渲染，仓库却是只有空 div 的 Vite 应用，源代码里没有文章标题。或者 Next、Nuxt、Astro 三个都建了，同一篇文章有三套路由。",
+    "example": "两种源代码，对的是需求。脚手架跟已经选定的界面库，不是三个都建：\n\n```html\n<!-- 登录后的表格：浏览器里渲染，源代码里可以没有业务标题 -->\n<div id=\"app\"></div>\n\n<!-- 帮助文章：源代码里已经有标题 -->\n<h1>如何退款</h1>\n```\n\n```ts\n// 已经是 Angular，标题要进 HTML。不要为此新建 Next\n// ng add @angular/ssr\n{ path: \"help\", renderMode: RenderMode.Prerender }\n```\n\n```astro\n---\nconst title = \"如何退款\"\n---\n<h1>{title}</h1>\n<Search client:load />\n```",
+    "task": "打开目标页的「查看网页源代码」，写下标题在不在。再写仓库里已有的界面库，以及这个库自己的服务端方案。登录后台可以写「浏览器里渲染即可」。",
+    "answer": "标题可以不在源代码里时，用浏览器里渲染的应用。标题必须在时：React 用 Next 或 React Router 框架模式，Vue 用 Nuxt 或 VitePress，Svelte 用 SvelteKit，Angular 用 @angular/ssr。交互很少的内容站可以用 Astro。只留一个。",
     "deep": [
       {
-        "title": "模型和生态是两笔",
-        "body": "选定谁负责更新之后，路由、跨页状态和请求缓存跟着这个模型走，见 `fe-ecosystem-follows-model`。先装齐四个生态、再决定用哪个模型，职责位会重复。"
+        "title": "三个都会出 HTML 的词",
+        "body": "请求进来时在服务器上生成 HTML，常叫服务端渲染。构建时先生成 HTML，常叫预渲染。Astro 默认整页是 HTML，只有标了 client: 的块带框架脚本。三种都可能让标题出现在源代码里，选型时写明用哪一种。"
       },
       {
         "title": "怎样自己验证",
-        "body": "在选定的模型里改计数，确认只有一种赋值会让数字变化。仓库搜索另外三种入口：setState 与 signal( 与 $state 与 ref( 不应同时成为这个按钮的写法。"
+        "body": "对文章页使用「查看网页源代码」，搜索标题文字。搜不到，就还是客户端空壳。再看 package.json 里是 next、nuxt、@sveltejs/kit 还是 astro，只能有一个。"
+      }
+    ],
+    "map": [
+      {
+        "title": "浏览器里渲染",
+        "body": "源代码常只有空 div；登录后的表格可以接受"
+      },
+      {
+        "title": "跟着已选的库",
+        "body": "React 用 Next 或 React Router；Vue 用 Nuxt；Angular 用 @angular/ssr"
+      },
+      {
+        "title": "SvelteKit",
+        "body": "已经是 Svelte 时，数据从 load 返回"
+      },
+      {
+        "title": "Astro",
+        "body": "内容站。整页先是 HTML；client:load 的组件才带脚本"
       }
     ],
     "references": [
       [
-        "React：状态",
+        "Angular：服务端渲染",
+        "https://angular.dev/guide/ssr"
+      ],
+      [
+        "Astro：为什么用 Astro",
+        "https://docs.astro.build/en/concepts/why-astro/"
+      ],
+      [
+        "Nuxt：简介",
+        "https://nuxt.com/docs/getting-started/introduction"
+      ],
+      [
+        "SvelteKit：简介",
+        "https://svelte.dev/docs/kit/introduction"
+      ],
+      [
+        "React：创建应用",
+        "https://react.dev/learn/creating-a-react-app"
+      ]
+    ],
+    "diagram": "diagrams/fe-meta-framework-tradeoffs.svg"
+  },
+  "fe-framework-tradeoffs": {
+    "core": "选界面库看仓库和团队，见 `fe-pick-decision-order`。这一课只写选定之后，官方应用里已经带了什么。改数字的那一行见 `fe-ui-update-model`，那也不是打分项。\n\nReact：库本身是组件和状态。创建应用的文档推荐新项目使用已经带上路由、数据获取和打包的框架，列出的是 Next.js，以及可搭配 Vite 的 React Router 框架模式。只用 react 和 react-dom 时，路由和取数要自己选定。\n\nVue 3：create-vue 基于 Vite，创建时可选 Vue Router 和 Pinia。Vue CLI、Vuex 只维护已经在用的旧仓库。要在服务端输出 HTML 时用 Nuxt。文档站可以用 VitePress。\n\nAngular：路由、HTTP、表单都在 @angular 包里。新应用默认在浏览器里渲染；正文要进 HTML 时用 @angular/ssr，不是改去 Next。v21 起新应用默认不用 zone.js。不要把只认 React 组件的 react-router 或 React Query 装进这个工程。\n\nSvelte 5：$state 只在 Svelte 编译的文件里有效。新应用用 SvelteKit 管文件路由和 load。把 .svelte 页面塞进 Vue Router，编译器不会处理那些页面。",
+    "why": "按流行程度把四套路由都装上之后，地址既走 Vue Router 又走 react-router。官方包是选定之后的安装清单，不是四个库的得分。",
+    "example": "官方起点各留一行，不要四个一起装进同一个 package.json：\n\n```bash\n# React：文档列出的框架（路由和取数在框架里）\nnpx create-next-app@latest\n\n# Vue 3 后台：Vite，勾上 Vue Router 和 Pinia\nnpm create vue@latest\n\n# 文章要在源代码里看到正文，且界面是 Vue\nnpx nuxi@latest init\n\n# Svelte 应用\nnpx sv create\n```\n\n```ts\n// Angular：路由和请求来自 @angular，不另装 react-router\nprovideRouter(routes)\nhttp.get<Order[]>('/api/orders')\n```",
+    "task": "画四行：React、Vue、Angular、Svelte。每行写官方创建方式，以及路由是框架自带还是要自己选一个库。不要写星数或招聘。",
+    "answer": "React 用 Next.js 或 React Router 框架模式，否则路由和取数自己选。Vue 新项目用 Vite、Vue Router、Pinia；要服务端 HTML 时用 Nuxt。Angular 用 provideRouter 和 HttpClient。Svelte 用 SvelteKit 和 $state。一个产品只留一行。",
+    "deep": [
+      {
+        "title": "这一课不打分",
+        "body": "包更全不是选型分数。仓库和招人见 `fe-pick-decision-order`。正文要不要出现在源代码里，见 `fe-meta-framework-tradeoffs`。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开选定框架的「创建应用」文档，对照 package.json 里的路由包是不是文档写的那一个。出现第二种界面库的路由包，就多装了。"
+      }
+    ],
+    "map": [
+      {
+        "title": "React",
+        "body": "本身不带路由；新项目用 Next 或 React Router 框架模式"
+      },
+      {
+        "title": "Vue 3",
+        "body": "create-vue：Vite + Router + Pinia；正文进 HTML 用 Nuxt"
+      },
+      {
+        "title": "Angular",
+        "body": "路由、HTTP、表单都在 @angular；v21 起默认不用 zone.js"
+      },
+      {
+        "title": "Svelte 5",
+        "body": "应用用 SvelteKit；$state 只在 Svelte 编译的文件里"
+      }
+    ],
+    "references": [
+      [
+        "React：创建应用",
+        "https://react.dev/learn/creating-a-react-app"
+      ],
+      [
+        "Vue：快速上手",
+        "https://vuejs.org/guide/quick-start"
+      ],
+      [
+        "Vue 3 迁移：框架级建议",
+        "https://v3-migration.vuejs.org/recommendations"
+      ],
+      [
+        "Angular：Zoneless",
+        "https://angular.dev/guide/zoneless"
+      ],
+      [
+        "SvelteKit：简介",
+        "https://svelte.dev/docs/kit/introduction"
+      ]
+    ],
+    "diagram": "diagrams/fe-framework-tradeoffs.svg"
+  },
+  "fe-ui-update-model": {
+    "core": "四种都能做「数字加一」，差别是你必须写哪一句，画面才会变。下面每句都能在对应文档里对上。\n\nReact：const [count, setCount] = useState(0)。要点按钮时调用 setCount(count + 1)，或 setCount(n => n + 1)。React 会用新的 count 把这个组件再画一遍。直接写 count = count + 1 不会触发重画。见 React 文档 State。\n\nVue 3：数字用 const count = ref(0)。脚本里写 count.value++。模板里写 count++ 即可，因为模板会自动去掉 .value。Vue 在第一次渲染时记下模板用过哪些 ref，之后这个 ref 变了，就重新渲染用到它的组件。对象可以用 reactive()，返回值是原对象的 Proxy，改它的字段也会更新。文档仍把 ref() 当作声明状态的主要写法。见 Vue 响应式基础。\n\nAngular：count = signal(0)，模板里读 count()，改的时候调用 count.set(count() + 1)。模板读过的 signal 被更新后，Angular 会安排变更检查。从 v21 起，新应用默认不再靠 zone.js 在每次异步之后扫整棵组件树。不要再写 provideZoneChangeDetection 把默认改回去。已有旧工程可能仍带着 zone.js。见 Angular Zoneless。\n\nSvelte 5：let count = $state(0)，然后 count++。$state 不用 import，它是编译器认的语法，不是可以传给别的函数的运行时函数。只在 .svelte、.svelte.js、.svelte.ts 里、出现在允许的位置才有效。编译结果会去更新绑定了这个变量的 DOM。见 Svelte Runes。\n\n一个产品只留上面一种写法。这四行是选定之后怎么写，不是给四个库打分的依据。选型先看仓库和团队，见 `fe-pick-decision-order`。路由和请求怎么配，见 `fe-framework-tradeoffs`。",
+    "why": "四种写法堆在同一个按钮上时，数字不变，你不知道该看 setCount、count.value、signal.set，还是 $state。先选定一种，另外三种这次不引入。",
+    "example": "对照本课断言，先写出最小可观察片段：\n\n```js\n// 框架之间比的是谁负责更新界面\n```",
+    "task": "选一种实现「点击加一」。另外三种各写一句「这次不用」，并写上上面的那一行代码，用来对照，不新建另外三个工程。",
+    "answer": "留下一种。React 调 setCount。Vue 在脚本里改 ref 的 .value。Angular 调 signal 的 set，模板读 count()。Svelte 5 给 $state 声明的变量赋值。同一个按钮不混四种。",
+    "deep": [
+      {
+        "title": "四个名字分别是什么",
+        "body": "useState 是 React 的函数，返回「当前值」和「修改函数」。ref 是 Vue 包一层对象，脚本通过 .value 读写。signal 是 Angular 的函数，用 count() 读取、用 set 写入。$state 是 Svelte 5 写在源码里的标记，编译器看见它才把这个变量当成会更新界面的状态。"
+      },
+      {
+        "title": "zone.js 是什么",
+        "body": "旧的 Angular 常用 zone.js 包住浏览器异步，异步结束就扫组件树看要不要重画。Angular 文档写明：v21 起新应用默认不再这样，改由「模板读到的 signal 更新、组件输入、模板事件」等通知来安排检查。这不是「Angular 不用检测变化了」。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "在选定的那一种里点按钮，数字加一。把 React 的 setCount 换成 count = count + 1，数字应不变。Vue 若只改了普通 let 变量、没有 ref，模板也不应跟着变。"
+      }
+    ],
+    "map": [
+      {
+        "title": "React",
+        "body": "setCount(...) 之后才会重画；count = 1 不会"
+      },
+      {
+        "title": "Vue 3",
+        "body": "脚本里 count.value++；模板里的 ref 会自动去掉 .value"
+      },
+      {
+        "title": "Angular",
+        "body": "模板读 count()，再用 count.set 改；v21 起新应用默认不用 zone.js"
+      },
+      {
+        "title": "Svelte 5",
+        "body": "let count = $state(0) 之后才能 count++；$state 不用 import"
+      }
+    ],
+    "references": [
+      [
+        "React：State",
         "https://react.dev/learn/state-a-components-memory"
       ],
       [
         "Vue：响应式基础",
         "https://vuejs.org/guide/essentials/reactivity-fundamentals.html"
+      ],
+      [
+        "Angular：Zoneless",
+        "https://angular.dev/guide/zoneless"
       ],
       [
         "Svelte：Runes",
@@ -5432,12 +6570,62 @@
     ],
     "diagram": "diagrams/fe-ui-update-model.svg"
   },
+  "fe-ecosystem-slot-tradeoffs": {
+    "core": "界面库选定之后，还有三样要各留一个地方。\n\n地址：框架自带路由就不要再装第二个。React 自己组装时，在 React Router 和 TanStack Router 里留一个。Vue 用 Vue Router。Angular 用 provideRouter。SvelteKit 用 src/routes 里的文件当路由。\n\n接口返回的列表只放一处：React 的 useQuery，或路由的 loader；Vue 的 useAsyncData；Angular 的 HttpClient 或 httpResource；SvelteKit 的 load 返回值。筛选条件要写进 queryKey 或请求参数里。不要在请求成功后再 dispatch(setOrders)，也不要写进 Pinia。见 `fe-server-state-one-owner`。\n\n登录态和主题不是上面那份订单列表。React 可以放一份 Redux Toolkit store，Vue 用 Pinia。里面不要再存同一份订单数组。\n\nTanStack Query 和 RTK Query 都能缓存接口结果。订单列表只选其中一个。",
+    "why": "两处都存订单。点「已发货」之后网络请求是对的，表格读的是没有清掉的那一份旧数组。",
+    "example": "列表只读 Query。登录态另放，不要复制订单数组：\n\n```tsx\nconst { data } = useQuery({\n  queryKey: [\"orders\", status],\n  queryFn: () => fetchOrders(status),\n})\n// 表格只读 data\n// 不要：dispatch(setOrders(data))\n```\n\n```ts\n// Vue / Nuxt：表格只读 data，不要再写进 Pinia\nconst { data } = await useAsyncData(\n  \"orders-\" + status,\n  () => $fetch(\"/api/orders\", { query: { status } }),\n)\n```",
+    "task": "找到订单表格读的是哪个变量。如果 Query（或 useAsyncData）和 Redux（或 Pinia）里各有一份订单数组，删掉全局状态里的那一份。",
+    "answer": "表格只读一个来源：useQuery 的 data、useAsyncData 的 data、HttpClient 的结果，或 load 返回的 data。queryKey 或请求参数里要有筛选条件。Redux 或 Pinia 不保存这份列表。路由只留一个实现。",
+    "deep": [
+      {
+        "title": "Query 和 RTK Query",
+        "body": "两个库都会缓存 GET 结果。订单列表选定一个。两个都装上时，失效要记两套 API。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "改筛选后看网络请求的查询参数和表格第一行。第一行必须属于新参数。若第一行仍是旧订单，说明表格读的是另一份没被清掉的数组。"
+      }
+    ],
+    "map": [
+      {
+        "title": "地址",
+        "body": "一个路由实现：框架自带，或 React Router / Vue Router"
+      },
+      {
+        "title": "订单列表",
+        "body": "useQuery 或 useAsyncData 或 HttpClient 或 load，只一处"
+      },
+      {
+        "title": "登录态",
+        "body": "Redux Toolkit 或 Pinia；不要再存同一份订单数组"
+      }
+    ],
+    "references": [
+      [
+        "TanStack Query：查询键",
+        "https://tanstack.com/query/latest/docs/framework/react/guides/query-keys"
+      ],
+      [
+        "Pinia：介绍",
+        "https://pinia.vuejs.org/introduction.html"
+      ],
+      [
+        "Nuxt：useAsyncData",
+        "https://nuxt.com/docs/api/composables/use-async-data"
+      ],
+      [
+        "SvelteKit：加载数据",
+        "https://svelte.dev/docs/kit/load"
+      ]
+    ],
+    "diagram": "diagrams/fe-ecosystem-slot-tradeoffs.svg"
+  },
   "fe-react-framework-first": {
     "core": "React 文档推荐新项目使用已集成路由、数据获取和打包的框架。页面上列出的是 Next.js 的 App Router，以及可与 Vite 搭配的 React Router 框架模式，创建命令分别是 create-next-app 和 create-react-router。Create React App 已经日落，见 `retired-frontend-stack`。服务端组件和客户端组件的边界见 `react-rsc-vs-client`。loader 只在数据模式和框架模式里、于渲染前执行，见 `rr-mode-gates-data`、`react-router-loader`。用 Vite 从零组装是允许的，文档同时写明你要自己选定路由和数据获取，那相当于自建框架。原生方向文档把 Expo 和这两个 Web 框架并列，视图模型仍是 React Native，见 `rn-view-not-div`。",
-    "why": "把「能打开开发服务器」当成选型结束。下一周补路由、再下一周补服务端数据，仓库里出现第二套路由和手写的请求缓存，文档里的框架本来已经带了这些职责位。",
+    "why": "把「能打开开发服务器」当成选型结束。下一周补路由、再下一周补服务端数据，仓库里出现第二套路由和手写的请求缓存，文档里的框架本来已经带了路由和数据获取。",
     "example": "新全栈页优先官方框架脚手架：\n\n```bash\nnpx create-next-app@latest\n# 或 create-react-router 框架模式\n# 不要先空 Vite + 自拼 SSR/路由\n```",
-    "task": "写出本次的创建命令。若命令是 Vite 模板，在旁边写上路由库和数据获取各一个名字。若命令是文档列出的框架，这两个职责位写「框架自带」。",
-    "answer": "新项目的创建命令来自 React 文档列出的框架，或明确写成 Vite 自建并补上路由和数据两个职责位。Create React App 不再是起点。原生界面另走 Expo 所接的 React Native 视图，不把 Web 框架当成手机运行时。",
+    "task": "写出本次的创建命令。若命令是 Vite 模板，在旁边写上路由库和数据获取各一个名字。若命令是文档列出的框架，这两项写「框架自带」。",
+    "answer": "新项目的创建命令来自 React 文档列出的框架，或明确写成 Vite 自建并补上路由库和数据获取库。Create React App 不再是起点。原生界面另走 Expo 所接的 React Native 视图，不把 Web 框架当成手机运行时。",
     "deep": [
       {
         "title": "框架模式和组件路由",
@@ -5445,7 +6633,7 @@
       },
       {
         "title": "怎样自己验证",
-        "body": "看 package.json 的创建痕迹和依赖。存在 next 或框架模式的 React Router 插件时，路由职责位算框架自带。只有 react 和 react-dom 时，列出你另外选定的那一个路由库。"
+        "body": "看 package.json 的创建痕迹和依赖。存在 next 或框架模式的 React Router 插件时，路由算框架自带。只有 react 和 react-dom 时，列出你另外选定的那一个路由库。"
       }
     ],
     "references": [
@@ -5464,15 +6652,19 @@
     ]
   },
   "fe-vue-official-slots": {
-    "core": "官方脚手架 **create-vue**（Vue 3）基于 Vite。创建时可选 Vue Router、Pinia、Vitest 和端到端测试。迁移说明里的现行默认是：构建用 Vite，Vue CLI 只维护旧项目；跨页状态用 Pinia，Vuex 只维护已有仓库，见 `pinia-not-vuex`；编辑器用 Vue 官方扩展。需要文件路由、服务端渲染和把数据放进首屏 HTML 时用 Nuxt，取数走 useFetch 或 useAsyncData，见 `nuxt-payload`。Nuxt 默认用 Vite，不再附带 Vuex。页面级路由在 SPA 里是 Vue Router，不要再平行装一个 history 库去管同一批 URL。",
+    "core": "构建、路由、跨页状态各留一个库。官方脚手架 **create-vue**（Vue 3）基于 Vite。创建时可选 Vue Router、Pinia、Vitest 和端到端测试。迁移说明里的现行默认是：构建用 Vite，Vue CLI 只维护旧项目；跨页状态用 Pinia，Vuex 只维护已有仓库，见 `pinia-not-vuex`；编辑器用 Vue 官方扩展。需要文件路由、服务端渲染和把数据放进首屏 HTML 时用 Nuxt，取数走 useFetch 或 useAsyncData，见 `nuxt-payload`。Nuxt 默认用 Vite，不再附带 Vuex。页面级路由在 SPA 里是 Vue Router，不要再平行装一个 history 库去管同一批 URL。",
     "why": "三套构建和两套 store 同时在依赖里，热更新走的是哪一条、退出登录该清哪一份状态，都要对着两份文档。新项目按脚手架的选项各留一个，旧项目才保留 Vuex 或 Vue CLI。",
     "example": "后台用官方 create-vue；内容站用 Nuxt：\n\n```bash\nnpm create vue@latest   # 勾 Router + Pinia\nnpx nuxi@latest init    # 文章站看源码正文\n```",
-    "task": "打开创建选项或 package.json，列出构建、路由、跨页状态各一个包名。出现 vuex 或 @vue/cli 时，写明这是旧仓库保留，还是这次误加的第二职责位。",
+    "task": "打开创建选项或 package.json，列出构建、路由、跨页状态各一个包名。出现 vuex 或 @vue/cli 时，写明这是旧仓库保留，还是这次误加的第二个库。",
     "answer": "新的 Vue 单页应用用 Vite、Vue Router 和 Pinia。要服务端 HTML 时换 Nuxt，仍然用 Pinia，数据进 payload。Vuex 和 Vue CLI 只留在已经使用它们的仓库。同一批 URL 只交给一个路由实现。",
     "deep": [
       {
+        "title": "各留一个库",
+        "body": "构建、路由、跨页状态各留一个库。同一职责写了两个包名，就是第二个库。"
+      },
+      {
         "title": "和机制课的分工",
-        "body": "路由复用、守卫和 Pinia 的 storeToRefs 在 Vue 与 Vue 生态那两章。这里只决定职责位留谁。选定 Pinia 之后，不要为了「更简单」再导出一份 reactive({}) 当第二份全局会话。"
+        "body": "路由复用、守卫和 Pinia 的 storeToRefs 在 Vue 与 Vue 生态那两章。这里只决定各留哪一个库。选定 Pinia 之后，不要为了「更简单」再导出一份 reactive({}) 当第二份全局会话。"
       },
       {
         "title": "怎样自己验证",
@@ -5496,15 +6688,19 @@
     "diagram": "diagrams/fe-ecosystem-slots.svg"
   },
   "fe-angular-first-party": {
-    "core": "**Angular v21** 起，新应用默认采用无 Zone 的变更检测，引导配置里不要再用 provideZoneChangeDetection 把它改回去。模板读取的信号更新、markForCheck、组件输入和模板事件会安排检查。信号用 signal、computed 和 effect 描述状态和派生。HttpClient 从 v21 起默认可注入；更早的工程用 provideHttpClient，而不是再引入已不推荐的 HttpClientModule 当现行写法。路由用 provideRouter 和 RouterOutlet。表单是应用主体时用响应式表单，模型放在组件类里。这些包都在 @angular 下。输入钩子何时触发见 `angular-ngonchanges-primitives`。已有工程可以仍带着 zone.js，那是迁移状态，不是新项目的默认。",
+    "core": "**Angular v21** 起，新应用默认采用无 Zone 的变更检测（不用 zone.js 扫整棵树，改由信号安排检查），引导配置里不要再用 provideZoneChangeDetection 把它改回去。模板读取的信号更新、markForCheck、组件输入和模板事件会安排检查。信号用 signal、computed 和 effect 描述状态和派生。HttpClient 从 v21 起默认可注入；更早的工程用 provideHttpClient，而不是再引入已不推荐的 HttpClientModule 当现行写法。路由用 provideRouter 和 RouterOutlet。表单是应用主体时用响应式表单，模型放在组件类里。这些包都在 @angular 下。输入钩子何时触发见 `angular-ngonchanges-primitives`。已有工程可以仍带着 zone.js，那是迁移状态，不是新项目的默认。",
     "why": "把 React 生态的请求缓存和路由再装一份之后，同一次跳转既走 Angular Router 又走另一个 history，列表既在 HttpClient 的流里又在第二份缓存里。取消订阅和刷新列表会对不上。",
     "example": "对照本课断言，先写出最小可观察片段：\n\n```js\n// Angular 的路由、HTTP 和表单用自己的包（v21）\n```",
     "task": "在新工程的依赖里确认路由、HTTP、表单都来自 @angular。若 zone.js 还在，写明这是 v21 之前的工程还是有意覆盖了默认。",
     "answer": "新应用保持无 Zone 默认，状态用信号，请求用 HttpClient，地址用 provideRouter，复杂表单用响应式表单。不要把 React 的路由和请求库当成 Angular 的对应生态。旧工程里的 Zone 是待迁移项。",
     "deep": [
       {
+        "title": "无 Zone 指什么",
+        "body": "旧默认靠 zone.js 包住异步，再扫整棵树做变更检测。v21 新应用默认不装这条路径，模板读到的信号变化、输入和事件会安排检查。"
+      },
+      {
         "title": "Observable 要有订阅者",
-        "body": "HttpClient 的方法返回冷 Observable，订阅才发出请求，同一 Observable 订阅两次会请求两次。选 Angular 的数据职责位，就要按这个时机处理取消和重复，而不是再包一层只认 hook 的缓存库。"
+        "body": "HttpClient 的方法返回冷 Observable，订阅才发出请求，同一 Observable 订阅两次会请求两次。选 Angular 的 HttpClient，就要按这个时机处理取消和重复，而不是再包一层只认 hook 的缓存库。"
       },
       {
         "title": "怎样自己验证",
@@ -5554,15 +6750,19 @@
     ]
   },
   "fe-ecosystem-follows-model": {
-    "core": "更新模型决定后面四个职责位跟谁：应用框架、路由、只存在于客户端的共享状态、服务端列表的缓存。React 新项目是 Next.js 或 React Router 框架模式，路由不要再配第二个；客户端会话才考虑 Redux Toolkit，列表缓存用 Query 或框架加载器，见 `fe-react-one-slot`。Vue 新项目是 Vite、Vue Router、Pinia，要首屏 HTML 时换 Nuxt，见 `fe-vue-official-slots`。Angular 的路由、HTTP、表单都在 @angular 下，见 `fe-angular-first-party`。Svelte 应用是 SvelteKit，状态用 runes，见 `fe-sveltekit-runes`。四个模型可以各做一张订单表，但同一张表不要从四套文档里各抄一个库。跨端运行时另算一笔，见 `fe-cross-end-one-runtime`。",
+    "core": "选定的界面库决定后面四项跟谁：应用框架、路由、只存在于客户端的共享状态、服务端列表的缓存。这四项各留一个库。**同一套里**路由用 loader 还是 Query、Pinia 还是页面请求，见取舍总表 `fe-ecosystem-slot-tradeoffs`；元框架怎么选见 `fe-meta-framework-tradeoffs`。React 新项目是 Next.js 或 React Router 框架模式，路由不要再配第二个；客户端会话才考虑 Redux Toolkit，列表缓存用 Query 或框架加载器，见 `fe-react-one-slot`。Vue 新项目是 Vite、Vue Router、Pinia，要首屏 HTML 时换 Nuxt，见 `fe-vue-official-slots`。Angular 的路由、HTTP、表单都在 @angular 下，见 `fe-angular-first-party`。Svelte 应用是 SvelteKit，状态用 runes，见 `fe-sveltekit-runes`。四套界面库可以各做一张订单表，但同一张表不要从四套文档里各抄一个库。跨端运行时另算一笔，见 `fe-cross-end-one-runtime`。",
     "why": "按热度把各生态的明星库装齐。同一次跳转既改 history 又走 Vue Router，列表既在 Pinia 又在 Query 里。线上少画一次时，没有一份文档能同时解释这两套通知。",
-    "example": "对照本课断言，先写出最小可观察片段：\n\n```js\n// 选定更新模型之后，生态跟着这一套走\n```",
-    "task": "写出这次留下的更新模型，再填四格：应用框架、路由、客户端共享状态、服务端列表。每格一个名字。出现另一模型的包名时划掉。",
+    "example": "对照本课断言，先写出最小可观察片段：\n\n```js\n// 选定界面库之后，生态跟着这一套走\n```",
+    "task": "写出这次留下的界面库，再填四格：应用框架、路由、客户端共享状态、服务端列表。每格一个名字。出现另一套框架的包名时划掉。",
     "answer": "这次留下 Vue。四格：应用框架 Vite（要首屏 HTML 时换 Nuxt）；路由 Vue Router；客户端共享状态 Pinia；服务端列表用该模型的加载器或查询库。出现 React Router、Redux、@tanstack/react-query、@angular/router 时划掉。",
     "deep": [
       {
         "title": "官方入口不是热度榜",
         "body": "Vue 的跨页状态官方入口是 Pinia，不是仓库里 star 更多的那一个 React 状态库。Angular 的请求入口是 HttpClient，不是把 React Query 的钩子抄进独立组件。SvelteKit 的页面数据入口是 load，不是再引入一个只会在 React 树里工作的缓存。"
+      },
+      {
+        "title": "同一套里怎么选",
+        "body": "「跟这一套走」只锁定家族。Query 与 loader、Pinia 与 useAsyncData 的取舍口诀见 `fe-ecosystem-slot-tradeoffs`。决策总顺序见 `fe-pick-decision-order`。"
       },
       {
         "title": "怎样自己验证",
@@ -5586,15 +6786,15 @@
     "diagram": "diagrams/fe-ecosystem-map.svg"
   },
   "fe-react-one-slot": {
-    "core": "职责位按职责拆开。应用框架占用「路由 + 打包 + 数据入口」时，不要再装第二个路由。自建时文档建议的路由是 React Router 或 TanStack Router，二选一，加载器见 `react-router-loader`。服务端列表的缓存用 TanStack Query：它保存的是请求结果，组件里调用的仍然是你的请求函数，见 `query-cache-not-http-client`、`query-fn-calls-the-client`。多个页面共享、而且只存在于客户端的会话，才考虑 Redux Toolkit，见 `redux-rtk-today`。同一份订单列表不要既进 Query 又进 slice。主题、弹层、列表、购物车各住哪里，见 `state-kind-picks-home`。样式同样只留一条进入组件的路径。测试断言用 Testing Library 的角色查询，见 `react-enzyme-not-default`。",
+    "core": "应用框架占用「路由 + 打包 + 数据入口」时，不要再装第二个路由。自建时文档建议的路由是 React Router 或 TanStack Router，二选一，加载器见 `react-router-loader`。服务端列表的缓存用 TanStack Query：它保存的是请求结果，组件里调用的仍然是你的请求函数，见 `query-cache-not-http-client`、`query-fn-calls-the-client`。多个页面共享、而且只存在于客户端的会话，才考虑 Redux Toolkit，见 `redux-rtk-today`。同一份订单列表不要既进 Query 又进 slice。主题、弹层、列表、购物车各住哪里，见 `state-kind-picks-home`。样式同样只留一条进入组件的路径。测试断言用 Testing Library 的角色查询，见 `react-enzyme-not-default`。",
     "why": "每个热门库都装上之后，失效订单列表要记两个 API，路由参数有两套钩子。新人无法从目录判断该改哪一个文件。",
     "example": "框架管路由与服务器数据；浏览器复用 GET 用 Query：\n\n```tsx\n// Next / RR 框架：loader 或 server 取首屏\nuseQuery({ queryKey: [\"orders\", status], queryFn })\n```",
     "task": "画五格：应用框架、路由、服务端缓存、客户端全局状态、样式。每格一个名字或「不需要」。两格写了同一个职责时删到一格。",
-    "answer": "框架自带的路由不要再配第二个路由库。服务端列表留在 Query 或路由加载器。Redux Toolkit 只放客户端共享状态。样式和测试各一条路径。同一份服务器数据只有一个缓存主人，见 `fe-server-state-one-owner`。",
+    "answer": "框架自带的路由不要再配第二个路由库。服务端列表留在 Query 或路由加载器。Redux Toolkit 只放客户端共享状态。样式和测试各一条路径。同一份服务器数据只放在一个地方，见 `fe-server-state-one-owner`。",
     "deep": [
       {
-        "title": "RTK Query 也占数据槽",
-        "body": "Toolkit 可以带 RTK Query。它和 TanStack Query 都是服务端缓存。选定一个作为列表的主人。两个都装上时，失效和重试策略会各写一遍。"
+        "title": "RTK Query 也是服务端缓存",
+        "body": "Toolkit 可以带 RTK Query。它和 TanStack Query 都是服务端缓存。选定一个来放列表。两个都装上时，失效和重试策略会各写一遍。"
       },
       {
         "title": "怎样自己验证",
@@ -5617,12 +6817,16 @@
     ]
   },
   "fe-vue-data-one-slot": {
-    "core": "Vue 单页应用里，只用一次、离开就丢的列表可以放在页面里请求。需要文件路由和首屏 HTML 时，Nuxt 用 useAsyncData 或 useFetch 把结果放进 payload，水合时不再打同一枪，见 `nuxt-payload`。Pinia 是客户端还要继续改、并且多个页面一起读的状态，官方推荐取代 Vuex，见 `pinia-not-vuex`、`fe-vue-official-slots`。同一份 GET 列表不要在 onSuccess 里再写入 store。TanStack Vue Query 也可以做服务端缓存，它和 useAsyncData 不要同时当表格的主人。筛选条件变了，键或 watch 的来源要变。",
+    "core": "Vue 单页应用里，只用一次、离开就丢的列表可以放在页面里请求。需要文件路由和首屏 HTML 时，Nuxt 用 useAsyncData 或 useFetch 把结果放进 payload（随首屏 HTML 交给浏览器的那份数据），水合时不再打同一枪，见 `nuxt-payload`。Pinia 是客户端还要继续改、并且多个页面一起读的状态，官方推荐取代 Vuex，见 `pinia-not-vuex`、`fe-vue-official-slots`。同一份 GET 列表不要在 onSuccess 里再写入 store。TanStack Vue Query 也可以做服务端缓存，它和 useAsyncData 不要同时给同一张表供数。筛选条件变了，键或 watch 的来源要变。",
     "why": "为了「全局都能读」把 payload 再抄进 Pinia。刷新只清了 useAsyncData，模板绑的是 store 里的数组。网络面板里新响应已经回来，格子上仍是上一份。",
     "example": "Nuxt/页面数据用 useAsyncData 一个钥匙：\n\n```ts\nconst { data } = await useAsyncData(\n  \"orders-\" + status,\n  () => $fetch(\"/api/orders\", { query: { status } }),\n)\n```",
     "task": "找到表格绑定。若同时出现 useAsyncData 或 useFetch，以及 Pinia 里的同一数组，删掉 store 那一份，改筛选后确认第一行属于新参数。",
-    "answer": "Nuxt 页的列表主人是 useAsyncData 或 useFetch。Pinia 不保存同一份 GET 结果。单页应用同样只留一个请求缓存。Vue Query 和 useAsyncData 只选一个当主人。",
+    "answer": "Nuxt 页的列表放在 useAsyncData 或 useFetch。Pinia 不保存同一份 GET 结果。单页应用同样只留一个请求缓存。Vue Query 和 useAsyncData 只选一个。",
     "deep": [
+      {
+        "title": "payload 是什么",
+        "body": "payload 是 Nuxt 随首屏 HTML 交给浏览器的那份数据。useAsyncData 的结果写在这里，打开源码或水合时就能读到，不必为同一枪再请求一次。"
+      },
       {
         "title": "键和筛选在一起",
         "body": "useAsyncData 的第一个参数是去重键。筛选变了，键要跟着变，或者把筛选放进 watch。键不变时，换了查询参数仍可能拿到上一份 payload。"
@@ -5648,7 +6852,7 @@
     ]
   },
   "fe-angular-resource-not-ngrx": {
-    "core": "Angular v21 新应用默认无 Zone，状态用信号，路由用 provideRouter，见 `fe-angular-first-party`。读列表时走 HttpClient 这一路：订阅返回的 Observable，或用文档里已标成开发者稳定的 httpResource，把请求结果暴露成信号。httpResource 会在依赖的信号变化时发新请求，未完成的旧请求会被取消；它会立刻发出请求，和「订阅才发出」的 HttpClient 方法不同。改服务端数据的 POST、PUT 仍用 HttpClient，文档写明不要用 httpResource 做变更。NgRx 是独立的状态库，不是 @angular 下的默认职责位。多处都要改、规则已经复杂的客户端状态，才考虑另选一个状态库。不要把 @tanstack/react-query 装进这个工程。",
+    "core": "Angular v21 新应用默认无 Zone（不用 zone.js 扫整棵树），状态用信号，路由用 provideRouter，见 `fe-angular-first-party`。读列表时走 HttpClient 这一路：订阅返回的 Observable，或用文档里已标成开发者稳定的 httpResource，把请求结果暴露成信号。httpResource 会在依赖的信号变化时发新请求，未完成的旧请求会被取消；它会立刻发出请求，和「订阅才发出」的 HttpClient 方法不同。改服务端数据的 POST、PUT 仍用 HttpClient，文档写明不要用 httpResource 做变更。NgRx 是独立的状态库，不是 @angular 下的默认库。多处都要改、规则已经复杂的客户端状态，才考虑另选一个状态库。不要把 @tanstack/react-query 装进这个工程。",
     "why": "把 React 生态的缓存和 NgRx 一起当作 Angular 的标配。同一份订单既在 Store 里，又在 httpResource 的 value 里。失效只打了其中一个 API，表格读的是另一个。",
     "example": "对照本课断言，先写出最小可观察片段：\n\n```js\n// Angular 的 GET 用 HttpClient 这一路，不必先装 NgRx\n```",
     "task": "新建订单页：GET 只走 HttpClient 或 httpResource。确认没有为这一页添加 Store。提交用 HttpClient。再搜索 react-query，新路径上应当没有。",
@@ -5711,11 +6915,42 @@
     ],
     "diagram": "diagrams/fe-svelte-load.svg"
   },
+  "fe-server-state-one-owner": {
+    "core": "GET 回来的列表是服务端状态。它只放在一个地方：Query 的 queryKey、路由加载器、Nuxt 的 useAsyncData、Angular 服务里的那一次流，或仅属于当前页的组件状态。Pinia 和 Redux 放的是客户端还要继续改、并且多个页面一起读的数据，见 `pinia-not-vuex`。把同一列表再提交进 store，失效时只清了请求库，store 里仍是旧数组，界面继续读旧的那份。这一处负责键：筛选条件变了，键要变，否则会把上一页的结果留在下一页。",
+    "why": "为了「保险」写两份缓存。刷新按钮清掉其中一份，绑定在模板上的是另一份。用户看到的仍是旧订单，网络面板里新响应已经回来了。",
+    "example": "列表只放一处服务器状态，不要再抄进 Redux：\n\n```ts\nuseQuery({ queryKey: [\"orders\", status], queryFn: fetchOrders })\n// 不要再 setOrders 进全局 store 当第二真相源\n```",
+    "task": "找到表格的数据表达式，向上追到唯一的赋值点。若还有第二处把同一响应写进全局 store，删掉第二处，再改筛选条件确认不会留下上一份列表。",
+    "answer": "表格只读一个缓存。键包含会改变结果的参数。全局 store 不复制这份服务端列表。刷新和失效只调用这一处的那一个 API。",
+    "deep": [
+      {
+        "title": "页面里的状态也算这一处",
+        "body": "只用一次、离开就丢的列表可以留在组件里，不必先升级成 Query 或 Pinia。它一旦被复制到全局，就变成两处。升级时是搬走，不是再抄一份。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "改筛选后看网络请求的查询参数，以及表格第一行。第一行必须属于新参数。若第一行仍是旧数据，说明绑定读的是没有跟着键失效的那一份。"
+      }
+    ],
+    "references": [
+      [
+        "TanStack Query：查询键",
+        "https://tanstack.com/query/latest/docs/framework/react/guides/query-keys"
+      ],
+      [
+        "Pinia：介绍",
+        "https://pinia.vuejs.org/introduction.html"
+      ],
+      [
+        "Nuxt：数据获取",
+        "https://nuxt.com/docs/getting-started/data-fetching"
+      ]
+    ]
+  },
   "fe-cross-end-one-runtime": {
-    "core": "运行时决定组件最后画到什么上。浏览器应用画到 DOM，用前面选定的 Web 框架。小程序要在逻辑层和视图层之间交数据：uni-app 改的是 Vue 数据，Taro 把模拟树 setData 到模板，两边的页面清单和钩子不能互换，见 `taro-and-uniapp-layers`。要编成 Android 原生语言的新工程是 uni-app x，页面是 uvue，不能把旧的 .vue 直接混进去，见 `uniapp-x-uts-not-vue-page`。没有 DOM 时再分宿主：像素自己画、用 Dart 和 Widget，选 Flutter，路由见 `flutter-gorouter-not-named`；要系统控件，选 React Native 的 View、Text 和 Pressable，见 `rn-view-not-div`、`rn-pressable-not-click`。React 文档把 Expo 列为原生应用的推荐框架，它接的仍是 React Native 的视图。四套各自的宿主见 `cross-four-where-it-fits`。一个产品面只留一个运行时。营销页和小程序可以是两个仓库。",
+    "core": "运行时决定组件最后画到什么上。浏览器应用画到 DOM，用前面选定的 Web 框架。小程序要在逻辑层和视图层之间交数据：uni-app 改的是 Vue 数据，Taro 把模拟树 setData 到模板，两边的页面清单和钩子不能互换，见 `taro-and-uniapp-layers`。**小程序栈取舍**：团队已会 Vue 时偏 uni-app；已会 React 时偏 Taro；只留其中一个，不要两个脚手架并行。要编成 Android 原生语言的新工程是 uni-app x，页面是 uvue，不能把旧的 .vue 直接混进去，见 `uniapp-x-uts-not-vue-page`。没有 DOM 时再分宿主：像素自己画、用 Dart 和 Widget，选 Flutter（适合强一致自绘 UI，代价是要学 Dart/Widget，路由见 `flutter-gorouter-not-named`）；要系统控件与 React 技能复用，选 React Native 的 View、Text 和 Pressable（适合贴系统观感，代价是两端仍有平台差），见 `rn-view-not-div`、`rn-pressable-not-click`。React 文档把 Expo 列为原生应用的推荐框架，它接的仍是 React Native 的视图。四套各自的宿主见 `cross-four-where-it-fits`。一个产品面只留一个运行时。营销页和小程序可以是两个仓库。",
     "why": "用条件编译把三套运行时缝进一个组件。网页上的 div、小程序的 view 和原生 View 在同一个文件里各写一支，布局和事件只要改一处就会漏端。",
     "example": "对照本课断言，先写出最小可观察片段：\n\n```js\n// 跨端先选定一个运行时\n```",
-    "task": "列出这次要上的端。每个端写下运行时和页面登记文件。超过一个运行时时，拆成多个工程，或写明只有一个编译目标、其余端本次不做。",
+    "task": "列出这次要上的端。每个端写下运行时和页面登记文件，并写一句适合/代价。超过一个运行时时，拆成多个工程，或写明只有一个编译目标、其余端本次不做。",
     "answer": "浏览器、小程序、自绘 App、系统视图各用自己的运行时。小程序只留 uni-app 或 Taro 其中一个。自绘留 Flutter，系统控件留 React Native。uni-app x 是另一套工程。不要把 DOM 组件编译进后面三种。",
     "deep": [
       {
@@ -5723,8 +6958,34 @@
         "body": "uni-app 或 Taro 能把同一套页面编译到多个小程序端和 H5，条件编译在出包前裁剪。这仍然是一个运行时家族。它不自动获得 React Native 的原生视图，也不把浏览器的 document 带进小程序。"
       },
       {
+        "title": "和决策顺序",
+        "body": "跨端是目标端里的手机/小程序格，仍要先写「本次做不做」，再选运行时，见 `fe-pick-decision-order`。"
+      },
+      {
         "title": "怎样自己验证",
         "body": "在选定工程里搜索 document. 和 <div。小程序或 React Native 的源码路径上不应依赖它们。页面打不开时先看该运行时的页面清单，而不是先看另一端的路由表。"
+      }
+    ],
+    "map": [
+      {
+        "title": "Web SPA / 元框架",
+        "body": "画到 DOM；首屏正文见元框架对照课"
+      },
+      {
+        "title": "uni-app",
+        "body": "适合 Vue 栈多小程序；不是 RN 原生视图"
+      },
+      {
+        "title": "Taro",
+        "body": "适合 React 栈多小程序；与 uni-app 二选一"
+      },
+      {
+        "title": "Flutter",
+        "body": "自绘一致 UI；要学 Dart，不是 HTML"
+      },
+      {
+        "title": "React Native / Expo",
+        "body": "系统控件 + React 技能；两端仍有平台差"
       }
     ],
     "references": [
@@ -5744,11 +7005,11 @@
     "diagram": "diagrams/fe-cross-end-runtime.svg"
   },
   "fe-expo-router-one-nav": {
-    "core": "React Native 核心包不带导航。React 文档把 Expo 列为原生应用的推荐框架，视图仍是 View 和 Text，见 `rn-view-not-div`。Expo 文档写明：新项目在 Expo 里一般在 React Navigation 和 Expo Router 里选一个。create-expo-app 的现行模板默认带上 Expo Router，按 app 目录生成路由，并接好深链和打包。Expo Router 建立在 React Navigation 之上，但应用代码里只应有一个地址主人。不用 Expo 的仓库，才直接用 React Navigation；react-native 文档也把 React Navigation 当作入门导航。navigate 已经停在该屏时不会再压栈，见 `rn-navigate-not-push`。不要把 Next.js 或 Vue Router 当成原生路由。",
+    "core": "React Native 核心包不带导航。React 文档把 Expo 列为原生应用的推荐框架，视图仍是 View 和 Text，见 `rn-view-not-div`。Expo 文档写明：新项目在 Expo 里一般在 React Navigation 和 Expo Router 里选一个。create-expo-app 的现行模板默认带上 Expo Router，按 app 目录生成路由，并接好深链和打包。Expo Router 建立在 React Navigation 之上，但应用代码里只应有一个导航入口。不用 Expo 的仓库，才直接用 React Navigation；react-native 文档也把 React Navigation 当作入门导航。navigate 已经停在该屏时不会再压栈，见 `rn-navigate-not-push`。不要把 Next.js 或 Vue Router 当成原生路由。",
     "why": "模板已经用文件生成路由，又在根组件里再挂一个 NavigationContainer。一次点击走了两套栈，返回键回到的不是用户以为的上一屏。",
     "example": "Expo Router 文件即路由：\n\n```bash\nnpx create-expo-app\n# app/orders/[id].tsx → 路径 /orders/:id\n# 跳转用 router.push，不要再挂第二套导航库\n```",
     "task": "看入口是 Expo Router 的 app 目录，还是自己写的导航容器。两套都在改 URL 时删掉后加的那一套。确认从列表进详情再返回，停在原来的列表位置。",
-    "answer": "新的 Expo 应用把路由留给 Expo Router。不用 Expo 时才直接用 React Navigation。同一产品不要两个导航容器。Web 框架的路由不是原生职责位。",
+    "answer": "新的 Expo 应用把路由留给 Expo Router。不用 Expo 时才直接用 React Navigation。同一产品不要两个导航容器。Web 框架的路由不是这里的导航库。",
     "deep": [
       {
         "title": "两个库不是互斥的内核",
@@ -5756,7 +7017,7 @@
       },
       {
         "title": "怎样自己验证",
-        "body": "搜索 NavigationContainer 和 app 目录里的 _layout。新功能路径上只应命中一种。从详情返回时，列表滚动位置应还在。出现 Next.js 的 App Router 文件时，那是 Web 工程，不是这个原生职责位。"
+        "body": "搜索 NavigationContainer 和 app 目录里的 _layout。新功能路径上只应命中一种。从详情返回时，列表滚动位置应还在。出现 Next.js 的 App Router 文件时，那是 Web 工程，不是这里的导航库。"
       }
     ],
     "references": [
@@ -5807,39 +7068,8 @@
     ],
     "diagram": "diagrams/fe-flutter-slots.svg"
   },
-  "fe-server-state-one-owner": {
-    "core": "GET 回来的列表是服务端状态。它的缓存主人只能有一个：Query 的 queryKey、路由加载器、Nuxt 的 useAsyncData、Angular 服务里的那一次流，或仅属于当前页的组件状态。Pinia 和 Redux 放的是客户端还要继续改、并且多个页面一起读的数据，见 `pinia-not-vuex`。把同一列表再提交进 store，失效时只清了请求库，store 里仍是旧数组，界面继续读旧的那份。主人负责键：筛选条件变了，键要变，否则会把上一页的结果留在下一页。",
-    "why": "为了「保险」写两份缓存。刷新按钮清掉其中一份，绑定在模板上的是另一份。用户看到的仍是旧订单，网络面板里新响应已经回来了。",
-    "example": "列表只放一处服务器状态，不要再抄进 Redux：\n\n```ts\nuseQuery({ queryKey: [\"orders\", status], queryFn: fetchOrders })\n// 不要再 setOrders 进全局 store 当第二真相源\n```",
-    "task": "找到表格的数据表达式，向上追到唯一的赋值点。若还有第二处把同一响应写进全局 store，删掉第二处，再改筛选条件确认不会留下上一份列表。",
-    "answer": "表格只读一个缓存。键包含会改变结果的参数。全局 store 不复制这份服务端列表。刷新和失效只调用主人的那一个 API。",
-    "deep": [
-      {
-        "title": "页面内状态也算主人",
-        "body": "只用一次、离开就丢的列表可以留在组件里，不必先升级成 Query 或 Pinia。它一旦被复制到全局，就变成两个主人。升级时是搬走，不是再抄一份。"
-      },
-      {
-        "title": "怎样自己验证",
-        "body": "改筛选后看网络请求的查询参数，以及表格第一行。第一行必须属于新参数。若第一行仍是旧数据，说明绑定读的是没有跟着键失效的那一份。"
-      }
-    ],
-    "references": [
-      [
-        "TanStack Query：查询键",
-        "https://tanstack.com/query/latest/docs/framework/react/guides/query-keys"
-      ],
-      [
-        "Pinia：介绍",
-        "https://pinia.vuejs.org/introduction.html"
-      ],
-      [
-        "Nuxt：数据获取",
-        "https://nuxt.com/docs/getting-started/data-fetching"
-      ]
-    ]
-  },
   "mfe-when-to-split": {
-    "core": "微前端解决的是「多个前端应用要能独立构建、独立发布，再在运行时或构建时拼成一个产品」，不是把目录拆成 src/orders 就算完成。动手前先写下三句：谁拥有哪一块页面、谁可以在别人不发版时上线、失败时用户看见什么。若答案是「同一支小队、同一流水线、同一发版窗口」，拆应用只会换来重复依赖、路由打架和联调成本，见 `mfe-not-for-everything`。若答案是「订单组与营销组各有发版节奏，或必须允许不同框架长期并存」，才进入组合方式，见 `mfe-composition-models`。选型课里「同一产品留一套更新模型」仍然成立：微前端是多应用边界，不是在同一按钮里混四套状态库，见 `fe-ecosystem-follows-model`。",
+    "core": "微前端解决的是「多个前端应用要能独立构建、独立发布，再在运行时或构建时拼成一个产品」，不是把目录拆成 src/orders 就算完成。动手前先写下三句：谁拥有哪一块页面、谁可以在别人不发版时上线、失败时用户看见什么。若答案是「同一支小队、同一流水线、同一发版窗口」，拆应用只会换来重复依赖、路由打架和联调成本，见 `mfe-not-for-everything`。若答案是「订单组与营销组各有发版节奏，或必须允许不同框架长期并存」，才进入组合方式，见 `mfe-composition-models`。选型课里「同一产品留一套界面库」仍然成立：微前端是多应用边界，不是在同一按钮里混四套状态库，见 `fe-ecosystem-follows-model`。",
     "why": "把「仓库变大了」当成必须拆壳。拆完之后仍同一次打镜像、同一次回滚，用户却多付了首屏和治理成本。",
     "example": "独立发版与独立回滚才值得拆前端：\n\n```text\n商品组每周发 / 结算组两周一发\n事故要能只回滚结算 → 两个可独立部署前端 + 壳只做登录导航\n```",
     "task": "给手上的产品写三句：谁拥有哪条菜单、谁能单独上线、失败时用户看见什么。三句都指向同一小队同一次发版时，写下「这次不拆」。",
@@ -5936,19 +7166,19 @@
     "diagram": "diagrams/mfe-composition.svg"
   },
   "mfe-pick-by-constraint": {
-    "core": "选型不是先定框架名，而是先写下三条约束。隔离要多强：只要约定 CSS 前缀，还是必须 Shadow / 独立文档。栈是否长期异构：同一 React 大版本可共享，还是 Vue 与 React 要共存多年。谁决定挂载：完全由 URL 前缀驱动，还是弹层、页签由壳状态手动加载。三问写清之后，才对照 mfe-compare-matrix。独立发版仍不成立时，先回到 mfe-not-for-everything，不要为了选型表硬拆。构建时钉版本、运行时 remote、服务端拼 HTML 见 `mfe-composition-models`。",
-    "why": "先按热度装框架，再发现第三方报表必须强隔离、或弹层根本不跟路由走，只好叠第二套加载器。",
-    "example": "约束对齐再选型，不是先选时髦词：\n\n```text\n全员 React 19、菜单=路径 → Module Federation\n多技术栈遗留 → qiankun / iframe\n```",
-    "task": "给当前产品填三格：隔离强度、是否异构、挂载由 URL 还是壳状态。每一格只留一种答案，空着的写「未决」。",
-    "answer": "三格示例：隔离写「约定前缀即可」；异构写「同一 React」；挂载写「URL 前缀」。第三方报表那一格单独写成「独立文档」。未决的格不要先写框架名。",
+    "core": "没有一张表能算出该上哪一个微前端。会议按这三条写事实。\n\n1. 仓库里已有的加载方式先留下。已经用 qiankun 挂子应用，新菜单继续用它。没有人维护过的加载器，不要因为更新或星数就换。\n\n2. 写下现有方式做不到的那一件，而不是三条都打分。做不到「第三方页面必须跑在独立 document 里」，这一块用 iframe 或无界。做不到「多份构建共享同一份 React 单例」，才评估 Module Federation。弹层不跟 URL 走，用现有加载器的手动挂载，见 `mfe-qiankun-html-entry`。做得到的事不要换一套。\n\n3. 主路径只留一个。第二种只写范围，例如「仅报表域 iframe」。对照表写每种方案的主缝，不输出框架名，见 `mfe-compare-matrix`。独立发版仍不成立时，先回到 `mfe-not-for-everything`。\n\n界面库本身怎么留，见 `fe-pick-decision-order`。微前端不负责把 Vue 换成 React。",
+    "why": "按对照表把同栈中台改成 Federation，qiankun 仍在跑菜单，仓库里出现两套挂载。第三方报表的隔离问题没有被这套新壳解决。",
+    "example": "仓库已经是 qiankun，菜单跟路径走：\n\n```text\n已有加载方式：qiankun。不因为 Federation 更新就换。\n做不到的事：第三方报表必须是独立 document。这一块用 iframe。\n不引入 Module Federation。共享同一份 React 单例这件事，现有 HTML 入口做得到，就不加。\n```",
+    "task": "写三行：仓库里已有的加载方式、它做不到的一件事、这一件用什么补。做得到的事不要换加载器。",
+    "answer": "已有的 qiankun 留下。只有独立 document 或它提供不了的模块单例，才另加 iframe 或 Federation，并写上范围。对照表不直接给出框架名。",
     "deep": [
       {
-        "title": "和「技术选型」章的关系",
-        "body": "fe-pick-by-surface 决定交付面；本课决定多应用怎么拼。同一产品面仍应只留一种 UI 更新模型，见 `fe-ui-update-model`。"
+        "title": "和界面库选型的关系",
+        "body": "浏览器里用 Vue 还是 React，见 `fe-pick-decision-order`。本课只决定多个已有应用怎么拼。拼的时候不要顺手把界面库换成另一种。"
       },
       {
         "title": "怎样自己验证",
-        "body": "拿掉框架名后，三格仍能填满才进入对照表。只能说出「别人都用 X」时，先停选型。"
+        "body": "结论里如果出现「因为表上同栈推荐 Federation，所以换掉 qiankun」，就还没写完。做得到的菜单仍应走原来的加载方式。"
       }
     ],
     "references": [
@@ -5963,9 +7193,9 @@
     ]
   },
   "mfe-compare-matrix": {
-    "core": "把常见方案按「主缝」对齐。Module Federation：独立构建在运行时共享模块，适合同栈、要 shared 单例，见 `mfe-mf-host-setup`。single-spa：根配置登记应用与 activeWhen，编排 bootstrap/mount/unmount，加载器可换，见 `mfe-singlespa-register`。qiankun：在 single-spa 模型上强调 HTML entry，路由用 registerMicroApps，按需用 loadMicroApp，见 `mfe-qiankun-html-entry`。无界：Web Component 容器加 iframe 沙箱，startApp 打开子应用，偏强隔离与保活，见 `mfe-wujie-startapp`。iframe：浏览器原生独立文档，通信走 postMessage，见 `mfe-iframe-postmessage`。构建时包或 npm 工作区：发版前钉死，不是运行时容器。一张表里每格只写「主缝」和「不擅长」，不要写成万能评分。",
-    "why": "把五个名字排成先进程度，落地时既要 shared，又要 HTML 入口沙箱，仓库出现两套生命周期。",
-    "example": "按场景对照，不要一张表盖所有：\n\n```text\nReact 中台共享设计系统 → Federation\n已有多 Webpack 应用要渐进 → single-spa\n强隔离报表 → iframe\n```",
+    "core": "这张表只写每种方案的主缝和做不到的事，不能把「同栈」换成 Federation、「要隔离」换成 iframe。仓库里已有的加载方式先留下，见 `mfe-pick-by-constraint`。\n\nModule Federation：运行时共享模块，要 shared 单例时用，见 `mfe-mf-host-setup`。它做不到独立 document。single-spa：登记应用和 activeWhen，编排 bootstrap、mount、unmount，见 `mfe-singlespa-register`。它不自带拉取整页 HTML。qiankun：在这套模型上用 HTML entry，路由用 registerMicroApps，按需用 loadMicroApp，见 `mfe-qiankun-html-entry`。无界：Web Component 加 iframe 沙箱，见 `mfe-wujie-startapp`。iframe：浏览器里的独立文档，通信走 postMessage，见 `mfe-iframe-postmessage`。构建时打进同一个包：发版前钉死版本，壳不发版，子应用也不能单独换。",
+    "why": "把五个名字排成先进程度，落地时既要 shared，又要 HTML 入口，仓库出现两套生命周期。",
+    "example": "已有 qiankun 时，表用来核对它做不到什么，不用来换名字：\n\n```text\nqiankun 做得到：路径激活一整页 HTML。菜单继续用它。\n它做不到：第三方页的独立 document。这一块才写 iframe。\nFederation 的主缝是 shared 单例。这次不需要，就不装。\n```",
     "task": "画出六行对照：Federation、single-spa、qiankun、无界、iframe、构建时包。每行写主缝一句、不适合一句。",
     "answer": "Federation 主缝是运行时模块与 shared；不擅长强文档隔离。single-spa 主缝是生命周期与 activeWhen；不自带 HTML 拉取。qiankun 主缝是 HTML entry；容器要传真实元素。无界主缝是 WebComponent+iframe；不要当成轻量 shared。iframe 主缝是独立文档；通信贵。构建时包主缝是钉版本；壳不发版子应用也不能单独换。",
     "deep": [
@@ -6019,13 +7249,13 @@
   "mfe-pick-one-path": {
     "core": "选型结束要留下唯一主路径，并写明不做项。主路径写：入口文件、子应用怎么被发现、共享依赖谁说了算、失败降级写在哪。不做清单写：不在同一产品再引入第二种运行时容器、不把每个页面拆成 remote、不把第三方页既 Federation 又 iframe。例外必须带删除日期或范围（例如「仅报表域 iframe」）。主路径与契约见 `mfe-contract-version`；独立发布指针见 `mfe-independent-deploy`。",
     "why": "表上五个都「可考虑」，落地五个都开工。联调要记两套 API，故障不知该看 remoteEntry 还是 HTML entry。",
-    "example": "决议写清主路径与例外，避免三套并行：\n\n```text\n中台主路径：Module Federation\n报表子域：iframe\n不新开第三条运行时\n```",
+    "example": "主路径留下已有的加载方式，例外写范围：\n\n```text\n中台主路径：继续 qiankun\n报表子域：iframe，仅这一块\n不新开 Module Federation\n```",
     "task": "写出主路径一句话、不做三项、一个带范围的例外。缺任何一项就标「选型未结束」。",
     "answer": "主路径只留一个运行时容器名。不做项包含第二种容器与过度拆分。例外写清范围或到期日。写不出不做项等于还没选完。",
     "deep": [
       {
         "title": "和发版节奏",
-        "body": "主路径确定后，CI 只认一种产物形态：remoteEntry 或 HTML entry 或 iframe URL，不要三条流水线并行却无主人。"
+        "body": "主路径确定后，CI 只认一种产物形态：remoteEntry 或 HTML entry 或 iframe URL，不要三条流水线并行却没有人负责。"
       },
       {
         "title": "怎样自己验证",
@@ -7216,7 +8446,7 @@
   "node-http-cookie": {
     "core": "Node 的 http 模块接收请求、写出响应头和正文。会话登录应在响应里 Set-Cookie，标 HttpOnly、Secure、SameSite，并在后续请求的 Cookie 头里读回会话标识。JSON 正文里返回可读的访问令牌，等于让浏览器把令牌交给脚本。请求体要限制大小，否则上传或 JSON 会占满内存。未处理的拒绝仍应落到这一次响应，而不是进程退出，这和 unhandled-rejection 课是同一条纪律。Node 可以当 BFF：对浏览器发 Cookie 会话，对上游 Java 服务使用短时服务凭证。",
     "why": "学习者会让登录接口把令牌放进 JSON，再由前端存起来。脚本因此读得到会话，模型和把令牌放进本地存储是同一条路，只是换成了自己写的服务。浏览器登录后请求自动带上 Cookie、脚本却读不到该值，才说明会话留在了浏览器的 Cookie 而不是响应正文。",
-    "example": "对照本课断言，先写出最小可观察片段：\n\n```js\nimport http from 'node:http'\nconst s = http.createServer((req, res) => {\n  res.setHeader('Set-Cookie', 'sid=1; HttpOnly')\n  res.end(\"ok\")\n})\n```",
+    "example": "会话用 HttpOnly Cookie；/me 不从 Authorization 读前端 JWT：\n\n```http\nHTTP/1.1 200\nSet-Cookie: session=...; HttpOnly; Secure; SameSite=Lax\n```\n\n```js\n// GET /me → 解析 Cookie 会话，不是 Authorization Bearer\n```",
     "task": "写一个最小登录和读取当前用户的处理器。用浏览器登录后查看 Cookie 是否 HttpOnly。用脚本读 document.cookie，确认读不到会话值。",
     "answer": "登录成功后，响应应设置 HttpOnly 的会话 Cookie，而不是在 JSON 里给一段让脚本保存的令牌。随后读取当前用户的请求带上这个 Cookie，处理器从 Cookie 读会话。在控制台读 document.cookie 应看不到该会话值。不要再从授权头读取前端自己带来的令牌。",
     "deep": [
@@ -7243,7 +8473,7 @@
   "node-unhandled-rejection": {
     "core": "同步异常若冒泡到事件循环之外，会触发 uncaughtException，默认行为可能结束进程。Promise 拒绝且没有拒绝处理函数时，会触发 unhandledRejection。Node 从 15 起，未处理的拒绝默认导致进程以非零状态退出。请求处理函数应在该请求路径上捕获错误并写回响应。进程级事件只适合记录和决定是否退出，不能代替每一个请求的错误边界。",
     "why": "学习者会把进程退出当成这一次请求的 500。数据库拒绝没人接住时，当前连接没有写回状态码，随后进程以非零状态退出，别的请求一起被掐断。日志里先出现未处理拒绝，而不是一条写好的 500，才说明错误逃出了这条请求。",
-    "example": "对照本课断言，先写出最小可观察片段：\n\n```js\nimport http from 'node:http'\nconst s = http.createServer((req, res) => {\n  res.setHeader('Set-Cookie', 'sid=1; HttpOnly')\n  res.end(\"ok\")\n})\n```",
+    "example": "未捕获的 Promise 拒绝会拖垮进程：\n\n```js\n// 坏：查询失败无 catch → 未处理拒绝、退出码非 0\ntry {\n  await db.query(...)\n} catch (e) {\n  res.status(500).end()\n}\n// 只这条 500；其它请求仍 200\n```",
     "task": "分别在请求处理函数内外抛出同步异常和 Promise 拒绝，记录响应是否写回、进程是否退出。",
     "answer": "在请求函数里捕获同步异常或拒绝时，应只给这一条写回 500，进程保持运行，另一条并发请求仍返回 200。函数外面的同步异常和没人接收的拒绝是进程级事件；后者默认让进程以非零状态退出，其他连接一起中断，没有单独的失败响应。进程事件不能冒充这一条请求的失败响应。",
     "deep": [
@@ -7293,7 +8523,7 @@
   "node-global-fetch": {
     "core": "Node 18+ 提供全局 fetch（Undici）。默认没有浏览器那种“用户关页就停”，也没有无限等你以为的短超时。服务端必须自己设 AbortSignal.timeout 或封装截止时间，并处理连接错误。相对 URL 没有网页基址，必须用绝对地址。Cookie 不会按浏览器同源策略自动带；要当 HTTP 客户端显式设置。它适合出站调用，不代替 IncomingMessage 读入站请求体。",
     "why": "把浏览器里的 fetch(url) 原样放到 Node，慢上游没有页面关闭来取消，等待中的请求会一直占着。区分信号是同一条慢接口，不带 AbortSignal 时进程停在 await，带上很短的 timeout 会抛超时而不是无限挂起。",
-    "example": "对照本课断言，先写出最小可观察片段：\n\n```js\nimport http from 'node:http'\nconst s = http.createServer((req, res) => {\n  res.setHeader('Set-Cookie', 'sid=1; HttpOnly')\n  res.end(\"ok\")\n})\n```",
+    "example": "fetch 要绝对 URL；长时间等待用 AbortSignal：\n\n```js\nawait fetch(url, { signal: AbortSignal.timeout(100) })\n// 无 signal：慢接口可让进程挂在 await\n// 相对地址无网页基址 → 必须绝对 URL\n```",
     "task": "分别不带超时和带 100ms 超时请求一个慢接口。记下 Node 进程是否一直挂起。",
     "answer": "不带超时请求慢接口，预测 Node 进程停在这次 await 上，一直挂起。带 100 毫秒 AbortSignal.timeout 时，预测到点抛超时，进程不必再等上游。地址要用绝对 URL，也不要指望浏览器那套 Cookie 自动带上。",
     "deep": [
@@ -7320,7 +8550,7 @@
   "node-http-close": {
     "core": "HTTP server.close 停止接受新连接，已建立的请求要等它们结束（或再设超时强拆）。只 process.exit 会切断进行中的写。SIGTERM 里应：停止接新流量、关健康检查、等队列清空、再关数据库。keep-alive 连接会让 close 的回调迟迟不来，需要设超时或关闭空闲套接字。这和 Spring 优雅停机是同一件事，只是钩子在 Node 进程上。",
     "why": "滚动发布时直接 process.exit 或 SIGKILL，正在写的响应会被切成半截 JSON。区分信号是同一条慢请求收到 SIGTERM 时，只 exit 的连接中途断开，先 server.close 的那条能把已接受的响应写完。",
-    "example": "对照本课断言，先写出最小可观察片段：\n\n```js\nimport http from 'node:http'\nconst s = http.createServer((req, res) => {\n  res.setHeader('Set-Cookie', 'sid=1; HttpOnly')\n  res.end(\"ok\")\n})\n```",
+    "example": "SIGTERM 先 server.close 排空，再关库退出：\n\n```js\nprocess.on(\"SIGTERM\", () => {\n  server.close(async () => {\n    await db.end()\n    process.exit(0)\n  })\n})\n// 直接 exit → 客户端半截正文\n```",
     "task": "对一个慢接口发请求，期间 SIGTERM。对比只 exit 和先 close 的响应完整性。",
     "answer": "慢接口进行中收到 SIGTERM：只 exit，预测响应写到一半被切断。先 server.close 再退出，预测不再接受新连接，已接受的这条把正文写完。keep-alive 会拖住 close 回调，所以还要有超时，最后再关数据库。半截正文只应出现在直接退出的那一次。",
     "deep": [
@@ -7370,7 +8600,7 @@
   "node-event-loop-phases": {
     "core": "Node 的事件循环分阶段：到期定时器、pending、poll 取 IO、check 跑 setImmediate、close 回调。process.nextTick 和 Promise 微任务穿插在这些阶段之间，能推迟进入下一阶段。setTimeout(0) 进定时器阶段，setImmediate 进 check。在 I/O 回调里，setImmediate 通常更先；在纯启动脚本里，顺序可能反过来。不要用一张浏览器微任务图解释 Node 服务器。",
     "why": "把浏览器和 Node 的队列当成同一张图，日志里 timeout 和 immediate 的先后会对不上，有时还会换序。区分信号是在启动顶层和在 I/O 回调里，两者顺序不一样。换一个注册位置，同一对回调的先后会变。",
-    "example": "对照本课断言，先写出最小可观察片段：\n\n```js\nimport http from 'node:http'\nconst s = http.createServer((req, res) => {\n  res.setHeader('Set-Cookie', 'sid=1; HttpOnly')\n  res.end(\"ok\")\n})\n```",
+    "example": "I/O 回调里 setImmediate 通常先于 setTimeout(0)：\n\n```js\nfs.readFile(path, () => {\n  setTimeout(() => console.log(\"timeout\"), 0)\n  setImmediate(() => console.log(\"immediate\"))\n})\n// 通常 immediate 先；顶层两者顺序不稳定\n// nextTick 插在阶段之间，更早\n```",
     "task": "分别在启动顶层和 IO 回调里跑 timeout 与 immediate，记录两次顺序，对照官方阶段图。",
     "answer": "启动顶层：timeout 和 immediate 的先后预测不稳定，要当场记下来。I/O 回调里：预测 immediate 先于 timeout(0)。对照官方阶段图，定时器在 timers，immediate 在 check，不是同一阶段。nextTick 会插在阶段之间，不要按浏览器那张图排。",
     "deep": [
@@ -7397,7 +8627,7 @@
   "node-libuv-threadpool": {
     "core": "事件循环线程应尽快把回调交回去。dns.lookup、部分 fs、crypto 的 CPU 密集路径会排到 libuv 的线程池，默认大约四条。池满了，这些“异步”调用其实在排队，事件循环看起来空闲，请求却变慢。真正的 CPU 死循环仍会堵住循环本身。耗 CPU 的工作应限制并发、换 worker，或调大 UV_THREADPOOL_SIZE 并测量。不要把所有 async 都理解成“不占线程”。",
     "why": "入口全是 await 的文件和加密，事件循环没被死循环堵住，延迟却随并发上升，因为线程池排满了。区分信号是短的网络回调仍能跑，新的加密要等池里的位置。池排满时加密在等，循环还能处理短回调。",
-    "example": "对照本课断言，先写出最小可观察片段：\n\n```js\nimport http from 'node:http'\nconst s = http.createServer((req, res) => {\n  res.setHeader('Set-Cookie', 'sid=1; HttpOnly')\n  res.end(\"ok\")\n})\n```",
+    "example": "默认线程池排满后 CPU 型异步会排队：\n\n```js\n// 大量 crypto.pbkdf2 → 池满后延迟升\n// 短网络回调仍可被循环处理\n// 同步大计算堵的是循环本身，不是线程池\n```",
     "task": "对照“不要阻塞事件循环”文档，列出走线程池的操作和会堵住循环的操作各两项。",
     "answer": "走线程池的例如某些文件操作和加密。会堵住循环本身的是同步死循环和长时间的纯计算。预测：池耗尽时加密延迟上升，短网络回调仍能执行。死循环则两者都停。不要把池等待说成事件循环被堵死。池等待和循环被堵死，池满时短请求还能返回，死循环则全部停下来。",
     "deep": [
@@ -7470,7 +8700,7 @@
   "node-worker-cluster": {
     "core": "Node 的 JavaScript 默认在一个线程的事件循环上运行。cluster 是多个进程，各自有自己的堆和事件循环，可以共享一个服务器端口。worker_threads 是同一进程里的额外线程，各自有自己的 JavaScript 堆，可以通过转移 ArrayBuffer 或消息传递数据，普通对象不会变成共享内存。两种方式都要明确任务怎么切分。一个进程里的死循环仍然占满它自己的那个线程。",
     "why": "学习者会以为开了多进程，主线程里的大循环就会占满所有核。请求在死循环期间一直没有响应，其他核是空的，于是他再增加进程数，这个循环仍卡在原来的那一个线程上。请求在循环移入工作线程后恢复返回，才说明并行发生在另一条堆和循环上。",
-    "example": "对照本课断言，先写出最小可观察片段：\n\n```js\nimport http from 'node:http'\nconst s = http.createServer((req, res) => {\n  res.setHeader('Set-Cookie', 'sid=1; HttpOnly')\n  res.end(\"ok\")\n})\n```",
+    "example": "主线程死循环堵事件循环；重活丢 Worker：\n\n```js\n// 主线程 while(true) → HTTP 一直挂起\nconst { Worker } = require(\"node:worker_threads\")\nnew Worker(\"./heavy.js\").on(\"message\", send200)\n// cluster 多进程：各进程死循环只堵自己\n```",
     "task": "用一个死循环占住主线程，同时发一个 HTTP 请求，记录它是否被堵住；再把死循环放进 Worker，比较请求是否还能返回。",
     "answer": "死循环放在主线程时，同时发出的 HTTP 请求被堵住，因为同步代码占住了这一个事件循环。把死循环放进工作线程后，请求可以返回，结果靠消息或转移的内存回来。多进程是各自的堆和循环，不会让同一个循环里的同步代码跑到多个核上。同一个事件循环里的死循环不会因为多进程而让出请求。",
     "deep": [

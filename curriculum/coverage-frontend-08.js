@@ -3,7 +3,8 @@ const COVERAGE_FRONTEND_08 = [
   {
     track:'frontend', group:'Vue', id:'vue-design-goals-proxy',
     title:'更小更快：落到编译提示与惰性深层代理',
-    prompt:'为什么把 Vue 3 说成“更小更快更友好，而且 Proxy 监听整个对象所以完全不用管深层”不够准确？',
+    prompt:'为什么「Vue 3 更小更快，而且 Proxy 监听整个对象所以完全不用管深层」不够准确？',
+    promptAnswer:'未访问的嵌套对象不会立刻变成代理。体积、更新和首屏要分开看，不能收成一句更快。',
     core:'资料里的「更小更快更友好」是概括，不是可单独背诵的官方版本口号。体积与更新成本要落到可核对的机制：编译期静态节点缓存、补丁标记、块级树扁平化，以及按需具名导入带来的裁剪机会。vuejs/core 以 monorepo 维护，packages 按功能拆分，reactivity 等包可以脱离完整运行时单独使用，这一点与仓库结构一致。响应式对象用 Proxy 拦截属性读写；深层嵌套不会在 reactive() 时无脑走完整棵树，而是在属性被读取时追踪依赖，嵌套对象在被访问时再变成代理。因此「不必初始化深度遍历」成立，但业务仍会在实际访问路径上建立深层代理，也不能把原始对象上的写入当成已追踪。',
     why:'误以为更小更快，并且 Proxy 会在创建时监听整棵树。未使用的具名 API 仍可能留在包里，直接改原始嵌套对象也等不到更新。区分信号是嵌套代理出现在首次读取时，而不是调用返回的那一刻。',
     example:'const state = reactive({ nested: { n: 1 } })；首次读 state.nested.n 才让 nested 进入代理路径。直接改原始对象上的同名结构不会触发依赖。体积对比应看生产构建与未使用 API 是否仍在产物中，而不是只背“更小”。',
@@ -21,7 +22,8 @@ const COVERAGE_FRONTEND_08 = [
   {
     track:'frontend', group:'Vue', id:'vue-defineproperty-proxy',
     title:'Proxy 取代 defineProperty，仍要拦在代理上',
-    prompt:'为什么“Proxy 能监听整个对象，所以比 defineProperty 全面更强，手写一个 Proxy 就等于 Vue 响应式”说不清边界？',
+    prompt:'为什么「Proxy 能监听整个对象，所以比 defineProperty 全面更强，手写一个就等于 Vue 响应式」说不清？',
+    promptAnswer:'Proxy 只解决拦截面。响应式还要读写走代理、深层按需代理，以及真正的依赖订阅。',
     core:'Vue 2 时代用 Object.defineProperty 给已有属性装 getter/setter，是受当时浏览器能力约束；对对象后来才新增的属性、删除，以及数组下标与 length，都需要额外手段。Vue 3 对响应式对象改用 Proxy，可以拦截 get、set、deleteProperty、has 等操作，因此新增、删除和许多数组变更可以走同一套陷阱；ref 仍然用 getter/setter 持有 .value。Proxy 拦截的是代理对象上的操作：改原始对象、或把属性解构成普通变量后读写，都不会进入陷阱。深层对象仍要在被访问时再代理，手写只打日志的 get/set 也没有依赖收集与触发更新。null 不能做 Proxy 目标、以及 raw.push 不证明数组已被拦截，已在既有课里单独说明。',
     why:'误以为换上 Proxy 就全面超过逐个定义属性，手写一个就算响应式。继续改原始对象时界面不更新，只打日志的陷阱也不会让组件重渲染。区分信号是操作落在代理上，并且真有依赖收集，而不只是多了几种拦截。',
     example:'对 reactive 返回的代理执行 obj.newKey = 1 或 delete obj.newKey 可以进入拦截；对同一份 raw 做同样操作通常不会通知依赖。数组应通过代理调用 push，而不是只改 raw。',
@@ -40,6 +42,7 @@ const COVERAGE_FRONTEND_08 = [
     track:'frontend', group:'Vue', id:'vue-tree-shake-faster',
     title:'树摇能变小，不能直接许诺执行更快',
     prompt:'为什么“Vue 3 引入 tree shaking 后，无用代码被剪掉，程序既更小又更快”不能整句当成结论？',
+    promptAnswer:'剪掉未使用代码主要减体积。更新是否变快要另测，不能和树摇写成同一个结论。',
     core:'Tree shaking 是在保持行为不变的前提下删除未用到的代码，前提是 ESM 静态导入、生产构建和副作用规则允许删除。Vue 3 把许多全局 API 改成具名导出，并配合编译期标志，使未使用的运行时更有机会从打包结果里消失；Vue 2 常见的默认全局构建与实例单例用法，确实更难按 API 裁剪。体积变小主要影响下载、解析与内存占用。CPU 上的“更快”取决于仍然保留并实际执行的路径，以及模板编译给出的补丁标记、静态提升等优化；删掉从未调用的模块，并不会自动加快一条已经在跑的更新路径。业务代码若通过副作用导入、动态拼接或挂到全局，同样摇不掉。Options API 相关运行时默认仍保留，除非构建显式关闭且依赖不再使用它。',
     why:'误以为剪掉无用代码之后，执行也会一起变快。包体小了，同一次点击的更新耗时仍可能不变。区分信号是体积差来自未引用导出的消失，耗时变化要对上补丁标记或静态提升，体积变化和同一次点击的耗时必须分开记录。',
     example:'生产构建里只使用 nextTick，不引入未用的 API；sourcemap 中应看不到未引用导出。同一页面交互的 Performance 条目，应在包体变化之外单独对比，不能把“少打进包里”写成“diff 更快”。',

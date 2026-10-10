@@ -4,6 +4,7 @@ const COVERAGE_FRONTEND_13 = [
     track:'frontend', group:'工程实践', id:'react-ssr-not-fewer-http',
     title:'SSR 先给可看的 HTML，并不等于少请求或一份文档带齐数据',
     prompt:'为什么把服务端渲染概括成“一个 HTML 返回所有数据、因此减少 HTTP 请求、首屏不再依赖 JS”会误导？',
+    promptAnswer:'SSR 交出的 HTML 之后仍要拉脚本样式图片。不是“一份 HTML 返回所有数据、减少 HTTP”。',
     core:'SSR 用服务端生成的标记让用户先看到内容，客户端再用 hydrateRoot 把同一棵树接上交互。官方强调：这是在 JS 到达前展示快照，服务端输出必须与客户端首次渲染一致；不匹配会变慢甚至把事件绑错节点。它并不取消后续的脚本、样式和图片请求，更不保证“一份 HTML 里已经有全部数据”。现行服务端 API 优先流式输出（如 renderToPipeableStream），而不是一次拼完字符串。CSR 的文档也未必是空 body：预渲染、静态导出同样能先有标记。服务端压力、SEO 友好在不少场景成立，但要绑具体爬虫与缓存策略。类组件“服务端只跑到 DidMount 之前”对 Effect 同样适用：useEffect 不在服务端跑；这限制的是副作用时机，不是“第三方库因此都不能用”。水合一致性见既有 `ssr-hydration`；服务端组件与客户端组件分工见 `react-rsc-vs-client`。',
     why:'误以为服务端渲染就是一次 HTML 带回全部数据，从而更少请求。页面仍要下载脚本，两边文案不一致时水合还会出错。区分信号是先有可看的标记，交互要等脚本，水合必须和首次渲染一致，文档之后的脚本、样式和图片请求都仍然会发出。',
     example:'商品页先返回带标题的 HTML，浏览器仍要拉 JS 才能点加入购物车。hydrateRoot 时若客户端用 Date.now() 画出不同文案，就会 mismatch。不要把 ReactDOM.render 当水合入口。',
@@ -21,7 +22,8 @@ const COVERAGE_FRONTEND_13 = [
   {
     track:'frontend', group:'React', id:'react-hooks-over-hoc',
     title:'复用状态逻辑：自定义 Hook 优先，HOC 不是 mixins 的现行替身',
-    prompt:'为什么“class 之后 mixins 不能用了，所以 HOC 是政治正确的替代，效果完全一致”不够当现行答案？',
+    prompt:'为什么「class 之后 mixins 不能用了，所以 HOC 完全等价替代」不够当现行答案？',
+    promptAnswer:'复用状态的现行默认是 Hook。HOC 会多一层包装并展开 props；Hook 在组件里直接取返回值。',
     core:'mixins 的依赖隐晦、命名冲突、越改越大，这些批评成立，React 也早就不推荐 mixins。但替代路径不是“从此只用 HOC”。官方复用状态逻辑的默认方式是自定义 Hook：把订阅、计时器、窗口宽度等抽成函数，在多个组件顶层调用，依赖关系写在调用处。HOC 仍能装饰组件，也会带来包裹层、displayName、把 props 塞进被装饰组件、以及与 Hooks 叠在一起时的心智负担。资料里 withWindowWidth 把 window 监听塞进类 HOC，用自定义 Hook 更直接。HOC 与 Vue mixins 作用也不等同：Vue 的 mixins / 组合式 API 是另一套模型。需要横切 UI 外壳时仍可用 HOC 或包装组件；需要复用状态时先写 Hook。',
     why:'误以为类组件之后只能用高阶组件替代 mixins，而且效果完全一样。新代码会叠出多层包装，调用处看不出状态从哪来。区分信号是订阅和窗口宽度写成自定义 Hook，在组件顶层直接调用。',
     example:'function useWindowWidth(){ const [w,setW]=useState(innerWidth); useEffect(()=>{ const on=()=>setW(innerWidth); addEventListener("resize",on); return ()=>removeEventListener("resize",on); },[]); return w; } 组件里 const width=useWindowWidth()。不必先包一层 DerivedClass。',

@@ -50,6 +50,18 @@
 | Private Network Access | `pna-private-network-access` |
 | Fenced Frames | `fenced-frame-embed-boundary` |
 | Attribution Reporting | `attribution-reporting-not-cookie` |
+| Storage Access API | `storage-access-api-not-cookie-restore` |
+| FedCM | `fedcm-not-oauth-popup` |
+| Topics API | `topics-api-not-cookie-segments` |
+| Shared Storage | `shared-storage-not-third-party-cookie` |
+| Private State Tokens | `private-state-tokens-not-cookie` |
+| Protected Audience | `protected-audience-not-cookie-remarketing` |
+| CAPTCHA≠认证授权 | `captcha-challenge-not-authn` |
+| 防刷≠只靠挂件 | `bot-mitigation-not-only-widget` |
+| Related Website Sets≠Cookie 复辟 | `related-website-sets-not-cookie-restore` |
+| 跳转追踪缓解≠随机登出 | `bounce-tracking-mitigation-not-session-bug` |
+| UA Client Hints 需 Accept-CH | `ua-client-hints-need-accept-ch` |
+| UA 削减≠稳定设备 id | `reduced-ua-not-stable-device-id` |
 | 长轮询 / WebSocket | `long-poll-vs-websocket` |
 | SSE 单向推送 | `sse-one-way-http-stream` |
 | 中止请求 | `fetch-abort` |
@@ -72,6 +84,12 @@
 | Redis ACL≠requirepass | `redis-acl-not-just-requirepass` |
 | WAIT≠落盘耐久 | `redis-wait-replicas-not-durability` |
 | HELLO/RESP3≠自动能力 | `redis-hello-resp3-not-just-version` |
+| 分片 Pub/Sub≠可靠队列 | `redis-sharded-pubsub-not-cluster-queue` |
+| ACL DRYRUN≠已落地 | `redis-acl-dryrun-not-enforce` |
+| COMMAND GETKEYS≠ACL | `redis-command-getkeys-not-acl` |
+| CLIENT NO-TOUCH≠关过期 | `redis-client-no-touch-not-expire-off` |
+| 复制链路 down≠FATAL | `redis-repl-link-down-not-fatal` |
+| CLUSTER SLOTS≠业务分片键 | `redis-cluster-slots-not-app-shard-key` |
 | INNER JOIN | `mysql-inner-join-match` |
 | 外连接 WHERE 陷阱 | `sql-outer-join-where` |
 | GROUP BY / HAVING | `mysql-where-having`、`mysql-group-by-having` |
@@ -83,6 +101,12 @@
 | 生成列/函数索引≠WHERE 包函数 | `mysql-generated-column-not-where-wrap` |
 | CHECK 8.0.16+ 强制 | `mysql-check-enforced-not-parsed-only` |
 | 不可见索引≠已删除 | `mysql-invisible-index-not-drop` |
+| 直方图≠索引 | `mysql-histogram-not-index` |
+| 降序索引≠ORDER BY 定律 | `mysql-descending-index-not-sort-law` |
+| 多值索引≠文档库 | `mysql-multi-valued-index-not-json-db` |
+| SKIP LOCKED≠MQ | `mysql-skip-locked-not-queue` |
+| Clone≠可回档备份 | `mysql-clone-not-backup` |
+| Resource Group≠OS cgroup | `mysql-resource-group-not-os-cgroup` |
 | VIEW 机制 | `mysql-view-is-stored-query` |
 | 存储过程≠自动事务 | `mysql-procedure-not-auto-txn` |
 | 触发器副作用 | `mysql-trigger-side-effect-hidden` |
@@ -151,3 +175,37 @@
 已补：Fenced Frames、Attribution Reporting、MySQL invisible index、Redis HELLO/RESP3。
 
 下一轮可继续扫：Storage Access API、FedCM、MySQL histogram、Redis Sharded Pub/Sub 有则只交叉；先 ls 空闲号。
+
+## 第十三轮（2026-10-10）
+
+已补：Storage Access API、FedCM、MySQL histogram、Redis Sharded Pub/Sub。
+
+## 第十四轮（2026-10-10）
+
+已补：Topics≠Cookie 人群包、Shared Storage≠跨站 Cookie、降序索引≠永免排序、ACL DRYRUN≠已落地。
+
+下一轮可继续扫：Private State Tokens、CHIPS 深化、MySQL multi-valued index、Redis COMMAND GETKEYS 有则只交叉；先 ls 空闲号。
+
+## 第十五轮（2026-10-10）
+
+已补：Private State Tokens、Protected Audience（CHIPS 已有课只交叉）、MySQL multi-valued index、Redis COMMAND GETKEYS。
+
+下一轮可继续扫：Captchas/Bot mitigation 目录有则只交叉、MySQL SKIP LOCKED、Redis CLIENT NO-TOUCH；先 ls 空闲号。
+
+## 第十六轮（2026-10-10）
+
+已补：CAPTCHA≠authn/authz、防刷≠只靠挂件、MySQL SKIP LOCKED、Redis CLIENT NO-TOUCH。
+
+下一轮可继续扫：Privacy Sandbox 收尾有则只交叉、MySQL clone plugin 边界、Redis FATAL 与复制；先 ls 空闲号。
+
+## 第十七轮（2026-10-10）
+
+已补：Related Website Sets≠Cookie 复辟、跳转追踪缓解≠随机登出、MySQL Clone≠备份、Redis 复制链路 down≠FATAL。
+
+下一轮可继续扫：User-Agent Client Hints / UA 削减有则只交叉、MySQL RESOURCE GROUP 边界、Redis CLUSTER SLOTS≠业务分片键；先 ls 空闲号。
+
+## 第十八轮（2026-10-10）
+
+已补：UA Client Hints 需 Accept-CH、UA 削减≠设备主键、MySQL Resource Group≠cgroup、Redis CLUSTER SLOTS≠业务分片键。
+
+下一轮可继续扫：Permissions-Policy 与 Client Hints 跨源有则只交叉、MySQL Clone 与 GR 分布式恢复边界、Redis CLIENT KILL / UNBLOCK；先 ls 空闲号。

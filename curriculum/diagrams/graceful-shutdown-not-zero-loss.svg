@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-labelledby="title desc">
+  <title id="title">优雅停机不是零丢失</title>
+  <desc id="desc">停机钩子 ≠ 业务零丢失保证书。</desc>
+  <rect width="960" height="400" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">发布</text>
+  <text x="32" y="64" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">优雅停机不是零丢失</text>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <rect x="32" y="96" width="430" height="176" rx="14" fill="#f6ecea" stroke="#a05048"/>
+    <text x="52" y="132" font-size="15" font-weight="600" fill="#6e3530">资料口吻</text>
+    <text x="52" y="164" font-size="14" fill="#2e3330">开启 graceful</text>
+    <text x="52" y="196" font-size="14" fill="#2e3330">请求不会丢</text>
+    <text x="52" y="228" font-size="14" fill="#5e6661">发布无感知</text>
+    <rect x="496" y="96" width="432" height="176" rx="14" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="516" y="132" font-size="15" font-weight="600" fill="#2e3330">纠正</text>
+    <text x="516" y="164" font-size="14" fill="#3f6a58">减少粗暴截断</text>
+    <text x="516" y="196" font-size="14" fill="#3f6a58">仍有超时强杀</text>
+    <text x="516" y="228" font-size="14" fill="#5e6661">零丢失靠幂等与排水</text>
+    <rect x="32" y="296" width="896" height="72" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="52" y="328" font-size="15" font-weight="600" fill="#2e3330">停机钩子 ≠ 业务零丢失保证书。</text>
+    <text x="52" y="352" font-size="14" fill="#5e6661">对照 Spring graceful shutdown</text>
+  </g>
+</svg>

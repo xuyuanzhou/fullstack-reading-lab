@@ -3,7 +3,8 @@ const COVERAGE_JAVA_96 = [
   {
     track:'java', group:'交付与运行', id:'jenkins-not-only-ci-tool',
     title:'Jenkins 是一种持续集成工具，不是 CI 的同义词',
-    prompt:'为什么资料在「持续集成、持续发布」专节里，把好处写成「使用 Jenkins 等持续集成工具」就能把构建从手动变成自动？',
+    prompt:'资料把持续集成的好处写成“使用 Jenkins 等工具”就自动了。为什么 Jenkins 不能当 CI 的同义词？',
+    promptAnswer:'CI 是实践，Jenkins 只是工具之一。Actions、GitLab CI 也能跑同一条验证链。',
     core:'**持续集成（CI）**是实践：频繁合并、自动构建与测试、尽早暴露缺陷。资料列的降低风险、减少重复、随时可部署软件等好处，属于这一实践，不是某一产品专属。**Jenkins** 只是历史上常见的自建 CI 服务器之一；同职责任务也可由 **GitHub Actions、GitLab CI、Buildkite、云构建**等完成。面试把「CI=Jenkins」背死，会漏掉流水线即代码、密钥注入、产物与环境晋升这些跨工具共性。邻接既有 GitHub Actions 三课：工作流位置、job 依赖、artifact 传递。',
     why:'只会背 Jenkins 插件名，换到 Actions/GitLab 时说不出「合并→构建→测→产物」这条链；或反过来以为没装 Jenkins 就等于没有 CI。',
     example:'同一仓库：本地用 `./gradlew test`，远端用 `.github/workflows/ci.yml` 在 push/PR 上跑同等测试并上传 artifact。换成 Jenkinsfile 或 `.gitlab-ci.yml`，实践目标不变，编排语法变。',
@@ -23,6 +24,7 @@ const COVERAGE_JAVA_96 = [
     track:'java', group:'分布式与高并发', id:'db-insert-unique-cron-not-lease',
     title:'唯一插入加定时清表，补不上真正的锁租约',
     prompt:'为什么资料用主键/唯一冲突当分布式锁，又用「定时任务扫超时行」补失效时间，还用 while 重插补阻塞？',
+    promptAnswer:'唯一插入只演示互斥。定时清表不是服务端租约，忙等重插还会打爆库。',
     core:'用**唯一键 INSERT 成功=持锁、DELETE=释放**方向能演示互斥，但资料后续补丁要把坑看清：**定时任务清超时行**不是租约——时钟漂移、清理延迟、清掉仍在干活的持有者都会双持锁；**while 重插**是忙等，打爆库；**主机+线程字段当可重入身份**会撞车，见 `dist-lock-owner-not-mac-pid-tid`。把「主键冲突在大并发下锁表」说死也不准：InnoDB 在唯一索引上的插入通常是**行/间隙锁竞争**，表现为吞吐塌陷，不等于 MyISAM 式整表锁。跨机互斥优先看带 **TTL/租约与 fencing token** 的方案（Redis `SET NX PX`、ZooKeeper 临时节点），库表锁只作权宜且要写清失效与 fencing。邻接 `mysql-for-update-not-dist-lease`、`redis-lock-setnx-expire-race`。',
     why:'定时 job 把还在跑的任务行删了，第二台抢走「锁」；或高峰 while INSERT 把连接池打满。',
     example:'坏：锁表无 TTL，靠每分钟 `DELETE FROM locks WHERE updated_at < NOW()-INTERVAL 30 SECOND`。好：锁记录带绝对过期或租约续期；持有者带随机 token，释放/续约必须比对 token；宁愿获取失败返回，也不空转 INSERT。',

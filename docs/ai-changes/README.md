@@ -11,6 +11,40 @@
 
 | 日期 | 状态 | 标题 |
 | --- | --- | --- |
+| 2026-10-10 | 已完成 | [公开课不再自造分类名](2026-10-10-no-coined-terms.md) |
+| 2026-10-10 | 已完成 | [语言基础、TypeScript、CSS、React、Vue 补上定义课](2026-10-10-foundations-before-corrections.md) |
+| 2026-10-10 | 已完成 | [Java 基础补上类型和语法](2026-10-10-java-basics-types-syntax.md) |
+| 2026-10-10 | 已完成 | [全栈主线改用现成术语](2026-10-10-fullstack-spine-terms.md) |
+| 2026-10-10 | 已完成 | [record 课去掉自造词「分量」](2026-10-10-record-component-wording.md) |
+| 2026-10-10 | 已完成 | [Java 基础收短：基础结论不再单开「为什么」](2026-10-10-java-basics-plain.md) |
+| 2026-10-10 | 已完成 | [前端轨剩余章提问可读性过一遍](2026-10-10-frontend-rest-prompt-pass.md) |
+| 2026-10-10 | 已完成 | [选型类路线去掉查表：已有系统先留下](2026-10-10-selection-paths-no-score.md) |
+| 2026-10-10 | 已完成 | [Java 轨剩余章提问可读性过一遍（收尾）](2026-10-10-java-rest-prompt-pass.md) |
+| 2026-10-10 | 已完成 | [设计模式 / 工程实践 / 交付与运行提问可读性过一遍](2026-10-10-java-ops-prompt-pass.md) |
+| 2026-10-10 | 已完成 | [选型去掉打分公式，改成仓库、运行时、该库自己的服务端方案](2026-10-10-fe-selection-no-score.md) |
+| 2026-10-10 | 已完成 | [W3CSchool 第十八轮：UA-CH / Resource Group / CLUSTER SLOTS（4 课）](2026-10-10-w3cschool-round18-uach-resource-slots.md) |
+| 2026-10-10 | 已完成 | [技术选型审查：句子对上文档，该有代码的地方补代码](2026-10-10-fe-selection-plain-review.md) |
+| 2026-10-10 | 已完成 | [W3CSchool 第十七轮：RWS / bounce / Clone / 复制链路（4 课）](2026-10-10-w3cschool-round17-rws-bounce-clone-repl.md) |
+| 2026-10-10 | 已完成 | [分布式与高并发提问可读性过一遍](2026-10-10-java-dist-prompt-pass.md) |
+| 2026-10-10 | 已完成 | [把「谁负责更新界面」改成能直接读的四行代码](2026-10-10-fe-ui-update-plain.md) |
+| 2026-10-10 | 已完成 | [数据库 / 缓存 / 消息队列提问可读性过一遍](2026-10-10-java-data-prompt-pass.md) |
+| 2026-10-10 | 已完成 | [W3CSchool 第十六轮：CAPTCHA / 防刷 / SKIP LOCKED / NO-TOUCH（4 课）](2026-10-10-w3cschool-round16-captcha-skiplock-notouch.md) |
+| 2026-10-10 | 已完成 | [D8 续抽：幂等键≠UUID；雪花时钟回拨（2 课）](2026-10-10-d8-idempotency-snowflake-clock.md) |
+| 2026-10-10 | 已完成 | [修复：补回 fe-pick-decision-order 并挂回 OUTLINE](2026-10-10-fix-fe-pick-decision-order.md) |
+| 2026-10-10 | 已完成 | [技术选型补「怎么选 / 优缺点 / 生态槽位」](2026-10-10-fe-selection-tradeoffs.md) |
+| 2026-10-10 | 已完成 | [学习课例子代码块第十八批（润色 Kafka / RocketMQ / Redis / CSP / EXPLAIN / MQ，56 课）](2026-10-10-lesson-example-code-batch18.md) |
+| 2026-10-10 | 已完成 | [Spring / MyBatis / JPA 提问可读性过一遍](2026-10-10-java-spring-prompt-pass.md) |
+| 2026-10-10 | 已完成 | [W3CSchool 第十五轮：PST / PA / multi-valued / GETKEYS（4 课）](2026-10-10-w3cschool-round15-pst-pa-mvi-getkeys.md) |
+| 2026-10-10 | 已完成 | [D8 续抽：优雅停机≠零丢失；连接池≠线程池（2 课）](2026-10-10-d8-graceful-conn-pool.md) |
+| 2026-10-10 | 已完成 | [Java 基础 / 并发 / JVM 提问可读性过一遍](2026-10-10-java-core-prompt-pass.md) |
+| 2026-10-10 | 已完成 | [W3CSchool 第十四轮：Topics / Shared Storage / DESC / DRYRUN（4 课）](2026-10-10-w3cschool-round14-topics-shared-desc-dryrun.md) |
+| 2026-10-10 | 已完成 | [D8 续抽：binlog≠事件总线；ThreadLocal≠分布式上下文（2 课）](2026-10-10-d8-binlog-threadlocal.md) |
+| 2026-10-10 | 已完成 | [学习课例子代码块第十七批（润色 MyBatis / Spring / 并发 / Node / JPA，53 课）](2026-10-10-lesson-example-code-batch17.md) |
+| 2026-10-10 | 已完成 | [React / Vue / 全栈主线 / 微前端提问可读性过一遍](2026-10-10-react-vue-prompt-pass.md) |
+| 2026-10-10 | 已完成 | [学习课例子代码块第十六批（润色 MySQL 错配模板，38 课）](2026-10-10-lesson-example-code-batch16.md) |
+| 2026-10-10 | 已完成 | [W3CSchool 第十三轮：SAA / FedCM / histogram / Sharded Pub/Sub（4 课）](2026-10-10-w3cschool-round13-saa-fedcm-histogram-spub.md) |
+| 2026-10-10 | 已完成 | [D8 续抽：QPS 公式≠容量；熔断≠重试（2 课）](2026-10-10-d8-qps-circuit.md) |
+| 2026-10-10 | 已完成 | [技术选型整章提问可读性过一遍](2026-10-10-selection-prompt-pass.md) |
 | 2026-10-10 | 已完成 | [缓存 / 消息 / 数据库同构导论（Redis / MQ / MySQL）](2026-10-10-redis-mq-mysql-intro.md) |
 | 2026-10-10 | 已完成 | [Elasticsearch 导论补齐与搜索章知识点过一遍](2026-10-10-es-intro-and-pass.md) |
 | 2026-10-09 | 已完成 | [侧栏「搜索」章显示为 Elasticsearch](2026-10-09-sidebar-search-elasticsearch.md) |

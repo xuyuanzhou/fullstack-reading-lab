@@ -4,7 +4,7 @@ import { Link, Navigate, useParams } from 'react-router-dom'
 import { findLesson, isVersionSince, lessonIndex, loadFullLesson, nextLesson } from '@/data/curriculum'
 import { deliverableKey, slotsOf, spineNextId, spinePlace, spinePrevId } from '@/data/learningPaths'
 import { groupKeyForLabel, groupPath, groupTitle, isTrack, lessonPath } from '@/data/routes'
-import { shortTitle, splitProse, structureCore } from '@/data/reading'
+import { lessonNav, shortTitle, splitProse, structureCore } from '@/data/reading'
 import { REACT_CHAPTERS, VUE_CHAPTERS, reactUrl, vueUrl } from '@/data/meta'
 import { useProgress } from '@/state/progress'
 import { LessonOutline } from '@/components/LessonOutline'
@@ -57,6 +57,11 @@ export function LessonPage() {
   const spinePrev = findLesson(spinePrevId(lesson.id) || '')
   const core = structureCore(lesson.core)
   const references = lesson.references || []
+  const hasWhy = Boolean(lesson.why?.trim())
+  const sectionNo = (id: string) => {
+    const nav = lessonNav({ hasDeep: Boolean(lesson.deep?.length), hasWhy })
+    return String(nav.findIndex(([key]) => key === id) + 1).padStart(2, '0')
+  }
   const source =
     lesson.react && REACT_CHAPTERS[lesson.react]
       ? {
@@ -148,7 +153,7 @@ export function LessonPage() {
       <div className="lesson-body">
 
       <section className="section-block" id="lesson-points" tabIndex={-1}>
-        <span className="section-index">01</span>
+        <span className="section-index">{sectionNo('points')}</span>
         <h2>要点</h2>
         <ul className="point-list">
           {lesson.points.map((point) => (
@@ -158,7 +163,7 @@ export function LessonPage() {
       </section>
 
       <section className="core-panel" id="lesson-model" tabIndex={-1}>
-        <span className="panel-label">02 / 核心模型</span>
+        <span className="panel-label">{sectionNo('model')} / 核心模型</span>
         {lesson.diagram ? (
           <figure className="concept-figure">
             <Image
@@ -211,7 +216,7 @@ export function LessonPage() {
 
       {lesson.deep?.length ? (
         <section className="section-block" id="lesson-mechanism" tabIndex={-1}>
-          <span className="section-index">03</span>
+          <span className="section-index">{sectionNo('mechanism')}</span>
           <h2>细节</h2>
           <div className="deep-stack">
             {lesson.deep.map((part) => (
@@ -231,16 +236,18 @@ export function LessonPage() {
         </section>
       ) : null}
 
-      <section className="section-block" id="lesson-why" tabIndex={-1}>
-        <span className="section-index">04</span>
-        <h2>为什么</h2>
-        {splitProse(lesson.why || '').map((part) => (
-          <RichProse key={part.slice(0, 40)} text={part} />
-        ))}
-      </section>
+      {hasWhy ? (
+        <section className="section-block" id="lesson-why" tabIndex={-1}>
+          <span className="section-index">{sectionNo('why')}</span>
+          <h2>为什么</h2>
+          {splitProse(lesson.why).map((part) => (
+            <RichProse key={part.slice(0, 40)} text={part} />
+          ))}
+        </section>
+      ) : null}
 
       <section className="section-block" id="lesson-example" tabIndex={-1}>
-        <span className="section-index">05</span>
+        <span className="section-index">{sectionNo('example')}</span>
         <h2>例子</h2>
         <div className="example-box">
           <RichBlocks text={lesson.example || ''} />
@@ -261,7 +268,7 @@ export function LessonPage() {
       ) : null}
 
       <section className="section-block" id="lesson-practice" tabIndex={-1}>
-        <span className="section-index">06</span>
+        <span className="section-index">{sectionNo('practice')}</span>
         <h2>练习</h2>
         <p style={{ marginBottom: 14 }}>{lesson.task}</p>
         <Collapse
@@ -278,7 +285,7 @@ export function LessonPage() {
       </section>
 
       <section className="section-block" id="lesson-references" tabIndex={-1}>
-        <span className="section-index">07</span>
+        <span className="section-index">{sectionNo('references')}</span>
         <h2>依据</h2>
         <p className="muted" style={{ marginBottom: 8 }}>
           以官方文档、标准或固定版本源码为准。课程中的简化模型不代替实际运行验证。
@@ -297,7 +304,7 @@ export function LessonPage() {
       </section>
 
       <section className="section-block" id="lesson-notes" tabIndex={-1}>
-        <span className="section-index">08</span>
+        <span className="section-index">{sectionNo('notes')}</span>
         <h2>笔记</h2>
         <Input.TextArea
           rows={5}

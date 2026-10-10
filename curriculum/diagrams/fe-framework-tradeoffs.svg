@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 300" role="img" aria-labelledby="title desc">
+  <title id="title">官方自带什么</title>
+  <desc id="desc">React 不带路由。Vue 用 Vite Router Pinia。Angular 路由和 HTTP 在自己的包里。Svelte 用 SvelteKit。</desc>
+  <rect width="960" height="300" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">官方自带什么，不写招聘和星数</text>
+  <rect x="32" y="64" width="214" height="160" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+  <text x="48" y="100" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2e3330">React</text>
+  <text x="48" y="136" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">本身不带路由</text>
+  <text x="48" y="164" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">新项目用 Next</text>
+  <text x="48" y="192" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">或 Router 框架模式</text>
+  <rect x="262" y="64" width="214" height="160" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+  <text x="278" y="100" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2e3330">Vue 3</text>
+  <text x="278" y="136" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">Vite + Router</text>
+  <text x="278" y="164" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">+ Pinia</text>
+  <text x="278" y="192" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">正文进 HTML 用 Nuxt</text>
+  <rect x="492" y="64" width="214" height="160" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+  <text x="508" y="100" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2e3330">Angular</text>
+  <text x="508" y="136" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">路由 HTTP 表单</text>
+  <text x="508" y="164" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">都在 @angular</text>
+  <text x="508" y="192" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">v21 起默认无 zone.js</text>
+  <rect x="722" y="64" width="206" height="160" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+  <text x="738" y="100" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2e3330">Svelte 5</text>
+  <text x="738" y="136" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">应用用 SvelteKit</text>
+  <text x="738" y="164" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">状态用 $state</text>
+  <text x="32" y="260" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="600" fill="#2d4f41">一个产品只留上面一行。</text>
+</svg>

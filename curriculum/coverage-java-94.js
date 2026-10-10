@@ -3,7 +3,8 @@ const COVERAGE_JAVA_94 = [
   {
     track:'java', group:'数据库', id:'mysql-spatial-index-not-full-gis',
     title:'MySQL SPATIAL 索引能加速几何谓词，不是完整 GIS 引擎',
-    prompt:'为什么建了 SPATIAL INDEX、会用 MBRContains，测绘围栏和投影换算仍对不齐？',
+    prompt:'为什么建了 SPATIAL INDEX、会用 MBRContains，测绘围栏和投影换算仍不一致？',
+    promptAnswer:'擅长关系表内几何类型与支持的空间谓词加速。完整测绘、复杂拓扑用空间库。',
     core:'MySQL 支持 **`GEOMETRY` 等类型**与 **`SPATIAL INDEX`**（InnoDB 上多为 R-tree 一类结构），配合 `ST_Contains` / `MBR…` 等函数做**点、矩形、简单多边形**的空间过滤。它适合“附近门店、行政区粗判”等关系库内嵌需求，**不是** PostGIS 那种完整 GIS：复杂拓扑、精确测地、多层坐标系与专业空间分析仍要专门空间库。索引只加速支持的谓词与列类型组合；把经纬度当普通 DOUBLE 建 B-tree，和 SPATIAL 不是同一条路。邻接 `mysql-index-kinds`、`redis-geo-on-zset-not-gis`（Redis GEO 更是附近点快捷命令）。',
     why:'面试背“MySQL 有空间索引=已上 GIS”；或用 SPATIAL 硬扛不规则测绘围栏，边界案例全错。',
     example:'`CREATE SPATIAL INDEX idx_g ON shop (g);` 后 `ST_Contains(area, point)` 可走空间索引（视版本与函数而定）。不规则行政区精细包含仍查 PostGIS，MySQL 只存业务主键与粗筛结果。',
@@ -21,6 +22,7 @@ const COVERAGE_JAVA_94 = [
     track:'java', group:'缓存', id:'redis-functions-not-just-eval',
     title:'Redis Functions 是注册后的库，不是每次 EVAL 贴脚本的同义词',
     prompt:'为什么资料说 Redis 7 有 Functions，团队却仍把整段 Lua 每次 EVAL 送上服务器？',
+    promptAnswer:'Functions 先注册进服务端库再 FCALL，可随持久化带走。EVAL 每次带脚本或靠脚本缓存 SHA。',
     core:'**`EVAL` / `EVALSHA`** 把脚本（或 SHA）随调用送上或从脚本缓存取，见 `redis-lua-atomic`。**Redis 7+ Functions**（`FUNCTION LOAD`、`FCALL`）把函数**注册进服务端函数库**，可持久、可复制，调用时按库名/函数名执行，减少“每次携带大脚本”、便于版本化与权限边界。它仍是服务端可编程能力，**不是**把 Redis 变成通用应用服务器：逻辑应短、键仍要声明清楚，集群路由约束与 Lua 类似。选型：偶发一次性脚本 → EVAL；多服务复用、要随 RDB/AOF 带走的例程 → Functions。不要以为改名 Functions 就自动解决超卖——原子性仍靠脚本/函数体内连续执行。',
     why:'把 Functions 当成“营销词版 EVAL”，发版仍每次传几千行；或以为上了 FCALL 就不用声明键、集群也不会报错。',
     example:'`FUNCTION LOAD` 载入库存扣减库后，各实例 `FCALL stock_decr 1 key:sku`。重启后若函数已持久，不必再把整段源码塞进每次请求。对照：旧代码每次 `EVAL "…很长…" 1 key`。',

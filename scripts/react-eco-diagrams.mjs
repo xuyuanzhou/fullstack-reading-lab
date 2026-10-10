@@ -118,7 +118,7 @@ const diagrams = {
     takeaway(292, '热度不是目标端。空着的格这次不做。'),
   ].join(''), '选型'),
 
-  'fe-ui-update-model.svg': svg('留下一种更新模型', '同一个按钮里不混四种赋值。', 380, [
+  'fe-ui-update-model.svg': svg('改数字时各自要写的那一行', 'React 调 setCount，Vue 改 ref，Angular 调 signal.set，Svelte 给 $state 赋值。只留一种。', 380, [
     card(32, 88, 214, 160),
     tx(48, 124, 'React', { size: 16, weight: 600, fill: '#2e3330' }),
     tx(48, 168, 'setCount', { size: 16, fill: '#2e3330' }),
@@ -131,10 +131,10 @@ const diagrams = {
     card(722, 88, 206, 160),
     tx(738, 124, 'Svelte', { size: 16, weight: 600, fill: '#2e3330' }),
     tx(738, 168, '$state 后赋值', { size: 16, fill: '#2e3330' }),
-    takeaway(272, '选定之后，路由和请求缓存跟着这一种模型走。'),
+    takeaway(272, '同一个按钮只留上面一种写法。'),
   ].join(''), '选型'),
 
-  'fe-ecosystem-slots.svg': svg('Vue 新项目各留一个职责位', '构建、路由、跨页状态不要各有两套。', 360, [
+  'fe-ecosystem-slots.svg': svg('Vue 新项目各留一个库', '构建、路由、跨页状态不要各有两套。', 360, [
     card(32, 88, 288, 150, 'accent'),
     tx(48, 124, '构建', { size: 16, weight: 600, fill: '#2d4f41' }),
     tx(48, 168, 'Vite', { size: 18, fill: '#2e3330' }),
@@ -147,7 +147,7 @@ const diagrams = {
     takeaway(262, '要首屏正文时用 Nuxt。Vuex 只留在已有仓库。'),
   ].join(''), '选型'),
 
-  'fe-ecosystem-map.svg': svg('四个职责位跟一种模型', '同一张订单表不要从四套文档各抄一个库。', 400, [
+  'fe-ecosystem-map.svg': svg('四项各跟一套界面库', '同一张订单表不要从四套文档各抄一个库。', 400, [
     card(32, 88, 214, 196, 'accent'),
     tx(48, 124, 'React', { size: 16, weight: 600, fill: '#2d4f41' }),
     lines(48, 160, ['Next / RR 框架', 'Query 或加载器', 'Toolkit 只放会话'], { size: 14, fill: '#2e3330', lh: 28 }),
@@ -163,7 +163,7 @@ const diagrams = {
     takeaway(308, '跨端运行时另算一笔，不跟 Web 框架缝进同一个组件。'),
   ].join(''), '选型'),
 
-  'fe-angular-http-slot.svg': svg('GET 走 HttpClient 这一路', 'NgRx 不是新应用的默认数据槽。', 360, [
+  'fe-angular-http-slot.svg': svg('GET 走 HttpClient 这一路', 'NgRx 不是新应用默认的数据获取库。', 360, [
     card(32, 88, 430, 168, 'accent'),
     tx(48, 124, '读列表', { size: 16, weight: 600, fill: '#2d4f41' }),
     lines(48, 164, ['HttpClient 或 httpResource', '结果用信号读', '依赖变了会换请求'], { size: 16, fill: '#2e3330' }),
@@ -190,7 +190,7 @@ const diagrams = {
     card(498, 88, 430, 168, 'warn'),
     tx(514, 124, '再挂一个容器', { size: 16, weight: 600, fill: '#6e3530' }),
     lines(514, 164, ['又一套 NavigationContainer', '一次点击走两个栈', '返回停错屏'], { size: 16, fill: '#2e3330' }),
-    takeaway(280, '不用 Expo 的仓库才直接把 React Navigation 当地址主人。'),
+    takeaway(280, '不用 Expo 的仓库才直接用 React Navigation。'),
   ].join(''), '选型'),
 
   'fe-flutter-slots.svg': svg('深链和共享状态分开选', '瞬时值用 setState。跨页只留一种做法。', 360, [

@@ -3,7 +3,8 @@ const COVERAGE_FRONTEND_09 = [
   {
     track:'frontend', group:'React', id:'react-event-root',
     title:'React 事件委托在根上，stopPropagation 仍有意义',
-    prompt:'为什么“事件都绑在 document 上，所以要用 preventDefault 代替 stopPropagation”不能当 React 19 的答案？',
+    prompt:'为什么「事件都绑在 document 上，所以要用 preventDefault 代替 stopPropagation」不能当 React 19 的答案？',
+    promptAnswer:'委托在根容器，不在 document。停止冒泡仍用 stopPropagation；取消默认行为才用 preventDefault。',
     core:'旧资料常写把监听挂到 document。从 React 17 起，委托目标是应用根容器；createRoot(container) 会在该根上注册支持的事件。合成事件包装原生事件，但 stopPropagation 与 preventDefault 语义仍然分开：前者停止传播，后者取消默认动作。把“不想冒泡”写成必须 preventDefault、并宣称 stopPropagation 无效，是概念错误。混用原生监听与 React 事件时，若在更内层原生 handler 里停冒泡，可能让根上的 React 监听收不到事件，这是混用问题，不是 stopPropagation 本身无效。',
     why:'误以为监听都挂在 document 上，于是要用取消默认来代替停止冒泡。这样会误取消链接跳转，外层点击却还在。区分信号是委托挂在根容器上，停止传播和取消默认动作各管一件事，原生截断若发生在根之前，根内处理都不会执行。',
     example:'按钮 onClick 里 event.stopPropagation() 可阻止外层 div 的 onClick；阻止链接跳转才用 preventDefault。用 createRoot 挂到 #app 时，监听在 #app 而不是必然在 document。',
@@ -21,7 +22,8 @@ const COVERAGE_FRONTEND_09 = [
   {
     track:'frontend', group:'React', id:'react-setstate-batch',
     title:'setState 批处理：别再背 isBatchingUpdates（React 18）',
-    prompt:'为什么用“合成事件里异步、setTimeout 里同步”加上 isBatchingUpdates 解释 React 19 不够用？',
+    prompt:'资料说合成事件里异步批、setTimeout 里同步。为什么这套说法解释不了 React 19 里两次自增只加 1？',
+    promptAnswer:'默认批处理不限合成事件。基于旧 count 的两次自增会入同一队列，结果仍只加 1；要连加要用更新函数。',
     core:'状态更新先进入队列，按渲染快照应用；同一事件里的多次更新可以批处理合并。**React 18** 起在更多场景默认批处理，不能再把“原生事件 / setTimeout 一定同步刷 DOM”当稳定定律。资料里的 isBatchingUpdates、dirtyComponents 属于旧协调器叙事，不适合作为 Hooks 与并发渲染的标准讲解。setter 调用后，当前这次渲染里读到的变量仍是旧快照；要基于前值计算应使用更新函数形式。性能上的“少 render”来自批处理与跳过更新，而不是“setState 天生异步函数”。',
     why:'误以为合成事件里异步、定时器里一定同步。定时器或 Promise 里连续两次自增，仍可能只渲染一次，中间值看不到。区分信号是更新进入队列后按快照应用，而不是 isBatchingUpdates 那个旧开关。',
     example:'点击处理器里 setCount(c=>c+1) 两次，一次渲染里累加两次。把同样两次更新放到 Promise 回调里，在 React 18+ 仍可能批处理，不能默认假设一定看到中间态。',
@@ -39,7 +41,8 @@ const COVERAGE_FRONTEND_09 = [
   {
     track:'frontend', group:'React', id:'react-effect-timing',
     title:'useLayoutEffect 在绘制前，但不是无条件定理',
-    prompt:'为什么“useEffect 总在改变像素之后、且总比 useLayoutEffect 晚”不能写成绝对规则？',
+    prompt:'为什么不能写成：useEffect 总在改完像素之后，而且一定比 useLayoutEffect 晚？',
+    promptAnswer:'要在绘制前量布局、避免闪一帧时用 useLayoutEffect。默认副作用仍用 useEffect；服务端没有布局。',
     core:'官方建议：需要在浏览器重新绘制前测量或同步改 DOM 时用 useLayoutEffect；其余副作用优先 useEffect。常见客户端路径里，layout effect 的 setup 在 DOM 更新后、绘制前同步运行；passive 的 useEffect 在绘制后异步运行，因此多数情况下 layout 先于 effect。但不能把“像素一定已经变了 / 一定还没变”当成与调度、Strict Mode 双调用、SSR 水合无关的物理定律。useLayoutEffect 在服务器渲染时会告警，服务端没有布局可测。资料里“两者底层完全一致、基本可直接替换”也不成立：签名相似，提交阶段的调度时机不同。分不清就先用 useEffect；出现闪烁或测量不准再改 layout，并避免在 layout 里做重计算。',
     why:'误以为绘制之后像素一定已经变完，两个钩子可以互换。服务端没有布局可测，放在绘制前的钩子会告警，在里面发请求还会堵住绘制。区分信号是测量并同步改 DOM 才放绘制前，其余副作用放绘制后。',
     example:'根据子节点高度设置父容器样式：在 useLayoutEffect 里读 getBoundingClientRect 再 setState，避免先绘错误高度再闪一下。拉数用 useEffect，不要堵在 layout 阶段。',

@@ -4,6 +4,7 @@ const COVERAGE_JAVA_64 = [
     track:'java', group:'数据库', id:'mysql-trigger-side-effect-hidden',
     title:'触发器是隐蔽副作用，不是自动正确的业务层',
     prompt:'为什么应用只写了一条 INSERT，库存却被改了，代码里找不到 UPDATE？',
+    promptAnswer:'触发器在库内自动跑，应用源码默认看不见。禁令多为可维护性/容量启发式。',
     core:'**触发器**在指定表上对 INSERT/UPDATE/DELETE（及时机 BEFORE/AFTER）自动跑的一段 SQL。它和语句通常处在**同一事务**里：外层回滚，触发器改动一并撤销（具体以引擎与语句类型为准）。好处是库内强制约束；代价是**调用方源码看不见**这条路径，排障、性能和权限都变难。不要用触发器代替明确的应用用例与事务边界，见 `mysql-procedure-not-auto-txn`。团队“禁止触发器”多半是容量与可维护性启发式，不是 SQL 真理——和“禁止 JOIN”同类，见 `mysql-join-ban-not-absolute`。',
     why:'以为业务只在 Java 服务里，库内 BEFORE INSERT 又改了别的表，对账对不上；或误以为禁触发器是数据库定律。',
     example:'订单 INSERT 触发器里 UPDATE 库存。应用日志只有 insertOrder。库存异常时要查 `SHOW TRIGGERS` / information_schema，而不是只搜 Java。若团队禁用触发器，库存扣减应显式写在同一应用事务里。',

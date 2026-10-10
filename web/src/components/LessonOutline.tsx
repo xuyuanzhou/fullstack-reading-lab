@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import type { Lesson } from '@/types/curriculum'
 import { lessonNav } from '@/data/reading'
 
-const sectionsFor = (lesson: Lesson) => lessonNav(Boolean(lesson.deep?.length))
+const sectionsFor = (lesson: Lesson) =>
+  lessonNav({ hasDeep: Boolean(lesson.deep?.length), hasWhy: Boolean(lesson.why?.trim()) })
 
 export function LessonOutline({ lesson }: { lesson: Lesson }) {
   const sections = sectionsFor(lesson)
@@ -25,7 +26,7 @@ export function LessonOutline({ lesson }: { lesson: Lesson }) {
     )
     nodes.forEach((node) => observer.observe(node))
     return () => observer.disconnect()
-  }, [lesson.id, lesson.deep?.length])
+  }, [lesson.id, lesson.deep?.length, lesson.why])
 
   return (
     <nav className="lesson-outline" aria-label="本课目录">

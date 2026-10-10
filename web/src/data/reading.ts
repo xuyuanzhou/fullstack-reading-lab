@@ -10,8 +10,12 @@ export const LESSON_NAV = [
   ['notes', '笔记'],
 ] as const
 
-export function lessonNav(hasDeep: boolean) {
-  return LESSON_NAV.filter(([id]) => id !== 'mechanism' || hasDeep)
+export function lessonNav(options: { hasDeep: boolean; hasWhy: boolean }) {
+  return LESSON_NAV.filter(([id]) => {
+    if (id === 'mechanism') return options.hasDeep
+    if (id === 'why') return options.hasWhy
+    return true
+  })
 }
 
 /** Sidebar labels: readable first clause, not a single jargon token. */

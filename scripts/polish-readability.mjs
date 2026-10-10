@@ -35,22 +35,13 @@ function backtickThatLesson(text, knownIds) {
 
 function replaceSlots(text, lessonId) {
   if (!text.includes('槽位')) return text;
-  if (
-    lessonId.startsWith('fe-') ||
-    /(?:one-slot|official-slots|ecosystem|framework-first|resource-not|expo-router|svelte)/.test(lessonId)
-  ) {
-    return text.replace(/槽位/g, '职责位');
-  }
-  if (lessonId === 'css-container-query' || lessonId === 'html5-picture-source') {
-    return text.replace(/槽位/g, '所在位置');
-  }
   if (lessonId === 'java-arrays-aslist-fixed') {
     return text.replace(/槽位/g, '下标位置');
   }
   if (lessonId.includes('redis')) {
     return text.replace(/槽位/g, '哈希槽');
   }
-  return text.replace(/槽位/g, '位置');
+  return text;
 }
 
 function replaceOralRefs(text, prevId) {

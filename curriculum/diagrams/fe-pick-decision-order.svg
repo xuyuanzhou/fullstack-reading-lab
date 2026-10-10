@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 460" font-family="PingFang SC, Noto Sans SC, sans-serif">
+  <rect width="880" height="460" fill="#f7f5f2"/>
+  <text x="32" y="42" font-size="22" fill="#1c1917">选型没有打分公式</text>
+  <text x="32" y="70" font-size="14" fill="#57534e">四条分开写。不要把「用过的人更多」和「要不要服务端渲染」乘成一个分数。</text>
+  <g font-size="15" fill="#1c1917">
+    <rect x="32" y="96" width="816" height="72" rx="8" fill="#fff" stroke="#d6d3d1"/>
+    <text x="52" y="126">1 仓库和团队</text>
+    <text x="52" y="150" fill="#44403c">已经在交付的界面库继续用。空仓库才看本地能不能招到人，不看星数。</text>
+    <rect x="32" y="180" width="816" height="72" rx="8" fill="#fff" stroke="#d6d3d1"/>
+    <text x="52" y="210">2 谁打开</text>
+    <text x="52" y="234" fill="#44403c">小程序和 App 换运行时。不要为此把 Vue 换成 React。</text>
+    <rect x="32" y="264" width="816" height="72" rx="8" fill="#fff" stroke="#d6d3d1"/>
+    <text x="52" y="294">3 源代码里要不要标题</text>
+    <text x="52" y="318" fill="#44403c">要标题时用这个库自己的方案：Nuxt、Next、SvelteKit 或 Angular SSR。</text>
+    <rect x="32" y="348" width="816" height="72" rx="8" fill="#fff" stroke="#d6d3d1"/>
+    <text x="52" y="378">4 路由和数据</text>
+    <text x="52" y="402" fill="#44403c">只装这一套。改数字的那一行不参与打分。</text>
+  </g>
+</svg>

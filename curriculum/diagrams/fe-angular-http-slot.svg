@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 360" role="img" aria-labelledby="title desc">
   <title id="title">GET 走 HttpClient 这一路</title>
-  <desc id="desc">NgRx 不是新应用的默认数据槽。</desc>
+  <desc id="desc">NgRx 不是新应用默认的数据获取库。</desc>
   <defs><filter id="soft" x="-6%" y="-8%" width="112%" height="124%"><feDropShadow dx="0" dy="1" stdDeviation="1.4" flood-color="#28302a" flood-opacity="0.07"/></filter></defs>
   <rect width="960" height="360" rx="18" fill="#f6f7f4"/>
   <text x="32" y="28" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">选型</text>

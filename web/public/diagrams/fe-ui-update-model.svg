@@ -1,10 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 380" role="img" aria-labelledby="title desc">
-  <title id="title">留下一种更新模型</title>
-  <desc id="desc">同一个按钮里不混四种赋值。</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" role="img" aria-labelledby="title desc">
+  <title id="title">改数字时各自要写的那一行</title>
+  <desc id="desc">React 调 setCount，Vue 改 ref，Angular 调 signal.set，Svelte 给 $state 赋值。只留一种。</desc>
   <defs><filter id="soft" x="-6%" y="-8%" width="112%" height="124%"><feDropShadow dx="0" dy="1" stdDeviation="1.4" flood-color="#28302a" flood-opacity="0.07"/></filter></defs>
-  <rect width="960" height="380" rx="18" fill="#f6f7f4"/>
+  <rect width="960" height="420" rx="18" fill="#f6f7f4"/>
   <text x="32" y="28" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">选型</text>
-  <text x="32" y="56" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">留下一种更新模型</text>
-  <rect x="32" y="88" width="214" height="160" rx="14" fill="#fafaf8" stroke="#d9ddd8" filter="url(#soft)"/><text x="48" y="124" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2e3330" text-anchor="start">React</text><text x="48" y="168" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="400" fill="#2e3330" text-anchor="start">setCount</text><rect x="262" y="88" width="214" height="160" rx="14" fill="#fafaf8" stroke="#d9ddd8" filter="url(#soft)"/><text x="278" y="124" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2e3330" text-anchor="start">Vue</text><text x="278" y="168" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="400" fill="#2e3330" text-anchor="start">改 ref 字段</text><rect x="492" y="88" width="214" height="160" rx="14" fill="#fafaf8" stroke="#d9ddd8" filter="url(#soft)"/><text x="508" y="124" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2e3330" text-anchor="start">Angular</text><text x="508" y="168" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="400" fill="#2e3330" text-anchor="start">signal.set</text><rect x="722" y="88" width="206" height="160" rx="14" fill="#fafaf8" stroke="#d9ddd8" filter="url(#soft)"/><text x="738" y="124" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2e3330" text-anchor="start">Svelte</text><text x="738" y="168" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="400" fill="#2e3330" text-anchor="start">$state 后赋值</text><rect x="32" y="272" width="896" height="44" rx="12" fill="#e6efe9"/><text x="48" y="300" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="600" fill="#2d4f41" text-anchor="start">选定之后，路由和请求缓存跟着这一种模型走。</text>
+  <text x="32" y="56" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">点一下，数字加一：要写哪一行</text>
+  <rect x="32" y="84" width="214" height="220" rx="14" fill="#fafaf8" stroke="#d9ddd8" filter="url(#soft)"/>
+  <text x="48" y="118" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2e3330">React</text>
+  <text x="48" y="156" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">setCount(n + 1)</text>
+  <text x="48" y="188" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#5c6560">直接写 count = 1</text>
+  <text x="48" y="212" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#5c6560">画面不变</text>
+  <rect x="262" y="84" width="214" height="220" rx="14" fill="#fafaf8" stroke="#d9ddd8" filter="url(#soft)"/>
+  <text x="278" y="118" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2e3330">Vue 3</text>
+  <text x="278" y="156" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">count.value++</text>
+  <text x="278" y="188" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#5c6560">模板里写 count++</text>
+  <text x="278" y="212" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#5c6560">即可</text>
+  <rect x="492" y="84" width="214" height="220" rx="14" fill="#fafaf8" stroke="#d9ddd8" filter="url(#soft)"/>
+  <text x="508" y="118" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2e3330">Angular</text>
+  <text x="508" y="156" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">count.set(...)</text>
+  <text x="508" y="188" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#5c6560">模板要读 count()</text>
+  <text x="508" y="212" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#5c6560">v21 起默认无 zone.js</text>
+  <rect x="722" y="84" width="206" height="220" rx="14" fill="#fafaf8" stroke="#d9ddd8" filter="url(#soft)"/>
+  <text x="738" y="118" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="16" font-weight="600" fill="#2e3330">Svelte 5</text>
+  <text x="738" y="156" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">let n = $state(0)</text>
+  <text x="738" y="188" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#5c6560">然后 n++</text>
+  <text x="738" y="212" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#5c6560">$state 不用 import</text>
+  <rect x="32" y="328" width="896" height="64" rx="12" fill="#e6efe9"/>
+  <text x="48" y="356" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="600" fill="#2d4f41">同一个按钮只留上面一种写法。</text>
+  <text x="48" y="378" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#2d4f41">依据：react.dev State、Vue 响应式基础、Angular Zoneless、Svelte Runes。</text>
 </svg>

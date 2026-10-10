@@ -4,6 +4,7 @@ const COVERAGE_FRONTEND_19 = [
     track:'frontend', group:'测试', id:'react-enzyme-not-default',
     title:'组件测试默认 Testing Library，不是 Enzyme',
     prompt:'为什么 2019 的 React 路线图还把 Enzyme 画成组件测试必选项？',
+    promptAnswer:'那是旧图。现行默认是 Testing Library：按用户能看见的角色和名字查。Enzyme 的 shallow/instance 不是 React 19 的默认答案。',
     core:'Enzyme 用 shallow、wrapper.state、instance() 去读组件内部。那是实现细节，类名和内部方法一改测试就碎。Testing Library 按用户能感知的角色和名字查询，见 `testing-library-role`。React 19 的函数组件没有可供 Enzyme 依赖的实例；维护者也已转向 Testing Library。2019 图上并列的 Jest 仍常用，但断言目标应是页面上的控件，不是组件实例。端到端仍用 Playwright 走一条用户路径，见 `playwright-user-journey`。',
     why:'按 Enzyme 去 shallow 再读 state，Hooks 组件没有 instance，一升级 React 测试全红，按钮文字其实没变。',
     example:'render(<SaveButton />) 后 getByRole("button", { name: "保存" })。不要 wrapper.state("busy")。把按钮文字改成“提交”时，按角色的测试应失败；只改内部变量名时不应失败。',
@@ -22,7 +23,8 @@ const COVERAGE_FRONTEND_19 = [
   {
     track:'frontend', group:'TypeScript', id:'react-flow-not-default',
     title:'React 文档用 TypeScript，不再把 Flow 当默认',
-    prompt:'为什么 2019 路线图把 Flow 和 TypeScript 画成并列必学？',
+    prompt:'2019 路线图把 Flow 和 TypeScript 画成并列必学。为什么今天不能再这么背？',
+    promptAnswer:'新 React 代码默认 TypeScript。Flow 不是现行并列必学。',
     core:'Flow 是当时 Facebook 的类型检查器，注释写在 JS 里。现行 react.dev 的类型示例是 TypeScript：组件 props、Hooks 返回值都按 TS 讲解。PropTypes 是运行时检查，编译期帮不上忙，也不是 Flow 的替代品。遗留 Flow 仓库可以继续跑，新文件不要再开一条和文档不一致的类型工具链。类型边界见 `ts-unknown`、`ts-type-vs-interface`。',
     why:'新项目同时装 Flow 和 TypeScript，CI 两套检查互相打架，文档示例却全是 .tsx。',
     example:'function Hello({ name }: { name: string }) { return <p>{name}</p>; }。不要在新文件顶部写 // @flow。运行时 PropTypes.string 挡不住把数字传进 name 的编译错误。',

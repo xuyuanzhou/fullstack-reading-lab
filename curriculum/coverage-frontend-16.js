@@ -3,7 +3,8 @@ const COVERAGE_FRONTEND_16 = [
   {
     track:'frontend', group:'语言基础', id:'js-not-everything-object',
     title:'不是万物皆对象，链的尽头是 null',
-    prompt:'为什么图上写「万物皆对象、万物皆空」，还说每个对象都有 __proto__？',
+    prompt:'图上写「万物皆对象、万物皆空」，还说每个对象都有 __proto__。为什么不对？',
+    promptAnswer:'不是万物皆对象。原始值 typeof 不是 object；null 也不是对象。',
     core:'JavaScript 有对象，也有原始值：undefined、null、布尔、数字、bigint、字符串、symbol。读数字的 toString 时，实现会临时装箱，原始值本身不是对象。`typeof null === "object"` 是历史错误，null 不能当对象用，也不是「空对象」。`Object.create(null)` 才是没有原型的对象，连 `toString` 都没有。原型链查找停在 null，见 `js-prototype-chain`。日常用 `Object.getPrototypeOf`，不要把 `__proto__` 写成必有字段。',
     why:'按「万物皆对象」去给数字赋属性，下次读还是没有。把 Object.create(null) 当字典再调用 toString，会抛错，于是以为对象坏了。',
     example:'const n = 1; n.flag = true; 再读 n.flag 是 undefined。Object.create(null).toString 不是函数。Object.getPrototypeOf({}) 是 Object.prototype，再上一层是 null。',
@@ -22,7 +23,8 @@ const COVERAGE_FRONTEND_16 = [
   {
     track:'frontend', group:'语言基础', id:'js-arrow-has-no-prototype',
     title:'箭头函数没有 prototype，Function.prototype 也不是普通对象',
-    prompt:'为什么图上写「只要是构造函数就有 prototype，原型对象都是 Object 构造出来的」？',
+    prompt:'图上写「只要是构造函数就有 prototype，原型对象都是 Object 构造出来的」。为什么不准确？',
+    promptAnswer:'箭头与 bind 后的函数没有 prototype，不能当构造函数。',
     core:'能 `new` 的普通函数和 class 才有 `prototype`，实例的内部原型指向它。箭头函数没有 `prototype`，`new (() => {})` 抛 TypeError。`Function.prototype.bind` 得到的函数同样没有 `prototype`。`Function.prototype` 自己是函数，不是 `new Object()` 出来的普通对象；它的原型才是 `Object.prototype`。函数对象的内部原型通常是 `Function.prototype`，但不要写成「所有函数都是 Function 构造出来的」——箭头函数、方法简写和绑定函数走的是不同创建路径。见 `js-prototype-chain`、`js-this-callsite`。',
     why:'按那张图去 `new` 箭头函数，或去改 Function.prototype 上的 constructor 当普通对象字段，调试信息会对不上。',
     example:'function Person() {} 有 Person.prototype。const f = () => {}; f.prototype 是 undefined。typeof Function.prototype 是 function。Object.getPrototypeOf(Function.prototype) 是 Object.prototype。',

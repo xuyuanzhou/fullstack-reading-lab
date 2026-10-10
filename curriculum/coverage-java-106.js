@@ -4,6 +4,7 @@ const COVERAGE_JAVA_106 = [
     track:'java', group:'数据库', id:'mysql-what-and-when',
     title:'MySQL 是关系库，管事务与权威数据，不是搜索/缓存引擎',
     prompt:'为什么业务一上来先落 MySQL，却又不能拿它当 Elasticsearch 或 Redis 用？',
+    promptAnswer:'MySQL 管事务和权威数据。全文搜索与通用缓存要交给专用系统，不能把库当 ES 或 Redis 用。',
     core:'**MySQL（InnoDB）**是**关系型数据库**：表、约束、事务（ACID 语义）、索引与 SQL。它擅长：**权威业务状态**、多行一致性写、按键/索引的点查与关联。默认引擎与边界见 `mysql-innodb-default-not-ban-others`、`mysql-acid-c-is-consistency`。它**不是**全文搜索引擎（见 `es-what-and-when`），也**不是**通用内存缓存（见 `redis-what-and-when`）。复杂探索式检索、海量日志分析、纯热点缓存应考虑专用组件。',
     why:'用 `LIKE \'%词%\'` 扛商城搜索；或把会话与排行榜硬塞进表却抱怨慢；或反过来不敢用事务库。',
     example:'订单/库存/支付在 MySQL 事务内提交；商品搜索走 ES；详情热点走 Redis。三套职责分开。',
@@ -21,7 +22,8 @@ const COVERAGE_JAVA_106 = [
   {
     track:'java', group:'数据库', id:'mysql-tradeoffs-capacity',
     title:'MySQL 优缺点与容量看缓冲池、查询与复制，没有万能 QPS',
-    prompt:'为什么不能背“单库多少 QPS、单表多少行”当容量定律？',
+    prompt:'有人背“单库多少 QPS、单表多少行”当容量定律。为什么不能？',
+    promptAnswer:'没有固定的“单库 QPS / 单表行数”定律。容量看缓冲池、查询形态与复制，要用压测。',
     core:'**优点**：事务与约束、成熟生态、按索引的稳定点查。**代价**：错误索引/SQL 放大锁与 IO；大表变更与备份窗口；水平扩展有分片/分布式事务成本，见 `mysql-scalability-not-hopeless`、`mysql-split-not-at-ten-million`。**容量**：没有全站通用 QPS/行数阈值。粗框架：缓冲池命中、行与索引体积、查询形态（点查 vs 扫）、复制延迟与硬件；用压测与 `EXPLAIN`/监控定界。千万行拆表不是铁律。**为何用**：需要事务权威源时作为默认主存。',
     why:'背“单表一千万必拆”或“QPS 五万”上线；复杂报表打满实例却怪“MySQL 不行”。',
     example:'订单库按真实 QPS 与 P99 压测；慢查询用 EXPLAIN；只读报表可走副本并接受 lag。行数只是输入之一。',
