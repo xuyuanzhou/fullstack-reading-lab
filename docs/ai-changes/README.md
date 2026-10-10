@@ -11,6 +11,7 @@
 
 | 日期 | 状态 | 标题 |
 | --- | --- | --- |
+| 2026-10-10 | 已完成 | [契约写明库图上公网；外部碎片课挂 os-p0125](2026-10-10-library-assets-public-and-os-frag.md) |
 | 2026-10-10 | 已完成 | [HTTP 压缩与 Content-Type 专页挂图](2026-10-10-library-sync-http-compress-ctype.md) |
 | 2026-10-10 | 已完成 | [点章节名时左侧目录保持展开](2026-10-10-sidebar-keep-chapter-open.md) |
 | 2026-10-10 | 已完成 | [React、Vue 章先说明它们是什么](2026-10-10-react-vue-what-it-is.md) |

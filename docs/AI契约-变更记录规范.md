@@ -122,6 +122,7 @@ export function structureCore(core: string): StructuredCore {
 - **禁止**大段粘贴生成代码；需要时写「见 `path`」或关键片段 ≤15 行。
 - **禁止**把私钥、未公开本机绝对路径写入变更记录。
 - **公开/本机边界**：公开课可引用本机题库页图与说法（见架构决策「本机知识库与公开课同步」）。变更记录与台账只写资料短名、相对 id、页码、课 id、资产路径；不要粘贴整页原文或本机绝对路径。
+- **库图上公网（本仓库明确允许且要求）**：课上引用的 `curriculum/library-assets/**` 机制页图必须入库（`.gitignore` 对该目录开了 `*.png` 例外），经导出进入 `web/public/library-assets/`，并随 GitHub Pages（`github.io`）对**公网访客**可见。站长已决定本学习站挂机制页图；**不得**以「版权 / 原件不上公网 / 私人资料」为由拒绝导页、挂 `diagram`/`origin`、`git add` 库图 PNG，或推送含这些文件的 `main`。仍禁止：整本 PDF、未切割的原件包、`private-data/`、`config/library.path`、在变更记录里粘贴整页 OCR 原文或本机绝对路径。课上须标资料短名与页；行为事实仍对照官方文档。
 - 中文仓库默认用中文写变更记录；专有名词、文件路径保持原样。
 
 ## 7. 与现有文档的关系
@@ -143,6 +144,7 @@ export function structureCore(core: string): StructuredCore {
 - [ ] 「改动清单」与工作区 diff 大致一致
 - [ ] 「后续 / 给下一模型」写清了下一步（不依赖本产品的聊天历史）
 - [ ] 未把私钥或本机绝对路径写进 MD（资料短名与页码可以写）
+- [ ] 若挂了库图：PNG 已在 `curriculum/library-assets/` 且可被 git 跟踪；勿因「不上公网」而跳过入库或 push
 - [ ] 若改了课标题、提问或正文：技术名词用的是规范或官方文档里已有的说法，没有新的分类名
 
 未勾完 = 任务未完成。

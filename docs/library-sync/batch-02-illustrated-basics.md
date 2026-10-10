@@ -37,6 +37,7 @@
 | `linux-virtual-memory-isolation` | 图解系统 p121（为何要虚拟内存） | `os-p0121.png` | 已挂（新建定义课） |
 | `linux-virtual-addr-mmu` | 图解系统 p122（虚拟/物理地址与 MMU） | `os-p0122.png` | 已挂（新建定义课） |
 | `linux-memory-segmentation` | 图解系统 p123（段选择子/段表翻译） | `os-p0123.png` | 已挂（新建定义课） |
+| `linux-external-fragmentation` | 图解系统 p125（外部碎片算例） | `os-p0125.png` | 已挂（新建定义课） |
 | `linux-memory-paging` | 图解系统 p128（页号/偏移与页表翻译） | `os-p0128.png` | 已挂（新建定义课） |
 | `linux-multilevel-page-table` | 图解系统 p130（多级页表） | `os-p0130.png` | 已挂（新建定义课） |
 | `linux-page-fault-swap` | 图解系统 p127（缺页与换入换出） | `os-p0127.png` | 已挂（新建定义课） |
@@ -47,4 +48,4 @@
 
 另导出备用：OS `os-p0005`/`p0012`/`p0020`/`p0124`～`p0126`/`p0129`/`p0131`/`p0132`/`p0134`；HTTP `http-p0028`～`p0033`/`p0038`/`p0051`/`p0066`～`p0068`/`p0070`/`p0093`～`p0095`/`p0115`/`p0116`/`p0119`；网络 `network-p0026`/`p0027`/`p0067`；Redis `redis-ds-p0021`/`p0031`/`p0034`/`p0036`；封面级 `http-p0001`/`network-p0001`/`redis-ds-p0001` 可弃用。跳过：`os-p0001`、`os-p0231`。
 
-后续可续：Redis embstr（本亮白卷未单独成页）；碎片/局部性算例（勿硬挂 JVM 运行时区课）。握手对比见 `network-p0080`；HTTPS 示意见 `http-p0149`（现行以 TLS 1.3 为准）。跳过：`network-p0049`（推广插页）。
+后续可续：Redis embstr（本亮白卷未单独成页）。握手对比见 `network-p0080`；HTTPS 示意见 `http-p0149`（现行以 TLS 1.3 为准）。跳过：`network-p0049`（推广插页）。

@@ -986,6 +986,7 @@
         "linux-virtual-memory-isolation",
         "linux-virtual-addr-mmu",
         "linux-memory-segmentation",
+        "linux-external-fragmentation",
         "linux-memory-paging",
         "linux-multilevel-page-table",
         "linux-page-fault-swap",
@@ -2976,6 +2977,7 @@
             "linux-virtual-memory-isolation",
             "linux-virtual-addr-mmu",
             "linux-memory-segmentation",
+            "linux-external-fragmentation",
             "linux-memory-paging",
             "linux-multilevel-page-table",
             "linux-page-fault-swap",
@@ -17090,6 +17092,21 @@
         "分段用段号查段表，基址加偏移得到物理地址",
         "段长短可变，易产生外部碎片",
         "现行通用操作系统地址翻译主路径是分页"
+      ],
+      "since": "engineering"
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "linux-external-fragmentation",
+      "title": "外部碎片：空闲总量够，却放不下一个连续分配",
+      "prompt": "物理内存还空着 256MB，为什么一个只要 200MB 的新程序仍可能装不进去？",
+      "promptAnswer": "空闲块不连续时，每一块都小于 200MB，总和够也不等于能装下。这叫外部碎片。",
+      "keywords": "外部碎片 内部碎片 分段 连续分配 分页",
+      "points": [
+        "外部碎片：空闲总够但块不连续，装不下新分配",
+        "内部碎片：已分配块内部用不满",
+        "分页按页分配，减轻对大块连续空闲的依赖"
       ],
       "since": "engineering"
     },

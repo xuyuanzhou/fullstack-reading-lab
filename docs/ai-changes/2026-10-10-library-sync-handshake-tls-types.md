@@ -35,7 +35,8 @@ node scripts/export-curriculum.mjs && node scripts/verify_content.mjs
 
 ## 后续
 
-- [ ] 可选：HTTP 压缩协商页；OS 碎片算例
+- [x] 可选：HTTP 压缩协商页 → 已由 [http-compress-ctype](2026-10-10-library-sync-http-compress-ctype.md) 接续
+- [x] 可选：OS 碎片算例 → 已由 [public-and-os-frag](2026-10-10-library-assets-public-and-os-frag.md) 接续
 - [ ] AI 工具篇机制图仍无则跳过
 - [ ] HTTPS 旧书图勿当成 TLS 1.3 固定包数证据
 

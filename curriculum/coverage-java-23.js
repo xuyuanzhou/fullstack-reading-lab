@@ -213,6 +213,26 @@ const COVERAGE_JAVA_23 = [
     refs:[['Intel SDM：Segmentation','https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html'],['kernel：Memory Management','https://docs.kernel.org/admin-guide/mm/index.html']]
   },
   {
+    track:'java', group:'工程实践', id:'linux-external-fragmentation',
+    title:'外部碎片：空闲总量够，却放不下一个连续分配',
+    prompt:'物理内存还空着 256MB，为什么一个只要 200MB 的新程序仍可能装不进去？',
+    promptAnswer:'空闲块不连续时，每一块都小于 200MB，总和够也不等于能装下。这叫外部碎片。',
+    core:'外部碎片指物理内存里空闲块总容量够，但被占用块隔成多段不连续空洞，放不下一个需要连续区间的新分配。分段下段长短不一，进程退出后更容易留下这种空洞。内部碎片则是已分配块内部用不满的浪费，和“洞在块与块之间”不是同一回事。缓解外部碎片可以靠把整段换出再换入以合并空闲区，但整段交换成本高；固定大小的分页让分配按页进行，不再依赖很大的连续物理空洞，这是后来主流转向分页的重要原因之一。',
+    why:'只背“空闲字节数够就能装”，会对不上分段时代常见的装载失败，也解释不清为何分页减轻的是连续空洞问题。区分信号是：看空闲是否连成一块，还是只看总和。',
+    example:'1GB 物理内存里先有游戏 512MB、浏览器 128MB、音乐 256MB。浏览器退出后空出中间 128MB，加上末尾 128MB，空闲合计 256MB，但新程序要连续 200MB 时两段都塞不进去——这就是外部碎片。',
+    task:'用一句话区分外部碎片与内部碎片；写出“总和够仍装不下”的条件；说明分页如何减轻对大块连续空闲的依赖。',
+    answer:'外部碎片是空闲块之间的不连续空洞；内部碎片是已分配块内部浪费。总和够仍装不下，是因为没有任何一块连续空闲满足所需长度。分页按固定页分配，不要求很大的连续物理空洞。',
+    keywords:'外部碎片 内部碎片 分段 连续分配 分页',
+    origin:'本地库《图解系统》外部碎片算例页',
+    diagram:'library-assets/illustrated-basics/os-p0125.png',
+    points:['外部碎片：空闲总够但块不连续，装不下新分配','内部碎片：已分配块内部用不满','分页按页分配，减轻对大块连续空闲的依赖'],
+    deep:[
+      {title:'和分段课怎么衔接',body:'`linux-memory-segmentation` 讲段表翻译。本课钉它留下的问题：可变长占用后的空洞。分页课再讲固定页如何改分配粒度。'},
+      {title:'怎样自己验证',body:'对照「游戏/浏览器/音乐 → 浏览器退出 → 200MB 新程序两处都标 X」图，写出空闲总和与最大连续空闲各是多少。'},
+    ],
+    refs:[['kernel：Memory Management','https://docs.kernel.org/admin-guide/mm/index.html'],['Intel SDM：Memory Management','https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html']]
+  },
+  {
     track:'java', group:'工程实践', id:'linux-page-fault-swap',
     title:'缺页时内核补页或换入，内存紧时可以把页换出到磁盘',
     prompt:'为什么把“进程一启动就把全部虚拟页装进物理内存”背成现状，会在解释懒加载和 swap 时说不通？',
