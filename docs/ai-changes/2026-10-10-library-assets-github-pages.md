@@ -34,10 +34,11 @@ cd web && npm run check   # CI 同款：export → verify → build
 ```
 
 - 本地 export 后 `web/public/library-assets` 约 107 张引用图。
+- Pages 部署 `38062489454` 成功后抽样均为 200：`os-p0122`、`http-p0069`、`js-mindmap-2`、`prototype-chain-flow`。
 
 ## 后续
 
-- [ ] push `main` 后确认 Pages 课页图片 200
+- [x] push `main`（`a76c35d` 库图 + `948e544` 导出同步；HTTP/1.1 + 大 postBuffer）后确认 Pages 课页图片 200
 - [ ] 新导页进 `curriculum/library-assets/` 后必须 `git add`（勿再被全局 `*.png` 挡住）
 
 ## 给下一模型
