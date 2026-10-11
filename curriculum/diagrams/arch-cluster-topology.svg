@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 720" role="img" aria-labelledby="title desc">
+  <title id="title">水平扩展站：应用集群与读写分离拓扑</title>
+  <desc id="desc">负载均衡调度到无状态应用集群；本地缓存与分布式缓存分层；文件服务独立；数据库主写从读并通过主从复制同步。</desc>
+  <defs>
+    <filter id="soft" x="-8%" y="-10%" width="116%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2.2" flood-color="#28302a" flood-opacity="0.09"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5e6661"/>
+    </marker>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3f6a58"/>
+    </marker>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a6280"/>
+    </marker>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f7f8f5"/>
+      <stop offset="100%" stop-color="#eef1ec"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1120" height="720" rx="20" fill="url(#bg)"/>
+  <text x="36" y="40" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="12" font-weight="600" letter-spacing="1.6" fill="#3f6a58">系统设计 / 水平扩展</text>
+  <text x="36" y="72" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="24" font-weight="600" fill="#2e3330">无状态应用集群 · 缓存分层 · 主从读写</text>
+  <text x="36" y="98" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#5e6661">同一套应用多副本；会话外置。库忙时加副本会放大连接与锁争用。</text>
+
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <!-- users hint -->
+    <rect x="36" y="320" width="100" height="72" rx="12" fill="#fafaf8" stroke="#d9ddd8" filter="url(#soft)"/>
+    <text x="56" y="350" font-size="14" font-weight="600" fill="#2e3330">用户</text>
+    <text x="56" y="374" font-size="12" fill="#5e6661">请求入口</text>
+    <path d="M136 356 H168" stroke="#5e6661" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+    <!-- LB -->
+    <rect x="176" y="300" width="130" height="112" rx="14" fill="#e6efe9" stroke="#3f6a58" filter="url(#soft)"/>
+    <text x="192" y="344" font-size="15" font-weight="600" fill="#2e3330">负载均衡</text>
+    <text x="192" y="370" font-size="12" fill="#5e6661">调度服务器</text>
+    <text x="192" y="392" font-size="12" fill="#3f6a58">健康检查</text>
+
+    <!-- App cluster -->
+    <rect x="360" y="140" width="340" height="420" rx="16" fill="#ffffff" stroke="#c5cdc6" filter="url(#soft)"/>
+    <text x="380" y="172" font-size="14" font-weight="600" fill="#3f6a58">应用服务器集群</text>
+    <text x="380" y="196" font-size="12" fill="#5e6661">无状态同质副本 · 会话不落本机</text>
+
+    <rect x="380" y="220" width="300" height="130" rx="12" fill="#eef2f8" stroke="#4a6280"/>
+    <text x="396" y="248" font-size="14" font-weight="600" fill="#2e3330">应用服务器 1</text>
+    <rect x="396" y="264" width="120" height="60" rx="8" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="412" y="300" font-size="13" fill="#2e3330">应用程序</text>
+    <rect x="532" y="264" width="128" height="60" rx="8" fill="#f6f7f4" stroke="#d9ddd8"/>
+    <text x="548" y="290" font-size="13" fill="#5e6661">本地缓存</text>
+    <text x="548" y="312" font-size="11" fill="#5e6661">进程内热点</text>
+
+    <rect x="388" y="366" width="300" height="56" rx="10" fill="#f6f7f4" stroke="#d9ddd8"/>
+    <text x="404" y="400" font-size="13" fill="#5e6661">应用服务器 2</text>
+    <rect x="396" y="438" width="300" height="56" rx="10" fill="#f6f7f4" stroke="#d9ddd8"/>
+    <text x="412" y="472" font-size="13" fill="#5e6661">应用服务器 n</text>
+    <text x="380" y="530" font-size="12" fill="#5e6661">数据访问模块：写主库 · 读从库</text>
+
+    <!-- fan-out from LB -->
+    <path d="M306 356 H352" stroke="#3f6a58" stroke-width="1.8" marker-end="url(#arrowGreen)"/>
+    <path d="M330 356 V285 H352" stroke="#3f6a58" stroke-width="1.2" fill="none" opacity="0.4"/>
+    <path d="M330 356 V466 H352" stroke="#3f6a58" stroke-width="1.2" fill="none" opacity="0.4"/>
+
+    <!-- Dist cache -->
+    <rect x="760" y="140" width="320" height="120" rx="14" fill="#eef2f8" stroke="#4a6280" filter="url(#soft)"/>
+    <text x="780" y="176" font-size="15" font-weight="600" fill="#2e3330">分布式缓存服务器 1..n</text>
+    <text x="780" y="204" font-size="13" fill="#5e6661">远程共享缓存（常见 Redis）</text>
+    <text x="780" y="228" font-size="13" fill="#4a6280">会话外置 · 跨实例热点读</text>
+    <path d="M700 280 C730 240, 740 200, 760 190" stroke="#4a6280" stroke-width="1.6" fill="none" marker-end="url(#arrowBlue)"/>
+    <text x="640" y="230" font-size="12" fill="#4a6280">远程缓存</text>
+
+    <!-- Files -->
+    <rect x="760" y="292" width="320" height="100" rx="14" fill="#fafaf8" stroke="#d9ddd8" filter="url(#soft)"/>
+    <text x="780" y="328" font-size="15" font-weight="600" fill="#2e3330">文件服务器 1..n</text>
+    <text x="780" y="356" font-size="13" fill="#5e6661">图片、附件等文件</text>
+    <path d="M700 340 H752" stroke="#5e6661" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+    <!-- DB -->
+    <rect x="760" y="424" width="320" height="100" rx="14" fill="#e6efe9" stroke="#3f6a58" filter="url(#soft)"/>
+    <text x="780" y="460" font-size="15" font-weight="600" fill="#2e3330">数据库服务器（主）</text>
+    <text x="780" y="488" font-size="13" fill="#3f6a58">写操作 · 权威状态</text>
+
+    <rect x="760" y="548" width="320" height="100" rx="14" fill="#ffffff" stroke="#c5cdc6" filter="url(#soft)"/>
+    <text x="780" y="584" font-size="15" font-weight="600" fill="#2e3330">数据库服务器（从）</text>
+    <text x="780" y="612" font-size="13" fill="#5e6661">读操作 · 可短暂落后</text>
+
+    <path d="M920 524 V548" stroke="#3f6a58" stroke-width="1.7" marker-end="url(#arrowGreen)"/>
+    <text x="932" y="542" font-size="12" fill="#3f6a58">主从复制</text>
+
+    <path d="M700 500 C730 500, 740 470, 760 470" stroke="#3f6a58" stroke-width="1.6" fill="none" marker-end="url(#arrowGreen)"/>
+    <text x="708" y="488" font-size="12" fill="#3f6a58">写</text>
+    <path d="M700 530 C730 560, 740 590, 760 590" stroke="#5e6661" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+    <text x="708" y="568" font-size="12" fill="#5e6661">读</text>
+
+    <rect x="36" y="620" width="680" height="72" rx="12" fill="#f6ecea" stroke="#a05048"/>
+    <text x="56" y="652" font-size="14" font-weight="600" fill="#6e3530">这是集群，不是微服务</text>
+    <text x="56" y="676" font-size="13" fill="#6e3530">边界未拆、数据仍共享。库已打满时，再加应用副本往往更差——先治查询与事务。</text>
+  </g>
+</svg>

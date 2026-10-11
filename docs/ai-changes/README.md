@@ -11,6 +11,22 @@
 
 | 日期 | 状态 | 标题 |
 | --- | --- | --- |
+| 2026-10-11 | 已完成 | [系统设计章审查：释义、收薄、SOA 并列与同步图](2026-10-11-arch-system-design-review-fixes.md) |
+| 2026-10-11 | 已完成 | [旁路缓存课：先讲清 Cache Aside 是什么](2026-10-11-cache-aside-gloss.md) |
+| 2026-10-11 | 已完成 | [redis-vs-db-cache 机制图补中文](2026-10-11-redis-vs-db-cache-zh.md) |
+| 2026-10-11 | 已完成 | [练习要求画图的课：参考答案统一补图](2026-10-11-answer-diagrams-sweep.md) |
+| 2026-10-11 | 已完成 | [事务课参考答案补箭头图](2026-10-11-spring-transaction-answer-diagram.md) |
+| 2026-10-11 | 已完成 | [第 2 关：关卡页不泄题并对齐 D2](2026-10-11-gate2-write-path-review.md) |
+| 2026-10-11 | 已完成 | [交付课写明五种失败，主线参考答案分条排版](2026-10-11-fs-ship-bar-five-failures-answer-layout.md) |
+| 2026-10-11 | 已完成 | [全栈主线八课审查：去口语并对齐参考答案](2026-10-11-fullstack-spine-review.md) |
+| 2026-10-11 | 已完成 | [交付收口课：自查标准说清楚缺哪回哪](2026-10-11-fs-ship-bar-self-check-plain.md) |
+| 2026-10-11 | 已完成 | [写接口分段课标题与提问改可读](2026-10-11-fs-boot-chain-plain.md) |
+| 2026-10-11 | 已完成 | [前端收口课练习与参考答案改规范表述](2026-10-11-fs-frontend-done-answer-plain.md) |
+| 2026-10-11 | 已完成 | [契约：知识点不用口语；清掉现有口语](2026-10-11-points-no-colloquial.md) |
+| 2026-10-11 | 已完成 | [公开课去掉口语「连发」](2026-10-11-no-lianfa-colloquial.md) |
+| 2026-10-11 | 已完成 | [主线首课练习题与答案去掉「守」句式](2026-10-11-fs-four-layers-task-plain.md) |
+| 2026-10-11 | 已完成 | [主线首课给四件事加第一次出现的括注](2026-10-11-fs-four-layers-term-gloss.md) |
+| 2026-10-11 | 已完成 | [主线首课提问改用正式四件事说法](2026-10-11-fs-four-layers-prompt-terms.md) |
 | 2026-10-11 | 已完成 | [HTTP 导论与 WebSocket 课挂图解专页](2026-10-11-library-sync-http-what-websocket.md) |
 | 2026-10-11 | 已完成 | [OS 续挂：扇区/块、ss 队列列、四指标与 MTU](2026-10-11-library-sync-os-fs-net-ops.md) |
 | 2026-10-11 | 已完成 | [inode/dentry 换挂关系图 os-p0286](2026-10-11-inode-dentry-diagram-p0286.md) |

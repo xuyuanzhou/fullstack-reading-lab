@@ -39,7 +39,7 @@ const COVERAGE_JAVA_12 = [
   {
     track:'java', group:'MyBatis', id:'mybatis-rowbounds-memory',
     title:'RowBounds 默认是结果集上跳过，不是数据库 LIMIT',
-    prompt:'为什么把 MyBatis 分页只背成“用 RowBounds 就分页了”会在大结果集上踩坑？',
+    prompt:'为什么把 MyBatis 分页只背成“用 RowBounds 就分页了”会在大结果集上出错？',
     promptAnswer:'默认 RowBounds 仍可能先把大结果读回再跳过。数据库分页要写 LIMIT/keyset，不能只背“用了 RowBounds”。',
     core:'RowBounds 给一个 offset 和 limit，默认执行器仍把 JDBC 查询跑完，再在结果集上跳过和截取。这是内存分页，不是自动改写成数据库的 LIMIT/OFFSET。数据量大时驱动仍可能拉回大量行。要物理分页，应在 SQL 里写数据库分页语法，或用插件在 StatementHandler 里按方言改写 SQL。资料说 RowBounds 是内存分页、插件才拼物理分页，这一句成立；但不要把 RowBounds 当成生产环境的默认分页方案。翻页深、排序不稳定时，还要考虑 keyset 而不是越来越大的 OFFSET。',
     why:'接口把页码交给 RowBounds 去翻后面的页，数据库会先查出前面的行，应用内存再跳过，大表上像整表都读回来了。区分信号是驱动读到的行数远大于页面上的 20 行。页码越大，读回来的行越多。',

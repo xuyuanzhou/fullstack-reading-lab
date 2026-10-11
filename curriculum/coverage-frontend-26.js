@@ -93,7 +93,7 @@ const COVERAGE_FRONTEND_26 = [
     task:'列出必须 singleton 的包名三到五个，写出双方的 requiredVersion。再预测少配 shared 时控制台会出现哪类症状。',
     answer:'React 与 react-dom 必写 singleton。版本写双方都能接受的范围。少配 shared 时预期钩子无效或 Context 为空，而不是「自动去重」。',
     keywords:'shared singleton requiredVersion React 重复',
-    points:['shared 不会因为 package.json 同名就自动单例','React 等带内部状态的库必须约定 singleton','版本对不上时要失败可见，不要静默双实例'],
+    points:['shared 不会因为 package.json 同名就自动单例','React 等带内部状态的库必须约定 singleton','版本不一致时要失败可见，不要静默双实例'],
     deep:[
       {title:'eager 与首屏',body:'eager 会把共享模块打进初始块，减少异步等待，但抬高壳的首包。按首屏路径选择，不要默认全部 eager。'},
       {title:'怎样自己验证',body:'在两个构建里各打印 React 的版本与模块对象身份。应为同一引用。去掉 shared 后再打印，应变成两个身份，并复现钩子报错。'}

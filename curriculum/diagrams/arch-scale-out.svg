@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" role="img" aria-labelledby="title desc">
+  <title id="title">水平扩展：先看瓶颈在应用还是在库</title>
+  <desc id="desc">应用 CPU 高且库闲时加副本有效。库 CPU 或锁等待高时加副本会放大连接与争用，应先治理查询与事务。</desc>
+  <rect width="960" height="420" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">系统设计 / 容量</text>
+  <text x="32" y="64" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">先看拐点在应用还是在库，再决定加副本</text>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <rect x="32" y="96" width="430" height="200" rx="14" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="52" y="132" font-size="15" font-weight="600" fill="#2e3330">应用忙 / 库闲</text>
+    <text x="52" y="164" font-size="14" fill="#3f6a58">多副本 + 负载均衡</text>
+    <text x="52" y="196" font-size="14" fill="#3f6a58">前提：无状态、会话外置</text>
+    <text x="52" y="228" font-size="14" fill="#5e6661">吞吐随副本上升</text>
+    <text x="52" y="268" font-size="14" fill="#3f6a58">这时加副本有效</text>
+
+    <rect x="496" y="96" width="432" height="200" rx="14" fill="#f3e9e7" stroke="#6e3530"/>
+    <text x="516" y="132" font-size="15" font-weight="600" fill="#2e3330">应用闲 / 库忙</text>
+    <text x="516" y="164" font-size="14" fill="#6e3530">再加副本 -&gt; 连接与查询放大</text>
+    <text x="516" y="196" font-size="14" fill="#6e3530">锁等待更挤，吞吐不升</text>
+    <text x="516" y="228" font-size="14" fill="#5e6661">先治查询、索引、事务</text>
+    <text x="516" y="268" font-size="14" fill="#6e3530">共享库拆服务消不掉库瓶颈</text>
+
+    <rect x="32" y="320" width="896" height="72" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="52" y="352" font-size="15" font-weight="600" fill="#2e3330">水平扩展解决的是无状态应用层容量</text>
+    <text x="52" y="376" font-size="14" fill="#5e6661">库仍是瓶颈时：先治理，再评估读副本或分片；不要先为名词拆微服务。</text>
+  </g>
+</svg>

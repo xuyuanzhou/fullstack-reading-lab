@@ -5,7 +5,7 @@ const COVERAGE_JAVA_59 = [
     title:'可重入身份别绑 MAC + 进程号 + 线程号',
     prompt:'为什么资料写分布式可重入锁要记录「MAC 地址 + JVM 进程 ID + 线程 ID」和重入次数？',
     promptAnswer:'锁持有者要用不可猜测的令牌。MAC+pid+tid 会撞车，也不能证明跨进程唯一身份。',
-    core:'可重入需要知道**还是不是同一个持有者**，并维护重入计数；身份应是**锁服务端存下的随机令牌**（UUID 等），释放与重入都比对令牌，见 `distributed-lock`、`redis-lock-setnx-expire-race`。资料用 MAC + PID + TID 拼身份，在云与容器里会翻车：MAC 可虚拟、可漂移、可撞车；PID/TID 会回收复用；多网卡、无 MAC 的命名空间更对不上。进程崩溃后旧身份若被新人拼出相同串，可能误当成“自己重入”而不真正互斥。数据库方案里写“主机信息 + 线程信息即可再分配锁”，是同一类错误。正确做法：占锁时写入唯一 token（可附 count），同 token 才允许 count+1；租约仍由服务端 TTL/会话管，不要靠墙钟，见 `redis-lock-getset-wall-clock`。',
+    core:'可重入需要知道**还是不是同一个持有者**，并维护重入计数；身份应是**锁服务端存下的随机令牌**（UUID 等），释放与重入都比对令牌，见 `distributed-lock`、`redis-lock-setnx-expire-race`。资料用 MAC + PID + TID 拼身份，在云与容器里会失败：MAC 可虚拟、可漂移、可撞车；PID/TID 会回收复用；多网卡、无 MAC 的命名空间更难得到稳定身份。进程崩溃后旧身份若被新人拼出相同串，可能误当成“自己重入”而不真正互斥。数据库方案里写“主机信息 + 线程信息即可再分配锁”，是同一类错误。正确做法：占锁时写入唯一 token（可附 count），同 token 才允许 count+1；租约仍由服务端 TTL/会话管，不要靠墙钟，见 `redis-lock-getset-wall-clock`。',
     why:'两台容器克隆出相同 MAC，或 PID 回收后新进程拼出旧串，第二次“重入”其实是另一个进程进了临界区。',
     example:'实例 A 写入 `owner=aa:bb:cc:dd:ee:ff|1234|42`，count=1。A 崩溃。新进程拿到同一个 PID 和相似的网卡配置，拼出相同 owner，被当成重入，count 再加，互斥失效。改成 `SET lock:order:9 <uuid> NX EX 30`，value 带 count；只有持有该 uuid 的客户端才能 INCR count 或续租，别人只能等租约过期。',
     task:'划掉“MAC+PID+TID=可靠持有者”。写出应用存什么当 owner，重入时比什么。',

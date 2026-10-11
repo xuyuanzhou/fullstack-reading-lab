@@ -3,7 +3,7 @@ const COVERAGE_JAVA_23 = [
   {
     track:'frontend', group:'语言基础', id:'js-regex-dot-not-newline',
     title:'. 默认不匹配换行，\\d 也不总等于 0-9 的全部数字',
-    prompt:'为什么把正则背成“. 匹配任意单个字符、\\d 就是 [0-9]”会在开了 Unicode 或 DOTALL 时翻车？',
+    prompt:'为什么把正则背成“. 匹配任意单个字符、\\d 就是 [0-9]”会在开了 Unicode 或 DOTALL 时出错？',
     promptAnswer:'默认点号不匹配换行。要跨行开 s/DOTALL；\\d 也不等于永远 [0-9]。',
     core:'多数引擎里 `.` 是元字符，默认不匹配换行；要匹配换行需 `(?s)`、`/s`、Pattern.DOTALL 或 `[^]` 这类写法。匹配字面点用 `\\.`。`\\d` 在 JavaScript 默认是 `[0-9]`；在 Java 开 UNICODE_CHARACTER_CLASS、或 Python 的 Unicode 模式下可以匹配其他数字字符。`[^0-9]` 是否等于“最后一个不是数字”还取决于锚点和量词，资料里的 `abc[^0-9]` 只会再吃一个非数字字符。正则嵌在宿主语言里，flag 决定语义。',
     why:'把 . 背成任意单个字符，多行日志会在第一处换行停住；把 \\d 背成永远等于 [0-9]，开了 Unicode 时全角数字会判断反。区分信号是点号要 DOTALL 或 s 标志才跨行，\\d 的宽度看 flag。',

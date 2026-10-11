@@ -208,6 +208,7 @@ export const publishedSources = [
   'coverage-core-16.js',
   'coverage-ops-17.js',
   'answer-walkthrough.js',
+  'answer-diagrams.js',
   'example-code-blocks.js',
 ];
 
@@ -554,7 +555,7 @@ export const OUTLINE = {
       { title: '其他', ids: ['sca-rocketmq-intro', 'sca-oss-intro', 'sca-schedulerx-intro', 'sca-sms-intro'] },
     ],
     系统设计: [
-      { title: '这一章', ids: ['arch-chapter-aim', 'arch-evolution-stages', 'arch-monolith-when', 'arch-modular-boundary', 'arch-scale-before-split', 'arch-microservice-split', 'arch-split-order-case', 'arch-sync-vs-async'] },
+      { title: '这一章', ids: ['arch-chapter-aim', 'arch-evolution-stages', 'arch-monolith-when', 'arch-modular-boundary', 'arch-scale-before-split', 'arch-soa-classic', 'arch-microservice-split', 'arch-split-order-case', 'arch-sync-vs-async'] },
       { title: '通用能力', ids: ['idempotency', 'cache', 'message-delivery', 'rate-limit', 'sql-keyset-page'] },
       { title: '容量', ids: ['arch-slo-budget', 'arch-queue-wait', 'arch-design-one-path'] },
       { title: '领域驱动', ids: ['ddd-same-word-two-contexts', 'ddd-aggregate-transaction-boundary', 'ddd-entity-or-value', 'ddd-repository-one-entry'] },
@@ -755,6 +756,7 @@ export const PATH_LEAD = {
       'arch-monolith-when',
       'arch-modular-boundary',
       'arch-scale-before-split',
+      'arch-soa-classic',
       'arch-microservice-split',
       'arch-split-order-case',
       'arch-sync-vs-async',
@@ -1212,6 +1214,7 @@ export const LESSON_SINCE = {
   "arch-queue-wait": "system design",
   "arch-scale-before-split": "system design",
   "arch-slo-budget": "system design",
+  "arch-soa-classic": "system design",
   "arch-split-order-case": "system design",
   "arch-sync-vs-async": "system design",
   "auth-session-vs-jwt": "session / JWT",

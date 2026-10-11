@@ -27,7 +27,7 @@
 
 ## 指标（最近一次 verify）
 
-- 公开课约 1055 课 / 3173 知识点（以 `verify_content.mjs` 为准；本轮只换图不增课）
+- 公开课约 1056 课 / 3176 知识点（以 `verify_content.mjs` 为准）
 - curriculum 带 `origin` 且未挂库图：上表 2 课（binlog / cache-db 双写）
 
 ## 下一刀（有需要再开）

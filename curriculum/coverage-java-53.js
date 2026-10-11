@@ -72,7 +72,7 @@ const COVERAGE_JAVA_53 = [
     keywords:'INNER JOIN LEFT JOIN SQL 联结',
     points:['INNER JOIN 丢弃无匹配行','LEFT JOIN 保留左表，右表侧可为 NULL','WHERE 右表条件可能抵消外连接'],
     deep:[
-      {title:'和 ON vs WHERE',body:'过滤联结条件优先写在 ON。WHERE 在联结之后过滤，对外连接更易踩坑。'},
+      {title:'和 ON vs WHERE',body:'过滤联结条件优先写在 ON。WHERE 在联结之后过滤，对外连接更容易得到不符合预期的行。'},
       {title:'怎样自己验证',body:'造一个无订单用户，INNER 结果应无他；LEFT 应有他且订单列为 NULL。'}
     ],
     refs:[['MySQL：JOIN','https://dev.mysql.com/doc/refman/8.4/en/join.html'],['MySQL：外连接','https://dev.mysql.com/doc/refman/8.4/en/outer-join-simplification.html']]

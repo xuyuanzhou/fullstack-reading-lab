@@ -8,7 +8,7 @@ const COVERAGE_JAVA_106 = [
     core:'**MySQL（InnoDB）**是**关系型数据库**：表、约束、事务（ACID 语义）、索引与 SQL。它擅长：**权威业务状态**、多行一致性写、按键/索引的点查与关联。默认引擎与边界见 `mysql-innodb-default-not-ban-others`、`mysql-acid-c-is-consistency`。它**不是**全文搜索引擎（见 `es-what-and-when`），也**不是**通用内存缓存（见 `redis-what-and-when`）。复杂探索式检索、海量日志分析、纯热点缓存应考虑专用组件。',
     why:'用 `LIKE \'%词%\'` 扛商城搜索；或把会话与排行榜硬塞进表却抱怨慢；或反过来不敢用事务库。',
     example:'订单/库存/支付在 MySQL 事务内提交；商品搜索走 ES；详情热点走 Redis。三套职责分开。',
-    task:'划掉“一个 MySQL 搞定搜索和缓存”。用两句话：它是什么；最适合的两类工作负载。',
+    task:'划掉“一个 MySQL 兼做搜索和缓存”。用两句话：它是什么；最适合的两类工作负载。',
     answer:'划掉万能。MySQL 是关系库，管事务与权威数据。适合一致性写与按索引查询。搜索与通用缓存交给专用系统。',
     keywords:'MySQL InnoDB 事务 权威数据',
     diagram:'diagrams/mysql-what-and-when.svg',

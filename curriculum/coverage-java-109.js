@@ -5,7 +5,7 @@ const COVERAGE_JAVA_109 = [
     title:'降序索引是索引键方向选项，不是 “ORDER BY 随便写都免排序”',
     prompt:'为什么资料写 MySQL 8 支持降序索引后，有人就认为所有 ORDER BY col DESC 都不再 filesort？',
     promptAnswer:'降序索引让索引顺序与某些 ORDER BY 对齐。是否免排序仍看计划与前缀匹配，要用 EXPLAIN 核对。',
-    core:'MySQL 8.0 起二级索引可声明 **DESC/ASC 混合方向**（降序索引），让某些 **ORDER BY** 与索引顺序一致时避免额外排序。它不是定律：是否走索引、是否还能 filesort，仍看最左前缀、过滤选择性、回表与优化器代价，见 `mysql-explain-analyze`、`mysql-composite-selectivity-order-heuristic`。旧版把 DESC 当语法糖、实际仍按 ASC 存的说法不能套在现行 8.x 上；反过来以为“有降序索引=一切降序查询免费”也会翻车。',
+    core:'MySQL 8.0 起二级索引可声明 **DESC/ASC 混合方向**（降序索引），让某些 **ORDER BY** 与索引顺序一致时避免额外排序。它不是定律：是否走索引、是否还能 filesort，仍看最左前缀、过滤选择性、回表与优化器代价，见 `mysql-explain-analyze`、`mysql-composite-selectivity-order-heuristic`。旧版把 DESC 当语法糖、实际仍按 ASC 存的说法不能套在现行 8.x 上；反过来以为“有降序索引=一切降序查询免费”也会出错。',
     why:'给所有排序列建 DESC 索引却从不看 EXPLAIN；或升到 8.0 后仍背“DESC 无效”。',
     example:'`INDEX (created_at DESC)` 支撑 `ORDER BY created_at DESC LIMIT 20` 时常更贴。若 `WHERE` 无法用上最左前缀，仍可能排序或扫更多行——用 EXPLAIN 证明。',
     task:'划掉“有降序索引=ORDER BY DESC 永免排序”。写出：它解决什么匹配；还要核对什么。',

@@ -159,16 +159,7 @@ function StageDetail({
                       {item.job ? <p>{item.job}</p> : null}
                     </div>
                   ))}
-                  {upcoming ? (
-                    <>
-                      <p className="path-lesson-ask">先回答：{lead.prompt}</p>
-                      <ul>
-                        {lead.points.map((point) => (
-                          <li key={point}>{point}</li>
-                        ))}
-                      </ul>
-                    </>
-                  ) : null}
+                  {upcoming ? <p className="path-lesson-ask">先回答：{lead.prompt}</p> : null}
                 </li>
               )
             })}

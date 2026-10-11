@@ -5,7 +5,7 @@ const COVERAGE_JAVA_97 = [
     title:'CHECK 约束在现行 MySQL 会强制，不是“写了等于没写”',
     prompt:'为什么老资料说 MySQL 的 CHECK 只解析不执行，新人却在 8.0 上撞上约束失败？',
     promptAnswer:'8.0.16+ 起 InnoDB 强制 CHECK。它挡非法写入，不代替索引与查询优化。',
-    core:'历史上不少资料写：**CHECK 语法接受但不强制**。从 **MySQL 8.0.16** 起，InnoDB 对 **CHECK 约束会真正强制**（违反则语句失败）。把“MySQL 没有 CHECK”背成定律会在现行版本翻车；反过来以为任意表达式都能当高性能过滤也不对——CHECK 是写路径校验，不是替代索引与 WHERE 计划。迁移时要核对版本：旧库“能写入的脏行”在升级后可能插不进去。邻接 `mysql-not-null-default-not-absolute`、`table-constraint-holds-rule`。',
+    core:'历史上不少资料写：**CHECK 语法接受但不强制**。从 **MySQL 8.0.16** 起，InnoDB 对 **CHECK 约束会真正强制**（违反则语句失败）。把“MySQL 没有 CHECK”背成定律会在现行版本出错；反过来以为任意表达式都能当高性能过滤也不对——CHECK 是写路径校验，不是替代索引与 WHERE 计划。迁移时要核对版本：旧库“能写入的脏行”在升级后可能插不进去。邻接 `mysql-not-null-default-not-absolute`、`table-constraint-holds-rule`。',
     why:'按老博客关掉应用侧校验，靠“数据库反正不管 CHECK”；或升级到 8.0.16+ 后批量导入突然全失败。',
     example:'`ALTER TABLE t ADD CONSTRAINT chk_qty CHECK (qty >= 0);` 在 8.0.16+ 插入 qty=-1 应失败。在更早版本同一 DDL 可能“成功”却仍写入 -1——不要用旧行为当现行手册。',
     task:'划掉“MySQL CHECK 永不生效”。写出：从哪代起强制；它解决什么、不解决什么。',

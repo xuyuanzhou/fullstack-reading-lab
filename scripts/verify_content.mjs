@@ -176,6 +176,7 @@ assert.equal(publishedSources.includes('coverage-chapters-10.js'), true);
 assert.equal(publishedSources.includes('coverage-sca-12.js'), true);
 assert.equal(publishedSources.includes('coverage-infra-13.js'), true);
 assert.equal(publishedSources.includes('answer-walkthrough.js'), true);
+assert.equal(publishedSources.includes('answer-diagrams.js'), true);
 assert.equal(publishedSources.includes('coverage-depth-14.js'), true);
 assert.equal(publishedSources.includes('coverage-ship-15.js'), true);
 assert.equal(publishedSources.includes('coverage-core-16.js'), true);
@@ -202,6 +203,17 @@ for (const lesson of lessons) {
   if (/划掉/.test(lesson.task)) {
     assert(/划掉/.test(lesson.answer), `${lesson.id}: 划掉 task needs 划掉 in the practice answer`);
   }
+  const asksDraw =
+    /画(?:出|一棵|一张|一次|一条|一个|三条|两条|入口|控制|你|当前仓库|「)|依赖箭头|getPrototypeOf 画出|前两层队列/.test(
+      lesson.task,
+    ) &&
+    !/箭头函数|引擎画出来|箭头形式|再画一遍|画到哪里|把组件画|画一条线|默认画布|性能时间线/.test(lesson.task);
+  if (asksDraw) {
+    assert(
+      /```(?:text|ascii|mermaid)?/.test(lesson.answer) || Boolean(lesson.diagram),
+      `${lesson.id}: draw task needs a figure in the practice answer (fenced text or lesson.diagram)`,
+    );
+  }
   if (/谁保存地址|谁选择地址|谁拒绝超额流量|谁提交两个数据库/.test(lesson.task)) {
     assert(
       /Nacos/.test(lesson.answer) && /LoadBalancer/.test(lesson.answer) && /Sentinel/.test(lesson.answer),
@@ -213,6 +225,32 @@ for (const lesson of lessons) {
 const frontendCount = lessons.filter((lesson) => lesson.track === 'frontend').length;
 const javaCount = lessons.filter((lesson) => lesson.track === 'java').length;
 const pointCount = lessons.reduce((n, x) => n + x.points.length, 0);
+/** 知识点（points）口语禁词；与契约第 11 节一致。 */
+const POINT_COLLOQUIAL = [
+  [/连发/, '连发'],
+  [/各守/, '各守'],
+  [/踩坑/, '踩坑'],
+  [/翻车/, '翻车'],
+  [/语义坑/, '语义坑'],
+  [/搞定/, '搞定'],
+  [/说白了/, '说白了'],
+  [/玩意/, '玩意'],
+  [/干嘛/, '干嘛'],
+  [/咱们/, '咱们'],
+  [/对不齐/, '对不齐'],
+  [/对不上/, '对不上'],
+];
+const POINT_KULI_OK = /(仓库|标准库|类库|工具库|数据库)里/;
+for (const lesson of lessons) {
+  for (const point of lesson.points ?? []) {
+    for (const [re, label] of POINT_COLLOQUIAL) {
+      assert.equal(re.test(point), false, `${lesson.id}: point must not use colloquial「${label}」: ${point}`);
+    }
+    if (/库里/.test(point) && !POINT_KULI_OK.test(point)) {
+      assert.fail(`${lesson.id}: point must not use colloquial「库里」: ${point}`);
+    }
+  }
+}
 const readme = fs.readFileSync(new URL('../README.md', import.meta.url), 'utf8');
 assert.equal(
   readme.includes(`${lessons.length} 节原创课程、${pointCount} 个具体知识点`),

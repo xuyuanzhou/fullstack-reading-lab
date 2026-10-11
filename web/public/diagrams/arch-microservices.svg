@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 460" role="img" aria-labelledby="title desc">
   <title id="title">微服务按业务能力拆</title>
-  <desc id="desc">订单、库存、支付各自独立部署并拥有自己的数据。按控制器、服务、数据访问三层拆开，不是微服务。</desc>
+  <desc id="desc">订单、库存、支付各自独立部署并拥有自己的数据。当场结果同步预留，副作用异步并补偿。按控制器、服务、数据访问三层拆开，不是微服务。</desc>
   <defs>
     <filter id="soft" x="-6%" y="-8%" width="112%" height="124%">
       <feDropShadow dx="0" dy="1" stdDeviation="1.4" flood-color="#28302a" flood-opacity="0.07"/>
@@ -30,6 +30,6 @@
     <text x="698" y="280" font-size="14" fill="#3f6a58">失败走补偿</text>
     <text x="698" y="306" font-size="14" fill="#3f6a58">不共享本地事务</text>
   </g>
-  <text x="32" y="400" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#5e6661">下单先在订单侧落单，再通过消息或带幂等的调用扣库存。</text>
+  <text x="32" y="400" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#5e6661">当场要结果：同步预留库存（超时 + 幂等）。副作用：异步履约；失败走补偿。</text>
   <text x="32" y="426" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#5e6661">不能 join 对方的库。要数据就走 API 或只读副本，并接受延迟。</text>
 </svg>

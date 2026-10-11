@@ -13,7 +13,7 @@ const COVERAGE_JAVA_110 = [
     keywords:'binlog CDC Outbox 事件驱动',
     origin:'《分布式高并发.pdf》数据变更驱动架构常见夸大',
     diagram:'diagrams/binlog-not-change-event-bus.svg',
-    points:['binlog 服务复制与恢复','CDC 可用但有位点与语义坑','领域事件常用 Outbox+MQ'],
+    points:['binlog 服务复制与恢复','CDC 可用但有位点与语义风险','领域事件常用 Outbox+MQ'],
     deep:[
       {title:'和缓存删键',body:'CDC 删缓存是旁路失效手段之一，仍有延迟与乱序，见 cache-db-double-write-race。'},
       {title:'怎样自己验证',body:'一次事务改两表，观察下游是否按行拆成两次“业务事件”；对照 Outbox 一笔业务一事。'}

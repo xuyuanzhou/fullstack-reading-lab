@@ -10,7 +10,7 @@
     <text x="52" y="132" font-size="15" font-weight="600" fill="#6e3530">含糊写法</text>
     <text x="52" y="164" font-size="14" fill="#2e3330">必须使用 UTF8</text>
     <text x="52" y="196" font-size="14" fill="#2e3330">utf8 常是 utf8mb3</text>
-    <text x="52" y="228" font-size="14" fill="#5e6661">emoji 易踩坑</text>
+    <text x="52" y="228" font-size="14" fill="#5e6661">emoji 易写入失败</text>
     <rect x="496" y="96" width="432" height="176" rx="14" fill="#e6efe9" stroke="#3f6a58"/>
     <text x="516" y="132" font-size="15" font-weight="600" fill="#2e3330">对齐写法</text>
     <text x="516" y="164" font-size="14" fill="#3f6a58">显式 utf8mb4</text>

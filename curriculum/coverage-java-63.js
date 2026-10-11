@@ -3,17 +3,17 @@ const COVERAGE_JAVA_63 = [
   {
     track:'java', group:'数据库', id:'mysql-money-decimal-not-ban',
     title:'“禁止小数存货币”不能禁掉 DECIMAL',
-    prompt:'为什么规范写“禁止使用小数存储货币，小数容易导致钱对不上”？',
+    prompt:'为什么规范写“禁止使用小数存储货币，小数容易导致金额不一致”？',
     promptAnswer:'禁 FLOAT/DOUBLE。用 DECIMAL 或整数分。',
-    core:'这里真正该禁的是 **FLOAT/DOUBLE** 一类二进制浮点：0.1 不能精确表示，累加会对不上，见 `mysql-float-ieee-not-8-digits`。**DECIMAL**（以及按分存的整数）是定点，金额常用 `DECIMAL(p,s)` 或最小货币单位整数。资料把“小数”一刀切，学习者会以为 `DECIMAL(10,2)` 也违规，反而改用浮点或字符串硬算。正确口令：货币用 DECIMAL 或整数分；不要用 FLOAT/DOUBLE；展示与四舍五入规则写进业务，而不是靠二进制浮点碰运气。',
+    core:'这里真正该禁的是 **FLOAT/DOUBLE** 一类二进制浮点：0.1 不能精确表示，累加会不一致，见 `mysql-float-ieee-not-8-digits`。**DECIMAL**（以及按分存的整数）是定点，金额常用 `DECIMAL(p,s)` 或最小货币单位整数。资料把“小数”一刀切，学习者会以为 `DECIMAL(10,2)` 也违规，反而改用浮点或字符串硬算。正确说法：货币用 DECIMAL 或整数分；不要用 FLOAT/DOUBLE；展示与四舍五入规则写进业务，而不是靠二进制浮点碰运气。',
     why:'评审看见 DECIMAL 就打回“规范禁止小数”，有人改成 FLOAT，对账出现分差。',
-    example:'`amount DECIMAL(12,2)` 存 19.90，十次相加仍是 199.00。同值进 FLOAT 列再 SUM，常对不上。按分用 `BIGINT` 存 1990 也可以，展示时除以 100。',
+    example:'`amount DECIMAL(12,2)` 存 19.90，十次相加仍是 199.00。同值进 FLOAT 列再 SUM，结果常不一致。按分用 `BIGINT` 存 1990 也可以，展示时除以 100。',
     task:'划掉“凡小数都不能存货币”。分别标：FLOAT、DECIMAL、整数分——哪个禁、哪个用。',
-    answer:'划掉「凡小数都不能存货币」。禁 FLOAT/DOUBLE。用 DECIMAL 或整数分。钱对不上来自二进制浮点，不是 DECIMAL 的定点小数。',
+    answer:'划掉「凡小数都不能存货币」。禁 FLOAT/DOUBLE。用 DECIMAL 或整数分。金额不一致来自二进制浮点，不是 DECIMAL 的定点小数。',
     keywords:'DECIMAL FLOAT 货币 定点 规范',
     origin:'《分布式高并发.pdf》约第 104 页：禁止使用小数存储货币',
     diagram:'library-assets/distributed-hc/p0104.png',
-    points:['禁的是浮点不是定点 DECIMAL','金额用 DECIMAL 或整数分','钱对不上来自二进制表示误差'],
+    points:['禁的是浮点不是定点 DECIMAL','金额用 DECIMAL 或整数分','金额不一致来自二进制表示误差'],
     deep:[
       {title:'和手机号 varchar',body:'同页“手机号必须 varchar”方向对（含区号、不做算术）。类型规范要按语义拆，不能一句“小数”打全部数值类型。'},
       {title:'怎样自己验证',body:'建 FLOAT 与 DECIMAL(12,2) 各插十个 0.1，SUM 对比。DECIMAL 应为精确和；FLOAT 常不是。'}

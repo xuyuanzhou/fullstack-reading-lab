@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" role="img" aria-labelledby="title desc">
+  <title id="title">同步异步与编排协同</title>
+  <desc id="desc">用户正在等结果的路径用同步 RPC；已经成立的事实用异步消息传播。编排是中心调多方，协同是各方听事件。全部消息化不会消灭一致性问题。</desc>
+  <rect width="960" height="500" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">系统设计 / 通信</text>
+  <text x="32" y="64" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">用户在等用同步；事实已成立用异步</text>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <rect x="32" y="96" width="430" height="168" rx="14" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="52" y="132" font-size="15" font-weight="600" fill="#2e3330">同步 RPC</text>
+    <text x="52" y="164" font-size="14" fill="#3f6a58">用户 -&gt; 订单 -&gt; 库存校验</text>
+    <text x="52" y="196" font-size="14" fill="#3f6a58">不够立刻失败，当场可见</text>
+    <text x="52" y="228" font-size="14" fill="#5e6661">代价：延迟叠加、故障传导</text>
+
+    <rect x="496" y="96" width="432" height="168" rx="14" fill="#eef2f8" stroke="#4a6280"/>
+    <text x="516" y="132" font-size="15" font-weight="600" fill="#2e3330">异步消息</text>
+    <text x="516" y="164" font-size="14" fill="#3f6a58">支付成功 --事件--&gt; 积分 / 发货</text>
+    <text x="516" y="196" font-size="14" fill="#3f6a58">事实已成立，稍后一致</text>
+    <text x="516" y="228" font-size="14" fill="#5e6661">代价：最终一致、排障更难</text>
+
+    <rect x="32" y="284" width="430" height="100" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="52" y="320" font-size="15" font-weight="600" fill="#2e3330">编排</text>
+    <text x="52" y="348" font-size="14" fill="#5e6661">协调者依次调多方；状态集中，中心易热</text>
+    <text x="52" y="372" font-size="14" fill="#5e6661">Saga 常见编排落地</text>
+
+    <rect x="496" y="284" width="432" height="100" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="516" y="320" font-size="15" font-weight="600" fill="#2e3330">协同</text>
+    <text x="516" y="348" font-size="14" fill="#5e6661">各方听事件自行推进；解耦，状态分散</text>
+    <text x="516" y="372" font-size="14" fill="#5e6661">上了消息不等于协同做完</text>
+
+    <rect x="32" y="404" width="896" height="68" rx="14" fill="#f6ecea" stroke="#a05048"/>
+    <text x="52" y="436" font-size="15" font-weight="600" fill="#6e3530">全部改成消息不等于没有分布式事务问题</text>
+    <text x="52" y="460" font-size="14" fill="#6e3530">换成：状态机 + 幂等 + 补偿 + 对账。编排与协同都要这些。</text>
+  </g>
+</svg>

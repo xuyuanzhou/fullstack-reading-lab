@@ -15,7 +15,7 @@ const COVERAGE_JAVA_86 = [
     diagram:'library-assets/distributed-hc/p0014.png',
     points:["业务分库清边界","热点再水平拆","过碎引入分布式事务"],
     deep:[
-      {title:"和千万行",body:"行数不是唯一扳机，见拆分课。"},
+      {title:"和千万行",body:"行数不是唯一扳机，见 `mysql-split-not-at-ten-million`。"},
       {title:"怎样自己验证",body:"画域边界与跨库事务边，数有多少必须跨库。"}
     ],
     refs:[["MySQL：分区","https://dev.mysql.com/doc/refman/8.4/en/partitioning.html"],["Martin Fowler：Microservices","https://martinfowler.com/articles/microservices.html"],["分布式事务边界课邻接","https://dev.mysql.com/doc/refman/8.4/en/xa.html"]]

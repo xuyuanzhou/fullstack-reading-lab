@@ -13,7 +13,7 @@ const COVERAGE_FRONTEND_19 = [
     keywords:'Enzyme Testing Library getByRole React 组件测试',
     origin:'本地库 2019 React 开发者路线图把 Enzyme 列为组件测试',
     diagram:'library-assets/frontend-local/react-roadmap-2019.png',
-    points:['现行组件测试按用户能感知的角色查询','Enzyme 绑在实例和内部状态上，函数组件对不上','Jest 仍可用，断言目标不要写成 wrapper.state'],
+    points:['现行组件测试按用户能感知的角色查询','Enzyme 绑在实例和内部状态上，无法对应函数组件','Jest 仍可用，断言目标不要写成 wrapper.state'],
     deep:[
       {title:'shallow 不是更快的用户',body:'shallow 故意不渲染子树，测到的是当前文件的实现边界。用户点的是整棵树画出来的按钮。需要隔离子组件时用假模块，而不是回到 Enzyme。'},
       {title:'怎样自己验证',body:'写一条 getByRole 点按钮的测试。只改内部 state 字段名，测试应仍通过。再改按钮可见文字，测试应失败。不要用 instance()。'}

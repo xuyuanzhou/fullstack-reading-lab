@@ -2,23 +2,35 @@
 const COVERAGE_JAVA_77 = [
   {
     track:'java', group:"分布式与高并发", id:"microservices-not-just-soa-relabel",
-    title:"“微服务本质还是 SOA”抹掉了关键差别",
-    prompt:"为什么资料写微服务从本质意义上看还是 SOA，只是不绑定技术、靠 REST 拼起来？",
-    promptAnswer:"微服务不是给 SOA 换名。要独立部署与清晰边界，不是拆成更多进程就算。",
-    core:"微服务与 SOA 都谈服务化拆分，资料指出谱系关系不算错。但本质还是 SOA 会抹掉 Fowler 等人强调的差别：团队与发布独立性、去中央化治理、接口与数据所有权、避免企业总线式中心化。多语言与 REST 也不是微服务定义的充分条件。对照原文 https://martinfowler.com/articles/microservices.html，应说清相同点与分叉点，而不是一句本质相同。",
-    why:"面试背本质是 SOA，却答不出独立部署、数据所有权与避免共享大库。",
-    example:"把用户与订单拆成两服务、各自数据库、独立发版：这是微服务常见形态。仅把单体模块换成 SOAP/ESB 调用仍是经典 SOA 味道。",
-    task:"划掉“本质=SOA 就结束”。列出至少两条微服务相对经典 SOA 的分叉。",
-    answer:"划掉一句本质相同。谱系相关，但微服务强调独立部署与去中心治理等。多语言/REST 不是充分条件。",
-    keywords:"微服务 SOA Fowler 独立部署",
-    origin:"《分布式高并发.pdf》约第 17 页：微服务本质还是 SOA",
-    diagram:'library-assets/distributed-hc/p0017.png',
-    points:["谱系相关不等于定义等同","独立部署与数据所有权是分叉","REST/多语言不是充分条件"],
+    title:"SOA 与微服务的标准差别",
+    prompt:"已经拆成多个远程服务，又用了 REST，为什么还不能说做成了微服务？",
+    promptAnswer:"不够。标准差别看独立部署、数据所有权、智能端点与哑管道、围绕业务能力与去中心治理。REST 只是通信方式之一。",
+    core:"先给可核对的说法（以 Fowler / Lewis《Microservices》一文为准，而不是某份讲义的“本质还是 SOA”）。\n\nSOA（面向服务架构）：把能力做成可远程调用的服务。历史上“SOA”含义很宽；业界常见落地（下文称经典 SOA）往往是：较粗的服务、经企业服务总线（ESB）做集成与编排、治理偏中心、多个应用仍共享数据库或强依赖中心组件。\n\n微服务：把一个产品做成一套小服务，各自跑在自己的进程里，围绕业务能力划分，用轻量机制通信（常见 HTTP API），由自动化部署做到独立发布，中心化管理尽量少；存储技术也可按服务选择。\n\n标准对照（经典 SOA → 微服务）：\n1. 部署：常要协调多服务同窗口发版 → 目标是单服务可独立部署；必须捆绑发版的，不算做成微服务风格。\n2. 数据：共享企业库或强共库很常见 → 去中心数据管理，服务尽量拥有自己的数据（Database per service 是常见形态）。\n3. 集成：ESB 上堆路由、转换、编排（智能管道）→ 智能端点、哑管道：业务逻辑在服务内，管道只做传输。\n4. 划分：常按技术层或既有系统集成切开 → 按业务能力（订单、库存）组织团队与边界。\n5. 治理：企业级中心规范与总线管控 → 中心管理尽量少，契约与演进在服务边界上完成。\n\n相同点：都谈服务化、远程调用、复用能力。因此有人说微服务是“一种 SOA”或“SOA 做对的子集”——谱系相关可以承认。错误的是把“本质相同”当成定义，或以为 REST、多语言、多进程齐了就等于微服务。PDF 里“本质还是 SOA、靠 REST 拼起来”不能当标准答案。系统设计章经典 SOA 站见 `arch-soa-classic`。",
+    why:"讲义写本质相同，学习者就背 REST 与多进程，答不出独立部署和数据归属。对照标准条目后，才能判断系统停在经典 SOA 还是已进入微服务风格。",
+    example:"订单与库存都是远程服务，经 ESB 互调，并写同一个 trade 库，发版必须同一窗口：经典 SOA。订单只写 order 库、库存只写 inventory 库，库存可单独发版，服务间 HTTP 或事件直连、总线不承载业务编排：更接近微服务。",
+    task:"用五条对照表各写一句：部署、数据、集成管道、划分方式、治理。标出你们系统（或例子）更接近经典 SOA 还是微服务。不要用“用了 REST”当作唯一依据。",
+    answer:[
+      '五条标准对照（经典 SOA → 微服务）：',
+      '',
+      '1. 部署：协调同窗口发版 → 单服务可独立部署。',
+      '2. 数据：共享写库常见 → 服务尽量自有数据。',
+      '3. 集成：ESB 智能管道 → 智能端点、哑管道。',
+      '4. 划分：技术层/系统集成 → 按业务能力。',
+      '5. 治理：中心总线与企业规范为主 → 中心管理尽量少。',
+      '',
+      'REST / 多语言 / 多进程都不是充分条件。',
+      '“本质还是 SOA”不能当定义；谱系相关不等于定义等同。',
+    ].join('\n'),
+    keywords:"微服务 SOA 独立部署 数据所有权 ESB",
+    origin:"纠正《分布式高并发.pdf》约第 17 页“本质还是 SOA”的简写；标准对照见 Fowler",
+    diagram:'diagrams/soa-vs-microservices.svg',
+    points:["经典 SOA 与微服务谱系相关，定义不能一句等同","分叉在独立部署、数据所有权、哑管道与业务能力边界","REST 与多语言不是做成微服务的充分条件"],
     deep:[
-      {title:"和拆分动机",body:"连接数平方、共用业务提取是动机之一，见拆分课；不等于完成微服务。"},
-      {title:"怎样自己验证",body:"对照 Fowler 文：独立部署、去中心化、产品型团队等条目自检架构。"}
+      {title:"Fowler 怎么说 SOA",body:"SOA 一词被用得太杂；常见落地是 ESB 去粘合单体。有人把微服务看作 SOA 的一种，有人拒绝 SOA 标签。有价值的是用微服务这个更利落的名字标出独立部署、轻量通信、去中心数据等特征。原文：martinfowler.com/articles/microservices.html 一节 Are Microservices Just SOA?"},
+      {title:"和系统设计章",body:"经典 SOA 站见 `arch-soa-classic`；演进两条线见 `arch-evolution-stages`；按能力拆开见 `arch-microservice-split`。"},
+      {title:"怎样自己验证",body:"列一张表：上次发版是否只动一个服务、写库存是否必须进共享库、有没有 ESB 承载业务编排。三项里任一偏经典 SOA，就不要自称微服务已完成。"}
     ],
-    refs:[["Martin Fowler：Microservices","https://martinfowler.com/articles/microservices.html"],["SOA 与微服务对比讨论","https://martinfowler.com/articles/microservices.html#AreMicroservicesJustSOA"],["CNCF 词汇","https://glossary.cncf.io/"]]
+    refs:[["Martin Fowler：Microservices","https://martinfowler.com/articles/microservices.html"],["Are Microservices Just SOA?","https://martinfowler.com/articles/microservices.html#AreMicroservicesJustSOA"],["Microsoft：微服务架构风格","https://learn.microsoft.com/en-us/azure/architecture/guide/architecture-styles/microservices"]]
   },
   {
     track:'java', group:"数据库", id:"mysql-db-features-ban-not-absolute",

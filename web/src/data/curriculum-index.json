@@ -698,6 +698,7 @@
         "arch-monolith-when",
         "arch-modular-boundary",
         "arch-scale-before-split",
+        "arch-soa-classic",
         "arch-microservice-split",
         "arch-split-order-case",
         "arch-sync-vs-async",
@@ -3035,6 +3036,7 @@
             "arch-monolith-when",
             "arch-modular-boundary",
             "arch-scale-before-split",
+            "arch-soa-classic",
             "arch-microservice-split",
             "arch-split-order-case",
             "arch-sync-vs-async"
@@ -3302,13 +3304,13 @@
       "group": "全栈主线",
       "id": "fs-four-layers",
       "title": "一个功能要同时对上页面、接口契约、用例和持久化",
-      "prompt": "React 和 Spring 都会写了，为什么同一个下单在页面、接口和库里仍然不一致？",
-      "promptAnswer": "会写框架不等于这四件事一致。页面、接口契约、用例、持久化各守一件事：按钮能否点击、库存够不够、失败文案，各有归属。",
+      "prompt": "React 和 Spring 都会写了，为什么同一个下单在页面、接口契约、用例和持久化里仍然不一致？",
+      "promptAnswer": "会写框架不等于这四件事已经对齐。页面管交互，接口契约管双方字段和失败 type，用例管业务规则和事务，持久化管落盘的行和约束。按钮能不能点、库存够不够、失败文案用哪个 type，都要能指出归属其中一件。用例指应用服务里的一次业务动作，不是需求文档里的用户场景。",
       "keywords": "全栈 接口契约 用例 持久化 事务",
       "points": [
         "接口契约是前后端约定好的 HTTP 接口形状与失败类型",
-        "同一业务要在页面、接口契约、用例、持久化上一致",
-        "交互状态、失败类型、事务和唯一约束各有归属"
+        "用例是应用服务里的一次业务动作，不是需求文档里的用户场景",
+        "同一业务要在页面、接口契约、用例、持久化上一致"
       ],
       "since": "path"
     },
@@ -3318,7 +3320,7 @@
       "id": "fs-page-feature",
       "title": "页面上要分清 URL 状态、表单状态、服务器状态和请求状态",
       "prompt": "把接口结果放进 useState，输入时又改同一份状态，刷新后为什么和服务器上的数据不一致？",
-      "promptAnswer": "服务器状态、表单状态、请求状态是三份数据。晚到的 GET 写进表单状态，会抹掉用户正在打的字。",
+      "promptAnswer": "服务器状态、表单状态、请求状态是三份数据。晚到的 GET 若写入表单状态，会覆盖用户尚未提交的输入。",
       "keywords": "React URL 表单状态 服务器状态 fetch",
       "points": [
         "URL 状态、服务器状态、表单状态和请求状态是四种状态",
@@ -3347,12 +3349,13 @@
       "group": "全栈主线",
       "id": "fs-frontend-done",
       "title": "前端这一侧做完，要能不看资料回答六件事",
-      "prompt": "功能能点通，怎样判断自己是会做，还是只赶上了一次成功请求？",
+      "prompt": "功能能点通，怎样判断自己已经掌握，而不是只完成了一次成功请求？",
+      "promptAnswer": "用六项验收：资源标识、请求形状、成功字段、失败 type 与表单状态、传输失败与幂等重试、登录态存放位置。任一项须查实现才能回答，则该项尚未掌握。",
       "keywords": "全栈 前端 验收 错误处理 会话",
       "points": [
         "功能完成的标准包含失败、刷新和重试，不只是成功路径",
         "失败文案来自契约的 type，登录态要能说清存放位置",
-        "答不出时回到对应的一课，而不是换组件库"
+        "答不出时回到对应的一课，而不是更换界面组件库"
       ],
       "since": "path"
     },
@@ -3990,7 +3993,7 @@
       "group": "语言基础",
       "id": "js-regex-dot-not-newline",
       "title": ". 默认不匹配换行，\\d 也不总等于 0-9 的全部数字",
-      "prompt": "为什么把正则背成“. 匹配任意单个字符、\\d 就是 [0-9]”会在开了 Unicode 或 DOTALL 时翻车？",
+      "prompt": "为什么把正则背成“. 匹配任意单个字符、\\d 就是 [0-9]”会在开了 Unicode 或 DOTALL 时出错？",
       "promptAnswer": "默认点号不匹配换行。要跨行开 s/DOTALL；\\d 也不等于永远 [0-9]。",
       "keywords": "正则 DOTALL 换行 \\d Unicode",
       "points": [
@@ -5457,7 +5460,7 @@
       "track": "frontend",
       "group": "安全",
       "id": "cookie-credential",
-      "title": "Cookie 自动带上，localStorage 不会",
+      "title": "Cookie 自动带上、localStorage 不会",
       "prompt": "登录令牌放进 localStorage，和放进 Cookie，浏览器的行为有什么不同？",
       "keywords": "Cookie HttpOnly SameSite Secure localStorage 会话",
       "points": [
@@ -7450,7 +7453,7 @@
       "points": [
         "shared 不会因为 package.json 同名就自动单例",
         "React 等带内部状态的库必须约定 singleton",
-        "版本对不上时要失败可见，不要静默双实例"
+        "版本不一致时要失败可见，不要静默双实例"
       ],
       "since": "micro-frontend"
     },
@@ -8359,7 +8362,7 @@
       "keywords": "Enzyme Testing Library getByRole React 组件测试",
       "points": [
         "现行组件测试按用户能感知的角色查询",
-        "Enzyme 绑在实例和内部状态上，函数组件对不上",
+        "Enzyme 绑在实例和内部状态上，无法对应函数组件",
         "Jest 仍可用，断言目标不要写成 wrapper.state"
       ],
       "since": "React 19"
@@ -8661,9 +8664,9 @@
       "track": "java",
       "group": "全栈主线",
       "id": "fs-boot-chain",
-      "title": "一个写接口沿着校验、用例、事务和响应往下走",
-      "prompt": "在控制器里 new 实体并保存，为什么以后改规则会把表结构漏到 HTTP？",
-      "promptAnswer": "控制器只把 HTTP 变成用例调用。实体和表结构留在持久化；堆在控制器里，改规则就会漏到 HTTP。",
+      "title": "写接口分成校验、用例、事务和响应",
+      "prompt": "在控制器里直接 new 实体并 save，为什么改表字段或业务规则时，HTTP 接口形状也会被动一起改？",
+      "promptAnswer": "控制器只接收 HTTP、调用用例，并返回状态码与问题详情。实体与表结构留在持久化。若在控制器里直接操作实体，表字段会进入请求或响应；改表或改规则就会迫使接口契约一起改。",
       "keywords": "Spring Boot Controller DTO 事务 校验",
       "points": [
         "写请求分成校验、用例、持久化和响应",
@@ -8681,7 +8684,7 @@
       "promptAnswer": "200 只说明这次响应的状态码。订单是否写入、库存是否够，要看事务和不变量是否已经提交。",
       "keywords": "事务 不变量 唯一约束 幂等 条件更新",
       "points": [
-        "成功指不变量已提交，不是方法返回了",
+        "成功指不变量已提交，不是仅返回了状态码",
         "并发修改靠条件更新、锁或唯一约束，不靠先查再改",
         "缓存和外部副作用不在这次提交的保护里"
       ],
@@ -8708,11 +8711,12 @@
       "id": "fs-ship-bar",
       "title": "能独立做全栈，是能改一条路径并解释每一种失败",
       "prompt": "怎样判断自己可以独立做一个前端加 Java 的功能，而不是只会分别写两边的示例？",
+      "promptAnswer": "标准是一条竖切（vertical slice）：同一功能从页面到数据库。五种失败——字段不合法、业务规则拒绝、唯一约束冲突、事务回滚、请求没到达服务——都能指出落在页面、接口契约、用例还是持久化；前后端各跑通一个互不相关的示例不算。",
       "keywords": "全栈 交付 契约 不变量 失败",
       "points": [
-        "独立交付是一条页面到数据库的竖切，不是两个示例",
-        "五种失败都要能指出拒绝它的那一件",
-        "中间件和框架是在保护这条路径"
+        "独立交付是一条页面到数据库的竖切（vertical slice），不是前后端各一个互不相关的示例",
+        "五种失败是字段不合法、业务规则拒绝、唯一约束冲突、事务回滚、请求没到达服务；各能指出落在页面、接口契约、用例还是持久化",
+        "中间件和框架用来保护这条路径，不能代替这条路径"
       ],
       "since": "path"
     },
@@ -9607,7 +9611,7 @@
       "group": "Java 基础",
       "id": "java-string-strip-not-trim",
       "title": "trim 清的不是全部空白，getBytes 必须写字符集（JDK 11 strip）",
-      "prompt": "旧资料常把 trim、无参 getBytes、new String(byte[]) 连成一套。为什么在现行 JDK 里会翻车？",
+      "prompt": "旧资料常把 trim、无参 getBytes、new String(byte[]) 连成一套。为什么在现行 JDK 里会出错？",
       "promptAnswer": "trim 去不掉部分 Unicode 空白；strip 按 Unicode 空白。字节转换要写明字符集，不要靠默认。",
       "keywords": "String trim strip getBytes UTF-8 intern",
       "points": [
@@ -11537,13 +11541,13 @@
       "group": "数据库",
       "id": "mysql-money-decimal-not-ban",
       "title": "“禁止小数存货币”不能禁掉 DECIMAL",
-      "prompt": "为什么规范写“禁止使用小数存储货币，小数容易导致钱对不上”？",
+      "prompt": "为什么规范写“禁止使用小数存储货币，小数容易导致金额不一致”？",
       "promptAnswer": "禁 FLOAT/DOUBLE。用 DECIMAL 或整数分。",
       "keywords": "DECIMAL FLOAT 货币 定点 规范",
       "points": [
         "禁的是浮点不是定点 DECIMAL",
         "金额用 DECIMAL 或整数分",
-        "钱对不上来自二进制表示误差"
+        "金额不一致来自二进制表示误差"
       ],
       "since": "MySQL 8.4"
     },
@@ -11673,7 +11677,7 @@
       "id": "mysql-utf8-alias-not-utf8mb4",
       "title": "“必须 UTF8”在 8.x 应对齐 utf8mb4",
       "prompt": "为什么规范写“必须使用 UTF8 字符集”，并说万国码、省空间、无乱码？",
-      "promptAnswer": "资料说的 UTF8 应对齐 utf8mb4。历史别名 utf8 其实是 utf8mb3，emoji 会踩坑。",
+      "promptAnswer": "资料说的 UTF8 应对齐 utf8mb4。历史别名 utf8 其实是 utf8mb3，emoji 会写入失败或损坏。",
       "keywords": "MySQL utf8mb4 utf8mb3 字符集",
       "points": [
         "utf8 历史别名常是 utf8mb3",
@@ -12915,14 +12919,14 @@
       "track": "java",
       "group": "缓存",
       "id": "cache-aside-steps",
-      "title": "旁路缓存：读时回填，写时删掉",
+      "title": "旁路缓存（Cache Aside）：读时回填，写时删掉",
       "prompt": "更新了数据库，为什么页面有时还是旧价格？",
-      "promptAnswer": "先读缓存，未命中再读库并回填。更新时要定失效还是双写，避免脏读窗口被忽略。",
-      "keywords": "旁路缓存 cache aside Redis 删除缓存 回填",
+      "promptAnswer": "旁路缓存（Cache Aside）常见用 Redis（或 Memcached）作缓存服务，应用用客户端管 GET/SET/DEL。读先查缓存，未命中再读库并回填；写成功后删键。键还在时，页面会继续读到旧价格。",
+      "keywords": "旁路缓存 Cache Aside Redis Memcached Caffeine 删除缓存 回填",
       "points": [
-        "未命中时读数据库并回填缓存",
-        "写数据库成功后再删除缓存",
-        "缓存不会自动跟随数据库更新"
+        "旁路缓存（Cache Aside）指缓存站在数据库旁边，由应用负责读写两边",
+        "跨实例共享时主流是 Redis；另有 Memcached，进程内一级常用 Caffeine",
+        "未命中时读数据库并回填；写数据库成功后再删除缓存键"
       ],
       "since": "Redis"
     },
@@ -14261,7 +14265,7 @@
       "group": "MyBatis",
       "id": "mybatis-rowbounds-memory",
       "title": "RowBounds 默认是结果集上跳过，不是数据库 LIMIT",
-      "prompt": "为什么把 MyBatis 分页只背成“用 RowBounds 就分页了”会在大结果集上踩坑？",
+      "prompt": "为什么把 MyBatis 分页只背成“用 RowBounds 就分页了”会在大结果集上出错？",
       "promptAnswer": "默认 RowBounds 仍可能先把大结果读回再跳过。数据库分页要写 LIMIT/keyset，不能只背“用了 RowBounds”。",
       "keywords": "MyBatis RowBounds 分页 LIMIT 内存分页",
       "points": [
@@ -16378,23 +16382,23 @@
       "promptAnswer": "先写一条路径：用户动作、读写量、权威数据和失败时用户看见什么。中间件在这些句子之后。",
       "keywords": "system design monolith split SLO",
       "points": [
-        "先写路径再拆分",
-        "单体可以是正确选择",
-        "中间件出现在六句话之后"
+        "先写清一条路径的读写、权威数据与失败，再谈拆分与中间件",
+        "单体或模块化单体可以是正确停留点",
+        "跨服务事务与 Outbox 等见分布式与高并发章"
       ]
     },
     {
       "track": "java",
       "group": "系统设计",
       "id": "arch-evolution-stages",
-      "title": "按瓶颈决定停在哪一级，不是必走四级",
+      "title": "架构演进看两条线，不是一张名词表",
       "prompt": "为什么不能把“上微服务”当成架构演进的第一句？",
-      "promptAnswer": "没有发布冲突、库打满或必须独立扩缩的信号，就停在现在这一级。停在单体是正常结果。课文里的日订单一千只是例子，会上要写你们自己的线上数字。",
-      "keywords": "架构演进 单体 模块化单体 水平扩展 微服务",
+      "promptAnswer": "没有发布冲突、库打满或必须独立扩缩的信号，就停在现在这一站。演进要分清容量线与服务化线；停在单体是正常结果。",
+      "keywords": "架构演进 单体 模块化单体 水平扩展 集群 SOA 微服务",
       "points": [
-        "演进按瓶颈分级，不按时髦名词跳级",
-        "模块化单体先清边界再谈拆进程",
-        "微服务换来自治，也换来网络与多库成本"
+        "演进分容量线与服务化线，不是一张名词跳格表",
+        "集群是同质副本；SOA 到微服务看独立数据与发布",
+        "没有可量化信号就停在当前站"
       ],
       "since": "system design"
     },
@@ -16404,11 +16408,12 @@
       "id": "arch-monolith-when",
       "title": "单体与模块化单体：何时足够",
       "prompt": "小团队一上线就拆六个服务，会先痛在哪里？",
+      "promptAnswer": "先痛在分布式调用、排障和跨服务事务，模块之间却还在直接改对方的表。模块化单体（仍是一个进程，但模块与表边界已划清）往往更合适。",
       "keywords": "单体架构 模块化单体 部署耦合 本地事务",
       "points": [
         "单体共享进程与库，事务与排障简单",
         "痛点是发布耦合与整包扩容",
-        "模块化单体先固化边界，再考虑拆进程"
+        "模块化单体仍是单进程，先固化模块与表边界再考虑拆进程"
       ],
       "since": "system design"
     },
@@ -16418,10 +16423,11 @@
       "id": "arch-modular-boundary",
       "title": "拆服务前的模块边界体检",
       "prompt": "怎样判断一个包已经可以独立成服务，而不是只是换了个 Maven 模块名？",
+      "promptAnswer": "五条都过才可评估拆：公开 API、自有表与迁移（见正文释义）、可单独测、依赖只走公开接口、确有独立发布诉求。缺一条先改造，不要先拆仓库。",
       "keywords": "模块边界 可拆分 数据归属 循环依赖",
       "points": [
         "可拆模块有独立 API、表与测试",
-        "跨模块禁止直连对方表与内部类",
+        "跨模块禁止直连对方表与内部类型",
         "循环依赖和共享实体是拆分红灯"
       ],
       "since": "system design"
@@ -16430,12 +16436,13 @@
       "track": "java",
       "group": "系统设计",
       "id": "arch-scale-before-split",
-      "title": "先水平扩展，再谈拆服务",
+      "title": "瓶颈在应用再水平扩展，再谈拆服务",
       "prompt": "数据库已经 CPU 打满，再多加几个应用副本有用吗？",
+      "promptAnswer": "没用，往往更差。库已是瓶颈时，加应用副本会放大对库的连接与查询压力。先治理查询、索引和事务。",
       "keywords": "水平扩展 负载均衡 无状态 数据库瓶颈",
       "points": [
-        "水平扩展依赖无状态应用与外置会话",
-        "库瓶颈加副本可能更差",
+        "水平扩展依赖无状态应用与会话外置",
+        "库瓶颈时加副本会放大连接与锁争用",
         "拆服务前先确认瓶颈不在共享数据"
       ],
       "since": "system design"
@@ -16443,13 +16450,29 @@
     {
       "track": "java",
       "group": "系统设计",
+      "id": "arch-soa-classic",
+      "title": "经典 SOA：远程服务化，常停在共享库与中心总线",
+      "prompt": "已经把订单和库存拆成两个远程服务，还共用一个库、走企业服务总线，算不算做成微服务了？",
+      "promptAnswer": "不算。那是经典 SOA（面向服务架构）常见形态。微服务还要尽量独立数据、独立发布与去中心治理。",
+      "keywords": "SOA 面向服务 ESB 共享库 微服务",
+      "points": [
+        "SOA 是远程服务化，经典形态常含 ESB 与共享库",
+        "有远程调用不等于微服务已完成",
+        "独立数据与独立发布才是迈向微服务的分叉"
+      ],
+      "since": "system design"
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
       "id": "arch-microservice-split",
-      "title": "微服务：按业务能力拆，并接受分布式成本",
+      "title": "按业务能力拆微服务，并接受分布式成本",
       "prompt": "按 Controller、Service、Dao 三层拆成三个仓库，算微服务吗？",
-      "keywords": "微服务 业务能力 独立数据库 分布式事务 网关",
+      "promptAnswer": "不算。微服务按业务能力与数据归属拆；按技术层拆只会让一次下单变成三次发布还要共享库。",
+      "keywords": "微服务 业务能力 数据归属 补偿 独立部署",
       "points": [
         "边界是业务能力与数据归属，不是技术分层",
-        "独立部署后本地事务升级为同步或异步协作",
+        "独立部署后本地事务升级为同步或异步协作与补偿",
         "网关与中间件是支撑，不能代替领域边界"
       ],
       "since": "system design"
@@ -16472,14 +16495,14 @@
       "track": "java",
       "group": "系统设计",
       "id": "arch-sync-vs-async",
-      "title": "服务间通信：同步、异步与编排边界",
+      "title": "同步异步怎么选，兼谈编排与协同",
       "prompt": "全部改成消息驱动，是不是就没有分布式事务问题了？",
-      "promptAnswer": "不是。全部改成消息驱动只是把事务换成状态机、幂等、补偿和对账，问题还在。",
+      "promptAnswer": "不是。全部改成消息驱动只是把事务换成状态机、幂等、补偿和对账，问题还在。编排与协同都要这些，上了消息不等于协同做完。",
       "keywords": "同步调用 异步消息 编排 协同 最终一致",
       "points": [
         "同步适合当场要失败可见的路径",
         "异步适合已发生事实的传播与削峰",
-        "编排与协同是流程风格，都要幂等和补偿"
+        "编排是中心调多方，协同是各方听事件；都要幂等和补偿"
       ],
       "since": "system design"
     },
@@ -16489,12 +16512,12 @@
       "id": "idempotency",
       "title": "接口幂等与重试",
       "prompt": "按钮已经禁用了，为什么超时重试仍会生成两张订单？",
-      "promptAnswer": "禁用按钮挡不住超时重试。同一业务键加唯一约束，冲突时返回同一结果。",
+      "promptAnswer": "禁用按钮挡不住超时后的第二次 HTTP。服务端要用同一幂等键加唯一约束，冲突时返回第一次的结果。",
       "keywords": "分布式 幂等 重试 订单",
       "points": [
         "超时、重试和再投都会把同一次业务再送进来",
         "幂等键加唯一约束才能挡住同时到达的两次插入",
-        "冲突后返回第一次的结果，而不是再执行一次业务"
+        "跨服务键见 `distributed-idempotent-key`"
       ],
       "since": "system design"
     },
@@ -16504,11 +16527,12 @@
       "id": "cache",
       "title": "缓存一致性与失效",
       "prompt": "更新数据库后立即删缓存，就绝对不会读到旧值吗？",
-      "keywords": "Redis 缓存 一致性 失效",
+      "promptAnswer": "不会绝对。删缓存只缩短窗口；并发回填仍可能把旧值写回。步骤见 `cache-aside-steps`，竞态见 `cache-db-double-write-race`。",
+      "keywords": "Redis 缓存 一致性 失效 Cache Aside",
       "points": [
-        "缓存失效的并发窗口",
-        "数据陈旧的业务容忍度",
-        "库存与详情的不同一致性要求"
+        "删缓存不能消灭并发旧值窗口",
+        "详情可容忍短陈旧；库存不变量在数据库",
+        "旁路步骤与竞态分别见 `cache-aside-steps`、`cache-db-double-write-race`"
       ],
       "since": "system design"
     },
@@ -16564,9 +16588,9 @@
       "promptAnswer": "能拿来决定，不是口号。先定 SLI、窗口和 SLO，再看本月错误预算还剩多少。",
       "keywords": "SLO SLI 错误预算 SRE 可用性",
       "points": [
-        "SLI 是用户可感知的测量",
-        "SLO 是目标，不是 100%",
-        "错误预算用来权衡发版和稳定性"
+        "SLI（服务水平指标）是用户可感知的测量",
+        "SLO（服务水平目标）是目标，不是 100%",
+        "错误预算是目标之外还能失败的份额，用来权衡发版"
       ],
       "since": "system design"
     },
@@ -16624,7 +16648,7 @@
       "promptAnswer": "一次事务只改一个聚合内部。商品用户库存别的聚合不要装进订单一起保存。",
       "keywords": "DDD 聚合 聚合根 事务 不变量 标识",
       "points": [
-        "聚合是一次事务要一起守住的不变量",
+        "聚合（aggregate）是一次事务要一起守住的不变量边界",
         "别的聚合只留标识，不放进这次保存",
         "明细上的成交价是抄下来的事实，不是去改商品标价"
       ],
@@ -16756,7 +16780,7 @@
       "keywords": "binlog CDC Outbox 事件驱动",
       "points": [
         "binlog 服务复制与恢复",
-        "CDC 可用但有位点与语义坑",
+        "CDC 可用但有位点与语义风险",
         "领域事件常用 Outbox+MQ"
       ],
       "since": "MySQL binlog"
@@ -17360,14 +17384,14 @@
       "track": "java",
       "group": "分布式与高并发",
       "id": "microservices-not-just-soa-relabel",
-      "title": "“微服务本质还是 SOA”抹掉了关键差别",
-      "prompt": "为什么资料写微服务从本质意义上看还是 SOA，只是不绑定技术、靠 REST 拼起来？",
-      "promptAnswer": "微服务不是给 SOA 换名。要独立部署与清晰边界，不是拆成更多进程就算。",
-      "keywords": "微服务 SOA Fowler 独立部署",
+      "title": "SOA 与微服务的标准差别",
+      "prompt": "已经拆成多个远程服务，又用了 REST，为什么还不能说做成了微服务？",
+      "promptAnswer": "不够。标准差别看独立部署、数据所有权、智能端点与哑管道、围绕业务能力与去中心治理。REST 只是通信方式之一。",
+      "keywords": "微服务 SOA 独立部署 数据所有权 ESB",
       "points": [
-        "谱系相关不等于定义等同",
-        "独立部署与数据所有权是分叉",
-        "REST/多语言不是充分条件"
+        "经典 SOA 与微服务谱系相关，定义不能一句等同",
+        "分叉在独立部署、数据所有权、哑管道与业务能力边界",
+        "REST 与多语言不是做成微服务的充分条件"
       ],
       "since": "distributed"
     },

@@ -74,7 +74,7 @@ const COVERAGE_JAVA_16 = [
   {
     track:'java', group:'Java 基础', id:'java-string-strip-not-trim',
     title:'trim 清的不是全部空白，getBytes 必须写字符集（JDK 11 strip）',
-    prompt:'旧资料常把 trim、无参 getBytes、new String(byte[]) 连成一套。为什么在现行 JDK 里会翻车？',
+    prompt:'旧资料常把 trim、无参 getBytes、new String(byte[]) 连成一套。为什么在现行 JDK 里会出错？',
     promptAnswer:'trim 去不掉部分 Unicode 空白；strip 按 Unicode 空白。字节转换要写明字符集，不要靠默认。',
     core:'trim 去掉码点小于等于 U+0020 的字符，不间断空格（U+00A0）去不掉。Java 11 起的 strip、stripLeading、stripTrailing 按 Character.isWhitespace 判断，能去掉这类空白。无参 getBytes() 和 new String(byte[]) 走默认字符集；要稳定就写明 StandardCharsets，不要赌 file.encoding。',
     example:'字符串两端是 U+00A0。trim() 之后这些字符还在，长度不变。strip() 之后两端空白消失。同一中文用无参 getBytes() 得到的字节随默认字符集变化，getBytes(StandardCharsets.UTF_8) 得到的字节序列稳定。',

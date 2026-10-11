@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 620" role="img" aria-labelledby="title desc">
+  <title id="title">SOA 与微服务标准对照</title>
+  <desc id="desc">五条对照：部署、数据、集成管道、划分方式、治理。REST 与多语言不是充分条件。</desc>
+  <defs>
+    <filter id="soft" x="-6%" y="-8%" width="112%" height="124%">
+      <feDropShadow dx="0" dy="1.5" stdDeviation="1.8" flood-color="#28302a" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+  <rect width="1120" height="620" rx="20" fill="#f6f7f4"/>
+  <text x="36" y="40" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="12" font-weight="600" letter-spacing="1.6" fill="#3f6a58">分布式 / 服务化</text>
+  <text x="36" y="72" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="22" font-weight="600" fill="#2e3330">标准差别：五条对照，不是 REST 换皮</text>
+  <text x="36" y="98" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#5e6661">依据 Fowler / Lewis《Microservices》；不采纳“本质还是 SOA”当定义。</text>
+
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <rect x="36" y="124" width="200" height="56" rx="10" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="56" y="158" font-size="15" font-weight="600" fill="#5e6661">对照项</text>
+    <rect x="252" y="124" width="400" height="56" rx="10" fill="#eef2f8" stroke="#4a6280" filter="url(#soft)"/>
+    <text x="272" y="158" font-size="15" font-weight="600" fill="#4a6280">经典 SOA（常见落地）</text>
+    <rect x="668" y="124" width="416" height="56" rx="10" fill="#e6efe9" stroke="#3f6a58" filter="url(#soft)"/>
+    <text x="688" y="158" font-size="15" font-weight="600" fill="#3f6a58">微服务</text>
+
+    <rect x="36" y="196" width="200" height="64" rx="10" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="56" y="234" font-size="15" font-weight="600" fill="#2e3330">部署</text>
+    <rect x="252" y="196" width="400" height="64" rx="10" fill="#ffffff" stroke="#d9ddd8"/>
+    <text x="272" y="234" font-size="14" fill="#5e6661">多服务常需同窗口协调发版</text>
+    <rect x="668" y="196" width="416" height="64" rx="10" fill="#ffffff" stroke="#d9ddd8"/>
+    <text x="688" y="234" font-size="14" fill="#2e3330">目标：单服务可独立部署</text>
+
+    <rect x="36" y="276" width="200" height="64" rx="10" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="56" y="314" font-size="15" font-weight="600" fill="#2e3330">数据</text>
+    <rect x="252" y="276" width="400" height="64" rx="10" fill="#ffffff" stroke="#d9ddd8"/>
+    <text x="272" y="314" font-size="14" fill="#5e6661">共享企业库 / 强共库常见</text>
+    <rect x="668" y="276" width="416" height="64" rx="10" fill="#ffffff" stroke="#d9ddd8"/>
+    <text x="688" y="314" font-size="14" fill="#2e3330">去中心数据；服务尽量自有库</text>
+
+    <rect x="36" y="356" width="200" height="64" rx="10" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="56" y="394" font-size="15" font-weight="600" fill="#2e3330">集成</text>
+    <rect x="252" y="356" width="400" height="64" rx="10" fill="#ffffff" stroke="#d9ddd8"/>
+    <text x="272" y="394" font-size="14" fill="#5e6661">ESB：智能管道（路由/编排）</text>
+    <rect x="668" y="356" width="416" height="64" rx="10" fill="#ffffff" stroke="#d9ddd8"/>
+    <text x="688" y="394" font-size="14" fill="#2e3330">智能端点、哑管道</text>
+
+    <rect x="36" y="436" width="200" height="64" rx="10" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="56" y="474" font-size="15" font-weight="600" fill="#2e3330">划分 / 治理</text>
+    <rect x="252" y="436" width="400" height="64" rx="10" fill="#ffffff" stroke="#d9ddd8"/>
+    <text x="272" y="474" font-size="14" fill="#5e6661">技术层或系统集成；中心管控</text>
+    <rect x="668" y="436" width="416" height="64" rx="10" fill="#ffffff" stroke="#d9ddd8"/>
+    <text x="688" y="474" font-size="14" fill="#2e3330">业务能力边界；中心管理尽量少</text>
+
+    <rect x="36" y="524" width="1048" height="68" rx="12" fill="#f6ecea" stroke="#a05048"/>
+    <text x="56" y="554" font-size="15" font-weight="600" fill="#6e3530">REST、多语言、多进程都不是充分条件</text>
+    <text x="56" y="578" font-size="14" fill="#6e3530">必须捆绑发版、或写库存仍进共享库 → 不要自称微服务已完成。</text>
+  </g>
+</svg>

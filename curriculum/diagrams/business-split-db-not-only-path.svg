@@ -18,6 +18,6 @@
     <text x="516" y="228" font-size="14" fill="#5e6661">行数非唯一扳机</text>
     <rect x="32" y="296" width="896" height="72" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
     <text x="52" y="328" font-size="15" font-weight="600" fill="#2e3330">边界清晰仍可能要分片。</text>
-    <text x="52" y="352" font-size="14" fill="#5e6661">对照千万拆分课</text>
+    <text x="52" y="352" font-size="14" fill="#5e6661">对照 mysql-split-not-at-ten-million</text>
   </g>
 </svg>

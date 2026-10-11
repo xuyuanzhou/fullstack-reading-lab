@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 560" role="img" aria-labelledby="title desc">
+  <title id="title">经典 SOA 与微服务对照</title>
+  <desc id="desc">经典 SOA：远程服务经 ESB 互通，常共享数据库。微服务：服务尽量独立数据与独立发布，不强制经中心总线。</desc>
+  <defs>
+    <filter id="soft" x="-8%" y="-10%" width="116%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#28302a" flood-opacity="0.08"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5e6661"/>
+    </marker>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a6280"/>
+    </marker>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3f6a58"/>
+    </marker>
+  </defs>
+  <rect width="1120" height="560" rx="20" fill="#f6f7f4"/>
+  <text x="36" y="40" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="12" font-weight="600" letter-spacing="1.6" fill="#3f6a58">系统设计 / 服务化线</text>
+  <text x="36" y="72" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="22" font-weight="600" fill="#2e3330">有远程服务不等于微服务完成</text>
+
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <rect x="28" y="100" width="520" height="360" rx="16" fill="#ffffff" stroke="#c5cdc6" filter="url(#soft)"/>
+    <text x="48" y="136" font-size="16" font-weight="600" fill="#4a6280">经典 SOA</text>
+    <text x="48" y="160" font-size="13" fill="#5e6661">远程可调 · 常经 ESB · 数据常共享</text>
+
+    <rect x="56" y="188" width="140" height="72" rx="12" fill="#eef2f8" stroke="#4a6280"/>
+    <text x="72" y="220" font-size="14" font-weight="600" fill="#2e3330">订单服务</text>
+    <text x="72" y="244" font-size="12" fill="#5e6661">远程进程</text>
+
+    <rect x="300" y="188" width="140" height="72" rx="12" fill="#eef2f8" stroke="#4a6280"/>
+    <text x="316" y="220" font-size="14" font-weight="600" fill="#2e3330">库存服务</text>
+    <text x="316" y="244" font-size="12" fill="#5e6661">远程进程</text>
+
+    <rect x="168" y="288" width="200" height="64" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="196" y="316" font-size="14" font-weight="600" fill="#2e3330">ESB / 中心编排</text>
+    <text x="196" y="338" font-size="12" fill="#5e6661">路由 · 转换 · 管控</text>
+
+    <path d="M196 260 V288" stroke="#4a6280" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+    <path d="M370 260 V288" stroke="#4a6280" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+
+    <rect x="120" y="380" width="300" height="56" rx="12" fill="#f3e9e7" stroke="#6e3530"/>
+    <text x="148" y="414" font-size="14" font-weight="600" fill="#6e3530">共享写库（归属未切开）</text>
+    <path d="M126 260 V380" stroke="#6e3530" stroke-width="1.3" fill="none" opacity="0.7"/>
+    <path d="M370 260 V380" stroke="#6e3530" stroke-width="1.3" fill="none" opacity="0.7"/>
+
+    <rect x="572" y="100" width="520" height="360" rx="16" fill="#ffffff" stroke="#c5cdc6" filter="url(#soft)"/>
+    <text x="592" y="136" font-size="16" font-weight="600" fill="#3f6a58">微服务常见形态</text>
+    <text x="592" y="160" font-size="13" fill="#5e6661">独立部署 · 尽量独立数据 · 去中心</text>
+
+    <rect x="600" y="188" width="200" height="100" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="616" y="224" font-size="14" font-weight="600" fill="#2e3330">订单服务</text>
+    <text x="616" y="248" font-size="12" fill="#5e6661">只写订单库</text>
+    <text x="616" y="270" font-size="12" fill="#3f6a58">可单独发版</text>
+
+    <rect x="848" y="188" width="200" height="100" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="864" y="224" font-size="14" font-weight="600" fill="#2e3330">库存服务</text>
+    <text x="864" y="248" font-size="12" fill="#5e6661">只写库存库</text>
+    <text x="864" y="270" font-size="12" fill="#3f6a58">可单独发版</text>
+
+    <path d="M800 238 H848" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arrowGreen)"/>
+    <text x="790" y="226" font-size="12" fill="#3f6a58">API / 事件</text>
+    <text x="790" y="256" font-size="12" fill="#5e6661">不强制经 ESB</text>
+
+    <rect x="600" y="320" width="200" height="56" rx="12" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="628" y="354" font-size="14" fill="#2e3330">订单库</text>
+    <rect x="848" y="320" width="200" height="56" rx="12" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="876" y="354" font-size="14" fill="#2e3330">库存库</text>
+    <path d="M700 288 V320" stroke="#5e6661" stroke-width="1.4" marker-end="url(#arrow)"/>
+    <path d="M948 288 V320" stroke="#5e6661" stroke-width="1.4" marker-end="url(#arrow)"/>
+
+    <text x="592" y="420" font-size="13" fill="#5e6661">协作要超时、幂等、补偿；见下一课</text>
+
+    <rect x="28" y="480" width="1064" height="56" rx="12" fill="#f6ecea" stroke="#a05048"/>
+    <text x="48" y="514" font-size="14" font-weight="600" fill="#6e3530">判别：远程调用有了，但共享写库 + 中心总线 → 仍停在经典 SOA</text>
+  </g>
+</svg>

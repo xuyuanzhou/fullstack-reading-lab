@@ -1,43 +1,127 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 700" role="img" aria-labelledby="title desc">
-  <title id="title">架构演进：从单体到微服务的四级</title>
-  <desc id="desc">单体、模块化单体、水平扩展、微服务。每一级解决上一级的瓶颈，并带上新成本。没有可量化信号就不要跳级。</desc>
-  <rect width="680" height="700" rx="16" fill="#f6f7f4"/>
-  <text x="28" y="40" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" font-weight="600" letter-spacing="1.4" fill="#3f6a58">系统设计</text>
-  <text x="28" y="72" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="24" font-weight="600" fill="#2e3330">按瓶颈升级，不按名词跳级</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 920" role="img" aria-labelledby="title desc">
+  <title id="title">架构演进：两条线与水平扩展站拓扑</title>
+  <desc id="desc">上半：容量线与服务化线。下半：水平扩展站常见拓扑——负载均衡、应用集群、本地与分布式缓存、文件服务、数据库主从读写分离。仍是同一套应用，不是微服务。</desc>
+  <defs>
+    <filter id="soft" x="-8%" y="-10%" width="116%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#28302a" flood-opacity="0.08"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5e6661"/>
+    </marker>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3f6a58"/>
+    </marker>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a6280"/>
+    </marker>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f6f7f4"/>
+      <stop offset="100%" stop-color="#eef2ee"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1120" height="920" rx="20" fill="url(#bg)"/>
+  <text x="36" y="40" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="12" font-weight="600" letter-spacing="1.6" fill="#3f6a58">系统设计 / 架构演进</text>
+  <text x="36" y="72" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="24" font-weight="600" fill="#2e3330">两条线 + 水平扩展站拓扑</text>
+  <text x="36" y="98" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#5e6661">有可量化信号才进下一站；下图仍是同一套应用的集群，不是微服务。</text>
+
   <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
-    <rect x="24" y="100" width="308" height="228" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
-    <text x="44" y="132" font-size="14" font-weight="600" fill="#3f6a58">01</text>
-    <text x="44" y="164" font-size="22" font-weight="600" fill="#2e3330">单体</text>
-    <text x="44" y="198" font-size="16" fill="#5e6661">一个进程，一个库</text>
-    <text x="44" y="224" font-size="16" fill="#5e6661">一次部署，交付最快</text>
-    <text x="44" y="258" font-size="16" fill="#6e3530">模块边界容易糊</text>
-    <text x="44" y="300" font-size="15" fill="#3f6a58">先走通一条写路径</text>
+    <!-- Track A -->
+    <text x="36" y="140" font-size="13" font-weight="600" fill="#3f6a58">容量线</text>
+    <rect x="36" y="152" width="150" height="52" rx="10" fill="#fafaf8" stroke="#d9ddd8" filter="url(#soft)"/>
+    <text x="52" y="184" font-size="15" font-weight="600" fill="#2e3330">单体</text>
+    <path d="M194 178 H214" stroke="#5e6661" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <rect x="220" y="152" width="150" height="52" rx="10" fill="#fafaf8" stroke="#d9ddd8" filter="url(#soft)"/>
+    <text x="236" y="184" font-size="15" font-weight="600" fill="#2e3330">垂直扩展</text>
+    <path d="M378 178 H398" stroke="#5e6661" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <rect x="404" y="152" width="190" height="52" rx="10" fill="#e6efe9" stroke="#3f6a58" filter="url(#soft)"/>
+    <text x="420" y="184" font-size="15" font-weight="600" fill="#2e3330">水平扩展 / 集群</text>
+    <path d="M602 178 H622" stroke="#5e6661" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <rect x="628" y="152" width="200" height="52" rx="10" fill="#f3e9e7" stroke="#6e3530" filter="url(#soft)"/>
+    <text x="644" y="184" font-size="14" font-weight="600" fill="#6e3530">库忙先治库</text>
 
-    <rect x="348" y="100" width="308" height="228" rx="14" fill="#e6efe9" stroke="#3f6a58"/>
-    <text x="368" y="132" font-size="14" font-weight="600" fill="#3f6a58">02</text>
-    <text x="368" y="164" font-size="22" font-weight="600" fill="#2e3330">模块化单体</text>
-    <text x="368" y="198" font-size="16" fill="#5e6661">仍是一个进程</text>
-    <text x="368" y="224" font-size="16" fill="#5e6661">包、依赖、表归属清楚</text>
-    <text x="368" y="258" font-size="16" fill="#3f6a58">调用还在进程内</text>
-    <text x="368" y="300" font-size="15" fill="#3f6a58">为以后拆分留边界</text>
+    <!-- Track B -->
+    <text x="36" y="246" font-size="13" font-weight="600" fill="#4a6280">服务化线</text>
+    <rect x="36" y="258" width="200" height="52" rx="10" fill="#e6efe9" stroke="#3f6a58" filter="url(#soft)"/>
+    <text x="52" y="290" font-size="15" font-weight="600" fill="#2e3330">模块化单体</text>
+    <path d="M244 284 H264" stroke="#5e6661" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <rect x="270" y="258" width="200" height="52" rx="10" fill="#eef2f8" stroke="#4a6280" filter="url(#soft)"/>
+    <text x="286" y="290" font-size="15" font-weight="600" fill="#2e3330">经典 SOA</text>
+    <path d="M478 284 H498" stroke="#5e6661" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <rect x="504" y="258" width="200" height="52" rx="10" fill="#fafaf8" stroke="#d9ddd8" filter="url(#soft)"/>
+    <text x="520" y="290" font-size="15" font-weight="600" fill="#2e3330">微服务</text>
+    <text x="730" y="290" font-size="13" fill="#5e6661">独立部署与尽量独立数据</text>
 
-    <rect x="24" y="344" width="308" height="228" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
-    <text x="44" y="376" font-size="14" font-weight="600" fill="#3f6a58">03</text>
-    <text x="44" y="408" font-size="22" font-weight="600" fill="#2e3330">水平扩展</text>
-    <text x="44" y="442" font-size="16" fill="#5e6661">多副本加负载均衡</text>
-    <text x="44" y="468" font-size="16" fill="#5e6661">会话要外置</text>
-    <text x="44" y="502" font-size="16" fill="#6e3530">共享库会成为瓶颈</text>
-    <text x="44" y="544" font-size="15" fill="#2e3330">库忙时先治理库</text>
+    <!-- Topology panel -->
+    <rect x="28" y="340" width="1064" height="540" rx="18" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="48" y="376" font-size="16" font-weight="600" fill="#2e3330">水平扩展站 · 常见拓扑</text>
+    <text x="48" y="400" font-size="13" fill="#5e6661">负载均衡 + 无状态应用集群 + 缓存分层 + 文件服务 + 主从读写分离</text>
 
-    <rect x="348" y="344" width="308" height="228" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
-    <text x="368" y="376" font-size="14" font-weight="600" fill="#3f6a58">04</text>
-    <text x="368" y="408" font-size="22" font-weight="600" fill="#2e3330">微服务</text>
-    <text x="368" y="442" font-size="16" fill="#5e6661">独立部署，独立数据</text>
-    <text x="368" y="468" font-size="16" fill="#5e6661">换来团队自治</text>
-    <text x="368" y="502" font-size="16" fill="#6e3530">也换来网络故障</text>
-    <text x="368" y="544" font-size="15" fill="#6e3530">和分布式一致性</text>
+    <!-- LB -->
+    <rect x="48" y="520" width="120" height="100" rx="12" fill="#e6efe9" stroke="#3f6a58" filter="url(#soft)"/>
+    <text x="64" y="562" font-size="14" font-weight="600" fill="#2e3330">负载均衡</text>
+    <text x="64" y="586" font-size="12" fill="#5e6661">调度入口</text>
+
+    <!-- App cluster stack -->
+    <rect x="230" y="430" width="300" height="280" rx="14" fill="#ffffff" stroke="#c5cdc6" filter="url(#soft)"/>
+    <text x="248" y="458" font-size="13" font-weight="600" fill="#3f6a58">应用服务器集群 1..n</text>
+
+    <!-- app1 -->
+    <rect x="250" y="478" width="260" height="100" rx="10" fill="#eef2f8" stroke="#4a6280"/>
+    <text x="266" y="504" font-size="13" font-weight="600" fill="#2e3330">应用服务器 1</text>
+    <rect x="266" y="516" width="100" height="44" rx="8" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="278" y="544" font-size="12" fill="#2e3330">应用程序</text>
+    <rect x="378" y="516" width="112" height="44" rx="8" fill="#f6f7f4" stroke="#d9ddd8"/>
+    <text x="390" y="544" font-size="12" fill="#5e6661">本地缓存</text>
+
+    <!-- app2 ghost -->
+    <rect x="258" y="590" width="260" height="48" rx="10" fill="#f6f7f4" stroke="#d9ddd8"/>
+    <text x="274" y="620" font-size="13" fill="#5e6661">应用服务器 2 .. n（同质副本）</text>
+    <text x="258" y="678" font-size="12" fill="#5e6661">数据访问：写主库 / 读从库</text>
+
+    <!-- arrows LB to apps -->
+    <path d="M168 570 H222" stroke="#3f6a58" stroke-width="1.8" marker-end="url(#arrowGreen)"/>
+    <path d="M190 570 V500 H222" stroke="#3f6a58" stroke-width="1.2" fill="none" opacity="0.45"/>
+    <path d="M190 570 V640 H222" stroke="#3f6a58" stroke-width="1.2" fill="none" opacity="0.45"/>
+
+    <!-- Distributed cache -->
+    <rect x="580" y="430" width="240" height="100" rx="12" fill="#eef2f8" stroke="#4a6280" filter="url(#soft)"/>
+    <text x="596" y="466" font-size="14" font-weight="600" fill="#2e3330">分布式缓存 1..n</text>
+    <text x="596" y="492" font-size="12" fill="#5e6661">远程共享（如 Redis）</text>
+    <text x="596" y="514" font-size="12" fill="#4a6280">会话外置 / 热点读</text>
+    <path d="M530 520 H572" stroke="#4a6280" stroke-width="1.6" marker-end="url(#arrowBlue)"/>
+    <text x="500" y="512" font-size="11" fill="#4a6280">远程缓存</text>
+
+    <!-- File servers -->
+    <rect x="580" y="556" width="240" height="88" rx="12" fill="#fafaf8" stroke="#d9ddd8" filter="url(#soft)"/>
+    <text x="596" y="592" font-size="14" font-weight="600" fill="#2e3330">文件服务器 1..n</text>
+    <text x="596" y="618" font-size="12" fill="#5e6661">静态与上传文件</text>
+    <path d="M530 600 H572" stroke="#5e6661" stroke-width="1.4" marker-end="url(#arrow)"/>
+
+    <!-- DB master / slave -->
+    <rect x="860" y="430" width="200" height="120" rx="12" fill="#e6efe9" stroke="#3f6a58" filter="url(#soft)"/>
+    <text x="876" y="466" font-size="14" font-weight="600" fill="#2e3330">数据库（主）</text>
+    <text x="876" y="494" font-size="12" fill="#3f6a58">写操作</text>
+    <text x="876" y="518" font-size="12" fill="#5e6661">权威提交</text>
+
+    <rect x="860" y="580" width="200" height="120" rx="12" fill="#fafaf8" stroke="#d9ddd8" filter="url(#soft)"/>
+    <text x="876" y="616" font-size="14" font-weight="600" fill="#2e3330">数据库（从）</text>
+    <text x="876" y="644" font-size="12" fill="#5e6661">读操作</text>
+    <text x="876" y="668" font-size="12" fill="#5e6661">可短暂落后于主</text>
+
+    <path d="M960 550 V580" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arrowGreen)"/>
+    <text x="972" y="572" font-size="11" fill="#3f6a58">主从复制</text>
+
+    <!-- write / read from apps -->
+    <path d="M530 650 C620 650, 760 500, 860 490" stroke="#3f6a58" stroke-width="1.5" fill="none" marker-end="url(#arrowGreen)"/>
+    <text x="700" y="560" font-size="11" fill="#3f6a58">写</text>
+    <path d="M530 680 C640 700, 780 660, 860 640" stroke="#5e6661" stroke-width="1.4" fill="none" marker-end="url(#arrow)"/>
+    <text x="720" y="690" font-size="11" fill="#5e6661">读</text>
+
+    <!-- footer note -->
+    <rect x="48" y="780" width="1012" height="72" rx="12" fill="#f6ecea" stroke="#a05048"/>
+    <text x="68" y="812" font-size="14" font-weight="600" fill="#6e3530">注意：这是容量线上的集群拓扑，不是服务化线上的微服务</text>
+    <text x="68" y="836" font-size="13" fill="#6e3530">应用仍是同一套；会话要外置。库 CPU/锁打满时再加应用副本往往更差。</text>
   </g>
-  <text x="28" y="652" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="15" fill="#5e6661">没有延迟、发布冲突或库负载的信号，就停在当前这一级。</text>
-  <text x="28" y="678" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="15" fill="#6e3530">跳级会把没划清的边界变成分布式事务。</text>
 </svg>
