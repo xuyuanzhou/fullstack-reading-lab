@@ -11,6 +11,57 @@
 
 | 日期 | 状态 | 标题 |
 | --- | --- | --- |
+| 2026-10-12 | 已完成 | [主线地图按宽度折返](2026-10-12-path-snake-map.md) |
+| 2026-10-12 | 已完成 | [全栈与架构师主线落地为九关](2026-10-12-fullstack-nine-gates.md) |
+| 2026-10-12 | 已完成 | [计划的上线关补上持续集成与持续交付](2026-10-12-fullstack-plan-cicd.md) |
+| 2026-10-12 | 已完成 | [复审全栈精通计划并改顺序](2026-10-12-fullstack-plan-rereview.md) |
+| 2026-10-12 | 已完成 | [计划补上排查关](2026-10-12-fullstack-plan-triage.md) |
+| 2026-10-12 | 已完成 | [计划补上 Docker 课，进度和选关改为浮动](2026-10-12-fullstack-plan-docker-float.md) |
+| 2026-10-12 | 已完成 | [全栈精通计划改为 8 关并保留 Outbox、CAP、Kubernetes](2026-10-12-fullstack-mastery-plan-revise.md) |
+| 2026-10-12 | 已完成 | [全栈主线按关卡学完不能精通](2026-10-12-fullstack-path-mastery-review.md) |
+| 2026-10-12 | 已完成 | [主线：手机上六关一次看全](2026-10-12-path-portrait-mobile-fix.md) |
+| 2026-10-12 | 已完成 | [主线：窄屏改成向下的弯路](2026-10-12-path-portrait-map.md) |
+| 2026-10-12 | 已完成 | [主线：弯路上的六座石台](2026-10-12-path-campaign-map.md) |
+| 2026-10-12 | 已完成 | [主线：路上有人在走](2026-10-12-path-route-motion.md) |
+| 2026-10-12 | 已完成 | [主线：从路线走进这一关](2026-10-12-path-immerse.md) |
+| 2026-10-12 | 已完成 | [主线改成一条能走的路线](2026-10-12-path-route.md) |
+| 2026-10-12 | 已完成 | [主线收成一份展开的目录](2026-10-12-path-stage-contents.md) |
+| 2026-10-12 | 已完成 | [主线关卡改成目录和章节](2026-10-12-path-stage-type.md) |
+| 2026-10-12 | 已完成 | [主线关卡收成细线队列](2026-10-12-path-stage-elegance.md) |
+| 2026-10-12 | 已完成 | [主线改成印章地图和关卡简报](2026-10-12-path-stage-map.md) |
+| 2026-10-12 | 已完成 | [主线关卡收成进度轨和工作台](2026-10-12-path-gate-craft.md) |
+| 2026-10-12 | 已完成 | [主线可以切到任意一关](2026-10-12-path-gate-switch.md) |
+| 2026-10-12 | 已完成 | [架构师主线：补死信、熔断、Service、迁移，并新开三课](2026-10-12-architect-gates-remaining.md) |
+| 2026-10-12 | 已完成 | [架构师主线：按交付把已有课挂进关卡 2～6](2026-10-12-architect-gates-fill.md) |
+| 2026-10-12 | 已完成 | [消息重试与消费幂等：提问与确认口径对齐](2026-10-12-message-delivery-review.md) |
+| 2026-10-12 | 已完成 | [关卡 5：必读与交付物对齐](2026-10-12-gate5-read-deliver-align.md) |
+| 2026-10-12 | 已完成 | [下单拆分案例课：补库存预留库表设计](2026-10-12-arch-split-order-reserve-schema.md) |
+| 2026-10-12 | 已完成 | [下单拆分案例课：提问答案、术语与答案分条](2026-10-12-arch-split-order-case-gloss.md) |
+| 2026-10-12 | 已完成 | [架构演进课：术语释义、答案空行与相关课收口](2026-10-12-arch-evolution-stages-gloss.md) |
+| 2026-10-12 | 已完成 | [Sentinel 接入课：平台与业务协作写进核心](2026-10-12-sentinel-platform-biz-collab.md) |
+| 2026-10-12 | 已完成 | [Sentinel 接入课：业务单独配阈值（多资源）](2026-10-12-sentinel-per-resource-qps.md) |
+| 2026-10-12 | 已完成 | [Sentinel 接入课：补实际项目 Nacos 配 QPS](2026-10-12-sentinel-java-app-nacos-qps.md) |
+| 2026-10-12 | 已完成 | [Sentinel 接入课：验证步骤补注解与 QPS=1 代码](2026-10-12-sentinel-java-app-verify-code.md) |
+| 2026-10-12 | 已完成 | [Sentinel 拦截课：blockHandler/Nacos 释义与相关课](2026-10-12-sca-sentinel-block-gloss.md) |
+| 2026-10-12 | 已完成 | [消费幂等课：至少一次/业务键释义与答案空行](2026-10-12-mq-consume-idempotent-key-gloss.md) |
+| 2026-10-12 | 已完成 | [幂等业务键课：术语点击释义与答案空行](2026-10-12-distributed-idempotent-key-gloss.md) |
+| 2026-10-12 | 已完成 | [Outbox 课：术语点击释义与答案空行](2026-10-12-distributed-outbox-gloss.md) |
+| 2026-10-12 | 已完成 | [三个「一致」课：术语释义、答案空行与练习对齐](2026-10-12-consistency-three-words-gloss.md) |
+| 2026-10-12 | 已完成 | [CAP 课：术语释义、答案分条与知识点收口](2026-10-12-distributed-cap-review.md) |
+| 2026-10-12 | 已完成 | [同库不变量课：参考答案首句改可读](2026-10-12-one-db-first-answer-plain.md) |
+| 2026-10-12 | 已完成 | [同库不变量课：术语点击释义与答案分条](2026-10-12-distributed-one-db-first-gloss.md) |
+| 2026-10-12 | 已完成 | [细节小节「和邻课」改为「相关课」](2026-10-12-related-lessons-title.md) |
+| 2026-10-12 | 已完成 | [同步异步课：术语释义、答案分条与引用](2026-10-12-arch-sync-async-review.md) |
+| 2026-10-12 | 已完成 | [补 Sentinel 章路由键，修复空白页](2026-10-12-sentinel-route-key.md) |
+| 2026-10-12 | 已完成 | [Sentinel 章按契约审核：先判断再释义并收口](2026-10-12-sentinel-contract-audit.md) |
+| 2026-10-12 | 已完成 | [Sentinel 独立成章，并补 Java 应用接入课](2026-10-12-sentinel-java-chapter.md) |
+| 2026-10-12 | 已完成 | [术语点击释义：INCR 等与 〔术语｜释义〕](2026-10-12-term-gloss-click.md) |
+| 2026-10-12 | 已完成 | [消费幂等课：对齐提问并修正 SETNX 口径](2026-10-12-mq-consume-idempotent-key-review.md) |
+| 2026-10-12 | 已完成 | [幂等业务键课：标题与至少一次口径](2026-10-12-distributed-idempotent-key-review.md) |
+| 2026-10-12 | 已完成 | [Outbox 课：短名、双写括注与至少一次收口](2026-10-12-distributed-outbox-review.md) |
+| 2026-10-12 | 已完成 | [三个「一致」课：提问答案与分条收口](2026-10-12-consistency-three-words-review.md) |
+| 2026-10-11 | 已完成 | [CAP 课改权威依据，并约定本地资料审查](2026-10-11-distributed-cap-authority.md) |
+| 2026-10-11 | 已完成 | [同库不变量课：对齐提问并补释义](2026-10-11-distributed-one-db-first-review.md) |
 | 2026-10-11 | 已完成 | [系统设计章审查：释义、收薄、SOA 并列与同步图](2026-10-11-arch-system-design-review-fixes.md) |
 | 2026-10-11 | 已完成 | [旁路缓存课：先讲清 Cache Aside 是什么](2026-10-11-cache-aside-gloss.md) |
 | 2026-10-11 | 已完成 | [redis-vs-db-cache 机制图补中文](2026-10-11-redis-vs-db-cache-zh.md) |
