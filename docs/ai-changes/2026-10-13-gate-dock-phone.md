@@ -24,12 +24,14 @@
 | --- | --- |
 | `web/src/components/GateDock.tsx` | 窄屏一层切换；宽屏保持上下两块 |
 | `web/src/styles/_reading.scss` | 窄屏一行关卡，简报单独占满顶栏以下 |
+| `web/src/components/ProgressAside.tsx` | 没有当前关时，交付链接不再读取关卡 id |
 
 ## 验证
 
 - 浏览器 412×915：点开见九关，一行一个，列表不滚动，弹窗约占一半视口。点第 7 关后列表消失，先见下一节和课序，只有简报在滚。返回回到九关。点下一节后弹窗关闭并进入课文。
 - 360×740：九关仍一次看全，不横向溢出，顶不压住页头。
 - 1200 宽：列表和简报同时在，阅读、交付计数仍在每一行。
+- `tsc --noEmit -p web/tsconfig.app.json` 通过。侧栏「下一步」只在没有当前关时出现，交付链接改为 `/paths?focus=deliver`。
 
 ## 后续
 

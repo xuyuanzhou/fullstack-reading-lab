@@ -89,7 +89,7 @@ export function ProgressAside({ localReady }: { localReady: boolean }) {
         <h5>下一步</h5>
         {waitingOnDelivery ? (
           spine ? (
-            <Link className="text-link" to={focus ? gatePath(focus.id, 'deliver') : '/paths?focus=deliver'}>
+            <Link className="text-link" to="/paths?focus=deliver">
               回去勾这一关的交付 →
             </Link>
           ) : (
