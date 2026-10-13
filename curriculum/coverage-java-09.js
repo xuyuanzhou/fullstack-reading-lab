@@ -93,6 +93,27 @@ const COVERAGE_JAVA_09 = [
     refs:[['MySQL 8.4：Transaction Isolation Levels','https://dev.mysql.com/doc/refman/8.4/en/innodb-transaction-isolation-levels.html'],['MySQL 8.4：InnoDB Multi-Versioning','https://dev.mysql.com/doc/refman/8.4/en/innodb-multi-versioning.html']]
   },
   {
+    track:'java', group:'数据库', id:'postgresql-read-committed-vacuum', since:'PostgreSQL',
+    title:'PostgreSQL 默认是读已提交，旧行要等 VACUUM 回收',
+    prompt:'同一事务里查了两次余额，为什么第二次看见了别人刚提交的数？',
+    promptAnswer:'〔读已提交｜一条语句只看见它开始之前已经提交的数据〕是 PostgreSQL 的默认隔离级别。后一条 SELECT 用新的快照。',
+    core:'PostgreSQL 默认为读已提交。一条不带 FOR UPDATE 或 FOR SHARE 的 SELECT，只看见该语句开始前已经提交的数据，也看见本事务里已经执行过的更新。同一事务里连续两条 SELECT，若中间有别的事务提交，第二次可以看见新数据。可重复读则从本事务第一条非事务控制语句开始保持同一快照。把级别设成读未提交，行为仍与读已提交相同。InnoDB 的默认是可重复读，见 mysql-isolation-levels。UPDATE 或 DELETE 不立刻去掉旧行版本，否则别的事务还可能要看见它。不再被任何事务需要的旧版本，由〔VACUUM｜收回已无事务需要的旧行版本所占空间〕标成以后可以复用。常规 VACUUM 可以和查询、插入、更新、删除同时进行，通常不把空间还给操作系统。VACUUM FULL 会拿表的排他锁并重写整表。自动清理不会发出 VACUUM FULL。',
+    why:'学习者把 InnoDB 的默认可重复读套到 PostgreSQL，同一事务里第二次查询却看见了刚提交的余额。删除大量行之后磁盘也不下降，因为他以为 DELETE 会立刻把空间还给操作系统。区分信号是 default_transaction_isolation 为 read committed，并且常规 VACUUM 之后空间留给后续的行复用。',
+    example:'默认级别，以及同一事务里的两次读取：\n\n```sql\nSHOW default_transaction_isolation;\n\nBEGIN;\nSELECT balance FROM account WHERE id = 1;\nSELECT balance FROM account WHERE id = 1;\nCOMMIT;\n\nVACUUM account;\n```',
+    task:'写出默认隔离级别下，两次 SELECT 之间别人提交之后第二次能看见什么。再写出常规 VACUUM 对磁盘空间做什么。',
+    answer:'1. 默认是 read committed。后一条 SELECT 使用新快照，能看见两条语句之间已经提交的修改。\n\n2. 隔离级别设成读未提交时，行为仍与读已提交相同。可重复读才让同一事务里的连续 SELECT 保持第一次的快照。\n\n3. UPDATE 或 DELETE 留下旧行版本。常规 VACUUM 把不再需要的空间标成可复用，通常不还给操作系统。VACUUM FULL 会锁表并重写，自动清理不会发出它。',
+    keywords:'PostgreSQL Read Committed VACUUM 读已提交 旧行版本',
+    points:['PostgreSQL 默认是读已提交，同一事务里的后一条 SELECT 用新快照','读未提交的行为与读已提交相同','常规 VACUUM 复用旧行空间，通常不把空间还给操作系统'],
+    deep:[
+      {title:'两种清理',body:'常规 VACUUM 去掉死行版本并把空间留给以后的行，查询和修改可以同时进行。VACUUM FULL 重写整张表并持有排他锁，还要额外的磁盘放新副本。日常靠自动清理做前一种。表还会继续增长时，不必为了把空间还给操作系统去跑后一种。'},
+      {title:'怎样自己验证',body:'SHOW default_transaction_isolation 应为 read committed。事务甲做两次 SELECT，中间让事务乙提交一次修改，第二次应看见新值。再 DELETE 一批行，看表占用不会立刻降到删除前。跑常规 VACUUM 之后，空间留给后续插入，而不是一次 VACUUM FULL。'}
+    ],
+    refs:[
+      ['PostgreSQL：事务隔离','https://www.postgresql.org/docs/current/transaction-iso.html'],
+      ['PostgreSQL：日常 VACUUM','https://www.postgresql.org/docs/current/routine-vacuuming.html']
+    ]
+  },
+  {
     track:'java', group:'数据库', id:'mysql-wide-column-split',
     title:'大字段拆表：页内更瘦，不是自动更快',
     prompt:'为什么“TEXT 不常更新就拆到子表，因为 InnoDB 页是 16KB”不能当必赢方案？',

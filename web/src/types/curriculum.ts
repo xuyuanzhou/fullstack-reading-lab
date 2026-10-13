@@ -1,3 +1,5 @@
+import type { LearningEnvelope } from '../state/learningEvidence'
+
 export type Track = 'frontend' | 'java'
 export type LocalCategory = Track | 'ai'
 
@@ -68,8 +70,14 @@ export type ProgressState = {
   aiSkippedPrereq: string[]
   /** 面试题训练自评 0–4 */
   aiDrillScores: Record<string, number>
-  /** 主线交付勾选，形如 g1:0。课读完并且本关条目都勾上，才进入下一关。 */
+  /** 主线交付勾选，形如 g1:0。这是自评，不是测试通过。 */
   pathChecks: string[]
+  /** 任务草稿和证据。schemaVersion 在这份信封里，和下面的 revision 不是同一件事。 */
+  learning: LearningEnvelope
+  /** 记录比本页新时为真，写回时必须保留原文。 */
+  learningReadonly: boolean
+  /** 只在 learningReadonly 时保留的原文。 */
+  learningHeld: unknown
   /** Monotonic write counter so a stale tab cannot blank a newer tab's notes. */
   revision: number
 }

@@ -201,3 +201,13 @@ export function structureCore(core: string): StructuredCore {
   4. **学员可见面**：课上写正确结论即可。**不要**在 `deep`/`origin`/正文展开「本地资料怎么用」「不以某 PDF 某页为准」之类元讨论；同步与纠正记在 `docs/ai-changes/`（`origin` 仅在库图台账需要时简短标注资料短名与页）。
   5. **引用与检测**：`references` 须有可核对的 `https://` 权威链接。若仍写 `origin` 指向本地 PDF/本地库，`verify_content.mjs` 要求至少一条 https 引用；脚本不代替人工核对对错。
 - 导出后 `scripts/verify_content.mjs` 会对 `points` 做口语禁词检查，并对「本地 origin 须有 https 引用」断言；改知识点或 origin 后须跑通。
+
+## 12. 客户端状态
+
+`web/` 里跨页面的状态用 Zustand。选型和切片说明见 [客户端状态管理-2026-10-13.md](客户端状态管理-2026-10-13.md)。
+
+- 用 `zustand` 的 vanilla store 加 React 订阅。不要再引入 Redux、Redux Toolkit、MobX、Jotai、Recoil。
+- 学习记录仍是一份信封。写回必须走 `progressStorage` 的 `readProgress`、`mergeForWrite`、`writeProgress`。不要改用 Zustand 自带的 `persist` 中间件整份替换本地记录；那会绕过 revision、跨页合并和只读备份。
+- 状态按三块维护：用户（阅读位置、主题、笔记）、业务（完成、证据、关卡、核验）、全局（保存失败、本机资料是否连上）。全局字段不写入那份信封。
+- 新界面只订阅用到的字段（`useLearningSlice`、`useReadingPlace`）。已经整份订阅的旧组件可以继续用 `useProgress()`。
+- 关卡奖励不是证据。不要为了状态库抬高 `LEARNING_SCHEMA_VERSION`。

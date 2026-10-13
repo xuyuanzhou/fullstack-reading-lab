@@ -219,6 +219,49 @@ const COVERAGE_CORE_16 = [
     refs:[['Spring Security：OAuth2 Resource Server','https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/index.html'],['Spring Security：JWT','https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html']]
   },
   {
+    track:'java', group:'安全', id:'oidc-id-token-pkce',
+    title:'OpenID Connect 用 ID Token 表示登录，公开客户端还要 PKCE',
+    prompt:'拿到 Access Token 就算登录完成了吗？',
+    promptAnswer:'登录结果在〔ID Token｜发给客户端、声明这次登录的 JWT〕里。Access Token 是交给资源服务器的，不是这次登录的声明。',
+    core:'〔OpenID Connect｜在 OAuth 2.0 之上增加登录身份的协议〕要求认证请求的 scope 含有 openid。没有这个值，就不是一次 OpenID Connect 认证请求。授权服务器返回的〔ID Token｜发给客户端、声明这次登录的 JWT〕必须带签发者、主体、受众和过期时间，受众里要有这个客户端的 client id。Access Token 按 OAuth 2.0 交给资源服务器，见 spring-oauth2-resource。浏览器或手机这种保管不了客户端密钥的公开客户端，授权码还要带〔PKCE｜换授权码前先提交口令摘要〕。客户端先生成 code_verifier，授权请求里放它的 S256 摘要 code_challenge。换令牌时再交回 code_verifier。摘要与口令不一致时，授权服务器拒绝。Spring Security 的 oauth2Login 走授权码，scope 要包含 openid。',
+    why:'学习者会把 Access Token 交给浏览器页面，当成用户已经登录。页面读不到这次认证的受众和过期声明，资源服务器却拿到了本该只证明登录的材料。区分信号是：证明这次登录的是 ID Token，调用订单 API 的才是 Access Token。',
+    example:'依赖方只打开 OAuth2 登录，并声明 openid：\n\n```java\n@Configuration\n@EnableWebSecurity\npublic class OidcLoginConfig {\n  @Bean\n  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {\n    http\n        .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())\n        .oauth2Login(org.springframework.security.config.Customizer.withDefaults());\n    return http.build();\n  }\n}\n```\n\n```properties\nspring.security.oauth2.client.registration.orders.client-id=order-web\nspring.security.oauth2.client.registration.orders.scope=openid,profile\nspring.security.oauth2.client.provider.orders.issuer-uri=https://idp.example/realms/orders\n```',
+    task:'写出授权请求里必须出现的 scope，以及公开客户端换授权码时两段口令各自放在哪一次请求。',
+    answer:'1. 认证请求的 scope 必须包含 openid。没有它，这次请求不是 OpenID Connect 认证。\n\n2. ID Token 发给客户端，受众包含 client id。Access Token 交给资源服务器，不拿它代替登录声明。\n\n3. 公开客户端在授权请求里提交 code_challenge，在换令牌时提交 code_verifier。摘要与口令不一致时，授权服务器拒绝发出令牌。',
+    keywords:'OpenID Connect ID Token PKCE code_verifier oauth2Login openid',
+    points:['认证请求的 scope 必须包含 openid','ID Token 的受众是客户端，Access Token 交给资源服务器','公开客户端用授权码和 PKCE，口令不一致就拒绝换令牌'],
+    deep:[
+      {title:'两张令牌',body:'ID Token 声明授权服务器对这个客户端完成了一次认证，受众要包含 client id，过期后客户端不得再接受。Access Token 的校验在资源服务器。对象级授权仍在订单服务里做，不在 ID Token 的验签里。'},
+      {title:'怎样自己验证',body:'看一次认证请求的 scope 里有没有 openid。再看令牌响应：ID Token 的 aud 是不是这个 client id。公开客户端再核对授权请求里的 code_challenge 和换令牌请求里的 code_verifier 能否按 S256 还原为同一口令。'}
+    ],
+    refs:[
+      ['OpenID Connect Core 1.0','https://openid.net/specs/openid-connect-core-1_0.html'],
+      ['RFC 7636：PKCE','https://www.rfc-editor.org/rfc/rfc7636.html'],
+      ['Spring Security：OAuth 2.0 Login','https://docs.spring.io/spring-security/reference/servlet/oauth2/login/core.html']
+    ]
+  },
+  {
+    track:'java', group:'安全', id:'ssrf-allowlist-before-fetch',
+    title:'SSRF：服务器代取地址之前，先核对允许名单',
+    prompt:'用户已经登录，为什么仍不能把对方传来的地址直接拿去下载？',
+    promptAnswer:'登录只说明是谁。〔SSRF｜服务器按收到的地址去取内容，却没有核对目标是不是预期的〕看的是取回的目标。',
+    core:'CWE-918 的情形是：服务器从上游拿到一个地址并取回内容，却没有充分确认请求发往预期的目标。调用方到不了的主机，可能经这台服务器被访问，防火墙只看见服务器自己。目标事先能点名时，OWASP 的做法是〔允许名单｜事先写明可以取的完整地址〕。取回前用完整地址核对，不在名单里就拒绝，然后再发请求。HTTP 客户端要关闭自动跟随重定向，避免核对过的地址被带到名单之外。目标不能事先点名时，这一份名单不够用。对象级授权仍见 object-level-authz，它不代替这道核对。',
+    why:'学习者看见接口已经要登录，就把请求里的地址交给 HTTP 客户端。服务器所在的网络能到达调用方到不了的服务，取回的内容却回到了调用方。区分信号是：名单里的完整地址可以取回，名单外的地址在发出请求之前被拒绝。',
+    example:'只取事先写明的发票地址，并且不跟随重定向：\n\n```java\nstatic final java.util.Set<String> ALLOWED = java.util.Set.of(\n    "https://files.example/invoices/sample.pdf");\n\nstatic byte[] fetchInvoice(String url) throws Exception {\n  if (!ALLOWED.contains(url)) {\n    throw new IllegalArgumentException("url");\n  }\n  java.net.http.HttpClient client = java.net.http.HttpClient.newBuilder()\n      .followRedirects(java.net.http.HttpClient.Redirect.NEVER)\n      .build();\n  java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder(java.net.URI.create(url)).build();\n  return client.send(request, java.net.http.HttpResponse.BodyHandlers.ofByteArray()).body();\n}\n```',
+    task:'写出取回之前要核对什么，以及 HTTP 客户端对重定向应怎样设置。',
+    answer:'1. 服务器按收到的地址取内容之前，必须确认目标是预期的那一个。登录通过不代替这道确认。\n\n2. 目标事先能点名时，用完整地址的允许名单核对。不在名单里就拒绝，请求还没有发出。\n\n3. HTTP 客户端关闭自动跟随重定向。核对过的地址不能再被带到名单之外。',
+    keywords:'SSRF CWE-918 允许名单 followRedirects NEVER',
+    points:['服务器取回地址之前必须确认目标是预期的','目标能点名时用完整地址的允许名单，不在名单里就拒绝','HTTP 客户端关闭自动跟随重定向'],
+    deep:[
+      {title:'名单核对的是完整地址',body:'允许名单写的是可以取的那几个完整地址。只比较主机名、或取回之后再看结果，都晚于请求已经发出。名单外的地址应在发出之前拒绝。'},
+      {title:'怎样自己验证',body:'用名单里的发票地址调用 fetchInvoice，应取回字节。把地址改成名单外的另一个 https 地址，应在抛出 IllegalArgumentException 时还没有发出请求。再确认 HttpClient 的重定向策略是 NEVER。'}
+    ],
+    refs:[
+      ['CWE-918：SSRF','https://cwe.mitre.org/data/definitions/918.html'],
+      ['OWASP：SSRF Prevention','https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html']
+    ]
+  },
+  {
     track:'java', group:'安全', id:'spring-session-stateless',
     title:'无状态 API 不要再为每次 Bearer 请求创建会话',
     prompt:'接口已经用 JWT，为什么日志里还在写 SESSION 并且发 Set-Cookie？',
@@ -335,6 +378,48 @@ const COVERAGE_CORE_16 = [
     keywords:'排队论 线程池 P99 利用率 拒绝策略',
     points:['延迟 = 排队 + 处理','池满之后等待时间会主导尾延迟','超时和拒绝要作用在入口，避免无效堆积'],
     refs:[['SRE：Queueing','https://sre.google/sre-book/addressing-cascading-failures/'],['Java Executor 拒绝策略','https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/ThreadPoolExecutor.html']]
+  },
+  {
+    track:'java', group:'系统设计', id:'k6-threshold-not-check', since:'k6',
+    title:'k6 的阈值失败才让进程失败，check 不改变退出码',
+    prompt:'检查项都是绿的，为什么这次压测仍算通过？',
+    promptAnswer:'〔check｜记下断言是否成立、本身不改变进程退出码的函数〕不决定成败。要挡住合并，把条件写进〔阈值｜结束时决定整次测试是否失败的条件〕。',
+    core:'〔k6｜用脚本发起并发请求并按阈值判定成败的工具〕用 options.vus 指定同时运行的〔VU｜在指定时长内循环执行默认函数的并发执行者〕数量，默认是 1。duration 表示这次运行持续多久，这段时间里每个 VU 循环执行默认函数。两者一起是恒定 VU 场景的简写。阈值写在 options.thresholds 里，表达式在结束时为假，整次测试失败，退出码非 0。表达式为真则退出码是 0。check 只记录断言是否成立，不改变退出码。要让检查失败挡住这次运行，再给 checks 指标加一条阈值，例如成功率要高于 0.9。http_req_failed 用 rate 看错误比例，http_req_duration 用 p(95) 看时长。阶梯升降要另写 stages 或 scenarios。一次 duration 不是三次可比运行。排队时间见 arch-queue-wait。',
+    why:'学习者看见每个 check 都通过，就让流水线放行。没有阈值时，慢响应和错误请求仍让进程以 0 结束。区分信号是：阈值表达式为假时退出码非 0；只有 check 失败、没有对应阈值时，退出码仍是 0。',
+    example:'五名虚拟用户跑十秒，错误率和尾延迟写进阈值，检查也要达到成功率：\n\n```javascript\nimport http from "k6/http";\nimport { check } from "k6";\n\nexport const options = {\n  vus: 5,\n  duration: "10s",\n  thresholds: {\n    http_req_failed: ["rate<0.01"],\n    http_req_duration: ["p(95)<200"],\n    checks: ["rate>0.9"],\n  },\n};\n\nexport default function () {\n  const res = http.get("http://127.0.0.1:8080/orders");\n  check(res, { "status is 200": (r) => r.status === 200 });\n}\n```',
+    task:'写出只有 check 失败时的退出码，以及怎样让检查成功率也决定整次测试的成败。',
+    answer:'1. vus 是同时循环执行默认函数的虚拟用户数，duration 是这次运行的时长。\n\n2. 阈值表达式在结束时为假，整次测试失败，退出码非 0。全部成立时退出码是 0。\n\n3. 只有 check 失败时，退出码仍是 0。给 checks 加上 rate>0.9 之后，成功率不够才会让进程失败。',
+    keywords:'k6 vus duration threshold check http_req_duration 退出码',
+    points:['vus 与 duration 让固定数量的虚拟用户在时长内循环执行','阈值表达式为假时整次测试失败，退出码非 0','check 不改变退出码，要另给 checks 写阈值'],
+    deep:[
+      {title:'一次运行说明不了容量',body:'恒定的 vus 和 duration 只覆盖这一段负载。阶梯要写在 stages 或 scenarios 里。一次脚本通过，还不是同一数据上的三次可比运行。尾延迟变长时，先看排队，见 arch-queue-wait。'},
+      {title:'怎样自己验证',body:'先只留 check、不写 thresholds，让接口返回非 200。check 失败，进程退出码仍是 0。再写上 checks 的 rate>0.9，同一失败应使退出码非 0。阈值全部成立时退出码是 0。'}
+    ],
+    refs:[
+      ['Grafana k6：Thresholds','https://grafana.com/docs/k6/latest/using-k6/thresholds/'],
+      ['Grafana k6：Options','https://grafana.com/docs/k6/latest/using-k6/k6-options/reference/']
+    ]
+  },
+  {
+    track:'java', group:'系统设计', id:'jmeter-cli-continue-on-error', since:'JMeter',
+    title:'JMeter 负载用命令行跑，断言失败后可以继续',
+    prompt:'结果树里有一条断言失败，为什么整次负载还在往下跑？',
+    promptAnswer:'线程组在取样错误或断言失败后可以选择 Continue。〔JMeter｜用线程组对服务器执行测试计划的负载工具〕会忽略这次错误并继续。',
+    core:'〔线程组｜规定模拟用户数、启动用时和重复次数的执行池〕用线程数表示要模拟的用户。〔Ramp-up｜把全部线程启动完毕所用的时间〕是这些线程陆续启动的总时长。10 个线程、100 秒时，后一个线程在前一个之后 10 秒启动，第一个立刻启动，第十个在 90 秒时启动。循环次数是每条线程把用例做几遍。取样本身失败，或断言失败，都算取样错误。选择 Continue 时，忽略该错误并继续测试。计划的编写和单线程验证用 GUI。负载测试用命令行模式，jmeter -n -t 计划.jmx -l 结果.jtl。手册写明不要用 GUI 跑负载。k6 的阈值会让退出码非 0，见 k6-threshold-not-check。一次命令行运行仍不是三次可比的阶梯负载。',
+    why:'学习者在 GUI 的结果树里看见断言失败，就以为进程已经失败并停住。选择 Continue 时，其余线程还在发请求，失败只留在结果文件里。区分信号是：命令行仍在输出汇总，结果文件里同时有失败样本。',
+    example:'编写好的计划用命令行跑，结果写入 jtl：\n\n```bash\njmeter -n -t orders.jmx -l orders.jtl\n```',
+    task:'写出 10 个线程、Ramp-up 100 秒时第十个线程何时启动，以及断言失败且动作为 Continue 时测试会不会停。',
+    answer:'1. 线程数是模拟用户数。Ramp-up 是把这些线程全部启动所用的时间。10 个线程、100 秒时，第十个线程在 90 秒时启动。\n\n2. 负载测试用 jmeter -n -t 计划.jmx -l 结果.jtl。GUI 用来编写和验证，不用来跑负载。\n\n3. 取样错误或断言失败后若选择 Continue，JMeter 忽略该错误并继续。失败记在结果里，整个计划不因此停下。',
+    keywords:'JMeter Thread Group Ramp-up Continue jmeter -n -t jtl',
+    points:['线程数是模拟用户数，Ramp-up 是全部线程启动完毕的时间','负载测试用命令行 jmeter -n -t 计划 -l 结果','Continue 在断言失败后忽略错误并继续测试'],
+    deep:[
+      {title:'和 k6 阈值',body:'k6 的阈值表达式为假时，整次测试失败且退出码非 0。JMeter 的 Continue 让断言失败后的线程继续取样。两条都要看结果文件，一次运行都不是三次可比的阶梯负载。'},
+      {title:'怎样自己验证',body:'线程组设 10 个线程、Ramp-up 100 秒，在日志里核对第十个线程约在 90 秒启动。把错误后动作设为 Continue，让一条断言失败，确认命令行汇总仍在继续，结果文件里有这条失败。负载用 jmeter -n -t 跑，不用 GUI。'}
+    ],
+    refs:[
+      ['JMeter：Thread Group','https://jmeter.apache.org/usermanual/component_reference.html#Thread_Group'],
+      ['JMeter：Getting Started','https://jmeter.apache.org/usermanual/get-started.html']
+    ]
   },
   {
     track:'frontend', group:'Vue 生态', id:'pinia-store-to-refs',

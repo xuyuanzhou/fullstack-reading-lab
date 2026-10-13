@@ -2,7 +2,11 @@
 
 在线阅读：[全栈学习实验室](https://xuyuanzhou.github.io/fullstack-reading-lab/) · [GitHub 仓库](https://github.com/xuyuanzhou/fullstack-reading-lab)
 
-面向前端和 Java 开发者的公开学习网站。以本机题库的主题分布作为选题线索，重新编写中文解释、具体例子、主动回忆练习与参考答案。除原创回答框架课 `design-review` 外，每节公开课附官方文档、标准或固定版本源码依据。当前有 **1063 节原创课程、3200 个具体知识点**（前端 364 课、Java 699 课）。另有一条 AI 公开阅读路线（入门 → 基础 → 手册 → 项目 → 精通 → 面试口述 → 工具）和练习台，不计入上述课数；面向小白讲清机制，并按网上常见的大模型 / RAG / Agent 追问准备口述。前端在技术选型之后增加「微前端」专章（独立发版边界、选型对照、Module Federation / single-spa / qiankun / 无界 / iframe 落地、路由与样式隔离、发布契约）。Java 侧已按 Spring、JPA、MyBatis、缓存、Nginx、Netty、网关、搜索、JVM、Sentinel 分章；Spring Cloud Alibaba 按 Nacos、调用、Seata 展开，Sentinel 独立成章讲 Java 应用接入与规则行为。学习从「全栈主线」开始：一条功能怎样从页面交到数据库，再进入语言、框架和失败场景。
+面向前端和 Java 开发者的公开学习网站。以本机题库的主题分布作为选题线索，重新编写中文解释、具体例子、主动回忆练习与参考答案。除原创回答框架课 `design-review` 外，每节公开课附官方文档、标准或固定版本源码依据。当前有 **1082 节原创课程、3257 个具体知识点**（前端 368 课、Java 714 课）。另有一条 AI 公开阅读路线（入门 → 基础 → 手册 → 项目 → 精通 → 面试口述 → 工具）和练习台，不计入上述课数；面向小白讲清机制，并按网上常见的大模型 / RAG / Agent 追问准备口述。前端在技术选型之后增加「微前端」专章（独立发版边界、选型对照、Module Federation / single-spa / qiankun / 无界 / iframe 落地、路由与样式隔离、发布契约）。Java 侧已按 Spring、JPA、MyBatis、缓存、Nginx、Netty、网关、搜索、JVM、Sentinel 分章；Spring Cloud Alibaba 按 Nacos、调用、Dubbo、Seata 展开。Dubbo 这一节讲一次调用的路径、暴露与引用、注册模式、ZooKeeper 临时节点、集群容错、线程池和找不到提供者。Sentinel 独立成章讲 Java 应用接入与规则行为。学习从「全栈主线」开始：一条功能怎样从页面交到数据库，再进入语言、框架和失败场景。默认入口是九关。四条补强（前端工程化、云与平台、安全与合规、协作与职业化）列在路线地图下面，不排进九关。90 天定向补弱见 [90天冲高级全栈主线清单](docs/90天冲高级全栈主线清单.md)，完整培养范围见 [全栈学习与发展路线图](docs/全栈学习与发展路线图-2026-10-13.md)。作品集是 A 写路径、B 读路径、C 异步链路、D 云上交付；周期按起点和剩余学时计算，26 周不是零基础到精通的承诺。
+
+新版规划要求 Java、React、Vue 分别通过能力验证，并覆盖微服务、高并发、生产排障、分布式设计、安全与团队工程。配套 [关卡考核任务](docs/全栈路线考核任务-2026-10-13.md) 和 [轻量游戏化设计](docs/全栈主线轻量游戏化设计-2026-10-13.md) 已成文；新增任务判分、成就、挑战解锁与证据进度尚未在网站实现，当前打勾不等于已通过这些考核。
+
+后续落地从 [实施总计划](docs/全栈学习平台实施总计划-2026-10-13.md) 开始，包含 P0～P8 任务、资源、排期、风险与质量门禁；[模型选型与交接](docs/全栈项目模型选型与交接-2026-10-13.md) 覆盖 Grok 4.7 和核对时 TRAE 官方列出的 19 个内置模型。产品建设周期与学员学习周期分开计算，模型实际可用性和推荐排序需按账号及项目试测确认。
 
 公开站使用 **React + TypeScript + Vite + Ant Design**（目录 `web/`）。左侧课程路径、中间阅读、右侧进度。React / Vue 知识卡分别打开 [React Mastery Lab](https://xuyuanzhou.github.io/react-mastery-lab/) 与 [Vue 3 Mastery Lab](https://xuyuanzhou.github.io/vue3-mastery-lab/#/) 的对应章节。
 

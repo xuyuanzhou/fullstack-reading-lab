@@ -1,10 +1,12 @@
 import { Button, Space, Typography } from 'antd'
-import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
-import { findLesson, lessonsFor, lessonsInGroup, outlineFor, prefetchTrackBodies, totals } from '@/data/curriculum'
+import { useEffect } from 'react'
+import { Link, Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { findLesson, lessonsFor, lessonsInGroup, outlineFor, prefetchLessonBody, totals } from '@/data/curriculum'
 import { TRACK_INTRO, TRACK_LABEL } from '@/data/meta'
 import { shortTitle } from '@/data/reading'
 import { groupLabel, groupTitle, isTrack, lessonPath, resumePath } from '@/data/routes'
 import { useProgress } from '@/state/progress'
+import { markSceneReady } from '@/transition/jumpBudget'
 import type { LessonSummary } from '@/data/curriculum'
 
 function LessonRows({
@@ -25,7 +27,7 @@ function LessonRows({
             key={item.id}
             className={`lesson-row${done ? ' is-done' : ''}`}
             to={lessonPath(item)}
-            onMouseEnter={() => prefetchTrackBodies(item.track)}
+            onMouseEnter={() => prefetchLessonBody(item.id)}
             onClick={() => onOpen(item.id)}
           >
             <span className="lesson-row-mark">{done ? '✓' : ''}</span>
@@ -42,10 +44,18 @@ function LessonRows({
 
 export function HomePage() {
   const { track: trackParam = '', groupKey = '' } = useParams()
+  const location = useLocation()
   const progress = useProgress()
   const navigate = useNavigate()
   const track = isTrack(trackParam) ? trackParam : undefined
   const label = track ? groupLabel(track, groupKey) : ''
+  const upcomingId = track && label
+    ? (lessonsFor(track).find((item) => !progress.done.includes(item.id)) || lessonsFor(track)[0])?.id || ''
+    : ''
+  useEffect(() => {
+    if (upcomingId) prefetchLessonBody(upcomingId)
+    if (track && label) markSceneReady(location.pathname)
+  }, [label, location.pathname, track, upcomingId])
   if (!track || !label) return <Navigate to={resumePath(progress.track, progress.group)} replace />
 
   const current = lessonsFor(track)
@@ -75,6 +85,7 @@ export function HomePage() {
           <Button
             type="primary"
             size="middle"
+            onPointerDown={() => { if (next) prefetchLessonBody(next.id) }}
             onClick={() => {
               if (!next) return
               progress.remember(next.id)

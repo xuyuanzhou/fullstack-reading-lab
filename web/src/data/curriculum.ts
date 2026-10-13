@@ -39,22 +39,35 @@ const byTrack: Record<Track, LessonSummary[]> = {
   java: curriculum.lessons.filter((lesson) => lesson.track === 'java'),
 }
 
-const bodiesCache: Partial<Record<Track, Promise<Record<string, LessonBody>>>> = {}
-const bodiesReady: Partial<Record<Track, Record<string, LessonBody>>> = {}
+const bodyModules = import.meta.glob('./bodies/*/*.json', {
+  query: '?raw',
+  import: 'default',
+}) as Record<string, () => Promise<string>>
 
-function loadBodies(track: Track) {
-  if (!bodiesCache[track]) {
-    const loader =
-      track === 'frontend'
-        ? import('./curriculum-bodies-frontend.json?raw')
-        : import('./curriculum-bodies-java.json?raw')
-    bodiesCache[track] = loader.then((mod) => {
-      const data = JSON.parse(mod.default) as Record<string, LessonBody>
-      bodiesReady[track] = data
-      return data
-    })
-  }
-  return bodiesCache[track]!
+const lessonReady = new Map<string, LessonBody>()
+const lessonPending = new Map<string, Promise<LessonBody>>()
+
+function bodyPath(track: Track, id: string) {
+  return `./bodies/${track}/${id}.json`
+}
+
+function loadLessonBody(track: Track, id: string) {
+  const cached = lessonReady.get(id)
+  if (cached) return Promise.resolve(cached)
+  const pending = lessonPending.get(id)
+  if (pending) return pending
+  const load = bodyModules[bodyPath(track, id)]
+  const next = (load ? load() : Promise.resolve('{}')).then((raw) => {
+    const body = JSON.parse(raw) as LessonBody
+    lessonReady.set(id, body)
+    lessonPending.delete(id)
+    return body
+  }).catch((error: unknown) => {
+    lessonPending.delete(id)
+    throw error
+  })
+  lessonPending.set(id, next)
+  return next
 }
 
 function lessonFrom(summary: LessonSummary, body: LessonBody): Lesson {
@@ -95,23 +108,28 @@ export function findLesson(id: string): LessonSummary | undefined {
 /** Already-loaded lesson, so a route change can paint without waiting on a promise. */
 export function peekFullLesson(id: string): Lesson | undefined {
   const summary = byId.get(id)
-  if (!summary) return undefined
-  const bodies = bodiesReady[summary.track]
-  if (!bodies) return undefined
-  return lessonFrom(summary, bodies[id] || {})
+  const body = lessonReady.get(id)
+  if (!summary || !body) return undefined
+  return lessonFrom(summary, body)
 }
 
-/** Full lesson for the reading page; loads only that track's bodies chunk. */
+/** Full lesson for the reading page. Loads that lesson's file, not the whole track. */
 export async function loadFullLesson(id: string): Promise<Lesson | undefined> {
   const summary = byId.get(id)
   if (!summary) return undefined
-  const bodies = await loadBodies(summary.track)
-  return lessonFrom(summary, bodies[id] || {})
+  const body = await loadLessonBody(summary.track, id)
+  return lessonFrom(summary, body)
 }
 
-/** Prefetch a track pack (e.g. when switching to that route). */
-export function prefetchTrackBodies(track: Track) {
-  void loadBodies(track)
+/** Warm the next lesson before the click, so the jump does not wait on a track pack. */
+export function prefetchLessonBody(id: string) {
+  const summary = byId.get(id)
+  if (!summary || lessonReady.has(id)) return
+  void loadLessonBody(summary.track, id).catch(() => {})
+}
+
+export function prefetchLessonBodies(ids: readonly string[]) {
+  for (const id of ids) prefetchLessonBody(id)
 }
 
 export function nextLesson(track: Track, id: string): LessonSummary | undefined {

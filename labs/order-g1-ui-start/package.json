@@ -1,0 +1,28 @@
+{
+  "name": "order-g1-ui-start",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "dev": "vite --host 127.0.0.1 --port 5176",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "vue": "3.5.44"
+  },
+  "devDependencies": {
+    "@testing-library/react": "16.3.3",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.7",
+    "@vitejs/plugin-react": "6.1.2",
+    "@vitejs/plugin-vue": "6.0.10",
+    "@vue/test-utils": "2.5.1",
+    "happy-dom": "21.0.1",
+    "typescript": "6.0.2",
+    "vite": "8.3.0",
+    "vitest": "5.0.4"
+  }
+}

@@ -1,4 +1,5 @@
 import type { LocalCategory, ProgressState, Track } from '../types/curriculum'
+import { emptyEnvelope, mergeEnvelopes, migrateProgress, type LearningEnvelope } from './learningEvidence.ts'
 
 const object = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -43,6 +44,7 @@ export function normalizeProgress(value: unknown, groups: ProgressGroups): Progr
   const audit = object(saved.audit)
     ? Object.fromEntries(Object.entries(saved.audit).filter(([, item]) => object(item) && typeof item.note === 'string' && typeof item.status === 'string')) as ProgressState['audit']
     : {}
+  const learning = learningFields(saved)
   return {
     track, group: resolveGroup(track, saved.group, groups), notes, audit,
     done: strings(saved.done), review: strings(saved.review), recent: strings(saved.recent).slice(0, 12),
@@ -57,15 +59,47 @@ export function normalizeProgress(value: unknown, groups: ProgressGroups): Progr
     aiSkippedPrereq: strings(saved.aiSkippedPrereq),
     aiDrillScores,
     pathChecks: strings(saved.pathChecks),
+    ...learning,
     revision: revisionOf(saved.revision),
   }
+}
+
+function envelopeBody(envelope: LearningEnvelope) {
+  return JSON.stringify({
+    selfChecks: envelope.selfChecks,
+    attempts: envelope.attempts,
+    evidence: envelope.evidence,
+    unresolvedLegacy: envelope.unresolvedLegacy,
+    pause: envelope.pause,
+    quests: envelope.quests,
+  })
+}
+
+function sameEnvelope(left: LearningEnvelope, right: LearningEnvelope) {
+  return envelopeBody(left) === envelopeBody(right)
+}
+
+function learningFields(saved: Record<string, unknown>): Pick<ProgressState, 'learning' | 'learningReadonly' | 'learningHeld'> {
+  if (object(saved.learning)) {
+    const result = migrateProgress(saved.learning)
+    if (result.readonly) return { learning: emptyEnvelope(), learningReadonly: true, learningHeld: saved.learning }
+    return { learning: result.envelope, learningReadonly: false, learningHeld: null }
+  }
+  const migrated = migrateProgress({ pathChecks: saved.pathChecks })
+  return { learning: migrated.envelope, learningReadonly: false, learningHeld: null }
 }
 
 export function readProgress(key: string, groups: ProgressGroups) {
   try {
     const raw = localStorage.getItem(key)
     try {
-      return { state: normalizeProgress(raw ? JSON.parse(raw) : {}, groups), issue: '' }
+      const parsed = raw ? JSON.parse(raw) : {}
+      if (object(parsed) && !object(parsed.learning) && raw) {
+        try {
+          if (!localStorage.getItem(`${key}.learning-backup`)) localStorage.setItem(`${key}.learning-backup`, raw)
+        } catch { /* reading still continues */ }
+      }
+      return { state: normalizeProgress(parsed, groups), issue: '' }
     } catch {
       // A quota or privacy error while copying the raw record must not blank the page.
       try { if (raw) localStorage.setItem(`${key}.recovery`, raw) } catch { /* keep reading */ }
@@ -92,7 +126,7 @@ export function sameProgress(a: ProgressState, b: ProgressState) {
 export function mergeForWrite(local: ProgressState, remote: ProgressState, base: ProgressState): ProgressState {
   if (remote.revision <= local.revision) {
     if (sameProgress(local, remote)) return remote
-    return { ...local, revision: Math.max(local.revision, remote.revision) + 1 }
+    return { ...local, ...mergedLearning(local, remote, base), revision: Math.max(local.revision, remote.revision) + 1 }
   }
   const notes = { ...remote.notes }
   let touched = false
@@ -170,6 +204,8 @@ export function mergeForWrite(local: ProgressState, remote: ProgressState, base:
   ) {
     touched = true
   }
+  const learning = mergedLearning(local, remote, base)
+  if (envelopeBody(learning.learning) !== envelopeBody(remote.learning) || learning.learningReadonly !== remote.learningReadonly) touched = true
   const next: ProgressState = {
     ...remote,
     notes,
@@ -182,6 +218,7 @@ export function mergeForWrite(local: ProgressState, remote: ProgressState, base:
     aiReview,
     aiSkippedPrereq,
     pathChecks,
+    ...learning,
     revision: remote.revision + (touched ? 1 : 0),
   }
   // Prefer this tab's UI prefs only when it actually changed them since last sync.
@@ -198,9 +235,57 @@ export function mergeForWrite(local: ProgressState, remote: ProgressState, base:
   return next
 }
 
+function changedSince<T extends { id: string }>(current: T[], base: T[], same: (left: T, right: T) => boolean) {
+  return current.filter((item) => {
+    const prior = base.find((candidate) => candidate.id === item.id)
+    return !prior || !same(prior, item)
+  })
+}
+
+function mergedLearning(local: ProgressState, remote: ProgressState, base: ProgressState): Pick<ProgressState, 'learning' | 'learningReadonly' | 'learningHeld'> {
+  if (local.learningReadonly || remote.learningReadonly) {
+    const held = remote.learningReadonly ? remote.learningHeld : local.learningHeld
+    return { learning: emptyEnvelope(), learningReadonly: true, learningHeld: held }
+  }
+  if (sameEnvelope(local.learning, remote.learning)) {
+    const learning = remote.learning.revision >= local.learning.revision ? remote.learning : local.learning
+    return { learning, learningReadonly: false, learningHeld: null }
+  }
+  const attempts = changedSince(local.learning.attempts, base.learning.attempts, (left, right) =>
+    left.draft === right.draft && left.status === right.status && !!left.deleted === !!right.deleted)
+  const evidence = changedSince(local.learning.evidence, base.learning.evidence, (left, right) =>
+    left.summary === right.summary && left.verification === right.verification && !!left.deleted === !!right.deleted
+    && left.score?.value === right.score?.value && left.score?.source === right.score?.source)
+  const quests = changedSince(local.learning.quests ?? [], base.learning.quests ?? [], (left, right) =>
+    left.step === right.step && left.status === right.status && left.rewardIds.join('\n') === right.rewardIds.join('\n')
+    && left.marks.join('\n') === right.marks.join('\n'))
+  const overlay = { ...local.learning, attempts, evidence, quests }
+  const merged = mergeEnvelopes(overlay, remote.learning)
+  const pauseChanged = JSON.stringify(local.learning.pause) !== JSON.stringify(base.learning.pause)
+  return {
+    learning: { ...merged, pause: pauseChanged ? local.learning.pause : remote.learning.pause },
+    learningReadonly: false,
+    learningHeld: null,
+  }
+}
+
+export function adoptLearningDraft(state: ProgressState, raw: string | null): ProgressState {
+  if (state.learningReadonly || state.learning.attempts.length || !raw) return state
+  try {
+    const migrated = migrateProgress(JSON.parse(raw))
+    if (migrated.readonly || migrated.issue || !migrated.envelope.attempts.length) return state
+    return { ...state, learning: mergeEnvelopes(migrated.envelope, state.learning) }
+  } catch {
+    return state
+  }
+}
+
 export function writeProgress(key: string, state: ProgressState): string {
   try {
-    localStorage.setItem(key, JSON.stringify({ version: 1, ...state }))
+    const payload: Record<string, unknown> = { version: 1, ...state }
+    delete payload.learningHeld
+    if (state.learningReadonly && state.learningHeld != null) payload.learning = state.learningHeld
+    localStorage.setItem(key, JSON.stringify(payload))
     return ''
   } catch {
     return '记录未能保存到浏览器，请先复制重要笔记。当前页面仍可使用。'

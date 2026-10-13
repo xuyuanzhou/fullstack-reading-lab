@@ -1,6 +1,7 @@
 @use 'tokens';
 @use 'shell';
 @use 'reading';
+@use 'transition';
 
 *,
 *::before,
@@ -111,6 +112,47 @@ textarea {
 }
 
 .route-loading { padding: 40px 24px; color: var(--lab-muted); }
+
+.route-skeleton {
+  display: grid;
+  gap: 14px;
+  max-width: 40rem;
+  padding: 28px 0 8px;
+
+  span {
+    display: block;
+    height: 14px;
+    border-radius: 999px;
+    background: var(--lab-sider);
+  }
+
+  .route-skeleton-kicker { width: 8rem; height: 10px; }
+  .route-skeleton-title { width: min(16rem, 70%); height: 28px; }
+  .route-skeleton-line.is-short { width: 70%; }
+}
+
+.route-fail {
+  padding: 28px 0;
+  p { margin: 0 0 12px; }
+  button {
+    padding: 8px 14px;
+    border: 1px solid var(--lab-line, var(--lab-muted));
+    border-radius: 8px;
+    background: var(--lab-panel);
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .route-skeleton span { animation: route-skeleton 1.6s ease-in-out infinite; }
+}
+
+@keyframes route-skeleton {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 1; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }

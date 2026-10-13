@@ -50,7 +50,7 @@ for (const lesson of payload.lessons) {
   bodiesByTrack[lesson.track][lesson.id] = row;
 }
 
-// Full dump kept for verify_content / audits; runtime uses index + per-track bodies.
+// Full dump kept for verify_content / audits. The app loads one lesson file, not the track pack.
 fs.writeFileSync(path.join(dataDir, 'curriculum.json'), JSON.stringify(payload, null, 2) + '\n');
 fs.writeFileSync(path.join(dataDir, 'curriculum-index.json'), JSON.stringify(index, null, 2) + '\n');
 fs.writeFileSync(
@@ -61,6 +61,22 @@ fs.writeFileSync(
   path.join(dataDir, 'curriculum-bodies-java.json'),
   JSON.stringify(bodiesByTrack.java, null, 2) + '\n',
 );
+writeLessonBodies(dataDir, bodiesByTrack);
+
+function writeLessonBodies(dataDir, bodiesByTrack) {
+  for (const track of Object.keys(bodiesByTrack)) {
+    const dir = path.join(dataDir, 'bodies', track);
+    fs.mkdirSync(dir, { recursive: true });
+    const keep = new Set();
+    for (const [id, row] of Object.entries(bodiesByTrack[track])) {
+      keep.add(`${id}.json`);
+      fs.writeFileSync(path.join(dir, `${id}.json`), JSON.stringify(row) + '\n');
+    }
+    for (const name of fs.readdirSync(dir)) {
+      if (!keep.has(name)) fs.unlinkSync(path.join(dir, name));
+    }
+  }
+}
 
 const legacyBodies = path.join(dataDir, 'curriculum-bodies.json');
 if (fs.existsSync(legacyBodies)) fs.unlinkSync(legacyBodies);

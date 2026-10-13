@@ -1,0 +1,133 @@
+.route-fx {
+  --fx-ms: 1000ms;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  overflow: hidden;
+  pointer-events: auto;
+  background: #121614;
+}
+
+.route-fx-gl,
+.route-fx-fallback,
+.route-fx-camera {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.route-fx-fallback {
+  background:
+    radial-gradient(circle at 50% 45%, rgba(63, 106, 88, 0.55), transparent 42%),
+    linear-gradient(180deg, #1a211e, #101412);
+}
+
+.route-fx.is-warp .route-fx-fallback {
+  animation: fx-warp var(--fx-ms) ease-in forwards;
+}
+
+.route-fx-scan {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.05) 0 1px,
+    transparent 1px 4px
+  );
+  opacity: 0.35;
+  mix-blend-mode: overlay;
+}
+
+.route-fx-neon {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(143, 181, 160, 0.0);
+  animation: fx-neon var(--fx-ms) linear forwards;
+}
+
+.route-fx-pane {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 28%),
+    #1c2420;
+}
+
+.route-fx-pane.is-left { left: 0; animation: fx-pane-left var(--fx-ms) ease-in forwards; }
+.route-fx-pane.is-right { right: 0; animation: fx-pane-right var(--fx-ms) ease-in forwards; }
+
+.route-fx-seam {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  background: #d7ebe0;
+  box-shadow: 0 0 18px 4px rgba(143, 181, 160, 0.85);
+  animation: fx-seam var(--fx-ms) ease-in forwards;
+}
+
+.route-fx-camera {
+  background:
+    radial-gradient(circle at 50% 50%, transparent 20%, rgba(8, 10, 9, 0.72) 72%),
+    linear-gradient(180deg, rgba(20, 28, 24, 0.2), rgba(8, 10, 9, 0.55));
+  transform-origin: 50% 45%;
+  animation: fx-pull var(--fx-ms) ease-out forwards;
+}
+
+.route-fx.is-lite .route-fx-scan,
+.route-fx.is-lite .route-fx-gl { display: none; }
+
+.fx-audio {
+  margin-right: 4px;
+  border: 0;
+  background: transparent;
+  color: var(--lab-muted);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.fx-audio.is-on { color: var(--lab-accent-strong); }
+
+@keyframes fx-warp {
+  from { transform: scale(1.18); filter: blur(0); }
+  to { transform: scale(1); filter: blur(0); opacity: 0.2; }
+}
+
+@keyframes fx-pane-left {
+  from { transform: translateX(0); }
+  to { transform: translateX(-105%); }
+}
+
+@keyframes fx-pane-right {
+  from { transform: translateX(0); }
+  to { transform: translateX(105%); }
+}
+
+@keyframes fx-seam {
+  0% { opacity: 1; transform: scaleY(0.2); }
+  35% { opacity: 1; transform: scaleY(1); }
+  100% { opacity: 0; transform: scaleY(1); }
+}
+
+@keyframes fx-pull {
+  from { transform: perspective(900px) translateZ(120px) scale(1.12); opacity: 1; }
+  to { transform: perspective(900px) translateZ(0) scale(1); opacity: 0; }
+}
+
+@keyframes fx-neon {
+  0% { box-shadow: inset 0 0 0 0 rgba(143, 181, 160, 0); }
+  28% { box-shadow: inset 0 0 0 2px rgba(196, 161, 90, 0.85), inset 0 0 24px rgba(63, 106, 88, 0.35); }
+  100% { box-shadow: inset 0 0 0 0 rgba(143, 181, 160, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-fx { display: none; }
+}

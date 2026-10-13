@@ -1362,16 +1362,6 @@ const EXAMPLE_CODE_BLOCKS = {
     '```',
   ].join('\n'),
 
-  'http-methods': [
-    'DELETE 终态可幂等；创建 POST 要靠幂等键：',
-    '',
-    '```http',
-    'DELETE /orders/9   → 204',
-    'DELETE /orders/9   → 404 亦可（资源已不在）',
-    'POST /orders + Idempotency-Key → 第二次返回同一订单号',
-    '```',
-  ].join('\n'),
-
   'http-patch-rfc5789': [
     'PATCH 描述修改；PUT 换整份表示：',
     '',

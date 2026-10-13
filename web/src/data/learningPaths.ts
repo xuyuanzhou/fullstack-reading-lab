@@ -1,6 +1,7 @@
 /** Delivery paths. Lesson ids match docs/全栈主线精通审查.md. */
 
-import { MASTERY_GATES } from './masteryGates'
+import { pathSlots } from './learningGraph.ts'
+import { MASTERY_GATES } from './masteryGates.ts'
 
 /** One slot is one required read. Lessons that share a note are alternatives and count as one slot. */
 export function deliverableKey(gateId: string, index: number) {
@@ -20,7 +21,7 @@ export function gatePath(gateId?: string, focus?: 'deliver') {
 export function gateCleared(gate: PathGate, doneIds: readonly string[], checks: readonly string[]) {
   const done = new Set(doneIds)
   const marked = new Set(checks)
-  const slots = slotsOf(gate.lessons)
+  const slots = requiredSlotsOf(gate.lessons)
   const lessonsDone = slots.length === 0 || slots.every((slot) => slot.some((id) => done.has(id)))
   const delivered = gate.outputs.every((_, index) => marked.has(deliverableKey(gate.id, index)))
   return lessonsDone && delivered
@@ -41,7 +42,7 @@ export function spinePlace(lessonId: string): { index: number; step: number; gat
 export function spineNextId(lessonId: string): string | undefined {
   const place = spinePlace(lessonId)
   if (!place) return undefined
-  const slots = slotsOf(place.gate.lessons)
+  const slots = requiredSlotsOf(place.gate.lessons)
   const at = slots.findIndex((slot) => slot.includes(lessonId))
   return slots[at + 1]?.[0]
 }
@@ -49,7 +50,7 @@ export function spineNextId(lessonId: string): string | undefined {
 export function spinePrevId(lessonId: string): string | undefined {
   const place = spinePlace(lessonId)
   if (!place) return undefined
-  const slots = slotsOf(place.gate.lessons)
+  const slots = requiredSlotsOf(place.gate.lessons)
   const at = slots.findIndex((slot) => slot.includes(lessonId))
   if (at <= 0) return undefined
   return slots[at - 1]?.[0]
@@ -58,7 +59,7 @@ export function spinePrevId(lessonId: string): string | undefined {
 /** First lesson of the first slot that is still unread. Reading either lesson in a pair clears that slot. */
 export function nextInGate(gate: PathGate, doneIds: readonly string[]): string | undefined {
   const done = new Set(doneIds)
-  for (const slot of slotsOf(gate.lessons)) {
+  for (const slot of requiredSlotsOf(gate.lessons)) {
     if (slot.some((id) => done.has(id))) continue
     return slot[0]
   }
@@ -72,25 +73,22 @@ export type PathLesson = {
   /** 这节在这一关里要解决的一件事。 */
   job?: string
   note?: string
+  requirement?: 'required' | 'supplement'
+  alternativeGroup?: string
 }
 
-/** Consecutive「二选一」lessons are one slot. Other notes, such as 补读, stay separate. */
+export function isSupplement(lesson: PathLesson) {
+  return lesson.requirement === 'supplement' || (lesson.note?.includes('补读') ?? false)
+}
+
+/** Required slots only. 补读 stays on the gate list but does not block the next required lesson. */
+export function requiredSlotsOf(lessons: PathLesson[]) {
+  return pathSlots(lessons, true)
+}
+
+/** Consecutive「二选一」or the same alternativeGroup are one slot. */
 export function slotsOf(lessons: PathLesson[]): string[][] {
-  const slots: string[][] = []
-  let group: string[] = []
-  for (const lesson of lessons) {
-    if (lesson.note?.includes('二选一')) {
-      group.push(lesson.id)
-      continue
-    }
-    if (group.length) {
-      slots.push(group)
-      group = []
-    }
-    slots.push([lesson.id])
-  }
-  if (group.length) slots.push(group)
-  return slots
+  return pathSlots(lessons, false)
 }
 
 export type PathGate = {
@@ -105,10 +103,35 @@ export type PathGate = {
   /** 交付物拆开的条目。 */
   outputs: string[]
   pass: string
-  /** 这一关在整条路线上的位置。 */
+  /** 这一关在整条路线上的位置。给人看的句子。 */
   milestone?: string
+  /** 地图上的短标记。不要用句子里的词来判断。 */
+  milestoneKind?: 'fullstack' | 'architect'
   lessons: PathLesson[]
   extra?: string
+}
+
+export type GateFace = 'cleared' | 'live' | 'ahead' | 'resume'
+
+/** 已过、进行中、还没走到、前面有缺口。未到仍可打开，不锁课。 */
+export function gateFace(index: number, progressIndex: number, cleared: boolean): GateFace {
+  if (cleared) return 'cleared'
+  if (index === progressIndex) return 'live'
+  if (index > progressIndex) return 'ahead'
+  return 'resume'
+}
+
+export function gateFaceLabel(face: GateFace) {
+  if (face === 'cleared') return '已过'
+  if (face === 'live') return '进行中'
+  if (face === 'ahead') return '未到'
+  return '可补'
+}
+
+export function gateMark(stage: PathGate) {
+  if (stage.milestoneKind === 'fullstack') return '全栈'
+  if (stage.milestoneKind === 'architect') return '职责'
+  return ''
 }
 
 export const PATHS: Record<
@@ -123,7 +146,7 @@ export const PATHS: Record<
   },
   architect: {
     title: '架构师主线',
-    lead: '九关与全栈同一套课。第 3 关能独立交付一条全栈路径。第 9 关的决策会在工作里完成。',
+    lead: '九关与全栈同一套课。第 3 关能独立交付一条全栈路径。第 9 关的决策会在工作里完成。地图下面的四条补强另计，不改变这九关的必读。',
     done: 'F1～F9',
     gates: MASTERY_GATES,
   },

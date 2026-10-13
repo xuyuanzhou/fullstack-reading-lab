@@ -1,7 +1,11 @@
-import { useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import { PATHS, gateCleared, type PathGate } from '@/data/learningPaths'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useLocation, useSearchParams } from 'react-router-dom'
+import { QuestBoard } from '@/components/learning/QuestBoard'
+import { prefetchLessonBody } from '@/data/curriculum'
+import { LEARNING_TASKS } from '@/data/learningTasks'
+import { PATHS, gateCleared, gateMark, nextInGate, type PathGate } from '@/data/learningPaths'
 import { useProgress } from '@/state/progress'
+import { markSceneReady } from '@/transition/jumpBudget'
 
 const path = PATHS.architect
 const stages = path.gates
@@ -17,16 +21,20 @@ const LABEL_BELOW = 108
 function gateStatus(stage: PathGate, index: number, finished: boolean, sequenceIndex: number, openIndex: number) {
   if (finished) return '已过'
   if (index === sequenceIndex && openIndex >= 0) return '进行中'
-  if (stage.milestone?.includes('能交付的全栈')) return '全栈'
-  if (stage.milestone?.includes('架构师')) return '职责'
-  return ''
+  return gateMark(stage)
 }
 
 export function PathPage() {
   const progress = useProgress()
+  const location = useLocation()
   const [params, setParams] = useSearchParams()
   const openIndex = stages.findIndex((stage) => !gateCleared(stage, progress.done, progress.pathChecks))
   const sequenceIndex = openIndex === -1 ? stages.length - 1 : openIndex
+  const upcomingId = nextInGate(stages[sequenceIndex], progress.done) || ''
+  useEffect(() => {
+    if (upcomingId) prefetchLessonBody(upcomingId)
+    markSceneReady(location.pathname)
+  }, [location.pathname, upcomingId])
   const requested = stages.findIndex((stage) => stage.id === params.get('gate'))
   const currentIndex = requested >= 0 ? requested : sequenceIndex
 
@@ -64,6 +72,18 @@ export function PathPage() {
   }
 
   const arrow = openIndex >= 0 ? layout.arrows[sequenceIndex] : null
+  const openAttempt = [...progress.learning.attempts].reverse().find((item) => !item.deleted)
+  const openTask = LEARNING_TASKS.find((item) => item.id === openAttempt?.taskId)
+    ?? LEARNING_TASKS.find((item) => item.id === 'g1.write-path')
+    ?? LEARNING_TASKS[0]
+  const pauseLabel = progress.learning.pause
+    ? progress.learning.pause.choice === 'day' ? '一天' : progress.learning.pause.choice === 'week' ? '一周' : '一个月'
+    : ''
+
+  function jump(id: string) {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    document.getElementById(id)?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
+  }
 
   return (
     <div className="path-stage">
@@ -76,7 +96,14 @@ export function PathPage() {
         <h1 className="hero-title">{path.title}</h1>
         <p className="hero-lead">{path.lead}</p>
       </header>
-      <div className="path-map-scroll" ref={scrollRef}>
+      <nav className="path-jumps" aria-label="这一页的位置">
+        <button type="button" onClick={() => jump('path-map')}>九关地图</button>
+        <button type="button" onClick={() => jump('quest-map')}>关卡地图</button>
+        <button type="button" onClick={() => jump('quest-main')}>主线子关</button>
+        <button type="button" onClick={() => jump('quest-side')}>支线任务</button>
+        <button type="button" onClick={() => jump('quest-boss')}>核心挑战</button>
+      </nav>
+      <div className="path-map-scroll" id="path-map" ref={scrollRef}>
         <div
           className={layout.rows === 1 ? 'path-map is-single' : 'path-map'}
           style={{ width: layout.width, height: layout.height, ['--slot' as string]: `${layout.slot}px` }}
@@ -138,6 +165,11 @@ export function PathPage() {
           </ol>
         </div>
       </div>
+      <p className="path-continue">
+        九关仍可点开。下面的地图把子关、支线和核心挑战分开。
+        {pauseLabel ? `已暂停${pauseLabel}。` : ''}最近一题：{openTask.title}。
+      </p>
+      <QuestBoard />
     </div>
   )
 }

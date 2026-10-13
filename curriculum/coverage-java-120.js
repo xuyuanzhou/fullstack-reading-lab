@@ -222,6 +222,24 @@ const COVERAGE_JAVA_120 = [
     refs:[['JUnit 5：Overview','https://docs.junit.org/current/user-guide/#overview'],['JUnit 5：Writing Tests','https://docs.junit.org/current/user-guide/#writing-tests']]
   },
   {
+    track:'java', group:'测试', id:'pit-mutation-killed',
+    title:'变异测试看测试能否杀掉改过的代码',
+    prompt:'行覆盖率到了 100%，测试就足够了吗？',
+    promptAnswer:'〔行覆盖率｜测试执行过的行占源码行的比例〕只说明这些行被跑过。〔变异测试｜往代码里植入故障再跑测试〕要看测试会不会失败。',
+    core:'PIT 把故障植入被测代码，再跑单元测试。测试失败，这次变异被〔杀掉｜测试失败，说明植入被发现〕。测试仍然通过，这次变异〔存活｜测试仍然通过，说明植入没被发现〕。测试质量看被杀掉的变异占全部变异的比例。行覆盖率、语句覆盖率和分支覆盖率只度量哪些代码被执行，不检查测试能不能发现故障。没有断言的测试可以把一行跑到，却让改掉返回值的变异存活。JUnit 负责写断言，见 junit-what-it-is。Maven 用 pitest-maven 的 mutationCoverage 目标跑这次分析，HTML 报告在 target/pit-reports。',
+    why:'学习者看到行覆盖率是 100% 就停止补测试。方法被调用过，返回值改掉之后测试仍然通过，故障会留到生产。区分信号是：没有断言时变异存活；断言对照了返回值时，同样的改动被杀掉。',
+    example:'只调用、不对照结果：\n\n```java\nstatic int discount(int qty) {\n  return qty > 10 ? qty : 0;\n}\n\n@Test\nvoid largeOrderIsCovered() {\n  discount(11);\n}\n```\n\n把返回值改成 0，这个测试仍然通过，变异存活。对照两个结果：\n\n```java\n@Test\nvoid boundaryIsChecked() {\n  assertEquals(0, discount(10));\n  assertEquals(11, discount(11));\n}\n```\n\n```bash\nmvn test-compile org.pitest:pitest-maven:mutationCoverage\n```',
+    task:'说明行覆盖率到了 100% 时，一个没有断言的测试为什么仍会让变异存活。',
+    answer:'1. 变异测试把故障植入代码后再跑测试。测试失败则这次变异被杀掉，测试仍通过则变异存活。\n\n2. 行覆盖率只说明 discount(11) 执行过 true 分支。没有断言时，返回值改成 0，测试仍然通过。\n\n3. 断言对照 10 与 11 的结果后，返回值被改掉会使断言失败，这次变异被杀掉。',
+    keywords:'变异测试 PIT mutation killed survived 行覆盖率',
+    points:['变异测试向代码植入故障后再跑测试','测试失败则变异被杀掉，测试仍通过则变异存活','行覆盖率只说明执行过，没有断言的测试仍可能让变异存活'],
+    deep:[
+      {title:'覆盖率的边界',body:'一行被执行，只说明测试走到了这里。返回值、边界条件被改掉之后测试仍是绿的，说明断言没有钉住这个结果。PIT 用被杀掉的比例衡量这一点。'},
+      {title:'怎样自己验证',body:'先留一个只调用 discount(11)、没有断言的测试，跑 mutationCoverage，看返回值被改掉的变异是否存活。再补上 10 与 11 的断言，同一类变异应被杀掉。报告在 target/pit-reports。'}
+    ],
+    refs:[['PIT：变异测试','https://pitest.org/'],['PIT：Maven 快速开始','https://pitest.org/quickstart/maven/']]
+  },
+  {
     track:'java', group:'测试', id:'junit-enter-test',
     title:'构建工具发现测试类，JUnit 执行方法',
     prompt:'写好 @Test 方法之后，谁去找到它并在 JVM 里跑起来？',

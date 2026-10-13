@@ -37,7 +37,7 @@ export const MASTERY_GATES: PathGate[] = [
     weeks: '2～3 周',
     how: [
       '继续上一关同一笔业务，把那条写路径在本地跑通，不要每课换例子。',
-      '事务课之后读 MVCC、索引记录上的锁，以及 JPA 乐观锁。MyBatis 不会因为字段变了就发出 UPDATE，要改这一行必须再写更新语句。并发测试按 MVCC 和乐观锁写。再读幂等、HTTP 方法语义、异常映射和带版本的表结构脚本。',
+      '事务课之后先读 ACID 四项承诺和隔离级别，再读 MVCC、索引记录上的锁，以及 JPA 乐观锁。MyBatis 不会因为字段变了就发出 UPDATE，要改这一行必须再写更新语句。并发测试按 MVCC 和乐观锁写。再读幂等、HTTP 方法语义、异常映射和带版本的表结构脚本。',
       '写请求的凭证见 Cookie 课；登录态放哪、谁能改这一行，在关卡 4 收口。',
       '能交出下面这些再进下一关。并发测试可以先按一种行为来写，正式读测试课在关卡 5。',
     ],
@@ -52,12 +52,14 @@ export const MASTERY_GATES: PathGate[] = [
     pass: '同类 this 调用与吞掉异常不会误提交；同键重试不双写；三种失败都是 JSON。',
     lessons: [
       { id: 'spring-transaction', job: '声明式事务拦截的是进入代理的外部调用。同类 this 调用不经过代理；捕获异常后不再抛出，事务会按成功提交。' },
+      { id: 'mysql-acid-c-is-consistency', job: '四个字母是原子性、一致性、隔离性、持久性。一致性是提交时约束仍成立。隔离由级别决定，不是同一时间只许一个请求。' },
+      { id: 'mysql-isolation-levels', job: 'InnoDB 默认是可重复读。普通 SELECT 看这次事务的快照，锁定读才用间隙锁挡住插入。MVCC 不能代替所有读法上的幻读控制。' },
       { id: 'mysql-mvcc', job: '两次普通查询都能看见库存是 1。先查再改守不住不变量，扣减用条件更新或锁定读，放在同一个事务里。' },
       { id: 'mysql-innodb-index-lock', job: '行锁加在索引记录上。没有合适的二级索引时，更新可能锁住大量记录，看起来像整表被堵住，机制仍是记录锁。' },
       { id: 'jpa-optimistic-lock', job: '更新必须带上读到的版本号。版本不匹配就失败，重读再改。' },
       { id: 'mybatis-not-jpa', job: '查出对象改了字段，MyBatis 不会在提交时自动 UPDATE。要改这一行，再调用一条更新语句，版本条件写在语句里。' },
       { id: 'idempotency', job: '超时重试会把同一次业务再送进来。幂等键加唯一约束，冲突时返回第一次的结果，而不是再执行一次业务。' },
-      { id: 'http-methods', job: '方法是否安全、是否幂等是语义约定，不是业务防重。创建类写操作仍靠幂等键与唯一约束，不能只看方法名。' },
+      { id: 'http-methods', job: '安全方法是 GET、HEAD、OPTIONS、TRACE。幂等还包括 PUT 和 DELETE。还没读到响应时才能按幂等自动重试。创建类 POST 仍靠幂等键，不能只看方法名。' },
       { id: 'spring-mvc-exception', job: '校验失败、业务冲突、未处理错误要变成契约里的 JSON。容器的 HTML 错误页说明异常还没被映射。' },
       { id: 'schema-migration', job: '结构变化用带版本的脚本按顺序应用。删列或改语义要拆开发布，回滚应用不能假设数据库会自动退回。' },
       { id: 'cookie-credential', job: '写请求的身份从哪来：Cookie 可按属性自动附带；localStorage 不自动发送，同源脚本可以读取。' },
@@ -69,6 +71,7 @@ export const MASTERY_GATES: PathGate[] = [
     learnTitle: '把读取做对',
     weeks: '2～3 周',
     milestone: '做到这里，是能交付的全栈。',
+    milestoneKind: 'fullstack',
     how: [
       '还是同一条业务，这一关改看读取。',
       'N+1 前后的 SQL 对比要有：JPA 是循环访问关联，MyBatis 是结果没折叠或延迟关联再查。列表分页方式、旁路缓存的步骤，以及写成功后删缓存仍可能读到旧值的那一步，都要有。MyBatis 一级缓存只活在同一次 SqlSession，不要把它当成旁路缓存。',
@@ -291,6 +294,7 @@ export const MASTERY_GATES: PathGate[] = [
     learnTitle: '到工作里推动',
     weeks: '3～4 周 · 课外',
     milestone: '做到这里，才有架构师的材料。课库代替不了这一关。',
+    milestoneKind: 'architect',
     how: [
       '先读一条路径和成本取舍，写出质量属性那一页。错误预算用上一关那一课。',
       '契约评审、路线图和决策记录三课告诉你各写哪几行。填进去的内容来自工作或等价场景。',

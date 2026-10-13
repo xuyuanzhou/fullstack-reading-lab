@@ -36,6 +36,24 @@ const COVERAGE_FRONTEND_07 = [
     keywords:'Vue 3 createApp createVNode render Teleport globalProperties dialog aria-modal Escape 焦点',
     points:['Vue.extend 和 vue.prototype 不能再当 Vue 3 写法','Teleport 只搬动 DOM，挂载不等于无障碍对话框','setup 里没有 this，全局属性出现在模板和选项式 this 上'],
     refs:[['Vue 3 迁移：Global API','https://v3-migration.vuejs.org/breaking-changes/global-api.html'],['Vue：Teleport','https://vuejs.org/guide/built-ins/teleport.html'],['Vue：Application API','https://vuejs.org/api/application.html'],['Vue：setup()','https://vuejs.org/api/composition-api-setup.html'],['WAI-ARIA：Dialog (Modal) Pattern','https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/']]
+  },
+  {
+    track:'frontend', group:'Vue', id:'vue-teleport-dom-not-logical',
+    title:'Teleport 把片段搬到组件 DOM 之外，逻辑父子不变',
+    prompt:'对话框已经写在按钮旁边，为什么固定定位还会被外层挡住？',
+    promptAnswer:'祖先若有 transform、perspective 或 filter，position: fixed 不再相对视口。〔Teleport｜把模板片段渲染到组件 DOM 层次之外的内置组件〕把片段搬到 body。',
+    core:'Teleport 的 to 接受 CSS 选择器或一个 DOM 节点，把片段渲染到该组件 DOM 层次之外。目标在 Teleport 挂载时必须已经在文档里，最好在整个 Vue 应用之外。它只改渲染出来的 DOM。里面的组件仍是逻辑上的子组件：props、事件和父组件的 provide 照常，Vue Devtools 里也仍挂在父组件下面。disabled 为真时不搬动，片段留在原处。多个 Teleport 指向同一目标时，按挂载顺序依次追加。Vue 3.5 起可以用 defer，把目标解析推迟到同一次挂载里更靠后的部分。目标若晚一个更新周期才出现，仍然报错。对话框的焦点和 Escape 见 vue-modal-programmatic，Teleport 不提供这些。',
+    why:'学习者把模态框写在按钮旁边，再靠 position: fixed 盖住页面。外层动画一带 transform，固定定位就相对那个祖先，更高的 z-index 也会把它盖住。区分信号是：元素检查里片段在 body 下，Devtools 里组件仍是按钮所在组件的子组件。',
+    example:'按钮留在组件里，片段搬到 body：\n\n```vue\n<script setup>\nimport { ref } from "vue"\nconst open = ref(false)\n</script>\n\n<template>\n  <button @click="open = true">打开</button>\n  <Teleport to="body">\n    <div v-if="open" class="modal">\n      <p>来自逻辑子组件</p>\n      <button @click="open = false">关闭</button>\n    </div>\n  </Teleport>\n</template>\n```',
+    task:'说明元素检查和 Devtools 里分别看到什么，以及目标还不存在时 defer 能推迟到哪一步。',
+    answer:'1. to 接受 CSS 选择器或 DOM 节点。目标在 Teleport 挂载时必须已经在文档里。\n\n2. 元素检查里片段在 body 下。逻辑上它仍是父组件的子组件，props、事件和 provide 不变，Devtools 里也不跟到 body。\n\n3. Vue 3.5 的 defer 只推迟到同一次挂载里更靠后的目标。目标晚一个更新周期才出现，仍然报错。',
+    keywords:'Vue Teleport to disabled defer body 逻辑子组件',
+    points:['to 的目标在挂载时必须已经在文档里','只改渲染出的 DOM，逻辑父子、props 和 provide 不变','Vue 3.5 的 defer 只推迟到同一次挂载，晚一个周期仍报错'],
+    deep:[
+      {title:'同一目标上的多个片段',body:'多个 Teleport 可以指向同一个元素。后挂载的内容追加在先挂载的后面，都在这个目标里面。disabled 为真时，这一份留在组件自己的 DOM 里，不参与这次搬动。'},
+      {title:'怎样自己验证',body:'打开片段后在元素检查里确认它位于 body 下，在 Devtools 里确认组件仍在父组件下面。再把目标改成模板后部才渲染的节点：不加 defer 应在挂载时报错；加上 defer 且目标在同一次挂载内出现则成功。把目标改成下一轮更新才出现，defer 仍然报错。'}
+    ],
+    refs:[['Vue：Teleport','https://vuejs.org/guide/built-ins/teleport.html']]
   }
 ];
 

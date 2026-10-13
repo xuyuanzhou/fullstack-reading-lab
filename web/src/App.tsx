@@ -3,8 +3,9 @@ import zhCN from 'antd/locale/zh_CN'
 import { lazy, Suspense } from 'react'
 import { HashRouter, Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { AppLayout } from '@/components/AppLayout'
-import { ProgressProvider, useProgress } from '@/state/progress'
+import { ProgressProvider, useLearningSlice, useReadingPlace } from '@/state/progress'
 import { ReadingBoundary } from '@/components/ReadingBoundary'
+import { RouteSkeleton } from '@/components/RouteSkeleton'
 import { findLesson } from '@/data/curriculum'
 import { isTrack, lessonPath, resumePath } from '@/data/routes'
 
@@ -21,7 +22,7 @@ const AiLabPage = lazy(() => import('@/pages/AiLabPage').then(m => ({ default: m
 const PathPage = lazy(() => import('@/pages/PathPage').then(m => ({ default: m.PathPage })))
 
 function ResumeRoute() {
-  const progress = useProgress()
+  const progress = useReadingPlace()
   return <Navigate to={resumePath(progress.track, progress.group)} replace />
 }
 
@@ -35,8 +36,8 @@ function LegacyLessonRedirect() {
 }
 
 function ThemedApp() {
-  const progress = useProgress()
-  const dark = progress.theme === 'dark'
+  const themeName = useLearningSlice((state) => state.theme)
+  const dark = themeName === 'dark'
   return (
     <ConfigProvider
       locale={zhCN}
@@ -86,7 +87,7 @@ function ThemedApp() {
     >
       <AntApp>
         <HashRouter>
-          <Suspense fallback={<div className="route-loading" role="status">正在打开课程…</div>}>
+          <Suspense fallback={<RouteSkeleton />}>
           <Routes>
             <Route element={<AppLayout />}>
               <Route index element={<ResumeRoute />} />

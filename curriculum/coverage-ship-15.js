@@ -128,6 +128,42 @@ const COVERAGE_SHIP_15 = [
     refs:[['Vite：Env Variables','https://vite.dev/guide/env-and-mode.html'],['Vite：envPrefix','https://vite.dev/config/shared-options.html#envprefix']]
   },
   {
+    track:'frontend', group:'工程实践', id:'eslint-error-not-warning',
+    title:'ESLint 的 error 让进程失败，warn 默认不改变退出码',
+    prompt:'规则全是警告，流水线为什么还是绿的？',
+    promptAnswer:'warn 默认不改变〔退出码｜进程结束时交给调用方的整数〕。要让警告挡住合并，运行时加上 --max-warnings。',
+    core:'〔ESLint｜按配置检查 JavaScript 是否违反规则的工具〕把项目配置放在 eslint.config.js，并导出配置对象数组。规则有三种级别：off 关闭，warn 只报告，error 在触发时让进程以退出码 1 结束。只有警告、没有 error 时，默认退出码是 0。命令行加上 --max-warnings，警告条数超过这个上限，退出码才变成 1。配置本身出错时退出码是 2，那是配置问题，不是某条规则的违规。类型检查仍由类型检查器负责，ESLint 的 error 代替不了那一道门。',
+    why:'学习者把规则都设成警告，本地能看见提示，合并却继续。区分信号是：出现 error 时退出码为 1；只有 warn 时默认仍是 0，除非 --max-warnings 把警告也算进失败。',
+    example:'把未使用变量设成 error：\n\n```javascript\nimport { defineConfig } from "eslint/config";\n\nexport default defineConfig([\n  {\n    rules: {\n      "no-unused-vars": "error",\n    },\n  },\n]);\n```\n\n让警告也挡住合并：\n\n```bash\nnpx eslint --max-warnings 0 src\n```',
+    task:'写出只有警告时的默认退出码，以及怎样让警告也变成失败。',
+    answer:'1. 规则设为 error 并被触发时，退出码是 1。\n\n2. 只有 warn、没有 error 时，默认退出码是 0，流水线仍算成功。\n\n3. 加上 --max-warnings 0 后，警告条数超过 0，退出码变为 1。配置文件本身有问题则是退出码 2。',
+    keywords:'ESLint eslint.config.js error warn max-warnings 退出码',
+    points:['配置写在 eslint.config.js，并导出配置数组','规则为 error 且被触发时，退出码是 1','warn 默认不改变退出码，--max-warnings 才让警告失败'],
+    deep:[
+      {title:'两级报告',body:'warn 适合刚引入、还不能挡住合并的规则。要执行的规则设为 error。把全部规则留在 warn，报告看得见，进程仍然成功。'},
+      {title:'怎样自己验证',body:'准备一个未使用变量。规则为 error 时，eslint 的退出码是 1。改成 warn 后再跑，退出码是 0。加上 --max-warnings 0 后，同一条警告的退出码变为 1。'}
+    ],
+    refs:[['ESLint：配置文件','https://eslint.org/docs/latest/use/configure/configuration-files'],['ESLint：规则级别','https://eslint.org/docs/latest/use/configure/rules'],['ESLint：命令行退出码','https://eslint.org/docs/latest/use/command-line-interface']]
+  },
+  {
+    track:'frontend', group:'工程实践', id:'npm-lockfile-ci',
+    title:'锁文件 package-lock.json 钉住依赖树，npm ci 不改写它',
+    prompt:'package.json 写着 ^3.5.0，为什么另一台机器装出来的版本可以不同？',
+    promptAnswer:'范围只约束能接受的版本。〔package-lock.json｜记录当时装好的依赖树，使下次安装得到同一棵树〕才钉住具体版本。',
+    core:'npm 在改动 node_modules 或 package.json 时生成 package-lock.json。它描述当时生成的那一棵依赖树，使之后的安装能得到同一棵树，而不跟着中间发布的新版本走。这个文件要提交进仓库，给同事、部署和持续集成用。清单里的 ^3.5.0 只是范围。锁里 packages 下的 version 是当时解析到的版本，〔integrity｜该安装包的 sha512 校验值〕钉住那一份压缩包。〔npm ci｜按已有锁做干净安装、并且不改写锁的命令〕要求项目里已经有 package-lock.json 或 npm-shrinkwrap.json。锁里的依赖和 package.json 不一致时，它以错误退出，并且不改写这两份文件。已有的 node_modules 会先被删掉再安装。本机要加依赖时用 npm install，装完后把更新过的锁一并提交。根目录若同时有 npm-shrinkwrap.json，npm 采用那一份，package-lock.json 被忽略。构建缓存课讲的是锁变了会让产物失效，这一课讲的是安装树本身。',
+    why:'学习者只提交 package.json，持续集成每次按范围重新解析，同一条范围在不同天能装到不同版本。区分信号是：npm ci 在锁和清单不一致时失败，并且锁文件没有被改写。',
+    example:'清单只写范围：\n\n```json\n{\n  "dependencies": {\n    "vue": "^3.5.0"\n  }\n}\n```\n\n锁记下当时的版本：\n\n```json\n{\n  "lockfileVersion": 3,\n  "packages": {\n    "node_modules/vue": {\n      "version": "3.5.13",\n      "integrity": "sha512-<tarball>"\n    }\n  }\n}\n```\n\n自动化环境按锁安装，不改写锁：\n\n```bash\nnpm ci\n```',
+    task:'写出 npm ci 在锁和 package.json 不一致时做什么，以及本机加依赖后要提交哪一份文件。',
+    answer:'1. package-lock.json 要提交。它描述当时生成的依赖树，version 和 integrity 钉住解析到的包。\n\n2. npm ci 发现锁和 package.json 不一致时以错误退出，并且不改写锁，也不改写清单。\n\n3. 本机用 npm install 增加依赖后，把更新过的 package-lock.json 和 package.json 一起提交。持续集成继续用 npm ci。',
+    keywords:'package-lock.json npm ci lockfileVersion integrity 锁文件',
+    points:['package-lock.json 要提交，它描述当时生成的依赖树','npm ci 在锁和清单不一致时退出，并且不改写锁','本机用 npm install 更新锁后再提交，持续集成用 npm ci'],
+    deep:[
+      {title:'范围和树',body:'^3.5.0 允许 3.5 这一列里的更新。没有锁时，下一次安装可以解析到列里较新的版本。锁把当时的 version 和 integrity 记下来，下一次按这棵树安装。'},
+      {title:'怎样自己验证',body:'提交锁之后，在另一份干净目录运行 npm ci，装到的 version 应与锁里相同。再只改 package.json 的范围、不改锁，npm ci 应以错误退出，锁文件内容保持原样。'}
+    ],
+    refs:[['npm：package-lock.json','https://docs.npmjs.com/cli/v11/configuring-npm/package-lock-json'],['npm：npm ci','https://docs.npmjs.com/cli/v11/commands/npm-ci']]
+  },
+  {
     track:'frontend', group:'工程实践', id:'ci-gate-not-only-build',
     title:'CI 要拦住类型和测试，而不是只证明能打包',
     prompt:'为什么“构建成功”不能当合并条件？',

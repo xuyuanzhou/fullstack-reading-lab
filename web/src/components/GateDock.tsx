@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { findLesson } from '@/data/curriculum'
-import { PATHS, deliverableKey, gateCleared, nextInGate, slotsOf, spinePlace, type PathGate, type PathLesson } from '@/data/learningPaths'
+import { findLesson, prefetchLessonBodies, prefetchLessonBody } from '@/data/curriculum'
+import { PATHS, deliverableKey, gateCleared, gateFace, gateFaceLabel, gateMark, nextInGate, slotsOf, spinePlace, type PathGate, type PathLesson } from '@/data/learningPaths'
 import { shortTitle } from '@/data/reading'
 import { lessonPath } from '@/data/routes'
 import { useProgress } from '@/state/progress'
@@ -62,6 +62,16 @@ export function GateDock() {
     window.addEventListener('lab-open-gate', onOpen)
     return () => window.removeEventListener('lab-open-gate', onOpen)
   }, [])
+
+  useEffect(() => {
+    if (nextId) prefetchLessonBody(nextId)
+  }, [nextId])
+
+  useEffect(() => {
+    const stage = stages.find((item) => item.id === expandedId)
+    if (!stage) return
+    prefetchLessonBodies(stage.lessons.map((lesson) => lesson.id))
+  }, [expandedId])
 
   useEffect(() => {
     if (pathName.current === location.pathname) return
@@ -164,25 +174,29 @@ export function GateDock() {
           <ol className="gate-dock-list" ref={listRef}>
             {stages.map((stage, index) => {
               const finished = gateCleared(stage, progress.done, checks)
-              const live = index === progressIndex && openIndex >= 0
+              const face = gateFace(index, progressIndex, finished)
               const expanded = expandedId === stage.id
               const rowFill = gateFill(stage, done, checkSet)
-              const status = finished ? '已过' : live ? '进行中' : stage.milestone?.includes('能交付的全栈') ? '全栈' : stage.milestone?.includes('架构师') ? '职责' : ''
+              const mark = gateMark(stage)
+              const total = rowFill.slots + stage.outputs.length
+              const ratio = total ? (rowFill.read + rowFill.delivered) / total : 0
               return (
                 <li key={stage.id}>
                   <button
                     type="button"
                     data-gate={stage.id}
-                    className={['gate-dock-row', expanded ? 'is-open' : '', live ? 'is-live' : ''].filter(Boolean).join(' ')}
+                    data-face={face}
+                    className={['gate-dock-row', `is-${face}`, expanded ? 'is-open' : ''].filter(Boolean).join(' ')}
                     aria-expanded={expanded}
                     aria-current={expanded ? 'true' : undefined}
                     onClick={() => toggleGate(stage.id)}
                   >
                     <span className="gate-dock-num">{String(index + 1).padStart(2, '0')}</span>
-                    <span className="gate-dock-name">{stage.learnTitle}</span>
-                    <span className="gate-dock-status">{status}</span>
+                    <span className="gate-dock-name">{stage.learnTitle}{mark ? <em>{mark}</em> : null}</span>
+                    <span className="gate-dock-status">{gateFaceLabel(face)}</span>
                     <span className="gate-dock-count is-read">{rowFill.slots ? `阅读 ${rowFill.read}/${rowFill.slots}` : '阅读 0'}</span>
                     <span className="gate-dock-count is-deliver">交付 {rowFill.delivered}/{stage.outputs.length}</span>
+                    <span className="gate-dock-bar" aria-hidden="true"><span style={{ width: `${Math.round(ratio * 100)}%` }} /></span>
                   </button>
                 </li>
               )
@@ -215,6 +229,9 @@ export function GateDock() {
             <strong>{entryTitle}</strong>
             <span className="gate-dock-meters">
               阅读 {fill.read}/{fill.slots} · 交付 {fill.delivered}/{progressGate.outputs.length}
+            </span>
+            <span className="gate-dock-bar" aria-hidden="true">
+              <span style={{ width: `${Math.round(((fill.slots ? fill.read : 0) + fill.delivered) / Math.max(1, fill.slots + progressGate.outputs.length) * 100)}%` }} />
             </span>
           </>
         )}
@@ -286,11 +303,12 @@ function Briefing({
         const upcoming = !read && slot.includes(nextId || '')
         const side = rows.some(({ item }) => item.note?.includes('补读'))
         const fork = rows.length > 1
+        const stepFace = read ? '已读' : upcoming ? '当前' : '未读'
         return (
           <li key={slot.join('+')} className={[read ? 'is-read' : '', upcoming ? 'is-next' : '', side ? 'is-side' : '', fork ? 'is-fork' : ''].filter(Boolean).join(' ') || undefined}>
             <div className="trail-slot">
               {rows.map(({ item, lesson }, rowIndex) => (
-                <TrailRow key={lesson.id} item={item} title={shortTitle(lesson.title)} to={lessonPath(lesson)} fork={fork && rowIndex > 0} showJob={upcoming && !sheet} onOpen={() => onOpenNext(lesson.id)} />
+                <TrailRow key={lesson.id} item={item} title={shortTitle(lesson.title)} to={lessonPath(lesson)} face={stepFace} fork={fork && rowIndex > 0} showJob={upcoming && !sheet} onOpen={() => onOpenNext(lesson.id)} />
               ))}
             </div>
           </li>
@@ -351,6 +369,7 @@ function Briefing({
           ))}
         </ol>
         <h3 id="path-deliver">交付</h3>
+        <p className="path-note">这些勾选是自评，没有测试记录不算验证通过。</p>
         {deliver}
         <p className="path-pass">{stage.pass}</p>
         {stage.milestone ? <p className="path-milestone">{stage.milestone}</p> : null}
@@ -389,6 +408,7 @@ function Briefing({
         </>
       ) : null}
       <h3 id="path-deliver">交付</h3>
+      <p className="path-note">这些勾选是自评，没有测试记录不算验证通过。</p>
       {deliver}
       {stage.extra ? <p className="path-note">{stage.extra}</p> : null}
       {waitingOnEvidence ? <p className="path-note">阅读已完成。交付记全，这一关才过。</p> : null}
@@ -423,6 +443,7 @@ function TrailRow({
   item,
   title,
   to,
+  face,
   fork,
   showJob,
   onOpen,
@@ -430,6 +451,7 @@ function TrailRow({
   item: PathLesson
   title: string
   to: string
+  face: '已读' | '当前' | '未读'
   fork: boolean
   showJob: boolean
   onOpen: () => void
@@ -445,6 +467,7 @@ function TrailRow({
         }}
       >
         {title}
+        <span className="trail-face">{face}</span>
       </Link>
       {item.note?.includes('补读') ? <em>补读</em> : null}
       {showJob && item.job ? <p>{item.job}</p> : null}

@@ -293,6 +293,7 @@
       "测试": [
         "frontend-testing",
         "testing-library-role",
+        "vue-test-utils-mount",
         "test-mock-boundary",
         "test-fake-timers",
         "react-enzyme-not-default",
@@ -316,6 +317,8 @@
         "fe-slow-page-where",
         "fe-tune-one-layer",
         "vite-env-client-prefix",
+        "eslint-error-not-warning",
+        "npm-lockfile-ci",
         "ci-gate-not-only-build",
         "retired-frontend-stack"
       ],
@@ -399,6 +402,7 @@
         "vue-list-key",
         "vue-composition-options",
         "vue-modal-programmatic",
+        "vue-teleport-dom-not-logical",
         "vue-vnode-not-fragment",
         "vue-design-goals-proxy",
         "vue-tree-shake-options",
@@ -711,6 +715,8 @@
         "sql-keyset-page",
         "arch-slo-budget",
         "arch-queue-wait",
+        "k6-threshold-not-check",
+        "jmeter-cli-continue-on-error",
         "arch-design-one-path",
         "arch-cost-tradeoff",
         "arch-contract-review",
@@ -809,6 +815,7 @@
         "mysql-mvcc-not-two-version-columns",
         "mysql-isolation",
         "mysql-isolation-levels",
+        "postgresql-read-committed-vacuum",
         "mysql-deadlock",
         "mysql-skip-locked-not-queue",
         "mysql-upsert",
@@ -1022,7 +1029,10 @@
         "spring-security-filter-chain",
         "spring-authn-authz",
         "object-level-authz",
+        "abac-subject-object-attributes",
         "spring-oauth2-resource",
+        "oidc-id-token-pkce",
+        "ssrf-allowlist-before-fetch",
         "sshd-rate-limit-not-lastb",
         "password-adaptive-hash",
         "spring-csrf-spa",
@@ -1038,6 +1048,7 @@
         "junit-instance-lifecycle",
         "test-one-behavior",
         "test-observable-result",
+        "pit-mutation-killed",
         "spring-test-slice",
         "spring-test-transaction-rollback",
         "testcontainers-real-db",
@@ -1144,11 +1155,19 @@
         "sca-feign-timeout-retry",
         "sca-dubbo-or-feign",
         "sca-stream-binding",
-        "dubbo-loadbalance-random-default",
-        "dubbo-hessian-zk-not-frozen",
-        "dubbo-registry-down-local-cache",
-        "dubbo-timeout-retry-idempotent",
         "spring-cloud-feign-not-lb",
+        "dubbo-one-call",
+        "dubbo-hessian-zk-not-frozen",
+        "dubbo-spring-expose",
+        "dubbo-register-mode",
+        "dubbo-zk-ephemeral",
+        "dubbo-loadbalance-random-default",
+        "dubbo-cluster-failover",
+        "dubbo-timeout-retry-idempotent",
+        "dubbo-thread-pool",
+        "dubbo-no-provider",
+        "dubbo-registry-down-local-cache",
+        "dubbo-beside-stack",
         "sca-seata-intro",
         "sca-seata-at-boundary",
         "sca-seata-tcc-empty",
@@ -1656,6 +1675,7 @@
             "vue-list-key",
             "vue-composition-options",
             "vue-modal-programmatic",
+            "vue-teleport-dom-not-logical",
             "vue-vnode-not-fragment"
           ]
         },
@@ -1963,6 +1983,7 @@
           "ids": [
             "frontend-testing",
             "testing-library-role",
+            "vue-test-utils-mount",
             "test-mock-boundary",
             "test-fake-timers",
             "react-enzyme-not-default"
@@ -2042,6 +2063,8 @@
           "title": "发布",
           "ids": [
             "vite-env-client-prefix",
+            "eslint-error-not-warning",
+            "npm-lockfile-ci",
             "ci-gate-not-only-build",
             "retired-frontend-stack"
           ]
@@ -2726,6 +2749,7 @@
             "mysql-mvcc-not-two-version-columns",
             "mysql-isolation",
             "mysql-isolation-levels",
+            "postgresql-read-committed-vacuum",
             "mysql-deadlock",
             "mysql-skip-locked-not-queue",
             "mysql-upsert",
@@ -2863,7 +2887,10 @@
             "spring-security-filter-chain",
             "spring-authn-authz",
             "object-level-authz",
+            "abac-subject-object-attributes",
             "spring-oauth2-resource",
+            "oidc-id-token-pkce",
+            "ssrf-allowlist-before-fetch",
             "sshd-rate-limit-not-lastb"
           ]
         },
@@ -2893,7 +2920,8 @@
           "ids": [
             "junit-instance-lifecycle",
             "test-one-behavior",
-            "test-observable-result"
+            "test-observable-result",
+            "pit-mutation-killed"
           ]
         },
         {
@@ -3002,11 +3030,24 @@
             "sca-feign-timeout-retry",
             "sca-dubbo-or-feign",
             "sca-stream-binding",
-            "dubbo-loadbalance-random-default",
-            "dubbo-hessian-zk-not-frozen",
-            "dubbo-registry-down-local-cache",
-            "dubbo-timeout-retry-idempotent",
             "spring-cloud-feign-not-lb"
+          ]
+        },
+        {
+          "title": "Dubbo",
+          "ids": [
+            "dubbo-one-call",
+            "dubbo-hessian-zk-not-frozen",
+            "dubbo-spring-expose",
+            "dubbo-register-mode",
+            "dubbo-zk-ephemeral",
+            "dubbo-loadbalance-random-default",
+            "dubbo-cluster-failover",
+            "dubbo-timeout-retry-idempotent",
+            "dubbo-thread-pool",
+            "dubbo-no-provider",
+            "dubbo-registry-down-local-cache",
+            "dubbo-beside-stack"
           ]
         },
         {
@@ -3076,6 +3117,8 @@
           "ids": [
             "arch-slo-budget",
             "arch-queue-wait",
+            "k6-threshold-not-check",
+            "jmeter-cli-continue-on-error",
             "arch-design-one-path"
           ]
         },
@@ -5062,11 +5105,12 @@
       "id": "http-methods",
       "title": "HTTP 方法：安全与幂等",
       "prompt": "POST 一定不幂等，而 DELETE 一定能无条件重试吗？",
+      "promptAnswer": "POST 在 RFC 9110 的方法表里不幂等。DELETE 的预期效果可以重复，但第二次的状态码可以不同，而且只有还没读到响应时才适合自动重试。",
       "keywords": "HTTP safe idempotent GET PUT DELETE POST 重试",
       "points": [
-        "安全方法与幂等方法",
-        "方法语义和实际业务副作用",
-        "失败重试与幂等键"
+        "GET、HEAD、OPTIONS、TRACE 是安全方法，客户端没有请求改变权威服务器的状态",
+        "PUT、DELETE 和安全方法是幂等的，多次相同请求的预期效果与一次相同，响应可以不同",
+        "还没读到响应时才自动重试幂等方法；POST 在规范里不幂等，自动重试要另有依据"
       ],
       "since": "HTTP"
     },
@@ -6790,6 +6834,21 @@
     {
       "track": "frontend",
       "group": "Vue",
+      "id": "vue-teleport-dom-not-logical",
+      "title": "Teleport 把片段搬到组件 DOM 之外，逻辑父子不变",
+      "prompt": "对话框已经写在按钮旁边，为什么固定定位还会被外层挡住？",
+      "promptAnswer": "祖先若有 transform、perspective 或 filter，position: fixed 不再相对视口。〔Teleport｜把模板片段渲染到组件 DOM 层次之外的内置组件〕把片段搬到 body。",
+      "keywords": "Vue Teleport to disabled defer body 逻辑子组件",
+      "points": [
+        "to 的目标在挂载时必须已经在文档里",
+        "只改渲染出的 DOM，逻辑父子、props 和 provide 不变",
+        "Vue 3.5 的 defer 只推迟到同一次挂载，晚一个周期仍报错"
+      ],
+      "since": "Vue 3"
+    },
+    {
+      "track": "frontend",
+      "group": "Vue",
       "id": "vue-vnode-not-fragment",
       "title": "Vue 的虚拟 DOM 不是 DocumentFragment",
       "prompt": "为什么「Vue 2 用 DocumentFragment 建虚拟 DOM，再用 defineProperty 完成全部响应式」对不上源码？",
@@ -8356,6 +8415,21 @@
     {
       "track": "frontend",
       "group": "测试",
+      "id": "vue-test-utils-mount",
+      "title": "Vue 组件测试用 mount 挂上组件，Vitest 只负责跑断言",
+      "prompt": "装了 Vitest，为什么直接查询组件文件仍然碰不到输入框？",
+      "promptAnswer": "〔Vitest｜Vue 官方测试指南推荐的测试运行器〕只调用测试函数。输入框要出现，得用 Vue Test Utils 的 mount 把组件渲染出来。",
+      "keywords": "Vue Test Utils mount shallowMount Vitest setValue",
+      "points": [
+        "Vitest 运行测试函数，不负责渲染 Vue 组件",
+        "mount 渲染组件及其子组件，shallowMount 把子组件换成桩",
+        "wrapper.get 找不到就失败，find 找不到时 exists 为 false"
+      ],
+      "since": "Vue Test Utils"
+    },
+    {
+      "track": "frontend",
+      "group": "测试",
       "id": "test-mock-boundary",
       "title": "只替掉边界，不要替掉正在测的逻辑",
       "prompt": "把被测函数里的每个调用都 mock 掉，测试为什么还是绿的，线上却是错的？",
@@ -8661,6 +8735,36 @@
         "运行时机密放服务端，前端只拿公开基址"
       ],
       "since": "Vite"
+    },
+    {
+      "track": "frontend",
+      "group": "工程实践",
+      "id": "eslint-error-not-warning",
+      "title": "ESLint 的 error 让进程失败，warn 默认不改变退出码",
+      "prompt": "规则全是警告，流水线为什么还是绿的？",
+      "promptAnswer": "warn 默认不改变〔退出码｜进程结束时交给调用方的整数〕。要让警告挡住合并，运行时加上 --max-warnings。",
+      "keywords": "ESLint eslint.config.js error warn max-warnings 退出码",
+      "points": [
+        "配置写在 eslint.config.js，并导出配置数组",
+        "规则为 error 且被触发时，退出码是 1",
+        "warn 默认不改变退出码，--max-warnings 才让警告失败"
+      ],
+      "since": "ESLint"
+    },
+    {
+      "track": "frontend",
+      "group": "工程实践",
+      "id": "npm-lockfile-ci",
+      "title": "锁文件 package-lock.json 钉住依赖树，npm ci 不改写它",
+      "prompt": "package.json 写着 ^3.5.0，为什么另一台机器装出来的版本可以不同？",
+      "promptAnswer": "范围只约束能接受的版本。〔package-lock.json｜记录当时装好的依赖树，使下次安装得到同一棵树〕才钉住具体版本。",
+      "keywords": "package-lock.json npm ci lockfileVersion integrity 锁文件",
+      "points": [
+        "package-lock.json 要提交，它描述当时生成的依赖树",
+        "npm ci 在锁和清单不一致时退出，并且不改写锁",
+        "本机用 npm install 更新锁后再提交，持续集成用 npm ci"
+      ],
+      "since": "npm 7+"
     },
     {
       "track": "frontend",
@@ -12512,6 +12616,21 @@
     {
       "track": "java",
       "group": "数据库",
+      "id": "postgresql-read-committed-vacuum",
+      "title": "PostgreSQL 默认是读已提交，旧行要等 VACUUM 回收",
+      "prompt": "同一事务里查了两次余额，为什么第二次看见了别人刚提交的数？",
+      "promptAnswer": "〔读已提交｜一条语句只看见它开始之前已经提交的数据〕是 PostgreSQL 的默认隔离级别。后一条 SELECT 用新的快照。",
+      "keywords": "PostgreSQL Read Committed VACUUM 读已提交 旧行版本",
+      "points": [
+        "PostgreSQL 默认是读已提交，同一事务里的后一条 SELECT 用新快照",
+        "读未提交的行为与读已提交相同",
+        "常规 VACUUM 复用旧行空间，通常不把空间还给操作系统"
+      ],
+      "since": "PostgreSQL"
+    },
+    {
+      "track": "java",
+      "group": "数据库",
       "id": "mysql-deadlock",
       "title": "InnoDB 死锁与整笔事务重试",
       "prompt": "出现死锁后，只重发最后一条 UPDATE 就够了吗？",
@@ -14501,6 +14620,21 @@
     {
       "track": "java",
       "group": "安全",
+      "id": "abac-subject-object-attributes",
+      "title": "ABAC 按主体和客体的属性评估规则",
+      "prompt": "心内科来了第二位护士，为什么不必再为每本病历写一条名单？",
+      "promptAnswer": "〔ABAC｜按主体、客体、动作和环境的属性来评估规则的访问控制〕写的是属性组合。新人带上同样的属性即可。",
+      "keywords": "ABAC NIST SP 800-162 主体属性 客体属性 环境条件",
+      "points": [
+        "决策评估主体属性、客体属性、动作和环境条件",
+        "规则写属性组合，不为每个人和每条记录各写关系",
+        "新主体赋上规则要求的属性即可，不必改已有规则"
+      ],
+      "since": "NIST SP 800-162"
+    },
+    {
+      "track": "java",
+      "group": "安全",
       "id": "spring-oauth2-resource",
       "title": "资源服务器校验令牌，不是再做一遍登录表单",
       "prompt": "API 只收 Bearer Token，为什么还去配用户名密码登录页？",
@@ -14512,6 +14646,36 @@
         "令牌有效仍要做对象级权限"
       ],
       "since": "Spring Security OAuth2"
+    },
+    {
+      "track": "java",
+      "group": "安全",
+      "id": "oidc-id-token-pkce",
+      "title": "OpenID Connect 用 ID Token 表示登录，公开客户端还要 PKCE",
+      "prompt": "拿到 Access Token 就算登录完成了吗？",
+      "promptAnswer": "登录结果在〔ID Token｜发给客户端、声明这次登录的 JWT〕里。Access Token 是交给资源服务器的，不是这次登录的声明。",
+      "keywords": "OpenID Connect ID Token PKCE code_verifier oauth2Login openid",
+      "points": [
+        "认证请求的 scope 必须包含 openid",
+        "ID Token 的受众是客户端，Access Token 交给资源服务器",
+        "公开客户端用授权码和 PKCE，口令不一致就拒绝换令牌"
+      ],
+      "since": "OpenID Connect"
+    },
+    {
+      "track": "java",
+      "group": "安全",
+      "id": "ssrf-allowlist-before-fetch",
+      "title": "SSRF：服务器代取地址之前，先核对允许名单",
+      "prompt": "用户已经登录，为什么仍不能把对方传来的地址直接拿去下载？",
+      "promptAnswer": "登录只说明是谁。〔SSRF｜服务器按收到的地址去取内容，却没有核对目标是不是预期的〕看的是取回的目标。",
+      "keywords": "SSRF CWE-918 允许名单 followRedirects NEVER",
+      "points": [
+        "服务器取回地址之前必须确认目标是预期的",
+        "目标能点名时用完整地址的允许名单，不在名单里就拒绝",
+        "HTTP 客户端关闭自动跟随重定向"
+      ],
+      "since": "CWE-918"
     },
     {
       "track": "java",
@@ -16143,17 +16307,31 @@
     {
       "track": "java",
       "group": "Spring Cloud Alibaba",
-      "id": "dubbo-loadbalance-random-default",
-      "title": "Dubbo 默认是加权随机，轮询会在慢节点上堆积",
-      "prompt": "为什么只背 RoundRobin，或把 LeastActive 说成“响应最短”，会对不上 Dubbo 的负载均衡？",
-      "promptAnswer": "Dubbo 默认常见是加权随机。LeastActive 看进行中调用数，不是直接比响应时间。",
-      "keywords": "Dubbo loadbalance Random RoundRobin LeastActive ConsistentHash",
+      "id": "spring-cloud-feign-not-lb",
+      "title": "OpenFeign 是声明式客户端，负载均衡是另一层",
+      "prompt": "为什么把 Spring Cloud 背成 Feign 解决负载均衡、Zuul 解决跨域？",
+      "promptAnswer": "Feign 编 HTTP；选实例是 LoadBalancer。跨域是 CORS，不是 Zuul 专属职责。",
+      "keywords": "OpenFeign LoadBalancer Ribbon Zuul Gateway CORS",
       "points": [
-        "默认 RandomLoadBalance，可加权",
-        "LeastActive 统计活跃调用数，不是直接最短响应",
-        "RoundRobin 会在慢但未摘除的节点上堆积"
+        "Feign 是 HTTP 客户端不是负载均衡器",
+        "选实例是 LoadBalancer（或旧 Ribbon）",
+        "Zuul/Gateway 主职是路由不是跨域"
       ],
-      "since": "Dubbo"
+      "since": "Spring"
+    },
+    {
+      "track": "java",
+      "group": "Spring Cloud Alibaba",
+      "id": "dubbo-one-call",
+      "title": "一次 Dubbo 调用经过代理、集群容错、负载均衡和协议",
+      "prompt": "订单服务里写了 inventory.deduct()，这次调用在离开本进程之前经过哪几段？",
+      "promptAnswer": "消费方拿到的是接口代理。调用先过过滤器，再由集群容错和负载均衡选一台提供者，最后由协议做序列化和传输。",
+      "keywords": "Dubbo RPC 代理 failover random 协议",
+      "points": [
+        "消费方调用的是接口代理，方法进入过滤器",
+        "集群容错处理失败，负载均衡选择提供者",
+        "不写协议名时默认是 dubbo，端口 20880"
+      ]
     },
     {
       "track": "java",
@@ -16173,17 +16351,73 @@
     {
       "track": "java",
       "group": "Spring Cloud Alibaba",
-      "id": "dubbo-registry-down-local-cache",
-      "title": "注册中心全挂后，旧地址还能调，新服务调不到",
-      "prompt": "为什么说“ZooKeeper 全挂了 Dubbo 就全部不能通信”或反过来“挂了还能无限发现新服务”都会错？",
-      "promptAnswer": "注册中心全挂仍可按本地已缓存地址调用，但不能发现新提供者。",
-      "keywords": "Dubbo ZooKeeper 本地缓存 注册中心 RandomLoadBalance",
+      "id": "dubbo-spring-expose",
+      "title": "用 @DubboService 暴露，用 @DubboReference 引用，version 和 group 要一致",
+      "prompt": "提供方写了 version = \"1.0.0\"，消费方注解上没写 version，为什么启动或调用时找不到提供者？",
+      "promptAnswer": "不写 version 时按 0.0.0 匹配。只有一边写成 1.0.0，消费方就找不到这条服务。group 也要两边相同。",
+      "keywords": "DubboService DubboReference version group tri",
       "points": [
-        "消费者本地缓存已订阅的地址",
-        "注册中心全挂后不能发现新服务",
-        "负载均衡在客户端，默认随机"
+        "@DubboService 暴露实现，@DubboReference 注入接口",
+        "省略 version 时按 0.0.0 匹配，group 缺省为空",
+        "Triple 要把协议名写成 tri，不写则仍是 dubbo"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Spring Cloud Alibaba",
+      "id": "dubbo-register-mode",
+      "title": "register-mode 默认是 all，接口级和应用级都会登记",
+      "prompt": "为什么把 Dubbo 3 说成“已经不会再按接口往注册中心写地址”？",
+      "promptAnswer": "3.3.5 里 register-mode 的代码默认是 all。接口级和应用级都会登记。只留应用级要写成 instance。",
+      "keywords": "Dubbo register-mode instance interface 元数据",
+      "points": [
+        "3.3.5 的 register-mode 默认是 all",
+        "interface 按接口登记完整地址",
+        "instance 按应用实例登记，接口清单在元数据"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Spring Cloud Alibaba",
+      "id": "dubbo-zk-ephemeral",
+      "title": "ZooKeeper 为 Dubbo 保存临时节点，不执行远程调用",
+      "prompt": "提供者进程被杀掉之后，消费方为什么不应再选这台已经不在的地址？",
+      "promptAnswer": "接口级注册在 dynamic 为 true 时写入临时节点。会话没了，ZooKeeper 删掉节点，消费方订阅到的地址列表里就没有它。",
+      "keywords": "Dubbo ZooKeeper 临时节点 providers dynamic",
+      "points": [
+        "ZooKeeper 保存并通知地址，不执行 RPC",
+        "接口级路径在 /dubbo/{接口名}/providers/",
+        "dynamic 缺省 true，登记的是临时节点"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Spring Cloud Alibaba",
+      "id": "dubbo-loadbalance-random-default",
+      "title": "Dubbo 默认是加权随机，轮询会在慢节点上堆积",
+      "prompt": "为什么只背 RoundRobin，或把 LeastActive 说成“响应最短”，会对不上 Dubbo 的负载均衡？",
+      "promptAnswer": "Dubbo 默认常见是加权随机。LeastActive 看进行中调用数，不是直接比响应时间。",
+      "keywords": "Dubbo loadbalance Random RoundRobin LeastActive ConsistentHash",
+      "points": [
+        "默认 RandomLoadBalance，可加权",
+        "LeastActive 统计活跃调用数，不是直接最短响应",
+        "RoundRobin 会在慢但未摘除的节点上堆积"
       ],
       "since": "Dubbo"
+    },
+    {
+      "track": "java",
+      "group": "Spring Cloud Alibaba",
+      "id": "dubbo-cluster-failover",
+      "title": "默认集群容错是 failover，非幂等写入要改成 failfast",
+      "prompt": "扣库存这种写入，为什么只改负载均衡，重复扣减还会出现？",
+      "promptAnswer": "负载均衡负责选一台。失败后还会不会再叫另一台，由集群容错决定。默认 failover 会按 retries 再试。",
+      "keywords": "Dubbo failover failfast retries 集群容错",
+      "points": [
+        "默认集群容错是 failover，默认负载均衡是 random",
+        "retries 默认 2，failover 最多调用 3 次",
+        "非幂等写入使用 failfast 或把 retries 设为 0"
+      ]
     },
     {
       "track": "java",
@@ -16203,17 +16437,59 @@
     {
       "track": "java",
       "group": "Spring Cloud Alibaba",
-      "id": "spring-cloud-feign-not-lb",
-      "title": "OpenFeign 是声明式客户端，负载均衡是另一层",
-      "prompt": "为什么把 Spring Cloud 背成 Feign 解决负载均衡、Zuul 解决跨域？",
-      "promptAnswer": "Feign 编 HTTP；选实例是 LoadBalancer。跨域是 CORS，不是 Zuul 专属职责。",
-      "keywords": "OpenFeign LoadBalancer Ribbon Zuul Gateway CORS",
+      "id": "dubbo-thread-pool",
+      "title": "dubbo 协议的业务线程池默认 200，队列为 0 时直接拒绝",
+      "prompt": "提供方日志里出现线程池拒绝之后，为什么先把 threads 从 200 改成 2000 仍会拖垮数据库？",
+      "promptAnswer": "默认是 fixed 线程池，200 条线程，queues 为 0，底层是 SynchronousQueue。池满时请求被拒绝并反馈给消费方。线程加多，只是让更多慢调用同时打到数据库。",
+      "keywords": "Dubbo 线程池 SynchronousQueue threads queues",
       "points": [
-        "Feign 是 HTTP 客户端不是负载均衡器",
-        "选实例是 LoadBalancer（或旧 Ribbon）",
-        "Zuul/Gateway 主职是路由不是跨域"
+        "dubbo 协议默认 fixed 线程池，200 条线程",
+        "queues 默认 0，对应 SynchronousQueue",
+        "池满时拒绝并反馈给消费方，先查慢调用"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Spring Cloud Alibaba",
+      "id": "dubbo-no-provider",
+      "title": "找不到提供者时核对 version、group 和启动检查",
+      "prompt": "消费方日志是 No provider available，注册中心里却看得到实例。先查什么？",
+      "promptAnswer": "先核对 version、group 和协议是否与提供方一致。@DubboReference 的 check 默认为 true 时，启动阶段没有匹配提供者就会失败。",
+      "keywords": "Dubbo No provider check version group",
+      "points": [
+        "匹配要看接口、version、group 和协议",
+        "@DubboReference 的 check 默认为 true",
+        "注册中心有响应但列表为空，不同于宕机后的本地缓存"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Spring Cloud Alibaba",
+      "id": "dubbo-registry-down-local-cache",
+      "title": "注册中心全挂后，旧地址还能调，新服务调不到",
+      "prompt": "为什么说“ZooKeeper 全挂了 Dubbo 就全部不能通信”或反过来“挂了还能无限发现新服务”都会错？",
+      "promptAnswer": "注册中心全挂仍可按本地已缓存地址调用，但不能发现新提供者。",
+      "keywords": "Dubbo ZooKeeper 本地缓存 注册中心 RandomLoadBalance",
+      "points": [
+        "消费者本地缓存已订阅的地址",
+        "注册中心全挂后不能发现新服务",
+        "负载均衡在客户端，默认随机"
       ],
-      "since": "Spring"
+      "since": "Dubbo"
+    },
+    {
+      "track": "java",
+      "group": "Spring Cloud Alibaba",
+      "id": "dubbo-beside-stack",
+      "title": "下单链路里 Dubbo 只负责 Java 进程之间的同步调用",
+      "prompt": "浏览器下单时，Nginx、Dubbo、MyBatis、Redis、Kafka 和 ZooKeeper 各接哪一段？",
+      "promptAnswer": "Nginx 接 HTTP 入口。Dubbo 只接两个 Java 进程之间的同步调用。库存的条件更新在提供方用 MyBatis 提交。Redis 不存放这份库存。消息在本地提交之后发出。ZooKeeper 或 Nacos 只提供地址。",
+      "keywords": "Dubbo MyBatis 事务 Nginx Redis Kafka",
+      "points": [
+        "Dubbo 承担两个 Java 进程之间的同步调用",
+        "库存条件更新在提供方的事务里提交",
+        "Redis 不存放这份库存，消息在本地提交之后发送"
+      ]
     },
     {
       "track": "java",
@@ -16660,6 +16936,36 @@
         "超时和拒绝要作用在入口，避免无效堆积"
       ],
       "since": "system design"
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "k6-threshold-not-check",
+      "title": "k6 的阈值失败才让进程失败，check 不改变退出码",
+      "prompt": "检查项都是绿的，为什么这次压测仍算通过？",
+      "promptAnswer": "〔check｜记下断言是否成立、本身不改变进程退出码的函数〕不决定成败。要挡住合并，把条件写进〔阈值｜结束时决定整次测试是否失败的条件〕。",
+      "keywords": "k6 vus duration threshold check http_req_duration 退出码",
+      "points": [
+        "vus 与 duration 让固定数量的虚拟用户在时长内循环执行",
+        "阈值表达式为假时整次测试失败，退出码非 0",
+        "check 不改变退出码，要另给 checks 写阈值"
+      ],
+      "since": "k6"
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "jmeter-cli-continue-on-error",
+      "title": "JMeter 负载用命令行跑，断言失败后可以继续",
+      "prompt": "结果树里有一条断言失败，为什么整次负载还在往下跑？",
+      "promptAnswer": "线程组在取样错误或断言失败后可以选择 Continue。〔JMeter｜用线程组对服务器执行测试计划的负载工具〕会忽略这次错误并继续。",
+      "keywords": "JMeter Thread Group Ramp-up Continue jmeter -n -t jtl",
+      "points": [
+        "线程数是模拟用户数，Ramp-up 是全部线程启动完毕的时间",
+        "负载测试用命令行 jmeter -n -t 计划 -l 结果",
+        "Continue 在断言失败后忽略错误并继续测试"
+      ],
+      "since": "JMeter"
     },
     {
       "track": "java",
@@ -18199,6 +18505,21 @@
         "异常要断言类型和关键信息"
       ],
       "since": "frontend test"
+    },
+    {
+      "track": "java",
+      "group": "测试",
+      "id": "pit-mutation-killed",
+      "title": "变异测试看测试能否杀掉改过的代码",
+      "prompt": "行覆盖率到了 100%，测试就足够了吗？",
+      "promptAnswer": "〔行覆盖率｜测试执行过的行占源码行的比例〕只说明这些行被跑过。〔变异测试｜往代码里植入故障再跑测试〕要看测试会不会失败。",
+      "keywords": "变异测试 PIT mutation killed survived 行覆盖率",
+      "points": [
+        "变异测试向代码植入故障后再跑测试",
+        "测试失败则变异被杀掉，测试仍通过则变异存活",
+        "行覆盖率只说明执行过，没有断言的测试仍可能让变异存活"
+      ],
+      "since": "PIT"
     },
     {
       "track": "java",

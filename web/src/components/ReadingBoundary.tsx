@@ -15,7 +15,7 @@ export class ReadingBoundary extends Component<{ children: ReactNode }, { failed
       title="这一页暂时没有打开"
       subTitle="已保存的学习记录仍保留在当前浏览器。可以重试，或返回学习路线。"
       extra={<Space>
-        <Button type="primary" onClick={() => window.location.reload()}>重新加载</Button>
+        <Button type="primary" onClick={() => this.setState({ failed: false })}>再试一次</Button>
         <Button href="#/">返回学习路线</Button>
       </Space>}
     />

@@ -3190,11 +3190,11 @@
     ]
   },
   "http-methods": {
-    "core": "HTTP 的安全和幂等描述方法的语义约定：安全方法不应请求改变服务器状态；幂等方法重复执行的预期效果与一次执行相同。业务副作用、鉴权、失败窗口和响应内容仍须具体设计。顺序是：先看方法约定的安全与幂等，再看这次业务有没有额外副作用，最后用唯一键把重试收成同一次效果。边界是：幂等说的是预期效果相同，不保证第二次状态码相同。DELETE 可以是幂等的，创建订单的 POST 默认不是。没有业务键时，方法名本身挡不住超时重试。安全方法失败后可以再读。幂等方法重复执行的预期效果与一次相同，但第二次的状态码仍可能不同。创建订单看唯一键和表里的行数，不看这次用的是不是 POST。",
-    "why": "错把 POST 当成一定不能重试、DELETE 当成一定可以盲目重试，重复创建会出两张订单，重复删除却可能第二次返回不同状态码。方法名不是重试策略。能分开的信号是：服务器用不用业务键保证效果只发生一次。",
-    "example": "DELETE 终态可幂等；创建 POST 要靠幂等键：\n\n```http\nDELETE /orders/9   → 204\nDELETE /orders/9   → 404 亦可（资源已不在）\nPOST /orders + Idempotency-Key → 第二次返回同一订单号\n```",
-    "task": "为查询、覆盖更新、扣款三个接口分别说明方法、重试条件和服务器防重措施。",
-    "answer": "查询用安全方法：重复执行不应要求改服务器状态，失败后可以再读。\n覆盖式 PUT：按资源标识写整份表示，重复写的预期效果与一次相同。\n扣款：不能只看 POST 这个名字，必须用业务键和持久化约束让重试返回第一次的结果，而不是再扣一次。\n\n状态码可以不同，效果不能再来一次。",
+    "core": "〔安全方法｜客户端没有请求、也不期待权威服务器因此改变状态〕在 RFC 9110 里是 GET、HEAD、OPTIONS、TRACE。访问日志、广告计费这类客户端没有请求的副作用，仍算安全。用查询参数让 GET 去执行删除，则必须禁止，因为自动抓取和预取会访问每个链接。〔幂等方法｜多次相同请求在服务器上的预期效果与一次相同〕是 PUT、DELETE，以及全部安全方法。POST 和 CONNECT 在这张表里不是幂等的。幂等只约束客户端请求的那份效果，服务器仍可以每次单独写日志，也不保证第二次的状态码相同。同一资源的第二次 DELETE，这个 URI 仍然不对应原来的功能，响应可以是 404 而不是 204。自动重试只发生在还没读到响应的时候。幂等方法可以自动再发一次。非幂等方法，客户端不应自动重试，除非它知道这个资源实际幂等，或能判断第一次根本没有执行。代理不得自动重试非幂等请求。创建订单的 POST 要另有〔幂等键｜同一次提交重复发送时携带的同一个键〕和唯一约束。方法名本身挡不住超时后再发。",
+    "why": "把 POST 当成永远不能重试，会漏掉带幂等键的那一种。把 DELETE 当成第二次也必须是 204，会把已经删掉的资源判成失败。连接在读到任何响应之前断开时，PUT 和 DELETE 可以再发，预期效果与一次相同。已经收到响应的 POST 再自动发一次，可能插入第二张订单。看订单表的行数和幂等键，不看方法名。",
+    "example": "安全方法没有请求删除。下面第二条若真的删掉订单，自动预取打到这个链接就会删数据，必须在 GET 上禁止这个动作。\n\n```http\nGET /orders/9 HTTP/1.1\nHost: shop.example\n\nGET /orders/9?do=delete HTTP/1.1\nHost: shop.example\n```\n\nDELETE 的预期效果是这个 URI 不再对应原来的功能。第二次的状态码可以不同，资源仍然不在。若实现成每次都把库存加回去，那就不是这个方法的幂等。\n\n```http\nDELETE /orders/9 HTTP/1.1\nHost: shop.example\n\nHTTP/1.1 204 No Content\n```\n\n```http\nDELETE /orders/9 HTTP/1.1\nHost: shop.example\n\nHTTP/1.1 404 Not Found\n```\n\nPOST 在方法表里不幂等。下面这个头是接口自己约定的幂等键，不是 RFC 9110 定义的方法属性。没有这个键时，还没读到响应就再发一次，会插入第二张订单。有这个键并且列上有唯一约束时，第二次返回第一次的订单号，订单表只有一行。\n\n```http\nPOST /orders HTTP/1.1\nHost: shop.example\nContent-Type: application/json\nIdempotency-Key: 7f3c\n\n{\"sku\":\"pen\",\"qty\":1}\n```",
+    "task": "为查询、覆盖更新、扣款三个接口分别说明方法、什么情况下可以自动重试，以及服务器靠什么让效果只发生一次。",
+    "answer": "1. 查询用 GET、HEAD、OPTIONS 或 TRACE。客户端没有请求改变状态。还没读到响应时可以再发。已经读到 4xx 或 5xx，按这次响应处理。\n\n2. 覆盖更新用 PUT，同一份表示再写一次，预期效果与一次相同。第一次可以是 201，第二次可以是 200 或 204。\n\n3. DELETE 的预期效果是这个 URI 不再对应原来的功能。第二次可以是 404，资源仍然不在。每次删除都把库存加回去，就不是这个方法的幂等。\n\n4. 扣款若用 POST，规范不把它标成幂等。还没读到响应就自动再发，可能扣两次。要重试，就用幂等键和唯一约束，让第二次返回第一次的结果。",
     "deep": [
       {
         "title": "和导论",
@@ -3202,7 +3202,7 @@
       },
       {
         "title": "语义和实现要分开",
-        "body": "安全和幂等是方法的约定，不是某个框架自动加上的锁。查询不应靠它改状态。覆盖更新可以设计成幂等。扣款、下单必须另有业务键，否则 POST 重试就会重复生效。看表里的行数，不要只看方法名。"
+        "body": "安全和幂等是方法登记的约定，不是框架自动加上的锁。客户端没有请求的日志仍算安全。GET 上的删除动作必须关掉。PUT 和 DELETE 幂等的是同一次请求的预期效果，不是每一次业务删除都会把库存加回去。扣款、下单另有幂等键，见 idempotency。PATCH 不在 RFC 9110 这张表里，见 `http-patch-rfc5789`。"
       },
       {
         "title": "创建与正文类型",
@@ -3210,13 +3210,21 @@
       },
       {
         "title": "怎样自己验证",
-        "body": "对同一资源连续 DELETE 两次，记录两次状态码和资源是否还在。再对创建订单连续 POST 两次相同正文：没有幂等键时应有两张单，加上唯一键后应只剩一张并返回同一结果。"
+        "body": "用 GET 带删除参数打一次，确认订单还在。对同一资源连续 DELETE 两次，记下两次状态码，并确认资源仍然不在。再对创建订单连续 POST 两次相同正文：没有幂等键时应有两张订单；加上唯一键后应只剩一张，并返回同一个订单号。"
       }
     ],
     "references": [
       [
-        "RFC 9110：HTTP Semantics",
-        "https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2"
+        "RFC 9110：Safe Methods",
+        "https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.1"
+      ],
+      [
+        "RFC 9110：Idempotent Methods",
+        "https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.2"
+      ],
+      [
+        "RFC 9110：Method Registration",
+        "https://www.rfc-editor.org/rfc/rfc9110.html#section-18.2"
       ]
     ],
     "diagram": "library-assets/illustrated-basics/http-p0034.png",
@@ -6569,6 +6577,29 @@
     ],
     "vue": "teleport"
   },
+  "vue-teleport-dom-not-logical": {
+    "core": "Teleport 的 to 接受 CSS 选择器或一个 DOM 节点，把片段渲染到该组件 DOM 层次之外。目标在 Teleport 挂载时必须已经在文档里，最好在整个 Vue 应用之外。它只改渲染出来的 DOM。里面的组件仍是逻辑上的子组件：props、事件和父组件的 provide 照常，Vue Devtools 里也仍挂在父组件下面。disabled 为真时不搬动，片段留在原处。多个 Teleport 指向同一目标时，按挂载顺序依次追加。Vue 3.5 起可以用 defer，把目标解析推迟到同一次挂载里更靠后的部分。目标若晚一个更新周期才出现，仍然报错。对话框的焦点和 Escape 见 `vue-modal-programmatic`，Teleport 不提供这些。",
+    "why": "学习者把模态框写在按钮旁边，再靠 position: fixed 盖住页面。外层动画一带 transform，固定定位就相对那个祖先，更高的 z-index 也会把它盖住。区分信号是：元素检查里片段在 body 下，Devtools 里组件仍是按钮所在组件的子组件。",
+    "example": "按钮留在组件里，片段搬到 body：\n\n```vue\n<script setup>\nimport { ref } from \"vue\"\nconst open = ref(false)\n</script>\n\n<template>\n  <button @click=\"open = true\">打开</button>\n  <Teleport to=\"body\">\n    <div v-if=\"open\" class=\"modal\">\n      <p>来自逻辑子组件</p>\n      <button @click=\"open = false\">关闭</button>\n    </div>\n  </Teleport>\n</template>\n```",
+    "task": "说明元素检查和 Devtools 里分别看到什么，以及目标还不存在时 defer 能推迟到哪一步。",
+    "answer": "1. to 接受 CSS 选择器或 DOM 节点。目标在 Teleport 挂载时必须已经在文档里。\n\n2. 元素检查里片段在 body 下。逻辑上它仍是父组件的子组件，props、事件和 provide 不变，Devtools 里也不跟到 body。\n\n3. Vue 3.5 的 defer 只推迟到同一次挂载里更靠后的目标。目标晚一个更新周期才出现，仍然报错。",
+    "deep": [
+      {
+        "title": "同一目标上的多个片段",
+        "body": "多个 Teleport 可以指向同一个元素。后挂载的内容追加在先挂载的后面，都在这个目标里面。disabled 为真时，这一份留在组件自己的 DOM 里，不参与这次搬动。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "打开片段后在元素检查里确认它位于 body 下，在 Devtools 里确认组件仍在父组件下面。再把目标改成模板后部才渲染的节点：不加 defer 应在挂载时报错；加上 defer 且目标在同一次挂载内出现则成功。把目标改成下一轮更新才出现，defer 仍然报错。"
+      }
+    ],
+    "references": [
+      [
+        "Vue：Teleport",
+        "https://vuejs.org/guide/built-ins/teleport.html"
+      ]
+    ]
+  },
   "vue-vnode-not-fragment": {
     "core": "虚拟 DOM 是普通 JS 对象描述的 VNode 树，不是 document.createDocumentFragment()。Fragment 是真实 DOM 的轻量容器，偶尔用于插入节点，不是 diff 的数据结构。Vue 2 用 Object.defineProperty 劫持对象，数组要用变异方法；Vue 3 主路径是 Proxy，见 `vue-defineproperty-proxy`。key 用来稳定身份，index 在静态列表可用，插入删除会错位，见 `vue-list-key`。组件 data 必须是函数以免共享同一对象。$route 是当前记录，$router 是实例。渐进式是“可以只用视图层”，不是“全面不如 React/Angular”。",
     "why": "把虚拟 DOM 说成 createDocumentFragment，diff 会拿真实 DOM 容器去比，内存里的 VNode 和页面节点对不上。区分信号是 h() 得到普通对象，挂载之后才有 Element。",
@@ -9836,6 +9867,37 @@
       ]
     ]
   },
+  "vue-test-utils-mount": {
+    "core": "〔Vitest｜Vue 官方测试指南推荐的测试运行器〕负责执行 test 和 expect。它不解析单文件组件，也不会替你生成 DOM。〔mount｜把组件和子组件一起渲染成可查询的包装〕来自 Vue Test Utils，返回的包装才能 get、setValue 和 trigger。〔shallowMount｜渲染当前组件，并把子组件换成桩〕不渲染子组件的模板。wrapper.get 找不到匹配节点就失败。wrapper.find 找不到时 exists 为 false，适合断言某个节点不存在。setValue 写入输入框并更新 v-model。组件测试用的是 DOM 模拟，不是用户打开的浏览器。一条从打开页面到看见结果的路径仍用浏览器测试，见 `playwright-user-journey`。",
+    "why": "学习者会以为安装 Vitest 之后，测试函数里就能读到模板上的输入框。运行器只调用了测试函数，组件没有被挂载，查询因此失败。先 mount 再 get 输入框，同一条断言才读得到 v-model 的值。",
+    "example": "订单备注组件：\n\n```vue\n<script setup>\nimport { ref } from \"vue\";\nconst memo = ref(\"\");\n</script>\n\n<template>\n  <label>\n    备注\n    <input v-model=\"memo\" />\n  </label>\n  <p>{{ memo }}</p>\n</template>\n```\n\n测试先挂载，再写入输入框：\n\n```javascript\nimport { mount } from \"@vue/test-utils\";\nimport { expect, test } from \"vitest\";\nimport MemoNote from \"./MemoNote.vue\";\n\ntest(\"typing updates the memo\", async () => {\n  const wrapper = mount(MemoNote);\n  await wrapper.get(\"input\").setValue(\"补一笔\");\n  expect(wrapper.text()).toContain(\"补一笔\");\n});\n```",
+    "task": "用 mount 挂上一个带输入框的组件，setValue 之后断言页面文字。再说明 shallowMount 和这条浏览器路径各自不负责什么。",
+    "answer": "1. mount 之后 setValue 写入输入框，包装的文字里出现刚写入的备注。\n\n2. shallowMount 不渲染子组件模板，不能用它断言子组件内部的输入框。\n\n3. Vitest 只运行测试函数。从打开页面到看见结果的那一条路径不放在这次挂载里，交给浏览器测试。",
+    "deep": [
+      {
+        "title": "运行器和挂载",
+        "body": "Vitest 调用 test 里的函数并核对 expect。单文件组件要先经过 mount，模板里的输入框才会出现在包装上。只导入 .vue 文件并查询字符串，读不到 v-model 的当前值。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "写一个只有备注输入框的组件。测试里先 mount，再 setValue，断言包装文字包含刚写入的备注。把 mount 换成 shallowMount 去查一个子组件内部的输入框，这次应找不到。"
+      }
+    ],
+    "references": [
+      [
+        "Vue：测试",
+        "https://vuejs.org/guide/scaling-up/testing.html"
+      ],
+      [
+        "Vue Test Utils：挂载组件",
+        "https://test-utils.vuejs.org/guide/"
+      ],
+      [
+        "Vitest：入门",
+        "https://vitest.dev/guide/"
+      ]
+    ]
+  },
   "test-mock-boundary": {
     "core": "mock 用来替换你不拥有的边界：网络、时钟、数据库。被测函数自己的分支要真的跑。把内部函数全替成“返回成功”，测试只证明你写对了替身，没有证明计算、分支和错误处理。组件测试优先从屏幕上的角色和文字断言，而不是断言某个内部函数被调用了几次。需要断言协作时，只 mock 那一个外部依赖，并让它按真实形状返回成功和失败。顺序是先让被测函数自己的分支跑起来，只把网络、时钟或数据库换成按真实形状返回的替身，再断言用户看得到的结果。边界是把内部函数全替成返回成功，测试只证明替身写对了。成功和失败两种形状都要能从那一个外部依赖返回。失败形状也要从同一个外部依赖返回一次，否则错误分支从未执行。",
     "why": "学习者会把被测函数里的每个调用都换成替身，测试是绿的，线上计算却是错的。金额函数没真的跑，断言的只是替身被调用了。改成只替掉网络、让金额计算真的执行后测试变红，才说明原来锁住的是替身而不是结果。",
@@ -10405,6 +10467,64 @@
       [
         "Vite：envPrefix",
         "https://vite.dev/config/shared-options.html#envprefix"
+      ]
+    ]
+  },
+  "eslint-error-not-warning": {
+    "core": "〔ESLint｜按配置检查 JavaScript 是否违反规则的工具〕把项目配置放在 eslint.config.js，并导出配置对象数组。规则有三种级别：off 关闭，warn 只报告，error 在触发时让进程以退出码 1 结束。只有警告、没有 error 时，默认退出码是 0。命令行加上 --max-warnings，警告条数超过这个上限，退出码才变成 1。配置本身出错时退出码是 2，那是配置问题，不是某条规则的违规。类型检查仍由类型检查器负责，ESLint 的 error 代替不了那一道门。",
+    "why": "学习者把规则都设成警告，本地能看见提示，合并却继续。区分信号是：出现 error 时退出码为 1；只有 warn 时默认仍是 0，除非 --max-warnings 把警告也算进失败。",
+    "example": "把未使用变量设成 error：\n\n```javascript\nimport { defineConfig } from \"eslint/config\";\n\nexport default defineConfig([\n  {\n    rules: {\n      \"no-unused-vars\": \"error\",\n    },\n  },\n]);\n```\n\n让警告也挡住合并：\n\n```bash\nnpx eslint --max-warnings 0 src\n```",
+    "task": "写出只有警告时的默认退出码，以及怎样让警告也变成失败。",
+    "answer": "1. 规则设为 error 并被触发时，退出码是 1。\n\n2. 只有 warn、没有 error 时，默认退出码是 0，流水线仍算成功。\n\n3. 加上 --max-warnings 0 后，警告条数超过 0，退出码变为 1。配置文件本身有问题则是退出码 2。",
+    "deep": [
+      {
+        "title": "两级报告",
+        "body": "warn 适合刚引入、还不能挡住合并的规则。要执行的规则设为 error。把全部规则留在 warn，报告看得见，进程仍然成功。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "准备一个未使用变量。规则为 error 时，eslint 的退出码是 1。改成 warn 后再跑，退出码是 0。加上 --max-warnings 0 后，同一条警告的退出码变为 1。"
+      }
+    ],
+    "references": [
+      [
+        "ESLint：配置文件",
+        "https://eslint.org/docs/latest/use/configure/configuration-files"
+      ],
+      [
+        "ESLint：规则级别",
+        "https://eslint.org/docs/latest/use/configure/rules"
+      ],
+      [
+        "ESLint：命令行退出码",
+        "https://eslint.org/docs/latest/use/command-line-interface"
+      ]
+    ]
+  },
+  "npm-lockfile-ci": {
+    "core": "npm 在改动 node_modules 或 package.json 时生成 package-lock.json。它描述当时生成的那一棵依赖树，使之后的安装能得到同一棵树，而不跟着中间发布的新版本走。这个文件要提交进仓库，给同事、部署和持续集成用。清单里的 ^3.5.0 只是范围。锁里 packages 下的 version 是当时解析到的版本，〔integrity｜该安装包的 sha512 校验值〕钉住那一份压缩包。〔npm ci｜按已有锁做干净安装、并且不改写锁的命令〕要求项目里已经有 package-lock.json 或 npm-shrinkwrap.json。锁里的依赖和 package.json 不一致时，它以错误退出，并且不改写这两份文件。已有的 node_modules 会先被删掉再安装。本机要加依赖时用 npm install，装完后把更新过的锁一并提交。根目录若同时有 npm-shrinkwrap.json，npm 采用那一份，package-lock.json 被忽略。构建缓存课讲的是锁变了会让产物失效，这一课讲的是安装树本身。",
+    "why": "学习者只提交 package.json，持续集成每次按范围重新解析，同一条范围在不同天能装到不同版本。区分信号是：npm ci 在锁和清单不一致时失败，并且锁文件没有被改写。",
+    "example": "清单只写范围：\n\n```json\n{\n  \"dependencies\": {\n    \"vue\": \"^3.5.0\"\n  }\n}\n```\n\n锁记下当时的版本：\n\n```json\n{\n  \"lockfileVersion\": 3,\n  \"packages\": {\n    \"node_modules/vue\": {\n      \"version\": \"3.5.13\",\n      \"integrity\": \"sha512-<tarball>\"\n    }\n  }\n}\n```\n\n自动化环境按锁安装，不改写锁：\n\n```bash\nnpm ci\n```",
+    "task": "写出 npm ci 在锁和 package.json 不一致时做什么，以及本机加依赖后要提交哪一份文件。",
+    "answer": "1. package-lock.json 要提交。它描述当时生成的依赖树，version 和 integrity 钉住解析到的包。\n\n2. npm ci 发现锁和 package.json 不一致时以错误退出，并且不改写锁，也不改写清单。\n\n3. 本机用 npm install 增加依赖后，把更新过的 package-lock.json 和 package.json 一起提交。持续集成继续用 npm ci。",
+    "deep": [
+      {
+        "title": "范围和树",
+        "body": "^3.5.0 允许 3.5 这一列里的更新。没有锁时，下一次安装可以解析到列里较新的版本。锁把当时的 version 和 integrity 记下来，下一次按这棵树安装。"
+      },
+      {
+        "title": "怎样自己验证",
+        "body": "提交锁之后，在另一份干净目录运行 npm ci，装到的 version 应与锁里相同。再只改 package.json 的范围、不改锁，npm ci 应以错误退出，锁文件内容保持原样。"
+      }
+    ],
+    "references": [
+      [
+        "npm：package-lock.json",
+        "https://docs.npmjs.com/cli/v11/configuring-npm/package-lock-json"
+      ],
+      [
+        "npm：npm ci",
+        "https://docs.npmjs.com/cli/v11/commands/npm-ci"
       ]
     ]
   },

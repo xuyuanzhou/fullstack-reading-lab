@@ -19,6 +19,28 @@ const COVERAGE_PATH_03 = [
     refs:[['Testing Library：查询优先级','https://testing-library.com/docs/queries/about/'],['Testing Library：ByRole','https://testing-library.com/docs/queries/byrole/']]
   },
   {
+    track:'frontend', group:'测试', id:'vue-test-utils-mount',
+    title:'Vue 组件测试用 mount 挂上组件，Vitest 只负责跑断言',
+    prompt:'装了 Vitest，为什么直接查询组件文件仍然碰不到输入框？',
+    promptAnswer:'〔Vitest｜Vue 官方测试指南推荐的测试运行器〕只调用测试函数。输入框要出现，得用 Vue Test Utils 的 mount 把组件渲染出来。',
+    core:'〔Vitest｜Vue 官方测试指南推荐的测试运行器〕负责执行 test 和 expect。它不解析单文件组件，也不会替你生成 DOM。〔mount｜把组件和子组件一起渲染成可查询的包装〕来自 Vue Test Utils，返回的包装才能 get、setValue 和 trigger。〔shallowMount｜渲染当前组件，并把子组件换成桩〕不渲染子组件的模板。wrapper.get 找不到匹配节点就失败。wrapper.find 找不到时 exists 为 false，适合断言某个节点不存在。setValue 写入输入框并更新 v-model。组件测试用的是 DOM 模拟，不是用户打开的浏览器。一条从打开页面到看见结果的路径仍用浏览器测试，见 playwright-user-journey。',
+    why:'学习者会以为安装 Vitest 之后，测试函数里就能读到模板上的输入框。运行器只调用了测试函数，组件没有被挂载，查询因此失败。先 mount 再 get 输入框，同一条断言才读得到 v-model 的值。',
+    example:'订单备注组件：\n\n```vue\n<script setup>\nimport { ref } from "vue";\nconst memo = ref("");\n</script>\n\n<template>\n  <label>\n    备注\n    <input v-model="memo" />\n  </label>\n  <p>{{ memo }}</p>\n</template>\n```\n\n测试先挂载，再写入输入框：\n\n```javascript\nimport { mount } from "@vue/test-utils";\nimport { expect, test } from "vitest";\nimport MemoNote from "./MemoNote.vue";\n\ntest("typing updates the memo", async () => {\n  const wrapper = mount(MemoNote);\n  await wrapper.get("input").setValue("补一笔");\n  expect(wrapper.text()).toContain("补一笔");\n});\n```',
+    task:'用 mount 挂上一个带输入框的组件，setValue 之后断言页面文字。再说明 shallowMount 和这条浏览器路径各自不负责什么。',
+    answer:'1. mount 之后 setValue 写入输入框，包装的文字里出现刚写入的备注。\n\n2. shallowMount 不渲染子组件模板，不能用它断言子组件内部的输入框。\n\n3. Vitest 只运行测试函数。从打开页面到看见结果的那一条路径不放在这次挂载里，交给浏览器测试。',
+    keywords:'Vue Test Utils mount shallowMount Vitest setValue',
+    points:['Vitest 运行测试函数，不负责渲染 Vue 组件','mount 渲染组件及其子组件，shallowMount 把子组件换成桩','wrapper.get 找不到就失败，find 找不到时 exists 为 false'],
+    deep:[
+      {title:'运行器和挂载',body:'Vitest 调用 test 里的函数并核对 expect。单文件组件要先经过 mount，模板里的输入框才会出现在包装上。只导入 .vue 文件并查询字符串，读不到 v-model 的当前值。'},
+      {title:'怎样自己验证',body:'写一个只有备注输入框的组件。测试里先 mount，再 setValue，断言包装文字包含刚写入的备注。把 mount 换成 shallowMount 去查一个子组件内部的输入框，这次应找不到。'}
+    ],
+    refs:[
+      ['Vue：测试','https://vuejs.org/guide/scaling-up/testing.html'],
+      ['Vue Test Utils：挂载组件','https://test-utils.vuejs.org/guide/'],
+      ['Vitest：入门','https://vitest.dev/guide/']
+    ]
+  },
+  {
     track:'frontend', group:'测试', id:'playwright-user-journey',
     title:'端到端只覆盖一条真正的用户路径',
     prompt:'是不是每个函数都该配一条浏览器测试？',
@@ -87,6 +109,27 @@ const COVERAGE_PATH_03 = [
       {title:'怎样自己验证',body:'用两个已登录用户互相携带对方的资源 id 访问。只校验登录时应成功并返回对方的数据。加上拥有者条件后，对方的请求应被拒绝，自己的请求仍成功。对方的订单号应被拒绝，自己的订单号仍返回 200，两次要同时记录。'}
     ],
     refs:[['Spring Security：方法安全','https://docs.spring.io/spring-security/reference/servlet/authorization/method-security.html']]
+  },
+  {
+    track:'java', group:'安全', id:'abac-subject-object-attributes',
+    title:'ABAC 按主体和客体的属性评估规则',
+    prompt:'心内科来了第二位护士，为什么不必再为每本病历写一条名单？',
+    promptAnswer:'〔ABAC｜按主体、客体、动作和环境的属性来评估规则的访问控制〕写的是属性组合。新人带上同样的属性即可。',
+    core:'NIST 把 ABAC 定义为一种逻辑访问控制：对客体的访问，由规则去评估主体属性、客体属性、动作，以及与这次请求相关的环境条件。属性是可以赋值的特征。基本形式是这些属性加上一条写明何种组合可以做何种操作的规则。NIST 的例子是：心内科的执业护士可以查看心脏病患者的病历。规则不给每一位护士和每一本病历各写一条关系。新来的人只要被赋上规则要求的属性，已有规则和客体都不必改。某一条订单属于谁，仍是对象级授权，见 object-level-authz。角色名单独通过，也不等于属性组合已经满足。',
+    why:'学习者会给每一位护士单独登记可以打开的病历编号。第二个人入职时要改每一条关系，科室一变又要重写。区分信号是：两位护士的科室和职务相同，同一条规则都允许查看；科室不同的人被拒绝，规则文本没有为新人改过。',
+    example:'规则只比较属性，不登记具体的人：\n\n```java\nrecord Subject(String role, String department) {}\nrecord Folder(String kind) {}\n\nstatic boolean allowView(Subject subject, Folder folder, String action) {\n  return "view".equals(action)\n      && "Nurse Practitioner".equals(subject.role())\n      && "Cardiology".equals(subject.department())\n      && "Heart Patients".equals(folder.kind());\n}\n```',
+    task:'写出这条查看规则用到的主体属性和客体属性，以及新护士入职时要改规则还是要赋属性。',
+    answer:'1. 决策评估主体属性、客体属性、动作，以及与请求相关的环境条件。\n\n2. 查看心脏病历这条规则用的是职务 Nurse Practitioner、科室 Cardiology 和病历种类 Heart Patients。\n\n3. 新护士入职时赋上同样的属性，不必修改已有规则，也不必为每一本病历再写一条关系。某一条记录的拥有者仍另外核对。',
+    keywords:'ABAC NIST SP 800-162 主体属性 客体属性 环境条件',
+    points:['决策评估主体属性、客体属性、动作和环境条件','规则写属性组合，不为每个人和每条记录各写关系','新主体赋上规则要求的属性即可，不必改已有规则'],
+    deep:[
+      {title:'和某一条记录的拥有者',body:'对象级授权回答这条订单是不是当前用户的。ABAC 回答一组属性是否满足规则，例如科室和病历种类。两条可以同时存在。只保存角色名、不看科室和病历种类，还不是这条规则。'},
+      {title:'怎样自己验证',body:'用两位职务和科室都相同的护士调用 allowView，对心脏病历的查看都应允许，规则源码不变。把其中一位的科室改成别的值，同一次查看应拒绝。环境条件本例没有使用。若规则再要求班次，同一人在班次外应拒绝，仍然不必新增人与病历的对应行。'}
+    ],
+    refs:[
+      ['NIST：Attribute Based Access Control','https://csrc.nist.gov/projects/attribute-based-access-control'],
+      ['NIST SP 800-162','https://csrc.nist.gov/pubs/sp/800/162/final']
+    ]
   },
   {
     track:'java', group:'安全', id:'runtime-config',

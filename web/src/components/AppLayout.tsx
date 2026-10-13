@@ -11,15 +11,16 @@ import {
 import { Alert, Badge, Button, Drawer, Layout, Menu, Typography, theme } from 'antd'
 import { Suspense, useEffect, useMemo, useState } from 'react'
 import { Link, matchPath, Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { findLesson, isVersionSince, lessonsFor, lessonsInGroup, outlineFor, prefetchTrackBodies } from '@/data/curriculum'
+import { findLesson, isVersionSince, lessonsFor, lessonsInGroup, outlineFor, prefetchLessonBody } from '@/data/curriculum'
 import { TRACK_LABEL } from '@/data/meta'
 import { shortTitle } from '@/data/reading'
 import { courseGroups, groupLabel, groupPath, isTrack, lessonPath, resumePath } from '@/data/routes'
-import { probeLocalLibrary } from '@/api/localLibrary'
-import { useProgress } from '@/state/progress'
+import { useLearningSlice, useProgress } from '@/state/progress'
 import { GateDock } from '@/components/GateDock'
+import { RouteSkeleton } from '@/components/RouteSkeleton'
 import { ProgressAside } from '@/components/ProgressAside'
 import { ReadingBoundary } from '@/components/ReadingBoundary'
+import { RouteTransition, TransitionAudioButton } from '@/transition/RouteTransition'
 
 const { Sider, Content } = Layout
 
@@ -27,23 +28,27 @@ export function AppLayout() {
   const navigate = useNavigate()
   const location = useLocation()
   const progress = useProgress()
+  useEffect(() => {
+    const warm = (event: Event) => {
+      const target = event.target
+      if (!(target instanceof Element)) return
+      const link = target.closest('a[href]')
+      if (!link) return
+      const id = lessonIdFromHref(link.getAttribute('href') || '')
+      if (id) prefetchLessonBody(id)
+    }
+    document.addEventListener('pointerdown', warm, true)
+    document.addEventListener('focusin', warm, true)
+    return () => {
+      document.removeEventListener('pointerdown', warm, true)
+      document.removeEventListener('focusin', warm, true)
+    }
+  }, [])
+  const localReady = useLearningSlice((state) => state.localReady)
+  const reconnectLocal = useLearningSlice((state) => state.reconnectLocal)
   const { token } = theme.useToken()
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [localReady, setLocalReady] = useState<boolean | null>(null)
   const localHost = ['localhost', '127.0.0.1', '[::1]'].includes(window.location.hostname)
-
-  async function reconnectLocal() {
-    setLocalReady(null)
-    const ready = await probeLocalLibrary()
-    setLocalReady(ready)
-    return ready
-  }
-
-  useEffect(() => {
-    let active = true
-    void probeLocalLibrary().then(ready => { if (active) setLocalReady(ready) })
-    return () => { active = false }
-  }, [])
 
   const courseLesson = matchPath('/:track/:groupKey/:lessonId', location.pathname)
   const courseGroup = matchPath('/:track/:groupKey', location.pathname)
@@ -159,7 +164,6 @@ export function AppLayout() {
         <Link
           to={lessonPath(lesson)}
           className="lesson-label"
-          onMouseEnter={() => prefetchTrackBodies(lesson.track)}
           onClick={() => {
             progress.remember(lesson.id)
             setMobileOpen(false)
@@ -349,7 +353,8 @@ export function AppLayout() {
   )
 
   return (
-    <Layout className="app-shell">
+      <Layout className="app-shell">
+      <RouteTransition />
       <a className="skip-link" href="#main-content" onClick={event => {
         event.preventDefault()
         document.getElementById('main-content')?.focus({ preventScroll: true, focusVisible: false })
@@ -413,6 +418,7 @@ export function AppLayout() {
             <span className="header-count">
               {onAi ? `${aiNav?.noteCount ?? '…'} 篇` : `${doneCount}/${trackLessons.length}`}
             </span>
+            <TransitionAudioButton />
             <Button
               type="text"
               icon={progress.theme === 'dark' ? <SunOutlined /> : <MoonOutlined />}
@@ -434,7 +440,7 @@ export function AppLayout() {
               />
             )}
             <ReadingBoundary key={location.pathname}>
-              <Suspense fallback={<div className="route-loading" role="status">正在打开课程…</div>}>
+              <Suspense fallback={<RouteSkeleton />}>
                 <Outlet context={{ localReady, reconnectLocal, localHost }} />
               </Suspense>
             </ReadingBoundary>
@@ -460,4 +466,10 @@ export function AppLayout() {
       {!onLab && !onAi && <GateDock />}
     </Layout>
   )
+}
+
+function lessonIdFromHref(href: string) {
+  const parts = href.replace(/^#/, '').split('?')[0].split('/').filter(Boolean)
+  if (parts.length === 3 && (parts[0] === 'frontend' || parts[0] === 'java')) return parts[2]
+  return ''
 }
