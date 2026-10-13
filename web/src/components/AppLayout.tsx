@@ -56,7 +56,6 @@ export function AppLayout() {
   const [menuCollapsed, setMenuCollapsed] = useState(false)
   const [openSections, setOpenSections] = useState<string[]>([])
 
-  const groups = courseGroups(activeTrack)
   const trackLessons = lessonsFor(activeTrack)
   const doneCount = trackLessons.filter((lesson) => progress.done.includes(lesson.id)).length
   const homeTo = resumePath(activeTrack, activeGroupKey)
@@ -150,76 +149,83 @@ export function AppLayout() {
     ? []
     : [`group:${activeGroupKey}`, ...new Set([currentSectionKey, ...openSections].filter(Boolean))]
 
-  const lessonNode = (lesson: NonNullable<ReturnType<typeof findLesson>>) => ({
-    key: lesson.id,
-    label: (
-      <Link
-        to={lessonPath(lesson)}
-        className="lesson-label"
-        onMouseEnter={() => prefetchTrackBodies(lesson.track)}
-        onClick={() => {
-          progress.remember(lesson.id)
-          setMobileOpen(false)
-        }}
-      >
-        <span
-          className={`lesson-status${progress.done.includes(lesson.id) ? ' is-done' : ''}`}
-          aria-hidden
-        />
-        <span>{shortTitle(lesson.title)}</span>
-        {isVersionSince(lesson.since) ? <span className="since-chip">{lesson.since}</span> : null}
-      </Link>
-    ),
-  })
-
-  const menuItems = groups.map((group, index) => {
-    const items = lessonsInGroup(activeTrack, group.name)
-    const completed = items.filter((lesson) => progress.done.includes(lesson.id)).length
-    const sections = outlineFor(activeTrack, group.name)
-    const listed = new Set(sections.flatMap((section) => section.ids))
-    const children = sections.length >= 2
-      ? [
-          ...sections.map((section, sectionIndex) => {
-            const sectionLessons = section.ids
-              .map((id) => findLesson(id))
-              .filter((item): item is NonNullable<ReturnType<typeof findLesson>> => !!item && item.group === group.name)
-            const sectionDone = sectionLessons.filter((lesson) => progress.done.includes(lesson.id)).length
-            return {
-              key: `section:${group.key}:${sectionIndex}`,
-              label: (
-                <span className="section-label">
-                  <span>{section.title}</span>
-                  <span className="group-count">{sectionDone}/{sectionLessons.length}</span>
-                </span>
-              ),
-              children: sectionLessons.map(lessonNode),
-            }
-          }),
-          ...items.filter((lesson) => !listed.has(lesson.id)).map(lessonNode),
-        ]
-      : items.map(lessonNode)
-    return {
-      key: `group:${group.key}`,
+  const doneIds = progress.done
+  const menuItems = useMemo(() => {
+    const done = new Set(doneIds)
+    const hold = (key: string) => [{ key: `hold:${key}`, label: <span className="menu-hold" />, disabled: true }]
+    const lessonNode = (lesson: NonNullable<ReturnType<typeof findLesson>>) => ({
+      key: lesson.id,
       label: (
         <Link
-          to={groupPath(activeTrack, group.key)}
-          className="group-label"
-          onClick={(event) => {
-            if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return
-            event.stopPropagation()
-            setMenuCollapsed(false)
+          to={lessonPath(lesson)}
+          className="lesson-label"
+          onMouseEnter={() => prefetchTrackBodies(lesson.track)}
+          onClick={() => {
+            progress.remember(lesson.id)
+            setMobileOpen(false)
           }}
         >
-          <span className="group-index">{String(index + 1).padStart(2, '0')}</span>
-          <span className="group-name">{group.label}</span>
-          <span className="group-count">
-            {completed}/{items.length}
-          </span>
+          <span className={`lesson-status${done.has(lesson.id) ? ' is-done' : ''}`} aria-hidden />
+          <span>{shortTitle(lesson.title)}</span>
+          {isVersionSince(lesson.since) ? <span className="since-chip">{lesson.since}</span> : null}
         </Link>
       ),
-      children,
-    }
-  })
+    })
+
+    return courseGroups(activeTrack).map((group, index) => {
+      const items = lessonsInGroup(activeTrack, group.name)
+      const completed = items.filter((lesson) => done.has(lesson.id)).length
+      const groupOpen = !menuCollapsed && group.key === activeGroupKey
+      const sections = outlineFor(activeTrack, group.name)
+      const listed = new Set(sections.flatMap((section) => section.ids))
+      const children = !groupOpen
+        ? hold(group.key)
+        : sections.length >= 2
+          ? [
+              ...sections.map((section, sectionIndex) => {
+                const sectionKey = `section:${group.key}:${sectionIndex}`
+                const sectionLessons = section.ids
+                  .map((id) => findLesson(id))
+                  .filter((item): item is NonNullable<ReturnType<typeof findLesson>> => !!item && item.group === group.name)
+                const sectionDone = sectionLessons.filter((lesson) => done.has(lesson.id)).length
+                const sectionOpen = currentSectionKey === sectionKey || openSections.includes(sectionKey)
+                return {
+                  key: sectionKey,
+                  label: (
+                    <span className="section-label">
+                      <span>{section.title}</span>
+                      <span className="group-count">{sectionDone}/{sectionLessons.length}</span>
+                    </span>
+                  ),
+                  children: sectionOpen ? sectionLessons.map(lessonNode) : hold(sectionKey),
+                }
+              }),
+              ...items.filter((lesson) => !listed.has(lesson.id)).map(lessonNode),
+            ]
+          : items.map(lessonNode)
+      return {
+        key: `group:${group.key}`,
+        label: (
+          <Link
+            to={groupPath(activeTrack, group.key)}
+            className="group-label"
+            onClick={(event) => {
+              if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return
+              event.stopPropagation()
+              setMenuCollapsed(false)
+            }}
+          >
+            <span className="group-index">{String(index + 1).padStart(2, '0')}</span>
+            <span className="group-name">{group.label}</span>
+            <span className="group-count">
+              {completed}/{items.length}
+            </span>
+          </Link>
+        ),
+        children,
+      }
+    })
+  }, [activeTrack, activeGroupKey, doneIds, menuCollapsed, currentSectionKey, openSections, progress.remember])
 
   const aiMenuItems = [
     ...(aiNav?.sections || []).map((section, index) => ({
@@ -416,7 +422,7 @@ export function AppLayout() {
           </div>
         </header>
 
-        <div className={onLab ? 'workspace is-workbench' : 'workspace'}>
+        <div className={[onLab ? 'workspace is-workbench' : 'workspace', !onLab && !onAi ? 'has-gate-dock' : ''].filter(Boolean).join(' ')}>
           <Content className="app-main" id="main-content" role="main" tabIndex={-1}>
             {progress.storageIssue && <Alert type="warning" showIcon title={progress.storageIssue} />}
             {localHost && localReady === false && (

@@ -9238,33 +9238,34 @@
       "id": "cookie-credential",
       "title": "Cookie 自动带上、localStorage 不会",
       "prompt": "登录令牌放进 localStorage，和放进 Cookie，浏览器的行为有什么不同？",
-      "core": "Cookie 按域、路径、Secure、HttpOnly 和 SameSite 决定是否自动附在后续请求上。HttpOnly 的 Cookie 不能通过 document.cookie 读取。没有 Max-Age 或 Expires 时，它是会话 Cookie，会话结束即删除。SameSite=None 必须同时标记 Secure。localStorage 只留在该源的页面存储里，不会自动随请求发送，但同源脚本可以读到它。",
-      "why": "学习者会以为只要刷新后还在，两种存放就一样。令牌放进 localStorage 后接口返回 401，因为浏览器没有自动带上它；若改成脚本手动加头，页面里任何脚本都能把这串值读出来。请求头里有没有 Cookie、脚本能不能读到，才把两种存放分开。",
-      "example": "HttpOnly Cookie 自动上请求头，脚本读不到：\n\n```http\nSet-Cookie: sid=...; HttpOnly; Secure; SameSite=Lax\n```\n\n```js\ndocument.cookie               // 没有 sid\n// 若改存 localStorage：请求不会自动带，XSS 却能读出\n```",
-      "task": "分别设置 HttpOnly Cookie 和 localStorage 项，检查 document.cookie、请求头和关闭浏览器后的残留。",
-      "answer": "HttpOnly Cookie：会出现在匹配请求的请求头里；document.cookie 读不到它；没有过期时间时关掉浏览器后会话消失。\nlocalStorage：刷新还在；请求头里不会自动出现；同源脚本可以读到。\n\n自动附带和脚本可读是两道分开的检查。",
+      "core": "匹配主机、路径、〔Secure｜只在 HTTPS 上发送；在 localhost 上这条限制放开〕和〔SameSite｜限制跨站请求带不带这枚 Cookie〕的 Cookie，会放进请求的 Cookie 头。〔HttpOnly｜禁止脚本通过 document.cookie 读取这枚 Cookie〕不阻止这次发送。同源 fetch 的〔credentials｜决定这次请求带不带 Cookie，以及收不收 Set-Cookie〕默认是 same-origin，所以这次请求仍会带上它。没有写 Domain 时，它只回到设置它的那台主机，不带到子域。没有写 Path 时，路径取设置它的那个 URL 的目录，不是整站。没有写 SameSite 时，Chrome 和 Firefox 按 Lax 处理。〔localStorage｜按源保存的页面存储〕的源包含协议、主机和端口。它不会进入请求头。同源脚本可以用 getItem 读到它；要让接口看见，只能由脚本自己写进请求头。没有 Max-Age 或 Expires 的是会话 Cookie，浏览器结束会话时删除。开了恢复会话时，关掉窗口再打开，它仍可能还在。localStorage 没有到期时间，普通窗口关掉再开还在。",
+      "why": "学习者把刷新后还在当成两种存放相同。令牌放进 localStorage 后，同源请求的 Cookie 头里没有它，接口返回 401。\n\n改成脚本把这串值放进 Authorization 后，请求头里有了，但页面上任何同源脚本都能读出来。HttpOnly 的会话 Cookie 相反：document.cookie 没有这项，匹配的同源请求头里却有 Cookie。",
+      "example": "登录响应种下一枚整站会话。控制台读不到 sid。同源 fetch 没有手写头，请求里仍有 Cookie。\n\n```http\nHTTP/1.1 200 OK\nSet-Cookie: sid=7f3a; HttpOnly; Secure; SameSite=Lax; Path=/\n```\n\n```js\ndocument.cookie\n// 没有 sid\n\nfetch(\"/orders\")\n// 同源，credentials 默认 same-origin\n// Cookie: sid=7f3a\n```\n\n同一枚 Cookie 若没写 Path=/，而设置它的地址是 /api/login，默认路径是 /api。接下来对 /orders 的请求头里没有 sid。\n\n```http\nSet-Cookie: sid=7f3a; HttpOnly; Secure; SameSite=Lax; Path=/api\n```\n\n把同一串值放进 localStorage，再由脚本抄进 Authorization。Cookie 头里没有它。getItem 能读出整串。\n\n```js\nlocalStorage.setItem(\"token\", \"7f3a\")\nfetch(\"/orders\", {\n  headers: { Authorization: \"Bearer \" + localStorage.getItem(\"token\") },\n})\n```\n\n页面在 https://app.example，接口在 https://api.example。sid 是 api.example 种下的。默认 fetch 跨源不带 Cookie，响应里的 Set-Cookie 也不会被收下。改成 include 之后，请求头里有 Cookie。这两个主机是同一站点，SameSite=Lax 不会挡住这次请求。\n\n```js\nfetch(\"https://api.example/orders\")\n// 没有 Cookie\n\nfetch(\"https://api.example/orders\", { credentials: \"include\" })\n// Cookie: sid=7f3a\n```\n\n脚本要读到正文，响应必须写出具体源，并允许凭证。〔Access-Control-Allow-Origin｜响应头，写明哪个源的脚本可以读这次响应〕不能是星号。来源按请求变化时加上 Vary: Origin，避免把这一份响应缓存给别的源。\n\n```http\nHTTP/1.1 200 OK\nAccess-Control-Allow-Origin: https://app.example\nAccess-Control-Allow-Credentials: true\nVary: Origin\n```\n\n下面这一对不能用。星号和允许凭证放在一起时，浏览器不把正文交给脚本，响应里的 Set-Cookie 也不会种下。请求却可能已经带着 Cookie 发出去了。\n\n```http\nHTTP/1.1 200 OK\nAccess-Control-Allow-Origin: *\nAccess-Control-Allow-Credentials: true\n```\n\n没有到期时间的那一枚跟会话走。写了 Max-Age 的按秒数到期，不跟这次开关窗口走。浏览器若恢复会话，第一枚关掉窗口后仍可能还在。\n\n```http\nSet-Cookie: sid=7f3a; HttpOnly; Secure; SameSite=Lax; Path=/\nSet-Cookie: stay=7f3a; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=1209600\n```",
+      "task": "设置一枚 HttpOnly、Path=/ 的 Cookie，和一项 localStorage。在控制台读 document.cookie 和 getItem，再发一次同源 fetch，看请求头里有没有 Cookie、有没有你没手写的 Authorization。把 Path 改成 /api 后再请求 /orders，确认这枚 Cookie 不在头里。再从另一个源 include 调用本接口：记下请求头有没有 Cookie，以及 Allow-Origin 写成星号时脚本能否读到正文。",
+      "answer": "1. HttpOnly 且 Path=/ 的 Cookie 会出现在匹配的同源请求的 Cookie 头里。document.cookie 读不到它。\n\n2. localStorage 刷新后还在，请求头里不会自己出现。同源脚本 getItem 能读到。只有脚本把它写进请求头，接口才看得见。\n\n3. Path 是 /api 时，对 /orders 的请求头里没有这枚 Cookie。\n\n4. 没有 Max-Age 或 Expires 时，它跟会话走。浏览器恢复会话时，关掉窗口后它仍可能还在。\n\n5. 跨源默认 fetch 的请求头没有 Cookie。改成 include 后可以有。响应的 Allow-Origin 必须是页面那个具体源，并且 Allow-Credentials 为 true，脚本才读得到正文。星号源时正文读不到。",
       "keywords": "Cookie HttpOnly SameSite Secure localStorage 会话",
       "origin": "本地库《图解 HTTP》Cookie 签发与回传页",
       "diagram": "library-assets/illustrated-basics/http-p0039.png",
       "deep": [
         {
-          "title": "和导论",
-          "body": "浏览器安全管谁读凭证、谁跑脚本见 `browser-security-what`。本课专讲 Cookie 与 localStorage。"
+          "title": "和相邻课",
+          "body": "SameSite、Secure 各挡什么见 `cookie-set-attributes`。预检和来源名单的其余情况见 `fetch-credentials`。带自定义请求头时，预检响应也要允许凭证。"
         },
         {
-          "title": "自动附带与脚本可读",
-          "body": "Cookie 按域、路径和 SameSite 决定是否附在请求上。HttpOnly 挡住脚本读取。localStorage 只留在该源页面里，请求不会自动带上，同源脚本却能读到这项。"
+          "title": "默认 Lax 的两分钟",
+          "body": "显式写成 SameSite=Lax 时，跨站只在安全方法的顶层导航上附带，跨站 POST 不带。没写 SameSite、由浏览器补成 Lax 时，设置之后两分钟内的跨站 POST 仍可能带上。SameSite=None 必须同时写 Secure。"
         },
         {
-          "title": "怎样自己验证",
-          "body": "分别设置 HttpOnly Cookie 和一项 localStorage。在控制台读 document.cookie，在网络面板看下一请求的请求头，再关掉浏览器重开。Cookie 看得到头、读不到脚本；存储项相反。"
+          "title": "主机和源",
+          "body": "Cookie 没写 Domain 时只回到设置它的主机，www 和 api 不会互相携带。localStorage 按源分开，http 与 https 不是同一份存储。隐私窗口里的 localStorage 要等最后一个隐私窗口关掉才清。"
         }
       ],
       "since": "Cookie",
       "points": [
-        "Cookie 按属性自动附在匹配的请求上",
-        "HttpOnly 阻止脚本读取该 Cookie",
-        "localStorage 不自动发送，同源脚本可以读取"
+        "匹配主机、路径、Secure 和 SameSite 的 Cookie 进入 Cookie 头，HttpOnly 不阻止这次发送",
+        "document.cookie 读不到 HttpOnly Cookie",
+        "localStorage 按源保存且不进入请求头，同源脚本可以读取",
+        "跨源 fetch 默认不带 Cookie；include 之后，Allow-Origin 必须是具体源且允许凭证，脚本才读得到正文"
       ],
       "references": [
         [
@@ -9274,6 +9275,14 @@
         [
           "MDN：localStorage",
           "https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage"
+        ],
+        [
+          "MDN：Request.credentials",
+          "https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials"
+        ],
+        [
+          "MDN：Access-Control-Allow-Credentials",
+          "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Access-Control-Allow-Credentials"
         ]
       ]
     },
@@ -18428,11 +18437,11 @@
       "title": "写接口分成校验、用例、事务和响应",
       "prompt": "在控制器里直接 new 实体并 save，为什么改表字段或业务规则时，HTTP 接口形状也会被动一起改？",
       "promptAnswer": "控制器只接收 HTTP、调用用例，并返回状态码与问题详情。实体与表结构留在持久化。若在控制器里直接操作实体，表字段会进入请求或响应；改表或改规则就会迫使接口契约一起改。",
-      "core": "Spring Boot 的一次写请求分成几段，每段只做自己的事。控制器把 HTTP 变成一次用例调用，并负责状态码和问题详情，不写业务判断。请求体用单独的类型承接，上面做字段校验，例如非空和长度。校验失败在进入用例前就变成 400。用例是一个应用服务方法，里面是这次业务规则和事务边界：哪些写入必须一起提交，失败就一起回到事务开始前。持久化通过仓储完成，实体和表的对应留在这一层。返回给页面的是响应类型，只含契约里的字段，不把实体、懒加载关联和口令哈希交出去。这样改表时改仓储和实体，改文案和状态码时改控制器，改“能不能下单”时改用例。全栈主线里说的用例，指的就是这段应用服务。",
-      "why": "学习者会在控制器里直接新建实体并保存，以为这样最省事。页面或表字段一改，事务和 HTTP 响应一起被牵动，规则也无法单独测试。校验、用例和响应拆开后，响应里不再出现实体的全部字段，才说明接口契约没有绑定表结构。",
-      "example": "控制器校验 → 应用服务事务 → 返回订单号：\n\n```java\n@PostMapping(\"/orders\")\nOrderId place(@Valid CreateOrder req) {\n  return orderApp.place(req); // @Transactional 内写单+扣库存\n}\n```",
+      "core": "写请求按校验、用例、持久化和响应分开。全栈主线里说的用例，指的就是这段应用服务。控制器只接 HTTP：把请求交给用例，再按结果写状态码。它不新建订单实体，也不在方法里写 SQL。请求类型带上字段约束。约束失败时，请求进不了用例，响应是 400。事务边界在用例的方法上：订单和库存必须一起提交或一起撤销。库存不足是业务失败，离开用例后由统一处理写成〔问题详情｜带 type 与 status 的 JSON〕，不在控制器里写。持久化通过〔仓储｜按标识保存和取出实体的类型〕完成。响应类型只放契约字段。订单实体的列、〔懒加载｜关联被访问时才查询〕的关联、密码散列都不进这个类型。改表时改仓储和实体，改状态码时改控制器，改能不能下单时改用例。",
+      "why": "学习者会在控制器里直接新建实体并保存。表上多一列，请求和响应就跟着改，业务规则也不能单独测。响应类型里没有实体的全部字段，才说明接口契约没有绑在表结构上。",
+      "example": "同一笔下单：商品标识不能为空白，数量必须大于 0，订单和库存在同一事务里提交，成功时响应是 201 和订单号。\n\n```java\nrecord CreateOrder(@NotBlank String sku, @Positive int qty) {}\n\nrecord OrderCreated(String id) {}\n```\n\n类路径上要有 Bean Validation 的实现，否则 @Valid 不会检查这些约束。方法直接返回对象时，Spring MVC 的默认状态码是 200。要 201，把状态码写在响应上。\n\n```java\n@RestController\nclass OrderController {\n  private final OrderApp orders;\n\n  @PostMapping(\"/orders\")\n  ResponseEntity<OrderCreated> place(@Valid @RequestBody CreateOrder req) {\n    OrderCreated created = orders.place(req);\n    return ResponseEntity.status(HttpStatus.CREATED).body(created);\n  }\n}\n```\n\n数量不是正数时，place 不会执行，响应是 400。控制器不调用仓储。\n\n```java\n@Service\nclass OrderApp {\n  private final OrderRepository orders;\n  private final Stock stock;\n\n  @Transactional\n  public OrderCreated place(CreateOrder req) {\n    if (!stock.deductIfAvailable(req.sku(), req.qty())) {\n      throw new InventoryExhausted();\n    }\n    return new OrderCreated(orders.insert(req.sku(), req.qty()));\n  }\n}\n\nclass InventoryExhausted extends RuntimeException {}\n```\n\n库存不足抛出运行时异常，这次事务回滚。把它写成 409 的问题详情，见 `spring-mvc-exception`。\n\n```java\ninterface OrderRepository {\n  String insert(String sku, int qty);\n}\n```\n\ninsert 后面才是表和实体。响应类型只有订单号，没有实体的列。",
       "task": "拿一个现有的保存接口，标出校验、规则、事务、SQL 和响应各在哪个类型里。若都在控制器，拆出用例方法，并确认响应类型里没有实体的全部字段。",
-      "answer": "校验应在请求类型里。\n规则和事务在用例方法里。\nSQL 在仓储里。\n响应类型只含契约字段。\n\n若这些原来都在控制器，拆出用例后，控制器不再拼语句，响应里也没有实体的全部列。\n库存不足由统一处理变成约定的失败，而不是控制器把表异常直接写进响应。\n实体的全部字段不应出现在响应类型里。",
+      "answer": "校验在请求类型上。数量不是正数时，用例方法不会执行，响应是 400。\n规则和事务在用例方法上。库存不足抛出运行时异常，事务回滚。\n写入经过仓储，不在控制器里写 SQL。\n响应类型只有契约字段，例如订单号。实体的列不在这个类型里。\n\n库存不足由统一处理变成 409 的问题详情，不在控制器里把表异常写进响应。",
       "keywords": "Spring Boot Controller DTO 事务 校验",
       "deep": [
         {
@@ -18440,15 +18449,15 @@
           "body": "页面提交的 JSON 对应请求类型。页面成功后读取的字段对应响应类型。两边多出来的字段都会在联调时变成猜测。"
         },
         {
-          "title": "异常怎样离开用例",
-          "body": "用例抛出的业务失败要变成问题详情，而不是堆栈 HTML。这是 `spring-mvc-exception` 那一课。控制器捕获后返回 200，页面会把它当成成功。"
+          "title": "相关课",
+          "body": "库存不足写成 409 的问题详情，而不是 HTML 错误页，见 `spring-mvc-exception`。运行时异常怎样让事务回滚，见 `spring-transaction`。"
         }
       ],
       "since": "path",
       "points": [
         "写请求分成校验、用例、持久化和响应",
-        "事务边界在用例上，不在控制器里拼 SQL",
-        "响应只含契约字段，不直接返回持久化实体"
+        "事务边界在用例上；控制器不写 SQL，也不直接保存实体",
+        "响应只含契约字段；字段校验失败在进入用例前就是 400"
       ],
       "references": [
         [
@@ -18458,6 +18467,14 @@
         [
           "Spring：Bean 校验",
           "https://docs.spring.io/spring-framework/reference/core/validation/beanvalidation.html"
+        ],
+        [
+          "Spring：声明式事务",
+          "https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative.html"
+        ],
+        [
+          "Spring：ResponseEntity",
+          "https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-methods/responseentity.html"
         ]
       ]
     },
@@ -18467,33 +18484,37 @@
       "id": "fs-write-invariant",
       "title": "写入成功的定义是不变量已经提交",
       "prompt": "接口返回了 200，为什么仍可能没有订单，或者库存被扣成负数？",
-      "promptAnswer": "200 只说明这次响应的状态码。订单是否写入、库存是否够，要看事务和不变量是否已经提交。",
-      "core": "写操作的成功，是业务不变量已经在一个事务里提交，并且响应按契约描述了这个结果。下单的不变量可以是：有一行订单，对应库存减少且不小于 0，同一个幂等键只有一行。这些要在同一次提交里成立。应用里先查库存再在内存里减，两次请求都会看到够减。正确的做法是带条件的更新或在事务里锁定要改的行，让数据库拒绝第二次。幂等键有唯一约束，重复插入时读出第一次的结果并返回，而不是再下一单。事务回滚后，不应该已经发出不可收回的短信或消息；那些放到提交成功之后，或用 Outbox 和事务消息。缓存里的库存数不是不变量的存放处。返回 200 只是契约，它必须发生在提交成功之后。",
-      "why": "学习者会把接口返回成功当成订单已经按规则写好。两个并发请求把最后一件扣成负数，超时重试又多出一张单。条件更新只有一行受影响、重复键撞上唯一约束后仍返回第一张订单，才说明成功是不变量已经提交。",
-      "example": "最后一件用条件更新，影响行数分胜负：\n\n```sql\nUPDATE stock SET qty = qty - 1 WHERE sku=? AND qty >= 1;\n-- affected=1 成功；=0 失败返回\n```",
+      "promptAnswer": "200 只说明这次响应的状态码。订单行、库存不小于 0、同一个幂等键只有一行，要在同一次提交里成立。成功状态码写在这次提交之后。",
+      "core": "写操作的成功，是〔不变量｜必须一直成立的业务事实〕已经在一个事务里提交，并且响应按契约描述这个结果。下单时要同时成立三件：有一行订单，对应库存减少且不小于 0，同一个〔幂等键｜同一次提交重复发送时携带的同一个键〕只有一行。先用普通查询读到库存，再在内存里减，再把那个数写回去，两个请求都会写成自己算的数。库存停在后一次写入的值，两张订单都在。不加条件地执行 qty = qty - 1，后一次仍会减，库存可以变成负数。条件更新是在 UPDATE 的 WHERE 里写上库存不少于 1。影响行数为 1 才算扣到。为 0 就抛出运行时异常，整次事务回滚。也可以在同一事务里锁定要改的行再改。普通查询为什么不锁这行，见 `mysql-mvcc`。幂等键所在列有〔唯一约束｜禁止这一列出现两行相同的值〕。先查询有没有这行，挡不住两个同时到来的插入。冲突的那一次还没有扣库存，读出第一次的订单号并返回。成功状态码在用例方法正常返回之后才写入响应，此时事务已经提交。方法抛出运行时异常时事务回滚。控制器接住异常仍返回 200，响应里可以有订单号，数据库里没有这次订单。缓存里的库存数不是这个不变量的存放处。短信和上传放在提交成功之后，并且重复执行不会产生第二笔业务。要和订单同一次提交才算发出，用〔Outbox｜与业务写入同一次提交的待发消息表〕，见 `distributed-outbox`。",
+      "why": "学习者会把 200 当成订单已经按规则写好。两个请求都先读到库存 1，再写成内存里的 0，两张订单都会留下，库存停在后一次写入的值。不加条件地执行 qty = qty - 1，库存可以变成负数。条件更新只有一行受影响，重复的幂等键撞上唯一约束后仍返回第一张订单，才说明成功是不变量已经提交。",
+      "example": "同一笔下单要同时成立：订单行带唯一的幂等键，库存按条件减 1，成功状态码在事务提交之后才写。\n\n```sql\nCREATE TABLE orders (\n  id VARCHAR(36) PRIMARY KEY,\n  idempotency_key VARCHAR(64) NOT NULL,\n  sku VARCHAR(64) NOT NULL,\n  UNIQUE (idempotency_key)\n);\n```\n\nsku 是主键或唯一索引时，InnoDB 会锁住被更新的索引记录。第二次条件更新等到第一次提交，再按提交后的库存判断 WHERE。库存已是 0 时影响行数为 0。\n\n```sql\nUPDATE stock\nSET qty = qty - 1\nWHERE sku = ? AND qty >= 1;\n```\n\n有幂等键时先插入订单行，再扣库存。重复键异常在用例方法里接住时，这次事务仍会提交，所以冲突的分支里不能已经扣过库存。\n\n```java\n@Service\nclass OrderApp {\n  private final OrderRepository orders;\n  private final Stock stock;\n\n  @Transactional\n  public OrderCreated place(String idempotencyKey, String sku) {\n    try {\n      String id = orders.insert(idempotencyKey, sku);\n      if (stock.deductOneIfAvailable(sku) != 1) {\n        throw new InventoryExhausted();\n      }\n      return new OrderCreated(id);\n    } catch (DuplicateKeyException ex) {\n      return new OrderCreated(orders.findIdByKey(idempotencyKey));\n    }\n  }\n}\n\nclass InventoryExhausted extends RuntimeException {}\n\nclass JdbcStock implements Stock {\n  private final JdbcTemplate jdbc;\n\n  public int deductOneIfAvailable(String sku) {\n    return jdbc.update(\n        \"UPDATE stock SET qty = qty - 1 WHERE sku = ? AND qty >= 1\",\n        sku);\n  }\n}\n```\n\nJdbcTemplate.update 的返回值是影响行数。Spring 把数据库的重复键错误译成 DuplicateKeyException。这次事务若已经做过普通查询，重复读可能还看不见对方刚提交的那一行，所以读第一次的订单号放在冲突之后。\n\n```java\n@PostMapping(\"/orders\")\nResponseEntity<OrderCreated> place(@RequestBody CreateOrder req) {\n  OrderCreated created = orders.place(req.idempotencyKey(), req.sku());\n  return ResponseEntity.status(HttpStatus.CREATED).body(created);\n}\n```\n\nplace 正常返回时，声明式事务已经提交，然后才写 201。place 抛出运行时异常时，这次插入和扣减一起回滚。外层接住异常再返回 200，客户端看到成功，数据库里没有这张订单。",
       "task": "写下你这个功能的不变量，标出哪一条由事务保证、哪一条由唯一约束保证、哪一条绝不能只放在缓存里。再预测两个并发请求同时扣最后一件的结果。",
-      "answer": "成功是不变量已经提交，并且响应和这个结果一致，不是方法返回了 200。\n\n两个请求同时买最后一件：都先读到 1 再在内存里减，可能各写各的，库存被写成后一次的值，两笔订单都在。\n改成「仅当库存大于 0 才减 1」的条件更新，或锁住这行再改，只有一笔影响 1 行，另一笔失败并回滚。\n同一个幂等键靠唯一约束认出第二次，返回第一次的订单，而不是再扣一次。\n缓存里的库存数不承担这个不变量。",
+      "answer": "成功是不变量已经提交，并且响应和这个结果一致。成功状态码写在提交之后。\n接住回滚异常再返回 200 时，数据库里可以没有这张订单。\n\n两个请求同时买最后一件：都先读到 1 再写成内存里的 0，两笔订单都可能提交，库存停在后一次写入的值。\n不加条件的 qty = qty - 1 可以把库存减成负数。\n改成仅当库存不少于 1 才减 1，只有一笔影响 1 行并提交，另一笔影响 0 行，抛出运行时异常并回滚。\n同一个幂等键靠唯一约束认出第二次。插入冲突时返回第一次的订单，并且这次还没有扣库存。\n缓存里的库存数不承担这个不变量。短信放在提交成功之后。",
       "keywords": "事务 不变量 唯一约束 幂等 条件更新",
       "deep": [
         {
           "title": "和页面重试的关系",
-          "body": "页面超时后用原幂等键再提交。服务端必须把第二次认成第一次。没有唯一约束的“先查有没有”挡不住两个同时到来的请求。"
+          "body": "页面超时后用原来的幂等键再提交。服务端必须把第二次认成第一次。没有唯一约束时，先查询有没有这行，挡不住两个同时到来的插入。"
         },
         {
-          "title": "提交之后才做的事",
-          "body": "发短信、发消息、上传文件放在提交成功之后，并允许重复执行而不产生第二笔业务。需要和数据库一起成立时，用 Outbox 或事务消息，见后面的分布式课。"
+          "title": "相关课",
+          "body": "普通查询为什么挡不住并发扣减，见 `mysql-mvcc`。要和订单同一次提交才发出的消息，见 `distributed-outbox`。"
         }
       ],
       "since": "path",
       "points": [
-        "成功指不变量已提交，不是仅返回了状态码",
-        "并发修改靠条件更新、锁或唯一约束，不靠先查再改",
-        "缓存和外部副作用不在这次提交的保护里"
+        "成功指不变量已提交，成功状态码写在提交之后",
+        "并发扣减用条件更新或锁定读，不靠先读再写入算好的数",
+        "同一个幂等键由唯一约束保住只有一行，缓存不存放这个不变量"
       ],
       "references": [
         [
           "Spring：声明式事务",
           "https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative.html"
+        ],
+        [
+          "Spring：JdbcTemplate",
+          "https://docs.spring.io/spring-framework/reference/data-access/jdbc.html"
         ],
         [
           "MySQL 8.4：InnoDB 锁",
@@ -18505,39 +18526,39 @@
       "track": "java",
       "group": "全栈主线",
       "id": "fs-read-shape",
-      "title": "查询返回用例要的形状，并说明它有多新",
-      "prompt": "详情接口直接返回实体，为什么页面会看到不该看的字段，或者突然多出一次查询？",
-      "promptAnswer": "实体上有内部字段和懒加载。详情只返回契约字段，关联用明确查询取出，不要在序列化时再查。",
-      "core": "读接口返回的是这个用例需要的形状，不是表的全部列，也不是持久化实体本身。实体上有关联时，序列化可能触发额外查询，也可能把内部状态交出去。用明确的查询或投影取出契约里的字段。列表要有稳定的顺序和分页方式，深页不用越来越大的偏移。从库或缓存上的读，要说明允许旧多少：刚提交的订单若必须立刻可见，就读主库上这次提交的结果，不要默认从库已经追上。空结果是 404 还是空列表，写进契约，页面才知道画哪一种。读接口不要顺便改数据。",
-      "why": "学习者会让详情接口直接返回实体，以为字段最全就最省事。页面看到不该看的列，序列化时又突然多出一次查询，空结果和查询失败也分不清。响应里划掉契约没有的字段、空结果有明确状态码，才说明读的是用例的形状。",
-      "example": "详情 DTO 只含需要的字段，一次查清：\n\n```text\n返回：id、status、amount、productName\nproductName 来自联接/明确查询，不是序列化时懒加载 N+1\n无权 → 404/403，不泄露存在性细节按约定\n```",
-      "task": "列出一个详情接口的响应字段，划掉实体上有、但契约不该有的字段。再写明这次读的是主库还是允许延迟的副本，空结果用什么状态码。",
-      "answer": "详情只返回用例要的字段，例如编号、状态、金额和商品名。\n实体上多出来的内部字段、口令哈希、懒加载关联划掉。\n关联用一次明确查询或联接取出，不在序列化时再查。\n\n刚提交、页面必须立刻看见的数据，读这次提交所在的库；允许延迟的列表才读副本。\n没有这条资源按契约返回 404 或约定的空结果，不要和查询失败混成同一种界面。",
+      "title": "详情接口只返回约定的字段，并写明读主库还是允许延迟的副本",
+      "prompt": "详情接口直接返回订单实体，为什么页面会多出内部字段，或者刚下单成功打开详情却像没有这张订单？",
+      "promptAnswer": "实体上有契约没约定的字段，序列化时还可能再查关联。详情只返回约定字段。刚提交、页面必须马上看见的，读主库；从库要写明允许旧多久。",
+      "core": "详情接口返回的是契约里约定的那几个字段，不是订单表的全部列，也不是〔实体｜映射到表行、由持久化会话管理的对象〕本身。把实体交给序列化，内部字段会进响应，还没查出的关联也可能再发一条 SELECT。用一条写明列和联接的查询，装进只含这些字段的类型再返回。列表要有稳定顺序和分页；深页不要用越来越大的〔OFFSET｜先跳过前 N 行再取一页〕。还要写明这次读允许旧多久：刚提交、页面必须马上看见的订单，读〔主库｜接受这次提交的那台数据库〕。〔从库｜重放主库二进制日志的副本〕或缓存可以比主库旧，复制或失效还没完成时，详情会像没有这张订单。允许旧多久要写在这次读取上，不能默认从库已经跟上。没有这条资源是 404 还是空列表，写进契约。读接口不要顺便改数据。",
+      "why": "直接返回实体时，响应里会出现口令哈希、版本号这类契约没有的字段，序列化碰到关联还会再查一次。刚下单成功立刻打开详情，若这次读走了还没跟上的从库，查询结果是空的，页面会画成订单不存在。响应只有约定字段，并且写明这次是主库还是允许延迟的副本，这两件事才分开。",
+      "example": "详情类型只有契约里的四项。查询在语句里取出商品名，控制器返回这个类型，不返回订单实体。\n\n```java\npackage lab.order;\n\nimport java.math.BigDecimal;\nimport java.util.Optional;\nimport org.springframework.data.jpa.repository.Query;\nimport org.springframework.data.repository.Repository;\nimport org.springframework.http.HttpStatus;\nimport org.springframework.web.bind.annotation.GetMapping;\nimport org.springframework.web.bind.annotation.PathVariable;\nimport org.springframework.web.bind.annotation.RestController;\nimport org.springframework.web.server.ResponseStatusException;\n\npublic record OrderDetail(Long id, String status, BigDecimal amount, String productName) {}\n\ninterface OrderRepository extends Repository<Order, Long> {\n  @Query(\"\"\"\n      select new lab.order.OrderDetail(o.id, o.status, o.amount, p.name)\n      from Order o join o.product p\n      where o.id = :id\n      \"\"\")\n  Optional<OrderDetail> findDetailById(Long id);\n}\n\n@RestController\nclass OrderController {\n  private final OrderRepository orders;\n\n  OrderController(OrderRepository orders) {\n    this.orders = orders;\n  }\n\n  @GetMapping(\"/orders/{id}\")\n  OrderDetail detail(@PathVariable long id) {\n    return orders.findDetailById(id)\n        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));\n  }\n}\n```\n\n刚下单、页面必须马上看见这一笔时，上面这次查询走主库。订单列表若写明可以比主库旧，才把查询指到从库或缓存。无权看这张订单时返回 404 或 403，按对象授权那一课的约定，不返回别人的订单实体。\n\n```http\nHTTP/1.1 200 OK\nContent-Type: application/json\n\n{\"id\":42,\"status\":\"PAID\",\"amount\":19.00,\"productName\":\"笔记本\"}\n```",
+      "task": "列出一个详情接口的响应字段，划掉实体上有、但契约不该有的字段。再写明这次读的是主库，还是允许比主库旧的从库或缓存，以及没有这条资源时的状态码。",
+      "answer": "详情只返回契约约定的字段，例如编号、状态、金额和商品名。\n实体上多出来的内部字段、口令哈希、还没查出的关联划掉。\n商品名在这一条查询的联接里取出，不在序列化时再查。\n\n刚提交、页面必须马上看见的详情，读接受这次提交的主库。\n允许比主库旧的列表，才读从库或缓存，并写明允许旧多久。\n没有这条资源按契约返回 404 或约定的空结果，查询失败用另一种状态，页面才能分开画。",
       "keywords": "DTO 查询 分页 主从 延迟",
       "deep": [
         {
           "title": "和 N+1 的关系",
-          "body": "列表里每行再查一次作者，就是循环中的查询。在这一课把它收成一次联接或一次按标识批量查询，细节见 JPA 那一课。"
+          "body": "列表里每行再查一次商品名，就是循环中的查询。在这一课把它收成一次联接或一次按标识批量查询，细节见 JPA 那一课。"
         },
         {
           "title": "和页面的关系",
-          "body": "页面的服务器状态就是这份响应。字段名和空结果的状态码变了，页面的四种状态里有一种会画错。"
+          "body": "页面的服务器状态就是这份响应。字段名变了，或者空结果和查询失败共用一个状态码，页面的四种状态里有一种会画错。"
         }
       ],
       "since": "path",
       "points": [
-        "读接口返回契约字段，不直接序列化实体",
-        "关联数据用明确的查询，避免序列化时额外查询",
-        "要立刻看见的写入去读提交所在的库"
+        "读接口返回契约约定的字段，不直接序列化实体",
+        "关联列写在这次查询里，序列化时不再额外查询",
+        "刚提交且必须马上看见的读取走主库，从库或缓存要写明允许旧多久"
       ],
       "references": [
         [
-          "Spring Data JPA：仓储",
-          "https://docs.spring.io/spring-data/jpa/reference/repositories.html"
+          "Spring Data JPA：投影",
+          "https://docs.spring.io/spring-data/jpa/reference/repositories/projections.html"
         ],
         [
-          "MySQL 8.4：一致性读",
-          "https://dev.mysql.com/doc/refman/8.4/en/innodb-consistent-read.html"
+          "MySQL 8.4：复制",
+          "https://dev.mysql.com/doc/refman/8.4/en/replication.html"
         ]
       ]
     },
@@ -25811,36 +25832,56 @@
       "id": "schema-migration",
       "title": "表结构跟版本走，不要在生产上随手 ALTER",
       "prompt": "应用新版本依赖新列，数据库还是旧结构，启动后会怎样？",
-      "core": "模式迁移把每一次结构变化写成带版本号的脚本，按顺序在目标库执行。Flyway 一类工具记录已应用的版本，启动时只跑尚未应用的脚本。脚本必须可在空库和已有库上得到同一结果，禁止手改生产表却不入库。破坏性变更要分开发布：先加新列并双写，再切读，再删旧列。回滚应用版本时，数据库迁移往往不能对称倒退，回滚计划要单独写。本地、测试、生产必须跑同一套脚本，不要靠“我记得生产已经改过”。",
-      "why": "学习者会在生产控制台随手加列，仓库里的脚本却还是旧的。新实例从空库启动失败，故障时分不清是代码新还是库旧。空库能跑到当前版本、故意跳过一条脚本就停在该版本，才说明表结构跟版本走，而不是跟某次手工操作走。",
-      "example": "迁移要可从空库顺序跑到当前；跳步应失败在缺列：\n\n```bash\nmigrate up   # 空库 → 当前版本，应用能启动\n# 故意跳过「加幂等键」脚本 → 启动失败在缺列/约束\n```",
-      "task": "从空库跑到当前版本，再故意跳过一条脚本启动应用。记录失败点。写一条需要回填数据的迁移，说明为何不能和删列放在同一次发布。",
-      "answer": "从空库按版本跑到当前，应用才能启动。跳过一条脚本时，失败点应在启动或迁移检查，而不是线上第一笔请求。需要回填数据的变更不能和删列放在同一次发布，因为回滚应用不会自动把列和数据加回去。生产控制台加过的列必须写回仓库里的脚本。手工加列而脚本没改时，下一套空库会在同一步失败。",
+      "core": "模式迁移把每一次结构变化写成带版本号的脚本，放进版本库，在每个环境按同一顺序执行。〔Flyway｜按版本执行数据库脚本，并用历史表记下已应用的版本〕的版本脚本只应用一次。历史表〔flyway_schema_history｜记下已应用版本和校验和的表〕保存版本和〔校验和｜根据脚本内容算出的指纹，用来发现脚本在应用之后被改过〕。Spring Boot 在 classpath 上有 Flyway 时，启动过程调用 Flyway.migrate()。migrate 只跑尚未应用的版本；数据库已经在当前版本时，这次调用什么都不做。空库从第一版跑到当前，和一台按同样版本依次升级的旧库，得到同一套结构。一条 ALTER 不能既在空库又在已有库上各成功执行一遍。已经应用到下游环境的脚本不要再改，要改就新增一个更高版本。生产控制台手工 ALTER 若没有对应脚本，这台数据库和仓库就不是同一套结构。破坏性变更要拆开发布：先加新列并双写，再把读切到新列，再删旧列。Spring Boot 只调用 migrate，不会在回滚应用时倒放脚本。回滚应用版本时，数据库不会自动退回，回滚计划要单独写。",
+      "why": "学习者会在生产控制台加列，仓库里的脚本仍是旧的。新环境从空库建出来时没有那一列。\n\n已经应用过的脚本被改掉时，校验和与历史表不一致，启动停在迁移检查。空库能按版本跑到当前、再启动一次不再执行这些脚本、改过的旧脚本在校验和处失败，才说明结构跟版本走。",
+      "example": "同一套订单表，下面按 MySQL 写。版本顺序和校验和与具体数据库无关。Spring Boot 启动时调用 Flyway.migrate()。classpath 上再放 schema.sql，或把 ddl-auto 设成 update，结构就有了第二套来源。\n\n```properties\nspring.flyway.locations=classpath:db/migration\nspring.jpa.hibernate.ddl-auto=validate\n```\n\n空库先跑 V1，再跑 V2。已经应用过 V1 的库只跑 V2。两边到达 V2 之后结构相同。再启动一次时，历史表已经是 V2，这些文件不会再执行。\n\n```sql\n-- db/migration/V1__create_orders.sql\nCREATE TABLE orders (\n  id BIGINT PRIMARY KEY,\n  status_text VARCHAR(32) NOT NULL\n);\n```\n\n```sql\n-- db/migration/V2__add_status_code.sql\nALTER TABLE orders ADD status_code VARCHAR(32) NULL;\nUPDATE orders SET status_code = status_text WHERE status_code IS NULL;\nALTER TABLE orders MODIFY status_code VARCHAR(32) NOT NULL;\n```\n\nV2 只加列并回填，应用仍双写 status_text 和 status_code。读已经改用 status_code 之后，下一次发布才放入 V3。回滚应用不会把删掉的列和数据加回去。\n\n```sql\n-- 下一次发布：db/migration/V3__drop_status_text.sql\nALTER TABLE orders DROP COLUMN status_text;\n```\n\nV2 已经记入历史表之后再改这个文件，启动停在校验和。要修正就新增 V4，不要改 V2。\n\n生产控制台执行了 ALTER TABLE orders ADD COLUMN note VARCHAR(255)，仓库里没有对应版本。这台数据库有 note。从空库只跑 V1 到 V3 的新环境没有 note。\n\nV2 还没有在任何环境应用过时，从目录里删掉 V2、只留下 V3，migrate 仍会执行 V3，不会因为少了一个从未应用的文件而停住。实体已经映射 status_code 时，validate 让启动停在结构校验。ddl-auto 为 none、实体也不映射这一列时，应用能启动，第一笔用到该列的 SQL 才失败。\n\nMySQL 的 DDL 会在语句前后隐式提交。V2 若在 MODIFY 处失败，前面的 ADD COLUMN 可能已经留下。Flyway 把 V2 标成失败，不会自动整段撤销。",
+      "task": "从空库按版本跑到当前，确认应用能启动。再启动一次，确认已应用的脚本不会再执行。改一份已经应用过的脚本，记录启动停在哪里。写一条先加列并回填的脚本，说明删旧列为什么不能放在同一次发布。",
+      "answer": "1. 从空库按版本跑到当前，应用才能启动。数据库已经在当前版本时，再次启动不会再执行这些脚本。\n\n2. 修改已经应用过的脚本后，启动停在校验和与历史表不一致，而不是等到第一笔请求。\n\n3. 加列和回填放在同一次发布。删旧列要等读已经切到新列之后，单独一次发布。回滚应用不会把列和数据加回去。\n\n4. 生产控制台手工加上的列，要写成更高版本的脚本。没有对应脚本时，下一套空库不会有这一列。",
       "keywords": "Flyway schema migration 数据库迁移 版本",
       "deep": [
         {
           "title": "和 JPA ddl-auto",
-          "body": "开发期自动更新结构不能拿到生产。生产只跑迁移脚本。实体和脚本不一致时，以脚本为权威，实体跟着改。"
+          "body": "嵌入式数据库且没有 Flyway 或 Liquibase 时，〔ddl-auto｜Hibernate 在启动时创建、校验或更新表结构的开关〕默认是 create-drop；其他情况默认是 none。生产不要靠 update 改表。已经使用 Flyway 时，不要再同时用 schema.sql 或 ddl-auto 生成结构。实体和脚本不一致时，以脚本为准，实体跟着改。要在启动时发现实体多了一列，用 validate，不要用 update 把列补上。"
         },
         {
-          "title": "锁",
-          "body": "大表加索引或改列会锁表。迁移要写预计锁时间和是否在线 DDL。把它当成普通发版步骤，而不是启动时的惊喜。"
+          "title": "校验和与基线",
+          "body": "已应用脚本的校验和写在历史表里。改文件会让下一次 migrate 在启动时失败。修正用更高版本，不要改旧文件。生产库已经有表、还没有历史表时，用〔baseline｜给已有库记一个版本，该版本及更早的脚本不再执行〕标出当前版本，不要把 CREATE 再跑一遍。"
+        },
+        {
+          "title": "失败与锁",
+          "body": "Flyway 默认把每个脚本包在一个事务里。失败时，能回滚才回滚，并停在这一版，不再跑后面的版本。MySQL 的 DDL 会在语句前后隐式提交，失败后可能留下已经提交的变更。历史表把这次标成失败，需要人工清理，再用〔repair｜修正历史表里失败的记录〕去掉失败条目。加二级索引在 InnoDB 可以〔INPLACE｜在原表上改结构，不把整表拷成新表〕，并允许并发写入，开始和结束仍会拿短暂的〔元数据锁｜改表开始和结束时挡住其他会话的锁〕。加列不一定要重建表。耗时长的变更要写下算法和预计锁时间。Flyway 建议在应用启动时执行 migrate，以免代码和表结构错开；长时间锁表要写进发布计划，而不是等每台副本启动才发现。"
         }
       ],
       "since": "Flyway-style",
       "points": [
-        "每次结构变化是带版本的脚本，按顺序应用",
-        "空库和旧库跑完同一套脚本后结构应一致",
-        "删列和改语义要拆发布，回滚应用不能假设库会自动退回"
+        "版本脚本按版本顺序只应用一次，已是当前版本时 migrate 不再执行",
+        "空库从第一版跑到当前，应与按同样版本升级的旧库结构一致",
+        "已应用的脚本不要改；删列和回填拆开发布，回滚应用不会把数据库退回"
       ],
       "references": [
+        [
+          "Flyway：Versioned migrations",
+          "https://documentation.red-gate.com/flyway/flyway-concepts/migrations/versioned-migrations"
+        ],
         [
           "Flyway：Migrations",
           "https://documentation.red-gate.com/flyway/flyway-concepts/migrations"
         ],
         [
-          "Spring Boot：数据库迁移",
-          "https://docs.spring.io/spring-boot/reference/data/sql.html"
+          "Flyway：事务处理",
+          "https://documentation.red-gate.com/flyway/flyway-concepts/migrations/migration-transaction-handling"
+        ],
+        [
+          "Flyway：baseline",
+          "https://documentation.red-gate.com/flyway/reference/commands/baseline"
+        ],
+        [
+          "Spring Boot：初始化数据库",
+          "https://docs.spring.io/spring-boot/how-to/data-initialization.html"
+        ],
+        [
+          "MySQL：Online DDL",
+          "https://dev.mysql.com/doc/refman/8.4/en/innodb-online-ddl-operations.html"
         ]
       ]
     },
@@ -32249,9 +32290,9 @@
       "title": "控制器里抛出的异常要变成契约里的 HTTP 响应，不要变成默认的 HTML 错误页",
       "prompt": "服务方法抛了库存不足，为什么浏览器收到的是一段 Tomcat 的 HTML？",
       "promptAnswer": "业务异常若没被收成契约 JSON，容器会吐 HTML 错误页。校验、冲突、未知错误要写成同一形状的 JSON 响应。",
-      "core": "Spring MVC 在控制器方法返回之后，由异常解析器把未捕获的异常变成响应。@ExceptionHandler 或 ProblemDetail 应输出与前端约定的状态码和 JSON，而不是容器的 HTML 错误页。校验失败、找不到资源、业务冲突、未处理的服务器错误，要分成不同的处理器，并写上稳定的 type。异常处理器自己再抛错，才会落到容器默认页。过滤器里的失败发生在控制器之前，也要有同一形状的响应，否则网关和浏览器仍会看到另一种 body。这节负责生成契约；前端 api-error-contract 负责消费。",
+      "core": "Spring MVC 在控制器方法返回之后，由异常解析器把未捕获的异常变成响应。@ExceptionHandler 写出的〔ProblemDetail｜RFC 9457 的错误正文，含 type、title、status〕应带上与前端约定的状态码和 JSON，而不是容器的 HTML 错误页。校验失败、找不到资源、业务冲突、未处理的服务器错误，要分成不同的处理器，并写上稳定的 type。异常处理器自己再抛错，才会落到容器默认页。过滤器里的失败发生在控制器之前，也要有同一形状的响应，否则网关和浏览器仍会看到另一种 body。这节负责生成契约；前端 api-error-contract 负责消费。",
       "why": "学习者会以为服务里抛出了明确的业务异常，浏览器就会收到约定的错误。用户看到的是容器的 HTML 错误页，联调把前后端一起判成接口坏了。三种失败的类型都是 JSON 而不是 HTML，才说明异常在离开容器前被映射成了契约。",
-      "example": "领域异常映射成稳定 problem+json：\n\n```java\n@ExceptionHandler(InventoryExhaustedException.class)\nResponseEntity<ProblemDetail> on(InventoryExhaustedException e) {\n  // 409 + application/problem+json，type=inventory-exhausted\n}\n```",
+      "example": "同一笔 POST /orders。下面每一种都要留下状态码、Content-Type 和 type。有一种正文以 <html 开头，这一课就还没做完。这些正文由〔RestControllerAdvice｜集中写 @ExceptionHandler 的类，返回值直接变成响应正文〕写出：\n\n```java\n@RestControllerAdvice\nclass OrderErrors {\n  @ExceptionHandler(MethodArgumentNotValidException.class)\n  ProblemDetail invalid(MethodArgumentNotValidException ex) {\n    ProblemDetail body = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);\n    body.setType(URI.create(\"https://api.example.com/problems/invalid-body\"));\n    body.setTitle(\"请求体没有通过校验\");\n    return body;\n  }\n\n  @ExceptionHandler(InventoryExhaustedException.class)\n  ProblemDetail exhausted(InventoryExhaustedException ex) {\n    ProblemDetail body = ProblemDetail.forStatus(HttpStatus.CONFLICT);\n    body.setType(URI.create(\"https://api.example.com/problems/inventory-exhausted\"));\n    body.setTitle(\"库存不足\");\n    return body;\n  }\n\n  @ExceptionHandler(OrderNotFoundException.class)\n  ProblemDetail missing(OrderNotFoundException ex) {\n    ProblemDetail body = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);\n    body.setType(URI.create(\"https://api.example.com/problems/order-not-found\"));\n    body.setTitle(\"订单不存在\");\n    return body;\n  }\n\n  @ExceptionHandler(Exception.class)\n  ProblemDetail unknown(Exception ex) {\n    ProblemDetail body = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);\n    body.setTitle(\"服务器内部错误\");\n    return body;\n  }\n}\n```\n\n字段没通过校验。数量缺失或小于等于 0 时，〔MethodArgumentNotValidException｜带 @Valid 的请求体没通过校验，在控制器方法执行前抛出〕先抛出。方法体不执行，库存不变。\n\n```http\nHTTP/1.1 400 Bad Request\nContent-Type: application/problem+json\n\n{\"type\":\"https://api.example.com/problems/invalid-body\",\"title\":\"请求体没有通过校验\",\"status\":400}\n```\n\n请求体不是合法 JSON 时是〔HttpMessageNotReadableException｜请求体解析失败，常见于 JSON 语法错误〕，也是 400，type 用另一个值。不要和字段校验写成同一个 type。\n\n库存为 0。用例抛出 InventoryExhaustedException，并让它离开带事务的方法。运行时异常离开事务边界后，这一笔回滚，处理器再写成 409。\n\n```http\nHTTP/1.1 409 Conflict\nContent-Type: application/problem+json\n\n{\"type\":\"https://api.example.com/problems/inventory-exhausted\",\"title\":\"库存不足\",\"status\":409}\n```\n\n在用例里把这个异常 catch 住并正常返回时，事务按成功结束。这时响应即使写成 409，数据库里也可能已经有订单行。\n\n订单 id 不存在，是 404，type 为 order-not-found，Content-Type 仍是 application/problem+json。路径上没有控制器方法时，容器按错误页返回 text/html。这两种 404 不是同一次处理。\n\n没人接住的空指针是 500。type 用 about:blank 或一个内部错误值。正文不放堆栈，也不放 SQL。\n\n```http\nHTTP/1.1 500 Internal Server Error\nContent-Type: application/problem+json\n\n{\"type\":\"about:blank\",\"title\":\"服务器内部错误\",\"status\":500}\n```\n\n处理器自己再抛错时，不会再次进入同一个 @ExceptionHandler。容器错误页的 Content-Type 是 text/html，正文以 <html 开头。\n\n未登录发生在控制器之前。〔AuthenticationEntryPoint｜安全过滤器在未认证时写响应的入口〕要写出同一份 problem+json，状态码 401。已认证但没有权限走〔AccessDeniedHandler｜已认证但被拒绝时写响应的入口〕，状态码 403。这两处上面的 @RestControllerAdvice 收不到。默认的表单登录会把浏览器带到登录页，那一页是 HTML。\n\n```java\nclass ProblemEntryPoint implements AuthenticationEntryPoint {\n  public void commence(HttpServletRequest req, HttpServletResponse res,\n      AuthenticationException ex) throws IOException {\n    res.setStatus(HttpStatus.UNAUTHORIZED.value());\n    res.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);\n    res.getWriter().write(\n        \"{\"type\":\"https://api.example.com/problems/unauthenticated\",\"title\":\"未登录\",\"status\":401}\");\n  }\n}\n```\n\n浏览器地址栏会带〔Accept｜请求头，声明客户端能接收哪些正文类型〕: text/html。Spring Boot 的默认错误页就按这个选出 HTML。curl 加上 Accept: application/json 时，可能看到 timestamp、status、error、path 那一套 JSON，浏览器里仍是 HTML。打开〔spring.mvc.problemdetails.enabled｜Spring Boot 3 的开关；打开后，Spring MVC 自带的异常也写成 ProblemDetail。默认关闭〕之后，自带异常才是 problem+json。业务上的 type 仍要写在对应的 @ExceptionHandler 里。\n\ncatch 之后返回 null 或 200，前端会走成功分支。失败就用上面的状态码。",
       "task": "分别触发校验失败、业务冲突和空指针。记录状态码、Content-Type 和 body 的 type。确认三种都不是 HTML。",
       "answer": "校验失败应是 400 和约定的类型，业务冲突应是 409 和对应类型，空指针应是 500 且不把堆栈返回浏览器。三种响应的内容类型都是 JSON，不是 HTML。未知错误可以给一个笼统类型，但不能泄露内部栈。过滤器和控制器要写成同一形状，否则某一层仍会吐出错误页。",
       "keywords": "Spring MVC ExceptionHandler ProblemDetail RFC9457",

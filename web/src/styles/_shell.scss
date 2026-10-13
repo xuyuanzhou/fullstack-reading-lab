@@ -218,6 +218,14 @@ html[data-theme='dark'] .brand-mark {
   }
 }
 
+.has-gate-dock .app-main {
+  padding-bottom: calc(8.75rem + env(safe-area-inset-bottom, 0px));
+}
+
+.has-gate-dock .next-card {
+  scroll-margin-bottom: calc(8.75rem + env(safe-area-inset-bottom, 0px));
+}
+
 .app-aside {
   width: auto;
   padding: 36px 0 48px;
@@ -269,6 +277,10 @@ html[data-theme='dark'] .brand-mark {
 
 .study-mode {
   margin-top: 8px;
+}
+
+.ant-menu-item-disabled:has(.menu-hold) {
+  display: none;
 }
 
 .path-menu.ant-menu {

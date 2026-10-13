@@ -4,6 +4,9 @@ import { Button, Result, Space } from 'antd'
 export class ReadingBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
   state = { failed: false }
   static getDerivedStateFromError() { return { failed: true } }
+  componentDidCatch(error: Error) {
+    console.error(error)
+  }
 
   render() {
     if (!this.state.failed) return this.props.children

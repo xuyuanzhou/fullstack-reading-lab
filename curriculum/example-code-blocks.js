@@ -969,19 +969,6 @@ const EXAMPLE_CODE_BLOCKS = {
     '```',
   ].join('\n'),
 
-  'cookie-credential': [
-    'HttpOnly Cookie 自动上请求头，脚本读不到：',
-    '',
-    '```http',
-    'Set-Cookie: sid=...; HttpOnly; Secure; SameSite=Lax',
-    '```',
-    '',
-    '```js',
-    'document.cookie               // 没有 sid',
-    '// 若改存 localStorage：请求不会自动带，XSS 却能读出',
-    '```',
-  ].join('\n'),
-
   'browser-storage': [
     'storage 事件只通知其它标签，不通知自己：',
     '',
@@ -3278,17 +3265,6 @@ const EXAMPLE_CODE_BLOCKS = {
     '# jar 内 application.yml: server.port=8080',
     'java -jar app.jar --server.port=9090',
     '# 进程实际监听 9090',
-    '```',
-  ].join('\n'),
-
-  'spring-mvc-exception': [
-    '领域异常映射成稳定 problem+json：',
-    '',
-    '```java',
-    '@ExceptionHandler(InventoryExhaustedException.class)',
-    'ResponseEntity<ProblemDetail> on(InventoryExhaustedException e) {',
-    '  // 409 + application/problem+json，type=inventory-exhausted',
-    '}',
     '```',
   ].join('\n'),
 
@@ -7307,15 +7283,6 @@ const EXAMPLE_CODE_BLOCKS = {
     '```',
   ].join('\n'),
 
-  'schema-migration': [
-    '迁移要可从空库顺序跑到当前；跳步应失败在缺列：',
-    '',
-    '```bash',
-    'migrate up   # 空库 → 当前版本，应用能启动',
-    '# 故意跳过「加幂等键」脚本 → 启动失败在缺列/约束',
-    '```',
-  ].join('\n'),
-
   'table-constraint-holds-rule': [
     '唯一约束挡住并发双插，不靠先查后插：',
     '',
@@ -8223,36 +8190,6 @@ const EXAMPLE_CODE_BLOCKS = {
     '```text',
     'PATCH 昵称 200 → 标题换成响应里的昵称',
     '400 → 标字段；500 → 保留输入可重试',
-    '```',
-  ].join('\n'),
-
-  'fs-boot-chain': [
-    '控制器校验 → 应用服务事务 → 返回订单号：',
-    '',
-    '```java',
-    '@PostMapping("/orders")',
-    'OrderId place(@Valid CreateOrder req) {',
-    '  return orderApp.place(req); // @Transactional 内写单+扣库存',
-    '}',
-    '```',
-  ].join('\n'),
-
-  'fs-write-invariant': [
-    '最后一件用条件更新，影响行数分胜负：',
-    '',
-    '```sql',
-    'UPDATE stock SET qty = qty - 1 WHERE sku=? AND qty >= 1;',
-    '-- affected=1 成功；=0 失败返回',
-    '```',
-  ].join('\n'),
-
-  'fs-read-shape': [
-    '详情 DTO 只含需要的字段，一次查清：',
-    '',
-    '```text',
-    '返回：id、status、amount、productName',
-    'productName 来自联接/明确查询，不是序列化时懒加载 N+1',
-    '无权 → 404/403，不泄露存在性细节按约定',
     '```',
   ].join('\n'),
 

@@ -15,6 +15,13 @@
   --lab-accent-strong: #2d4f41;
   --lab-warn-bg: #eef0ea;
   --lab-danger: #a05048;
+  --lab-code-keyword: #245a86;
+  --lab-code-string: #8a4038;
+  --lab-code-comment: #5e6661;
+  --lab-code-number: #8a5a20;
+  --lab-code-title: #2d4f41;
+  --lab-code-type: #3f6a58;
+  --lab-code-meta: #5c4a78;
   --lab-shadow: 0 1px 0 rgba(40, 48, 42, 0.03), 0 10px 28px rgba(40, 48, 42, 0.04);
   --lab-radius: 10px;
   --lab-sider-w: 300px;
@@ -54,6 +61,13 @@ html[data-theme='dark'] {
   --lab-accent-strong: #c5ddd0;
   --lab-warn-bg: #2a2c26;
   --lab-danger: #d4a39a;
+  --lab-code-keyword: #9ec3e0;
+  --lab-code-string: #e7b8b0;
+  --lab-code-comment: #919a94;
+  --lab-code-number: #e4c98a;
+  --lab-code-title: #c5ddd0;
+  --lab-code-type: #8fb5a0;
+  --lab-code-meta: #d4c0e4;
   --lab-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
 }
 

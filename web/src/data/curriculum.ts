@@ -1,4 +1,4 @@
-import rawIndex from './curriculum-index.json'
+import indexRaw from './curriculum-index.json?raw'
 import type { Curriculum, Lesson, Track } from '@/types/curriculum'
 
 /** Nav / list / search card — core and body fields load with the track pack. */
@@ -32,7 +32,7 @@ type LessonBody = Partial<
   >
 >
 
-export const curriculum = rawIndex as unknown as CurriculumIndex
+export const curriculum = JSON.parse(indexRaw) as CurriculumIndex
 const byId = new Map(curriculum.lessons.map((lesson) => [lesson.id, lesson]))
 const byTrack: Record<Track, LessonSummary[]> = {
   frontend: curriculum.lessons.filter((lesson) => lesson.track === 'frontend'),
@@ -40,18 +40,34 @@ const byTrack: Record<Track, LessonSummary[]> = {
 }
 
 const bodiesCache: Partial<Record<Track, Promise<Record<string, LessonBody>>>> = {}
+const bodiesReady: Partial<Record<Track, Record<string, LessonBody>>> = {}
 
 function loadBodies(track: Track) {
   if (!bodiesCache[track]) {
     const loader =
       track === 'frontend'
-        ? import('./curriculum-bodies-frontend.json')
-        : import('./curriculum-bodies-java.json')
-    bodiesCache[track] = loader.then(
-      (mod) => (mod.default || mod) as unknown as Record<string, LessonBody>,
-    )
+        ? import('./curriculum-bodies-frontend.json?raw')
+        : import('./curriculum-bodies-java.json?raw')
+    bodiesCache[track] = loader.then((mod) => {
+      const data = JSON.parse(mod.default) as Record<string, LessonBody>
+      bodiesReady[track] = data
+      return data
+    })
   }
   return bodiesCache[track]!
+}
+
+function lessonFrom(summary: LessonSummary, body: LessonBody): Lesson {
+  return {
+    ...summary,
+    core: body.core || '',
+    why: body.why || '',
+    example: body.example || '',
+    task: body.task || '',
+    answer: body.answer || '',
+    references: body.references || [],
+    ...body,
+  } as Lesson
 }
 
 export function lessonsFor(track: Track): LessonSummary[] {
@@ -76,22 +92,21 @@ export function findLesson(id: string): LessonSummary | undefined {
   return byId.get(id)
 }
 
+/** Already-loaded lesson, so a route change can paint without waiting on a promise. */
+export function peekFullLesson(id: string): Lesson | undefined {
+  const summary = byId.get(id)
+  if (!summary) return undefined
+  const bodies = bodiesReady[summary.track]
+  if (!bodies) return undefined
+  return lessonFrom(summary, bodies[id] || {})
+}
+
 /** Full lesson for the reading page; loads only that track's bodies chunk. */
 export async function loadFullLesson(id: string): Promise<Lesson | undefined> {
   const summary = byId.get(id)
   if (!summary) return undefined
   const bodies = await loadBodies(summary.track)
-  const body = bodies[id] || {}
-  return {
-    ...summary,
-    core: body.core || '',
-    why: body.why || '',
-    example: body.example || '',
-    task: body.task || '',
-    answer: body.answer || '',
-    references: body.references || [],
-    ...body,
-  } as Lesson
+  return lessonFrom(summary, bodies[id] || {})
 }
 
 /** Prefetch a track pack (e.g. when switching to that route). */

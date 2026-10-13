@@ -163,10 +163,13 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const remember = useCallback((id: string) => {
-    setState((prev) => ({
-      ...prev,
-      recent: [id, ...prev.recent.filter((item) => item !== id)].slice(0, 12),
-    }))
+    setState((prev) => {
+      if (prev.recent[0] === id) return prev
+      return {
+        ...prev,
+        recent: [id, ...prev.recent.filter((item) => item !== id)].slice(0, 12),
+      }
+    })
   }, [])
 
   const rememberAi = useCallback((id: string) => {

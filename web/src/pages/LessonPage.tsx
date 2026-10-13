@@ -1,7 +1,7 @@
 import { Breadcrumb, Button, Collapse, Image, Input, Space, Typography } from 'antd'
 import { useEffect, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
-import { findLesson, isVersionSince, lessonIndex, loadFullLesson, nextLesson } from '@/data/curriculum'
+import { findLesson, isVersionSince, lessonIndex, loadFullLesson, nextLesson, peekFullLesson } from '@/data/curriculum'
 import { deliverableKey, gatePath, slotsOf, spineNextId, spinePlace, spinePrevId } from '@/data/learningPaths'
 import { groupKeyForLabel, groupPath, groupTitle, isTrack, lessonPath } from '@/data/routes'
 import { lessonNav, shortTitle, splitProse, structureCore } from '@/data/reading'
@@ -16,17 +16,19 @@ export function LessonPage() {
   const { track = '', groupKey = '', lessonId = '' } = useParams()
   const progress = useProgress()
   const summary = findLesson(lessonId)
-  const [lesson, setLesson] = useState<Lesson | null | undefined>(undefined)
+  const cached = summary && isTrack(summary.track) ? peekFullLesson(summary.id) : undefined
+  const [fetched, setFetched] = useState<{ id: string; lesson: Lesson | null } | null>(null)
+  const lesson = cached ?? (fetched?.id === lessonId ? fetched.lesson : undefined)
 
   useEffect(() => {
     if (!lessonId || !summary || !isTrack(summary.track)) {
-      setLesson(null)
+      setFetched({ id: lessonId, lesson: null })
       return
     }
+    if (peekFullLesson(lessonId)) return
     let cancelled = false
-    setLesson(undefined)
     void loadFullLesson(lessonId).then((full) => {
-      if (!cancelled) setLesson(full ?? null)
+      if (!cancelled) setFetched({ id: lessonId, lesson: full ?? null })
     })
     return () => {
       cancelled = true

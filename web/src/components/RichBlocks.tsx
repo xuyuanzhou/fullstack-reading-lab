@@ -1,4 +1,6 @@
+import { useMemo } from 'react'
 import { RichProse } from '@/components/RichProse'
+import { highlightLessonCode } from '@/data/highlightCode'
 import { splitFencedBlocks } from '@/data/reading'
 
 function proseParagraphs(text: string) {
@@ -7,6 +9,15 @@ function proseParagraphs(text: string) {
     .split(/\n{2,}/u)
     .map((part) => part.trim())
     .filter(Boolean)
+}
+
+function LessonCode({ lang, text }: { lang: string; text: string }) {
+  const html = useMemo(() => highlightLessonCode(lang, text), [lang, text])
+  return (
+    <pre className="lesson-code" data-lang={lang || undefined}>
+      <code dangerouslySetInnerHTML={{ __html: html }} />
+    </pre>
+  )
 }
 
 /** Render lesson prose with optional ``` fenced code blocks. */
@@ -39,9 +50,7 @@ export function RichBlocks({
       {blocks.flatMap((block, index) =>
         block.kind === 'code'
           ? [
-              <pre key={index} className="lesson-code" data-lang={block.lang || undefined}>
-                <code>{block.text}</code>
-              </pre>,
+              <LessonCode key={index} lang={block.lang} text={block.text} />,
             ]
           : proseParagraphs(block.text).map((para, paraIndex) => (
               <RichProse key={`${index}-${paraIndex}`} text={para} />

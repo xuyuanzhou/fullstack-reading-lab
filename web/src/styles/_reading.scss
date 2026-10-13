@@ -1905,6 +1905,46 @@
     font-family: inherit;
   }
 
+  .hljs-keyword,
+  .hljs-selector-tag,
+  .hljs-name {
+    color: var(--lab-code-keyword);
+  }
+
+  .hljs-string,
+  .hljs-regexp {
+    color: var(--lab-code-string);
+  }
+
+  .hljs-comment,
+  .hljs-doctag {
+    color: var(--lab-code-comment);
+    font-style: italic;
+  }
+
+  .hljs-number,
+  .hljs-literal {
+    color: var(--lab-code-number);
+  }
+
+  .hljs-title,
+  .hljs-section {
+    color: var(--lab-code-title);
+  }
+
+  .hljs-type,
+  .hljs-built_in,
+  .hljs-attr,
+  .hljs-attribute,
+  .hljs-property {
+    color: var(--lab-code-type);
+  }
+
+  .hljs-meta,
+  .hljs-tag {
+    color: var(--lab-code-meta);
+  }
+
   &[data-lang]::before {
     content: attr(data-lang);
     display: block;

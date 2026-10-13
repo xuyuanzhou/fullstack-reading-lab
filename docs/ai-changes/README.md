@@ -11,6 +11,19 @@
 
 | 日期 | 状态 | 标题 |
 | --- | --- | --- |
+| 2026-10-13 | 已完成 | [换课和刷新不再执行整份课表脚本](2026-10-13-lesson-nav-speed.md) |
+| 2026-10-13 | 已完成 | [读路径课改成说字段和主从](2026-10-13-fs-read-shape-wording.md) |
+| 2026-10-13 | 已完成 | [架构师主线补上数据库与 MyBatis](2026-10-13-architect-path-mybatis.md) |
+| 2026-10-13 | 已完成 | [Cookie 课补上跨源的两个响应头](2026-10-13-cookie-credential-cors.md) |
+| 2026-10-13 | 已完成 | [写入成功课补上条件更新和提交时机](2026-10-13-fs-write-invariant-example.md) |
+| 2026-10-13 | 已完成 | [写接口分段课的例子补上 Spring 代码](2026-10-13-fs-boot-chain-example.md) |
+| 2026-10-13 | 已完成 | [Cookie 与 localStorage 课按浏览器规则改准](2026-10-13-cookie-credential-lesson.md) |
+| 2026-10-13 | 已完成 | [表结构迁移课改成按版本脚本核对](2026-10-13-schema-migration-lesson.md) |
+| 2026-10-13 | 已完成 | [课上代码块按语言上色](2026-10-13-lesson-code-highlight.md) |
+| 2026-10-13 | 已完成 | [契约要求例子里该有的框架代码必须写出](2026-10-13-contract-framework-code-in-examples.md) |
+| 2026-10-13 | 已完成 | [异常映射课的例子补回 Spring 代码](2026-10-13-spring-mvc-exception-java.md) |
+| 2026-10-13 | 已完成 | [异常映射课的例子补上几种失败](2026-10-13-spring-mvc-exception-example.md) |
+| 2026-10-13 | 已完成 | [底部浮框不再挡住下一节](2026-10-13-gate-dock-next-clearance.md) |
 | 2026-10-13 | 已完成 | [手机上关卡弹窗改成一次只看一层](2026-10-13-gate-dock-phone.md) |
 | 2026-10-13 | 已完成 | [关卡弹窗：选中关定位、进课关闭、底部简报单独滚动](2026-10-13-gate-dock-locate.md) |
 | 2026-10-12 | 已完成 | [主线地图按宽度折返](2026-10-12-path-snake-map.md) |
