@@ -2,7 +2,7 @@ import { Breadcrumb, Button, Collapse, Image, Input, Space, Typography } from 'a
 import { useEffect, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { findLesson, isVersionSince, lessonIndex, loadFullLesson, nextLesson } from '@/data/curriculum'
-import { deliverableKey, slotsOf, spineNextId, spinePlace, spinePrevId } from '@/data/learningPaths'
+import { deliverableKey, gatePath, slotsOf, spineNextId, spinePlace, spinePrevId } from '@/data/learningPaths'
 import { groupKeyForLabel, groupPath, groupTitle, isTrack, lessonPath } from '@/data/routes'
 import { lessonNav, shortTitle, splitProse, structureCore } from '@/data/reading'
 import { REACT_CHAPTERS, VUE_CHAPTERS, reactUrl, vueUrl } from '@/data/meta'
@@ -82,7 +82,7 @@ export function LessonPage() {
       {onSpine ? (
         <section className="path-strip">
           <p className="path-strip-kicker">
-            <Link to="/paths">
+            <Link to={gatePath(onSpine.gate.id)}>
               第 {onSpine.index + 1} 关 · {onSpine.gate.learnTitle}
             </Link>
             <span>
@@ -96,7 +96,7 @@ export function LessonPage() {
                 下一节 · {shortTitle(spineNext.title)}
               </Link>
             ) : progress.done.includes(lesson.id) ? (
-              <Link to="/paths?focus=deliver">回主线交交付物</Link>
+              <Link to={gatePath(onSpine.gate.id, 'deliver')}>回主线交交付物</Link>
             ) : (
               <span>文末记为已读，再交交付物</span>
             )}
@@ -229,9 +229,7 @@ export function LessonPage() {
             {lesson.deep.map((part) => (
               <div className="deep-item" key={part.title}>
                 <h3>{part.title}</h3>
-                {splitProse(part.body).map((para) => (
-                  <RichProse key={para.slice(0, 40)} text={para} />
-                ))}
+                <RichBlocks text={part.body} />
               </div>
             ))}
           </div>
@@ -344,7 +342,7 @@ export function LessonPage() {
               上一节 · {shortTitle(spinePrev.title)}
             </Link>
           ) : (
-            <Link className="path-turn-prev" to="/paths">
+            <Link className="path-turn-prev" to={gatePath(onSpine.gate.id)}>
               返回这一关
             </Link>
           )}
@@ -366,7 +364,7 @@ export function LessonPage() {
           ) : (
             <Link
               className="next-card"
-              to="/paths?focus=deliver"
+              to={gatePath(onSpine.gate.id, 'deliver')}
               onClick={() => {
                 if (!progress.done.includes(lesson.id)) progress.toggleDone(lesson.id)
               }}

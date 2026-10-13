@@ -171,6 +171,7 @@ assert.equal(publishedSources.includes('coverage-path-08.js'), true);
 assert.equal(publishedSources.includes('coverage-path-09.js'), true);
 assert.equal(publishedSources.includes('coverage-path-10.js'), true);
 assert.equal(publishedSources.includes('coverage-path-11.js'), true);
+assert.equal(publishedSources.includes('coverage-path-12.js'), true);
 assert.equal(publishedSources.includes('foundation-points.js'), true);
 assert.equal(publishedSources.includes('coverage-chapters-10.js'), true);
 assert.equal(publishedSources.includes('coverage-sca-12.js'), true);
@@ -250,6 +251,20 @@ for (const lesson of lessons) {
       assert.fail(`${lesson.id}: point must not use colloquial「库里」: ${point}`);
     }
   }
+}
+/** 本地 PDF/本地库 origin 不得作为唯一依据：须另有 https 权威引用（契约第 11 节「本地资料」）。 */
+const LOCAL_ORIGIN = /(?:\.pdf|本地库|《[^》]+》)/i;
+for (const lesson of lessons) {
+  if (!lesson.origin || !LOCAL_ORIGIN.test(lesson.origin)) continue;
+  const refs = lesson.references ?? [];
+  const hasHttps = refs.some(
+    (ref) => Array.isArray(ref) && typeof ref[1] === 'string' && /^https:\/\//.test(ref[1]),
+  );
+  assert.equal(
+    hasHttps,
+    true,
+    `${lesson.id}: origin cites local material but needs at least one https reference (do not treat local PDF as sole authority)`,
+  );
 }
 const readme = fs.readFileSync(new URL('../README.md', import.meta.url), 'utf8');
 assert.equal(

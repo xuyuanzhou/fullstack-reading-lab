@@ -198,21 +198,43 @@ export function structureCore(core: string): StructuredCore {
 export type ProseToken =
   | { type: 'text'; value: string }
   | { type: 'lesson'; id: string }
+  | { type: 'gloss'; term: string; gloss: string }
 
 const LESSON_ID_RE = /[a-z][a-z0-9]*(?:-[a-z0-9]+)+/g
 
+/** Click-to-reveal gloss: 〔术语｜释义〕（竖线可用全角｜或半角|） */
+const GLOSS_MARK_RE = /〔([^〔〕｜|]+)[｜|]([^〔〕]+)〕/g
+
+type ProseMark =
+  | { start: number; end: number; kind: 'lesson'; id: string }
+  | { start: number; end: number; kind: 'gloss'; term: string; gloss: string }
+
 /**
- * Turn backtick lesson ids (and “见 id、id”) into tokens so the UI can show
- * human titles instead of author-facing ids.
+ * Turn backtick lesson ids (and “见 id、id”) and 〔术语｜释义〕 into tokens
+ * so the UI can show titled links and click-to-reveal glosses.
  */
 export function tokenizeLessonRefs(text: string, knownIds: ReadonlySet<string>): ProseToken[] {
   if (!text) return []
-  const marks: { start: number; end: number; id: string }[] = []
+  const marks: ProseMark[] = []
+
+  for (const match of text.matchAll(GLOSS_MARK_RE)) {
+    if (match.index === undefined) continue
+    const term = match[1].trim()
+    const gloss = match[2].trim()
+    if (!term || !gloss) continue
+    marks.push({
+      start: match.index,
+      end: match.index + match[0].length,
+      kind: 'gloss',
+      term,
+      gloss,
+    })
+  }
 
   for (const match of text.matchAll(/`([a-z][a-z0-9]*(?:-[a-z0-9]+)+)`/g)) {
     const id = match[1]
     if (!knownIds.has(id) || match.index === undefined) continue
-    marks.push({ start: match.index, end: match.index + match[0].length, id })
+    marks.push({ start: match.index, end: match.index + match[0].length, kind: 'lesson', id })
   }
 
   for (const match of text.matchAll(/见\s*([a-z][a-z0-9]*(?:-[a-z0-9]+)+(?:\s*[、,]\s*[a-z][a-z0-9]*(?:-[a-z0-9]+)+)*)/g)) {
@@ -224,12 +246,12 @@ export function tokenizeLessonRefs(text: string, knownIds: ReadonlySet<string>):
       const start = listStart + idMatch.index
       const end = start + id.length
       if (marks.some((m) => !(end <= m.start || start >= m.end))) continue
-      marks.push({ start, end, id })
+      marks.push({ start, end, kind: 'lesson', id })
     }
   }
 
   marks.sort((a, b) => a.start - b.start || b.end - a.end)
-  const filtered: typeof marks = []
+  const filtered: ProseMark[] = []
   for (const mark of marks) {
     if (filtered.some((m) => !(mark.end <= m.start || mark.start >= m.end))) continue
     filtered.push(mark)
@@ -239,7 +261,8 @@ export function tokenizeLessonRefs(text: string, knownIds: ReadonlySet<string>):
   let cursor = 0
   for (const mark of filtered) {
     if (mark.start > cursor) tokens.push({ type: 'text', value: text.slice(cursor, mark.start) })
-    tokens.push({ type: 'lesson', id: mark.id })
+    if (mark.kind === 'lesson') tokens.push({ type: 'lesson', id: mark.id })
+    else tokens.push({ type: 'gloss', term: mark.term, gloss: mark.gloss })
     cursor = mark.end
   }
   if (cursor < text.length) tokens.push({ type: 'text', value: text.slice(cursor) })

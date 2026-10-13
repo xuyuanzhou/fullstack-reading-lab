@@ -58,6 +58,7 @@ node scripts/export-curriculum.mjs && node scripts/verify_content.mjs
 - `arch-scale-before-split` 标题改为「瓶颈在应用再水平扩展，再谈拆服务」，避免短名「先水平扩展」被读成无条件加副本。
 - `arch-microservice-split`：标题改为「按业务能力拆微服务，并接受分布式成本」（短名不再只剩「微服务」）；业务能力/数据归属/补偿括注；练习改为①②必写、有副作用才强制③；示例与图脚注对齐下单课「同步预留 + 异步履约 + 补偿」；keywords 去掉「分布式事务」；deep 链 `arch-sync-vs-async` / `mq-what-and-when`；主线 job 补分布式成本。
 - `arch-sync-vs-async`：标题改为「同步异步怎么选，兼谈编排与协同」（短名不再只剩「服务间通信」）；正文点明 Saga 与编排/协同；练习加多步流程标编排或协同；答案与答案图补对照；重绘 `arch-sync-async.svg`；deep 链下单/消息课；Feign 改为同步客户端；`arch-modular-boundary` deep 去掉错误的「下一课」说法。
+- `arch-sync-vs-async` why：误写「上了消息当成选好编排」改为「协同」；Saga 补首次括注。
 
 ## 后续
 

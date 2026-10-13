@@ -17,6 +17,7 @@ import { shortTitle } from '@/data/reading'
 import { courseGroups, groupLabel, groupPath, isTrack, lessonPath, resumePath } from '@/data/routes'
 import { probeLocalLibrary } from '@/api/localLibrary'
 import { useProgress } from '@/state/progress'
+import { GateDock } from '@/components/GateDock'
 import { ProgressAside } from '@/components/ProgressAside'
 import { ReadingBoundary } from '@/components/ReadingBoundary'
 
@@ -450,6 +451,7 @@ export function AppLayout() {
       >
         {siderBody}
       </Drawer>
+      {!onLab && !onAi && <GateDock />}
     </Layout>
   )
 }

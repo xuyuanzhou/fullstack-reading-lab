@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" role="img" aria-labelledby="title desc">
+  <title id="title">分区时先取舍</title>
+  <desc id="desc">先确认网络分区，再为这一次读写选择偏一致或偏可用。不能给产品永久贴 CP 或 AP。</desc>
+  <rect width="960" height="500" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">分布式 / CAP</text>
+  <text x="32" y="64" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">先定义分区，再谈这一次取舍</text>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <rect x="32" y="96" width="896" height="72" rx="14" fill="#eef2f8" stroke="#4a6280"/>
+    <text x="52" y="128" font-size="15" font-weight="600" fill="#2e3330">P 分区：节点还在跑，跨组消息在可接受时间内到不了</text>
+    <text x="52" y="152" font-size="14" fill="#5e6661">未分区时的主从延迟、普通超时，不要套进 CAP 三选二</text>
+
+    <rect x="32" y="188" width="430" height="168" rx="14" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="52" y="224" font-size="15" font-weight="600" fill="#2e3330">偏一致（常见称 CP 一侧）</text>
+    <text x="52" y="256" font-size="14" fill="#3f6a58">关键库存写：一侧失败或等待</text>
+    <text x="52" y="284" font-size="14" fill="#3f6a58">不能两侧都当成功</text>
+    <text x="52" y="320" font-size="14" fill="#5e6661">代价：部分请求不可用</text>
+
+    <rect x="496" y="188" width="432" height="168" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="516" y="224" font-size="15" font-weight="600" fill="#2e3330">偏可用（常见称 AP 一侧）</text>
+    <text x="516" y="256" font-size="14" fill="#3f6a58">资料写：两侧都可成功</text>
+    <text x="516" y="284" font-size="14" fill="#3f6a58">路径上写明恢复如何合并</text>
+    <text x="516" y="320" font-size="14" fill="#5e6661">代价：暂时读不到同一份最新视图</text>
+
+    <rect x="32" y="380" width="896" height="88" rx="14" fill="#f6ecea" stroke="#a05048"/>
+    <text x="52" y="416" font-size="15" font-weight="600" fill="#6e3530">不要给产品永久贴 CP / AP</text>
+    <text x="52" y="444" font-size="14" fill="#6e3530">同一次部署里，读与写、库存与资料可以不同策略。等待必须有超时。</text>
+  </g>
+</svg>

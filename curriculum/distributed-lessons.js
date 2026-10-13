@@ -1,15 +1,32 @@
-/* 分布式与高并发：标准知识点；页图来自《分布式高并发.pdf》，见 library-assets/distributed-hc。 */
+/* 分布式与高并发：标准知识点。定义与行为以论文/官方文档为准；可选挂 library-assets/distributed-hc 机制图。 */
 window.LESSONS.push(
 {
-track:'java',group:'分布式与高并发',id:'distributed-cap',title:'CAP：先定义分区，再谈取舍',
-prompt:'发生网络分区时，一个写入请求究竟应该成功还是等待？',
-core:'CAP 讨论的是分布式系统发生网络分区时，一致性与可用性的取舍。一致性在这里指单一、最新的读写视图；可用性指非故障节点对请求给出响应。不能把一个产品永久贴成“CP”或“AP”，还要看具体操作、部署和故障策略。顺序是先确认分区已经发生，再为这一次读写选择拒绝、等待或继续接受，最后写恢复后的收敛。边界是没有分区时，主从延迟和普通超时不要套进这组取舍；把产品永久标成某一种，也会掩盖同一次部署里读和写可以有不同策略。用户看见的成功必须和恢复后仍成立的那一份数据一致，等待则要有超时后的失败，而不是一直挂着。分区恢复前不要用另一侧的读来证明这一侧已经写入。没有分区的普通超时不要写成这组取舍，否则等待和拒绝会用错地方。',
-why:'学习者会把分区时的取舍背成三选二，于是任何写入都选等待或都选成功。库存一侧拒绝、资料一侧继续写，恢复后的冲突处理完全不同，他却用产品名字一次说完。先看节点是否还能互通，再看这次操作能不能接受分歧，才分得清该返回成功、失败还是等待。',
-example:'两地节点断联后，库存写入若必须避免冲突，一侧返回失败，成功订单数不超过可售库存。资料写入若两侧都返回成功，恢复后要按规则合并，否则后写入的一份会盖掉另一侧。同一次断联里，这两种返回不能合成一个产品标签。',
+track:'java',group:'分布式与高并发',id:'distributed-cap',title:'先定义网络分区，再谈 CAP 取舍',
+prompt:'发生网络分区时，一个写入请求应该返回成功、失败，还是等待？',
+promptAnswer:'先确认已经分区。不能接受分歧的关键写：失败或带超时的等待；能接受暂时分歧的写：可成功，但路径上写明恢复如何合并。不能凭产品名一刀切。',
+core:'CAP（Consistency / Availability / Partition tolerance）讨论的是：在已经发生〔网络分区｜节点仍在运行，但跨组消息在可接受时间内到不了〕（P）时，一致性与可用性不能同时按最强含义保住。定义以 Gilbert–Lynch 对 Brewer 猜想的形式化为准。\n\n一致性（C，此处常指〔线性化｜每次读都读到最新一次已完成的写〕）：分区两侧仍像在操作同一份最新结果。可用性（A）：非故障节点对收到的请求仍给出响应。分区已发生时，无法既保证「另一侧也看见同一份最新结果」，又保证「每一侧都立刻成功响应」。\n\n工程顺序：先确认分区已经发生 → 为这一次读写选择拒绝、带超时的等待、或继续接受 → 写明恢复后如何收敛。等待不是第三种魔法：超时后仍要落到失败或接受。没有分区时，主从延迟和普通超时不要套进这组取舍。不能把一个产品永久贴成「CP」或「AP」：同一次部署里，库存写与资料写、读与写可以不同策略。用户看见的成功必须和恢复后仍成立的那一份数据一致；分区恢复前不要用另一侧的读来证明这一侧已经写入。',
+why:'学习者把「三选二」或「某产品=CP」背成固定答案，于是任何写入都选等待或都选成功。库存一侧应拒绝、资料一侧可继续写，恢复后的冲突处理完全不同，他却用产品名字一次说完。先看节点是否还能互通，再看这次操作能不能接受分歧，才分得清该返回成功、失败还是等待。',
+example:'两地节点断联后：库存写入若必须避免超卖，一侧返回失败（或短等待后失败），成功订单数不超过可售库存。资料写入若两侧都返回成功，恢复后要按规则合并，否则后写入的一份会盖掉另一侧。同一次断联里，这两种返回不能合成一个产品标签。',
 task:'画出两个节点失联后的写请求路径，并明确你会向用户返回成功、失败还是等待，以及恢复后如何收敛。',
-answer:'两个节点失联后，关键库存写入应返回失败或等待，不能两侧都当成功，否则恢复时对不上同一份库存。允许暂时分歧的资料可以两侧都返回成功，但要写明恢复后如何合并。不能凭产品名称决定这次是成功、失败还是等待。恢复后的合并规则要写在路径上，不能等冲突出现再临时决定。',
-keywords:'CAP consistency availability partition Redis MongoDB 分区 一致性 可用性',origin:'《分布式高并发.pdf》第 19 页',diagram:'library-assets/distributed-hc/p0019.png',
-deep:[{title:'和导论',body:'分布式章回答多进程之间怎样看见同一份事实，见 dist-chapter-aim。本课专讲分区时的取舍。'},{title:'什么叫网络分区',body:'节点还在运行，但节点间消息无法在可接受时间内到达。分区期间，系统无法同时证明另一侧已接受什么。'},{title:'三种「一致」不要混',body:'CAP 的 C 是分区时还能不能给出一份最新读写视图。库里的完整性约束是 ACID 的 C。过一会儿对账成功是最终一致。三个词不要合成一句，见 `distributed-consistency-three-words`。'},{title:'资料常见写法',body:'“Redis 是 CP”“MongoDB 是 AP”都过于笼统。复制、确认级别、主节点选举和客户端读偏好会改变具体行为。'}]
+answer:[
+  '先确认：节点还在跑，但跨组消息到不了 → 这才叫网络分区。',
+  '',
+  '关键库存写：返回失败或带超时的等待；不能两侧都当成功。',
+  '',
+  '允许暂时分歧的资料写：两侧可成功，但路径上写明恢复如何合并。',
+  '',
+  '不能凭产品名称决定这次是成功、失败还是等待。',
+  '',
+  '等待必须有超时；超时后仍要落到失败或接受，不能一直挂着。',
+].join('\n'),
+keywords:'CAP 网络分区 一致性 可用性 线性化',
+diagram:'diagrams/distributed-cap.svg',
+deep:[
+  {title:'相关课',body:'分布式章回答多进程之间怎样看见同一份事实，见 `dist-chapter-aim`。三种「一致」不要混，见 `distributed-consistency-three-words`。本课专讲分区时的取舍。'},
+  {title:'什么叫网络分区',body:'节点还在运行，但节点间消息无法在可接受时间内到达。分区期间，系统无法同时证明另一侧已接受什么。'},
+  {title:'三种「一致」不要混',body:'CAP 的 C 是分区时还能不能给出一份最新读写视图（形式化里常对应线性化）。完整性约束是 ACID 的 C。过一会儿对账成功是最终一致。三个词不要合成一句，见 `distributed-consistency-three-words`。'},
+  {title:'不要给产品贴死标签',body:'「Redis 是 CP」「MongoDB 是 AP」都过于笼统。复制、确认级别、主节点选举和客户端读偏好会改变具体行为；取舍按这次读写与部署定。'},
+],
 },
 {
 track:'java',group:'分布式与高并发',id:'distributed-kafka-order',title:'Kafka 顺序：分区内有序',
@@ -91,15 +108,29 @@ keywords:'秒杀 seckill inventory overselling atomic update MySQL Redis',origin
 deep:[{title:'性能与正确性分层',body:'限流决定多少流量进入；队列缓解峰值；事务和唯一约束守住业务不变量。不能用排队来代替原子扣减。'},{title:'失败注入',body:'模拟扣库存成功而订单创建失败、支付回调重复、取消后回补重复，检查库存与订单最终能否对账。'}]
 },
 {
-track:'java',group:'分布式与高并发',id:'distributed-outbox',title:'事务消息与 Outbox：消除双写空窗',
+track:'java',group:'分布式与高并发',id:'distributed-outbox',title:'Outbox 消除双写空窗',
 prompt:'订单已经提交，但发消息时进程崩溃，怎样恢复？',
-core:'将业务状态与待发布事件写入同一个本地事务的 Outbox 表，由独立发布器持续发送。它缩小了数据库提交与消息发布之间的丢失窗口，但发布器可能重复发送，消费者仍要幂等。顺序是同一个本地事务写入业务行和待发布事件，提交后再由发布器发送并标记。边界是发布器可能重复发送，这不是端到端只一次；消费者仍要幂等。先发消息再提交库，会让消费端看见尚未提交的订单。标记更新失败只造成再发送，不造成订单行丢失。去重若和副作用不在同一个提交里，仍可能出现副作用做了两次或一次都没做。先发消息的那条路径不在这个表的保护里。重启后订单行数仍是 1，消息侧可以是 2，消费结果必须仍是 1。',
-why:'学习者会先写库再发消息，以为进程崩溃可以重来，于是订单已经提交、消息却没发出，消费者永远看不到。反过来先发消息，又会让消费端读到尚未提交的订单。发布标记没写上就崩溃、重启后再送一次并由消费端去重，才说明空窗被收成了至少一次。',
-example:'订单事务同时插入订单行和一条待发布事件。发布器读出未投递事件并推送，成功后更新标记。在推送已经成功、标记还没更新时杀进程，重启后同一事件再发送一次。消费者用事件编号去掉第二次，订单副作用只留下一次。重启后的第二次推送应被消费端按事件编号丢掉。',
+promptAnswer:'若业务行与待发事件已同事务写入 Outbox：靠发布器重试投递，消费端按事件键幂等。若只写了库、从未写入 Outbox（先库后消息）：这次发送意图已丢，重试补不回来。',
+core:'〔双写空窗｜对数据库与消息中间件各写一次、又没有共同事务时，中间崩溃会丢事件或出现幽灵事件〕。〔Outbox｜事务发件箱（transactional outbox）：把业务状态与待发布事件写入同一个本地事务，再异步投递〕收掉的是「库已提交、消息没发出」的丢失窗口；投递仍是〔至少一次｜at-least-once：同一条可能再投，不能假定只到一次〕，不是端到端恰好一次，消费者仍要幂等，见 `distributed-idempotent-key`。独立发布器或〔CDC｜变更数据捕获：读库变更再写入消息系统〕负责投递。\n\n顺序：同事务写业务行与 Outbox 行 → 提交 → 发布器发送并标记。边界：发布成功但未标 sent 时崩溃，重启会再发一次，去重记录须与副作用在同一可靠边界。先发消息再提交库，会出现〔幽灵事件｜消息已发出，但业务行尚未提交或已回滚，消费端读到不存在的订单〕。先写库再单独发消息、且未落 Outbox 的路径，不在本模式保护里。',
+why:'学习者会先写库再发消息，以为进程崩溃可以重来，于是订单已经提交、消息却没发出，消费者永远看不到。反过来先发消息，又会让消费端读到尚未提交的订单。同事务落 Outbox、发布标记没写上就崩溃后靠重试与消费端去重，才说明空窗被收成了至少一次，而不是恰好一次。',
+example:'订单事务同时插入订单行和一条待发布事件。发布器读出未投递事件并推送，成功后更新标记。在推送已经成功、标记还没更新时杀进程，重启后同一事件再发送一次。消费者用事件编号去掉第二次，订单副作用只留下一次。',
 task:'在发布成功但标记未更新时让进程崩溃，预测重启后的消息次数及消费者处理方式。',
-answer:'发布成功但标记未更新时进程崩溃，重启后这条消息会再发送一次。消费者要用事件编号或业务键去重，并且去重记录和业务副作用放在同一可靠边界里，避免去重成功但副作用没做，或副作用做了两次。先写库再单独发消息的那次空窗，不会靠重试自动补上已丢失的发送。',
-keywords:'transactional outbox Debezium CDC 双写 事务消息 幂等',origin:'《分布式高并发.pdf》的分布式事务与消息可靠性相关章节',
-deep:[{title:'边界与成本',body:'Outbox 解决本地数据库与发送意图的原子记录；不自动实现端到端恰好一次，也需要清理、重试、顺序和监控。'},{title:'CDC 变体',body:'可以由变更数据捕获读取 Outbox 表，再写入消息系统；设计时仍要明确键、重复消息和发布延迟。'}]
+answer:[
+  '发布成功但未标 sent → 重启后同一条会再发一次（至少一次）。',
+  '',
+  '消费者按事件编号或业务键去重；去重记录与副作用放在同一本地提交里。',
+  '',
+  'Outbox 不保证端到端恰好一次。',
+  '',
+  '若当时只写了库、从未写入 Outbox：发送意图已丢，靠重试补不回那次空窗。',
+].join('\n'),
+keywords:'Outbox 双写 至少一次 幂等 CDC',
+diagram:'diagrams/distributed-outbox.svg',
+deep:[
+  {title:'边界与成本',body:'Outbox 解决本地库与发送意图的原子记录；不自动实现端到端恰好一次，还要清理、重试、顺序与监控。消费幂等见 `distributed-idempotent-key`。'},
+  {title:'CDC 变体',body:'可用 CDC 读 Outbox 表再写入消息系统；仍须约定事件键、重复投递与发布延迟。'},
+  {title:'相关课',body:'跨服务幂等键见 `distributed-idempotent-key`；binlog 不是领域事件总线见 `binlog-not-change-event-bus`。'},
+],
 },
 {
 track:'java',group:'分布式与高并发',id:'distributed-lock',title:'分布式锁：租约不是永久所有权',
@@ -116,7 +147,10 @@ deep:[{title:'锁的适用边界',body:'租约可减少并发工作，但不能�
 }
 );
 Object.assign(window.LESSON_REFERENCES,{
- 'distributed-cap':[['Gilbert 与 Lynch：Brewer 猜想的形式化讨论','https://www.cs.princeton.edu/courses/archive/spr22/cos418/papers/cap.pdf']],
+ 'distributed-cap':[
+   ['Gilbert 与 Lynch：Brewer 猜想的形式化','https://www.comp.nus.edu.sg/~gilbert/pubs/BrewersConjecture-SigAct.pdf'],
+   ['Brewer：CAP twelve years later','https://www.infoq.com/articles/cap-twelve-years-later-how-the-rules-have-changed/'],
+ ],
  'distributed-kafka-order':[['Apache Kafka：官方文档','https://kafka.apache.org/documentation/']],
  'distributed-bloom':[['Redis：Bloom Filter','https://redis.io/docs/latest/develop/data-types/probabilistic/bloom-filter/'],['Redis：Cuckoo Filter','https://redis.io/docs/latest/develop/data-types/probabilistic/cuckoo-filter/']],
  'distributed-xa':[['MySQL 8.4：XA Transactions','https://dev.mysql.com/doc/refman/8.4/en/xa.html']],
@@ -124,6 +158,9 @@ Object.assign(window.LESSON_REFERENCES,{
  'distributed-token-bucket':[['Redis：Rate Limiting','https://redis.io/docs/latest/develop/use-cases/rate-limiter/']],
  'distributed-consistent-hash':[['Karger 等：Consistent Hashing and Random Trees','https://people.csail.mit.edu/karger/Papers/web.pdf']],
  'distributed-seckill':[['MySQL 8.4：Locking Reads','https://dev.mysql.com/doc/refman/8.4/en/innodb-locking-reads.html'],['MySQL 8.4：UPDATE','https://dev.mysql.com/doc/refman/8.4/en/update.html']],
- 'distributed-outbox':[['Debezium：Outbox Event Router','https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html']],
+ 'distributed-outbox':[
+   ['microservices.io：Transactional Outbox','https://microservices.io/patterns/data/transactional-outbox.html'],
+   ['Debezium：Outbox Event Router','https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html'],
+ ],
  'distributed-lock':[['Redis：Distributed Locks','https://redis.io/docs/latest/develop/clients/patterns/distributed-locks/']]
 });

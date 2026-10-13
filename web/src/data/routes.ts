@@ -38,6 +38,7 @@ const GROUP_KEYS: Record<Track, Record<string, string>> = {
     JPA: 'jpa',
     MyBatis: 'mybatis',
     'Spring Cloud Alibaba': 'spring-cloud-alibaba',
+    Sentinel: 'sentinel',
     消息队列: 'messaging',
     Nginx: 'nginx',
     Netty: 'netty',

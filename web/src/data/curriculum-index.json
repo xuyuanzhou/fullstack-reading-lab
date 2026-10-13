@@ -41,6 +41,7 @@
       "消息队列",
       "搜索",
       "Spring Cloud Alibaba",
+      "Sentinel",
       "系统设计",
       "分布式与高并发",
       "交付与运行",
@@ -89,6 +90,7 @@
       "消息队列": "消息队列",
       "搜索": "Elasticsearch",
       "Spring Cloud Alibaba": "Spring Cloud Alibaba",
+      "Sentinel": "Sentinel",
       "系统设计": "系统设计",
       "分布式与高并发": "分布式",
       "交付与运行": "交付与运行",
@@ -710,6 +712,10 @@
         "arch-slo-budget",
         "arch-queue-wait",
         "arch-design-one-path",
+        "arch-cost-tradeoff",
+        "arch-contract-review",
+        "arch-evolution-roadmap",
+        "arch-decision-minutes",
         "ddd-same-word-two-contexts",
         "ddd-aggregate-transaction-boundary",
         "ddd-entity-or-value",
@@ -1001,6 +1007,14 @@
         "es-aggregations",
         "es-custom-routing"
       ],
+      "Sentinel": [
+        "sca-sentinel-java-app",
+        "sca-sentinel-intro",
+        "sca-sentinel-block",
+        "sca-sentinel-circuit-state",
+        "sca-sentinel-block-fallback",
+        "sca-sentinel-flow-mode"
+      ],
       "安全": [
         "spring-security-what",
         "spring-security-enter-chain",
@@ -1039,6 +1053,8 @@
         "spring-graceful-shutdown",
         "log-correlation-id",
         "zabbix-active-at-scale",
+        "fs-triage-order",
+        "fault-inject-one-signal",
         "server-slow-which-resource",
         "backend-tune-the-span",
         "cpu-cache-line-sharing",
@@ -1116,6 +1132,7 @@
         "sca-what",
         "sca-component-map",
         "sca-one-call",
+        "sca-circuit-not-only-hystrix",
         "sca-nacos-intro",
         "sca-nacos-register",
         "sca-nacos-config",
@@ -1132,12 +1149,6 @@
         "dubbo-registry-down-local-cache",
         "dubbo-timeout-retry-idempotent",
         "spring-cloud-feign-not-lb",
-        "sca-sentinel-intro",
-        "sca-sentinel-block",
-        "sca-sentinel-circuit-state",
-        "sca-sentinel-block-fallback",
-        "sca-sentinel-flow-mode",
-        "sca-circuit-not-only-hystrix",
         "sca-seata-intro",
         "sca-seata-at-boundary",
         "sca-seata-tcc-empty",
@@ -2968,7 +2979,8 @@
           "ids": [
             "sca-what",
             "sca-component-map",
-            "sca-one-call"
+            "sca-one-call",
+            "sca-circuit-not-only-hystrix"
           ]
         },
         {
@@ -2998,17 +3010,6 @@
           ]
         },
         {
-          "title": "Sentinel",
-          "ids": [
-            "sca-sentinel-intro",
-            "sca-sentinel-block",
-            "sca-sentinel-circuit-state",
-            "sca-sentinel-block-fallback",
-            "sca-sentinel-flow-mode",
-            "sca-circuit-not-only-hystrix"
-          ]
-        },
-        {
           "title": "Seata",
           "ids": [
             "sca-seata-intro",
@@ -3024,6 +3025,24 @@
             "sca-oss-intro",
             "sca-schedulerx-intro",
             "sca-sms-intro"
+          ]
+        }
+      ],
+      "Sentinel": [
+        {
+          "title": "接入",
+          "ids": [
+            "sca-sentinel-java-app",
+            "sca-sentinel-intro"
+          ]
+        },
+        {
+          "title": "规则行为",
+          "ids": [
+            "sca-sentinel-block",
+            "sca-sentinel-circuit-state",
+            "sca-sentinel-block-fallback",
+            "sca-sentinel-flow-mode"
           ]
         }
       ],
@@ -3058,6 +3077,15 @@
             "arch-slo-budget",
             "arch-queue-wait",
             "arch-design-one-path"
+          ]
+        },
+        {
+          "title": "职责",
+          "ids": [
+            "arch-cost-tradeoff",
+            "arch-contract-review",
+            "arch-evolution-roadmap",
+            "arch-decision-minutes"
           ]
         },
         {
@@ -3246,6 +3274,8 @@
         {
           "title": "排查",
           "ids": [
+            "fs-triage-order",
+            "fault-inject-one-signal",
             "server-slow-which-resource",
             "backend-tune-the-span",
             "cpu-cache-line-sharing",
@@ -15310,14 +15340,14 @@
       "track": "java",
       "group": "消息队列",
       "id": "mq-consume-idempotent-key",
-      "title": "消费幂等要落可靠存储，SETNX 不是完整方案",
-      "prompt": "为什么“用 Redis SETNX 做消息 id 去重，Java 还不能设过期”不能当现行答案？",
-      "promptAnswer": "至少一次投递下，消费端要用业务键去重。删消息本身不等于幂等。",
-      "keywords": "幂等 SETNX SET NX EX 唯一索引 至少一次",
+      "title": "消费幂等靠库唯一键不要只靠 SETNX",
+      "prompt": "消费端只用 Redis SETNX 按消息 id 去重，够不够？有人说占位时没法一并设过期，对吗？",
+      "promptAnswer": "不够。占位成功后、写库前若崩溃：键还在会挡住重投，库里却没流水（丢处理）；键过期了又可能写两次。占位与过期应写在同一条命令里，例如 SET key 1 NX EX 60。最终仍要靠库表业务键唯一约束。",
+      "keywords": "消费幂等 SETNX 唯一约束 至少一次",
       "points": [
         "至少一次投递必须用业务键做幂等",
         "SET NX 与写库之间仍有崩溃窗口",
-        "SET 可同时 NX 和 EX，SETNX 不能设过期的说法过时"
+        "占位与过期应写在同一条 SET NX EX 里"
       ],
       "since": "messaging"
     },
@@ -15933,6 +15963,21 @@
     {
       "track": "java",
       "group": "Spring Cloud Alibaba",
+      "id": "sca-circuit-not-only-hystrix",
+      "title": "Spring Cloud 不是 Hystrix 说明书，断路器已换代（CircuitBreaker）",
+      "prompt": "为什么把 Spring Cloud 定义成 Stream 启动器，并把容错只背 Hystrix？",
+      "promptAnswer": "Spring Cloud 不是 Stream 启动器别名；容错也不只有 Hystrix，还有 CircuitBreaker/Resilience4j/Sentinel。",
+      "keywords": "Spring Cloud Hystrix Resilience4j Sentinel Eureka",
+      "points": [
+        "Spring Cloud 不是 Stream 或 Task 的别名",
+        "Hystrix 维护模式，改用 CircuitBreaker 或 Sentinel",
+        "发现与负载均衡也不只有 Eureka/Ribbon"
+      ],
+      "since": "SC CircuitBreaker"
+    },
+    {
+      "track": "java",
+      "group": "Spring Cloud Alibaba",
       "id": "sca-nacos-intro",
       "title": "Nacos 用命名空间隔开环境，用服务名和 dataId 定位两类数据",
       "prompt": "注册和配置都放在 Nacos，改控制台里的一个名字为什么会同时影响发现和配置？",
@@ -16172,94 +16217,6 @@
     {
       "track": "java",
       "group": "Spring Cloud Alibaba",
-      "id": "sca-sentinel-intro",
-      "title": "Sentinel 先定义资源，再用规则决定放不放行",
-      "prompt": "依赖加进订单服务之后，是不是每个接口都自动有了熔断？",
-      "promptAnswer": "不是。只加依赖不会让每个接口自动有熔断。要先有资源名和规则。",
-      "keywords": "Sentinel 资源 流控 熔断 热点参数 规则持久化",
-      "points": [
-        "资源是被统计和被规则检查的单位",
-        "流控、熔断、系统保护、来源和热点参数是不同规则",
-        "内存中的规则重启后消失，需要推到外部规则源"
-      ],
-      "since": "Sentinel"
-    },
-    {
-      "track": "java",
-      "group": "Spring Cloud Alibaba",
-      "id": "sca-sentinel-block",
-      "title": "Sentinel 拒绝的是超限，不是下游已经失败",
-      "prompt": "接口被 Sentinel 挡住时，应该按下游超时去重试吗？",
-      "keywords": "Sentinel 流控 熔断 BlockException Spring Cloud Alibaba",
-      "points": [
-        "流控按配额拒绝进入资源的请求",
-        "熔断在下游异常或过慢时暂停继续调用",
-        "规则拦截不是下游超时，不能立刻重试"
-      ],
-      "since": "Sentinel"
-    },
-    {
-      "track": "java",
-      "group": "Spring Cloud Alibaba",
-      "id": "sca-sentinel-circuit-state",
-      "title": "熔断有关闭、打开、半开三个状态",
-      "prompt": "熔断已经打开，为什么过一会儿请求又打到了下游？",
-      "promptAnswer": "熔断有关闭/打开/半开。过一会儿又打到下游，多半是半开在探测。",
-      "keywords": "Sentinel 熔断 半开 慢调用比例 异常比例",
-      "points": [
-        "熔断关闭时请求进入资源，打开时直接拦截",
-        "半开会放少量探测，成功才恢复关闭",
-        "熔断依据慢调用或异常，不是单纯的 QPS 计数"
-      ],
-      "since": "Sentinel"
-    },
-    {
-      "track": "java",
-      "group": "Spring Cloud Alibaba",
-      "id": "sca-sentinel-block-fallback",
-      "title": "规则挡住走拦截处理，业务抛错走降级方法",
-      "prompt": "@SentinelResource 上同时写了 blockHandler 和 fallback，超限时会进哪一个？",
-      "keywords": "Sentinel blockHandler fallback BlockException @SentinelResource",
-      "points": [
-        "规则拦截走 blockHandler，不是业务 fallback",
-        "业务方法抛出的异常才走 fallback",
-        "拦截处理禁止再次调用被限流的方法"
-      ],
-      "since": "Sentinel"
-    },
-    {
-      "track": "java",
-      "group": "Spring Cloud Alibaba",
-      "id": "sca-sentinel-flow-mode",
-      "title": "流控可以按自己、按关联、按调用链来数",
-      "prompt": "下单被限流了，为什么查商品的接口也一起慢下来才有用？",
-      "promptAnswer": "直接模式数自己，关联模式按另一资源热度降速。两种计数对象不要混。",
-      "keywords": "Sentinel 流控 关联 链路 预热 匀速排队",
-      "points": [
-        "直接模式统计本资源，关联模式看另一个资源的量",
-        "链路模式按入口计数，内部调用可以分开",
-        "预热和匀速排队改变流量怎么进入，不只改阈值"
-      ],
-      "since": "Sentinel"
-    },
-    {
-      "track": "java",
-      "group": "Spring Cloud Alibaba",
-      "id": "sca-circuit-not-only-hystrix",
-      "title": "Spring Cloud 不是 Hystrix 说明书，断路器已换代（CircuitBreaker）",
-      "prompt": "为什么把 Spring Cloud 定义成 Stream 启动器，并把容错只背 Hystrix？",
-      "promptAnswer": "Spring Cloud 不是 Stream 启动器别名；容错也不只有 Hystrix，还有 CircuitBreaker/Resilience4j/Sentinel。",
-      "keywords": "Spring Cloud Hystrix Resilience4j Sentinel Eureka",
-      "points": [
-        "Spring Cloud 不是 Stream 或 Task 的别名",
-        "Hystrix 维护模式，改用 CircuitBreaker 或 Sentinel",
-        "发现与负载均衡也不只有 Eureka/Ribbon"
-      ],
-      "since": "SC CircuitBreaker"
-    },
-    {
-      "track": "java",
-      "group": "Spring Cloud Alibaba",
       "id": "sca-seata-intro",
       "title": "Seata 用一个全局编号把多个数据库分支收在一起",
       "prompt": "订单库已经提交、库存库失败了，怎样让两边回到同一结果？",
@@ -16375,6 +16332,97 @@
     },
     {
       "track": "java",
+      "group": "Sentinel",
+      "id": "sca-sentinel-java-app",
+      "title": "Java 应用接入 Sentinel：starter、URL 资源与注解",
+      "prompt": "Spring Boot 订单服务要接 Sentinel，最少要做哪几步，HTTP 和业务方法才会被规则管住？",
+      "promptAnswer": "加 starter；HTTP 由 Web 适配成资源；业务方法用 @SentinelResource；规则推到可推送源。同类 this 不生效。",
+      "keywords": "Sentinel Spring Boot starter @SentinelResource Web 适配 规则源",
+      "points": [
+        "Java 应用用 Spring Cloud Alibaba 的 Sentinel starter 接入进程",
+        "HTTP 可由 Web 适配自动成资源，方法须注解或手动埋点",
+        "注解不挡同类 this 调用；规则按应用落在可推送的规则源",
+        "平台约定接入方式，业务维护本应用的资源名与阈值"
+      ],
+      "since": "Sentinel"
+    },
+    {
+      "track": "java",
+      "group": "Sentinel",
+      "id": "sca-sentinel-intro",
+      "title": "Sentinel 先定义资源，再用规则决定放不放行",
+      "prompt": "依赖加进订单服务之后，是不是每个接口都自动有了熔断？",
+      "promptAnswer": "不是。只加依赖不会让每个接口自动有熔断。要先有资源名和规则。",
+      "keywords": "Sentinel 资源 流控 熔断 热点参数 规则持久化",
+      "points": [
+        "资源是被统计和被规则检查的单位",
+        "流控、熔断、系统保护、来源和热点参数是不同规则",
+        "内存中的规则重启后消失，需要推到外部规则源"
+      ],
+      "since": "Sentinel"
+    },
+    {
+      "track": "java",
+      "group": "Sentinel",
+      "id": "sca-sentinel-block",
+      "title": "Sentinel 规则拦截不是下游超时",
+      "prompt": "接口被 Sentinel 挡住时，应该按下游超时去重试吗？",
+      "promptAnswer": "不应该。挡住时是规则拦截；按下游超时立刻重试只会继续消耗配额。",
+      "keywords": "Sentinel 流控 熔断 BlockException",
+      "points": [
+        "流控按配额拒绝进入资源的请求",
+        "熔断在下游异常或过慢时暂停继续调用",
+        "规则拦截不是下游超时，不能立刻重试"
+      ],
+      "since": "Sentinel"
+    },
+    {
+      "track": "java",
+      "group": "Sentinel",
+      "id": "sca-sentinel-circuit-state",
+      "title": "熔断有关闭、打开、半开三个状态",
+      "prompt": "熔断已经打开，为什么过一会儿请求又打到了下游？",
+      "promptAnswer": "熔断有关闭、打开、半开。过一会儿又打到下游，多半是半开在探测。",
+      "keywords": "Sentinel 熔断 半开 慢调用比例 异常比例",
+      "points": [
+        "熔断关闭时请求进入资源，打开时直接拦截",
+        "半开会放少量探测，成功才恢复关闭",
+        "熔断依据慢调用或异常，不是单纯的 QPS 计数"
+      ],
+      "since": "Sentinel"
+    },
+    {
+      "track": "java",
+      "group": "Sentinel",
+      "id": "sca-sentinel-block-fallback",
+      "title": "规则挡住走拦截处理，业务抛错走降级方法",
+      "prompt": "@SentinelResource 上同时写了 blockHandler 和 fallback，超限时会进哪一个？",
+      "promptAnswer": "超限走 blockHandler。业务方法自己抛错才走 fallback。",
+      "keywords": "Sentinel blockHandler fallback BlockException @SentinelResource",
+      "points": [
+        "规则拦截走 blockHandler，不是业务 fallback",
+        "业务方法抛出的异常才走 fallback",
+        "拦截处理禁止再次调用被限流的方法"
+      ],
+      "since": "Sentinel"
+    },
+    {
+      "track": "java",
+      "group": "Sentinel",
+      "id": "sca-sentinel-flow-mode",
+      "title": "流控可以按自己、按关联、按调用链来数",
+      "prompt": "下单被限流了，为什么查商品的接口也一起慢下来才有用？",
+      "promptAnswer": "直接模式数自己，关联模式按另一资源热度降速。两种计数对象不要混。",
+      "keywords": "Sentinel 流控 关联 链路 预热 匀速排队",
+      "points": [
+        "直接模式统计本资源，关联模式看另一个资源的量",
+        "链路模式按入口计数，内部调用可以分开",
+        "预热和匀速排队改变流量怎么进入，不只改阈值"
+      ],
+      "since": "Sentinel"
+    },
+    {
+      "track": "java",
       "group": "系统设计",
       "id": "arch-chapter-aim",
       "title": "系统设计章先写一条路径，再谈拆分和容量",
@@ -16483,11 +16531,13 @@
       "id": "arch-split-order-case",
       "title": "案例：下单链路怎样从单体拆开",
       "prompt": "把订单、库存、支付拆成三个服务之后，一次下单该如何走？",
+      "promptAnswer": "创建与库存预留走同步，失败当场返回；支付成功后的履约走异步并幂等；支付失败或超时用补偿释放预留，不指望跨库大事务自动回滚。",
       "keywords": "微服务拆分 下单 同步 RPC 异步消息 补偿",
       "points": [
         "同步路径只保留用户必须当场知道的结果",
         "订单成立后的副作用走异步并幂等",
-        "跨服务用补偿与对账，不共享对方库表"
+        "跨服务用补偿与对账，不共享对方库表",
+        "库存预留在库存库用条件更新判断是否够扣"
       ],
       "since": "system design"
     },
@@ -16542,11 +16592,12 @@
       "id": "message-delivery",
       "title": "消息重试与消费幂等",
       "prompt": "消息系统承诺“至少一次”后，消费者还需要处理重复吗？",
+      "promptAnswer": "需要。至少一次允许再投；确认前崩溃，或确认没落到服务端，都会再来。业务只做一次靠业务键，不靠投递口号。",
       "keywords": "message queue at least once retry idempotency",
       "points": [
-        "至少一次交付允许重复",
-        "消费幂等的业务键",
-        "去重记录与状态修改的事务边界"
+        "至少一次允许同一条再投",
+        "确认必须晚于业务提交",
+        "去重记录与状态修改在同一事务里"
       ],
       "since": "system design"
     },
@@ -16627,6 +16678,65 @@
     {
       "track": "java",
       "group": "系统设计",
+      "id": "arch-cost-tradeoff",
+      "title": "成本要和延迟、失败写在同一次取舍里",
+      "prompt": "方案已经满足延迟和失败时的数据要求，为什么还不能定下来？",
+      "promptAnswer": "还要写出每月多付的机器、流量或人工，以及拿掉这项之后用户侧变慢、失败，还是可能读到旧数据。",
+      "keywords": "架构取舍 成本 延迟 失败 粗算",
+      "points": [
+        "取舍要同时写延迟或错误、失败时的数据、每月费用或人工",
+        "只写更稳定而不写费用，评审无法选择",
+        "粗算要和拿掉该项之后的后果写在同一页"
+      ],
+      "since": "system design"
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "arch-contract-review",
+      "title": "契约评审要有消费方，并写清失败时对方看见什么",
+      "prompt": "接口文档已经列了字段，为什么上线后两边对同一条失败的理解仍会不一致？",
+      "promptAnswer": "字段表不够。评审要有消费方。写清对方会读哪些字段、失败时看见什么、不兼容变更怎样发。",
+      "keywords": "契约评审 消费方 不兼容变更 业务键",
+      "points": [
+        "契约评审必须有消费方在场",
+        "失败结果和业务键属于契约",
+        "不兼容变更要有版本或并行期"
+      ],
+      "since": "system design"
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "arch-evolution-roadmap",
+      "title": "路线图只写接下来一件事，并写清做到哪停",
+      "prompt": "路线图列了缓存、消息和拆服务，为什么团队还是不知道下个季度做什么？",
+      "promptAnswer": "清单不是路线图。3～6 个月只保留一件事，写清它解决哪一个已经观察到的约束，以及做到哪一条就停。",
+      "keywords": "路线图 演进 完成标准 一个季度一件事",
+      "points": [
+        "3～6 个月只推进一件事",
+        "这件事要对上已观察到的约束，并写完成标准",
+        "同一窗口要写明不做的事，做完不自动开始下一件"
+      ],
+      "since": "system design"
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "arch-decision-minutes",
+      "title": "决策记录要留下结论、放弃的方案和反对意见",
+      "prompt": "纪要只写「大家达成一致」，为什么下次仍会重开这场争论？",
+      "promptAnswer": "没有放弃的方案和反对意见的原话，下次无法知道当时拒绝了什么。",
+      "keywords": "决策记录 ADR 反对意见 结论 放弃的方案",
+      "points": [
+        "决策记录包含结论、放弃的方案和反对意见",
+        "反对意见保留原话",
+        "没有发生的会不能编成记录"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
       "id": "ddd-same-word-two-contexts",
       "title": "同一个词在两个上下文里可以是两件模型",
       "prompt": "销售和仓储都叫订单，为什么合成一张大表之后两边都改不动？",
@@ -16702,13 +16812,14 @@
       "track": "java",
       "group": "分布式与高并发",
       "id": "distributed-cap",
-      "title": "CAP：先定义分区，再谈取舍",
-      "prompt": "发生网络分区时，一个写入请求究竟应该成功还是等待？",
-      "keywords": "CAP consistency availability partition Redis MongoDB 分区 一致性 可用性",
+      "title": "先定义网络分区，再谈 CAP 取舍",
+      "prompt": "发生网络分区时，一个写入请求应该返回成功、失败，还是等待？",
+      "promptAnswer": "先确认已经分区。不能接受分歧的关键写：失败或带超时的等待；能接受暂时分歧的写：可成功，但路径上写明恢复如何合并。不能凭产品名一刀切。",
+      "keywords": "CAP 网络分区 一致性 可用性 线性化",
       "points": [
-        "先定义网络分区",
-        "分区期间的一致性与可用性取舍",
-        "CAP 不能代替正常运行时设计"
+        "取舍前须先确认网络分区已经发生",
+        "分区期间一致性与可用性不能同时按最强含义保住",
+        "不能给产品永久贴 CP 或 AP"
       ],
       "since": "distributed"
     },
@@ -16733,7 +16844,7 @@
       "id": "distributed-consistency-three-words",
       "title": "三个「一致」不是同一个承诺",
       "prompt": "为什么把库的约束、分区后的读写视图、过一会儿对账成功，都叫成 CAP 的 C？",
-      "promptAnswer": "库约束、分区视图、对账成功不是同一种 C。CAP 的 C 指分区下线性一致那种，不要三词混用。",
+      "promptAnswer": "混称会用错修法：约束失败去改复制策略，分区冲突用「最终会一致」带过。三者是不同承诺；CAP 的 C 只谈分区下能否同一份最新视图（常对应〔线性化｜每次读都读到最新一次已完成的写〕）。",
       "keywords": "一致性 CAP ACID 最终一致",
       "points": [
         "ACID 的 C 是提交时约束成立",
@@ -16760,13 +16871,14 @@
       "track": "java",
       "group": "分布式与高并发",
       "id": "distributed-outbox",
-      "title": "事务消息与 Outbox：消除双写空窗",
+      "title": "Outbox 消除双写空窗",
       "prompt": "订单已经提交，但发消息时进程崩溃，怎样恢复？",
-      "keywords": "transactional outbox Debezium CDC 双写 事务消息 幂等",
+      "promptAnswer": "若业务行与待发事件已同事务写入 Outbox：靠发布器重试投递，消费端按事件键幂等。若只写了库、从未写入 Outbox（先库后消息）：这次发送意图已丢，重试补不回来。",
+      "keywords": "Outbox 双写 至少一次 幂等 CDC",
       "points": [
-        "业务状态与事件同事务写入",
-        "异步发布与重试",
-        "消费者仍需幂等"
+        "业务状态与待发事件同事务写入 Outbox",
+        "投递是至少一次不是恰好一次",
+        "消费者须按事件键幂等"
       ],
       "since": "distributed"
     },
@@ -16984,9 +17096,9 @@
       "group": "分布式与高并发",
       "id": "distributed-one-db-first",
       "title": "能放进一个库的不变量，先不要拆成分布式事务",
-      "prompt": "为什么订单和库存刚拆到两个服务，第一件事就是上 Seata？",
-      "promptAnswer": "能单库本地事务先做单库。分布式事务与多写是额外成本，不是默认起点。",
-      "keywords": "本地事务 聚合 分布式事务 拆分",
+      "prompt": "订单和库存刚拆到两个服务，第一件事就该上 Seata 吗？",
+      "promptAnswer": "不该。刚拆开就上 Seata，是在用全局事务缝本可同库的不变量。能一次本地提交先守住；全局事务是拆开之后的补洞，不是拆分的默认起点。",
+      "keywords": "本地事务 不变量 聚合 分布式事务 拆分",
       "points": [
         "一次本地提交是最便宜的一起成功",
         "拆服务之前先问不变量能不能还在一个库",
@@ -17073,10 +17185,10 @@
       "track": "java",
       "group": "分布式与高并发",
       "id": "distributed-idempotent-key",
-      "title": "最终一致靠同一业务键只生效一次",
+      "title": "至少一次下同一业务键只生效一次",
       "prompt": "为什么补偿和消息都重试了，库存却被扣了两次？",
-      "promptAnswer": "至少一次下要用业务幂等键去重。重试带新键等于没做幂等。",
-      "keywords": "幂等 唯一约束 至少一次 补偿 重试",
+      "promptAnswer": "跨服务投递是〔至少一次｜at-least-once：同一条可能再投，不能假定只到一次〕。重试须带同一业务键，并把去重与扣减放进同一次本地提交；换新键或先改库存再记去重，都会再扣。",
+      "keywords": "幂等 业务键 唯一约束 至少一次",
       "points": [
         "跨服务投递是至少一次，不是恰好一次",
         "同一业务键的副作用只留下一次写入",
@@ -18275,6 +18387,34 @@
         "大规模用主动检查或 Proxy，不是全网被动轮询"
       ],
       "since": "engineering"
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "fs-triage-order",
+      "title": "一次故障先钉住这次请求，再按层排除",
+      "prompt": "页面慢、接口报错、库存不对，为什么不能三处一起改完再看感觉？",
+      "promptAnswer": "一次只改有记录的那一层。三处一起改，变好了也说不出是哪一处。",
+      "keywords": "排查 相关 id trace id 一层 复测",
+      "points": [
+        "先写下用户看见什么和数据库留下什么",
+        "用相关 id 或 trace id 钉住同一次请求",
+        "一次只改有记录的那一层，并用同一个指标复测"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "工程实践",
+      "id": "fault-inject-one-signal",
+      "title": "故障注入是为了看见哪一个信号变了",
+      "prompt": "停掉下游之后，为什么不能只写「系统变慢了」？",
+      "promptAnswer": "注入之后要指出哪一个信号变了。只写变慢，不知道该看下游、CPU 还是磁盘。",
+      "keywords": "故障注入 下游 信号 饱和 排查",
+      "points": [
+        "注入前先点名要看的那一个信号",
+        "停掉下游应改变这一跳，而不是先证明 CPU 忙",
+        "第一次注入放在能收回的环境，不放在承担用户流量的生产上"
+      ]
     },
     {
       "track": "java",

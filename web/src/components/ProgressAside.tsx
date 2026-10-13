@@ -1,8 +1,8 @@
 import { Button, Progress, Typography } from 'antd'
 import { lazy, Suspense } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { findLesson, lessonsFor } from '@/data/curriculum'
-import { PATHS, deliverableKey, gateCleared, nextInGate, slotsOf, spineNextId, spinePlace } from '@/data/learningPaths'
+import { PATHS, deliverableKey, gateCleared, gatePath, nextInGate, slotsOf, spineNextId, spinePlace } from '@/data/learningPaths'
 import { shortTitle } from '@/data/reading'
 import { lessonPath } from '@/data/routes'
 import { useProgress } from '@/state/progress'
@@ -15,6 +15,7 @@ export function ProgressAside({ localReady }: { localReady: boolean }) {
   const progress = useProgress()
   const navigate = useNavigate()
   const location = useLocation()
+  const [params] = useSearchParams()
   const onPath = location.pathname === '/paths' || location.pathname.startsWith('/paths/')
   const pathParts = location.pathname.split('/').filter(Boolean)
   const readingId = pathParts.length === 3 && (pathParts[0] === 'frontend' || pathParts[0] === 'java') ? pathParts[2] : ''
@@ -34,7 +35,14 @@ export function ProgressAside({ localReady }: { localReady: boolean }) {
 
   const checks = progress.pathChecks ?? []
   const openIndex = PATHS.architect.gates.findIndex((stage) => !gateCleared(stage, progress.done, checks))
-  const gateIndex = spine ? spine.index : openIndex === -1 ? PATHS.architect.gates.length - 1 : openIndex
+  const requested = PATHS.architect.gates.findIndex((stage) => stage.id === params.get('gate'))
+  const gateIndex = spine
+    ? spine.index
+    : onPath && requested >= 0
+      ? requested
+      : openIndex === -1
+        ? PATHS.architect.gates.length - 1
+        : openIndex
   const focus = spine?.gate ?? (onPath ? PATHS.architect.gates[gateIndex] : undefined)
   const current = lessonsFor(progress.track)
   const focusSlots = focus ? slotsOf(focus.lessons) : []
@@ -59,15 +67,13 @@ export function ProgressAside({ localReady }: { localReady: boolean }) {
 
   return (
     <div className="aside-stack">
+      {focus ? null : (
+      <>
       <div className="aside-block">
-        <span className="aside-label">{focus ? `第 ${gateIndex + 1} 关` : '查阅'}</span>
+        <span className="aside-label">查阅</span>
         <div className="progress-figure">{percent}%</div>
         <Typography.Text type="secondary">
-          {focus
-            ? lessonTotal
-              ? `已读 ${lessonDone}/${lessonTotal} · 交付 ${checkDone}/${checkTotal}`
-              : `交付 ${checkDone}/${checkTotal}`
-            : `已读 ${completed} / ${total} 课（查阅，不是过关）`}
+          已读 {completed} / {total} 课（查阅，不是过关）
         </Typography.Text>
         <Progress
           percent={percent}
@@ -83,19 +89,23 @@ export function ProgressAside({ localReady }: { localReady: boolean }) {
         <h5>下一步</h5>
         {waitingOnDelivery ? (
           spine ? (
-            <Link className="text-link" to="/paths?focus=deliver">
+            <Link className="text-link" to={focus ? gatePath(focus.id, 'deliver') : '/paths?focus=deliver'}>
               回去勾这一关的交付 →
             </Link>
           ) : (
             <Typography.Text type="secondary">勾上这一关的交付，下一关才会打开。</Typography.Text>
           )
         ) : gateDone ? (
-          gateIndex < PATHS.architect.gates.length - 1 ? (
+          openIndex >= 0 && openIndex !== gateIndex ? (
             <Link className="text-link" to="/paths">
+              过关从第 {openIndex + 1} 关算起 →
+            </Link>
+          ) : gateIndex < PATHS.architect.gates.length - 1 ? (
+            <Link className="text-link" to={gatePath(PATHS.architect.gates[gateIndex + 1].id)}>
               这一关已经交过，去下一关 →
             </Link>
           ) : (
-            <Typography.Text type="secondary">六关都已交付。</Typography.Text>
+            <Typography.Text type="secondary">{PATHS.architect.gates.length} 关都已交付。</Typography.Text>
           )
         ) : spine && !next ? (
           <Typography.Text type="secondary">读完这一节，用文末回去交交付物。</Typography.Text>
@@ -113,6 +123,8 @@ export function ProgressAside({ localReady }: { localReady: boolean }) {
           </Typography.Text>
         )}
       </div>
+      </>
+      )}
 
       <div className="aside-block">
         <h5>最近阅读</h5>

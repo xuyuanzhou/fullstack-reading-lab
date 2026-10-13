@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" role="img" aria-labelledby="title desc">
+  <title id="title">Outbox 消除双写空窗</title>
+  <desc id="desc">业务行与待发事件同事务写入；发布器异步投递至少一次；消费者按事件键幂等。</desc>
+  <rect width="960" height="480" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">分布式 / Outbox</text>
+  <text x="32" y="64" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">同事务落意图，异步至少一次投递</text>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <rect x="32" y="96" width="896" height="64" rx="14" fill="#f6ecea" stroke="#a05048"/>
+    <text x="52" y="128" font-size="15" font-weight="600" fill="#6e3530">双写空窗：对库写 + 对消息写，中间崩溃 → 丢事件或幽灵事件</text>
+    <text x="52" y="148" font-size="14" fill="#6e3530">没有共同事务，重试补不回「从未写入发件箱」的那次</text>
+
+    <rect x="32" y="180" width="280" height="180" rx="14" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="52" y="216" font-size="15" font-weight="600" fill="#2e3330">1 本地事务</text>
+    <text x="52" y="248" font-size="14" fill="#3f6a58">INSERT 订单</text>
+    <text x="52" y="276" font-size="14" fill="#3f6a58">INSERT Outbox 事件</text>
+    <text x="52" y="312" font-size="14" fill="#5e6661">一起提交或一起回滚</text>
+
+    <rect x="340" y="180" width="280" height="180" rx="14" fill="#eef2f8" stroke="#4a6280"/>
+    <text x="360" y="216" font-size="15" font-weight="600" fill="#2e3330">2 发布器 / CDC</text>
+    <text x="360" y="248" font-size="14" fill="#3f6a58">读未发送事件</text>
+    <text x="360" y="276" font-size="14" fill="#3f6a58">推到消息中间件</text>
+    <text x="360" y="312" font-size="14" fill="#5e6661">标 sent 前崩溃 → 会再发</text>
+
+    <rect x="648" y="180" width="280" height="180" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="668" y="216" font-size="15" font-weight="600" fill="#2e3330">3 消费者</text>
+    <text x="668" y="248" font-size="14" fill="#3f6a58">按 event_id 去重</text>
+    <text x="668" y="276" font-size="14" fill="#3f6a58">去重与副作用同提交</text>
+    <text x="668" y="312" font-size="14" fill="#5e6661">至少一次，不是恰好一次</text>
+
+    <rect x="32" y="384" width="896" height="64" rx="14" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="52" y="420" font-size="15" font-weight="600" fill="#2d4f41">结果：订单行数仍是 1；消息侧可以是 2；副作用仍只留下 1 次</text>
+  </g>
+</svg>
