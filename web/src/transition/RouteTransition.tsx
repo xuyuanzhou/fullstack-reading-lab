@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useLearningSlice } from '@/state/progress'
 import { playTransitionCue, primeTransitionAudio, setTransitionAudio, transitionAudioEnabled } from './audio.ts'
@@ -9,6 +9,7 @@ import { preloadWarp, runWarp } from './warp.ts'
 
 type Fx = { kind: TransitionKind; tier: Tier; ms: number }
 
+/** 仅在进出 `/paths` 营地时铺特效；其它学习路径跳转无遮罩，加载用页面里的 Spin。 */
 export function RouteTransition() {
   const location = useLocation()
   const flush = useLearningSlice((state) => state.flushPersist)
@@ -67,7 +68,7 @@ export function RouteTransition() {
       data-tier={fx.tier}
       aria-hidden="true"
     >
-      {fx.kind === 'warp' && fx.tier === 'full' ? <WarpView ms={fx.ms} /> : <div className="route-fx-fallback" />}
+      {fx.kind === 'warp' ? <WarpView ms={fx.ms} tier={fx.tier} /> : <div className="route-fx-fallback" />}
       {fx.kind === 'splice' ? (
         <>
           <span className="route-fx-pane is-left" />
@@ -83,13 +84,28 @@ export function RouteTransition() {
   )
 }
 
-function WarpView({ ms }: { ms: number }) {
+function WarpView({ ms, tier }: { ms: number; tier: Tier }) {
   const ref = useRef<HTMLCanvasElement>(null)
-  useEffect(() => {
+  const [useGl, setUseGl] = useState(tier === 'full')
+  useLayoutEffect(() => {
+    if (tier !== 'full') {
+      setUseGl(false)
+      return
+    }
     const canvas = ref.current
-    if (!canvas) return
-    return runWarp(canvas, ms)
-  }, [ms])
+    if (!canvas) {
+      setUseGl(false)
+      return
+    }
+    const stop = runWarp(canvas, ms)
+    if (!stop) {
+      setUseGl(false)
+      return
+    }
+    setUseGl(true)
+    return stop
+  }, [ms, tier])
+  if (!useGl) return <div className="route-fx-fallback" />
   return <canvas ref={ref} className="route-fx-gl" />
 }
 

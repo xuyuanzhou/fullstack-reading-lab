@@ -1,9 +1,12 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { useLocation, useSearchParams } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { QuestBoard } from '@/components/learning/QuestBoard'
-import { prefetchLessonBody } from '@/data/curriculum'
-import { LEARNING_TASKS } from '@/data/learningTasks'
-import { PATHS, gateCleared, gateMark, nextInGate, type PathGate } from '@/data/learningPaths'
+import { findLesson, prefetchLessonBody } from '@/data/curriculum'
+import { PATHS, campScene, deliverableKey, encounterAction, encounterPhase, encounterPhaseLabel, gateCleared, gateMark, missingOutput, nextInGate, requiredSlotsOf, sceneSentence, settleLine, type PathGate } from '@/data/learningPaths'
+import { bossQuest, questFace, sideQuests } from '@/data/questBoard'
+import { SIDE_TRACKS } from '@/data/sideTracks'
+import { shortTitle } from '@/data/reading'
+import { lessonPath } from '@/data/routes'
 import { useProgress } from '@/state/progress'
 import { markSceneReady } from '@/transition/jumpBudget'
 
@@ -27,6 +30,7 @@ function gateStatus(stage: PathGate, index: number, finished: boolean, sequenceI
 export function PathPage() {
   const progress = useProgress()
   const location = useLocation()
+  const navigate = useNavigate()
   const [params, setParams] = useSearchParams()
   const openIndex = stages.findIndex((stage) => !gateCleared(stage, progress.done, progress.pathChecks))
   const sequenceIndex = openIndex === -1 ? stages.length - 1 : openIndex
@@ -38,6 +42,270 @@ export function PathPage() {
   const requested = stages.findIndex((stage) => stage.id === params.get('gate'))
   const currentIndex = requested >= 0 ? requested : sequenceIndex
 
+  function selectGate(index: number) {
+    const id = stages[index].id
+    const query = new URLSearchParams()
+    query.set('gate', id)
+    setParams(query, { replace: true })
+  }
+
+  function openSide(id: string) {
+    const query = new URLSearchParams()
+    query.set('side', id)
+    setParams(query, { replace: true })
+  }
+
+  function openBoss() {
+    const query = new URLSearchParams()
+    query.set('boss', 'core')
+    setParams(query, { replace: true })
+  }
+
+  function leaveDetail() {
+    setParams(new URLSearchParams(), { replace: true })
+  }
+
+  const camp = stages[currentIndex] ?? stages[sequenceIndex]
+  const campIndex = stages.indexOf(camp)
+  const done = new Set(progress.done)
+  const checks = new Set(progress.pathChecks ?? [])
+  const slots = requiredSlotsOf(camp.lessons)
+  const readSlots = slots.filter((slot) => slot.some((id) => done.has(id))).length
+  const delivered = camp.outputs.filter((_, index) => checks.has(deliverableKey(camp.id, index))).length
+  const cleared = gateCleared(camp, progress.done, progress.pathChecks ?? [])
+  const phase = encounterPhase(campIndex, sequenceIndex, cleared, readSlots, slots.length)
+  const allDone = openIndex < 0
+  const scene = campScene(camp, progress.done)
+  const nextId = scene.lessonId || ''
+  useEffect(() => {
+    if (nextId && nextId !== upcomingId) prefetchLessonBody(nextId)
+  }, [nextId, upcomingId])
+  const nextItem = camp.lessons.find((lesson) => lesson.id === nextId)
+  const nextLesson = nextId ? findLesson(nextId) : undefined
+  const nextName = nextLesson ? shortTitle(nextLesson.title) : undefined
+  const settledRaw = location.state
+  const settledId = settledRaw && typeof settledRaw === 'object' && 'settled' in settledRaw
+    ? String((settledRaw as { settled?: string }).settled || '')
+    : ''
+  const settle = settleLine(settledId, camp.lessons.map((lesson) => lesson.id), progress.done, nextName)
+  const missing = missingOutput(camp, progress.pathChecks ?? [])
+  const handIn = missing ? sceneSentence(missing) : ''
+  const heading = phase === 'deliver'
+    ? (handIn || camp.learnTitle)
+    : phase === 'cleared' || !nextName
+      ? camp.learnTitle
+      : nextName
+  const goal = phase === 'deliver'
+    ? (missing && missing !== handIn ? missing : camp.pass)
+    : phase === 'cleared'
+      ? (allDone ? '九关的阅读和交付都已记下。' : '这一关已记下。')
+      : sceneSentence(nextItem?.job || camp.how[0] || camp.pass)
+  const action = settle && nextName && phase !== 'deliver' && phase !== 'cleared'
+    ? nextName
+    : allDone && phase === 'cleared'
+      ? '九关都已记下'
+      : encounterAction(phase)
+  const pause = progress.learning.pause
+  const pauseLabel = pause ? (pause.choice === 'day' ? '一天' : pause.choice === 'week' ? '一周' : '一个月') : ''
+
+  function depart() {
+    if (allDone && phase === 'cleared') return
+    if (phase === 'cleared') {
+      selectGate(sequenceIndex)
+      return
+    }
+    if (phase === 'deliver' || !nextId) {
+      const query = new URLSearchParams()
+      query.set('gate', camp.id)
+      query.set('focus', 'deliver')
+      setParams(query, { replace: true })
+      window.dispatchEvent(new CustomEvent('lab-open-gate', { detail: camp.id }))
+      return
+    }
+    const lesson = findLesson(nextId)
+    if (!lesson) return
+    progress.remember(nextId)
+    navigate(lessonPath(lesson))
+  }
+
+  const quests = progress.learning.quests ?? []
+  const sides = sideQuests()
+  const boss = bossQuest()
+  const sideTrack = SIDE_TRACKS.find((item) => item.id === params.get('side'))
+  const bossPage = params.get('boss') === 'core'
+  const inGate = Boolean(params.get('gate') && stages.some((stage) => stage.id === params.get('gate')))
+  const sideFaces = sides.map((item) => questFace(item, quests))
+  const sideLive = sideFaces.findIndex((face) => face !== 'cleared' && face !== 'starred')
+  const bossFace = questFace(boss, quests)
+  const bossDone = bossFace === 'cleared' || bossFace === 'starred'
+
+  if (!inGate && !sideTrack && !bossPage) {
+    return (
+      <div className="path-stage path-world path-atlas">
+        <section aria-label="主线">
+          <p className="atlas-kicker">主线</p>
+          <CampaignMap
+            mapId="main"
+            label={`${stages.length} 关`}
+            hereIndex={sequenceIndex}
+            liveIndex={openIndex >= 0 ? sequenceIndex : -1}
+            onPick={selectGate}
+            nodes={stages.map((stage, index) => {
+              const finished = gateCleared(stage, progress.done, progress.pathChecks)
+              return {
+                id: stage.id,
+                title: stage.learnTitle,
+                status: gateStatus(stage, index, finished, sequenceIndex, openIndex),
+                done: finished,
+                boss: false,
+              }
+            })}
+          />
+        </section>
+        <section aria-label="支线">
+          <p className="atlas-kicker">支线</p>
+          <CampaignMap
+            mapId="side"
+            label="四条支线"
+            hereIndex={sideLive >= 0 ? sideLive : 0}
+            liveIndex={sideLive}
+            onPick={(index) => openSide(sides[index].id.replace(/^side:/, ''))}
+            nodes={sides.map((item, index) => {
+              const face = sideFaces[index]
+              const done = face === 'cleared' || face === 'starred'
+              return {
+                id: item.id,
+                title: item.title,
+                status: done ? '已过' : index === sideLive ? '进行中' : '',
+                done,
+                boss: false,
+              }
+            })}
+          />
+        </section>
+        <section aria-label="Boss">
+          <p className="atlas-kicker">Boss</p>
+          <CampaignMap
+            mapId="boss"
+            label="Boss"
+            hereIndex={0}
+            liveIndex={bossDone ? -1 : 0}
+            onPick={openBoss}
+            nodes={[{
+              id: boss.id,
+              title: '核心挑战',
+              status: bossDone ? '已过' : 'Boss',
+              done: bossDone,
+              boss: true,
+            }]}
+          />
+        </section>
+      </div>
+    )
+  }
+
+  return (
+    <div className="path-stage path-world">
+      <p className="atlas-back">
+        <button type="button" onClick={leaveDetail}>回总图</button>
+      </p>
+      {inGate ? (
+        <>
+      <header className="encounter here">
+          {settle ? <p className="encounter-settle">{settle}</p> : null}
+          <div className="here-row">
+            <div>
+              <p className="encounter-kicker">
+                <span>第 {campIndex + 1} 关</span>
+                <span className="dot" />
+                <span>{camp.learnTitle}</span>
+                <span className="dot" />
+                <span>{encounterPhaseLabel(phase)}</span>
+              </p>
+              <h1 className="hero-title">{heading}</h1>
+            </div>
+            <button type="button" className="encounter-go" onClick={depart} disabled={allDone && phase === 'cleared'}>
+              {action}
+            </button>
+          </div>
+          <p className="encounter-goal">{goal}</p>
+          <div className="encounter-meters">
+            {phase === 'deliver' || phase === 'cleared' ? (
+              <Meter name="交付" value={delivered} total={camp.outputs.length} />
+            ) : (
+              <Meter name="阅读" value={Math.max(0, scene.step - 1)} total={scene.total} label={`第 ${scene.step} 场 / 本关 ${scene.total} 场`} />
+            )}
+          </div>
+          {campIndex !== sequenceIndex ? (
+            <p className="encounter-note">
+              进度在第 {sequenceIndex + 1} 关。
+              {phase === 'playing' ? '这一场已经开始。' : phase === 'resume' ? '这一场可以补。' : '这一场仍可开始。'}
+            </p>
+          ) : null}
+          {pauseLabel ? <p className="encounter-note">已暂停{pauseLabel}。草稿和证据都还在。</p> : null}
+          <div className="encounter-pause">
+            {pause ? (
+              <button type="button" onClick={() => progress.setLearningPause(null)}>继续</button>
+            ) : (
+              <details>
+                <summary>暂停</summary>
+                <button type="button" onClick={() => progress.setLearningPause('day')}>一天</button>
+                <button type="button" onClick={() => progress.setLearningPause('week')}>一周</button>
+                <button type="button" onClick={() => progress.setLearningPause('month')}>一个月</button>
+              </details>
+            )}
+          </div>
+        </header>
+      <QuestBoard gateId={camp.id} handIn={phase === 'deliver' || phase === 'cleared'} />
+        </>
+      ) : null}
+      {sideTrack ? (
+        <>
+          <header className="encounter here">
+            <p className="encounter-kicker">支线</p>
+            <h1 className="hero-title">{sideTrack.title}</h1>
+            <p className="encounter-goal">{sideTrack.objective}</p>
+          </header>
+          <QuestBoard sideId={sideTrack.id} />
+        </>
+      ) : null}
+      {bossPage ? (
+        <>
+          <header className="encounter here">
+            <p className="encounter-kicker">Boss</p>
+            <h1 className="hero-title">核心挑战</h1>
+            <p className="encounter-goal">{boss.objective}</p>
+          </header>
+          <QuestBoard bossPage />
+        </>
+      ) : null}
+    </div>
+  )
+}
+
+type MapNode = {
+  id: string
+  title: string
+  status: string
+  done: boolean
+  boss: boolean
+}
+
+function CampaignMap({
+  mapId,
+  label,
+  nodes,
+  hereIndex,
+  liveIndex,
+  onPick,
+}: {
+  mapId: string
+  label: string
+  nodes: MapNode[]
+  hereIndex: number
+  liveIndex: number
+  onPick: (index: number) => void
+}) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const [boardWidth, setBoardWidth] = useState(0)
   useLayoutEffect(() => {
@@ -49,127 +317,78 @@ export function PathPage() {
     observer.observe(el)
     return () => observer.disconnect()
   }, [])
-
-  const layout = useMemo(() => buildLayout(stages.length, boardWidth || MIN_SLOT + PAD_X * 2), [boardWidth])
-  const seen = useRef(false)
-
-  useLayoutEffect(() => {
-    const scroller = scrollRef.current
-    const stop = scroller?.querySelector<HTMLElement>('.path-stop[aria-current="page"]')
-    if (!scroller || !stop || !boardWidth) return
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const top = Math.max(0, stop.offsetTop - scroller.clientHeight / 2)
-    scroller.scrollTo({ top, behavior: seen.current && !reduce ? 'smooth' : 'auto' })
-    seen.current = true
-  }, [boardWidth, currentIndex, layout])
-
-  function selectGate(index: number) {
-    const id = stages[index].id
-    const query = new URLSearchParams()
-    query.set('gate', id)
-    setParams(query, { replace: true })
-    window.dispatchEvent(new CustomEvent('lab-open-gate', { detail: id }))
-  }
-
-  const arrow = openIndex >= 0 ? layout.arrows[sequenceIndex] : null
-  const openAttempt = [...progress.learning.attempts].reverse().find((item) => !item.deleted)
-  const openTask = LEARNING_TASKS.find((item) => item.id === openAttempt?.taskId)
-    ?? LEARNING_TASKS.find((item) => item.id === 'g1.write-path')
-    ?? LEARNING_TASKS[0]
-  const pauseLabel = progress.learning.pause
-    ? progress.learning.pause.choice === 'day' ? '一天' : progress.learning.pause.choice === 'week' ? '一周' : '一个月'
-    : ''
-
-  function jump(id: string) {
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    document.getElementById(id)?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
-  }
-
+  const layout = useMemo(() => buildLayout(nodes.length, boardWidth || MIN_SLOT + PAD_X * 2), [boardWidth, nodes.length])
+  const walkIndex = liveIndex >= 0 ? liveIndex : Math.max(0, nodes.length - 1)
+  const stand = hereIndex >= 0 ? hereIndex : walkIndex
+  const arrow = liveIndex >= 0 ? layout.arrows[liveIndex] ?? null : null
+  const maskId = `campaign-walked-${mapId}`
   return (
-    <div className="path-stage">
-      <header className="path-stage-head">
-        <div className="page-kicker">
-          <span>{stages.length} 关</span>
-          <span className="dot" />
-          <span>过关看交付</span>
-        </div>
-        <h1 className="hero-title">{path.title}</h1>
-        <p className="hero-lead">{path.lead}</p>
-      </header>
-      <nav className="path-jumps" aria-label="这一页的位置">
-        <button type="button" onClick={() => jump('path-map')}>九关地图</button>
-        <button type="button" onClick={() => jump('quest-map')}>关卡地图</button>
-        <button type="button" onClick={() => jump('quest-main')}>主线子关</button>
-        <button type="button" onClick={() => jump('quest-side')}>支线任务</button>
-        <button type="button" onClick={() => jump('quest-boss')}>核心挑战</button>
-      </nav>
-      <div className="path-map-scroll" id="path-map" ref={scrollRef}>
-        <div
-          className={layout.rows === 1 ? 'path-map is-single' : 'path-map'}
-          style={{ width: layout.width, height: layout.height, ['--slot' as string]: `${layout.slot}px` }}
-        >
-          <svg className="campaign" viewBox={`0 0 ${layout.width} ${layout.height}`} aria-hidden="true">
-            <defs>
-              <mask id="campaign-walked" maskUnits="userSpaceOnUse">
-                <path
-                  d={layout.d}
-                  pathLength="1"
-                  fill="none"
-                  stroke="#fff"
-                  strokeWidth="16"
-                  strokeDasharray={`${layout.fractions[sequenceIndex]} 1`}
-                />
-              </mask>
-            </defs>
-            <path className="campaign-road" d={layout.d} />
-            <path className="campaign-road-shadow" d={layout.d} pathLength="1" strokeDasharray={`${layout.fractions[sequenceIndex]} 1`} transform="translate(0 5)" />
-            <path className="campaign-walk" d={layout.d} pathLength="1" strokeDasharray={`${layout.fractions[sequenceIndex]} 1`} />
-            <path className="campaign-gleam" d={layout.d} pathLength="1" mask="url(#campaign-walked)" />
-            {arrow ? (
-              <path className="campaign-arrow" d="M-5 -3.5 L4 0 L-5 3.5 Z" transform={`translate(${arrow.x} ${arrow.y}) rotate(${arrow.deg})`} />
-            ) : null}
-            {layout.stops.map((stop, index) => (
-              <Plinth
-                key={stages[index].id}
-                stop={stop}
-                index={index}
-                done={gateCleared(stages[index], progress.done, progress.pathChecks)}
-                here={index === currentIndex}
-                live={index === sequenceIndex && openIndex >= 0}
-              />
-            ))}
-            <CampaignTraveler d={layout.d} index={currentIndex} fractions={layout.fractions} stops={layout.stops} />
-          </svg>
-          <ol className="path-stops" aria-label={`${stages.length} 关`}>
-            {stages.map((stage, index) => {
-              const finished = gateCleared(stage, progress.done, progress.pathChecks)
-              const status = gateStatus(stage, index, finished, sequenceIndex, openIndex)
-              const live = index === sequenceIndex && openIndex >= 0
-              const stop = layout.stops[index]
-              return (
-                <li key={stage.id}>
-                  <button
-                    type="button"
-                    className={['path-stop', live ? 'is-live' : '', finished ? 'is-done' : ''].filter(Boolean).join(' ')}
-                    style={{ left: stop.x, top: stop.y }}
-                    aria-current={index === currentIndex ? 'page' : undefined}
-                    onClick={() => selectGate(index)}
-                  >
-                    <span className="stop-hit" aria-hidden="true" />
-                    <span className="route-name">{stage.learnTitle}</span>
-                    <span className="route-state">{status}</span>
-                  </button>
-                </li>
-              )
-            })}
-          </ol>
-        </div>
+    <div className="path-map-scroll" id={mapId === 'main' ? 'path-map' : undefined} ref={scrollRef}>
+      <div
+        className={layout.rows === 1 ? 'path-map is-single' : 'path-map'}
+        style={{ width: layout.width, height: layout.height, ['--slot' as string]: `${layout.slot}px` }}
+      >
+        <svg className="campaign" viewBox={`0 0 ${layout.width} ${layout.height}`} aria-hidden="true">
+          <defs>
+            <mask id={maskId} maskUnits="userSpaceOnUse">
+              <path d={layout.d} pathLength="1" fill="none" stroke="#fff" strokeWidth="16" strokeDasharray={`${layout.fractions[walkIndex] ?? 0} 1`} />
+            </mask>
+          </defs>
+          <path className="campaign-road" d={layout.d} />
+          <path className="campaign-road-shadow" d={layout.d} pathLength="1" strokeDasharray={`${layout.fractions[walkIndex] ?? 0} 1`} transform="translate(0 5)" />
+          <path className="campaign-walk" d={layout.d} pathLength="1" strokeDasharray={`${layout.fractions[walkIndex] ?? 0} 1`} />
+          <path className="campaign-gleam" d={layout.d} pathLength="1" mask={`url(#${maskId})`} />
+          {arrow ? (
+            <path className="campaign-arrow" d="M-5 -3.5 L4 0 L-5 3.5 Z" transform={`translate(${arrow.x} ${arrow.y}) rotate(${arrow.deg})`} />
+          ) : null}
+          {layout.stops.map((stop, index) => (
+            <Plinth
+              key={nodes[index].id}
+              stop={stop}
+              index={index}
+              done={nodes[index].done}
+              here={index === stand}
+              live={index === liveIndex}
+              boss={nodes[index].boss}
+            />
+          ))}
+          <CampaignTraveler d={layout.d} index={stand} fractions={layout.fractions} stops={layout.stops} />
+        </svg>
+        <ol className="path-stops" aria-label={label}>
+          {nodes.map((node, index) => {
+            const stop = layout.stops[index]
+            const live = index === liveIndex
+            return (
+              <li key={node.id}>
+                <button
+                  type="button"
+                  className={['path-stop', live ? 'is-live' : '', node.done ? 'is-done' : '', node.boss ? 'is-boss' : ''].filter(Boolean).join(' ')}
+                  style={{ left: stop.x, top: stop.y }}
+                  aria-current={index === stand ? 'page' : undefined}
+                  onClick={() => onPick(index)}
+                >
+                  <span className="stop-hit" aria-hidden="true" />
+                  <span className="route-name">{node.title}</span>
+                  {node.status ? <span className="route-state">{node.status}</span> : null}
+                </button>
+              </li>
+            )
+          })}
+        </ol>
       </div>
-      <p className="path-continue">
-        九关仍可点开。下面的地图把子关、支线和核心挑战分开。
-        {pauseLabel ? `已暂停${pauseLabel}。` : ''}最近一题：{openTask.title}。
-      </p>
-      <QuestBoard />
+    </div>
+  )
+}
+
+function Meter({ name, value, total, label }: { name: string; value: number; total: number; label?: string }) {
+  const ratio = total ? Math.min(1, value / total) : 0
+  return (
+    <div className="encounter-meter">
+      <span>{name}</span>
+      <span>{label || `${value}/${total}`}</span>
+      <span className="encounter-track" aria-hidden="true">
+        <span style={{ width: `${Math.round(ratio * 100)}%` }} />
+      </span>
     </div>
   )
 }
@@ -180,24 +399,30 @@ function Plinth({
   done,
   here,
   live,
+  boss,
 }: {
   stop: { x: number; y: number }
   index: number
   done: boolean
   here: boolean
   live: boolean
+  boss?: boolean
 }) {
   const lift = here ? -8 : 0
   return (
-    <g className={['plinth', done ? 'is-done' : '', here ? 'is-here' : '', live ? 'is-live' : ''].filter(Boolean).join(' ')} transform={`translate(${stop.x} ${stop.y})`}>
+    <g className={['plinth', done ? 'is-done' : '', here ? 'is-here' : '', live ? 'is-live' : '', boss ? 'is-boss' : ''].filter(Boolean).join(' ')} transform={`translate(${stop.x} ${stop.y})`}>
       <ellipse className="plinth-shadow" cx="0" cy="16" rx="20" ry="5.5" />
       <g className="plinth-stone" transform={`translate(0 ${lift})`}>
         <polygon className="plinth-side-l" points="-22,1 0,11 0,20 -22,10" />
         <polygon className="plinth-side-r" points="0,11 22,1 22,10 0,20" />
         <polygon className="plinth-top" points="0,-9 22,1 0,11 -22,1" />
-        <text className="plinth-num" x="0" y="4" textAnchor="middle">
-          {String(index + 1).padStart(2, '0')}
-        </text>
+        {boss ? (
+          <polygon className="plinth-gem" points="0,-18 6,-12 0,-6 -6,-12" />
+        ) : (
+          <text className="plinth-num" x="0" y="4" textAnchor="middle">
+            {String(index + 1).padStart(2, '0')}
+          </text>
+        )}
       </g>
     </g>
   )

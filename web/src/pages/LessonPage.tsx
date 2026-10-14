@@ -84,7 +84,6 @@ export function LessonPage() {
   const onSpine = spinePlace(lesson.id)
   const spineSlots = onSpine ? slotsOf(onSpine.gate.lessons) : []
   const spineSlot = spineSlots.findIndex((slot) => slot.includes(lesson.id))
-  const spineNext = findLesson(spineNextId(lesson.id) || '')
   const spinePrev = findLesson(spinePrevId(lesson.id) || '')
   const core = structureCore(lesson.core)
   const references = lesson.references || []
@@ -122,15 +121,7 @@ export function LessonPage() {
             <span>
               交付 {onSpine.gate.outputs.filter((_, outputIndex) => (progress.pathChecks ?? []).includes(deliverableKey(onSpine.gate.id, outputIndex))).length}/{onSpine.gate.outputs.length}
             </span>
-            {spineNext ? (
-              <Link to={lessonPath(spineNext)} onClick={() => progress.remember(spineNext.id)}>
-                下一节 · {shortTitle(spineNext.title)}
-              </Link>
-            ) : progress.done.includes(lesson.id) ? (
-              <Link to={gatePath(onSpine.gate.id, 'deliver')}>回主线交交付物</Link>
-            ) : (
-              <span>文末记为已读，再交交付物</span>
-            )}
+            <Link to={gatePath(onSpine.gate.id)}>回营地</Link>
           </p>
           {onSpine.gate.lessons[onSpine.step]?.job ? <p>{onSpine.gate.lessons[onSpine.step].job}</p> : null}
         </section>
@@ -372,41 +363,24 @@ export function LessonPage() {
             <Link className="path-turn-prev" to={lessonPath(spinePrev)} onClick={() => progress.remember(spinePrev.id)}>
               上一节 · {shortTitle(spinePrev.title)}
             </Link>
-          ) : (
-            <Link className="path-turn-prev" to={gatePath(onSpine.gate.id)}>
-              返回这一关
-            </Link>
-          )}
-          {spineNext ? (
-            <Link
-              className="next-card"
-              to={lessonPath(spineNext)}
-              onClick={() => {
-                if (!progress.done.includes(lesson.id)) progress.toggleDone(lesson.id)
-                progress.remember(spineNext.id)
-              }}
-            >
-              <div>
-                <small>{progress.done.includes(lesson.id) ? '主线下一节' : '记为已读，下一节'}</small>
-                <strong>{shortTitle(spineNext.title)}</strong>
-              </div>
-              <span>→</span>
-            </Link>
-          ) : (
-            <Link
-              className="next-card"
-              to={gatePath(onSpine.gate.id, 'deliver')}
-              onClick={() => {
-                if (!progress.done.includes(lesson.id)) progress.toggleDone(lesson.id)
-              }}
-            >
-              <div>
-                <small>{progress.done.includes(lesson.id) ? '本关读完' : '记为已读'}</small>
-                <strong>回去交交付物</strong>
-              </div>
-              <span>→</span>
-            </Link>
-          )}
+          ) : null}
+          <Link className="path-turn-prev" to={gatePath(onSpine.gate.id)}>
+            先不记，回营地
+          </Link>
+          <Link
+            className="next-card"
+            to={gatePath(onSpine.gate.id)}
+            state={{ settled: lesson.id }}
+            onClick={() => {
+              if (!progress.done.includes(lesson.id)) progress.toggleDone(lesson.id)
+            }}
+          >
+            <div>
+              <small>这一场的结果</small>
+              <strong>记下这一场</strong>
+            </div>
+            <span>→</span>
+          </Link>
         </div>
       ) : next ? (
         <Link

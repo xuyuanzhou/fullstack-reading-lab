@@ -22,7 +22,8 @@ import {
   taskVerified,
   verifiedFromReading,
 } from '../web/src/state/learningEvidence.ts'
-import { gateFace, gateFaceLabel } from '../web/src/data/learningPaths.ts'
+import { campScene, campShowsChrome, encounterAction, encounterPhase, encounterPhaseLabel, gateFace, gateFaceLabel, gatePath, missingOutput, PATHS, sceneExitPath, sceneSentence, settleLine, spineNextId } from '../web/src/data/learningPaths.ts'
+import { openSideLessonIds } from '../web/src/data/sideTracks.ts'
 import { bossQuest, faceLabel, mainLanes, mergeQuestRecords, questDifficulty, questFace, questGraphIssues, questStars, questStatus, reduceQuests, sideQuests } from '../web/src/data/questBoard.ts'
 import { adoptLearningDraft, mergeForWrite, normalizeProgress, readProgress, writeProgress } from '../web/src/state/progressStorage.ts'
 
@@ -415,4 +416,43 @@ test('a later gate stays openable, and its label is not a lock', () => {
   assert.equal(gateFaceLabel('ahead'), '未到')
   assert.equal(gateFace(1, 2, false), 'resume')
   assert.equal(gateFaceLabel('resume'), '可补')
+})
+
+test('an encounter stays one step, and a finished read still waits on delivery', () => {
+  assert.equal(encounterPhase(0, 0, false, 0, 4), 'ready')
+  assert.equal(encounterAction('ready'), '开始这一场')
+  assert.equal(encounterPhaseLabel('ready'), '可开始')
+  assert.equal(encounterPhase(0, 0, false, 1, 4), 'playing')
+  assert.equal(encounterAction('playing'), '继续这一场')
+  assert.equal(encounterPhase(0, 0, false, 4, 4), 'deliver')
+  assert.equal(encounterPhaseLabel('deliver'), '待验收')
+  assert.equal(encounterAction('deliver'), '交上这一份')
+  assert.equal(encounterPhase(0, 2, false, 1, 4), 'resume')
+  assert.equal(encounterAction('resume'), '补上这一场')
+  assert.equal(encounterPhase(0, 2, true, 4, 4), 'cleared')
+  assert.equal(encounterAction('cleared'), '看下一场')
+})
+
+test('a spine lesson returns to camp, and the settle line needs a stored read', () => {
+  const gate = PATHS.architect.gates[0]
+  const first = 'fs-four-layers'
+  const next = spineNextId(first)
+  assert.equal(sceneExitPath(first), gatePath('g1'))
+  assert.equal(sceneExitPath(first)?.includes(next), false)
+  assert.equal(sceneExitPath('not-on-the-spine'), undefined)
+  assert.equal(campScene(gate, []).lessonId, first)
+  assert.equal(campScene(gate, []).step, 1)
+  assert.equal(campScene(gate, gate.lessons.map((lesson) => lesson.id)).lessonId, undefined)
+  assert.equal(missingOutput(gate, []), gate.outputs[0])
+  assert.equal(missingOutput(gate, [`${gate.id}:0`]), gate.outputs[1])
+  assert.equal(sceneSentence('先看这一句。后面先不放上营地。'), '先看这一句。')
+  assert.equal(settleLine(first, [first], [], '下一场'), '')
+  assert.equal(settleLine(first, [first], [first], '下一场'), '上一场已记下。下一场是 下一场。')
+  assert.equal(settleLine(first, [first], [first], undefined), '本关课文已记下。')
+  assert.equal(settleLine('other', [first], ['other'], '下一场'), '')
+  assert.equal(campShowsChrome(0, 0), false)
+  assert.equal(campShowsChrome(0, 1), true)
+  assert.equal(campShowsChrome(1, 0), true)
+  assert.equal(openSideLessonIds([])[0], 'ts-narrowing')
+  assert.equal(openSideLessonIds(['ts-narrowing'])[0], 'ts-generics')
 })

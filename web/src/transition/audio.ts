@@ -56,8 +56,8 @@ function cue(context: AudioContext, kind: TransitionKind) {
     const src = context.createBufferSource()
     const filter = context.createBiquadFilter()
     filter.type = 'lowpass'
-    filter.frequency.setValueAtTime(400, t)
-    filter.frequency.exponentialRampToValueAtTime(2200, t + 0.35)
+    filter.frequency.setValueAtTime(240, t)
+    filter.frequency.exponentialRampToValueAtTime(480, t + 0.32)
     src.buffer = noise
     src.connect(filter)
     filter.connect(gain)

@@ -1158,13 +1158,17 @@
         "spring-cloud-feign-not-lb",
         "dubbo-one-call",
         "dubbo-hessian-zk-not-frozen",
+        "dubbo-serialize-allowlist",
         "dubbo-spring-expose",
         "dubbo-register-mode",
         "dubbo-zk-ephemeral",
         "dubbo-loadbalance-random-default",
         "dubbo-cluster-failover",
+        "dubbo-tag-router",
         "dubbo-timeout-retry-idempotent",
         "dubbo-thread-pool",
+        "dubbo-filter-attachment",
+        "dubbo-qos-offline",
         "dubbo-no-provider",
         "dubbo-registry-down-local-cache",
         "dubbo-beside-stack",
@@ -3038,13 +3042,17 @@
           "ids": [
             "dubbo-one-call",
             "dubbo-hessian-zk-not-frozen",
+            "dubbo-serialize-allowlist",
             "dubbo-spring-expose",
             "dubbo-register-mode",
             "dubbo-zk-ephemeral",
             "dubbo-loadbalance-random-default",
             "dubbo-cluster-failover",
+            "dubbo-tag-router",
             "dubbo-timeout-retry-idempotent",
             "dubbo-thread-pool",
+            "dubbo-filter-attachment",
+            "dubbo-qos-offline",
             "dubbo-no-provider",
             "dubbo-registry-down-local-cache",
             "dubbo-beside-stack"
@@ -16351,6 +16359,20 @@
     {
       "track": "java",
       "group": "Spring Cloud Alibaba",
+      "id": "dubbo-serialize-allowlist",
+      "title": "反序列化默认 STRICT，只放行白名单里的类",
+      "prompt": "为什么接口参数里新加了一个内部 DTO，提供方已经部署，消费方一调用就在反序列化阶段失败？",
+      "promptAnswer": "3.3.5 默认序列化检查级别是 STRICT。不在允许列表里的类会被拒绝。先把该类纳入信任范围，再查协议和字段。",
+      "keywords": "Dubbo 序列化 STRICT allowlist Hessian",
+      "points": [
+        "默认序列化检查级别是 STRICT",
+        "不在允许列表中的类在反序列化时被拒绝",
+        "接口新增类型要两侧同发，并纳入允许列表"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Spring Cloud Alibaba",
       "id": "dubbo-spring-expose",
       "title": "用 @DubboService 暴露，用 @DubboReference 引用，version 和 group 要一致",
       "prompt": "提供方写了 version = \"1.0.0\"，消费方注解上没写 version，为什么启动或调用时找不到提供者？",
@@ -16422,6 +16444,20 @@
     {
       "track": "java",
       "group": "Spring Cloud Alibaba",
+      "id": "dubbo-tag-router",
+      "title": "标签路由按 dubbo.tag 选提供者，force 默认 false",
+      "prompt": "灰度发布时，为什么只改 version，灰度流量仍会打到未升级的实例？",
+      "promptAnswer": "version 是服务匹配键，两边不一致就找不到提供者。同版本内按机器划分灰度，用标签路由和 dubbo.tag。",
+      "keywords": "Dubbo 标签路由 dubbo.tag force.tag 灰度",
+      "points": [
+        "标签写在附件键 dubbo.tag 上",
+        "force 默认 false，会退回到无标签提供者",
+        "version 负责匹配，标签在同版本内筛选机器"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Spring Cloud Alibaba",
       "id": "dubbo-timeout-retry-idempotent",
       "title": "消费方超时不会掐掉提供方线程，默认还会再试",
       "prompt": "为什么服务调用超时后，只把超时时间改大，却不处理幂等，脏数据还会来？",
@@ -16446,6 +16482,34 @@
         "dubbo 协议默认 fixed 线程池，200 条线程",
         "queues 默认 0，对应 SynchronousQueue",
         "池满时拒绝并反馈给消费方，先查慢调用"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Spring Cloud Alibaba",
+      "id": "dubbo-filter-attachment",
+      "title": "Filter 拦截调用，附件只放短键值",
+      "prompt": "要把租户号传到库存服务，为什么往方法参数里加一个 TenantContext 对象，或在 Filter 里塞一整份订单 JSON，都会把链路弄乱？",
+      "promptAnswer": "跨服务的短上下文用 RpcContext 的附件传递，并在 Filter 里读写。业务字段仍走接口参数。附件不是第二份请求体。",
+      "keywords": "Dubbo Filter RpcContext attachment Activate",
+      "points": [
+        "Filter 在 Invoker 前后拦截，必须调用 invoker.invoke",
+        "附件传短键值，业务字段仍走接口参数",
+        "自定义 Filter 用 @Activate 登记到 META-INF/dubbo"
+      ]
+    },
+    {
+      "track": "java",
+      "group": "Spring Cloud Alibaba",
+      "id": "dubbo-qos-offline",
+      "title": "发布前用 QOS offline 注销，默认端口 22222",
+      "prompt": "为什么直接 kill -9 提供者之后，消费方还会把请求打到这台已经不存在的进程？",
+      "promptAnswer": "进程被立刻杀掉时，注册中心上的地址还要等会话或心跳超时才消失。先执行 QOS 的 offline，把地址注销掉，再停进程。",
+      "keywords": "Dubbo QOS offline 22222 优雅下线",
+      "points": [
+        "QOS 默认端口是 22222",
+        "offline 先 unregister，再停进程",
+        "kill -9 会留下注册中心上的旧地址空窗"
       ]
     },
     {

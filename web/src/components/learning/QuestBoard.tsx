@@ -41,7 +41,7 @@ function jump(id: string) {
   el?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
 }
 
-export function QuestBoard() {
+export function QuestBoard({ gateId, handIn = false, sideId, bossPage = false }: { gateId?: string; handIn?: boolean; sideId?: string; bossPage?: boolean }) {
   const progress = useProgress()
   const records = progress.learning.quests ?? []
   const lanes = mainLanes()
@@ -55,12 +55,17 @@ export function QuestBoard() {
   const [pulseId, setPulseId] = useState<string | null>(null)
   const [openLanes, setOpenLanes] = useState<Record<string, boolean>>({})
   const [focusId, setFocusId] = useState(boss.milestones[0]?.taskId)
+  const [stepId, setStepId] = useState('')
   const lane = lanes.find((item) => item.id === laneId) ?? lanes[0]
   const bossRow = records.find((item) => item.id === boss.id)
   const bossStep = bossRow?.step ?? 0
+  const sideDef = sides.find((item) => item.id === sideId || item.id === `side:${sideId}`)
+  const sideRow = sideDef ? records.find((item) => item.id === sideDef.id) : undefined
+  const sideStep = sideRow?.step ?? 0
   const showMain = filter === 'all' || filter === 'main'
   const showSide = filter === 'all' || filter === 'side'
   const showBoss = filter === 'all' || filter === 'boss'
+  const bossGrade = boss.milestones[Math.min(bossStep, boss.milestones.length - 1)]
 
   const reveal = (id: string, next: Filter) => {
     setFilter(next)
@@ -81,17 +86,172 @@ export function QuestBoard() {
       : '这一关的进度没有新变化。')
   }
 
+  if (bossPage) {
+    return (
+      <QuestMotionRoot>
+        <div className="quest-board is-place">
+          <section className="quest-lane quest-boss" aria-label="核心挑战">
+            <ol className="quest-stages" aria-label="三档">
+              {boss.milestones.map((item, index) => {
+                const done = bossStep > index || bossRow?.status === 'cleared'
+                const here = !done && bossStep === index
+                return (
+                  <li key={item.id} aria-current={here ? 'step' : undefined}>
+                    <button
+                      type="button"
+                      className="quest-node is-boss"
+                      aria-pressed={focusId === item.taskId}
+                      onClick={() => setFocusId(item.taskId)}
+                    >
+                      <span className="quest-node-title">{item.title}</span>
+                      <span className="quest-node-state">{done ? '已记下' : here ? '当前' : '后面'}</span>
+                    </button>
+                  </li>
+                )
+              })}
+            </ol>
+            <CurrentTask focusId={focusId} />
+            <div className="path-fold-mark">
+              <label className="quest-mark">
+                这一档做到哪
+                <input
+                  value={marks[boss.id] ?? ''}
+                  maxLength={80}
+                  disabled={bossRow?.status === 'cleared'}
+                  onChange={(event) => setMarks((prev) => ({ ...prev, [boss.id]: event.target.value }))}
+                />
+              </label>
+              <button
+                type="button"
+                onClick={() => act({ type: 'advance', id: boss.id, mark: marks[boss.id] ?? '' })}
+                disabled={bossRow?.status === 'cleared'}
+              >
+                {bossRow?.status === 'cleared' ? '三档都已收口' : `记下：${bossGrade?.title ?? '这一档'}`}
+              </button>
+            </div>
+          </section>
+          {notice ? <p className="quest-notice" role="status">{notice}</p> : null}
+          {seal ? (
+            <div className="quest-seal" role="status">
+              <p className="quest-seal-kicker">成就解开</p>
+              <p className="quest-seal-title">{seal.title}</p>
+              <p>{seal.detail}</p>
+            </div>
+          ) : null}
+        </div>
+      </QuestMotionRoot>
+    )
+  }
+
+  if (sideDef) {
+    const sideFace = questFace(sideDef, records)
+    const sideDone = sideFace === 'cleared' || sideFace === 'starred'
+    const track = SIDE_TRACKS.find((item) => item.id === sideDef.id.replace(/^side:/, ''))
+    return (
+      <QuestMotionRoot>
+        <div className="quest-board is-place">
+          <section className="quest-lane" aria-label="这条支线">
+            {track ? <p className="path-side-when">{track.when}</p> : null}
+            <SideTrackLinks id={sideDef.id} />
+            <div className="path-fold-mark">
+              <label className="quest-mark">
+                这一步做到哪
+                <input
+                  value={marks[sideDef.id] ?? ''}
+                  maxLength={80}
+                  disabled={sideDone}
+                  onChange={(event) => setMarks((prev) => ({ ...prev, [sideDef.id]: event.target.value }))}
+                />
+              </label>
+              <button
+                type="button"
+                onClick={() => act({ type: 'advance', id: sideDef.id, mark: marks[sideDef.id] ?? '' })}
+                disabled={sideDone}
+              >
+                {sideDone ? '这条已走完' : `记下：${sideDef.milestones[Math.min(sideStep, sideDef.milestones.length - 1)]?.title ?? '这一步'}`}
+              </button>
+            </div>
+          </section>
+          {notice ? <p className="quest-notice" role="status">{notice}</p> : null}
+        </div>
+      </QuestMotionRoot>
+    )
+  }
+
+  const place = gateId ? lanes.find((item) => item.gateId === gateId) : undefined
+  if (place) {
+    const done = place.subs.filter((sub) => questStatus(sub, records) === 'cleared').length
+    const openSub = place.subs.find((sub) => {
+      const face = questFace(sub, records)
+      return face !== 'cleared' && face !== 'starred'
+    }) ?? place.subs[place.subs.length - 1]
+    const sub = place.subs.find((item) => item.id === stepId) ?? openSub
+    const subIndex = Math.max(0, place.subs.findIndex((item) => item.id === sub?.id))
+    return (
+      <QuestMotionRoot>
+        <div className="quest-board is-place">
+          <section className="quest-lane" aria-label="这一站的子关">
+            <p className="quest-note">
+              {handIn
+                ? `${done}/${place.subs.length} 项已记下。星是笔记写满，不是能力分。`
+                : '这一场还在读。交付等课文记下再写。'}
+            </p>
+            <ol className="place-steps" aria-label="这一站的交付">
+              {place.subs.map((item, index) => (
+                <li key={item.id}>
+                  <button
+                    type="button"
+                    className={item.id === sub?.id ? 'is-on' : ''}
+                    aria-current={item.id === sub?.id ? 'step' : undefined}
+                    onClick={() => setStepId(item.id)}
+                  >
+                    <span>{index + 1}</span>
+                    {item.title}
+                  </button>
+                </li>
+              ))}
+            </ol>
+            {!handIn && sub ? <p className="place-preview">{sub.objective}</p> : null}
+            {handIn && sub ? (
+              <QuestCard
+                def={sub}
+                face={questFace(sub, records)}
+                stars={questStars(sub, records)}
+                difficulty={questDifficulty(sub, subIndex, place.subs.length)}
+                pulse={pulseId === sub.id}
+                step={records.find((row) => row.id === sub.id)?.step ?? 0}
+                rewardIds={records.find((row) => row.id === sub.id)?.rewardIds ?? []}
+                mark={marks[sub.id] ?? ''}
+                onMark={(value) => setMarks((prev) => ({ ...prev, [sub.id]: value }))}
+                onAdvance={() => act({ type: 'advance', id: sub.id, mark: marks[sub.id] ?? '' })}
+                brief
+              />
+            ) : null}
+          </section>
+          {notice ? <p className="quest-notice" role="status">{notice}</p> : null}
+          {seal ? (
+            <div className="quest-seal" role="status">
+              <p className="quest-seal-kicker">成就解开</p>
+              <p className="quest-seal-title">{seal.title}</p>
+              <p>{seal.detail}</p>
+            </div>
+          ) : null}
+        </div>
+      </QuestMotionRoot>
+    )
+  }
+
   return (
     <QuestMotionRoot>
     <div className="quest-board">
       <nav className="quest-map" id="quest-map" aria-label="关卡地图">
-        <p className="quest-map-lead">主线子关排成一条。支线在旁边，可以同时做。核心挑战是当次三题，不跟九关勾选锁在一起。</p>
+        <p className="quest-map-lead">主线按子关推进。支线四条并行补强。核心挑战是同一笔下单的三道题，不跟九关勾选绑在一起。</p>
         <div className="quest-filters" role="group" aria-label="关卡类型">
           {([
             ['all', '全部'],
             ['main', '主线'],
             ['side', '支线'],
-            ['boss', '小 boss'],
+            ['boss', '核心挑战'],
           ] as const).map(([id, label]) => (
             <button key={id} type="button" aria-pressed={filter === id} onClick={() => setFilter(id)}>
               {label}
@@ -141,7 +301,7 @@ export function QuestBoard() {
               <QuestNodeButton
                 def={boss}
                 face={questFace(boss, records)}
-                kind="小 boss"
+                kind="核心挑战"
                 stars={questStars(boss, records)}
                 step={bossStep}
                 onClick={() => {
@@ -201,8 +361,8 @@ export function QuestBoard() {
       </section>
 
       <section className="quest-lane" id="quest-side" aria-label="支线任务" hidden={!showSide}>
-          <h2>支线任务</h2>
-          <p className="quest-note">四条互不挡。开始一条不会停下另一条，也不看九关走到哪。</p>
+          <h2>支线</h2>
+          <p className="quest-note">前端、云、安全、协作四条。互不挡，也不看九关走到哪。</p>
           <ol className="quest-cards">
             {sides.map((side) => {
               const track = SIDE_TRACKS.find((item) => item.id === side.id.replace(/^side:/, ''))
@@ -237,7 +397,7 @@ export function QuestBoard() {
       <section className="quest-lane quest-boss" id="quest-boss" aria-label="核心挑战" hidden={!showBoss}>
           <h2>核心挑战</h2>
           <p className="quest-note">
-            三档由易到难：入门、加压、收口。必须按顺序。每一档要先在下面保存该题草稿，不能跳档。通关奖励比一个子关多出各档标记。标记不是认证。
+            {boss.objective} 按入门 → 加压 → 收口，先保存该题草稿再记下。本机标记不是认证。
           </p>
           <ol className="quest-stages" aria-label="挑战节点">
             {boss.milestones.map((item, index) => {
@@ -329,6 +489,7 @@ function QuestCard({
   onMark,
   onAdvance,
   advanceLabel = '记下这一步',
+  brief = false,
 }: {
   def: QuestDef
   face: QuestFace
@@ -341,6 +502,7 @@ function QuestCard({
   onMark: (value: string) => void
   onAdvance: () => void
   advanceLabel?: string
+  brief?: boolean
 }) {
   const locked = face === 'locked'
   const done = face === 'cleared' || face === 'starred'
@@ -356,30 +518,32 @@ function QuestCard({
       </header>
       <p>{def.objective}</p>
       <QuestMeter step={step} total={def.milestones.length} />
-      <dl className="quest-facts">
-        <dt>状态</dt>
-        <dd>{faceLabel(face)}。{locked ? '现在不能记进度。' : done ? '奖励已经发放。' : '现在可以记进度。'}</dd>
-        <dt>触发</dt>
-        <dd>{def.trigger}</dd>
-        <dt>进度</dt>
-        <dd>{step}/{def.milestones.length}</dd>
-        <dt>当前节点</dt>
-        <dd>{def.milestones[Math.min(step, def.milestones.length - 1)]?.title}</dd>
-      </dl>
+      {brief ? null : (
+        <dl className="quest-facts">
+          <dt>状态</dt>
+          <dd>{faceLabel(face)}。{locked ? '现在不能记进度。' : done ? '奖励已经发放。' : '现在可以记进度。'}</dd>
+          <dt>触发</dt>
+          <dd>{def.trigger}</dd>
+          <dt>进度</dt>
+          <dd>{step}/{def.milestones.length}</dd>
+          <dt>当前节点</dt>
+          <dd>{def.milestones[Math.min(step, def.milestones.length - 1)]?.title}</dd>
+        </dl>
+      )}
       <label className="quest-mark">
         这一步做到哪
         <input value={mark} maxLength={80} disabled={locked || done} onChange={(event) => onMark(event.target.value)} />
       </label>
-      <p className="quest-note">写满 {QUEST_STAR_NOTE} 个字，这一关显示三星。星表示笔记写完整，不是能力分。</p>
+      {brief ? null : <p className="quest-note">写满 {QUEST_STAR_NOTE} 个字，这一关显示三星。星表示笔记写完整，不是能力分。</p>}
       <button type="button" onClick={onAdvance} disabled={locked || done}>
         {advanceLabel}
       </button>
-      <ul className="quest-rewards" aria-label="奖励预览">
+      {brief ? null : <ul className="quest-rewards" aria-label="奖励预览">
         {def.rewards.map((item) => {
           const earned = rewardIds.includes(item.id)
           return <li key={item.id} className={earned ? 'is-earned' : 'is-preview'}>{earned ? item.title : `通关后：${item.title}`}</li>
         })}
-      </ul>
+      </ul>}
     </QuestSurface>
   )
 }

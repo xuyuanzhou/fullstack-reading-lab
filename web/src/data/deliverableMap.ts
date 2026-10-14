@@ -7,6 +7,54 @@ export type FrozenDeliverable = {
   legacyKey: string
 }
 
+/** 步骤条上的短名。完整交付句仍在 outputs / objective。 */
+export const DELIVERABLE_SHORT: Readonly<Record<string, string>> = {
+  'g1.four-roles': '四段职责',
+  'g1.write-path': '写路径',
+  'g1.explain': '能讲清',
+  'g2.runnable-write': '能跑的写路径',
+  'g2.concurrency-test': '并发只成一笔',
+  'g2.idempotent-retry': '同键不双写',
+  'g2.json-errors': '失败是 JSON',
+  'g2.versioned-schema': '版本化表结构',
+  'g3.read-shape': '读路径形状',
+  'g3.n-plus-one': 'N+1 前后',
+  'g3.cache-race': '删缓存竞态',
+  'g3.pagination': '列表分页',
+  'g-auth.anonymous': '未登录拒绝',
+  'g-auth.not-owner': '非拥有者拒绝',
+  'g-auth.csrf': '跨站拒绝',
+  'g-auth.cookie': '登录态存放',
+  'g-test.invariant': '不变量测试',
+  'g-test.contract': '契约测试',
+  'g-test.browser': '浏览器路径',
+  'g-test.object': '对象级授权测',
+  'g-triage.symptom': '用户看见什么',
+  'g-triage.database': '库里留下什么',
+  'g-triage.correlation': '相关 id',
+  'g-triage.excluded': '排除哪一层',
+  'g-triage.remeasure': '改后怎么变',
+  'g-triage.leave': '先不动的层',
+  'g4.adr': '拆或不拆 ADR',
+  'g4.outbox': 'Outbox 演示',
+  'g4.outcome': '超时对用户',
+  'g4.failure-handling': '死信与熔断',
+  'g5.health': '健康检查',
+  'g5.budget': '延迟预算',
+  'g5.fault': '压测/注入',
+  'g5.service': '连服务名',
+  'g5.release': '发布与密钥',
+  'g5.pipeline': '流水线',
+  'g6.quality': '质量属性',
+  'g6.review': '契约评审',
+  'g6.roadmap': '只做一件事',
+  'g6.decision': '决策记录',
+}
+
+export function deliverableShort(id: string, fallback: string) {
+  return DELIVERABLE_SHORT[id] ?? fallback
+}
+
 const ROWS: readonly (readonly [gateId: string, id: string])[] = [
   ['g1', 'g1.four-roles'],
   ['g1', 'g1.write-path'],

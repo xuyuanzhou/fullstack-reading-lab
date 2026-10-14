@@ -128,6 +128,88 @@ export function gateFaceLabel(face: GateFace) {
   return '可补'
 }
 
+export type EncounterPhase = 'ready' | 'playing' | 'deliver' | 'resume' | 'cleared'
+
+/** 这一场该怎么标。未读完仍可出发。课读完但交付未勾，进入待验收。 */
+export function encounterPhase(
+  index: number,
+  progressIndex: number,
+  cleared: boolean,
+  readSlots: number,
+  totalSlots: number,
+): EncounterPhase {
+  if (cleared) return 'cleared'
+  if (totalSlots === 0 || readSlots >= totalSlots) return 'deliver'
+  if (index < progressIndex) return 'resume'
+  if (readSlots > 0) return 'playing'
+  return 'ready'
+}
+
+export function encounterPhaseLabel(phase: EncounterPhase) {
+  if (phase === 'cleared') return '已过'
+  if (phase === 'deliver') return '待验收'
+  if (phase === 'resume') return '可补'
+  if (phase === 'playing') return '进行中'
+  return '可开始'
+}
+
+export function encounterAction(phase: EncounterPhase) {
+  if (phase === 'cleared') return '看下一场'
+  if (phase === 'deliver') return '交上这一份'
+  if (phase === 'resume') return '补上这一场'
+  if (phase === 'playing') return '继续这一场'
+  return '开始这一场'
+}
+
+/** First sentence, keeping its closing mark. */
+export function sceneSentence(text: string) {
+  const trimmed = text.trim()
+  const end = trimmed.search(/[。！？]/u)
+  if (end < 0) return trimmed
+  return trimmed.slice(0, end + 1)
+}
+
+/** Where this gate's current scene sits. step is 1-based; lessonId is empty once every required slot is read. */
+export function campScene(gate: PathGate, doneIds: readonly string[]) {
+  const slots = requiredSlotsOf(gate.lessons)
+  const done = new Set(doneIds)
+  const at = slots.findIndex((slot) => !slot.some((id) => done.has(id)))
+  return {
+    total: slots.length,
+    step: at < 0 ? slots.length : at + 1,
+    lessonId: at < 0 ? undefined : slots[at]?.[0],
+  }
+}
+
+export function missingOutput(gate: PathGate, checks: readonly string[]) {
+  const marked = new Set(checks)
+  return gate.outputs.find((_, index) => !marked.has(deliverableKey(gate.id, index)))
+}
+
+/** Spine lessons return to camp. Other lessons keep their own next link. */
+export function sceneExitPath(lessonId: string) {
+  const place = spinePlace(lessonId)
+  if (!place) return undefined
+  return gatePath(place.gate.id)
+}
+
+/** One line after 记下这一场. Empty unless that lesson is already in the read list and belongs to this gate. */
+export function settleLine(
+  settledId: string | undefined,
+  gateLessonIds: readonly string[],
+  doneIds: readonly string[],
+  nextName: string | undefined,
+) {
+  if (!settledId || !gateLessonIds.includes(settledId) || !doneIds.includes(settledId)) return ''
+  if (!nextName) return '本关课文已记下。'
+  return `上一场已记下。下一场是 ${nextName}。`
+}
+
+/** Gate 1 shows only the scene until the first required read is stored. */
+export function campShowsChrome(progressIndex: number, readSlots: number) {
+  return !(progressIndex === 0 && readSlots === 0)
+}
+
 export function gateMark(stage: PathGate) {
   if (stage.milestoneKind === 'fullstack') return '全栈'
   if (stage.milestoneKind === 'architect') return '职责'
@@ -146,7 +228,7 @@ export const PATHS: Record<
   },
   architect: {
     title: '架构师主线',
-    lead: '九关与全栈同一套课。第 3 关能独立交付一条全栈路径。第 9 关的决策会在工作里完成。地图下面的四条补强另计，不改变这九关的必读。',
+    lead: '九关与全栈同一套课。第 3 关能独立交付一条全栈路径。第 9 关的决策会在工作里完成。支线另计，不改变这九关的必读。',
     done: 'F1～F9',
     gates: MASTERY_GATES,
   },

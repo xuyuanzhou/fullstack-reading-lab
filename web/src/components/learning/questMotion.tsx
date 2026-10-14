@@ -44,19 +44,31 @@ export function QuestSurface({
   )
 }
 
+/** 细进度：数字 + 一条 2px 轨道。零进度不画，避免空灰条；也不要和关卡条的 `.quest-meter` 抢类名。 */
 export function QuestMeter({ step, total }: { step: number; total: number }) {
   const reduce = useReducedMotion()
-  const width = total === 0 ? 0 : Math.round((step / total) * 100)
+  if (total <= 0 || step <= 0) return null
+  const width = Math.round((Math.min(step, total) / total) * 100)
   return (
-    <div className="quest-meter" role="meter" aria-valuemin={0} aria-valuemax={total} aria-valuenow={step} aria-label="进度">
-      {reduce ? <span style={{ width: `${width}%` }} /> : (
-        <m.span
-          style={{ width: '100%', originX: 0 }}
-          initial={false}
-          animate={{ scaleX: width / 100 }}
-          transition={{ duration: 0.45, ease: 'easeOut' }}
-        />
-      )}
+    <div
+      className="quest-progress"
+      role="meter"
+      aria-valuemin={0}
+      aria-valuemax={total}
+      aria-valuenow={step}
+      aria-valuetext={`${step}/${total}`}
+      aria-label="进度"
+    >
+      <span className="quest-progress-count">{step}/{total}</span>
+      <span className="quest-progress-track" aria-hidden="true">
+        {reduce ? <span style={{ width: `${width}%` }} /> : (
+          <m.span
+            initial={false}
+            animate={{ width: `${width}%` }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
+          />
+        )}
+      </span>
     </div>
   )
 }

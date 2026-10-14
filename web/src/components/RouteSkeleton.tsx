@@ -1,10 +1,10 @@
+import { Spin } from 'antd'
+
+/** 路由与课文正文未就绪时的占位：Ant Design 标准加载。 */
 export function RouteSkeleton() {
   return (
-    <div className="route-skeleton" role="status" aria-busy="true" aria-label="正在打开这一关">
-      <span className="route-skeleton-kicker" />
-      <span className="route-skeleton-title" />
-      <span className="route-skeleton-line" />
-      <span className="route-skeleton-line is-short" />
+    <div className="route-loading" role="status" aria-busy="true" aria-live="polite">
+      <Spin tip="正在打开…" size="large" />
     </div>
   )
 }

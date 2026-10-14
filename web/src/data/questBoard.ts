@@ -1,4 +1,4 @@
-import { FROZEN_DELIVERABLES } from './deliverableMap.ts'
+import { deliverableShort, FROZEN_DELIVERABLES } from './deliverableMap.ts'
 import { LEARNING_TASKS } from './learningTasks.ts'
 import { MASTERY_GATES } from './masteryGates.ts'
 import { SIDE_TRACKS } from './sideTracks.ts'
@@ -102,10 +102,10 @@ function buildSubs(): QuestDef[] {
   let previous: string | null = null
   for (const gate of MASTERY_GATES) {
     const rows = FROZEN_DELIVERABLES.filter((row) => row.gateId === gate.id)
-    rows.forEach((row, index) => {
+    rows.forEach((row) => {
       const id = `sub:${row.id}`
       const objective = gate.outputs[row.index] ?? row.id
-      const title = `第 ${index + 1} 项 · ${clip(objective, 16)}`
+      const title = deliverableShort(row.id, clip(objective, 12))
       const reward = subReward(id, title)
       const milestoneId = `${id}:done`
       defs.push({
@@ -134,17 +134,17 @@ function buildSides(): QuestDef[] {
     })
     const clear: QuestReward = {
       id: `reward:${id}:clear`,
-      title: `支线完成：${track.title}`,
-      detail: `四条可以同时做。${track.evidence[0] ?? '留下作品里的记录'}。${MARK}不计入九关必读。`,
+      title: `走完「${track.title}」`,
+      detail: `${track.evidence[0] ?? '留下作品里的记录'}。四条支线互不挡。${MARK}不计入九关必读。`,
       tier: 'clear',
     }
     return {
       id,
       kind: 'side' as const,
       title: track.title,
-      objective: track.when,
+      objective: track.objective,
       unlock: [],
-      trigger: '不看九关进度。想做哪条就做哪条，可以同时进行。',
+      trigger: track.when,
       milestones,
       rewards: [
         ...milestones.map((item) => nodeReward(item.rewardId, item.title)),
@@ -168,17 +168,17 @@ function buildBoss(): QuestDef {
   })
   const clear: QuestReward = {
     id: `reward:${id}:clear`,
-    title: '通过核心挑战',
-    detail: `三档都已记下，并带上每档的阶段标记。比单独一个子关多这些阶段标记。${MARK}`,
+    title: '三档都收口',
+    detail: `职责、并发、幂等三题都留下草稿并记下。${MARK}`,
     tier: 'boss',
   }
   return {
     id,
     kind: 'boss',
     title: '核心挑战',
-    objective: '当次三题按入门、加压、收口依次记下。不能跳档。每一档要先保存该题草稿。',
+    objective: '同一笔下单：先写清四段职责，再压并发扣库存，最后收住幂等重试。',
     unlock: [],
-    trigger: '随时可进。难度在三档里面升高，不靠主线勾选把门。',
+    trigger: '按入门 → 加压 → 收口做。先保存当前这一档的草稿，再记下进度。不绑九关勾选。',
     parentId: 'main:g2',
     milestones,
     rewards: [

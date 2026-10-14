@@ -554,7 +554,7 @@ export const OUTLINE = {
       { title: '总览', ids: ['sca-what', 'sca-component-map', 'sca-one-call', 'sca-circuit-not-only-hystrix'] },
       { title: 'Nacos', ids: ['sca-nacos-intro', 'sca-nacos-register', 'sca-nacos-config', 'config-center-poll-needs-watch', 'sca-nacos-ephemeral', 'sca-nacos-shared-config', 'sca-deregister-shutdown', 'eureka-lease-30-90'] },
       { title: '调用', ids: ['sca-feign-timeout-retry', 'sca-dubbo-or-feign', 'sca-stream-binding', 'spring-cloud-feign-not-lb'] },
-      { title: 'Dubbo', ids: ['dubbo-one-call', 'dubbo-hessian-zk-not-frozen', 'dubbo-spring-expose', 'dubbo-register-mode', 'dubbo-zk-ephemeral', 'dubbo-loadbalance-random-default', 'dubbo-cluster-failover', 'dubbo-timeout-retry-idempotent', 'dubbo-thread-pool', 'dubbo-no-provider', 'dubbo-registry-down-local-cache', 'dubbo-beside-stack'] },
+      { title: 'Dubbo', ids: ['dubbo-one-call', 'dubbo-hessian-zk-not-frozen', 'dubbo-serialize-allowlist', 'dubbo-spring-expose', 'dubbo-register-mode', 'dubbo-zk-ephemeral', 'dubbo-loadbalance-random-default', 'dubbo-cluster-failover', 'dubbo-tag-router', 'dubbo-timeout-retry-idempotent', 'dubbo-thread-pool', 'dubbo-filter-attachment', 'dubbo-qos-offline', 'dubbo-no-provider', 'dubbo-registry-down-local-cache', 'dubbo-beside-stack'] },
       { title: 'Seata', ids: ['sca-seata-intro', 'sca-seata-at-boundary', 'sca-seata-tcc-empty', 'sca-seata-lock-timeout'] },
       { title: '其他', ids: ['sca-rocketmq-intro', 'sca-oss-intro', 'sca-schedulerx-intro', 'sca-sms-intro'] },
     ],
