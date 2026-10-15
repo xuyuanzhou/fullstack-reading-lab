@@ -2,6 +2,7 @@ import { Breadcrumb, Button, Collapse, Image, Input, Space, Typography } from 'a
 import { useEffect, useState } from 'react'
 import { Link, Navigate, useLocation, useParams } from 'react-router-dom'
 import { findLesson, isVersionSince, lessonIndex, loadFullLesson, nextLesson, peekFullLesson, prefetchLessonBodies } from '@/data/curriculum'
+import '@/data/curriculumCards'
 import { deliverableKey, gatePath, slotsOf, spineNextId, spinePlace, spinePrevId } from '@/data/learningPaths'
 import { markSceneReady } from '@/transition/jumpBudget'
 import { groupKeyForLabel, groupPath, groupTitle, isTrack, lessonPath } from '@/data/routes'

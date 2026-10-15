@@ -1,14 +1,21 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { QuestBoard } from '@/components/learning/QuestBoard'
-import { findLesson, prefetchLessonBody } from '@/data/curriculum'
-import { PATHS, campScene, deliverableKey, encounterAction, encounterPhase, encounterPhaseLabel, gateCleared, gateMark, missingOutput, nextInGate, requiredSlotsOf, sceneSentence, settleLine, type PathGate } from '@/data/learningPaths'
+import { CurrentTask } from '@/components/learning/CurrentTask'
+import { RichBlocks } from '@/components/RichBlocks'
+import { aiNoteById } from '@/data/aiCatalog'
+import { findLesson, loadFullLesson, prefetchLessonBody } from '@/data/curriculum'
+import { deliverableShort, FROZEN_DELIVERABLES } from '@/data/deliverableMap'
+import { gateAdvise, gateEdition, gateVerifyFill, passFlashLine, verifyFace, verifyFaceLabel, verifyItemsForGate } from '@/data/gateVerify'
+import { PATHS, campScene, deliverableKey, gateCleared, gateMark, nextInGate, requiredSlotsOf, settleLine, type PathGate } from '@/data/learningPaths'
 import { bossQuest, questFace, sideQuests } from '@/data/questBoard'
+import { LEARNING_SKILLS, SKILL_VIEWS, skillGlows, skillLessonIds, skillProgress, type SkillGlow } from '@/data/learningSkills'
 import { SIDE_TRACKS } from '@/data/sideTracks'
 import { shortTitle } from '@/data/reading'
 import { lessonPath } from '@/data/routes'
 import { useProgress } from '@/state/progress'
+import { playCampTick } from '@/transition/audio'
 import { markSceneReady } from '@/transition/jumpBudget'
+import type { Lesson } from '@/types/curriculum'
 
 const path = PATHS.architect
 const stages = path.gates
@@ -21,10 +28,72 @@ const WAVE = 18
 const TURN_R = 28
 const LABEL_BELOW = 108
 
+function pickedIndex(raw: string | null, length: number) {
+  if (raw == null || raw === '') return -1
+  const index = Number(raw)
+  if (!Number.isInteger(index) || index < 0 || index >= length) return -1
+  return index
+}
+
 function gateStatus(stage: PathGate, index: number, finished: boolean, sequenceIndex: number, openIndex: number) {
   if (finished) return '已过'
   if (index === sequenceIndex && openIndex >= 0) return '进行中'
   return gateMark(stage)
+}
+
+const IGNITE_SLOTS: { x: number; y: number; focus?: boolean }[] = [
+  { x: 28, y: 34 },
+  { x: 88, y: 16 },
+  { x: 156, y: 38 },
+  { x: 112, y: 66, focus: true },
+  { x: 214, y: 16 },
+  { x: 262, y: 46 },
+  { x: 304, y: 22 },
+  { x: 46, y: 84 },
+  { x: 188, y: 84 },
+  { x: 246, y: 78 },
+]
+
+const IGNITE_LINKS: [number, number][] = [
+  [0, 1], [1, 2], [1, 3], [0, 7], [3, 7],
+  [2, 3], [2, 4], [4, 5], [5, 6],
+  [3, 8], [5, 9], [8, 9],
+]
+
+function igniteChart(glow: Record<string, SkillGlow>, activeId: string) {
+  const rest = SKILL_VIEWS.filter((item) => item.id !== activeId)
+  const ranked = [
+    ...rest.filter((item) => glow[item.id] === 'lit'),
+    ...rest.filter((item) => glow[item.id] === 'ready'),
+    ...rest.filter((item) => glow[item.id] !== 'lit' && glow[item.id] !== 'ready'),
+  ]
+  let cursor = 0
+  return IGNITE_SLOTS.map((slot) => {
+    if (slot.focus && activeId) {
+      return { ...slot, id: activeId, light: glow[activeId] ?? 'research' }
+    }
+    const item = ranked[cursor]
+    cursor += 1
+    const light = item ? glow[item.id] ?? 'dim' : 'dim'
+    return { ...slot, id: item?.id ?? `empty-${slot.x}`, light }
+  })
+}
+
+function sceneNodes(gate: PathGate, done: Set<string>, nextId: string) {
+  return requiredSlotsOf(gate.lessons).map((slot) => {
+    const readId = slot.find((id) => done.has(id))
+    const id = readId || slot[0]
+    const lesson = findLesson(id)
+    const finished = Boolean(readId)
+    const live = !finished && slot.includes(nextId)
+    return {
+      id,
+      title: lesson ? shortTitle(lesson.title) : id,
+      status: finished ? '已记下' : live ? '进行中' : '',
+      done: finished,
+      boss: false,
+    }
+  })
 }
 
 export function PathPage() {
@@ -55,14 +124,48 @@ export function PathPage() {
     setParams(query, { replace: true })
   }
 
-  function openBoss() {
+  function openBoss(taskId?: string) {
     const query = new URLSearchParams()
     query.set('boss', 'core')
+    if (taskId) query.set('scene', taskId)
     setParams(query, { replace: true })
   }
 
   function leaveDetail() {
     setParams(new URLSearchParams(), { replace: true })
+  }
+
+  function leaveBossScene() {
+    const query = new URLSearchParams()
+    query.set('boss', 'core')
+    setParams(query, { replace: true })
+  }
+
+  function enterLesson(id: string) {
+    const lesson = findLesson(id)
+    if (!lesson) return
+    progress.remember(id)
+    navigate(lessonPath(lesson))
+  }
+
+  function openDeliver(index: number) {
+    const query = new URLSearchParams()
+    query.set('gate', stages[currentIndex].id)
+    query.set('deliver', String(index))
+    setParams(query, { replace: true })
+  }
+
+  function openVerify(id: string) {
+    const query = new URLSearchParams()
+    query.set('gate', stages[currentIndex].id)
+    query.set('verify', id)
+    setParams(query, { replace: true })
+  }
+
+  function leaveScene() {
+    const query = new URLSearchParams()
+    query.set('gate', stages[currentIndex].id)
+    setParams(query, { replace: true })
   }
 
   const camp = stages[currentIndex] ?? stages[sequenceIndex]
@@ -72,15 +175,11 @@ export function PathPage() {
   const slots = requiredSlotsOf(camp.lessons)
   const readSlots = slots.filter((slot) => slot.some((id) => done.has(id))).length
   const delivered = camp.outputs.filter((_, index) => checks.has(deliverableKey(camp.id, index))).length
-  const cleared = gateCleared(camp, progress.done, progress.pathChecks ?? [])
-  const phase = encounterPhase(campIndex, sequenceIndex, cleared, readSlots, slots.length)
-  const allDone = openIndex < 0
   const scene = campScene(camp, progress.done)
   const nextId = scene.lessonId || ''
   useEffect(() => {
     if (nextId && nextId !== upcomingId) prefetchLessonBody(nextId)
   }, [nextId, upcomingId])
-  const nextItem = camp.lessons.find((lesson) => lesson.id === nextId)
   const nextLesson = nextId ? findLesson(nextId) : undefined
   const nextName = nextLesson ? shortTitle(nextLesson.title) : undefined
   const settledRaw = location.state
@@ -88,62 +187,255 @@ export function PathPage() {
     ? String((settledRaw as { settled?: string }).settled || '')
     : ''
   const settle = settleLine(settledId, camp.lessons.map((lesson) => lesson.id), progress.done, nextName)
-  const missing = missingOutput(camp, progress.pathChecks ?? [])
-  const handIn = missing ? sceneSentence(missing) : ''
-  const heading = phase === 'deliver'
-    ? (handIn || camp.learnTitle)
-    : phase === 'cleared' || !nextName
-      ? camp.learnTitle
-      : nextName
-  const goal = phase === 'deliver'
-    ? (missing && missing !== handIn ? missing : camp.pass)
-    : phase === 'cleared'
-      ? (allDone ? '九关的阅读和交付都已记下。' : '这一关已记下。')
-      : sceneSentence(nextItem?.job || camp.how[0] || camp.pass)
-  const action = settle && nextName && phase !== 'deliver' && phase !== 'cleared'
-    ? nextName
-    : allDone && phase === 'cleared'
-      ? '九关都已记下'
-      : encounterAction(phase)
   const pause = progress.learning.pause
-  const pauseLabel = pause ? (pause.choice === 'day' ? '一天' : pause.choice === 'week' ? '一周' : '一个月') : ''
-
-  function depart() {
-    if (allDone && phase === 'cleared') return
-    if (phase === 'cleared') {
-      selectGate(sequenceIndex)
-      return
-    }
-    if (phase === 'deliver' || !nextId) {
-      const query = new URLSearchParams()
-      query.set('gate', camp.id)
-      query.set('focus', 'deliver')
-      setParams(query, { replace: true })
-      window.dispatchEvent(new CustomEvent('lab-open-gate', { detail: camp.id }))
-      return
-    }
-    const lesson = findLesson(nextId)
-    if (!lesson) return
-    progress.remember(nextId)
-    navigate(lessonPath(lesson))
-  }
 
   const quests = progress.learning.quests ?? []
   const sides = sideQuests()
   const boss = bossQuest()
   const sideTrack = SIDE_TRACKS.find((item) => item.id === params.get('side'))
   const bossPage = params.get('boss') === 'core'
+  const bossSceneId = bossPage ? params.get('scene') || '' : ''
   const inGate = Boolean(params.get('gate') && stages.some((stage) => stage.id === params.get('gate')))
   const sideFaces = sides.map((item) => questFace(item, quests))
   const sideLive = sideFaces.findIndex((face) => face !== 'cleared' && face !== 'starred')
   const bossFace = questFace(boss, quests)
   const bossDone = bossFace === 'cleared' || bossFace === 'starred'
+  const bossStep = quests.find((row) => row.id === boss.id)?.step ?? 0
+  const bossNodes = boss.milestones.map((item, index) => {
+    const grade = item.title.split(' · ')[0] || item.title
+    const finished = bossDone || bossStep > index
+    const live = !bossDone && bossStep === index
+    return {
+      id: item.taskId || item.id,
+      title: grade,
+      status: finished ? '已过' : live ? '进行中' : '',
+      done: finished,
+      boss: true,
+      detail: item.title.includes(' · ') ? item.title.split(' · ').slice(1).join(' · ') : item.title,
+      index,
+      taskId: item.taskId,
+    }
+  })
+  const bossLive = bossNodes.findIndex((item) => item.status === '进行中')
+  const bossPick = bossNodes.find((item) => item.id === bossSceneId || item.taskId === bossSceneId)
+  const [bossMark, setBossMark] = useState('')
+  const [bossNotice, setBossNotice] = useState('')
+  const [stoneFlash, setStoneFlash] = useState<{ id: string; text: string } | null>(null)
+  const [passFlash, setPassFlash] = useState('')
+  const canMarkBoss = Boolean(bossPick && (bossDone || bossPick.index === bossStep))
+  const scenes = sceneNodes(camp, done, nextId)
+  const sceneLive = scenes.findIndex((item) => item.status === '进行中')
+  const deliverRows = camp.outputs.map((text, index) => {
+    const key = deliverableKey(camp.id, index)
+    const row = FROZEN_DELIVERABLES.find((item) => item.legacyKey === key)
+    const finished = checks.has(key)
+    return {
+      id: String(index),
+      title: row ? deliverableShort(row.id, text.slice(0, 12)) : text.slice(0, 12),
+      status: finished ? '已记下' : '',
+      done: finished,
+      boss: false,
+      text,
+      key,
+    }
+  })
+  const deliverLive = deliverRows.findIndex((item) => !item.done)
+  if (deliverLive >= 0) deliverRows[deliverLive] = { ...deliverRows[deliverLive], status: '进行中' }
+  const deliverAt = pickedIndex(params.get('deliver'), deliverRows.length)
+  const deliverPick = deliverAt >= 0 ? deliverRows[deliverAt] : undefined
+  const verifyFill = gateVerifyFill(camp.id, progress.learning.attempts, progress.learning.evidence)
+  const campEdition = gateEdition(gateCleared(camp, progress.done, progress.pathChecks), verifyFill)
+  const titles = Object.fromEntries(stages.map((stage) => [stage.id, stage.learnTitle]))
+  const satisfied = new Set(stages.flatMap((stage) => {
+    const finished = gateCleared(stage, progress.done, progress.pathChecks)
+    const edition = gateEdition(finished, gateVerifyFill(stage.id, progress.learning.attempts, progress.learning.evidence))
+    return finished || edition.mark === '新版已通过' ? [stage.id] : []
+  }))
+  const advise = gateAdvise({
+    requires: camp.requires,
+    titles,
+    satisfied,
+    skipped: progress.skipVerify.includes(camp.id),
+    hasVerify: verifyItemsForGate(camp.id).length > 0,
+  })
+  const verifyRows = verifyItemsForGate(camp.id).map((item) => {
+    const face = verifyFace(item.id, progress.learning.attempts, progress.learning.evidence)
+    // 石台下字宽有限：题目前缀压成一字，正文走 shortTitle，避免竖条换行。
+    const label = item.kind === 'exam'
+      ? item.title.replace(/^笔试\s*/, '选 · ')
+      : `问 · ${shortTitle(item.title)}`
+    const evidenceStatus = face === 'idle' ? '' : verifyFaceLabel(face)
+    return {
+      id: item.id,
+      title: item.tier === 'advanced' ? `进阶 · ${label}` : label,
+      tier: item.tier,
+      status: item.tier === 'advanced'
+        ? (face === 'idle' ? (advise.stone === '建议先完成' ? '建议先完成' : '进阶') : '进阶记下')
+        : (evidenceStatus || advise.stone),
+      done: item.tier === 'advanced' ? face !== 'idle' : face === 'passed',
+      boss: false,
+    }
+  })
+  const verifyLive = verifyRows.findIndex((item) => !item.done)
+  if (verifyLive >= 0 && !verifyRows[verifyLive].status) {
+    verifyRows[verifyLive] = { ...verifyRows[verifyLive], status: '进行中' }
+  }
+  const verifyId = params.get('verify')
+  const verifyPick = verifyRows.find((item) => item.id === verifyId)
+  const verifySig = verifyRows.map((row) => `${row.id}=${row.status}`).join('|')
+  const seenFaces = useRef<string | null>(null)
+  useEffect(() => {
+    if (seenFaces.current === null) {
+      seenFaces.current = verifySig
+      return
+    }
+    if (seenFaces.current === verifySig) return
+    const prev = new Map(seenFaces.current.split('|').filter(Boolean).map((part) => {
+      const cut = part.lastIndexOf('=')
+      return [part.slice(0, cut), part.slice(cut + 1)] as const
+    }))
+    const remain = verifyFill.total - verifyFill.passed
+    for (const row of verifyRows) {
+      const prior = prev.get(row.id)
+      if (!prev.has(row.id) || prior === row.status) continue
+      if (row.status === '进阶记下') {
+        setStoneFlash({ id: row.id, text: `${row.title}。这不是认证，也不计入这一关的通过。` })
+        continue
+      }
+      if (prior === '本地检查通过' || row.status !== '本地检查通过') continue
+      if (remain === 0) setPassFlash(passFlashLine(camp.pass))
+      else setStoneFlash({ id: row.id, text: `${row.title}本地检查通过。还剩 ${remain} 项。这不是认证。` })
+    }
+    seenFaces.current = verifySig
+  }, [verifySig, verifyRows, verifyFill.total, verifyFill.passed, camp.pass])
+  useEffect(() => {
+    if (!stoneFlash) return
+    const timer = window.setTimeout(() => setStoneFlash(null), 2000)
+    return () => window.clearTimeout(timer)
+  }, [stoneFlash])
+  useEffect(() => {
+    if (!passFlash) return
+    const timer = window.setTimeout(() => setPassFlash(''), 2000)
+    return () => window.clearTimeout(timer)
+  }, [passFlash])
+
+  const sideLessons = (sideTrack?.items ?? []).flatMap((item) =>
+    item.lessons.flatMap((id) => {
+      const lesson = findLesson(id)
+      if (!lesson) return []
+      const finished = done.has(id)
+      return [{ id, title: shortTitle(lesson.title), status: finished ? '已记下' : '', done: finished, boss: false }]
+    }),
+  )
+  const sideNodes = sideLessons.map((node) => node)
+  const sideSceneLive = sideNodes.findIndex((item) => !item.done)
+  if (sideSceneLive >= 0) sideNodes[sideSceneLive] = { ...sideNodes[sideSceneLive], status: '进行中' }
+
+  const skillDone = new Set([...progress.done, ...progress.aiDone])
+  const skillExists = (id: string) => (id.startsWith('ai:') ? Boolean(aiNoteById(id)) : Boolean(findLesson(id)))
+  const { glow: skillGlow, activeId: skillActive } = skillGlows(
+    SKILL_VIEWS.map((item) => item.id),
+    (id) => LEARNING_SKILLS.find((item) => item.id === id)?.allOf ?? [],
+    (id) => skillProgress(skillLessonIds(id), skillDone, skillExists),
+  )
+  const skillLit = SKILL_VIEWS.filter((item) => skillGlow[item.id] === 'lit').length
+  const skillTotal = SKILL_VIEWS.length
+  const skillActiveTitle = SKILL_VIEWS.find((item) => item.id === skillActive)?.title
+  const igniteStars = igniteChart(skillGlow, skillActive)
 
   if (!inGate && !sideTrack && !bossPage) {
     return (
       <div className="path-stage path-world path-atlas">
-        <section aria-label="主线">
-          <p className="atlas-kicker">主线</p>
+        <header className="atlas-lead">
+          <h1 className="atlas-title">架构师主线</h1>
+          <p className="atlas-blurb">
+            九关主路，从下一笔订单走到能推动上线。
+            <br />
+            支线并排，不挡主路。Boss 按档立台，进一档只打一场。
+          </p>
+          <button
+            type="button"
+            className="skill-ignite"
+            onClick={() => {
+              playCampTick()
+              navigate('/skills')
+            }}
+          >
+            <svg className="skill-ignite-chart" viewBox="0 0 328 100" aria-hidden="true">
+              <defs>
+                <radialGradient id="skill-ignite-glow" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#e7d7a4" stopOpacity="0.45" />
+                  <stop offset="100%" stopColor="#e7d7a4" stopOpacity="0" />
+                </radialGradient>
+              </defs>
+              {igniteStars.some((star) => star.focus) ? (
+                <circle
+                  cx={igniteStars.find((star) => star.focus)?.x}
+                  cy={igniteStars.find((star) => star.focus)?.y}
+                  r="36"
+                  fill="url(#skill-ignite-glow)"
+                />
+              ) : null}
+              {IGNITE_LINKS.map(([from, to]) => {
+                const a = igniteStars[from]
+                const b = igniteStars[to]
+                const hot = a.light === 'research' || b.light === 'research' || a.light === 'lit' || b.light === 'lit'
+                return (
+                  <line
+                    key={`${from}-${to}`}
+                    x1={a.x}
+                    y1={a.y}
+                    x2={b.x}
+                    y2={b.y}
+                    className={hot ? 'is-hot' : undefined}
+                  />
+                )
+              })}
+              {igniteStars.map((star) => (
+                <g key={star.id} className={`skill-ignite-star is-${star.light}`}>
+                  {star.light === 'research' ? (
+                    <circle className="skill-ignite-orbit" cx={star.x} cy={star.y} r="12" />
+                  ) : (
+                    <circle className="skill-ignite-ring" cx={star.x} cy={star.y} r={star.light === 'lit' ? 6.2 : 5.4} />
+                  )}
+                  <circle
+                    className="skill-ignite-core"
+                    cx={star.x}
+                    cy={star.y}
+                    r={star.light === 'research' ? 4.2 : star.light === 'lit' ? 3.2 : 2.2}
+                  />
+                </g>
+              ))}
+            </svg>
+            <span className="skill-ignite-copy">
+              <span className="skill-ignite-kicker">能力星图</span>
+              <span className="skill-ignite-title">点亮技能树</span>
+              <span className="skill-ignite-meta">
+                <b>{skillLit}/{skillTotal}</b>
+                {' '}已点亮
+                {skillActiveTitle ? (
+                  <>
+                    {' · 正在点亮「'}
+                    <span className="skill-ignite-now">{skillActiveTitle}</span>
+                    {'」'}
+                  </>
+                ) : ' · 一课一火'}
+              </span>
+            </span>
+            <span className="skill-ignite-go">
+              <svg className="skill-ignite-flame" viewBox="0 0 36 48" aria-hidden="true">
+                <path className="skill-ignite-flame-outer" d="M18 1.2c.8 7.6-6.4 10.4-6.2 19.6-.4 4.2-2.6 6.6-2.2 11.2 1.6 6.4 5.4 11.2 8.4 13.6 3-2.4 6.8-7.2 8.4-13.6.4-4.6-1.8-7-2.2-11.2.2-9.2-7-12-6.2-19.6z" />
+                <path className="skill-ignite-flame-core" d="M18 20.5c1.8 3.6 4.6 5.6 4.4 10.2-.2 3.6-2 6.6-4.4 8-2.4-1.4-4.2-4.4-4.4-8-.2-4.6 2.6-6.6 4.4-10.2z" />
+              </svg>
+              点燃
+            </span>
+          </button>
+        </header>
+        <section className="atlas-panel is-main campaign-night" aria-label="主线">
+          <div className="atlas-head">
+            <p className="atlas-kicker">主线</p>
+            <p className="atlas-role">主路必走 · {stages.length} 站</p>
+          </div>
           <CampaignMap
             mapId="main"
             label={`${stages.length} 关`}
@@ -152,54 +444,57 @@ export function PathPage() {
             onPick={selectGate}
             nodes={stages.map((stage, index) => {
               const finished = gateCleared(stage, progress.done, progress.pathChecks)
+              const edition = gateEdition(finished, gateVerifyFill(stage.id, progress.learning.attempts, progress.learning.evidence))
               return {
                 id: stage.id,
                 title: stage.learnTitle,
-                status: gateStatus(stage, index, finished, sequenceIndex, openIndex),
+                status: edition.mark || gateStatus(stage, index, finished, sequenceIndex, openIndex),
                 done: finished,
                 boss: false,
               }
             })}
           />
         </section>
-        <section aria-label="支线">
-          <p className="atlas-kicker">支线</p>
-          <CampaignMap
-            mapId="side"
-            label="四条支线"
-            hereIndex={sideLive >= 0 ? sideLive : 0}
-            liveIndex={sideLive}
-            onPick={(index) => openSide(sides[index].id.replace(/^side:/, ''))}
-            nodes={sides.map((item, index) => {
-              const face = sideFaces[index]
-              const done = face === 'cleared' || face === 'starred'
-              return {
-                id: item.id,
-                title: item.title,
-                status: done ? '已过' : index === sideLive ? '进行中' : '',
-                done,
-                boss: false,
-              }
-            })}
-          />
-        </section>
-        <section aria-label="Boss">
-          <p className="atlas-kicker">Boss</p>
-          <CampaignMap
-            mapId="boss"
-            label="Boss"
-            hereIndex={0}
-            liveIndex={bossDone ? -1 : 0}
-            onPick={openBoss}
-            nodes={[{
-              id: boss.id,
-              title: '核心挑战',
-              status: bossDone ? '已过' : 'Boss',
-              done: bossDone,
-              boss: true,
-            }]}
-          />
-        </section>
+        <div className="atlas-secondary">
+          <section className="atlas-panel is-side campaign-night" aria-label="支线">
+            <div className="atlas-head">
+              <p className="atlas-kicker">支线</p>
+              <p className="atlas-role">四路并进 · 不挡主路</p>
+            </div>
+            <CampaignMap
+              mapId="side"
+              label="四条支线"
+              hereIndex={sideLive >= 0 ? sideLive : 0}
+              liveIndex={sideLive}
+              onPick={(index) => openSide(sides[index].id.replace(/^side:/, ''))}
+              nodes={sides.map((item, index) => {
+                const face = sideFaces[index]
+                const done = face === 'cleared' || face === 'starred'
+                return {
+                  id: item.id,
+                  title: item.title,
+                  status: done ? '已过' : index === sideLive ? '进行中' : '',
+                  done,
+                  boss: false,
+                }
+              })}
+            />
+          </section>
+          <section className="atlas-panel is-boss campaign-night" aria-label="Boss">
+            <div className="atlas-head">
+              <p className="atlas-kicker">Boss</p>
+              <p className="atlas-role">{boss.milestones.length} 档石台 · 一档一场</p>
+            </div>
+            <CampaignMap
+              mapId="boss"
+              label="核心挑战"
+              hereIndex={bossLive >= 0 ? bossLive : Math.max(0, bossNodes.length - 1)}
+              liveIndex={bossLive}
+              onPick={(index) => openBoss(bossNodes[index].id)}
+              nodes={bossNodes}
+            />
+          </section>
+        </div>
       </div>
     )
   }
@@ -208,41 +503,119 @@ export function PathPage() {
     <div className="path-stage path-world">
       <p className="atlas-back">
         <button type="button" onClick={leaveDetail}>回总图</button>
+        {deliverPick || verifyPick ? (
+          <button type="button" onClick={leaveScene}>回这一关</button>
+        ) : null}
+        {bossPick ? (
+          <button type="button" onClick={leaveBossScene}>回 Boss</button>
+        ) : null}
       </p>
-      {inGate ? (
-        <>
-      <header className="encounter here">
-          {settle ? <p className="encounter-settle">{settle}</p> : null}
-          <div className="here-row">
-            <div>
-              <p className="encounter-kicker">
-                <span>第 {campIndex + 1} 关</span>
-                <span className="dot" />
-                <span>{camp.learnTitle}</span>
-                <span className="dot" />
-                <span>{encounterPhaseLabel(phase)}</span>
-              </p>
-              <h1 className="hero-title">{heading}</h1>
-            </div>
-            <button type="button" className="encounter-go" onClick={depart} disabled={allDone && phase === 'cleared'}>
-              {action}
-            </button>
-          </div>
-          <p className="encounter-goal">{goal}</p>
-          <div className="encounter-meters">
-            {phase === 'deliver' || phase === 'cleared' ? (
-              <Meter name="交付" value={delivered} total={camp.outputs.length} />
-            ) : (
-              <Meter name="阅读" value={Math.max(0, scene.step - 1)} total={scene.total} label={`第 ${scene.step} 场 / 本关 ${scene.total} 场`} />
-            )}
-          </div>
-          {campIndex !== sequenceIndex ? (
-            <p className="encounter-note">
-              进度在第 {sequenceIndex + 1} 关。
-              {phase === 'playing' ? '这一场已经开始。' : phase === 'resume' ? '这一场可以补。' : '这一场仍可开始。'}
+      {inGate && deliverPick && !verifyPick ? (
+        <section className="deliver-step" aria-label={deliverPick.title}>
+          <p className="path-note">这些勾选是自评，没有测试记录不算验证通过。</p>
+          <button
+            type="button"
+            className="ink-seal"
+            aria-pressed={deliverPick.done}
+            onClick={() => {
+              if (!deliverPick.done) {
+                setStoneFlash({ id: deliverPick.id, text: `${deliverPick.title}已记下。这是自评，待复核。` })
+              }
+              progress.togglePathCheck(deliverPick.key)
+            }}
+          >
+            <span className="ink-dot" aria-hidden="true" />
+            <span>{deliverPick.text}</span>
+          </button>
+          {stoneFlash?.id === deliverPick.id ? <p className="path-note" role="status">{stoneFlash.text}</p> : null}
+          <GateAnswers lessonIds={camp.lessons.map((lesson) => lesson.id)} />
+        </section>
+      ) : null}
+      {inGate && verifyPick ? (
+        <section className="deliver-step" aria-label={verifyPick.title}>
+          {verifyPick.tier === 'advanced' ? (
+            <p className="path-note">这一道是进阶。记下之后不计入这一关的通过，也不是认证。</p>
+          ) : null}
+          <CurrentTask
+            focusId={verifyPick.id}
+            isolate
+            onDraftSaved={() => setStoneFlash({
+              id: verifyPick.id,
+              text: verifyPick.tier === 'advanced'
+                ? `${verifyPick.title}。这不是认证，也不计入这一关的通过。`
+                : `${verifyPick.title}已记下。这是自评，待复核。`,
+            })}
+          />
+          {stoneFlash?.id === verifyPick.id ? <p className="path-note" role="status">{stoneFlash.text}</p> : null}
+        </section>
+      ) : null}
+      {inGate && !deliverPick && !verifyPick ? (
+        <div className="path-scenes campaign-night">
+          <p className="scene-banner">第 {campIndex + 1} 关 · {camp.learnTitle}</p>
+          {passFlash ? <p className="path-note" role="status">{passFlash}</p> : null}
+          {campEdition.note ? <p className="path-note">{campEdition.note}</p> : null}
+          {advise.skipNote ? <p className="path-note">{advise.skipNote}</p> : null}
+          {advise.unmet.length > 0 && !advise.skipNote ? (
+            <p className="path-note path-advise">
+              建议先完成
+              {advise.unmet.map((item, index) => (
+                <span key={item.id}>
+                  {index ? '、' : ''}
+                  <button type="button" onClick={() => selectGate(stages.findIndex((stage) => stage.id === item.id))}>「{item.title}」</button>
+                </span>
+              ))}
             </p>
           ) : null}
-          {pauseLabel ? <p className="encounter-note">已暂停{pauseLabel}。草稿和证据都还在。</p> : null}
+          {advise.canSkip ? (
+            <p className="path-note">
+              <button type="button" className="path-skip" onClick={() => progress.skipGateVerify(camp.id)}>跳过建议，直接验证</button>
+            </p>
+          ) : null}
+          {settle ? <p className="encounter-settle">{settle}</p> : null}
+          <div className="encounter-meters" aria-label="阅读、交付与验证">
+            <Meter name="阅读" value={readSlots} total={slots.length} label={`${readSlots}/${slots.length} 场`} />
+            <Meter name="交付" value={delivered} total={camp.outputs.length} label={`${delivered}/${camp.outputs.length} 项`} />
+            {verifyFill.total ? (
+              <Meter name="验证" value={verifyFill.started} total={verifyFill.total} label={`${verifyFill.started}/${verifyFill.total} 项`} />
+            ) : null}
+          </div>
+          <p className="atlas-kicker">阅读</p>
+          <CampaignMap
+            mapId="scenes"
+            label={`${camp.learnTitle}的阅读`}
+            hereIndex={sceneLive >= 0 ? sceneLive : Math.max(0, scenes.length - 1)}
+            liveIndex={sceneLive}
+            onPick={(index) => enterLesson(scenes[index].id)}
+            nodes={scenes}
+          />
+          <p className="atlas-kicker">交付</p>
+          <CampaignMap
+            mapId="deliver"
+            label={`${camp.learnTitle}的交付`}
+            hereIndex={deliverLive >= 0 ? deliverLive : Math.max(0, deliverRows.length - 1)}
+            liveIndex={deliverLive}
+            onPick={(index) => openDeliver(index)}
+            nodes={deliverRows}
+          />
+          {stoneFlash && deliverRows.some((row) => row.id === stoneFlash.id) ? <p className="path-note" role="status">{stoneFlash.text}</p> : null}
+          {verifyRows.length ? (
+            <>
+              <p className="atlas-kicker">验证</p>
+              <CampaignMap
+                mapId="verify"
+                label={`${camp.learnTitle}的验证`}
+                hereIndex={verifyLive >= 0 ? verifyLive : Math.max(0, verifyRows.length - 1)}
+                liveIndex={verifyLive}
+                onPick={(index) => openVerify(verifyRows[index].id)}
+                nodes={verifyRows}
+              />
+              {stoneFlash && verifyRows.some((row) => row.id === stoneFlash.id) ? <p className="path-note" role="status">{stoneFlash.text}</p> : null}
+              {verifyFill.passed > 0 && verifyFill.passed < verifyFill.total ? (
+                <p className="path-note">还剩 {verifyFill.total - verifyFill.passed} 项。本地检查通过不是认证。</p>
+              ) : null}
+            </>
+          ) : null}
+          <p className="path-note">{verifyFill.note}</p>
           <div className="encounter-pause">
             {pause ? (
               <button type="button" onClick={() => progress.setLearningPause(null)}>继续</button>
@@ -255,29 +628,77 @@ export function PathPage() {
               </details>
             )}
           </div>
-        </header>
-      <QuestBoard gateId={camp.id} handIn={phase === 'deliver' || phase === 'cleared'} />
-        </>
+        </div>
       ) : null}
       {sideTrack ? (
-        <>
-          <header className="encounter here">
-            <p className="encounter-kicker">支线</p>
-            <h1 className="hero-title">{sideTrack.title}</h1>
-            <p className="encounter-goal">{sideTrack.objective}</p>
-          </header>
-          <QuestBoard sideId={sideTrack.id} />
-        </>
+        <div className="path-scenes campaign-night">
+          <p className="scene-banner">支线 · {sideTrack.title}</p>
+          <CampaignMap
+            mapId="side-scenes"
+            label={`${sideTrack.title}的场次`}
+            hereIndex={sideSceneLive >= 0 ? sideSceneLive : Math.max(0, sideNodes.length - 1)}
+            liveIndex={sideSceneLive}
+            onPick={(index) => enterLesson(sideNodes[index].id)}
+            nodes={sideNodes}
+          />
+        </div>
       ) : null}
-      {bossPage ? (
-        <>
-          <header className="encounter here">
-            <p className="encounter-kicker">Boss</p>
-            <h1 className="hero-title">核心挑战</h1>
-            <p className="encounter-goal">{boss.objective}</p>
+      {bossPage && !bossPick ? (
+        <div className="path-scenes campaign-night">
+          <p className="scene-banner">Boss · 核心挑战</p>
+          <p className="path-note">{boss.objective}进一档，只打这一场。</p>
+          <CampaignMap
+            mapId="boss-scenes"
+            label="核心挑战的档次"
+            hereIndex={bossLive >= 0 ? bossLive : Math.max(0, bossNodes.length - 1)}
+            liveIndex={bossLive}
+            onPick={(index) => openBoss(bossNodes[index].id)}
+            nodes={bossNodes}
+          />
+        </div>
+      ) : null}
+      {bossPage && bossPick ? (
+        <section className="boss-stage" aria-label={bossPick.title}>
+          <header className="boss-hero campaign-night">
+            <p className="atlas-kicker">Boss · 第 {bossPick.index + 1} 档</p>
+            <h1 className="boss-hero-title">{bossPick.title}</h1>
+            <p className="boss-hero-goal">{bossPick.detail}</p>
+            <p className="boss-hero-meter">
+              {bossPick.done ? '这一档已记下' : canMarkBoss ? '当前这一档' : '可先看题；记下要按顺序'}
+            </p>
           </header>
-          <QuestBoard bossPage />
-        </>
+          {bossPick.taskId ? <CurrentTask focusId={bossPick.taskId} isolate /> : null}
+          <div className="boss-mark">
+            {canMarkBoss ? (
+              <>
+                <label className="quest-mark">
+                  这一档做到哪
+                  <input
+                    value={bossMark}
+                    maxLength={80}
+                    disabled={bossDone && bossPick.done}
+                    onChange={(event) => setBossMark(event.target.value)}
+                  />
+                </label>
+                <button
+                  type="button"
+                  className="encounter-go"
+                  disabled={bossDone || bossPick.done}
+                  onClick={() => {
+                    const saved = progress.applyQuest({ type: 'advance', id: boss.id, mark: bossMark })
+                    setBossNotice(saved.ok ? (saved.granted.length ? `已发放：${saved.granted.map((item) => item.title).join('、')}。` : '这一档已记下。') : saved.issue)
+                    if (saved.ok) setBossMark('')
+                  }}
+                >
+                  {bossPick.done || bossDone ? '这一档已记下' : `记下：${bossPick.title}`}
+                </button>
+              </>
+            ) : (
+              <p className="path-note">前面一档还没记下。可以先读这一档的题，进度仍按顺序走。</p>
+            )}
+            {bossNotice ? <p className="quest-notice" role="status">{bossNotice}</p> : null}
+          </div>
+        </section>
       ) : null}
     </div>
   )
@@ -376,6 +797,45 @@ function CampaignMap({
           })}
         </ol>
       </div>
+    </div>
+  )
+}
+
+function GateAnswers({ lessonIds }: { lessonIds: readonly string[] }) {
+  const [rows, setRows] = useState<Lesson[]>([])
+  const key = lessonIds.join('|')
+  useEffect(() => {
+    let cancel = false
+    const ids = key.split('|').filter(Boolean)
+    Promise.all(ids.map((id) => loadFullLesson(id))).then((loaded) => {
+      if (cancel) return
+      setRows(loaded.filter((item): item is Lesson => Boolean(item && (item.answer || item.references.length))))
+    })
+    return () => {
+      cancel = true
+    }
+  }, [key])
+  if (!rows.length) return null
+  return (
+    <div className="deliver-reference">
+      {rows.map((lesson) => (
+        <div key={lesson.id}>
+          {lesson.answer ? (
+            <details className="current-task-answer">
+              <summary>先自己写，再看参考答案 · {shortTitle(lesson.title)}</summary>
+              <RichBlocks text={lesson.answer} className="body" />
+            </details>
+          ) : null}
+          {lesson.references.length ? (
+            <div className="ref-list">
+              <p className="current-task-kicker">依据 · {shortTitle(lesson.title)}</p>
+              {lesson.references.map(([label, href]) => (
+                <a key={href} href={href} target="_blank" rel="noreferrer">{label} ↗</a>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      ))}
     </div>
   )
 }
@@ -506,12 +966,13 @@ type Arrow = { x: number; y: number; deg: number }
 
 function buildLayout(count: number, width: number) {
   const compact = width < 520
-  const padX = compact ? 24 : PAD_X
-  const minSlot = compact ? 132 : MIN_SLOT
-  const padTop = compact ? 46 : PAD_TOP
-  const rowGap = compact ? 108 : ROW_GAP
-  const labelBelow = compact ? 88 : LABEL_BELOW
-  const turnR = compact ? 18 : TURN_R
+  const narrow = width < 380
+  const padX = narrow ? 16 : compact ? 24 : PAD_X
+  const minSlot = narrow ? 118 : compact ? 132 : MIN_SLOT
+  const padTop = narrow ? 40 : compact ? 46 : PAD_TOP
+  const rowGap = narrow ? 100 : compact ? 108 : ROW_GAP
+  const labelBelow = narrow ? 78 : compact ? 88 : LABEL_BELOW
+  const turnR = narrow ? 14 : compact ? 18 : TURN_R
   const columns = Math.max(1, Math.min(count, Math.floor((width - padX * 2) / minSlot)))
   const slot = (width - padX * 2) / columns
   const rows = Math.ceil(count / columns)

@@ -19,7 +19,11 @@ export function setTransitionAudio(on: boolean) {
   } catch {
     /* 记不住就只在这一页生效 */
   }
-  if (on) primeTransitionAudio()
+  if (on) {
+    primeTransitionAudio()
+    // 必须在这次点击里出声，用户才知道开关有效；也顺便解浏览器自动播放限制。
+    playToggleCue()
+  }
 }
 
 /** 在点击里调用，浏览器才允许出声。默认关闭，不自动播。 */
@@ -35,6 +39,55 @@ export function primeTransitionAudio() {
     const data = noise.getChannelData(0)
     for (let i = 0; i < length; i += 1) data[i] = (Math.random() * 2 - 1) * (1 - i / length)
   }
+}
+
+/** 打开音效时的确认声。不看 reduced-motion，因为这是用户主动点的反馈。 */
+export function playToggleCue() {
+  primeTransitionAudio()
+  if (!ctx) return
+  const run = () => {
+    if (!ctx) return
+    const t = ctx.currentTime
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+    osc.type = 'sine'
+    osc.frequency.setValueAtTime(523.25, t)
+    osc.frequency.exponentialRampToValueAtTime(784, t + 0.12)
+    gain.gain.setValueAtTime(0.0001, t)
+    gain.gain.exponentialRampToValueAtTime(0.14, t + 0.02)
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.22)
+    osc.connect(gain)
+    gain.connect(ctx.destination)
+    osc.start(t)
+    osc.stop(t + 0.24)
+  }
+  if (ctx.state === 'running') run()
+  else void ctx.resume().then(run)
+}
+
+/** 营地内换站的轻响，不铺遮罩。 */
+export function playCampTick() {
+  if (!transitionAudioEnabled()) return
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+  primeTransitionAudio()
+  if (!ctx) return
+  const run = () => {
+    if (!ctx) return
+    const t = ctx.currentTime
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+    osc.type = 'triangle'
+    osc.frequency.setValueAtTime(880, t)
+    gain.gain.setValueAtTime(0.0001, t)
+    gain.gain.exponentialRampToValueAtTime(0.09, t + 0.01)
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.1)
+    osc.connect(gain)
+    gain.connect(ctx.destination)
+    osc.start(t)
+    osc.stop(t + 0.12)
+  }
+  if (ctx.state === 'running') run()
+  else void ctx.resume().then(run)
 }
 
 export function playTransitionCue(kind: TransitionKind) {
@@ -57,14 +110,14 @@ function cue(context: AudioContext, kind: TransitionKind) {
     const filter = context.createBiquadFilter()
     filter.type = 'lowpass'
     filter.frequency.setValueAtTime(240, t)
-    filter.frequency.exponentialRampToValueAtTime(480, t + 0.32)
+    filter.frequency.exponentialRampToValueAtTime(720, t + 0.36)
     src.buffer = noise
     src.connect(filter)
     filter.connect(gain)
-    gain.gain.exponentialRampToValueAtTime(0.07, t + 0.05)
-    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.4)
+    gain.gain.exponentialRampToValueAtTime(0.16, t + 0.05)
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.45)
     src.start(t)
-    src.stop(t + 0.4)
+    src.stop(t + 0.45)
     return
   }
   const osc = context.createOscillator()
@@ -72,17 +125,17 @@ function cue(context: AudioContext, kind: TransitionKind) {
   if (kind === 'splice') {
     osc.type = 'triangle'
     osc.frequency.setValueAtTime(660, t)
-    gain.gain.exponentialRampToValueAtTime(0.05, t + 0.015)
-    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.16)
+    gain.gain.exponentialRampToValueAtTime(0.12, t + 0.015)
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.18)
     osc.start(t)
-    osc.stop(t + 0.18)
+    osc.stop(t + 0.2)
     return
   }
   osc.type = 'sine'
   osc.frequency.setValueAtTime(392, t)
   osc.frequency.exponentialRampToValueAtTime(148, t + 0.34)
-  gain.gain.exponentialRampToValueAtTime(0.06, t + 0.03)
-  gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.36)
+  gain.gain.exponentialRampToValueAtTime(0.13, t + 0.03)
+  gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.4)
   osc.start(t)
-  osc.stop(t + 0.38)
+  osc.stop(t + 0.42)
 }

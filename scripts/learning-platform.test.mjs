@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
+import { readFileSync } from 'node:fs'
 import test from 'node:test'
 import { FROZEN_DELIVERABLES, OUTPUT_ORDER_SHA256 } from '../web/src/data/deliverableMap.ts'
 import { pathSlots, requiredMet, skillSatisfied, supplementIds, validateLessons, validateSkills } from '../web/src/data/learningGraph.ts'
-import { LEARNING_SKILLS } from '../web/src/data/learningSkills.ts'
+import { AI_NOTES } from '../web/src/data/aiCatalog.ts'
+import { LEARNING_SKILLS, SKILL_LANES, SKILL_LESSONS, SKILL_VIEWS, skillGlows, skillHasLocalCheck, skillLessonIds, skillOpenIds, skillProgress } from '../web/src/data/learningSkills.ts'
 import { MASTERY_GATES } from '../web/src/data/masteryGates.ts'
 import {
   dualFrameworkEarned,
@@ -22,7 +24,8 @@ import {
   taskVerified,
   verifiedFromReading,
 } from '../web/src/state/learningEvidence.ts'
-import { campScene, campShowsChrome, encounterAction, encounterPhase, encounterPhaseLabel, gateFace, gateFaceLabel, gatePath, missingOutput, PATHS, sceneExitPath, sceneSentence, settleLine, spineNextId } from '../web/src/data/learningPaths.ts'
+import { campScene, campShowsChrome, encounterAction, encounterPhase, encounterPhaseLabel, gateCleared, gateFace, gateFaceLabel, gatePath, missingOutput, PATHS, sceneExitPath, sceneSentence, settleLine, spineNextId } from '../web/src/data/learningPaths.ts'
+import { abilityGoal, gateAdvise, gateEdition, gateVerifyFill, nextVerifyId, passFlashLine, verifyFace, verifyFaceLabel, verifyItemsForGate } from '../web/src/data/gateVerify.ts'
 import { openSideLessonIds } from '../web/src/data/sideTracks.ts'
 import { bossQuest, faceLabel, mainLanes, mergeQuestRecords, questDifficulty, questFace, questGraphIssues, questStars, questStatus, reduceQuests, sideQuests } from '../web/src/data/questBoard.ts'
 import { adoptLearningDraft, mergeForWrite, normalizeProgress, readProgress, writeProgress } from '../web/src/state/progressStorage.ts'
@@ -71,8 +74,100 @@ test('graph rejects duplicates, empty groups, dangling refs, and cycles', () => 
   assert.ok(issues.some((issue) => issue.kind === 'empty-group'))
   assert.ok(issues.some((issue) => issue.kind === 'dangling'))
   assert.equal(validateSkills(LEARNING_SKILLS).length, 0)
-  assert.equal(skillSatisfied(LEARNING_SKILLS[5], new Set(['R01']), LEARNING_SKILLS), false)
-  assert.equal(skillSatisfied(LEARNING_SKILLS[5], new Set(['R01', 'V01']), LEARNING_SKILLS), true)
+  const dual = LEARNING_SKILLS.find((item) => item.id === 'dual-framework')
+  assert.ok(dual)
+  assert.equal(skillSatisfied(dual, new Set(['R01']), LEARNING_SKILLS), false)
+  assert.equal(skillSatisfied(dual, new Set(['R01', 'V01']), LEARNING_SKILLS), true)
+  const present = () => true
+  const data = skillProgress(skillLessonIds('D01'), new Set(['mysql-mvcc']), present)
+  assert.equal(data.total, skillLessonIds('D01').length)
+  assert.ok(data.total >= 10)
+  assert.equal(data.read, 1)
+  assert.equal(data.nextId, 'mysql-what-and-when')
+  const finished = skillProgress(skillLessonIds('D01'), new Set(skillLessonIds('D01')), present)
+  assert.equal(finished.nextId, 'mysql-what-and-when')
+  assert.equal(skillProgress(['missing-lesson'], new Set(), () => false).total, 0)
+  assert.equal(skillOpenIds('dual-framework')[0], 'react-what-it-is')
+  assert.ok(skillLessonIds('js').length >= 8)
+  assert.ok(skillLessonIds('R01').length >= 8)
+  assert.ok(skillLessonIds('spring').length >= 8)
+  assert.equal(SKILL_VIEWS.length, 86)
+  assert.equal(SKILL_LANES[0], '计算机基础')
+  assert.equal(SKILL_LANES.at(-1), '架构')
+  assert.equal(SKILL_LANES.at(-2), 'AI')
+  assert.ok(SKILL_VIEWS.every((item) => item.group))
+  assert.equal(SKILL_VIEWS.find((item) => item.id === 'java')?.lane, 'Java')
+  assert.equal(SKILL_VIEWS.find((item) => item.id === 'redis')?.lane, '中间件')
+  assert.equal(SKILL_VIEWS.find((item) => item.id === 'tcp')?.lane, '计算机基础')
+  assert.equal(SKILL_VIEWS.find((item) => item.id === 'spring')?.group, 'Spring 生态')
+  assert.equal(SKILL_VIEWS.find((item) => item.id === 'R01')?.group, 'React')
+  assert.equal(SKILL_VIEWS.find((item) => item.id === 'query')?.group, 'React')
+  assert.equal(SKILL_VIEWS.find((item) => item.id === 'V01')?.group, 'Vue')
+  assert.equal(SKILL_VIEWS.find((item) => item.id === 'pinia')?.group, 'Vue')
+  assert.equal(SKILL_VIEWS.find((item) => item.id === 'ng')?.group, '其他')
+  assert.equal(SKILL_VIEWS.find((item) => item.id === 'ssr')?.group, '其他')
+  assert.equal(SKILL_VIEWS.find((item) => item.id === 'ai-rag')?.lane, 'AI')
+  const lessonIds = new Set(JSON.parse(readFileSync(new URL('../web/src/data/curriculum-index.json', import.meta.url), 'utf8')).lessons.map((item) => item.id))
+  const aiKeys = new Set(AI_NOTES.map((note) => `ai:${note.key}`))
+  for (const id of Object.values(SKILL_LESSONS).flat()) {
+    if (String(id).startsWith('ai:')) assert.ok(aiKeys.has(id), id)
+    else assert.ok(lessonIds.has(id), id)
+  }
+  for (const view of SKILL_VIEWS) assert.ok(LEARNING_SKILLS.some((item) => item.id === view.id), view.id)
+  assert.equal(SKILL_VIEWS.find((item) => item.id === 'dual-framework')?.bridge, true)
+  const parentsOf = (id) => LEARNING_SKILLS.find((item) => item.id === id)?.allOf ?? []
+  const glowOf = (done) => skillGlows(
+    SKILL_VIEWS.map((item) => item.id),
+    parentsOf,
+    (id) => skillProgress(skillLessonIds(id), done, present),
+  )
+  const partial = glowOf(new Set(['mysql-mvcc']))
+  assert.equal(partial.glow.D01, 'dim')
+  assert.equal(partial.glow.tcp, 'research')
+  assert.equal(partial.activeId, 'tcp')
+  assert.equal(partial.glow.redis, 'dim')
+  assert.equal(partial.glow.k8s, 'dim')
+  assert.equal(partial.glow.js, 'dim')
+  assert.equal(partial.glow.html, 'ready')
+  const mysqlDone = glowOf(new Set([...skillLessonIds('sql'), ...skillLessonIds('D01')]))
+  assert.equal(mysqlDone.glow.D01, 'lit')
+  assert.equal(mysqlDone.glow.redis, 'ready')
+  const both = glowOf(new Set([
+    ...skillLessonIds('html'),
+    ...skillLessonIds('js'),
+    ...skillLessonIds('R01'),
+    ...skillLessonIds('V01'),
+  ]))
+  assert.equal(both.glow['dual-framework'], 'lit')
+  const aiLit = glowOf(new Set(skillLessonIds('ai-prompt')))
+  assert.equal(aiLit.glow['ai-prompt'], 'lit')
+  assert.equal(aiLit.glow['ai-llm'], 'ready')
+  assert.equal(aiLit.glow['ai-agent'], 'dim')
+  const passed = {
+    id: 'e1',
+    attemptId: 'a1',
+    taskId: 'g2.concurrency-note',
+    taskVersion: 1,
+    kind: 'local-check',
+    verification: 'passed',
+    source: 'local',
+    summary: '本地检查通过。',
+  }
+  assert.equal(skillHasLocalCheck('J02', [passed]), true)
+  assert.equal(skillHasLocalCheck('D01', [passed]), true)
+  assert.equal(skillHasLocalCheck('S01', [passed]), false)
+  assert.equal(skillHasLocalCheck('R01', [passed]), false)
+  assert.equal(skillHasLocalCheck('J02', [{ ...passed, kind: 'self', verification: 'pending', source: 'self' }]), false)
+  const baseExam = { ...passed, id: 'e2', taskId: 'g2.written-oversell' }
+  assert.equal(skillHasLocalCheck('D01', [baseExam]), true)
+  assert.equal(skillHasLocalCheck('J02', [baseExam]), true)
+  const advancedExam = { ...passed, id: 'e3', taskId: 'g3.written-stale-cache' }
+  assert.equal(skillHasLocalCheck('redis', [advancedExam]), false)
+  const idemPass = { ...passed, id: 'e4', taskId: 'g2.idempotent-retry' }
+  assert.equal(skillHasLocalCheck('idem', [idemPass]), true)
+  const g2 = MASTERY_GATES.find((item) => item.id === 'g2')
+  assert.ok(g2)
+  assert.equal(gateCleared(g2, skillLessonIds('D01'), []), false)
 })
 
 test('old checks become self-assessments and reading does not verify', () => {
@@ -456,3 +551,124 @@ test('a spine lesson returns to camp, and the settle line needs a stored read', 
   assert.equal(openSideLessonIds([])[0], 'ts-narrowing')
   assert.equal(openSideLessonIds(['ts-narrowing'])[0], 'ts-generics')
 })
+
+test('gate verify progress stays pending for drafts and does not clear the gate', () => {
+  const gate = PATHS.architect.gates[0]
+  assert.equal(abilityGoal(gate), gate.pass)
+  const items = verifyItemsForGate('g1')
+  assert.ok(items.some((item) => item.id === 'g1.write-path' && item.tier === 'base'))
+  assert.ok(items.some((item) => item.id === 'g1.written-stock' && item.tier === 'base'))
+  assert.ok(items.some((item) => item.id === 'g1.written-render' && item.tier === 'advanced'))
+  const empty = gateVerifyFill('g1', [], [])
+  assert.equal(empty.started, 0)
+  assert.equal(empty.passed, 0)
+  assert.equal(empty.total, 2)
+  assert.equal(empty.advancedTotal, 2)
+  assert.equal(empty.advancedNoted, 0)
+  assert.match(empty.note, /不计入通过/)
+  const reading = verifyItemsForGate('g3')
+  assert.equal(reading[0]?.id, 'g3.open-keyset')
+  assert.equal(reading[0]?.tier, 'base')
+  assert.equal(nextVerifyId('g3', 'g3.open-keyset'), 'g3.written-keyset')
+  assert.equal(nextVerifyId('g1', 'g1.written-user'), undefined)
+  const advancedOnly = gateVerifyFill('g1', [], [{
+    id: 'g1.written-render@1',
+    attemptId: 'g1.written-render@1',
+    taskId: 'g1.written-render',
+    taskVersion: 1,
+    kind: 'local-check',
+    verification: 'passed',
+    source: 'local',
+    summary: '选对',
+  }])
+  assert.equal(advancedOnly.passed, 0)
+  assert.equal(advancedOnly.advancedNoted, 1)
+  assert.equal(gateEdition(true, advancedOnly).mark, '旧版已过')
+  assert.match(empty.note, /不冒充认证/)
+  const drafted = gateVerifyFill(
+    'g1',
+    [{ id: 'g1.write-path@1', taskId: 'g1.write-path', taskVersion: 1, status: 'draft', hintLevel: 0, draft: '四段职责' }],
+    [],
+  )
+  assert.equal(drafted.pending, 1)
+  assert.equal(drafted.passed, 0)
+  assert.equal(
+    verifyFace(
+      'g1.write-path',
+      [{ id: 'g1.write-path@1', taskId: 'g1.write-path', taskVersion: 1, status: 'draft', hintLevel: 0, draft: '四段' }],
+      [],
+    ),
+    'pending',
+  )
+  assert.equal(verifyFaceLabel('pending'), '自评完成，待复核')
+  assert.equal(verifyFaceLabel('passed'), '本地检查通过')
+  const later = PATHS.architect.gates.find((item) => item.id === 'g-auth')
+  assert.ok(later)
+  assert.equal(gateVerifyFill(later.id, [], []).total, 0)
+  assert.equal(gateEdition(true, { total: 0, passed: 0 }).mark, '')
+  assert.equal(gateEdition(false, { total: 4, passed: 4 }).mark, '')
+  assert.equal(gateEdition(true, { total: 4, passed: 0 }).mark, '旧版已过')
+  assert.match(gateEdition(true, { total: 4, passed: 1 }).note, /新版待验收/)
+  assert.equal(gateEdition(true, { total: 4, passed: 4 }).mark, '新版已通过')
+  const byId = Object.fromEntries(MASTERY_GATES.map((item) => [item.id, item.requires]))
+  assert.deepEqual(byId.g1, [])
+  assert.deepEqual(byId.g2, ['g1'])
+  assert.deepEqual(byId['g-auth'], ['g1'])
+  assert.deepEqual(byId['g-triage'], ['g2', 'g3'])
+  assert.deepEqual(byId.g6, ['g4', 'g5'])
+  const seen = new Set()
+  for (const item of MASTERY_GATES) {
+    for (const id of item.requires) assert.equal(seen.has(id), true, `${item.id} 指向了后面的关`)
+    seen.add(item.id)
+  }
+  const open = gateAdvise({
+    requires: ['g2', 'g3'],
+    titles: { g2: '把写入做对', g3: '把读取做对' },
+    satisfied: new Set(['g2']),
+    skipped: false,
+    hasVerify: true,
+  })
+  assert.equal(open.stone, '建议先完成')
+  assert.equal(open.canSkip, true)
+  assert.deepEqual(open.unmet.map((item) => item.title), ['把读取做对'])
+  const skipped = gateAdvise({
+    requires: ['g2'],
+    titles: { g2: '把写入做对' },
+    satisfied: new Set(),
+    skipped: true,
+    hasVerify: true,
+  })
+  assert.equal(skipped.stone, '可挑战')
+  assert.match(skipped.skipNote, /通过只记这一关/)
+  assert.equal(skipped.canSkip, false)
+  const ready = gateAdvise({
+    requires: ['g1'],
+    titles: { g1: '走通一次下单' },
+    satisfied: new Set(['g1']),
+    skipped: false,
+    hasVerify: true,
+  })
+  assert.equal(ready.stone, '可挑战')
+  assert.equal(ready.unmet.length, 0)
+  const quiet = gateAdvise({
+    requires: ['g1'],
+    titles: { g1: '走通一次下单' },
+    satisfied: new Set(),
+    skipped: false,
+    hasVerify: false,
+  })
+  assert.equal(quiet.stone, '')
+  assert.equal(quiet.canSkip, false)
+  assert.equal(passFlashLine('能讲清这条路径。这一关不是精通。'), '新版已通过。能讲清这条路径。这一关不是精通。')
+  assert.match(passFlashLine('测试失败不改正在跑的副本。'), /这一关不是精通。$/)
+  assert.deepEqual(normalizeProgress({ skipVerify: ['g3', 'g3', ''] }, groups).skipVerify, ['g3'])
+  assert.equal(
+    gateCleared(
+      gate,
+      gate.lessons.map((lesson) => lesson.id),
+      gate.outputs.map((_, index) => `${gate.id}:${index}`),
+    ),
+    true,
+  )
+})
+

@@ -59,6 +59,7 @@ export function normalizeProgress(value: unknown, groups: ProgressGroups): Progr
     aiSkippedPrereq: strings(saved.aiSkippedPrereq),
     aiDrillScores,
     pathChecks: strings(saved.pathChecks),
+    skipVerify: strings(saved.skipVerify),
     ...learning,
     revision: revisionOf(saved.revision),
   }
@@ -194,13 +195,17 @@ export function mergeForWrite(local: ProgressState, remote: ProgressState, base:
   const pathChecks = listChanged(local.pathChecks, base.pathChecks)
     ? [...new Set([...remote.pathChecks, ...local.pathChecks])]
     : remote.pathChecks
+  const skipVerify = listChanged(local.skipVerify, base.skipVerify)
+    ? [...new Set([...remote.skipVerify, ...local.skipVerify])]
+    : remote.skipVerify
   if (
     listChanged(local.done, base.done) ||
     listChanged(local.review, base.review) ||
     listChanged(local.aiDone, base.aiDone) ||
     listChanged(local.aiReview, base.aiReview) ||
     listChanged(local.aiSkippedPrereq, base.aiSkippedPrereq) ||
-    listChanged(local.pathChecks, base.pathChecks)
+    listChanged(local.pathChecks, base.pathChecks) ||
+    listChanged(local.skipVerify, base.skipVerify)
   ) {
     touched = true
   }
@@ -218,6 +223,7 @@ export function mergeForWrite(local: ProgressState, remote: ProgressState, base:
     aiReview,
     aiSkippedPrereq,
     pathChecks,
+    skipVerify,
     ...learning,
     revision: remote.revision + (touched ? 1 : 0),
   }

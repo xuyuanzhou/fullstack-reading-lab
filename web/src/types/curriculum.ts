@@ -72,6 +72,8 @@ export type ProgressState = {
   aiDrillScores: Record<string, number>
   /** 主线交付勾选，形如 g1:0。这是自评，不是测试通过。 */
   pathChecks: string[]
+  /** 学员选择跳过某关的先修建议。只记选择，不改勾选，也不算通过。 */
+  skipVerify: string[]
   /** 任务草稿和证据。schemaVersion 在这份信封里，和下面的 revision 不是同一件事。 */
   learning: LearningEnvelope
   /** 记录比本页新时为真，写回时必须保留原文。 */

@@ -41,7 +41,7 @@ function jump(id: string) {
   el?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
 }
 
-export function QuestBoard({ gateId, handIn = false, sideId, bossPage = false }: { gateId?: string; handIn?: boolean; sideId?: string; bossPage?: boolean }) {
+export function QuestBoard({ gateId, handIn = false, sideId }: { gateId?: string; handIn?: boolean; sideId?: string }) {
   const progress = useProgress()
   const records = progress.learning.quests ?? []
   const lanes = mainLanes()
@@ -65,7 +65,6 @@ export function QuestBoard({ gateId, handIn = false, sideId, bossPage = false }:
   const showMain = filter === 'all' || filter === 'main'
   const showSide = filter === 'all' || filter === 'side'
   const showBoss = filter === 'all' || filter === 'boss'
-  const bossGrade = boss.milestones[Math.min(bossStep, boss.milestones.length - 1)]
 
   const reveal = (id: string, next: Filter) => {
     setFilter(next)
@@ -84,63 +83,6 @@ export function QuestBoard({ gateId, handIn = false, sideId, bossPage = false }:
     setNotice(saved.granted.length
       ? `已发放：${saved.granted.map((item) => item.title).join('、')}。`
       : '这一关的进度没有新变化。')
-  }
-
-  if (bossPage) {
-    return (
-      <QuestMotionRoot>
-        <div className="quest-board is-place">
-          <section className="quest-lane quest-boss" aria-label="核心挑战">
-            <ol className="quest-stages" aria-label="三档">
-              {boss.milestones.map((item, index) => {
-                const done = bossStep > index || bossRow?.status === 'cleared'
-                const here = !done && bossStep === index
-                return (
-                  <li key={item.id} aria-current={here ? 'step' : undefined}>
-                    <button
-                      type="button"
-                      className="quest-node is-boss"
-                      aria-pressed={focusId === item.taskId}
-                      onClick={() => setFocusId(item.taskId)}
-                    >
-                      <span className="quest-node-title">{item.title}</span>
-                      <span className="quest-node-state">{done ? '已记下' : here ? '当前' : '后面'}</span>
-                    </button>
-                  </li>
-                )
-              })}
-            </ol>
-            <CurrentTask focusId={focusId} />
-            <div className="path-fold-mark">
-              <label className="quest-mark">
-                这一档做到哪
-                <input
-                  value={marks[boss.id] ?? ''}
-                  maxLength={80}
-                  disabled={bossRow?.status === 'cleared'}
-                  onChange={(event) => setMarks((prev) => ({ ...prev, [boss.id]: event.target.value }))}
-                />
-              </label>
-              <button
-                type="button"
-                onClick={() => act({ type: 'advance', id: boss.id, mark: marks[boss.id] ?? '' })}
-                disabled={bossRow?.status === 'cleared'}
-              >
-                {bossRow?.status === 'cleared' ? '三档都已收口' : `记下：${bossGrade?.title ?? '这一档'}`}
-              </button>
-            </div>
-          </section>
-          {notice ? <p className="quest-notice" role="status">{notice}</p> : null}
-          {seal ? (
-            <div className="quest-seal" role="status">
-              <p className="quest-seal-kicker">成就解开</p>
-              <p className="quest-seal-title">{seal.title}</p>
-              <p>{seal.detail}</p>
-            </div>
-          ) : null}
-        </div>
-      </QuestMotionRoot>
-    )
   }
 
   if (sideDef) {

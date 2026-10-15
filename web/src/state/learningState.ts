@@ -20,6 +20,7 @@ export type LearningState = ProgressState & {
   toggleDone: (id: string) => void
   toggleReview: (id: string) => void
   togglePathCheck: (id: string) => void
+  skipGateVerify: (gateId: string) => void
   toggleAiDone: (id: string) => void
   toggleAiReview: (id: string) => void
   rememberAi: (id: string) => void

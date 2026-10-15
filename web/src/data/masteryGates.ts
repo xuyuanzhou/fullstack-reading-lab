@@ -6,6 +6,7 @@ export const MASTERY_GATES: PathGate[] = [
     id: 'g1',
     title: '关卡 1 · 单笔业务竖切',
     learnTitle: '走通一次下单',
+    requires: [],
     weeks: '1～2 周',
     how: [
       '用同一笔下单或你手头的一个功能贯穿这 8 课，不要每课换例子。',
@@ -34,6 +35,7 @@ export const MASTERY_GATES: PathGate[] = [
     id: 'g2',
     title: '关卡 2 · 正确性',
     learnTitle: '把写入做对',
+    requires: ['g1'],
     weeks: '2～3 周',
     how: [
       '继续上一关同一笔业务，把那条写路径在本地跑通，不要每课换例子。',
@@ -69,6 +71,7 @@ export const MASTERY_GATES: PathGate[] = [
     id: 'g3',
     title: '关卡 3 · 读、库、缓存',
     learnTitle: '把读取做对',
+    requires: ['g2'],
     weeks: '2～3 周',
     milestone: '做到这里，是能交付的全栈。',
     milestoneKind: 'fullstack',
@@ -99,6 +102,7 @@ export const MASTERY_GATES: PathGate[] = [
     id: 'g-auth',
     title: '关卡 4 · 谁能改这一行',
     learnTitle: '谁能改这一行',
+    requires: ['g1'],
     weeks: '1～2 周',
     how: [
       '还是同一条订单。未登录、已登录但不是拥有者、跨站提交，三笔都要拒绝。',
@@ -126,6 +130,7 @@ export const MASTERY_GATES: PathGate[] = [
     id: 'g-test',
     title: '关卡 5 · 用测试锁住',
     learnTitle: '用测试锁住',
+    requires: ['g1'],
     weeks: '1～2 周',
     how: [
       '用测试名锁住已经做过的事，不要为了测试换一条业务。',
@@ -151,6 +156,7 @@ export const MASTERY_GATES: PathGate[] = [
     id: 'g-triage',
     title: '关卡 6 · 一次故障先定位再改',
     learnTitle: '一次故障先定位再改',
+    requires: ['g2', 'g3'],
     weeks: '2～3 周',
     how: [
       '先读排查顺序，再按层读后面的课。用同一条已经能跑的写路径，不要先拆服务。',
@@ -193,6 +199,7 @@ export const MASTERY_GATES: PathGate[] = [
     id: 'g4',
     title: '关卡 7 · 分布与边界',
     learnTitle: '决定拆不拆',
+    requires: ['g2'],
     weeks: '3～4 周',
     how: [
       '先读何时不拆，再读拆开之后的成本。顺序不要倒过来。',
@@ -236,6 +243,7 @@ export const MASTERY_GATES: PathGate[] = [
     id: 'g5',
     title: '关卡 8 · 运行与演进',
     learnTitle: '上线后能看见故障',
+    requires: ['g-triage'],
     weeks: '3～4 周',
     how: [
       '先读镜像，再读流水线怎么拦住失败，然后读集群。认识 Pod 之后再读「作业绿了不是线上进程」。',
@@ -292,6 +300,7 @@ export const MASTERY_GATES: PathGate[] = [
     id: 'g6',
     title: '关卡 9 · 架构职责',
     learnTitle: '到工作里推动',
+    requires: ['g4', 'g5'],
     weeks: '3～4 周 · 课外',
     milestone: '做到这里，才有架构师的材料。课库代替不了这一关。',
     milestoneKind: 'architect',

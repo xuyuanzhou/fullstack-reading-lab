@@ -20,6 +20,7 @@ const AiPage = lazy(() => import('@/pages/AiPage').then(m => ({ default: m.AiPag
 const AiNotePage = lazy(() => import('@/pages/AiPage').then(m => ({ default: m.AiNotePage })))
 const AiLabPage = lazy(() => import('@/pages/AiLabPage').then(m => ({ default: m.AiLabPage })))
 const PathPage = lazy(() => import('@/pages/PathPage').then(m => ({ default: m.PathPage })))
+const SkillsPage = lazy(() => import('@/pages/SkillsPage').then(m => ({ default: m.SkillsPage })))
 
 function ResumeRoute() {
   const progress = useReadingPlace()
@@ -55,7 +56,7 @@ function ThemedApp() {
           colorText: dark ? '#d0d5d1' : '#2e3330',
           colorTextSecondary: dark ? '#919a94' : '#5e6661',
           borderRadius: 8,
-          fontFamily: "'IBM Plex Sans', 'Noto Sans SC', 'PingFang SC', sans-serif",
+          fontFamily: "'PingFang SC', 'Noto Sans SC', 'Microsoft YaHei', sans-serif",
           fontSize: 14,
           controlHeight: 34,
         },
@@ -106,6 +107,7 @@ function ThemedApp() {
               <Route path="ai/:sectionKey" element={<AiPage />} />
               <Route path="ai/:sectionKey/:noteKey" element={<AiNotePage />} />
               <Route path="paths" element={<PathPage />} />
+              <Route path="skills" element={<SkillsPage />} />
               <Route path="paths/:kind" element={<Navigate to="/paths" replace />} />
               <Route path=":track/:groupKey" element={<HomePage />} />
               <Route path=":track/:groupKey/:lessonId" element={<LessonPage />} />

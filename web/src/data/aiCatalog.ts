@@ -1354,6 +1354,13 @@ export function aiProgressId(note: Pick<AiNote, 'key'>) {
   return `ai:${note.key}`
 }
 
+/** 技能树挂课用 `ai:课键`。找不到说明这节不在 AI 目录里。 */
+export function aiNoteById(progressId: string) {
+  if (!progressId.startsWith('ai:')) return undefined
+  const key = progressId.slice(3)
+  return AI_NOTES.find((note) => note.key === key)
+}
+
 export function searchAiNotes(query: string) {
   const q = query.trim().toLocaleLowerCase()
   const all = AI_NOTES.map((note) => withSampleExtras(note))

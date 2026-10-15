@@ -39,6 +39,11 @@ export function businessActions(set: SetState, get: GetState) {
     toggleDone: (id: string) => toggleList('done', id),
     toggleReview: (id: string) => toggleList('review', id),
     togglePathCheck: (id: string) => toggleList('pathChecks', id),
+    skipGateVerify(gateId: string) {
+      set((prev) => ({
+        skipVerify: prev.skipVerify.includes(gateId) ? prev.skipVerify : [...prev.skipVerify, gateId],
+      }))
+    },
     toggleAiDone: (id: string) => toggleList('aiDone', id),
     toggleAiReview: (id: string) => toggleList('aiReview', id),
     rememberAi(id: string) {

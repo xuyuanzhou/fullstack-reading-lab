@@ -52,7 +52,23 @@ for (const lesson of payload.lessons) {
 
 // Full dump kept for verify_content / audits. The app loads one lesson file, not the track pack.
 fs.writeFileSync(path.join(dataDir, 'curriculum.json'), JSON.stringify(payload, null, 2) + '\n');
-fs.writeFileSync(path.join(dataDir, 'curriculum-index.json'), JSON.stringify(index, null, 2) + '\n');
+fs.writeFileSync(path.join(dataDir, 'curriculum-index.json'), JSON.stringify(index) + '\n');
+const navLessons = index.lessons.map((lesson) => {
+  const row = {};
+  for (const key of ['track', 'group', 'id', 'title', 'since']) {
+    if (lesson[key] !== undefined) row[key] = lesson[key];
+  }
+  return row;
+});
+const cardLessons = index.lessons.map((lesson) => {
+  const row = { id: lesson.id };
+  for (const key of ['prompt', 'promptAnswer', 'keywords', 'points']) {
+    if (lesson[key] !== undefined) row[key] = lesson[key];
+  }
+  return row;
+});
+fs.writeFileSync(path.join(dataDir, 'curriculum-nav.json'), JSON.stringify({ ...index, lessons: navLessons }) + '\n');
+fs.writeFileSync(path.join(dataDir, 'curriculum-cards.json'), JSON.stringify(cardLessons) + '\n');
 fs.writeFileSync(
   path.join(dataDir, 'curriculum-bodies-frontend.json'),
   JSON.stringify(bodiesByTrack.frontend, null, 2) + '\n',

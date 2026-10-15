@@ -23,6 +23,27 @@
   --lab-code-type: #3f6a58;
   --lab-code-meta: #5c4a78;
   --lab-shadow: 0 1px 0 rgba(40, 48, 42, 0.03), 0 10px 28px rgba(40, 48, 42, 0.04);
+  /* 日间闯关/技能舞台：雾绿石台，跟浅色壳层同色温，不再硬贴夜色。 */
+  --lab-stage: #e7f0ea;
+  --lab-stage-raise: #f5faf7;
+  --lab-stage-idle: #d5e4db;
+  --lab-stage-ink: #1f2a26;
+  --lab-stage-muted: #4a5c54;
+  --lab-stage-line: #7fa090;
+  --lab-stage-accent: #3f6a58;
+  --lab-stage-bright: #2d4f41;
+  --lab-stage-done: #5f8f78;
+  --lab-stage-plinth-l: #b7cec1;
+  --lab-stage-plinth-r: #a3bdb0;
+  --lab-stage-plinth-done-l: #5f8f78;
+  --lab-stage-plinth-done-r: #4e7a66;
+  --lab-stage-shadow-fill: #24302c;
+  --lab-stage-shadow-opacity: 0.14;
+  --lab-stage-road-shadow-opacity: 0.1;
+  --lab-stage-dust: rgba(45, 79, 65, 0.28);
+  --lab-stage-ember: var(--lab-stage-bright);
+  --lab-stage-on-done: #f5faf7;
+  --lab-stage-glow: color-mix(in srgb, var(--lab-stage-accent) 50%, transparent);
   --lab-radius: 10px;
   --lab-sider-w: 300px;
   --lab-aside-w: 248px;
@@ -35,8 +56,8 @@
   --lab-text-h2: 16px;
   --lab-text-page: 22px;
   --lab-text-h1: 24px;
-  --font-sans: 'IBM Plex Sans', 'Noto Sans SC', 'PingFang SC', sans-serif;
-  --font-serif: 'Source Serif 4', 'Songti SC', 'Noto Serif SC', Georgia, serif;
+  --font-sans: 'PingFang SC', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+  --font-serif: 'Songti SC', 'Noto Serif SC', 'Source Han Serif SC', Georgia, serif;
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -69,6 +90,37 @@ html[data-theme='dark'] {
   --lab-code-type: #8fb5a0;
   --lab-code-meta: #d4c0e4;
   --lab-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+  /* 夜间舞台：松绿夜色。 */
+  --lab-stage: #1a2420;
+  --lab-stage-raise: #24302c;
+  --lab-stage-idle: #1f2b26;
+  --lab-stage-ink: #d0d5d1;
+  --lab-stage-muted: #919a94;
+  --lab-stage-line: #3d5248;
+  --lab-stage-accent: #8fb5a0;
+  --lab-stage-bright: #c5ddd0;
+  --lab-stage-done: #3f6a58;
+  --lab-stage-plinth-l: #1a2420;
+  --lab-stage-plinth-r: #16201c;
+  --lab-stage-plinth-done-l: #2d4f41;
+  --lab-stage-plinth-done-r: #243f34;
+  --lab-stage-shadow-fill: #000000;
+  --lab-stage-shadow-opacity: 0.45;
+  --lab-stage-road-shadow-opacity: 0.28;
+  --lab-stage-dust: rgba(197, 221, 208, 0.45);
+  --lab-stage-ember: var(--lab-stage-bright);
+  --lab-stage-on-done: #c5ddd0;
+  --lab-stage-glow: color-mix(in srgb, var(--lab-stage-bright) 65%, transparent);
+}
+
+@mixin lab-stage-surface {
+  border: 1px solid color-mix(in srgb, var(--lab-stage-accent) 36%, var(--lab-line));
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 14% 0%, color-mix(in srgb, var(--lab-stage-accent) 16%, transparent), transparent 34%),
+    linear-gradient(180deg, var(--lab-stage-raise) 0%, var(--lab-stage) 100%);
+  box-shadow: var(--lab-shadow);
+  color: var(--lab-stage-ink);
 }
 
 @mixin label {

@@ -2,6 +2,7 @@ import { Button, Space, Typography } from 'antd'
 import { useEffect } from 'react'
 import { Link, Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { findLesson, lessonsFor, lessonsInGroup, outlineFor, prefetchLessonBody, totals } from '@/data/curriculum'
+import { pointTotal } from '@/data/curriculumCards'
 import { TRACK_INTRO, TRACK_LABEL } from '@/data/meta'
 import { shortTitle } from '@/data/reading'
 import { groupLabel, groupTitle, isTrack, lessonPath, resumePath } from '@/data/routes'
@@ -74,7 +75,7 @@ export function HomePage() {
         <span>公开原创课程</span>
         <span className="dot" />
         <span>
-          {totals.lessons} 节 · {totals.points} 知识点
+          {totals.lessons} 节 · {pointTotal} 知识点
         </span>
       </div>
 

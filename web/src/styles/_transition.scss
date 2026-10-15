@@ -102,16 +102,32 @@
 .route-fx.is-lite .route-fx-gl { display: none; }
 
 .fx-audio {
-  margin-right: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
   border: 0;
+  border-radius: 8px;
   background: transparent;
   color: var(--lab-muted);
-  font: inherit;
-  font-size: 12px;
   cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    color: var(--lab-ink);
+    background: var(--lab-line-soft);
+  }
 }
 
 .fx-audio.is-on { color: var(--lab-accent-strong); }
+
+@media (max-width: 720px) {
+  .fx-audio {
+    width: 40px;
+    height: 40px;
+  }
+}
 
 @keyframes fx-warp-veil {
   0% { opacity: 0; }

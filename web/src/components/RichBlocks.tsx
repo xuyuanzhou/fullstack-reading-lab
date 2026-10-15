@@ -1,7 +1,10 @@
-import { useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import { RichProse } from '@/components/RichProse'
-import { highlightLessonCode } from '@/data/highlightCode'
 import { splitFencedBlocks } from '@/data/reading'
+
+function escapeHtml(text: string) {
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+}
 
 function proseParagraphs(text: string) {
   return text
@@ -12,7 +15,16 @@ function proseParagraphs(text: string) {
 }
 
 function LessonCode({ lang, text }: { lang: string; text: string }) {
-  const html = useMemo(() => highlightLessonCode(lang, text), [lang, text])
+  const [html, setHtml] = useState(() => escapeHtml(text))
+  useEffect(() => {
+    let cancel = false
+    void import('@/data/highlightCode').then((mod) => {
+      if (!cancel) setHtml(mod.highlightLessonCode(lang, text))
+    })
+    return () => {
+      cancel = true
+    }
+  }, [lang, text])
   return (
     <pre className="lesson-code" data-lang={lang || undefined}>
       <code dangerouslySetInnerHTML={{ __html: html }} />

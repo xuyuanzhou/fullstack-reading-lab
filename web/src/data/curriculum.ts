@@ -1,4 +1,4 @@
-import indexRaw from './curriculum-index.json?raw'
+import indexRaw from './curriculum-nav.json?raw'
 import type { Curriculum, Lesson, Track } from '@/types/curriculum'
 
 /** Nav / list / search card — core and body fields load with the track pack. */
@@ -144,7 +144,6 @@ export function lessonIndex(track: Track, id: string): number {
 
 export const totals = {
   lessons: curriculum.lessons.length,
-  points: curriculum.lessons.reduce((sum, lesson) => sum + lesson.points.length, 0),
   frontend: lessonsFor('frontend').length,
   java: lessonsFor('java').length,
 }

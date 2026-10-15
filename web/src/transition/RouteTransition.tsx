@@ -1,7 +1,8 @@
+import { Volume2, VolumeX } from 'lucide-react'
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useLearningSlice } from '@/state/progress'
-import { playTransitionCue, primeTransitionAudio, setTransitionAudio, transitionAudioEnabled } from './audio.ts'
+import { playCampTick, playTransitionCue, primeTransitionAudio, setTransitionAudio, transitionAudioEnabled } from './audio.ts'
 import { beginJump, completeJump, JUMP_BUDGET_MS, markSceneReady } from './jumpBudget.ts'
 import { currentTier, type Tier } from './quality.ts'
 import { LITE_MS, TRANSITION_MS, pageScene, transitionKind, type TransitionKind } from './scenes.ts'
@@ -14,6 +15,7 @@ export function RouteTransition() {
   const location = useLocation()
   const flush = useLearningSlice((state) => state.flushPersist)
   const prev = useRef(location.pathname)
+  const prevSearch = useRef(location.search)
   const [fx, setFx] = useState<Fx | null>(null)
 
   useEffect(() => {
@@ -36,8 +38,17 @@ export function RouteTransition() {
   useEffect(() => {
     const from = prev.current
     const to = location.pathname
-    if (from === to) return
+    const search = location.search
+    if (from === to) {
+      // 营地内只改 query（进关、Boss 档）时仍要有轻响，否则开了音效也像没声。
+      if (pageScene(to) === 'levels' && prevSearch.current !== search) {
+        prevSearch.current = search
+        playCampTick()
+      }
+      return
+    }
     prev.current = to
+    prevSearch.current = search
     flush()
     const kind = transitionKind(from, to)
     const tier = currentTier()
@@ -57,7 +68,7 @@ export function RouteTransition() {
       window.clearTimeout(timer)
       window.clearTimeout(cap)
     }
-  }, [flush, location.pathname])
+  }, [flush, location.pathname, location.search])
 
   if (!fx) return null
   return (
@@ -159,13 +170,14 @@ export function TransitionAudioButton() {
       className={`fx-audio${on ? ' is-on' : ''}`}
       aria-pressed={on}
       aria-label={on ? '关闭转场音效' : '打开转场音效'}
+      title={on ? '关闭转场音效' : '打开转场音效'}
       onClick={() => {
         const next = !on
         setTransitionAudio(next)
         setOn(next)
       }}
     >
-      {on ? '音效开' : '音效关'}
+      {on ? <Volume2 size={16} aria-hidden /> : <VolumeX size={16} aria-hidden />}
     </button>
   )
 }

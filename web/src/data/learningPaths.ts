@@ -96,6 +96,8 @@ export type PathGate = {
   title: string
   /** 给人看的阶段名，不使用课表分类词。 */
   learnTitle: string
+  /** 直接前置关卡 id。只用于建议，不参与 gateCleared。 */
+  requires: readonly string[]
   weeks: string
   /** 读这一关时按顺序做的事。 */
   how: string[]

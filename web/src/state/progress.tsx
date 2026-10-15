@@ -16,6 +16,7 @@ export type ProgressApi = ProgressState & {
   setGroup: (group: string) => void
   toggleDone: (id: string) => void
   togglePathCheck: (id: string) => void
+  skipGateVerify: (gateId: string) => void
   toggleReview: (id: string) => void
   remember: (id: string) => void
   setNote: (id: string, note: string) => void
@@ -86,6 +87,7 @@ function selectApi(state: LearningState): ProgressApi {
     aiSkippedPrereq: state.aiSkippedPrereq,
     aiDrillScores: state.aiDrillScores,
     pathChecks: state.pathChecks,
+    skipVerify: state.skipVerify,
     learning: state.learning,
     learningReadonly: state.learningReadonly,
     learningHeld: state.learningHeld,
@@ -96,6 +98,7 @@ function selectApi(state: LearningState): ProgressApi {
     setGroup: state.setGroup,
     toggleDone: state.toggleDone,
     togglePathCheck: state.togglePathCheck,
+    skipGateVerify: state.skipGateVerify,
     toggleReview: state.toggleReview,
     remember: state.remember,
     setNote: state.setNote,

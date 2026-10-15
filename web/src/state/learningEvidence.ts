@@ -254,6 +254,31 @@ export function selfEvidenceForDraft(attempt: Attempt, score: number | null): Ev
   }
 }
 
+/** 选择题对上固定项。来源是站内比对，只记本地检查，不改过关勾选。 */
+export function choicePassEvidence(exam: { id: string; version: number }, optionId: string): { attempt: Attempt; evidence: Evidence } {
+  const attemptId = `${exam.id}@${exam.version}:choice`
+  return {
+    attempt: {
+      id: attemptId,
+      taskId: exam.id,
+      taskVersion: exam.version,
+      status: 'saved',
+      hintLevel: 0,
+      draft: optionId,
+    },
+    evidence: {
+      id: `${attemptId}:local`,
+      attemptId,
+      taskId: exam.id,
+      taskVersion: exam.version,
+      kind: 'local-check',
+      verification: 'passed',
+      source: 'local',
+      summary: `选择题对上固定答案。只记本地检查，不改过关勾选。`,
+    },
+  }
+}
+
 /** 学员记下的样板失败。来源仍是学员自己，不能变成已通过。 */
 export function labFailureEvidence(attempt: Attempt, check: { id: string; next: string }): Evidence {
   const seen = attempt.draft.trim().replace(/\s+/g, ' ')

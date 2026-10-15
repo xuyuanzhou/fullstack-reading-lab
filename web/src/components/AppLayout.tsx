@@ -16,7 +16,6 @@ import { TRACK_LABEL } from '@/data/meta'
 import { shortTitle } from '@/data/reading'
 import { courseGroups, groupLabel, groupPath, isTrack, lessonPath, resumePath } from '@/data/routes'
 import { useLearningSlice, useProgress } from '@/state/progress'
-import { GateDock } from '@/components/GateDock'
 import { RouteSkeleton } from '@/components/RouteSkeleton'
 import { ProgressAside } from '@/components/ProgressAside'
 import { ReadingBoundary } from '@/components/ReadingBoundary'
@@ -127,16 +126,16 @@ export function AppLayout() {
 
   useEffect(() => {
     if (currentLesson) progress.remember(currentLesson.id)
-    document.title = currentLesson
-      ? `${shortTitle(currentLesson.title)} · 全栈学习实验室`
-      : onLab
-        ? `${labTitle} · AI · 全栈学习实验室`
-        : aiNav?.noteTitle
-          ? `${aiNav.noteTitle} · AI · 全栈学习实验室`
-          : aiNav?.sectionLabel
-            ? `${aiNav.sectionLabel} · AI · 全栈学习实验室`
-            : '全栈学习实验室'
-  }, [currentLesson, progress.remember, onLab, aiNav, labTitle])
+    const pageName = shellPageName({
+      lesson: currentLesson ? shortTitle(currentLesson.title) : '',
+      lab: onLab ? labTitle : '',
+      note: aiNav?.noteTitle || '',
+      section: onAi ? aiNav?.sectionLabel || '' : '',
+      pathname: location.pathname,
+      track: isTrack(routeTrack) ? TRACK_LABEL[routeTrack] : '',
+    })
+    document.title = pageName ? `${pageName} · 全栈学习实验室` : '全栈学习实验室'
+  }, [currentLesson, progress.remember, onLab, onAi, aiNav, labTitle, location.pathname, routeTrack])
 
   useEffect(() => {
     if (!isTrack(routeTrack) || !routeGroupKey || !groupLabel(routeTrack, routeGroupKey)) return
@@ -283,6 +282,7 @@ export function AppLayout() {
     if (location.pathname.startsWith('/audit')) return 'audit'
     if (location.pathname.startsWith('/review')) return 'review'
     if (location.pathname.startsWith('/local')) return 'local'
+    if (location.pathname.startsWith('/skills')) return ''
     return 'home'
   })()
 
@@ -428,7 +428,7 @@ export function AppLayout() {
           </div>
         </header>
 
-        <div className={[onLab ? 'workspace is-workbench' : 'workspace', !onLab && !onAi ? 'has-gate-dock' : ''].filter(Boolean).join(' ')}>
+        <div className={onLab ? 'workspace is-workbench' : 'workspace'}>
           <Content className="app-main" id="main-content" role="main" tabIndex={-1}>
             {progress.storageIssue && <Alert type="warning" showIcon title={progress.storageIssue} />}
             {localHost && localReady === false && (
@@ -463,9 +463,30 @@ export function AppLayout() {
       >
         {siderBody}
       </Drawer>
-      {!onLab && !onAi && <GateDock />}
     </Layout>
   )
+}
+
+function shellPageName(page: {
+  lesson: string
+  lab: string
+  note: string
+  section: string
+  pathname: string
+  track: string
+}) {
+  if (page.lesson) return page.lesson
+  if (page.lab) return `${page.lab} · AI`
+  if (page.note) return `${page.note} · AI`
+  if (page.section) return `${page.section} · AI`
+  if (page.pathname.startsWith('/paths')) return '学习路线'
+  if (page.pathname.startsWith('/skills')) return '技能'
+  if (page.pathname.startsWith('/knowledge')) return '知识库'
+  if (page.pathname.startsWith('/audit')) return '知识核验'
+  if (page.pathname.startsWith('/review')) return '复习清单'
+  if (page.pathname.startsWith('/local')) return '我的资料'
+  if (page.track) return `${page.track} · 学习路线`
+  return ''
 }
 
 function lessonIdFromHref(href: string) {

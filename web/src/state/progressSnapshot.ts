@@ -24,6 +24,7 @@ export function progressSnapshot(state: LearningState): ProgressState {
     aiSkippedPrereq: state.aiSkippedPrereq,
     aiDrillScores: state.aiDrillScores,
     pathChecks: state.pathChecks,
+    skipVerify: state.skipVerify,
     learning: state.learning,
     learningReadonly: state.learningReadonly,
     learningHeld: state.learningHeld,

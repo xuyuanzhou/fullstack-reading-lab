@@ -16,6 +16,8 @@ export type LearningTask = {
   doneWhen: string
   hint: string
   answer: string
+  /** 这道题的依据。没有单独依据的题可以不写。 */
+  basis?: string
   estimatedMinutes: 15 | 30 | 60
   required: boolean
   skillIds: readonly string[]
@@ -33,6 +35,7 @@ const ORDER_LAB_COMMAND = 'cd labs/order-g1g2 && ./mvnw -s maven-settings.xml te
 export const LEARNING_TASKS: readonly LearningTask[] = [
   {
     id: 'g1.write-path',
+    basis: '本关「一个功能要同时对上页面、接口契约、用例和持久化」。页面管这次交互，接口契约管失败 type，用例管事务，持久化管唯一约束。',
     version: 1,
     gateId: 'g1',
     title: '写下这一笔订单的四段职责',
@@ -47,6 +50,15 @@ export const LEARNING_TASKS: readonly LearningTask[] = [
       '持久化管落盘的行和约束：同一个幂等键只能有一行。',
       '',
       '按钮能不能点停在页面。库存够不够停在用例和持久化。失败文案用哪个 type 停在接口契约。',
+      '',
+      '```',
+      'submit.disabled = pending',
+      '',
+      'POST /orders',
+      '409 { "type": "inventory-exhausted" }',
+      '',
+      'UNIQUE (idempotency_key)',
+      '```',
     ].join('\n'),
     estimatedMinutes: 15,
     required: true,
@@ -56,6 +68,7 @@ export const LEARNING_TASKS: readonly LearningTask[] = [
   },
   {
     id: 'g2.concurrency-note',
+    basis: 'InnoDB 一致性读不能代替带版本的条件更新。样板在 labs/order-g1g2。',
     version: 1,
     gateId: 'g2',
     title: '写明并发时哪一次提交必须失败',
@@ -68,9 +81,11 @@ export const LEARNING_TASKS: readonly LearningTask[] = [
       '',
       '库存只剩 1，版本是 0。多个事务都可以用快照读到这一行。先提交的更新是：',
       '',
+      '```sql',
       'UPDATE stock',
       'SET quantity = quantity - 1, version = version + 1',
       'WHERE sku = ? AND version = 0 AND quantity >= 1',
+      '```',
       '',
       '这条改到 1 行，库存变为 0，版本变为 1，并插入 1 笔订单。',
       '后提交的 WHERE 仍是 version = 0。更新读的是当前行，版本已经是 1，条件对不上，影响 0 行，不能再插入订单。',
@@ -101,6 +116,7 @@ export const LEARNING_TASKS: readonly LearningTask[] = [
   },
   {
     id: 'g2.idempotent-retry',
+    basis: 'Idempotency-Key：同一键已完成的请求返回上一次的结果。',
     version: 1,
     gateId: 'g2',
     title: '同一幂等键的第二次请求',
@@ -113,6 +129,18 @@ export const LEARNING_TASKS: readonly LearningTask[] = [
       '',
       '第一次创建成功，库存减 1，replay 是 false，状态码是 201。',
       '同一个键、同一个商品再请求：读回第一次的订单，返回同一笔，replay 是 true，状态码是 200。库存不再减。',
+      '',
+      '```http',
+      'POST /orders',
+      'Idempotency-Key: 8f3c',
+      '',
+      '201 { "id": "ord-1", "replay": false }',
+      '',
+      'POST /orders',
+      'Idempotency-Key: 8f3c',
+      '',
+      '200 { "id": "ord-1", "replay": true }',
+      '```',
       '',
       '同一个键重试 20 次，只留下 1 笔订单，库存为 0。',
       '同一个键换成另一个商品：请求摘要和第一次不一致，返回 409，type 是 idempotency-conflict。库存不再变化。',
@@ -141,7 +169,7 @@ export const LEARNING_TASKS: readonly LearningTask[] = [
     },
     estimatedMinutes: 60,
     required: true,
-    skillIds: ['D01'],
+    skillIds: ['D01', 'idem'],
     prerequisites: ['g1.write-path'],
     rubric: 'local-pending',
   },
@@ -170,6 +198,14 @@ export type WrittenExam = {
   version: number
   gateId: string
   code: string
+  /**
+   * 这道题属于哪几项技能。
+   * 只有基础题（当场问答，或题号以 W1 结尾）在本地检查通过时，技能页才多一颗标记。
+   * 进阶题可以写下技能，但点不亮。
+   */
+  skillIds?: readonly string[]
+  /** 这道题的依据。页面上写出来，不留在注释里。 */
+  basis: string
   question: string
   parts: readonly WrittenPart[]
   hints: readonly WrittenHint[]
@@ -188,6 +224,8 @@ export const G1_WRITTEN_EXAM: WrittenExam = {
   version: 1,
   gateId: 'g1',
   code: 'G1-W1',
+  skillIds: ['D01', 'J02'],
+  basis: '库存数属于持久化和事务，不属于按钮。对照本关「一个功能要同时对上页面、接口契约、用例和持久化」。',
   question: '禁用提交按钮能否保证库存不超卖？',
   parts: [
     { label: '结论', points: 3, lookFor: '不能。禁用按钮保证不了库存不超卖。' },
@@ -208,6 +246,8 @@ export const G1_WRITTEN_RENDER: WrittenExam = {
   version: 1,
   gateId: 'g1',
   code: 'G1-W2',
+  skillIds: ['R01', 'V01'],
+  basis: 'React useState 的 set 只安排下一次渲染（https://react.dev/reference/react/useState）。Vue nextTick 把 DOM 更新放到下一次刷新（https://vuejs.org/api/general.html#nexttick）。',
   question: 'React 的 state 更新后当前事件里读到什么？Vue ref 更新后何时能读到新 DOM？',
   parts: [
     { label: '结论', points: 3, lookFor: 'React 这次事件里读到的 state 仍是这次渲染的值。Vue 改 ref 之后，新 DOM 要在 nextTick 里才能读到。两边都不能把这次调度当成 DOM 已经更新。' },
@@ -228,6 +268,8 @@ export const G1_WRITTEN_USER: WrittenExam = {
   version: 1,
   gateId: 'g1',
   code: 'G1-W3',
+  skillIds: ['spring'],
+  basis: 'Spring Bean Scopes：singleton 是默认作用域，一个容器一份共享实例。prototype 只改变新建次数。',
   question: 'Spring 控制器单例中保存“当前用户”字段会怎样？',
   parts: [
     { label: '结论', points: 3, lookFor: '这个字段在请求之间共享。后到的请求会覆盖先到的用户。' },
@@ -250,6 +292,8 @@ export const G2_WRITTEN_OVERSELL: WrittenExam = {
   version: 1,
   gateId: 'g2',
   code: 'G2-W1',
+  skillIds: ['D01', 'J02'],
+  basis: 'InnoDB 一致性读：普通 SELECT 不加锁，其他会话仍可同时修改。快照不能代替带版本的条件更新。',
   question: '为什么两个事务都查到库存 1 仍可能超卖？MVCC 能否替代条件更新？',
   parts: [
     { label: '结论', points: 3, lookFor: '会超卖。两次快照读都看到库存 1，这不等于谁独占了这一行的写入。MVCC 不能替代条件更新。' },
@@ -270,6 +314,8 @@ export const G2_WRITTEN_PROPAGATION: WrittenExam = {
   version: 1,
   gateId: 'g2',
   code: 'G2-W2',
+  skillIds: ['spring'],
+  basis: 'Spring 声明式事务：代理只拦外部调用；默认 RuntimeException 与 Error 回滚。REQUIRES_NEW 使用独立物理事务并另取连接，NESTED 才是保存点。',
   question: 'this 调用、捕获异常、REQUIRES_NEW 各如何影响 Spring 事务？',
   parts: [
     { label: '结论', points: 3, lookFor: 'this 调用不经过代理，被调方法上的事务不会生效。异常被接住并正常返回时，事务按提交处理。REQUIRES_NEW 是另一笔物理事务，可以单独提交，不是保存点。' },
@@ -292,6 +338,8 @@ export const G2_WRITTEN_RETRY: WrittenExam = {
   version: 1,
   gateId: 'g2',
   code: 'G2-W3',
+  skillIds: ['idem'],
+  basis: 'Idempotency-Key 草案：同一键不得配不同载荷；重复且已完成的请求返回上一次的结果。不同载荷草案给 422，进行中再试给 409。',
   question: '同幂等键但不同请求体应该返回什么？响应丢失后怎样重试？',
   parts: [
     { label: '结论', points: 3, lookFor: '同一键配上不同请求体，应当拒绝，不要当成新的一笔去执行。响应丢失后用原来的键再请求，读回第一次已经完成的结果，不要新生成一个键。' },
@@ -314,6 +362,8 @@ export const G3_WRITTEN_KEYSET: WrittenExam = {
   version: 1,
   gateId: 'g3',
   code: 'G3-W1',
+  skillIds: ['sql'],
+  basis: '键集分页：排序必须稳定且唯一，下一页的比较和 ORDER BY 用同一组键。并发插入或删除让页间漂移，看见哪一版要另外约定。',
   question: '排序字段不唯一时，keyset 分页为何仍会重复或漏项？',
   parts: [
     { label: '结论', points: 3, lookFor: '只用非唯一的排序列当游标，相同值的行会在相邻两页重复，或被下一页漏掉。排序要带上能分开两行的列，游标带上这一整组键。' },
@@ -334,6 +384,8 @@ export const G3_WRITTEN_STALE: WrittenExam = {
   version: 1,
   gateId: 'g3',
   code: 'G3-W2',
+  skillIds: ['redis'],
+  basis: 'Cache Aside：写提交后删除缓存键。另一次未命中读到的旧行可以在删键之后回填。DEL 只删当时的键，不能挡住之后的写入。',
   question: '写库后删缓存为何仍可能读旧值？',
   parts: [
     { label: '结论', points: 3, lookFor: '仍可能读到旧值。有一次读在缓存未命中时拿到了写提交前的数据库值，写提交并删掉缓存之后，这次读再把旧值放回去。删一次缓存不能保证后面都是新值。' },
@@ -354,6 +406,8 @@ export const G3_WRITTEN_FRAMEWORKS: WrittenExam = {
   version: 1,
   gateId: 'g3',
   code: 'G3-W3',
+  skillIds: ['R01', 'V01'],
+  basis: 'React effect 清理与 Vue 响应式基础：切换标识时要忽略或取消上一次请求；从 reactive 解构出的基本值不再连接代理。两边不是同一种机制。',
   question: 'React 请求闭包与 Vue 解构响应式对象分别会出现什么错误？',
   parts: [
     { label: '结论', points: 3, lookFor: 'React 里慢的响应会把上一次请求的结果写进当前页面。Vue 里从 reactive 对象解构出的数字或字符串不再跟着代理变。这两件要分开修，不是同一种机制。' },
@@ -376,6 +430,8 @@ export const G4_WRITTEN_AUTHZ: WrittenExam = {
   version: 1,
   gateId: 'g4',
   code: 'G4-W1',
+  skillIds: ['S01'],
+  basis: '对象级授权：登录只证明身份。角色管哪一类操作，这一条资源和租户仍要在服务端核对。前端藏起入口不是这层检查。',
   question: '登录成功且前端隐藏了按钮，为什么仍不能证明授权正确？',
   parts: [
     { label: '结论', points: 3, lookFor: '不能。登录只证明这次请求是谁。前端把按钮藏起来只影响这一次页面。服务端仍要核对这个身份能不能动这一条资源、这一个租户。' },
@@ -396,6 +452,8 @@ export const G4_WRITTEN_TOKENS: WrittenExam = {
   version: 1,
   gateId: 'g4',
   code: 'G4-W2',
+  skillIds: ['S01'],
+  basis: 'OAuth 2.0、OpenID Connect 与 JWT：授权框架、身份层、令牌格式分开。CORS 管脚本能否读跨源响应。Cookie 仍可能自动提交，改状态还要 CSRF 防护。未加密 JWT 的载荷不是密文。',
   question: 'OAuth2、OIDC、JWT 各是什么，CORS 能防 CSRF 吗？',
   parts: [
     { label: '结论', points: 3, lookFor: 'OAuth 2.0 是授权框架，OpenID Connect 是它上面的身份层，JWT 是一种令牌格式。CORS 不能防 CSRF。' },
@@ -416,6 +474,8 @@ export const G4_WRITTEN_UPLOAD: WrittenExam = {
   version: 1,
   gateId: 'g4',
   code: 'G4-W3',
+  skillIds: ['S01'],
+  basis: '上传核对与 CWE-918：扩展名不能证明内容。服务器代取地址前用完整地址的允许名单核对，并关闭自动跟随重定向。',
   question: '文件上传为什么不能只看扩展名？服务抓取用户 URL 有什么额外风险？',
   parts: [
     { label: '结论', points: 3, lookFor: '扩展名是客户端给出的文件名，不能证明内容。服务器按用户给的地址去取，请求从服务器所在的网络发出，调用方到不了的目标也可能被访问。' },
@@ -438,6 +498,8 @@ export const G5_WRITTEN_ENGINE: WrittenExam = {
   version: 1,
   gateId: 'g5',
   code: 'G5-W1',
+  skillIds: ['test'],
+  basis: '真实数据库测试：内存库或替身证明不了生产引擎的方言、锁、隔离和约束。少量隔离测试用真实引擎，纯计算留在单元测试。',
   question: 'H2 单元测试全绿，为什么 MySQL 并发行为仍可能出错？',
   parts: [
     { label: '结论', points: 3, lookFor: 'H2 全绿只说明替身库里被执行的断言过了。MySQL 的方言、锁、隔离和约束仍可能让并发结果不同。' },
@@ -458,6 +520,8 @@ export const G5_WRITTEN_STATE: WrittenExam = {
   version: 1,
   gateId: 'g5',
   code: 'G5-W2',
+  skillIds: ['query', 'pinia'],
+  basis: '状态职责：地址、未提交输入、服务端响应、跨页客户端数据分开存放。服务端列表只留一处。不按 Context 或 Pinia 的名字归类。',
   question: 'React 全部数据放 Context、Vue 全部数据放 Pinia 有何问题？',
   parts: [
     { label: '结论', points: 3, lookFor: '全部放进 Context 或 Pinia，会把地址、未提交输入、服务端响应和跨页客户端数据混成一处。要按这四种职责分开。' },
@@ -478,6 +542,8 @@ export const G5_WRITTEN_MOCK: WrittenExam = {
   version: 1,
   gateId: 'g5',
   code: 'G5-W3',
+  skillIds: ['test'],
+  basis: '测试边界与变异测试：把内部调用都替成成功，只证明替身按假设走通。断言钉住可观察结果。行覆盖率只说明执行过。',
   question: '测试都 mock 成成功能证明什么？为什么改实现细节不应让全部测试失效？',
   parts: [
     { label: '结论', points: 3, lookFor: '把内部调用都替成成功，只证明替身按写好的假设走通了。断言应钉住可观察的行为。改一个内部函数的名字，不应让全部测试变红。' },
@@ -500,6 +566,8 @@ export const G6_WRITTEN_CAPACITY: WrittenExam = {
   version: 1,
   gateId: 'g6',
   code: 'G6-W1',
+  skillIds: ['load'],
+  basis: '排队与尾延迟：线程变多、平均变低，仍要看成功吞吐、尾延迟、错误和拒绝，以及 CPU、下游和队列有没有先满。',
   question: '线程数翻倍、平均延迟下降就说明容量提升了吗？',
   parts: [
     { label: '结论', points: 3, lookFor: '不能。还要看成功吞吐、尾延迟、错误和拒绝，以及 CPU、下游和队列有没有先满。平均下降说明不了容量提升。' },
@@ -520,6 +588,8 @@ export const G6_WRITTEN_KILL: WrittenExam = {
   version: 1,
   gateId: 'g6',
   code: 'G6-W2',
+  skillIds: ['k8s', 'jvm'],
+  basis: '容器内存与堆上限：-Xmx 只限制堆。超过容器上限由内核终止进程。先记下退出原因、限制和堆外占用。',
   question: '堆并没满却被容器杀掉，应该收集什么？',
   parts: [
     { label: '结论', points: 3, lookFor: '先分清是 JVM 报了哪一块内存耗尽，还是内核因为容器上限终止了进程。堆没用满，说明不了这次只是堆的问题。' },
@@ -540,6 +610,8 @@ export const G6_WRITTEN_RENDER: WrittenExam = {
   version: 1,
   gateId: 'g6',
   code: 'G6-W3',
+  skillIds: ['perf'],
+  basis: 'React.memo 与 Vue 编译提示：跳过渲染有前提。比较和缓存都有成本。动态依赖仍要更新。先测量。',
   question: 'React memo 与 Vue 编译提示能否保证页面更快？',
   parts: [
     { label: '结论', points: 3, lookFor: '不能。两者都有前提。包上或打开之后，页面不一定更快。先测量这次更新，再决定要不要用。' },
