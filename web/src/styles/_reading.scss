@@ -2231,8 +2231,8 @@ div.skill-open {
 }
 
 .path-map.is-single .path-stop {
-  /* 单排槽位宽时标签也要可读，勿再减 96px 挤成竖条字。 */
-  --route-label: min(8.5rem, calc(var(--slot, 140px) - 24px));
+  /* 单排勿再减 96px；保底宽度，避免槽位一窄就挤成竖条字。 */
+  --route-label: max(5.75rem, min(8.5rem, calc(var(--slot, 140px) - 24px)));
 }
 
 .stop-hit {
@@ -2804,7 +2804,7 @@ div.skill-open {
   }
 
   .path-map.is-single .path-stop {
-    --route-label: min(7.75rem, calc(var(--slot, 140px) - 16px));
+    --route-label: max(5.5rem, min(7.75rem, calc(var(--slot, 140px) - 16px)));
   }
 
   .stop-hit {

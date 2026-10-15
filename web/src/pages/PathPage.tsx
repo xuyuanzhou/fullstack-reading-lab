@@ -260,14 +260,19 @@ export function PathPage() {
   })
   const verifyRows = verifyItemsForGate(camp.id).map((item) => {
     const face = verifyFace(item.id, progress.learning.attempts, progress.learning.evidence)
-    // 石台下字宽有限：题目前缀压成一字，正文走 shortTitle，避免竖条换行。
-    const label = item.kind === 'exam'
-      ? item.title.replace(/^笔试\s*/, '选 · ')
-      : `问 · ${shortTitle(item.title)}`
+    // 石台下字宽有限：题目前缀压短；进阶题已有「进阶 ·」，不再叠「选 ·」。
+    const bare = item.kind === 'exam'
+      ? item.title.replace(/^笔试\s*/, '').trim()
+      : shortTitle(item.title)
+    const label = item.tier === 'advanced'
+      ? `进阶 · ${bare}`
+      : item.kind === 'exam'
+        ? `选 · ${bare}`
+        : `问 · ${bare}`
     const evidenceStatus = face === 'idle' ? '' : verifyFaceLabel(face)
     return {
       id: item.id,
-      title: item.tier === 'advanced' ? `进阶 · ${label}` : label,
+      title: label,
       tier: item.tier,
       status: item.tier === 'advanced'
         ? (face === 'idle' ? (advise.stone === '建议先完成' ? '建议先完成' : '进阶') : '进阶记下')
