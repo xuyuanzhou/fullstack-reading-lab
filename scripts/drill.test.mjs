@@ -20,6 +20,7 @@ import {
   mergeDrill,
   neededCorrect,
   normalizeDrill,
+  percentOf,
   pointsOf,
   revivesLeft,
 } from '../web/src/data/drillRules.ts'
@@ -32,14 +33,16 @@ test('each gate has four choices, one answer, and a lesson', () => {
   const nav = JSON.parse(readFileSync(new URL('../web/src/data/curriculum-nav.json', import.meta.url), 'utf8'))
   const lessons = new Set(nav.lessons.map((lesson) => lesson.id))
   assert.equal(DRILL_COURSES.length, 3)
-  assert.equal(DRILL_GATES.length, 9)
-  assert.equal(DRILL_QUESTIONS.length, 45)
+  assert.equal(DRILL_GATES.length, 16)
+  assert.equal(DRILL_QUESTIONS.length, 160)
   assert.equal(neededCorrect(5), 4)
+  assert.equal(neededCorrect(10), 8)
   const answers = { a: 0, b: 0, c: 0, d: 0 }
   const points = new Set()
+  const ids = new Set()
   for (const gate of DRILL_GATES) {
-    assert.equal(gate.questionIds.length, 5, gate.id)
-    assert.equal(new Set(gate.questionIds).size, 5, gate.id)
+    assert.equal(gate.questionIds.length, 10, gate.id)
+    assert.equal(new Set(gate.questionIds).size, 10, gate.id)
   }
   for (const question of DRILL_QUESTIONS) {
     assert.equal(question.options.length, 4, question.id)
@@ -56,9 +59,13 @@ test('each gate has four choices, one answer, and a lesson', () => {
     }
     answers[question.answer] += 1
     points.add(question.pointId)
+    assert.equal(ids.has(question.id), false, question.id)
+    ids.add(question.id)
   }
+  assert.equal(ids.size, DRILL_QUESTIONS.length)
   assert.equal(points.size, DRILL_POINTS.length)
-  for (const count of Object.values(answers)) assert.ok(count >= 10 && count <= 13, JSON.stringify(answers))
+  const counts = Object.values(answers)
+  assert.ok(Math.max(...counts) - Math.min(...counts) <= 4, JSON.stringify(answers))
 })
 
 function answerWrong(question, wrong) {
@@ -89,13 +96,16 @@ function runGate(state, gateId, wrongIndexes, mode = 'gate') {
 test('80% clears a gate and unlocks only the next one', () => {
   let state = emptyDrill()
   assert.equal(describeGate(state, 'd2').unlocked, false)
-  state = runGate(state, 'd1', [0])
+  const total = gateById('d1').questionIds.length
+  const passWrong = total - neededCorrect(total)
+  state = runGate(state, 'd1', Array.from({ length: passWrong }, (_, index) => index))
   const play = describeGate(state, 'd1')
   assert.equal(play.cleared, true)
-  assert.equal(play.last.correct, 4)
-  assert.equal(play.last.percent, 80)
+  assert.equal(play.last.correct, neededCorrect(total))
+  assert.equal(play.last.percent, percentOf(neededCorrect(total), total))
   assert.equal(describeGate(state, 'd2').unlocked, true)
   assert.equal(describeGate(state, 'd3').unlocked, false)
+  assert.equal(describeGate(state, 'd4').unlocked, false)
   assert.equal(describeGate(state, 's1').unlocked, true)
   const blocked = acceptAnswer(state, {
     gateId: 'd3',
@@ -107,10 +117,12 @@ test('80% clears a gate and unlocks only the next one', () => {
   assert.match(blocked.issue, /锁/)
 })
 
-test('three correct answers do not clear or unlock', () => {
-  const state = runGate(emptyDrill(), 'd1', [0, 1])
+test('below 80% does not clear or unlock', () => {
+  const total = gateById('d1').questionIds.length
+  const failWrong = total - neededCorrect(total) + 1
+  const state = runGate(emptyDrill(), 'd1', Array.from({ length: failWrong }, (_, index) => index))
   const play = describeGate(state, 'd1')
-  assert.equal(play.last.correct, 3)
+  assert.equal(play.last.correct, total - failWrong)
   assert.equal(play.cleared, false)
   assert.equal(describeGate(state, 'd2').unlocked, false)
   assert.equal(revivesLeft(state), DRILL_REVIVE_START)
@@ -123,7 +135,8 @@ test('questions are answered in order, and a cleared gate cannot be farmed', () 
   assert.equal(skipped.ok, false)
   assert.match(skipped.issue, /顺序/)
   const state = runGate(emptyDrill(), 'd1', [])
-  assert.equal(pointsOf(state), 80)
+  const total = gateById('d1').questionIds.length
+  assert.equal(pointsOf(state), total * 10 + 20 + 10)
   const again = acceptAnswer(state, { gateId: 'd1', questionId: first, choice: 'a', mode: 'gate' }, 80)
   assert.equal(again.ok, false)
   assert.match(again.issue, /通过/)
@@ -149,13 +162,14 @@ test('a failed gate spends a revive on the retake and stops when none remain', (
 
 test('a perfect retry refunds one revive and marks the point once it is answered correctly', () => {
   let state = runGate(emptyDrill(), 'p1', [0])
+  const total = gateById('p1').questionIds.length
   assert.equal(describeGate(state, 'p1').cleared, true)
   assert.equal(describeGate(state, 'p1').canStartRetry, true)
   const before = learningReport(state)
   assert.equal(before.weak.length, 1)
   state = runGate(state, 'p1', [], 'retry')
   assert.equal(revivesLeft(state), 3)
-  assert.equal(pointsOf(state), 4 * 10 + 20 + 4)
+  assert.equal(pointsOf(state), (total - 1) * 10 + 20 + 4)
   const after = learningReport(state)
   assert.equal(after.weak.length, 0)
   assert.equal(badgesOf(state).find((badge) => badge.id === 'refund').earned, true)

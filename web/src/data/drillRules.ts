@@ -23,7 +23,7 @@ import {
 export const DRILL_PASS_PERCENT = 80
 export const DRILL_REVIVE_START = 2
 export const DRILL_REVIVE_CAP = 3
-export const DRILL_LOG_CAP = 480
+export const DRILL_LOG_CAP = 4000
 export const DRILL_POINT_FIRST = 10
 export const DRILL_POINT_LATER = 6
 export const DRILL_POINT_PRACTICE = 4
@@ -414,9 +414,9 @@ export function badgesOf(state: DrillState): DrillBadge[] {
   const refunded = DRILL_GATES.some((gate) => refundCount(state.log, gate.id) > 0)
   const specs = [
     { id: 'first', title: '第一关', detail: '任一关达到 80%。', earned: anyClear },
-    { id: 'design', title: '系统设计', detail: '系统设计三关都已通过。', earned: cleared('design') },
-    { id: 'sql', title: 'SQL 优化', detail: 'SQL 优化三关都已通过。', earned: cleared('sql') },
-    { id: 'perf', title: '性能排查', detail: '服务性能排查三关都已通过。', earned: cleared('perf') },
+    { id: 'design', title: '系统设计', detail: '系统设计每一关都已通过。', earned: cleared('design') },
+    { id: 'sql', title: 'SQL 优化', detail: 'SQL 优化每一关都已通过。', earned: cleared('sql') },
+    { id: 'perf', title: '性能排查', detail: '服务性能排查每一关都已通过。', earned: cleared('perf') },
     { id: 'all', title: '三卷', detail: '三门课全部通过。', earned: cleared('design') && cleared('sql') && cleared('perf') },
     { id: 'perfect', title: '全对', detail: '有一关全部答对。', earned: perfect },
     { id: 'refund', title: '错题回补', detail: '一组错题全部练对，补回过复活。', earned: refunded },

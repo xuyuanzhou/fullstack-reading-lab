@@ -1,4 +1,8 @@
 /** 系统设计、SQL 优化、服务性能排查的选择题。正确项对齐课文结论。 */
+import type { MoreAsk } from './drillMoreDesign.ts'
+import { DESIGN_MORE, DESIGN_POINTS } from './drillMoreDesign.ts'
+import { PERF_MORE, PERF_POINTS } from './drillMorePerf.ts'
+import { SQL_MORE, SQL_POINTS } from './drillMoreSql.ts'
 
 export type DrillCourseId = 'design' | 'sql' | 'perf'
 export type OptionId = 'a' | 'b' | 'c' | 'd'
@@ -30,7 +34,7 @@ export type DrillQuestion = {
 export type DrillGate = {
   id: string
   courseId: DrillCourseId
-  level: 1 | 2 | 3
+  level: number
   title: string
   lead: string
   questionIds: string[]
@@ -54,7 +58,7 @@ export const DRILL_COURSES: DrillCourse[] = [
   },
 ]
 
-export const DRILL_POINTS: DrillPoint[] = [
+const DRILL_POINT_BASE: DrillPoint[] = [
   { id: 'path', courseId: 'design', title: '一条请求路径', lessonId: 'arch-chapter-aim', summary: '先写清一条路径上的读写、权威数据和失败，再谈拆分与中间件。' },
   { id: 'monolith', courseId: 'design', title: '单体何时够用', lessonId: 'arch-monolith-when', summary: '模块化单体仍是一个进程；边界没划清就拆进程，会变成跨网络的纠缠。' },
   { id: 'scale-out', courseId: 'design', title: '先扩展应用', lessonId: 'arch-scale-before-split', summary: '应用先满、库仍有余量时，给无状态应用加副本，会话放到共享存储。' },
@@ -100,6 +104,13 @@ export const DRILL_POINTS: DrillPoint[] = [
   { id: 'producer-brake', courseId: 'perf', title: '生产端背压', lessonId: 'mq-backpressure-producer', summary: '积压是生产持续快于消费。分区不够时，只加消费者会空转。' },
   { id: 'dead-letter', courseId: 'perf', title: '死信与积压年龄', lessonId: 'mq-dlq-backlog', summary: '再试也一定失败的消息要离开主队列。积压要看深度和最早一条的年龄。' },
   { id: 'isolate-pool', courseId: 'perf', title: '慢下游占满池', lessonId: 'distributed-bulkhead', summary: '共用一个池时，最慢的下游会堵住所有请求。舱满应失败，而不是无限排队。' },
+]
+
+export const DRILL_POINTS: DrillPoint[] = [
+  ...DRILL_POINT_BASE,
+  ...DESIGN_POINTS,
+  ...SQL_POINTS,
+  ...PERF_POINTS,
 ]
 
 const OPT = ['a', 'b', 'c', 'd'] as const
@@ -980,10 +991,20 @@ const designSpread = spread(designQuestions, 0)
 const sqlSpread = spread(sqlQuestions, 1)
 const perfSpread = spread(perfQuestions, 2)
 
+function fromMore(item: MoreAsk): DrillQuestion {
+  return ask(item.id, item.pointId, item.stem, item.texts, item.answer, item.explain, item.whyWrong)
+}
+
+const moreSpread = spread([...DESIGN_MORE, ...SQL_MORE, ...PERF_MORE].map(fromMore), 3)
+
+function moreFor(gateId: string) {
+  return moreSpread.filter((item) => item.id.startsWith(`${gateId}-`))
+}
+
 function buildGate(
   id: string,
   courseId: DrillCourseId,
-  level: 1 | 2 | 3,
+  level: number,
   title: string,
   lead: string,
   questions: DrillQuestion[],
@@ -992,18 +1013,25 @@ function buildGate(
 }
 
 export const DRILL_GATES: DrillGate[] = [
-  buildGate('d1', 'design', 1, '路径与停留', '先写清一条路径，再决定单体够不够、失败要不要当场返回。', designSpread.slice(0, 5)),
-  buildGate('d2', 'design', 2, '不变量与缓存', '库存、合计和权威状态放在哪里，缓存只是旁边的加速。', designSpread.slice(5, 10)),
-  buildGate('d3', 'design', 3, '故障时仍成立', '慢下游、重复调用和没信号的演进，都不能冲掉已经写清的不变量。', designSpread.slice(10, 15)),
-  buildGate('s1', 'sql', 1, '语句在说什么', '先分清库的职责、星号、OR 和 JOIN，再用估计和实测核对。', sqlSpread.slice(0, 5)),
-  buildGate('s2', 'sql', 2, '索引的列与成本', '左列、区分度、写维护、函数和类型转换，都会改掉优化器的选择。', sqlSpread.slice(5, 10)),
-  buildGate('s3', 'sql', 3, '锁、深页与真实引擎', '堵住、深分页、N+1 和死锁，都要回到引擎实际做的那一步。', sqlSpread.slice(10, 15)),
-  buildGate('p1', 'perf', 1, '先定位', '先分开资源、最慢的一跳、追踪和「还在等连接」。', perfSpread.slice(0, 5)),
-  buildGate('p2', 'perf', 2, '超时不是同一种失败', '建连、网关、代理、提供方线程和规则拦截，失败点不在同一层。', perfSpread.slice(5, 10)),
-  buildGate('p3', 'perf', 3, '缓存与消息把库打满', '雪崩、积压和共用的池，要先看出是哪一种压力。', perfSpread.slice(10, 15)),
+  buildGate('d1', 'design', 1, '路径与停留', '先写清一条路径，再决定单体够不够、失败要不要当场返回。', [...designSpread.slice(0, 5), ...moreFor('d1')]),
+  buildGate('d2', 'design', 2, '不变量与缓存', '库存、合计和权威状态放在哪里，缓存只是旁边的加速。', [...designSpread.slice(5, 10), ...moreFor('d2')]),
+  buildGate('d3', 'design', 3, '故障时仍成立', '慢下游、重复调用和没信号的演进，都不能冲掉已经写清的不变量。', [...designSpread.slice(10, 15), ...moreFor('d3')]),
+  buildGate('d4', 'design', 4, '拆开之前', '边界、业务能力、下单分工和这一次取舍，都要写在拆进程之前。', moreFor('d4')),
+  buildGate('d5', 'design', 5, '跨进程仍是同一件事', '分区、待发事件、读自己的写、补偿和业务键，都要能对上同一次事实。', moreFor('d5')),
+  buildGate('s1', 'sql', 1, '语句在说什么', '先分清库的职责、星号、OR 和 JOIN，再用估计和实测核对。', [...sqlSpread.slice(0, 5), ...moreFor('s1')]),
+  buildGate('s2', 'sql', 2, '索引的列与成本', '左列、区分度、写维护、函数和类型转换，都会改掉优化器的选择。', [...sqlSpread.slice(5, 10), ...moreFor('s2')]),
+  buildGate('s3', 'sql', 3, '锁、深页与真实引擎', '堵住、深分页、N+1 和死锁，都要回到引擎实际做的那一步。', [...sqlSpread.slice(10, 15), ...moreFor('s3')]),
+  buildGate('s4', 'sql', 4, '条件写在哪一层', 'NULL、外连接、分组、窗口和 UNION，差一个位置，行数就变了。', moreFor('s4')),
+  buildGate('s5', 'sql', 5, '类型、大列与容量', '字符集、金额、大列和行数，都不要用一口诀代替这一次的计划。', moreFor('s5')),
+  buildGate('p1', 'perf', 1, '先定位', '先分开资源、最慢的一跳、追踪和「还在等连接」。', [...perfSpread.slice(0, 5), ...moreFor('p1')]),
+  buildGate('p2', 'perf', 2, '超时不是同一种失败', '建连、网关、代理、提供方线程和规则拦截，失败点不在同一层。', [...perfSpread.slice(5, 10), ...moreFor('p2')]),
+  buildGate('p3', 'perf', 3, '缓存与消息把库打满', '雪崩、积压和共用的池，要先看出是哪一种压力。', [...perfSpread.slice(10, 15), ...moreFor('p3')]),
+  buildGate('p4', 'perf', 4, '入口这一跳', '转到哪、选哪一台、这个接口让不让过，超时和重试不要并成一句。', moreFor('p4')),
+  buildGate('p5', 'perf', 5, '消息到了几次', '确认、位点、分区和重投，决定副作用会留下几次。', moreFor('p5')),
+  buildGate('p6', 'perf', 6, '停顿、内存与停机', '先读报错名字和暂停时间，再决定动堆、换收集器，还是排空进程。', moreFor('p6')),
 ]
 
-export const DRILL_QUESTIONS: DrillQuestion[] = [...designSpread, ...sqlSpread, ...perfSpread]
+export const DRILL_QUESTIONS: DrillQuestion[] = [...designSpread, ...sqlSpread, ...perfSpread, ...moreSpread]
 
 const questionMap = new Map(DRILL_QUESTIONS.map((item) => [item.id, item]))
 const pointMap = new Map(DRILL_POINTS.map((item) => [item.id, item]))
