@@ -26,7 +26,7 @@ const stages = path.gates
 
 const MIN_SLOT = 136
 const PAD_X = 48
-const PAD_TOP = 64
+const PAD_TOP = 80
 const ROW_GAP = 136
 const WAVE = 18
 const TURN_R = 28
@@ -1054,7 +1054,7 @@ function buildLayout(count: number, width: number) {
   const narrow = width < 380
   const padX = narrow ? 16 : compact ? 24 : PAD_X
   const minSlot = narrow ? 118 : compact ? 132 : MIN_SLOT
-  const padTop = narrow ? 40 : compact ? 46 : PAD_TOP
+  const padTop = PAD_TOP
   const rowGap = narrow ? 100 : compact ? 108 : ROW_GAP
   const labelBelow = narrow ? 78 : compact ? 88 : LABEL_BELOW
   const turnR = narrow ? 14 : compact ? 18 : TURN_R
