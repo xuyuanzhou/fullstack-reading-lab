@@ -1,3 +1,4 @@
+import type { DrillState } from '../data/drillRules'
 import type { LearningEnvelope } from '../state/learningEvidence'
 
 export type Track = 'frontend' | 'java'
@@ -82,4 +83,8 @@ export type ProgressState = {
   learningHeld: unknown
   /** Monotonic write counter so a stale tab cannot blank a newer tab's notes. */
   revision: number
+  /** 技能树「正在点亮」从哪条路里挑。不改变印章明暗。 */
+  skillScene: 'all' | 'browser' | 'java' | 'ai'
+  /** 选择题闯关的答题记录。积分、通关和徽章从这里推导。 */
+  drill: DrillState
 }

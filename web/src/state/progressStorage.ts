@@ -1,3 +1,4 @@
+import { mergeDrill, normalizeDrill } from '../data/drillRules.ts'
 import type { LocalCategory, ProgressState, Track } from '../types/curriculum'
 import { emptyEnvelope, mergeEnvelopes, migrateProgress, type LearningEnvelope } from './learningEvidence.ts'
 
@@ -62,6 +63,10 @@ export function normalizeProgress(value: unknown, groups: ProgressGroups): Progr
     skipVerify: strings(saved.skipVerify),
     ...learning,
     revision: revisionOf(saved.revision),
+    skillScene: saved.skillScene === 'browser' || saved.skillScene === 'java' || saved.skillScene === 'ai'
+      ? saved.skillScene
+      : 'all',
+    drill: normalizeDrill(saved.drill),
   }
 }
 
@@ -211,6 +216,8 @@ export function mergeForWrite(local: ProgressState, remote: ProgressState, base:
   }
   const learning = mergedLearning(local, remote, base)
   if (envelopeBody(learning.learning) !== envelopeBody(remote.learning) || learning.learningReadonly !== remote.learningReadonly) touched = true
+  const drill = mergeDrill(local.drill, remote.drill, base.drill)
+  if (JSON.stringify(drill) !== JSON.stringify(remote.drill)) touched = true
   const next: ProgressState = {
     ...remote,
     notes,
@@ -224,6 +231,7 @@ export function mergeForWrite(local: ProgressState, remote: ProgressState, base:
     aiSkippedPrereq,
     pathChecks,
     skipVerify,
+    drill,
     ...learning,
     revision: remote.revision + (touched ? 1 : 0),
   }
@@ -236,6 +244,7 @@ export function mergeForWrite(local: ProgressState, remote: ProgressState, base:
   if (local.localQuery !== base.localQuery) next.localQuery = local.localQuery
   if (local.localTopic !== base.localTopic) next.localTopic = local.localTopic
   if (local.localCategory !== base.localCategory) next.localCategory = local.localCategory
+  if (local.skillScene !== base.skillScene) next.skillScene = local.skillScene
   if (JSON.stringify(local.recent) !== JSON.stringify(base.recent)) next.recent = local.recent
   if (JSON.stringify(local.aiRecent) !== JSON.stringify(base.aiRecent)) next.aiRecent = local.aiRecent
   return next

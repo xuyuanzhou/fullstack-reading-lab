@@ -1,6 +1,7 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { curriculum, findLesson } from '@/data/curriculum'
+import { skillReturnState } from '@/data/learningSkills'
 import { lessonPath } from '@/data/routes'
 import { shortTitle, tokenizeLessonRefs } from '@/data/reading'
 
@@ -115,6 +116,7 @@ export function RichProse({
   className?: string
 }) {
   const tokens = tokenizeLessonRefs(text, knownIds)
+  const carried = skillReturnState(useLocation().state)
   return (
     <Tag className={className}>
       {tokens.map((token, index) => {
@@ -125,7 +127,7 @@ export function RichProse({
         const lesson = findLesson(token.id)
         if (!lesson) return <span key={index}>{token.id}</span>
         return (
-          <Link key={index} to={lessonPath(lesson)} className="lesson-ref">
+          <Link key={index} to={lessonPath(lesson)} state={carried} className="lesson-ref">
             {shortTitle(lesson.title)}
           </Link>
         )

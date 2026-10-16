@@ -5,7 +5,8 @@ import test from 'node:test'
 import { FROZEN_DELIVERABLES, OUTPUT_ORDER_SHA256 } from '../web/src/data/deliverableMap.ts'
 import { pathSlots, requiredMet, skillSatisfied, supplementIds, validateLessons, validateSkills } from '../web/src/data/learningGraph.ts'
 import { AI_NOTES } from '../web/src/data/aiCatalog.ts'
-import { LEARNING_SKILLS, SKILL_LANES, SKILL_LESSONS, SKILL_VIEWS, skillGlows, skillHasLocalCheck, skillLessonIds, skillOpenIds, skillProgress } from '../web/src/data/learningSkills.ts'
+import { LEARNING_SKILLS, SKILL_LANES, SKILL_LESSONS, SKILL_VIEWS, skillBoardState, skillFocusId, skillGlows, skillHasLocalCheck, skillLessonIds, skillOpenIds, skillProgress, skillReturnId, skillReturnState, skillReturnTo } from '../web/src/data/learningSkills.ts'
+import { SKILL_MILESTONES, SKILL_TRUNKS, clearedGateIds, practicedIds, readyChildTitles, skillPathAdvice, skillRank, skillTrunkId, trunkFills } from '../web/src/data/skillCycle.ts'
 import { MASTERY_GATES } from '../web/src/data/masteryGates.ts'
 import {
   dualFrameworkEarned,
@@ -25,12 +26,38 @@ import {
   verifiedFromReading,
 } from '../web/src/state/learningEvidence.ts'
 import { campScene, campShowsChrome, encounterAction, encounterPhase, encounterPhaseLabel, gateCleared, gateFace, gateFaceLabel, gatePath, missingOutput, PATHS, sceneExitPath, sceneSentence, settleLine, spineNextId } from '../web/src/data/learningPaths.ts'
-import { abilityGoal, gateAdvise, gateEdition, gateVerifyFill, nextVerifyId, passFlashLine, verifyFace, verifyFaceLabel, verifyItemsForGate } from '../web/src/data/gateVerify.ts'
+import { abilityGoal, gateAdvise, gateEdition, gateVerifyFill, nextVerifyId, passFlashLine, verifyFace, verifyFaceLabel, verifyItemsForGate, verifyTier } from '../web/src/data/gateVerify.ts'
+import { ORDER_SCALE_EXAMS, ORDER_SCALE_GATE, ORDER_SCALE_RUBRIC } from '../web/src/data/orderScaleGate.ts'
 import { openSideLessonIds } from '../web/src/data/sideTracks.ts'
 import { bossQuest, faceLabel, mainLanes, mergeQuestRecords, questDifficulty, questFace, questGraphIssues, questStars, questStatus, reduceQuests, sideQuests } from '../web/src/data/questBoard.ts'
 import { adoptLearningDraft, mergeForWrite, normalizeProgress, readProgress, writeProgress } from '../web/src/state/progressStorage.ts'
 
 const groups = () => ['全栈主线']
+
+test('order-scale exam stays off the nine-gate spine', () => {
+  assert.equal(MASTERY_GATES.some((gate) => gate.id === ORDER_SCALE_GATE.id), false)
+  assert.equal(PATHS.architect.gates.some((gate) => gate.id === ORDER_SCALE_GATE.id), false)
+  assert.equal(ORDER_SCALE_EXAMS.length, 6)
+  assert.equal(ORDER_SCALE_EXAMS.reduce((sum, exam) => sum + exam.parts.reduce((partSum, part) => partSum + part.points, 0), 0), ORDER_SCALE_RUBRIC.total)
+  assert.deepEqual(ORDER_SCALE_EXAMS.map((exam) => exam.code), ['OS-W1', 'OS-W2', 'OS-W3', 'OS-W4', 'OS-W5', 'OS-W6'])
+  for (const exam of ORDER_SCALE_EXAMS) assert.equal(verifyTier('exam', exam.code), 'base')
+  assert.equal(verifyTier('exam', 'G3-W2'), 'advanced')
+  const items = verifyItemsForGate(ORDER_SCALE_GATE.id)
+  assert.equal(items.length, 6)
+  assert.equal(items.every((item) => item.tier === 'base'), true)
+  assert.equal(gateVerifyFill(ORDER_SCALE_GATE.id, [], []).total, 6)
+  assert.equal(ORDER_SCALE_EXAMS.every((exam) => (exam.answer ?? '').length > 80), true)
+  assert.equal(ORDER_SCALE_EXAMS.filter((exam) => exam.diagram === 'exam/order-scale-architecture.svg').length, 3)
+  assert.equal(ORDER_SCALE_EXAMS.filter((exam) => exam.diagram === 'exam/order-scale-sql.svg').length, 3)
+  const joinExam = ORDER_SCALE_EXAMS.find((exam) => exam.code === 'OS-W3')
+  assert.equal(joinExam.version, 3)
+  assert.doesNotMatch(joinExam.question, /o\.user_id = \?/)
+  assert.match(joinExam.question, /u\.level = '500'/)
+  assert.match(joinExam.answer, /idx_status_created/)
+  assert.match(joinExam.answer, /id 紧跟 created_at/)
+  assert.match(joinExam.answer, /STRAIGHT_JOIN/)
+  assert.match(joinExam.answer, /UNION ALL/)
+})
 
 test('frozen deliverable ids match the current output order', () => {
   const live = MASTERY_GATES.flatMap((gate) => gate.outputs.map((_, index) => `${gate.id}:${index}`))
@@ -104,9 +131,14 @@ test('graph rejects duplicates, empty groups, dangling refs, and cycles', () => 
   assert.equal(SKILL_VIEWS.find((item) => item.id === 'query')?.group, 'React')
   assert.equal(SKILL_VIEWS.find((item) => item.id === 'V01')?.group, 'Vue')
   assert.equal(SKILL_VIEWS.find((item) => item.id === 'pinia')?.group, 'Vue')
-  assert.equal(SKILL_VIEWS.find((item) => item.id === 'ng')?.group, '其他')
-  assert.equal(SKILL_VIEWS.find((item) => item.id === 'ssr')?.group, '其他')
-  assert.equal(SKILL_VIEWS.find((item) => item.id === 'ai-rag')?.lane, 'AI')
+  assert.equal(SKILL_VIEWS.find((item) => item.id === 'ng')?.group, 'Angular')
+  assert.equal(SKILL_VIEWS.find((item) => item.id === 'ssr')?.group, '构建与渲染')
+  assert.equal(SKILL_VIEWS.find((item) => item.id === 'node')?.group, '服务端 JS')
+  assert.equal(SKILL_VIEWS.find((item) => item.id === 'sentinel')?.lane, '分布式与高并发')
+  assert.equal(SKILL_VIEWS.find((item) => item.id === 'sentinel')?.group, '容量与防护')
+  assert.ok(SKILL_VIEWS.findIndex((item) => item.id === 'netty') < SKILL_VIEWS.findIndex((item) => item.id === 'spring'))
+  assert.ok(!SKILL_VIEWS.some((item) => item.group === '其他'))
+  assert.equal(SKILL_VIEWS.find((item) => item.id === 'ai-rag')?.group, '模型机制')
   const lessonIds = new Set(JSON.parse(readFileSync(new URL('../web/src/data/curriculum-index.json', import.meta.url), 'utf8')).lessons.map((item) => item.id))
   const aiKeys = new Set(AI_NOTES.map((note) => `ai:${note.key}`))
   for (const id of Object.values(SKILL_LESSONS).flat()) {
@@ -125,13 +157,17 @@ test('graph rejects duplicates, empty groups, dangling refs, and cycles', () => 
   assert.equal(partial.glow.D01, 'dim')
   assert.equal(partial.glow.tcp, 'research')
   assert.equal(partial.activeId, 'tcp')
-  assert.equal(partial.glow.redis, 'dim')
+  assert.equal(partial.glow.redis, 'ready')
   assert.equal(partial.glow.k8s, 'dim')
   assert.equal(partial.glow.js, 'dim')
   assert.equal(partial.glow.html, 'ready')
   const mysqlDone = glowOf(new Set([...skillLessonIds('sql'), ...skillLessonIds('D01')]))
   assert.equal(mysqlDone.glow.D01, 'lit')
   assert.equal(mysqlDone.glow.redis, 'ready')
+  assert.deepEqual(LEARNING_SKILLS.find((item) => item.id === 'ci')?.allOf, ['git', 'test'])
+  assert.deepEqual(LEARNING_SKILLS.find((item) => item.id === 'ddd')?.allOf, ['dist'])
+  assert.deepEqual(LEARNING_SKILLS.find((item) => item.id === 'secrets')?.allOf, ['S01'])
+  assert.equal(LEARNING_SKILLS.find((item) => item.id === 'redis')?.allOf, undefined)
   const both = glowOf(new Set([
     ...skillLessonIds('html'),
     ...skillLessonIds('js'),
@@ -143,6 +179,25 @@ test('graph rejects duplicates, empty groups, dangling refs, and cycles', () => 
   assert.equal(aiLit.glow['ai-prompt'], 'lit')
   assert.equal(aiLit.glow['ai-llm'], 'ready')
   assert.equal(aiLit.glow['ai-agent'], 'dim')
+  const none = new Set()
+  const browser = skillBoardState(none, present, 'browser')
+  assert.equal(browser.activeId, 'html')
+  assert.equal(browser.glow.tcp, 'ready')
+  assert.equal(browser.glow.redis, 'ready')
+  const javaScene = skillBoardState(new Set([...skillLessonIds('java'), ...skillLessonIds('spring'), 'redis-what']), present, 'java')
+  assert.equal(javaScene.activeId, 'sql')
+  assert.equal(javaScene.glow.redis, 'ready')
+  const aiScene = skillBoardState(new Set([...skillLessonIds('ai-prompt'), ...skillLessonIds('ai-llm')]), present, 'ai')
+  assert.equal(aiScene.activeId, 'ai-agent')
+  assert.equal(aiScene.glow['ai-rag'], 'dim')
+  assert.equal(aiScene.glow['ai-transformer'], 'ready')
+  assert.equal(skillBoardState(none, present, 'all').activeId, 'tcp')
+  assert.equal(skillReturnTo('redis'), '/skills?skill=redis')
+  assert.equal(skillReturnId({ skillReturn: 'redis' }), 'redis')
+  assert.equal(skillReturnId({ skillReturn: 'missing' }), '')
+  assert.equal(skillFocusId('html'), 'html')
+  assert.deepEqual(skillReturnState({ skillReturn: 'redis' }), { skillReturn: 'redis' })
+  assert.equal(skillReturnState({}), undefined)
   const passed = {
     id: 'e1',
     attemptId: 'a1',
@@ -168,6 +223,79 @@ test('graph rejects duplicates, empty groups, dangling refs, and cycles', () => 
   const g2 = MASTERY_GATES.find((item) => item.id === 'g2')
   assert.ok(g2)
   assert.equal(gateCleared(g2, skillLessonIds('D01'), []), false)
+})
+
+test('skill cycle rolls trunks up without moving lanes or locking lessons', () => {
+  const seen = new Map()
+  for (const view of SKILL_VIEWS) {
+    const trunk = skillTrunkId(view.id)
+    assert.ok(SKILL_TRUNKS.some((item) => item.id === trunk), view.id)
+    seen.set(view.id, trunk)
+  }
+  assert.equal(seen.size, SKILL_VIEWS.length)
+  const dim = Object.fromEntries(SKILL_VIEWS.map((item) => [item.id, 'dim']))
+  const fills = trunkFills(dim, new Set())
+  assert.equal(fills.reduce((sum, item) => sum + item.total, 0), SKILL_VIEWS.length)
+  assert.equal(skillTrunkId('docker'), 'devops')
+  assert.equal(skillTrunkId('k8s'), 'devops')
+  assert.equal(skillTrunkId('ci'), 'devops')
+  assert.equal(skillTrunkId('nginx'), 'ops')
+  assert.equal(skillTrunkId('otel'), 'ops')
+  assert.equal(skillTrunkId('S01'), 'ops')
+  assert.equal(skillTrunkId('D01'), 'db')
+  assert.equal(skillTrunkId('R01'), 'fe')
+  assert.equal(skillTrunkId('dual-framework'), 'fe')
+  assert.equal(skillTrunkId('spring'), 'be')
+  assert.equal(skillTrunkId('redis'), 'be')
+  assert.equal(SKILL_VIEWS.find((item) => item.id === 'nginx')?.lane, '中间件')
+  assert.equal(SKILL_VIEWS.find((item) => item.id === 'docker')?.lane, '工程与运维')
+  for (const view of SKILL_VIEWS) {
+    if (view.bridge) {
+      assert.equal(skillLessonIds(view.id).length, 0)
+      assert.ok(skillOpenIds(view.id).length > 0)
+    } else {
+      assert.ok(skillLessonIds(view.id).length > 0, view.id)
+    }
+  }
+  assert.equal(skillRank('lit', true), 'practiced')
+  assert.equal(skillRank('lit', false), 'read')
+  assert.equal(skillRank('dim', true), 'ahead')
+  const g1 = MASTERY_GATES.find((item) => item.id === 'g1')
+  assert.ok(g1)
+  const done = g1.lessons.map((item) => item.id)
+  const checks = g1.outputs.map((_, index) => `g1:${index}`)
+  const cleared = clearedGateIds(done, checks)
+  assert.equal(cleared.has('g1'), true)
+  assert.equal(cleared.has('g3'), false)
+  assert.deepEqual(SKILL_MILESTONES.filter((item) => cleared.has(item.gateId)).map((item) => item.id), ['slice'])
+  const glow = Object.fromEntries(SKILL_VIEWS.map((item) => [item.id, 'ready']))
+  glow.http = 'lit'
+  glow.tcp = 'lit'
+  const practiced = practicedIds(glow, () => false, new Set(['g2']))
+  assert.equal(practiced.has('http'), true)
+  assert.equal(practiced.has('tcp'), false)
+  assert.deepEqual(readyChildTitles('http', glow), ['HTTPS', 'WebSocket'])
+  const blocked = Object.fromEntries(SKILL_VIEWS.map((item) => [item.id, 'dim']))
+  blocked['ai-prompt'] = 'lit'
+  blocked['ai-llm'] = 'lit'
+  blocked['ai-agent'] = 'lit'
+  blocked['ai-rag'] = 'dim'
+  const stuck = skillPathAdvice('ai', blocked)
+  assert.equal(stuck.scene, 'ai')
+  assert.match(stuck.line, /检索增强/)
+  assert.match(stuck.line, /嵌入/)
+  const javaDone = Object.fromEntries(SKILL_VIEWS.map((item) => [item.id, 'dim']))
+  for (const id of ['java', 'spring', 'sql', 'D01', 'redis', 'mq', 'idem', 'dist', 'docker', 'otel']) javaDone[id] = 'lit'
+  const onward = skillPathAdvice('java', javaDone)
+  assert.equal(onward.scene, 'browser')
+  assert.match(onward.line, /浏览器应用/)
+  const allLit = Object.fromEntries(SKILL_VIEWS.map((item) => [item.id, 'lit']))
+  assert.equal(skillPathAdvice('all', allLit).line, '八条主干都点亮了。')
+  assert.match(skillPathAdvice('all', dim).line, /都还没点亮/)
+  const researching = { ...dim, idem: 'research' }
+  assert.match(skillPathAdvice('all', researching).line, /幂等/)
+  const one = { ...dim, html: 'lit' }
+  assert.match(skillPathAdvice('all', one).line, /完成度最低/)
 })
 
 test('old checks become self-assessments and reading does not verify', () => {

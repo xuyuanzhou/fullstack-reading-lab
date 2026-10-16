@@ -210,6 +210,10 @@ export type WrittenExam = {
   parts: readonly WrittenPart[]
   hints: readonly WrittenHint[]
   oral: readonly OralAxis[]
+  /** 标准答案。有则在「先自己写」之后整段给出，lookFor 仍是阅卷要点。 */
+  answer?: string
+  /** 相对站点根的图，例如 exam/order-scale-architecture.svg */
+  diagram?: string
 }
 
 const WRITTEN_ORAL: readonly OralAxis[] = [

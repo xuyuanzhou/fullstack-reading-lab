@@ -3,6 +3,7 @@ import {
   CheckSquareOutlined,
   ExperimentOutlined,
   FolderOpenOutlined,
+  FormOutlined,
   MenuOutlined,
   MoonOutlined,
   ReadOutlined,
@@ -15,6 +16,7 @@ import { findLesson, isVersionSince, lessonsFor, lessonsInGroup, outlineFor, pre
 import { TRACK_LABEL } from '@/data/meta'
 import { shortTitle } from '@/data/reading'
 import { courseGroups, groupLabel, groupPath, isTrack, lessonPath, resumePath } from '@/data/routes'
+import { pointsOf } from '@/data/drillRules'
 import { useLearningSlice, useProgress } from '@/state/progress'
 import { RouteSkeleton } from '@/components/RouteSkeleton'
 import { ProgressAside } from '@/components/ProgressAside'
@@ -89,6 +91,8 @@ export function AppLayout() {
   const onAi = location.pathname === '/ai' || location.pathname.startsWith('/ai/')
   const aiSectionKey = location.pathname.split('/')[2] || 'intro'
   const onLab = location.pathname.startsWith('/ai/lab')
+  const onDrill = location.pathname === '/drill' || location.pathname.startsWith('/drill/')
+  const drillPoints = useLearningSlice((state) => pointsOf(state.drill))
   const labTitle = location.pathname.startsWith('/ai/lab/agent') ? '开发 agent' : '优化提示词'
   const [aiNav, setAiNav] = useState<{
     sections: { key: string; label: string }[]
@@ -267,6 +271,7 @@ export function AppLayout() {
       : localHost
         ? [{ key: 'local', icon: <FolderOpenOutlined />, label: '连接本机资料', badge: 0 }]
         : []),
+    { key: 'drill', icon: <FormOutlined />, label: '选择题' },
   ]
 
   const navSelected = (() => {
@@ -283,6 +288,7 @@ export function AppLayout() {
     if (location.pathname.startsWith('/review')) return 'review'
     if (location.pathname.startsWith('/local')) return 'local'
     if (location.pathname.startsWith('/skills')) return ''
+    if (location.pathname.startsWith('/drill')) return 'drill'
     return 'home'
   })()
 
@@ -416,7 +422,7 @@ export function AppLayout() {
 
           <div className="header-tools">
             <span className="header-count">
-              {onAi ? `${aiNav?.noteCount ?? '…'} 篇` : `${doneCount}/${trackLessons.length}`}
+              {onDrill ? `积分 ${drillPoints}` : onAi ? `${aiNav?.noteCount ?? '…'} 篇` : `${doneCount}/${trackLessons.length}`}
             </span>
             <TransitionAudioButton />
             <Button
@@ -428,7 +434,7 @@ export function AppLayout() {
           </div>
         </header>
 
-        <div className={onLab ? 'workspace is-workbench' : 'workspace'}>
+        <div className={onLab || onDrill ? 'workspace is-workbench' : 'workspace'}>
           <Content className="app-main" id="main-content" role="main" tabIndex={-1}>
             {progress.storageIssue && <Alert type="warning" showIcon title={progress.storageIssue} />}
             {localHost && localReady === false && (
@@ -445,7 +451,7 @@ export function AppLayout() {
               </Suspense>
             </ReadingBoundary>
           </Content>
-          {!onLab && (
+          {!onLab && !onDrill && (
             <aside className="app-aside">
               <ProgressAside localReady={localReady === true} />
             </aside>
@@ -481,6 +487,7 @@ function shellPageName(page: {
   if (page.section) return `${page.section} · AI`
   if (page.pathname.startsWith('/paths')) return '学习路线'
   if (page.pathname.startsWith('/skills')) return '技能'
+  if (page.pathname.startsWith('/drill')) return '选择题'
   if (page.pathname.startsWith('/knowledge')) return '知识库'
   if (page.pathname.startsWith('/audit')) return '知识核验'
   if (page.pathname.startsWith('/review')) return '复习清单'

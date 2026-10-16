@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "test": "node --experimental-strip-types --test ../scripts/architecture.test.mjs ../scripts/ai-lab.test.mjs ../scripts/learning-platform.test.mjs ../scripts/learning-store.test.mjs ../scripts/page-transition.test.mjs ../scripts/jump-budget.test.mjs",
+    "test": "node --experimental-strip-types --test ../scripts/architecture.test.mjs ../scripts/ai-lab.test.mjs ../scripts/learning-platform.test.mjs ../scripts/learning-store.test.mjs ../scripts/page-transition.test.mjs ../scripts/jump-budget.test.mjs ../scripts/drill.test.mjs",
     "verify:committed": "node ../scripts/verify_content.mjs && npm test && npm run lint && ./node_modules/.bin/tsc --noEmit -p tsconfig.app.json",
     "check": "npm run export:curriculum && npm run verify:committed && npm run build",
     "predev": "node ../scripts/export-curriculum.mjs",

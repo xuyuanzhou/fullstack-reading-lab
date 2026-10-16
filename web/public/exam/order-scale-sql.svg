@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1240" viewBox="0 0 1080 1240" role="img" aria-labelledby="title desc">
+  <title id="title">五千万行订单的访问路径</title>
+  <desc id="desc">这条语句没有 user_id。改之前按状态扫大量订单再读用户。改之后按 status、created_at 往回走，凑满 20 行停止。有 user_id 时才把 user_id 放在索引最左。</desc>
+  <rect width="1080" height="1240" rx="18" fill="#f6f7f4"/>
+  <defs>
+    <marker id="arr-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#a05048"/>
+    </marker>
+    <marker id="arr-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#3f6a58"/>
+    </marker>
+  </defs>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <text x="36" y="40" font-size="12" font-weight="600" letter-spacing="1.4" fill="#3f6a58">笔试 OS-W3 / OS-W4 / OS-W5</text>
+    <text x="36" y="72" font-size="22" font-weight="600" fill="#2e3330">这条语句没有 user_id</text>
+
+    <text x="36" y="112" font-size="15" font-weight="600" fill="#6e3530">改之前 · 超过 3 秒</text>
+    <rect x="36" y="128" width="250" height="88" rx="14" fill="#f6ecea" stroke="#a05048"/>
+    <text x="161" y="162" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">orders</text>
+    <text x="161" y="186" text-anchor="middle" font-size="13" fill="#6e3530">约 5000 万行</text>
+    <line x1="286" y1="172" x2="328" y2="172" stroke="#a05048" stroke-width="1.8" marker-end="url(#arr-r)"/>
+    <text x="292" y="160" font-size="12" fill="#6e3530">状态</text>
+    <rect x="336" y="128" width="300" height="88" rx="14" fill="#f6ecea" stroke="#a05048"/>
+    <text x="486" y="162" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">检查接近 5000 万行</text>
+    <text x="486" y="186" text-anchor="middle" font-size="13" fill="#5e6661">排好序才 LIMIT 20</text>
+    <line x1="636" y1="172" x2="678" y2="172" stroke="#a05048" stroke-width="1.8" marker-end="url(#arr-r)"/>
+    <text x="642" y="160" font-size="12" fill="#6e3530">每行</text>
+    <rect x="686" y="128" width="358" height="88" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="865" y="162" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">users 读 level</text>
+    <text x="865" y="186" text-anchor="middle" font-size="13" fill="#5e6661">还要取出 nickname</text>
+
+    <text x="36" y="252" font-size="14" fill="#5e6661">Query_time 与 Lock_time 分开记。锁等待长，先看谁占着行，不是先加索引。</text>
+
+    <text x="36" y="292" font-size="15" font-weight="600" fill="#6e3530">五个慢点</text>
+    <rect x="36" y="308" width="1008" height="196" rx="14" fill="#f6ecea" stroke="#a05048"/>
+    <text x="56" y="340" font-size="14" fill="#2e3330">1. 执行时间和锁等待没分开。锁等待长，加索引解决不了。</text>
+    <text x="56" y="372" font-size="14" fill="#2e3330">2. WHERE 没有 user_id。以 user_id 开头的索引用不上，status 仍可能扫接近 5000 万行。</text>
+    <text x="56" y="404" font-size="14" fill="#2e3330">3. 没有 (status, created_at, id) 时，先把命中行全部排好序，再 LIMIT 20。</text>
+    <text x="56" y="436" font-size="14" fill="#2e3330">4. level = '500' 是字符串。整数列会隐式转换。从 level 出发可能先扫出大量用户。</text>
+    <text x="56" y="468" font-size="14" fill="#2e3330">5. 每个候选订单都按主键读一次 users。检查行到几千万时，贵的是这些读取。</text>
+
+    <text x="36" y="544" font-size="15" font-weight="600" fill="#2d4f41">没有 user_id · INDEX (status, created_at, id, user_id)</text>
+    <rect x="36" y="560" width="220" height="92" rx="14" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="146" y="594" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">status 等值</text>
+    <text x="146" y="618" text-anchor="middle" font-size="13" fill="#3f6a58">一次只查一个状态</text>
+    <line x1="256" y1="606" x2="300" y2="606" stroke="#3f6a58" stroke-width="1.8" marker-end="url(#arr-g)"/>
+    <rect x="308" y="560" width="230" height="92" rx="14" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="423" y="594" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">created_at, id</text>
+    <text x="423" y="618" text-anchor="middle" font-size="13" fill="#3f6a58">按时间往回走</text>
+    <line x1="538" y1="606" x2="582" y2="606" stroke="#3f6a58" stroke-width="1.8" marker-end="url(#arr-g)"/>
+    <rect x="590" y="560" width="220" height="92" rx="14" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="700" y="594" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">users 主键</text>
+    <text x="700" y="618" text-anchor="middle" font-size="13" fill="#3f6a58">level = 500 才留下</text>
+    <line x1="810" y1="606" x2="854" y2="606" stroke="#3f6a58" stroke-width="1.8" marker-end="url(#arr-g)"/>
+    <rect x="862" y="560" width="182" height="92" rx="14" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="953" y="594" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">匹配满 20</text>
+    <text x="953" y="618" text-anchor="middle" font-size="13" fill="#3f6a58">看检查行数</text>
+
+    <text x="36" y="684" font-size="14" fill="#3f6a58">不能先取 20 行订单再过滤 level。匹配满 20 行才计数。id 必须紧跟 created_at。</text>
+
+    <text x="36" y="728" font-size="15" font-weight="600" fill="#2e3330">有 user_id 时 · INDEX (user_id, status, created_at, id)</text>
+    <rect x="36" y="744" width="280" height="80" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="176" y="778" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">user_id 等值</text>
+    <text x="176" y="800" text-anchor="middle" font-size="13" fill="#5e6661">OS-W3 没有这个条件</text>
+    <line x1="316" y1="784" x2="360" y2="784" stroke="#5e6661" stroke-width="1.6" marker-end="url(#arr-g)"/>
+    <rect x="368" y="744" width="280" height="80" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="508" y="778" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">status</text>
+    <text x="508" y="800" text-anchor="middle" font-size="13" fill="#5e6661">在这个用户里过滤</text>
+    <line x1="648" y1="784" x2="692" y2="784" stroke="#5e6661" stroke-width="1.6" marker-end="url(#arr-g)"/>
+    <rect x="700" y="744" width="344" height="80" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="872" y="778" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">created_at, id</text>
+    <text x="872" y="800" text-anchor="middle" font-size="13" fill="#5e6661">有等值才能接着排序</text>
+
+    <text x="36" y="864" font-size="15" font-weight="600" fill="#2e3330">status 每次变更，二级索引都要删旧叶子、插新叶子</text>
+    <rect x="36" y="880" width="500" height="120" rx="14" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="56" y="912" font-size="16" font-weight="600" fill="#2e3330">保留</text>
+    <text x="56" y="940" font-size="14" fill="#2e3330">(user_id, status) 某一个用户的订单</text>
+    <text x="56" y="968" font-size="14" fill="#2e3330">(status, created_at, id) 没有 user_id 时按时间取</text>
+    <rect x="556" y="880" width="488" height="120" rx="14" fill="#f6ecea" stroke="#a05048"/>
+    <text x="576" y="912" font-size="16" font-weight="600" fill="#6e3530">放弃</text>
+    <text x="576" y="940" font-size="14" fill="#2e3330">status 最左，后面拖着金额等列</text>
+    <text x="576" y="968" font-size="13" fill="#5e6661">报表走汇总或离线。历史状态另记一张表。</text>
+
+    <rect x="36" y="1024" width="1008" height="176" rx="14" fill="#eef2f8" stroke="#4a6280"/>
+    <text x="56" y="1058" font-size="16" font-weight="600" fill="#2e3330">不在这一步做</text>
+    <text x="56" y="1090" font-size="14" fill="#2e3330">不看计划就加从库、加缓存，或按五千万行拆表。</text>
+    <text x="56" y="1118" font-size="14" fill="#2e3330">不带 user_id、按 status 扫全表的报表，不要跑在下单主库上。</text>
+    <text x="56" y="1146" font-size="14" fill="#2e3330">从库只在允许读到旧数据时分担读。</text>
+    <text x="56" y="1174" font-size="14" fill="#2e3330">先 LIMIT 20 再过滤 level，得到的不是等级为 500 的最近 20 笔。</text>
+  </g>
+</svg>

@@ -1,3 +1,4 @@
+import { acceptAnswer, type DrillAttemptInput } from '../../data/drillRules.ts'
 import type { QuestAction } from '../../data/questBoard.ts'
 import type { LearningState } from '../learningState.ts'
 import {
@@ -102,6 +103,14 @@ export function businessActions(set: SetState, get: GetState) {
       const saved = applyQuestAction(state.learning, action)
       if (saved.envelope !== state.learning) set({ learning: saved.envelope })
       return saved
+    },
+    answerDrill(input: DrillAttemptInput) {
+      const state = get()
+      if (state.learningReadonly) return { ok: false, issue: '记录版本比本页新，不能改写。', questionId: '' }
+      const saved = acceptAnswer(state.drill, input, Date.now())
+      if (!saved.ok) return { ok: false, issue: saved.issue, questionId: '' }
+      set({ drill: saved.drill })
+      return { ok: true, issue: '', questionId: saved.questionId }
     },
   }
 }

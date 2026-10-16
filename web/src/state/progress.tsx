@@ -33,6 +33,7 @@ export type ProgressApi = ProgressState & {
     'aiDone' | 'aiReview' | 'aiRecent' | 'aiNotes' | 'aiQuery' | 'aiSkippedPrereq' | 'aiDrillScores'
   >) => void
   setTheme: (theme: 'light' | 'dark') => void
+  setSkillScene: (scene: ProgressState['skillScene']) => void
   setLocalQuery: (query: string) => void
   setLocalTopic: (topic: string) => void
   setLocalCategory: (category: ProgressState['localCategory']) => void
@@ -92,6 +93,8 @@ function selectApi(state: LearningState): ProgressApi {
     learningReadonly: state.learningReadonly,
     learningHeld: state.learningHeld,
     revision: state.revision,
+    skillScene: state.skillScene,
+    drill: state.drill,
     storageIssue: state.storageIssue,
     selectLesson: state.selectLesson,
     setTrack: state.setTrack,
@@ -112,6 +115,7 @@ function selectApi(state: LearningState): ProgressApi {
     setAiDrillScore: state.setAiDrillScore,
     replaceAiProgress: state.replaceAiProgress,
     setTheme: state.setTheme,
+    setSkillScene: state.setSkillScene,
     setLocalQuery: state.setLocalQuery,
     setLocalTopic: state.setLocalTopic,
     setLocalCategory: state.setLocalCategory,

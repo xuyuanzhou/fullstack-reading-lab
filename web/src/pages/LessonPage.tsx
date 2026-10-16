@@ -6,10 +6,12 @@ import '@/data/curriculumCards'
 import { deliverableKey, gatePath, slotsOf, spineNextId, spinePlace, spinePrevId } from '@/data/learningPaths'
 import { markSceneReady } from '@/transition/jumpBudget'
 import { groupKeyForLabel, groupPath, groupTitle, isTrack, lessonPath } from '@/data/routes'
+import { skillReturnId, skillReturnState } from '@/data/learningSkills'
 import { lessonNav, shortTitle, splitProse, structureCore } from '@/data/reading'
 import { REACT_CHAPTERS, VUE_CHAPTERS, reactUrl, vueUrl } from '@/data/meta'
 import { useProgress } from '@/state/progress'
 import { LessonOutline } from '@/components/LessonOutline'
+import { SkillReturn } from '@/components/learning/SkillReturn'
 import { RouteSkeleton } from '@/components/RouteSkeleton'
 import { RichBlocks } from '@/components/RichBlocks'
 import { RichProse } from '@/components/RichProse'
@@ -113,7 +115,7 @@ export function LessonPage() {
       {onSpine ? (
         <section className="path-strip">
           <p className="path-strip-kicker">
-            <Link to={gatePath(onSpine.gate.id)}>
+            <Link to={gatePath(onSpine.gate.id)} state={skillReturnState(location.state)}>
               第 {onSpine.index + 1} 关 · {onSpine.gate.learnTitle}
             </Link>
             <span>
@@ -122,11 +124,13 @@ export function LessonPage() {
             <span>
               交付 {onSpine.gate.outputs.filter((_, outputIndex) => (progress.pathChecks ?? []).includes(deliverableKey(onSpine.gate.id, outputIndex))).length}/{onSpine.gate.outputs.length}
             </span>
-            <Link to={gatePath(onSpine.gate.id)}>回营地</Link>
+            <Link to={gatePath(onSpine.gate.id)} state={skillReturnState(location.state)}>回营地</Link>
           </p>
           {onSpine.gate.lessons[onSpine.step]?.job ? <p>{onSpine.gate.lessons[onSpine.step].job}</p> : null}
         </section>
       ) : null}
+
+      <SkillReturn />
 
       <Breadcrumb
         items={[
@@ -361,17 +365,17 @@ export function LessonPage() {
       {onSpine ? (
         <div className="path-turn">
           {spinePrev ? (
-            <Link className="path-turn-prev" to={lessonPath(spinePrev)} onClick={() => progress.remember(spinePrev.id)}>
+            <Link className="path-turn-prev" to={lessonPath(spinePrev)} state={location.state} onClick={() => progress.remember(spinePrev.id)}>
               上一节 · {shortTitle(spinePrev.title)}
             </Link>
           ) : null}
-          <Link className="path-turn-prev" to={gatePath(onSpine.gate.id)}>
+          <Link className="path-turn-prev" to={gatePath(onSpine.gate.id)} state={skillReturnState(location.state)}>
             先不记，回营地
           </Link>
           <Link
             className="next-card"
             to={gatePath(onSpine.gate.id)}
-            state={{ settled: lesson.id }}
+            state={{ settled: lesson.id, ...(skillReturnId(location.state) ? { skillReturn: skillReturnId(location.state) } : {}) }}
             onClick={() => {
               if (!progress.done.includes(lesson.id)) progress.toggleDone(lesson.id)
             }}
@@ -387,6 +391,7 @@ export function LessonPage() {
         <Link
           className="next-card"
           to={lessonPath(next)}
+          state={location.state}
           onClick={() => progress.remember(next.id)}
         >
           <div>

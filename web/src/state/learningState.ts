@@ -1,6 +1,9 @@
+import type { DrillAttemptInput } from '../data/drillRules.ts'
 import type { QuestAction } from '../data/questBoard.ts'
 import type { Attempt, Evidence, PauseChoice, QuestSave } from './learningEvidence.ts'
 import type { ProgressState, Track } from '../types/curriculum.ts'
+
+type SkillScene = ProgressState['skillScene']
 
 export type LearningState = ProgressState & {
   storageIssue: string
@@ -11,6 +14,7 @@ export type LearningState = ProgressState & {
   setGroup: (group: string) => void
   selectLesson: (track: Track, group: string) => void
   setTheme: (theme: 'light' | 'dark') => void
+  setSkillScene: (scene: SkillScene) => void
   setQuery: (query: string) => void
   setNote: (id: string, note: string) => void
   remember: (id: string) => void
@@ -36,6 +40,7 @@ export type LearningState = ProgressState & {
   saveLearningDraft: (attempt: Attempt, evidence?: Evidence) => void
   setLearningPause: (choice: PauseChoice | null) => void
   applyQuest: (action: QuestAction) => QuestSave
+  answerDrill: (input: DrillAttemptInput) => { ok: boolean; issue: string; questionId: string }
   reconnectLocal: () => Promise<boolean>
   /** 立刻按 revision 合并写回。测试和离开页时用。 */
   flushPersist: () => void

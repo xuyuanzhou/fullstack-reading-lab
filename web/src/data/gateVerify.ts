@@ -13,6 +13,7 @@ import {
   type WrittenExam,
 } from './learningTasks.ts'
 import { openQuestionsForGate } from './gateOpen.ts'
+import { ORDER_SCALE_EXAMS } from './orderScaleGate.ts'
 import { taskVerified, type Attempt, type Evidence } from '../state/learningEvidence.ts'
 
 export type VerifyFace = 'idle' | 'pending' | 'passed'
@@ -27,9 +28,10 @@ export type VerifyItem = {
   tier: VerifyTier
 }
 
-/** 当场问答和每关第一道选择题是基础。其余选择题换了一个约束，算进阶。 */
+/** 当场问答和每关第一道选择题是基础。其余选择题换了一个约束，算进阶。OS- 是笔试专关的六题，全部计入该关。 */
 export function verifyTier(kind: VerifyItem['kind'], code: string): VerifyTier {
   if (kind === 'task') return 'base'
+  if (code.startsWith('OS-')) return 'base'
   return code.endsWith('-W1') ? 'base' : 'advanced'
 }
 
@@ -40,6 +42,7 @@ const EXAMS_BY_GATE: Readonly<Record<string, readonly WrittenExam[]>> = {
   g4: G4_WRITTEN_EXAMS,
   g5: G5_WRITTEN_EXAMS,
   g6: G6_WRITTEN_EXAMS,
+  'g-order-scale': ORDER_SCALE_EXAMS,
 }
 
 /** 关卡能力目标：复用 pass，不做第二套文案源。 */

@@ -3,6 +3,7 @@ import { lazy, Suspense } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { findLesson, lessonsFor } from '@/data/curriculum'
 import { PATHS, deliverableKey, gateCleared, gatePath, nextInGate, slotsOf, spineNextId, spinePlace } from '@/data/learningPaths'
+import { skillReturnState } from '@/data/learningSkills'
 import { shortTitle } from '@/data/reading'
 import { lessonPath } from '@/data/routes'
 import { useProgress } from '@/state/progress'
@@ -113,6 +114,7 @@ export function ProgressAside({ localReady }: { localReady: boolean }) {
           <Link
             className="text-link"
             to={lessonPath(next)}
+            state={skillReturnState(location.state)}
             onClick={() => progress.remember(next.id)}
           >
             {shortTitle(next.title)} →

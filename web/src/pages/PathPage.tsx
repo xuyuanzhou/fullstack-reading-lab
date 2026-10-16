@@ -8,7 +8,9 @@ import { deliverableShort, FROZEN_DELIVERABLES } from '@/data/deliverableMap'
 import { gateAdvise, gateEdition, gateVerifyFill, passFlashLine, verifyFace, verifyFaceLabel, verifyItemsForGate } from '@/data/gateVerify'
 import { PATHS, campScene, deliverableKey, gateCleared, gateMark, nextInGate, requiredSlotsOf, settleLine, type PathGate } from '@/data/learningPaths'
 import { bossQuest, questFace, sideQuests } from '@/data/questBoard'
-import { LEARNING_SKILLS, SKILL_VIEWS, skillGlows, skillLessonIds, skillProgress, type SkillGlow } from '@/data/learningSkills'
+import { SKILL_VIEWS, skillBoardState, skillSceneTitle, type SkillGlow } from '@/data/learningSkills'
+import { SkillReturn } from '@/components/learning/SkillReturn'
+import { ORDER_SCALE_GATE, ORDER_SCALE_RUBRIC } from '@/data/orderScaleGate'
 import { SIDE_TRACKS } from '@/data/sideTracks'
 import { shortTitle } from '@/data/reading'
 import { lessonPath } from '@/data/routes'
@@ -110,6 +112,13 @@ export function PathPage() {
   }, [location.pathname, upcomingId])
   const requested = stages.findIndex((stage) => stage.id === params.get('gate'))
   const currentIndex = requested >= 0 ? requested : sequenceIndex
+  const examCamp = params.get('gate') === ORDER_SCALE_GATE.id
+
+  function activeGateId() {
+    if (params.get('gate') === ORDER_SCALE_GATE.id) return ORDER_SCALE_GATE.id
+    const index = stages.findIndex((stage) => stage.id === params.get('gate'))
+    return stages[index >= 0 ? index : sequenceIndex].id
+  }
 
   function selectGate(index: number) {
     const id = stages[index].id
@@ -148,28 +157,34 @@ export function PathPage() {
     navigate(lessonPath(lesson))
   }
 
+  function openExam() {
+    const query = new URLSearchParams()
+    query.set('gate', ORDER_SCALE_GATE.id)
+    setParams(query, { replace: true })
+  }
+
   function openDeliver(index: number) {
     const query = new URLSearchParams()
-    query.set('gate', stages[currentIndex].id)
+    query.set('gate', activeGateId())
     query.set('deliver', String(index))
     setParams(query, { replace: true })
   }
 
   function openVerify(id: string) {
     const query = new URLSearchParams()
-    query.set('gate', stages[currentIndex].id)
+    query.set('gate', activeGateId())
     query.set('verify', id)
     setParams(query, { replace: true })
   }
 
   function leaveScene() {
     const query = new URLSearchParams()
-    query.set('gate', stages[currentIndex].id)
+    query.set('gate', activeGateId())
     setParams(query, { replace: true })
   }
 
-  const camp = stages[currentIndex] ?? stages[sequenceIndex]
-  const campIndex = stages.indexOf(camp)
+  const camp = examCamp ? ORDER_SCALE_GATE : (stages[currentIndex] ?? stages[sequenceIndex])
+  const campIndex = examCamp ? -1 : stages.indexOf(camp)
   const done = new Set(progress.done)
   const checks = new Set(progress.pathChecks ?? [])
   const slots = requiredSlotsOf(camp.lessons)
@@ -195,7 +210,7 @@ export function PathPage() {
   const sideTrack = SIDE_TRACKS.find((item) => item.id === params.get('side'))
   const bossPage = params.get('boss') === 'core'
   const bossSceneId = bossPage ? params.get('scene') || '' : ''
-  const inGate = Boolean(params.get('gate') && stages.some((stage) => stage.id === params.get('gate')))
+  const inGate = Boolean(params.get('gate') && (examCamp || stages.some((stage) => stage.id === params.get('gate'))))
   const sideFaces = sides.map((item) => questFace(item, quests))
   const sideLive = sideFaces.findIndex((face) => face !== 'cleared' && face !== 'starred')
   const bossFace = questFace(boss, quests)
@@ -267,7 +282,7 @@ export function PathPage() {
     const label = item.tier === 'advanced'
       ? `进阶 · ${bare}`
       : item.kind === 'exam'
-        ? `选 · ${bare}`
+        ? `${camp.id === 'g-order-scale' ? '笔' : '选'} · ${bare}`
         : `问 · ${bare}`
     const evidenceStatus = face === 'idle' ? '' : verifyFaceLabel(face)
     return {
@@ -338,11 +353,7 @@ export function PathPage() {
 
   const skillDone = new Set([...progress.done, ...progress.aiDone])
   const skillExists = (id: string) => (id.startsWith('ai:') ? Boolean(aiNoteById(id)) : Boolean(findLesson(id)))
-  const { glow: skillGlow, activeId: skillActive } = skillGlows(
-    SKILL_VIEWS.map((item) => item.id),
-    (id) => LEARNING_SKILLS.find((item) => item.id === id)?.allOf ?? [],
-    (id) => skillProgress(skillLessonIds(id), skillDone, skillExists),
-  )
+  const { glow: skillGlow, activeId: skillActive } = skillBoardState(skillDone, skillExists, progress.skillScene)
   const skillLit = SKILL_VIEWS.filter((item) => skillGlow[item.id] === 'lit').length
   const skillTotal = SKILL_VIEWS.length
   const skillActiveTitle = SKILL_VIEWS.find((item) => item.id === skillActive)?.title
@@ -418,6 +429,7 @@ export function PathPage() {
               <span className="skill-ignite-meta">
                 <b>{skillLit}/{skillTotal}</b>
                 {' '}已点亮
+                {progress.skillScene === 'all' ? '' : ` · ${skillSceneTitle(progress.skillScene)}`}
                 {skillActiveTitle ? (
                   <>
                     {' · 正在点亮「'}
@@ -500,6 +512,26 @@ export function PathPage() {
             />
           </section>
         </div>
+        <section className="atlas-panel atlas-exam campaign-night" aria-label="笔试专关">
+          <div className="atlas-head">
+            <p className="atlas-kicker">笔试专关</p>
+            <p className="atlas-role">不计入九关 · 人打 {ORDER_SCALE_RUBRIC.total} 分</p>
+          </div>
+          <CampaignMap
+            mapId="exam"
+            label="高并发下单笔试"
+            hereIndex={0}
+            liveIndex={0}
+            onPick={() => openExam()}
+            nodes={[{
+              id: ORDER_SCALE_GATE.id,
+              title: ORDER_SCALE_GATE.learnTitle,
+              status: '可挑战',
+              done: false,
+              boss: false,
+            }]}
+          />
+        </section>
       </div>
     )
   }
@@ -515,6 +547,7 @@ export function PathPage() {
           <button type="button" onClick={leaveBossScene}>回 Boss</button>
         ) : null}
       </p>
+      <SkillReturn />
       {inGate && deliverPick && !verifyPick ? (
         <section className="deliver-step" aria-label={deliverPick.title}>
           <p className="path-note">这些勾选是自评，没有测试记录不算验证通过。</p>
@@ -556,7 +589,17 @@ export function PathPage() {
       ) : null}
       {inGate && !deliverPick && !verifyPick ? (
         <div className="path-scenes campaign-night">
-          <p className="scene-banner">第 {campIndex + 1} 关 · {camp.learnTitle}</p>
+          <p className="scene-banner">{examCamp ? '笔试专关' : `第 ${campIndex + 1} 关`} · {camp.learnTitle}</p>
+          {examCamp ? (
+            <div className="path-note">
+              <p>{ORDER_SCALE_RUBRIC.passLine}</p>
+              <ul className="path-rubric">
+                {ORDER_SCALE_RUBRIC.dimensions.map((item) => (
+                  <li key={item.id}>{item.title} {item.points} 分 · {item.exams}</li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
           {passFlash ? <p className="path-note" role="status">{passFlash}</p> : null}
           {campEdition.note ? <p className="path-note">{campEdition.note}</p> : null}
           {advise.skipNote ? <p className="path-note">{advise.skipNote}</p> : null}

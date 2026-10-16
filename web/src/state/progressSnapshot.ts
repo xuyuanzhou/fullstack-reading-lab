@@ -29,5 +29,7 @@ export function progressSnapshot(state: LearningState): ProgressState {
     learningReadonly: state.learningReadonly,
     learningHeld: state.learningHeld,
     revision: state.revision,
+    skillScene: state.skillScene,
+    drill: state.drill,
   }
 }

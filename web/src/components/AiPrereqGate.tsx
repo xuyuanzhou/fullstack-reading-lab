@@ -1,11 +1,13 @@
 import { Button, Typography } from 'antd'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { sectionKeyForNote } from '@/data/aiCatalog'
 import { missingPrereqs, stageProgress } from '@/data/aiPrereq'
+import { skillReturnState } from '@/data/learningSkills'
 import { useProgress } from '@/state/progress'
 
 export function AiPrereqGate({ noteKey }: { noteKey: string }) {
   const progress = useProgress()
+  const carried = skillReturnState(useLocation().state)
   const status = missingPrereqs(noteKey, progress.aiDone, progress.aiSkippedPrereq)
   const stages = stageProgress(progress.aiDone)
 
@@ -30,7 +32,7 @@ export function AiPrereqGate({ noteKey }: { noteKey: string }) {
           <ul>
             {status.missing.map((item) => (
               <li key={item.key}>
-                <Link to={`/ai/${sectionKeyForNote(item.key)}/${item.key}`}>{item.title}</Link>
+                <Link to={`/ai/${sectionKeyForNote(item.key)}/${item.key}`} state={carried}>{item.title}</Link>
                 <span className="muted">（{item.key}）</span>
               </li>
             ))}

@@ -21,6 +21,7 @@ const AiNotePage = lazy(() => import('@/pages/AiPage').then(m => ({ default: m.A
 const AiLabPage = lazy(() => import('@/pages/AiLabPage').then(m => ({ default: m.AiLabPage })))
 const PathPage = lazy(() => import('@/pages/PathPage').then(m => ({ default: m.PathPage })))
 const SkillsPage = lazy(() => import('@/pages/SkillsPage').then(m => ({ default: m.SkillsPage })))
+const DrillPage = lazy(() => import('@/pages/DrillPage').then(m => ({ default: m.DrillPage })))
 
 function ResumeRoute() {
   const progress = useReadingPlace()
@@ -108,6 +109,10 @@ function ThemedApp() {
               <Route path="ai/:sectionKey/:noteKey" element={<AiNotePage />} />
               <Route path="paths" element={<PathPage />} />
               <Route path="skills" element={<SkillsPage />} />
+              <Route path="drill/report" element={<DrillPage />} />
+              <Route path="drill/:courseId/:gateId" element={<DrillPage />} />
+              <Route path="drill/:courseId" element={<DrillPage />} />
+              <Route path="drill" element={<DrillPage />} />
               <Route path="paths/:kind" element={<Navigate to="/paths" replace />} />
               <Route path=":track/:groupKey" element={<HomePage />} />
               <Route path=":track/:groupKey/:lessonId" element={<LessonPage />} />

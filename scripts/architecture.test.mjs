@@ -42,6 +42,16 @@ test('idle tab with the same snapshot does not bump revision', () => {
   assert.equal(mergeForWrite(state, state, state).revision, 4);
 });
 
+test('skill scene follows the tab that changed it', () => {
+  const base = blank({ revision: 1, skillScene: 'all' });
+  const remote = blank({ revision: 2, skillScene: 'all' });
+  const local = blank({ revision: 1, skillScene: 'browser' });
+  const merged = mergeForWrite(local, remote, base);
+  assert.equal(merged.skillScene, 'browser');
+  assert.equal(normalizeProgress({}, groups).skillScene, 'all');
+  assert.equal(normalizeProgress({ skillScene: 'nope' }, groups).skillScene, 'all');
+});
+
 test('stale tab cannot wipe notes written by a newer revision', () => {
   const base = blank({ revision: 1, notes: { a: '旧笔记' }, theme: 'dark' });
   const remote = blank({ revision: 2, notes: { a: '新笔记', b: '另一页' }, theme: 'light' });

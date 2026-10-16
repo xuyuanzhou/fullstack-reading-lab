@@ -1,7 +1,9 @@
 import { Button, Collapse, Input, Radio, Space } from 'antd'
 import { useEffect, useState } from 'react'
-import { Link, Navigate, useOutletContext, useParams } from 'react-router-dom'
+import { Link, Navigate, useLocation, useOutletContext, useParams } from 'react-router-dom'
 import { AiDiagram } from '@/components/AiDiagrams'
+import { SkillReturn } from '@/components/learning/SkillReturn'
+import { skillReturnState } from '@/data/learningSkills'
 import { AiPrereqGate } from '@/components/AiPrereqGate'
 import { AiRouteMap } from '@/components/AiRouteMap'
 import { InterviewWorkbench } from '@/components/InterviewWorkbench'
@@ -86,6 +88,7 @@ export function AiNotePage() {
   const note = aiNote(section.key, noteKey)
   const { localReady } = useOutletContext<OutletCtx>()
   const progress = useProgress()
+  const carried = skillReturnState(useLocation().state)
   const progressId = note && note.section === section.key ? aiProgressId(note) : ''
   useEffect(() => {
     if (!progressId) return
@@ -112,6 +115,7 @@ export function AiNotePage() {
 
   return (
     <div className="article-shell">
+      <SkillReturn />
       <div className="page-kicker">
         <Link to={`/ai/${section.key}`}>{section.label}</Link>
         <span className="dot" />
@@ -135,7 +139,7 @@ export function AiNotePage() {
           {note.prerequisites.map((key, index) => (
             <span key={key}>
               {index ? '、' : ''}
-              <Link to={`/ai/${sectionKeyForNote(key)}/${key}`}>{key}</Link>
+              <Link to={`/ai/${sectionKeyForNote(key)}/${key}`} state={carried}>{key}</Link>
             </span>
           ))}
         </p>
@@ -477,11 +481,12 @@ function QuizBlock({ quiz, index }: { quiz: AiQuiz; index: number }) {
 }
 
 function NoteNav({ note }: { note: AiNote }) {
+  const location = useLocation()
   const { prev, next } = noteNeighbors(note)
   return (
     <nav className="note-nav" aria-label="前后文">
-      {prev ? <Link to={`/ai/${prev.section}/${prev.key}`}>上一节 · {prev.title}</Link> : <span />}
-      {next ? <Link to={`/ai/${next.section}/${next.key}`}>下一节 · {next.title}</Link> : <span />}
+      {prev ? <Link to={`/ai/${prev.section}/${prev.key}`} state={location.state}>上一节 · {prev.title}</Link> : <span />}
+      {next ? <Link to={`/ai/${next.section}/${next.key}`} state={location.state}>下一节 · {next.title}</Link> : <span />}
     </nav>
   )
 }

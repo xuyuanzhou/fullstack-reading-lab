@@ -13,7 +13,8 @@ import {
 import { taskVerified, type Evidence } from '../state/learningEvidence.ts'
 
 /**
- * 前置最多两个。基础在前：网络/语言/SQL 点亮后，才亮框架与中间件枝叶。
+ * 前置最多两个，只表示缺了它就读不懂。
+ * 全栈叙事里的「通常接着学」不写进 allOf，避免把 Redis 绑在 MySQL 上。
  * React 与 Vue 分开；双框架要两边都亮。
  */
 export const LEARNING_SKILLS: readonly SkillNode[] = [
@@ -43,19 +44,19 @@ export const LEARNING_SKILLS: readonly SkillNode[] = [
   { id: 'node', allOf: ['js'] },
   { id: 'rn', allOf: ['R01'] },
   { id: 'flutter' },
-  { id: 'mini' },
+  { id: 'mini', allOf: ['js'] },
   { id: 'dual-framework', allOf: ['R01', 'V01'] },
   // Java
   { id: 'java' },
   { id: 'jvm', allOf: ['java'] },
   { id: 'J02', allOf: ['java'] },
   { id: 'pattern', allOf: ['java'] },
+  { id: 'netty', allOf: ['java'] },
   { id: 'spring', allOf: ['java'] },
   { id: 'aop', allOf: ['spring'] },
   { id: 'springsec', allOf: ['spring'] },
   { id: 'mybatis', allOf: ['spring'] },
   { id: 'jpa', allOf: ['spring'] },
-  { id: 'netty', allOf: ['java'] },
   // 数据存储
   { id: 'sql' },
   { id: 'schema', allOf: ['sql'] },
@@ -63,9 +64,9 @@ export const LEARNING_SKILLS: readonly SkillNode[] = [
   { id: 'pg', allOf: ['sql'] },
   { id: 'mongo' },
   // 中间件
-  { id: 'redis', allOf: ['D01'] },
-  { id: 'es', allOf: ['D01'] },
-  { id: 'mq', allOf: ['D01'] },
+  { id: 'redis' },
+  { id: 'es' },
+  { id: 'mq' },
   { id: 'kafka', allOf: ['mq'] },
   { id: 'rabbit', allOf: ['mq'] },
   { id: 'rocket', allOf: ['mq'] },
@@ -74,32 +75,32 @@ export const LEARNING_SKILLS: readonly SkillNode[] = [
   { id: 'feign', allOf: ['spring'] },
   { id: 'seata', allOf: ['spring'] },
   { id: 'gateway', allOf: ['spring'] },
-  { id: 'guard', allOf: ['spring'] },
-  { id: 'sentinel', allOf: ['guard'] },
   { id: 'nginx' },
   { id: 'cdn', allOf: ['nginx'] },
   { id: 'oss' },
   { id: 'pool', allOf: ['java'] },
   // 分布式与高并发
-  { id: 'dist', allOf: ['D01'] },
-  { id: 'idem', allOf: ['D01'] },
+  { id: 'dist' },
+  { id: 'idem' },
   { id: 'lock', allOf: ['redis'] },
   { id: 'outbox', allOf: ['mq'] },
   { id: 'saga', allOf: ['mq'] },
+  { id: 'guard' },
+  { id: 'sentinel', allOf: ['guard'] },
   { id: 'load' },
   // 工程与运维
   { id: 'docker' },
   { id: 'compose', allOf: ['docker'] },
   { id: 'k8s', allOf: ['docker'] },
   { id: 'test' },
-  { id: 'ci', allOf: ['git'] },
+  { id: 'ci', allOf: ['git', 'test'] },
   { id: 'otel' },
   { id: 'triage', allOf: ['otel'] },
-  { id: 'slo' },
+  { id: 'slo', allOf: ['otel'] },
   { id: 'S01' },
-  { id: 'secrets', allOf: ['docker'] },
+  { id: 'secrets', allOf: ['S01'] },
   // 架构
-  { id: 'ddd' },
+  { id: 'ddd', allOf: ['dist'] },
   { id: 'split', allOf: ['ddd'] },
   { id: 'adr', allOf: ['split'] },
   // AI（进度记在 aiDone，课文 id 为 ai:课键）
@@ -239,27 +240,27 @@ export const SKILL_VIEWS: readonly SkillView[] = [
   { id: 'query', title: '服务端状态', lane: '前端', group: 'React' },
   { id: 'V01', title: 'Vue', lane: '前端', group: 'Vue' },
   { id: 'pinia', title: 'Pinia', lane: '前端', group: 'Vue' },
-  { id: 'vite', title: 'Vite', lane: '前端', group: '其他' },
-  { id: 'ssr', title: '服务端渲染', lane: '前端', group: '其他' },
-  { id: 'perf', title: '性能优化', lane: '前端', group: '其他' },
-  { id: 'mfe', title: '微前端', lane: '前端', group: '其他' },
-  { id: 'ng', title: 'Angular', lane: '前端', group: '其他' },
-  { id: 'node', title: 'Node.js', lane: '前端', group: '跨端运行时' },
-  { id: 'rn', title: 'React Native', lane: '前端', group: '跨端运行时' },
-  { id: 'flutter', title: 'Flutter', lane: '前端', group: '跨端运行时' },
-  { id: 'mini', title: '小程序', lane: '前端', group: '跨端运行时' },
-  { id: 'dual-framework', title: '双框架', lane: '前端', group: '其他', bridge: true },
+  { id: 'vite', title: 'Vite', lane: '前端', group: '构建与渲染' },
+  { id: 'ssr', title: '服务端渲染', lane: '前端', group: '构建与渲染' },
+  { id: 'perf', title: '性能优化', lane: '前端', group: '界面进阶' },
+  { id: 'mfe', title: '微前端', lane: '前端', group: '界面进阶' },
+  { id: 'ng', title: 'Angular', lane: '前端', group: 'Angular' },
+  { id: 'node', title: 'Node.js', lane: '前端', group: '服务端 JS' },
+  { id: 'rn', title: 'React Native', lane: '前端', group: '跨端界面' },
+  { id: 'flutter', title: 'Flutter', lane: '前端', group: '跨端界面' },
+  { id: 'mini', title: '小程序', lane: '前端', group: '跨端界面' },
+  { id: 'dual-framework', title: '双框架', lane: '前端', group: '桥', bridge: true },
   // —— Java ——
   { id: 'java', title: 'Java 基础', lane: 'Java', group: '语言与运行时' },
   { id: 'jvm', title: 'JVM', lane: 'Java', group: '语言与运行时', gateId: 'g-triage' },
   { id: 'J02', title: 'Java 并发', lane: 'Java', group: '语言与运行时' },
   { id: 'pattern', title: '设计模式', lane: 'Java', group: '语言与运行时' },
+  { id: 'netty', title: 'Netty', lane: 'Java', group: '网络编程' },
   { id: 'spring', title: 'Spring', lane: 'Java', group: 'Spring 生态', gateId: 'g2' },
   { id: 'aop', title: 'AOP', lane: 'Java', group: 'Spring 生态' },
   { id: 'springsec', title: 'Spring Security', lane: 'Java', group: 'Spring 生态', gateId: 'g-auth' },
   { id: 'mybatis', title: 'MyBatis', lane: 'Java', group: 'Spring 生态' },
   { id: 'jpa', title: 'JPA', lane: 'Java', group: 'Spring 生态', gateId: 'g3' },
-  { id: 'netty', title: 'Netty', lane: 'Java', group: '网络编程' },
   // —— 数据存储 ——
   { id: 'sql', title: 'SQL', lane: '数据存储', group: '查询与建模', gateId: 'g3' },
   { id: 'schema', title: '表结构', lane: '数据存储', group: '查询与建模', gateId: 'g2' },
@@ -278,7 +279,6 @@ export const SKILL_VIEWS: readonly SkillView[] = [
   { id: 'feign', title: 'OpenFeign', lane: '中间件', group: '微服务组件' },
   { id: 'seata', title: 'Seata', lane: '中间件', group: '微服务组件', gateId: 'g4' },
   { id: 'gateway', title: '网关', lane: '中间件', group: '微服务组件' },
-  { id: 'sentinel', title: 'Sentinel', lane: '中间件', group: '微服务组件' },
   { id: 'nginx', title: 'Nginx', lane: '中间件', group: '接入与资源' },
   { id: 'cdn', title: 'CDN', lane: '中间件', group: '接入与资源' },
   { id: 'oss', title: '对象存储', lane: '中间件', group: '接入与资源' },
@@ -290,6 +290,7 @@ export const SKILL_VIEWS: readonly SkillView[] = [
   { id: 'outbox', title: '待发事件', lane: '分布式与高并发', group: '一致性与事务', gateId: 'g4' },
   { id: 'saga', title: '补偿', lane: '分布式与高并发', group: '一致性与事务', gateId: 'g4' },
   { id: 'guard', title: '限流熔断', lane: '分布式与高并发', group: '容量与防护' },
+  { id: 'sentinel', title: 'Sentinel', lane: '分布式与高并发', group: '容量与防护' },
   { id: 'load', title: '压测', lane: '分布式与高并发', group: '容量与防护', gateId: 'g-triage' },
   // —— 工程与运维 ——
   { id: 'docker', title: 'Docker', lane: '工程与运维', group: '容器编排', gateId: 'g5' },
@@ -305,11 +306,11 @@ export const SKILL_VIEWS: readonly SkillView[] = [
   // —— AI ——
   { id: 'ai-prompt', title: '提示词', lane: 'AI', group: '应用入门' },
   { id: 'ai-llm', title: '大语言模型', lane: 'AI', group: '应用入门' },
-  { id: 'ai-transformer', title: 'Transformer', lane: 'AI', group: '模型机制' },
-  { id: 'ai-embed', title: '嵌入', lane: 'AI', group: '模型机制' },
-  { id: 'ai-rag', title: '检索增强', lane: 'AI', group: '应用结构' },
   { id: 'ai-agent', title: '代理', lane: 'AI', group: '应用结构' },
   { id: 'ai-chain', title: 'LangChain', lane: 'AI', group: '应用结构' },
+  { id: 'ai-transformer', title: 'Transformer', lane: 'AI', group: '模型机制' },
+  { id: 'ai-embed', title: '嵌入', lane: 'AI', group: '模型机制' },
+  { id: 'ai-rag', title: '检索增强', lane: 'AI', group: '模型机制' },
   { id: 'ai-eval', title: '评测', lane: 'AI', group: '交付判断' },
   { id: 'ai-guard', title: '提示注入', lane: 'AI', group: '交付判断' },
   // —— 架构 ——
@@ -386,6 +387,109 @@ export function skillGlows(
   }
   if (activeId) glow[activeId] = 'research'
   return { glow, activeId }
+}
+
+/** 只改「正在点亮」从哪几步里挑。不把路外的印章打暗，也不改 allOf。 */
+export const SKILL_SCENES = [
+  { id: 'all', title: '全图' },
+  {
+    id: 'browser',
+    title: '浏览器应用',
+    steps: [['html'], ['js'], ['browser'], ['R01', 'V01'], ['vite'], ['perf']],
+  },
+  {
+    id: 'java',
+    title: 'Java 服务',
+    steps: [['java'], ['spring'], ['sql'], ['D01'], ['redis', 'mq'], ['idem'], ['dist'], ['docker'], ['otel']],
+  },
+  {
+    id: 'ai',
+    title: 'AI 应用',
+    steps: [['ai-prompt'], ['ai-llm'], ['ai-rag', 'ai-agent'], ['ai-eval'], ['ai-guard']],
+  },
+] as const
+
+export type SkillSceneId = (typeof SKILL_SCENES)[number]['id']
+
+const SKILL_SCENE_IDS = new Set<string>(SKILL_SCENES.map((scene) => scene.id))
+
+export function skillSceneId(value: unknown): SkillSceneId {
+  return typeof value === 'string' && SKILL_SCENE_IDS.has(value) ? value as SkillSceneId : 'all'
+}
+
+export function skillSceneTitle(value: unknown) {
+  const id = skillSceneId(value)
+  return SKILL_SCENES.find((scene) => scene.id === id)?.title ?? '全图'
+}
+
+function firstOpenStep(
+  steps: readonly (readonly string[])[],
+  glow: Record<string, SkillGlow>,
+  progressOf: (id: string) => { read: number; total: number },
+) {
+  for (const step of steps) {
+    const open = step.filter((id) => glow[id] !== 'lit')
+    if (!open.length) continue
+    const ready = open.filter((id) => glow[id] === 'ready' || glow[id] === 'research')
+    if (!ready.length) continue
+    const started = ready.filter((id) => progressOf(id).read > 0)
+    let activeId = ''
+    let best = -1
+    for (const id of started.length ? started : ready) {
+      const { read, total } = progressOf(id)
+      const ratio = total > 0 ? read / total : 0
+      if (ratio > best) {
+        best = ratio
+        activeId = id
+      }
+    }
+    return activeId
+  }
+  return ''
+}
+
+/** 全图沿用整张星图的正在点亮。选定一条路时，只在这条路还能开始的下一步上标正在点亮。 */
+export function skillBoardState(
+  done: ReadonlySet<string>,
+  exists: (id: string) => boolean,
+  scene: unknown,
+): { glow: Record<string, SkillGlow>; activeId: string } {
+  const progressOf = (id: string) => skillProgress(skillLessonIds(id), done, exists)
+  const base = skillGlows(
+    SKILL_VIEWS.map((item) => item.id),
+    (id) => LEARNING_SKILLS.find((item) => item.id === id)?.allOf ?? [],
+    progressOf,
+  )
+  const picked = SKILL_SCENES.find((item) => item.id === skillSceneId(scene))
+  if (!picked || !('steps' in picked)) return base
+  const next = firstOpenStep(picked.steps, base.glow, progressOf)
+  if (next === base.activeId) return base
+  const glow = { ...base.glow }
+  if (base.activeId && glow[base.activeId] === 'research') glow[base.activeId] = 'ready'
+  if (next && (glow[next] === 'ready' || glow[next] === 'research')) glow[next] = 'research'
+  return { glow, activeId: next }
+}
+
+export function skillReturnTo(id: string) {
+  return `/skills?skill=${encodeURIComponent(id)}`
+}
+
+export function skillFocusId(value: string | null) {
+  if (!value || !SKILL_VIEWS.some((item) => item.id === value)) return ''
+  return value
+}
+
+/** 从技能树点进课或关卡时带上的返回目标。别的入口不带这个字段。 */
+export function skillReturnId(state: unknown) {
+  if (!state || typeof state !== 'object' || !('skillReturn' in state)) return ''
+  const id = (state as { skillReturn?: unknown }).skillReturn
+  return skillFocusId(typeof id === 'string' ? id : null)
+}
+
+/** 跟课链接继续带上来源，返回仍指向点进来的那一项。 */
+export function skillReturnState(state: unknown) {
+  const id = skillReturnId(state)
+  return id ? { skillReturn: id } : undefined
 }
 
 export function skillLessonIds(id: string): readonly string[] {

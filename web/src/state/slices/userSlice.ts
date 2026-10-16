@@ -22,6 +22,9 @@ export function userActions(set: SetState, firstGroup: (track: Track) => string)
     setTheme(theme: 'light' | 'dark') {
       set({ theme })
     },
+    setSkillScene(skillScene: LearningState['skillScene']) {
+      set((prev) => (prev.skillScene === skillScene ? {} : { skillScene }))
+    },
     setQuery(query: string) {
       set({ query })
     },

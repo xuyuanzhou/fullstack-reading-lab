@@ -4,6 +4,7 @@ import { G1_WRITTEN_EXAMS, G2_RETRY_EXAMS, G2_WRITTEN_EXAMS, G3_WRITTEN_EXAMS, G
 import { choicesFor } from '@/data/gateChoices'
 import { openQuestionById, type GateOpenQuestion } from '@/data/gateOpen'
 import { nextVerifyId, verifyTier } from '@/data/gateVerify'
+import { ORDER_SCALE_EXAMS } from '@/data/orderScaleGate'
 import { RichBlocks } from '@/components/RichBlocks'
 import { choicePassEvidence, exportEnvelope, labFailureEvidence, previewImport, selfEvidenceForDraft, taskVerified, type Attempt, type Evidence } from '@/state/learningEvidence'
 import { useProgress } from '@/state/progress'
@@ -27,6 +28,7 @@ const WRITTEN_EXAMS = [
   ...G4_WRITTEN_EXAMS,
   ...G5_WRITTEN_EXAMS,
   ...G6_WRITTEN_EXAMS,
+  ...ORDER_SCALE_EXAMS,
 ]
 
 function examView(attempts: readonly Attempt[], exam: WrittenExam): ExamView {
@@ -192,14 +194,21 @@ function WrittenExamBlock({
     <div className="current-task-lab">
       <p className="current-task-kicker">笔试 {exam.code}</p>
       <p className="current-task-note">题版本 {exam.version}。这一题单独保存，不会改{keeps}，也不会改其他笔试。结论、机制、边界共 10 分由人打，本页不比照下面的要点判对错。</p>
-      <p>{exam.question}</p>
+      <RichBlocks text={exam.question} />
       <ol>
         {exam.parts.map((part) => (
           <li key={part.label}>{part.label} {part.points} 分。</li>
         ))}
       </ol>
       <details className="current-task-answer">
-        <summary>先自己写，再看参考答案</summary>
+        <summary>{exam.answer ? '先自己写，再看标准答案' : '先自己写，再看参考答案'}</summary>
+        {exam.diagram ? (
+          <figure className="exam-figure">
+            <img src={`${import.meta.env.BASE_URL}${exam.diagram}`} alt={`${exam.code} 的标准图`} />
+          </figure>
+        ) : null}
+        {exam.answer ? <RichBlocks text={exam.answer} /> : null}
+        <p className="current-task-kicker">阅卷要点</p>
         {exam.parts.map((part) => (
           <p key={part.label}>{part.label}：{part.lookFor}</p>
         ))}
@@ -477,9 +486,9 @@ export function CurrentTask({
   if (isolatedExam) {
     const view = examViews[isolatedExam.id] ?? { draft: '', hint: 0 as const, showParts: false }
     return (
-      <section className="current-task" aria-label={isolatedExam.question}>
+      <section className="current-task" aria-label={isolatedExam.question.split('\n')[0]}>
         <WrittenExamBlock
-          mode="choice"
+          mode={isolatedExam.gateId === 'g-order-scale' ? 'written' : 'choice'}
           exam={isolatedExam}
           keeps="这一关其它验证的草稿"
           view={view}
