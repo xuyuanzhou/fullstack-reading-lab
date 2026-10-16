@@ -74,6 +74,7 @@
 .route-fx.is-catalog {
   background: transparent;
   top: calc(var(--lab-header) + env(safe-area-inset-top, 0px));
+  pointer-events: none;
   animation: fx-roster-veil var(--fx-ms) ease forwards;
 }
 
@@ -239,7 +240,8 @@
 .fx-roster-dim {
   position: absolute;
   inset: 0;
-  background: color-mix(in srgb, var(--lab-stage-ink) 28%, transparent);
+  /* 用石台阴影色。夜间墨色是浅的，拿来铺遮罩会把整页洗白。 */
+  background: color-mix(in srgb, var(--lab-stage-shadow-fill) 46%, transparent);
 }
 
 .fx-roster-slot {

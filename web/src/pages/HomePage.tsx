@@ -1,6 +1,6 @@
 import { Button, Space, Typography } from 'antd'
 import { ProgressTransfer } from '@/components/learning/ProgressTransfer'
-import { useEffect } from 'react'
+import { startTransition, useEffect, useState } from 'react'
 import { Link, Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { findLesson, lessonsFor, lessonsInGroup, outlineFor, prefetchLessonBody, totals } from '@/data/curriculum'
 import { pointTotal } from '@/data/curriculumCards'
@@ -54,6 +54,16 @@ export function HomePage() {
   const upcomingId = track && label
     ? (lessonsFor(track).find((item) => !progress.done.includes(item.id)) || lessonsFor(track)[0])?.id || ''
     : ''
+  const listKey = track && label ? `${track}:${groupKey}` : ''
+  const [shownList, setShownList] = useState('')
+  const rowsReady = listKey !== '' && shownList === listKey
+  useEffect(() => {
+    if (!listKey) return
+    const id = window.requestAnimationFrame(() => {
+      startTransition(() => setShownList(listKey))
+    })
+    return () => window.cancelAnimationFrame(id)
+  }, [listKey])
   useEffect(() => {
     if (upcomingId) prefetchLessonBody(upcomingId)
     if (track && label) markSceneReady(location.pathname)
@@ -134,33 +144,41 @@ export function HomePage() {
             {chapterDone}/{visible.length} 已掌握
           </Typography.Text>
         </div>
-        {sections.length ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-            {sections.map((section) => {
-              const items = section.ids
-                .map((id) => findLesson(id))
-                .filter((item): item is LessonSummary => !!item && item.track === track && item.group === label)
-              if (!items.length) return null
-              return (
-                <div key={section.title}>
+        {rowsReady ? (
+          sections.length ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              {sections.map((section) => {
+                const items = section.ids
+                  .map((id) => findLesson(id))
+                  .filter((item): item is LessonSummary => !!item && item.track === track && item.group === label)
+                if (!items.length) return null
+                return (
+                  <div key={section.title}>
+                    <Typography.Text type="secondary" style={{ display: 'block', marginBottom: 8 }}>
+                      {section.title}
+                    </Typography.Text>
+                    <LessonRows items={items} doneIds={progress.done} onOpen={progress.remember} />
+                  </div>
+                )
+              })}
+              {remainder.length ? (
+                <div>
                   <Typography.Text type="secondary" style={{ display: 'block', marginBottom: 8 }}>
-                    {section.title}
+                    本章其他
                   </Typography.Text>
-                  <LessonRows items={items} doneIds={progress.done} onOpen={progress.remember} />
+                  <LessonRows items={remainder} doneIds={progress.done} onOpen={progress.remember} />
                 </div>
-              )
-            })}
-            {remainder.length ? (
-              <div>
-                <Typography.Text type="secondary" style={{ display: 'block', marginBottom: 8 }}>
-                  本章其他
-                </Typography.Text>
-                <LessonRows items={remainder} doneIds={progress.done} onOpen={progress.remember} />
-              </div>
-            ) : null}
-          </div>
+              ) : null}
+            </div>
+          ) : (
+            <LessonRows items={visible} doneIds={progress.done} onOpen={progress.remember} />
+          )
         ) : (
-          <LessonRows items={visible} doneIds={progress.done} onOpen={progress.remember} />
+          <div className="route-opening" aria-hidden="true">
+            <span className="route-opening-line is-title" />
+            <span className="route-opening-line" />
+            <span className="route-opening-line is-short" />
+          </div>
         )}
       </section>
     </div>

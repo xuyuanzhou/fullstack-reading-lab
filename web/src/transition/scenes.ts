@@ -28,6 +28,12 @@ export function pageScene(pathname: string): PageScene {
  * 总图打开课表用课表展开，落在正文栏里。课表点进总图不铺雾面。
  * 章节首页与课文之间不播，交给正文占位。
  */
+/** 窄屏不播课表纸页：纸页会盖住刚打开的课表，看起来像还在加载。 */
+export function transitionPlayback(kind: TransitionKind | null, viewportWidth: number): TransitionKind | null {
+  if (kind === 'catalog' && viewportWidth <= 720) return null
+  return kind
+}
+
 export function transitionKind(from: string, to: string): TransitionKind | null {
   if (from === to) return null
   const start = pageScene(from)

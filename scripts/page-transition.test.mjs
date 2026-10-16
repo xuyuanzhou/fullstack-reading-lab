@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { JUMP_BUDGET_MS, jumpIsOver, jumpTotal } from '../web/src/transition/jumpBudget.ts'
-import { LITE_MS, TRANSITION_MS, pageScene, transitionKind } from '../web/src/transition/scenes.ts'
+import { LITE_MS, TRANSITION_MS, pageScene, transitionKind, transitionPlayback } from '../web/src/transition/scenes.ts'
 import { WARP_FRAGMENT } from '../web/src/transition/warp.ts'
 import { chooseTier, noteSlowFrames, resetTransitionTier, tierIsForcedLite } from '../web/src/transition/quality.ts'
 
@@ -20,6 +20,10 @@ test('entering a lesson from the atlas plays; leaving the atlas does not go blac
   assert.equal(transitionKind('/paths', '/frontend/fullstack/http-methods'), 'splice')
   assert.equal(transitionKind('/frontend/fullstack/http-methods', '/paths'), null)
   assert.equal(transitionKind('/paths', '/frontend/fullstack'), 'catalog')
+  assert.equal(transitionPlayback('catalog', 390), null)
+  assert.equal(transitionPlayback('catalog', 720), null)
+  assert.equal(transitionPlayback('catalog', 721), 'catalog')
+  assert.equal(transitionPlayback('splice', 390), 'splice')
   // 章节课表 ↔ 课文：不播特效
   assert.equal(transitionKind('/frontend/fullstack', '/java/language/jvm'), null)
   assert.equal(transitionKind('/frontend/fullstack/http-methods', '/frontend/fullstack'), null)

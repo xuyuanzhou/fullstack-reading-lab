@@ -6,7 +6,7 @@ import { playCampTick, playTransitionCue, primeTransitionAudio, setTransitionAud
 import { beginJump, completeJump, JUMP_BUDGET_MS, markSceneReady } from './jumpBudget.ts'
 import { currentTier, type Tier } from './quality.ts'
 import { ChallengeFx, RosterFx } from './ChallengeFx.tsx'
-import { LITE_MS, TRANSITION_MS, pageScene, transitionKind, type TransitionKind } from './scenes.ts'
+import { LITE_MS, TRANSITION_MS, pageScene, transitionKind, transitionPlayback, type TransitionKind } from './scenes.ts'
 import { preloadWarp, runWarp } from './warp.ts'
 
 type Fx = { kind: TransitionKind; tier: Tier; ms: number }
@@ -51,7 +51,7 @@ export function RouteTransition() {
     prev.current = to
     prevSearch.current = search
     flush()
-    const kind = transitionKind(from, to)
+    const kind = transitionPlayback(transitionKind(from, to), window.innerWidth)
     const tier = currentTier()
     const overlayMs = !kind || tier === 'off' ? 0 : tier === 'lite' ? LITE_MS : TRANSITION_MS[kind]
     beginJump(to, overlayMs)
