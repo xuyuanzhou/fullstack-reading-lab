@@ -3,11 +3,11 @@ import zhCN from 'antd/locale/zh_CN'
 import { lazy, Suspense } from 'react'
 import { HashRouter, Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { AppLayout } from '@/components/AppLayout'
-import { ProgressProvider, useLearningSlice, useReadingPlace } from '@/state/progress'
+import { ProgressProvider, useLearningSlice } from '@/state/progress'
 import { ReadingBoundary } from '@/components/ReadingBoundary'
 import { RouteSkeleton } from '@/components/RouteSkeleton'
 import { findLesson } from '@/data/curriculum'
-import { isTrack, lessonPath, resumePath } from '@/data/routes'
+import { isTrack, lessonPath } from '@/data/routes'
 
 const HomePage = lazy(() => import('@/pages/HomePage').then(m => ({ default: m.HomePage })))
 const AuditPage = lazy(() => import('@/pages/AuditPage').then(m => ({ default: m.AuditPage })))
@@ -23,17 +23,12 @@ const PathPage = lazy(() => import('@/pages/PathPage').then(m => ({ default: m.P
 const SkillsPage = lazy(() => import('@/pages/SkillsPage').then(m => ({ default: m.SkillsPage })))
 const DrillPage = lazy(() => import('@/pages/DrillPage').then(m => ({ default: m.DrillPage })))
 
-function ResumeRoute() {
-  const progress = useReadingPlace()
-  return <Navigate to={resumePath(progress.track, progress.group)} replace />
-}
-
 function LegacyLessonRedirect() {
   const { lessonId = '' } = useParams()
   let id = lessonId
   try { id = decodeURIComponent(lessonId) } catch { /* keep the raw segment */ }
   const lesson = findLesson(id)
-  if (!lesson || !isTrack(lesson.track)) return <ResumeRoute />
+  if (!lesson || !isTrack(lesson.track)) return <Navigate to="/paths" replace />
   return <Navigate to={lessonPath(lesson)} replace />
 }
 
@@ -92,8 +87,8 @@ function ThemedApp() {
           <Suspense fallback={<RouteSkeleton />}>
           <Routes>
             <Route element={<AppLayout />}>
-              <Route index element={<ResumeRoute />} />
-              <Route path="home" element={<ResumeRoute />} />
+              <Route index element={<Navigate to="/paths" replace />} />
+              <Route path="home" element={<Navigate to="/paths" replace />} />
               <Route path="lesson/:lessonId" element={<LegacyLessonRedirect />} />
               <Route path="knowledge" element={<KnowledgePage />} />
               <Route path="library" element={<Navigate to="/knowledge" replace />} />
@@ -116,7 +111,7 @@ function ThemedApp() {
               <Route path="paths/:kind" element={<Navigate to="/paths" replace />} />
               <Route path=":track/:groupKey" element={<HomePage />} />
               <Route path=":track/:groupKey/:lessonId" element={<LessonPage />} />
-              <Route path="*" element={<ResumeRoute />} />
+              <Route path="*" element={<Navigate to="/paths" replace />} />
             </Route>
           </Routes>
           </Suspense>

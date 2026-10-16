@@ -8,6 +8,7 @@ import {
   MoonOutlined,
   ReadOutlined,
   SunOutlined,
+  UnorderedListOutlined,
 } from '@ant-design/icons'
 import { Alert, Badge, Button, Drawer, Layout, Menu, Typography, theme } from 'antd'
 import { Suspense, useEffect, useMemo, useState } from 'react'
@@ -16,8 +17,8 @@ import { findLesson, isVersionSince, lessonsFor, lessonsInGroup, outlineFor, pre
 import { TRACK_LABEL } from '@/data/meta'
 import { shortTitle } from '@/data/reading'
 import { courseGroups, groupLabel, groupPath, isTrack, lessonPath, resumePath } from '@/data/routes'
-import { pointsOf } from '@/data/drillRules'
-import { useLearningSlice, useProgress } from '@/state/progress'
+import { useLearningSlice } from '@/state/progress'
+import { useShallow } from 'zustand/react/shallow'
 import { RouteSkeleton } from '@/components/RouteSkeleton'
 import { ProgressAside } from '@/components/ProgressAside'
 import { ReadingBoundary } from '@/components/ReadingBoundary'
@@ -28,7 +29,33 @@ const { Sider, Content } = Layout
 export function AppLayout() {
   const navigate = useNavigate()
   const location = useLocation()
-  const progress = useProgress()
+  const progress = useLearningSlice(useShallow((state) => ({
+    track: state.track,
+    group: state.group,
+    done: state.done,
+    review: state.review,
+    aiReview: state.aiReview,
+    localCategory: state.localCategory,
+    theme: state.theme,
+    storageIssue: state.storageIssue,
+    remember: state.remember,
+    selectLesson: state.selectLesson,
+    setLocalCategory: state.setLocalCategory,
+    setTheme: state.setTheme,
+  })))
+  const onDrill = location.pathname === '/drill' || location.pathname.startsWith('/drill/')
+  const drillLog = useLearningSlice((state) => (onDrill ? state.drill.log : null))
+  const [drillPoints, setDrillPoints] = useState<number | null>(null)
+  useEffect(() => {
+    if (!drillLog) return
+    let cancel = false
+    void import('@/data/drillRules').then((mod) => {
+      if (!cancel) setDrillPoints(mod.pointsOf({ log: drillLog }))
+    })
+    return () => {
+      cancel = true
+    }
+  }, [drillLog])
   useEffect(() => {
     const warm = (event: Event) => {
       const target = event.target
@@ -64,7 +91,7 @@ export function AppLayout() {
 
   const trackLessons = lessonsFor(activeTrack)
   const doneCount = trackLessons.filter((lesson) => progress.done.includes(lesson.id)).length
-  const homeTo = resumePath(activeTrack, activeGroupKey)
+  const homeTo = '/paths'
 
   const currentLesson = useMemo(() => {
     const id = courseLesson?.params.lessonId
@@ -91,8 +118,6 @@ export function AppLayout() {
   const onAi = location.pathname === '/ai' || location.pathname.startsWith('/ai/')
   const aiSectionKey = location.pathname.split('/')[2] || 'intro'
   const onLab = location.pathname.startsWith('/ai/lab')
-  const onDrill = location.pathname === '/drill' || location.pathname.startsWith('/drill/')
-  const drillPoints = useLearningSlice((state) => pointsOf(state.drill))
   const labTitle = location.pathname.startsWith('/ai/lab/agent') ? '开发 agent' : '优化提示词'
   const [aiNav, setAiNav] = useState<{
     sections: { key: string; label: string }[]
@@ -258,6 +283,7 @@ export function AppLayout() {
 
   const navItems = [
     { key: 'home', icon: <ReadOutlined />, label: '学习路线' },
+    { key: 'catalog', icon: <UnorderedListOutlined />, label: '课表' },
     { key: 'knowledge', icon: <BookOutlined />, label: '知识库' },
     { key: 'audit', icon: <ExperimentOutlined />, label: '知识核验' },
     {
@@ -275,21 +301,14 @@ export function AppLayout() {
   ]
 
   const navSelected = (() => {
-    if (
-      onAi ||
-      isTrack(routeTrack) ||
-      location.pathname === '/' ||
-      location.pathname === '/home' ||
-      location.pathname.startsWith('/lesson/')
-    )
-      return 'home'
+    if (location.pathname === '/paths' || location.pathname.startsWith('/paths/')) return 'home'
+    if (courseGroup && !courseLesson && isTrack(courseGroup.params.track)) return 'catalog'
     if (location.pathname.startsWith('/knowledge')) return 'knowledge'
     if (location.pathname.startsWith('/audit')) return 'audit'
     if (location.pathname.startsWith('/review')) return 'review'
     if (location.pathname.startsWith('/local')) return 'local'
-    if (location.pathname.startsWith('/skills')) return ''
     if (location.pathname.startsWith('/drill')) return 'drill'
-    return 'home'
+    return ''
   })()
 
   useEffect(() => {
@@ -418,6 +437,10 @@ export function AppLayout() {
                       void reconnectLocal().then((ready) => { if (ready) navigate('/local') })
                       return
                     }
+                    if (item.key === 'catalog') {
+                      navigate(resumePath(progress.track, progress.group))
+                      return
+                    }
                     navigate(item.key === 'home' ? homeTo : `/${item.key}`)
                   }}
                 >
@@ -438,7 +461,7 @@ export function AppLayout() {
 
           <div className="header-tools">
             <span className="header-count">
-              {onDrill ? `积分 ${drillPoints}` : onAi ? `${aiNav?.noteCount ?? '…'} 篇` : `${doneCount}/${trackLessons.length}`}
+              {onDrill ? `积分 ${drillPoints ?? '…'}` : onAi ? `${aiNav?.noteCount ?? '…'} 篇` : `${doneCount}/${trackLessons.length}`}
             </span>
             <TransitionAudioButton />
             <Button
@@ -508,7 +531,7 @@ function shellPageName(page: {
   if (page.pathname.startsWith('/audit')) return '知识核验'
   if (page.pathname.startsWith('/review')) return '复习清单'
   if (page.pathname.startsWith('/local')) return '我的资料'
-  if (page.track) return `${page.track} · 学习路线`
+  if (page.track) return '课表'
   return ''
 }
 

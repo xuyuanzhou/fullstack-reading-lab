@@ -41,6 +41,7 @@ export type ProgressApi = ProgressState & {
   saveLearningDraft: (attempt: Attempt, evidence?: Evidence) => void
   setLearningPause: (choice: PauseChoice | null) => void
   applyQuest: (action: QuestAction) => QuestSave
+  importProgress: (next: ProgressState) => { ok: boolean; issue: string }
 }
 
 const LearningStoreContext = createContext<LearningStore | null>(null)
@@ -123,6 +124,7 @@ function selectApi(state: LearningState): ProgressApi {
     saveLearningDraft: state.saveLearningDraft,
     setLearningPause: state.setLearningPause,
     applyQuest: state.applyQuest,
+    importProgress: state.importProgress,
   }
 }
 

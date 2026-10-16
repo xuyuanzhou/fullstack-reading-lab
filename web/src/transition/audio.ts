@@ -124,11 +124,22 @@ function cue(context: AudioContext, kind: TransitionKind) {
   osc.connect(gain)
   if (kind === 'splice') {
     osc.type = 'triangle'
-    osc.frequency.setValueAtTime(660, t)
-    gain.gain.exponentialRampToValueAtTime(0.12, t + 0.015)
-    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.18)
+    osc.frequency.setValueAtTime(196, t)
+    osc.frequency.exponentialRampToValueAtTime(523, t + 0.16)
+    gain.gain.exponentialRampToValueAtTime(0.1, t + 0.04)
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.28)
     osc.start(t)
-    osc.stop(t + 0.2)
+    osc.stop(t + 0.3)
+    return
+  }
+  if (kind === 'catalog') {
+    osc.type = 'sine'
+    osc.frequency.setValueAtTime(247, t)
+    osc.frequency.exponentialRampToValueAtTime(392, t + 0.2)
+    gain.gain.exponentialRampToValueAtTime(0.08, t + 0.03)
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.26)
+    osc.start(t)
+    osc.stop(t + 0.28)
     return
   }
   osc.type = 'sine'

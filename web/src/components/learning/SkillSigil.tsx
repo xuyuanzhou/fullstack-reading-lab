@@ -32,6 +32,20 @@ const GLYPHS: Record<string, ReactNode> = {
       <path d="M16 30c2-8 4-8 6 0s4 8 6 0 4-8 6 0" />
     </g>
   ),
+  boot: (
+    <g className="skill-glyph">
+      <rect x="15" y="16" width="18" height="16" rx="2" />
+      <path d="M22 20l6 4-6 4z" />
+    </g>
+  ),
+  sca: (
+    <g className="skill-glyph">
+      <path d="M16 18h16M18 18l6 12M30 18l-6 12" />
+      <circle cx="16" cy="18" r="2" />
+      <circle cx="32" cy="18" r="2" />
+      <circle cx="24" cy="30" r="2" />
+    </g>
+  ),
   mybatis: (
     <g className="skill-glyph">
       <rect x="13" y="16" width="8" height="16" rx="1" />
@@ -129,10 +143,34 @@ const GLYPHS: Record<string, ReactNode> = {
       <path d="M24 22v8" />
     </g>
   ),
+  webpack: (
+    <g className="skill-glyph">
+      <path d="M16 16h16v16H16z" />
+      <path d="M16 22h16M22 16v16" />
+    </g>
+  ),
   ssr: (
     <g className="skill-glyph">
       <rect x="14" y="14" width="14" height="10" rx="1" />
       <path d="M18 30h12M24 24v6" />
+    </g>
+  ),
+  rr: (
+    <g className="skill-glyph">
+      <path d="M16 32V18h8" />
+      <path d="M24 14l6 4-6 4" />
+    </g>
+  ),
+  rtk: (
+    <g className="skill-glyph">
+      <rect x="15" y="15" width="18" height="18" rx="2" />
+      <path d="M19 21h10M19 25h10M19 29h6" />
+    </g>
+  ),
+  vrouter: (
+    <g className="skill-glyph">
+      <path d="M16 16v16" />
+      <path d="M16 24h10l4-6M26 24l4 6" />
     </g>
   ),
   pinia: (
@@ -176,6 +214,39 @@ const GLYPHS: Record<string, ReactNode> = {
   algo: (
     <g className="skill-glyph">
       <path d="M16 30l6-14 4 8 6-10" />
+    </g>
+  ),
+  sqlopt: (
+    <g className="skill-glyph">
+      <path d="M16 30l6-8 4 4 6-10" />
+    </g>
+  ),
+  slow: (
+    <g className="skill-glyph">
+      <circle cx="22" cy="22" r="6" />
+      <path d="M26 26l6 6" />
+    </g>
+  ),
+  column: (
+    <g className="skill-glyph">
+      <path d="M16 16h16M16 22h12M16 28h8" />
+    </g>
+  ),
+  migrate: (
+    <g className="skill-glyph">
+      <path d="M16 20h12M28 20l-4-4M28 20l-4 4M32 28H20M20 28l4-4M20 28l4 4" />
+    </g>
+  ),
+  cfg: (
+    <g className="skill-glyph">
+      <circle cx="24" cy="24" r="3" />
+      <path d="M24 15v3M24 30v3M15 24h3M30 24h3" />
+    </g>
+  ),
+  sched: (
+    <g className="skill-glyph">
+      <circle cx="24" cy="24" r="8" />
+      <path d="M24 18v6l4 3" />
     </g>
   ),
   sql: (
@@ -281,6 +352,39 @@ const GLYPHS: Record<string, ReactNode> = {
       <path d="M15 24h18" />
     </g>
   ),
+  ctx: (
+    <g className="skill-glyph">
+      <rect x="14" y="16" width="10" height="10" />
+      <rect x="24" y="22" width="10" height="10" />
+    </g>
+  ),
+  entity: (
+    <g className="skill-glyph">
+      <circle cx="18" cy="24" r="4" />
+      <rect x="26" y="20" width="8" height="8" />
+    </g>
+  ),
+  repo: (
+    <g className="skill-glyph">
+      <path d="M16 18h16v12H16zM16 22h16" />
+    </g>
+  ),
+  mod: (
+    <g className="skill-glyph">
+      <rect x="14" y="16" width="8" height="16" />
+      <rect x="26" y="16" width="8" height="16" />
+    </g>
+  ),
+  sync: (
+    <g className="skill-glyph">
+      <path d="M16 18h12M28 18l-4-3M28 18l-4 3M32 30H20M20 30l4-3M20 30l4 3" />
+    </g>
+  ),
+  evo: (
+    <g className="skill-glyph">
+      <path d="M16 30l6-6 4 3 6-10" />
+    </g>
+  ),
   adr: (
     <g className="skill-glyph">
       <path d="M18 14h8l6 6v14H18zM26 14v6h6M21 26h8M21 30h6" />
@@ -347,15 +451,40 @@ const GLYPHS: Record<string, ReactNode> = {
       <path d="M18 16h12l-6 6 6 6H18l6-6z" />
     </g>
   ),
-  mini: (
+  uniapp: (
     <g className="skill-glyph">
-      <rect x="16" y="16" width="16" height="16" rx="3" />
-      <path d="M20 24h8" />
+      <rect x="15" y="16" width="18" height="16" rx="2" />
+      <path d="M19 22h10M19 26h6" />
+    </g>
+  ),
+  taro: (
+    <g className="skill-glyph">
+      <path d="M16 30V18h16" />
+      <path d="M26 14l6 4-6 4" />
     </g>
   ),
   pattern: (
     <g className="skill-glyph">
       <path d="M24 14l8 5-8 5-8-5zM16 24l8 5 8-5" />
+    </g>
+  ),
+  pcreate: (
+    <g className="skill-glyph">
+      <path d="M24 14v8M20 18h8" />
+      <rect x="16" y="24" width="16" height="8" rx="1" />
+    </g>
+  ),
+  pstruct: (
+    <g className="skill-glyph">
+      <rect x="14" y="16" width="8" height="8" />
+      <rect x="26" y="16" width="8" height="8" />
+      <rect x="20" y="26" width="8" height="8" />
+    </g>
+  ),
+  pbehave: (
+    <g className="skill-glyph">
+      <path d="M16 18h10l4 6-4 6H16" />
+      <path d="M30 24h4" />
     </g>
   ),
   aop: (

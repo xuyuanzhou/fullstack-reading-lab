@@ -1,11 +1,12 @@
 export type PageScene = 'home' | 'levels' | 'sub' | 'other'
-export type TransitionKind = 'warp' | 'splice' | 'pullback'
+export type TransitionKind = 'warp' | 'splice' | 'pullback' | 'catalog'
 
 /** 游戏相关遮罩时长。单位毫秒，都落在 0.8–1.5 秒。 */
 export const TRANSITION_MS: Record<TransitionKind, number> = {
   warp: 1500,
-  splice: 1000,
+  splice: 1200,
   pullback: 900,
+  catalog: 900,
 }
 
 export const LITE_MS = 800
@@ -22,9 +23,10 @@ export function pageScene(pathname: string): PageScene {
 }
 
 /**
- * 只有架构师主线营地（`/paths`）相关跳转播特效：
- * 进营地穿梭、从营地进课文拼接、回营地拉远。
- * 章节首页与课文之间不播，交给 Ant Design Spin。
+ * 从总图进课文是剑客闯关。
+ * 课文回总图不再铺近黑遮罩：浏览器返回和页内回营地都直接看见总图。
+ * 总图打开课表用课表展开，落在正文栏里。课表点进总图不铺雾面。
+ * 章节首页与课文之间不播，交给正文占位。
  */
 export function transitionKind(from: string, to: string): TransitionKind | null {
   if (from === to) return null
@@ -32,9 +34,9 @@ export function transitionKind(from: string, to: string): TransitionKind | null 
   const end = pageScene(to)
   if (start === 'other' || end === 'other') return null
   if (start !== 'levels' && end !== 'levels') return null
-  if (start === 'home' && end === 'levels') return 'warp'
+  if (start === 'home' && end === 'levels') return null
+  if (start === 'sub' && end === 'levels') return null
   if (start === 'levels' && end === 'sub') return 'splice'
-  if (start === 'sub' && end === 'levels') return 'pullback'
-  if (start === 'levels' && end === 'home') return 'pullback'
+  if (start === 'levels' && end === 'home') return 'catalog'
   return null
 }

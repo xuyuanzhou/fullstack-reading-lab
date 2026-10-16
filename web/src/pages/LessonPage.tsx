@@ -88,6 +88,7 @@ export function LessonPage() {
   const spineSlots = onSpine ? slotsOf(onSpine.gate.lessons) : []
   const spineSlot = spineSlots.findIndex((slot) => slot.includes(lesson.id))
   const spinePrev = findLesson(spinePrevId(lesson.id) || '')
+  const spineNext = findLesson(spineNextId(lesson.id) || '')
   const core = structureCore(lesson.core)
   const references = lesson.references || []
   const hasWhy = Boolean(lesson.why?.trim())
@@ -134,7 +135,7 @@ export function LessonPage() {
 
       <Breadcrumb
         items={[
-          { title: <Link to={chapterPath}>学习路线</Link> },
+          { title: <Link to="/paths">学习路线</Link> },
           { title: <Link to={chapterPath}>{groupTitle(lesson.track, chapterKey)}</Link> },
           { title: shortTitle(lesson.title) },
         ]}
@@ -372,20 +373,38 @@ export function LessonPage() {
           <Link className="path-turn-prev" to={gatePath(onSpine.gate.id)} state={skillReturnState(location.state)}>
             先不记，回营地
           </Link>
-          <Link
-            className="next-card"
-            to={gatePath(onSpine.gate.id)}
-            state={{ settled: lesson.id, ...(skillReturnId(location.state) ? { skillReturn: skillReturnId(location.state) } : {}) }}
-            onClick={() => {
-              if (!progress.done.includes(lesson.id)) progress.toggleDone(lesson.id)
-            }}
-          >
-            <div>
-              <small>这一场的结果</small>
-              <strong>记下这一场</strong>
-            </div>
-            <span>→</span>
-          </Link>
+          {spineNext ? (
+            <Link
+              className="next-card"
+              to={lessonPath(spineNext)}
+              state={location.state}
+              onClick={() => {
+                if (!progress.done.includes(lesson.id)) progress.toggleDone(lesson.id)
+                progress.remember(spineNext.id)
+              }}
+            >
+              <div>
+                <small>下一节</small>
+                <strong>{shortTitle(spineNext.title)}</strong>
+              </div>
+              <span>→</span>
+            </Link>
+          ) : (
+            <Link
+              className="next-card"
+              to={gatePath(onSpine.gate.id)}
+              state={{ settled: lesson.id, ...(skillReturnId(location.state) ? { skillReturn: skillReturnId(location.state) } : {}) }}
+              onClick={() => {
+                if (!progress.done.includes(lesson.id)) progress.toggleDone(lesson.id)
+              }}
+            >
+              <div>
+                <small>这一场的结果</small>
+                <strong>记下这一场</strong>
+              </div>
+              <span>→</span>
+            </Link>
+          )}
         </div>
       ) : next ? (
         <Link

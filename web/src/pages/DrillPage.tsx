@@ -110,11 +110,9 @@ function DrillLobby() {
       <ol className="drill-badges">
         {report.badges.map((badge) => (
           <li key={badge.id} className={badge.earned ? 'is-earned' : 'is-locked'}>
-            <Seal status={badge.earned ? 'cleared' : 'locked'} />
-            <span>
-              <strong>{badge.title}</strong>
-              <small>{badge.detail}</small>
-            </span>
+            <span className="drill-crest" aria-hidden="true" />
+            <strong>{badge.title}</strong>
+            <small>{badge.detail}</small>
           </li>
         ))}
       </ol>

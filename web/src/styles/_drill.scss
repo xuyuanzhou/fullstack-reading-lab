@@ -79,20 +79,25 @@
 .drill-badges {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
-  margin: 22px 0 0;
-  padding: 0;
+  gap: 4px 6px;
+  margin: 16px 0 0;
+  padding: 12px 8px 14px;
   list-style: none;
+  border-radius: 22px;
+  background:
+    radial-gradient(1.2px 1.2px at 18% 22%, var(--lab-stage-dust), transparent),
+    radial-gradient(1px 1px at 74% 70%, var(--lab-stage-dust), transparent),
+    var(--lab-stage);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--lab-stage-line) 45%, transparent);
 
   li {
     display: flex;
-    gap: 8px;
+    flex-direction: column;
     align-items: center;
-    min-height: 64px;
-    padding: 8px 10px;
-    border: 1px solid var(--lab-stage-line);
-    border-radius: 14px;
-    background: var(--lab-stage-raise);
+    gap: 6px;
+    min-width: 0;
+    padding: 8px 8px 10px;
+    text-align: center;
   }
 
   strong,
@@ -100,15 +105,50 @@
     display: block;
   }
 
+  strong {
+    font-family: var(--font-serif);
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
   small {
     color: var(--lab-stage-muted);
     font-size: 12px;
-    line-height: 1.4;
+    line-height: 1.45;
   }
 
-  .is-locked {
-    opacity: 0.72;
+  .is-locked strong {
+    color: var(--lab-stage-muted);
   }
+}
+
+.drill-crest {
+  width: 36px;
+  height: 36px;
+  border-radius: 13px 13px 6px 6px;
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--lab-stage-line);
+}
+
+.drill-badges .is-earned .drill-crest {
+  position: relative;
+  background: var(--lab-stage-done);
+  box-shadow:
+    inset 0 -6px 0 var(--lab-stage-plinth-done-r),
+    0 0 0 3px color-mix(in srgb, var(--lab-stage-done) 28%, transparent);
+}
+
+.drill-badges .is-earned .drill-crest::after {
+  content: '';
+  position: absolute;
+  left: 13px;
+  top: 7px;
+  width: 6px;
+  height: 11px;
+  border: solid var(--lab-stage-on-done);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }
 
 .drill-roads {
@@ -850,13 +890,49 @@
   }
 }
 
+@media (min-width: 961px) {
+  .drill h1 {
+    font-size: 20px;
+  }
+
+  .drill-lead {
+    font-size: 14px;
+  }
+
+  .drill-meters b {
+    font-size: 22px;
+  }
+
+  .drill-road-head strong {
+    font-size: 16px;
+  }
+
+  .drill-path strong,
+  .drill-gate-head strong {
+    font-size: 15px;
+  }
+
+  .drill-path em,
+  .drill-roads em,
+  .drill-option {
+    font-size: 13px;
+  }
+
+  .drill-sheet h2 {
+    font-size: 18px;
+  }
+}
+
 @media (max-width: 800px) {
   .drill-mast,
-  .drill-badges,
   .drill-roads,
   .drill-report-courses {
     display: grid;
     grid-template-columns: 1fr;
+  }
+
+  .drill-badges {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .drill-meters {

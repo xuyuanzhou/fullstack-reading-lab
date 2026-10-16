@@ -6,14 +6,22 @@ import { PATHS, deliverableKey, gateCleared, gatePath, nextInGate, slotsOf, spin
 import { skillReturnState } from '@/data/learningSkills'
 import { shortTitle } from '@/data/reading'
 import { lessonPath } from '@/data/routes'
-import { useProgress } from '@/state/progress'
+import { useLearningSlice } from '@/state/progress'
+import { useShallow } from 'zustand/react/shallow'
 
 const AiProgressAside = lazy(() =>
   import('@/components/AiProgressAside').then((m) => ({ default: m.AiProgressAside })),
 )
 
 export function ProgressAside({ localReady }: { localReady: boolean }) {
-  const progress = useProgress()
+  const progress = useLearningSlice(useShallow((state) => ({
+    localCategory: state.localCategory,
+    pathChecks: state.pathChecks,
+    done: state.done,
+    track: state.track,
+    recent: state.recent,
+    remember: state.remember,
+  })))
   const navigate = useNavigate()
   const location = useLocation()
   const [params] = useSearchParams()

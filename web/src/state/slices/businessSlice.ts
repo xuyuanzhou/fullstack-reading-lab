@@ -1,4 +1,5 @@
 import { acceptAnswer, type DrillAttemptInput } from '../../data/drillRules.ts'
+import type { ProgressState } from '../../types/curriculum.ts'
 import type { QuestAction } from '../../data/questBoard.ts'
 import type { LearningState } from '../learningState.ts'
 import {
@@ -111,6 +112,11 @@ export function businessActions(set: SetState, get: GetState) {
       if (!saved.ok) return { ok: false, issue: saved.issue, questionId: '' }
       set({ drill: saved.drill })
       return { ok: true, issue: '', questionId: saved.questionId }
+    },
+    importProgress(next: ProgressState) {
+      if (get().learningReadonly) return { ok: false, issue: '记录版本比本页新，不能改写。' }
+      set(next)
+      return { ok: true, issue: '' }
     },
   }
 }

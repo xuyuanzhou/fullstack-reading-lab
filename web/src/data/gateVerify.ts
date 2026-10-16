@@ -184,8 +184,8 @@ export function gateVerifyFill(
 }
 
 export type GateEdition = {
-  /** 总图和关卡条上的短标记。没有验证题时留空，仍显示原来的「已过」。 */
-  mark: '' | '旧版已过' | '新版已通过'
+  /** 总图上的短标记。没有验证题，或勾选已齐但证据未达标时留空，仍显示原来的「已过」。 */
+  mark: '' | '新版已通过'
   note: string
 }
 
@@ -235,17 +235,11 @@ export function passFlashLine(pass: string) {
   return `新版已通过。${modest}`
 }
 
-/** 旧版过关不改。有验证题时另标：勾选已齐但证据未达标，或每一项都是本地检查通过。 */
+/** 旧版过关不改。证据未达标时不另标。每一项都是本地检查通过才标「新版已通过」。 */
 export function gateEdition(legacyCleared: boolean, fill: Pick<GateVerifyFill, 'total' | 'passed'>): GateEdition {
-  if (!legacyCleared || fill.total === 0) return { mark: '', note: '' }
-  if (fill.passed === fill.total) {
-    return {
-      mark: '新版已通过',
-      note: '新版已通过。每一项都是本地检查通过。阅读和交付的勾选还在。',
-    }
-  }
+  if (!legacyCleared || fill.total === 0 || fill.passed !== fill.total) return { mark: '', note: '' }
   return {
-    mark: '旧版已过',
-    note: '按旧版自评完成。新版待验收。草稿和勾选不算新版通过。',
+    mark: '新版已通过',
+    note: '新版已通过。每一项都是本地检查通过。阅读和交付的勾选还在。',
   }
 }

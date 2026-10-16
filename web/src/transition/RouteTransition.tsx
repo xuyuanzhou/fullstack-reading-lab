@@ -5,12 +5,13 @@ import { useLearningSlice } from '@/state/progress'
 import { playCampTick, playTransitionCue, primeTransitionAudio, setTransitionAudio, transitionAudioEnabled } from './audio.ts'
 import { beginJump, completeJump, JUMP_BUDGET_MS, markSceneReady } from './jumpBudget.ts'
 import { currentTier, type Tier } from './quality.ts'
+import { ChallengeFx, RosterFx } from './ChallengeFx.tsx'
 import { LITE_MS, TRANSITION_MS, pageScene, transitionKind, type TransitionKind } from './scenes.ts'
 import { preloadWarp, runWarp } from './warp.ts'
 
 type Fx = { kind: TransitionKind; tier: Tier; ms: number }
 
-/** 仅在进出 `/paths` 营地时铺特效；其它学习路径跳转无遮罩，加载用页面里的 Spin。 */
+/** 总图进课文是闯关，总图开课表是纸页展开。回总图和课表进总图不遮罩。其它路径用正文占位。 */
 export function RouteTransition() {
   const location = useLocation()
   const flush = useLearningSlice((state) => state.flushPersist)
@@ -79,18 +80,12 @@ export function RouteTransition() {
       data-tier={fx.tier}
       aria-hidden="true"
     >
-      {fx.kind === 'warp' ? <WarpView ms={fx.ms} tier={fx.tier} /> : <div className="route-fx-fallback" />}
-      {fx.kind === 'splice' ? (
-        <>
-          <span className="route-fx-pane is-left" />
-          <span className="route-fx-pane is-right" />
-          <span className="route-fx-seam" />
-          {fx.tier === 'full' ? <BurstView ms={fx.ms} /> : null}
-        </>
-      ) : null}
+      {fx.kind === 'warp' ? <WarpView ms={fx.ms} tier={fx.tier} /> : null}
+      {fx.kind === 'splice' ? <ChallengeFx /> : null}
+      {fx.kind === 'catalog' ? <RosterFx /> : null}
       {fx.kind === 'pullback' ? <div className="route-fx-camera" /> : null}
-      <span className="route-fx-scan" />
-      <span className="route-fx-neon" />
+      {fx.kind === 'pullback' ? <span className="route-fx-scan" /> : null}
+      {fx.kind === 'pullback' ? <span className="route-fx-neon" /> : null}
     </div>
   )
 }
@@ -117,48 +112,6 @@ function WarpView({ ms, tier }: { ms: number; tier: Tier }) {
     return stop
   }, [ms, tier])
   if (!useGl) return <div className="route-fx-fallback" />
-  return <canvas ref={ref} className="route-fx-gl" />
-}
-
-function BurstView({ ms }: { ms: number }) {
-  const ref = useRef<HTMLCanvasElement>(null)
-  useEffect(() => {
-    const canvas = ref.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-    const dots = Array.from({ length: 36 }, () => ({
-      a: Math.random() * Math.PI * 2,
-      v: 0.25 + Math.random() * 0.75,
-      r: 1 + Math.random() * 1.6,
-    }))
-    let frame = 0
-    const started = performance.now()
-    const draw = (now: number) => {
-      const t = Math.min(1, (now - started) / ms)
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.5)
-      const width = Math.max(1, Math.floor(canvas.clientWidth * dpr))
-      const height = Math.max(1, Math.floor(canvas.clientHeight * dpr))
-      if (canvas.width !== width || canvas.height !== height) {
-        canvas.width = width
-        canvas.height = height
-      }
-      ctx.clearRect(0, 0, width, height)
-      const cx = width / 2
-      const cy = height / 2
-      for (const dot of dots) {
-        const dist = t * dot.v * Math.min(width, height) * 0.55
-        ctx.globalAlpha = 1 - t
-        ctx.fillStyle = '#d7ebe0'
-        ctx.beginPath()
-        ctx.arc(cx + Math.cos(dot.a) * dist, cy + Math.sin(dot.a) * dist, dot.r * dpr, 0, Math.PI * 2)
-        ctx.fill()
-      }
-      if (t < 1) frame = requestAnimationFrame(draw)
-    }
-    frame = requestAnimationFrame(draw)
-    return () => cancelAnimationFrame(frame)
-  }, [ms])
   return <canvas ref={ref} className="route-fx-gl" />
 }
 

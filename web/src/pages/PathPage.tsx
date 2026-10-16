@@ -2,19 +2,21 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { CurrentTask } from '@/components/learning/CurrentTask'
 import { RichBlocks } from '@/components/RichBlocks'
-import { aiNoteById } from '@/data/aiCatalog'
+import { aiNoteRef } from '@/data/aiNoteIndex'
 import { findLesson, loadFullLesson, prefetchLessonBody } from '@/data/curriculum'
 import { deliverableShort, FROZEN_DELIVERABLES } from '@/data/deliverableMap'
 import { gateAdvise, gateEdition, gateVerifyFill, passFlashLine, verifyFace, verifyFaceLabel, verifyItemsForGate } from '@/data/gateVerify'
 import { PATHS, campScene, deliverableKey, gateCleared, gateMark, nextInGate, requiredSlotsOf, settleLine, type PathGate } from '@/data/learningPaths'
 import { bossQuest, questFace, sideQuests } from '@/data/questBoard'
-import { SKILL_VIEWS, skillBoardState, skillSceneTitle, type SkillGlow } from '@/data/learningSkills'
+import CountUp from '@/components/bits/CountUp'
+import { SKILL_VIEWS, skillBoardState, skillLessonIds, skillProgress, skillSceneTitle, type SkillGlow } from '@/data/learningSkills'
 import { SkillReturn } from '@/components/learning/SkillReturn'
 import { ORDER_SCALE_GATE, ORDER_SCALE_RUBRIC } from '@/data/orderScaleGate'
 import { SIDE_TRACKS } from '@/data/sideTracks'
 import { shortTitle } from '@/data/reading'
 import { lessonPath } from '@/data/routes'
-import { useProgress } from '@/state/progress'
+import { useLearningSlice } from '@/state/progress'
+import { useShallow } from 'zustand/react/shallow'
 import { playCampTick } from '@/transition/audio'
 import { markSceneReady } from '@/transition/jumpBudget'
 import type { Lesson } from '@/types/curriculum'
@@ -99,7 +101,19 @@ function sceneNodes(gate: PathGate, done: Set<string>, nextId: string) {
 }
 
 export function PathPage() {
-  const progress = useProgress()
+  const progress = useLearningSlice(useShallow((state) => ({
+    done: state.done,
+    pathChecks: state.pathChecks,
+    aiDone: state.aiDone,
+    skillScene: state.skillScene,
+    skipVerify: state.skipVerify,
+    learning: state.learning,
+    remember: state.remember,
+    togglePathCheck: state.togglePathCheck,
+    skipGateVerify: state.skipGateVerify,
+    setLearningPause: state.setLearningPause,
+    applyQuest: state.applyQuest,
+  })))
   const location = useLocation()
   const navigate = useNavigate()
   const [params, setParams] = useSearchParams()
@@ -352,11 +366,15 @@ export function PathPage() {
   if (sideSceneLive >= 0) sideNodes[sideSceneLive] = { ...sideNodes[sideSceneLive], status: '进行中' }
 
   const skillDone = new Set([...progress.done, ...progress.aiDone])
-  const skillExists = (id: string) => (id.startsWith('ai:') ? Boolean(aiNoteById(id)) : Boolean(findLesson(id)))
+  const skillExists = (id: string) => (id.startsWith('ai:') ? Boolean(aiNoteRef(id)) : Boolean(findLesson(id)))
   const { glow: skillGlow, activeId: skillActive } = skillBoardState(skillDone, skillExists, progress.skillScene)
   const skillLit = SKILL_VIEWS.filter((item) => skillGlow[item.id] === 'lit').length
   const skillTotal = SKILL_VIEWS.length
-  const skillActiveTitle = SKILL_VIEWS.find((item) => item.id === skillActive)?.title
+  const skillActiveView = SKILL_VIEWS.find((item) => item.id === skillActive)
+  const skillActiveTitle = skillActiveView?.title
+  const skillActiveFill = skillActiveView
+    ? skillProgress(skillLessonIds(skillActiveView.id), skillDone, skillExists)
+    : null
   const igniteStars = igniteChart(skillGlow, skillActive)
 
   if (!inGate && !sideTrack && !bossPage) {
@@ -427,7 +445,7 @@ export function PathPage() {
               <span className="skill-ignite-kicker">能力星图</span>
               <span className="skill-ignite-title">点亮技能树</span>
               <span className="skill-ignite-meta">
-                <b>{skillLit}/{skillTotal}</b>
+                <b><CountUp to={skillLit} duration={0.7} trigger="load" />/{skillTotal}</b>
                 {' '}已点亮
                 {progress.skillScene === 'all' ? '' : ` · ${skillSceneTitle(progress.skillScene)}`}
                 {skillActiveTitle ? (
@@ -435,6 +453,7 @@ export function PathPage() {
                     {' · 正在点亮「'}
                     <span className="skill-ignite-now">{skillActiveTitle}</span>
                     {'」'}
+                    {skillActiveFill && skillActiveFill.total > 0 ? ` ${skillActiveFill.read}/${skillActiveFill.total}` : ''}
                   </>
                 ) : ' · 一课一火'}
               </span>
@@ -996,11 +1015,29 @@ function CampaignTraveler({
       <path ref={measure} d={d} fill="none" stroke="none" />
       {pos ? (
         <g className="campaign-traveler" transform={`translate(${pos.x} ${pos.y})`}>
-          <ellipse className="traveler-shadow" cx="0" cy="3" rx="10" ry="3" />
+          <ellipse className="traveler-shadow" cx="1" cy="5" rx="13" ry="3.2" />
           <g className="traveler-body">
-            <path className="traveler-scarf" d="M-2 -12 C-8 -10 -12 -15 -11 -8" />
-            <path className="traveler-cloak" d="M0 -18 L8 0 L-6 0 Z" />
-            <circle className="traveler-head" cx="0.6" cy="-22" r="3.6" />
+            <g className="traveler-figure">
+              <path className="traveler-cape" d="M-2 -26 C-14 -24 -16 -10 -9 3 C-12 -6 -10 -18 -2 -22 Z" />
+              <path className="traveler-leg is-back" d="M-1.5 -9 L-9 1.2 L-5.6 2.2 L0.4 -7.2 Z" />
+              <path className="traveler-leg is-front" d="M1.5 -9 L9 0.6 L5.8 1.8 L-0.2 -7.2 Z" />
+              <path className="traveler-cloak" d="M-7.5 -27.5 C-2 -29.5 4 -29 8 -26 L5.2 -8.5 C1 -6.8 -1 -6.8 -4.2 -8.5 Z" />
+              <path className="traveler-hood" d="M-4.6 -27 L-3.2 -38.5 L1.2 -41 L5.4 -32 L4.2 -26.2 Z" />
+              <path className="traveler-visor" d="M-1.8 -33.2 L3.4 -32.2" />
+              <path className="traveler-collar" d="M-5.2 -26.8 L6.2 -25.6" />
+              <g transform="translate(6.6 -26)">
+                <g className="traveler-swing">
+                  <path className="traveler-blade" d="M2.6 -15 L8 -13.6 L5.4 -34 Z" />
+                  <path className="traveler-edge" d="M5.1 -16.2 L5.3 -31" />
+                  <path className="traveler-arm" d="M0 0 L3.8 -0.3 L5.4 -7.6 L1.6 -7 Z" />
+                  <path className="traveler-hand" d="M2 -7.2 C0.9 -8.6 1.1 -12.2 3.5 -12.8 L4.2 -9.4 Z" />
+                  <path className="traveler-fingers" d="M5 -7.4 C7.8 -8 8.2 -12.4 5.5 -13.2 L4.6 -9.6 Z" />
+                  <path className="traveler-grip" d="M3.7 -6.4 L4.9 -15" />
+                  <circle className="traveler-pommel" cx="3.4" cy="-6" r="1.9" />
+                  <path className="traveler-guard" d="M2 -15.2 L10.2 -13.6" />
+                </g>
+              </g>
+            </g>
           </g>
         </g>
       ) : null}

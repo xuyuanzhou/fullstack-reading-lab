@@ -1,4 +1,5 @@
 import { Button, Space, Typography } from 'antd'
+import { ProgressTransfer } from '@/components/learning/ProgressTransfer'
 import { useEffect } from 'react'
 import { Link, Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { findLesson, lessonsFor, lessonsInGroup, outlineFor, prefetchLessonBody, totals } from '@/data/curriculum'
@@ -98,6 +99,9 @@ export function HomePage() {
           <Button onClick={() => navigate('/paths')}>
             按主线学
           </Button>
+          <Button onClick={() => navigate('/skills')}>
+            点亮技能树
+          </Button>
           <Button onClick={() => navigate('/knowledge')}>
             浏览知识库
           </Button>
@@ -118,6 +122,8 @@ export function HomePage() {
           全路线 <strong>{current.length}</strong>
         </span>
       </div>
+
+      <ProgressTransfer />
 
       <section>
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, marginBottom: 8 }}>

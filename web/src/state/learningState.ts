@@ -41,6 +41,7 @@ export type LearningState = ProgressState & {
   setLearningPause: (choice: PauseChoice | null) => void
   applyQuest: (action: QuestAction) => QuestSave
   answerDrill: (input: DrillAttemptInput) => { ok: boolean; issue: string; questionId: string }
+  importProgress: (next: ProgressState) => { ok: boolean; issue: string }
   reconnectLocal: () => Promise<boolean>
   /** 立刻按 revision 合并写回。测试和离开页时用。 */
   flushPersist: () => void

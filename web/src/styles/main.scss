@@ -112,11 +112,63 @@ textarea {
 }
 
 .route-loading {
-  display: grid;
-  place-items: center;
-  min-height: 12rem;
-  padding: 40px 24px;
+  box-sizing: border-box;
+  width: min(100%, var(--lab-measure, 42rem));
+  margin-inline: auto;
+  min-height: 16rem;
+  padding: 8px 0 40px;
   color: var(--lab-muted);
+}
+
+.route-loading-label {
+  margin: 0 0 18px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+
+.route-opening {
+  display: grid;
+  gap: 14px;
+}
+
+.route-opening-rule {
+  width: 36px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--lab-accent);
+}
+
+.route-opening-line {
+  height: 12px;
+  width: 100%;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--lab-line, #d9ddd8) 85%, transparent);
+}
+
+.route-opening-line.is-title {
+  height: 22px;
+  width: 46%;
+  background: color-mix(in srgb, var(--lab-ink, #2e3330) 14%, var(--lab-line, #d9ddd8));
+}
+
+.route-opening-line.is-short {
+  width: 68%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .route-opening-line {
+    animation: route-ink 1.4s ease-in-out infinite;
+  }
+
+  .route-opening-line.is-short {
+    animation-delay: 0.18s;
+  }
+}
+
+@keyframes route-ink {
+  0%,
+  100% { opacity: 0.4; }
+  50% { opacity: 1; }
 }
 
 .route-fail {

@@ -156,11 +156,28 @@ function answerKey(row: DrillAnswer) {
   return `${row.mode}:${row.attempt}:${row.questionId}:${row.at}`
 }
 
+let rowsCacheLog: DrillAnswer[] | null = null
+let rowsCache = new Map<string, DrillAnswer[]>()
+
 function rowsFor(log: DrillAnswer[], gateId: string, mode: DrillMode) {
   const gate = gateById(gateId)
   if (!gate) return []
-  const ids = new Set(gate.questionIds)
-  return log.filter((row) => row.mode === mode && ids.has(row.questionId))
+  if (rowsCacheLog !== log) {
+    rowsCacheLog = log
+    rowsCache = new Map()
+    for (const row of log) {
+      const list = rowsCache.get(row.questionId)
+      if (list) list.push(row)
+      else rowsCache.set(row.questionId, [row])
+    }
+  }
+  const rows: DrillAnswer[] = []
+  for (const id of gate.questionIds) {
+    const list = rowsCache.get(id)
+    if (!list) continue
+    for (const row of list) if (row.mode === mode) rows.push(row)
+  }
+  return rows
 }
 
 function byAttempt(rows: DrillAnswer[]) {
@@ -436,12 +453,19 @@ export type PointReport = {
   weak: boolean
 }
 
+const QUESTIONS_BY_POINT = new Map<string, typeof DRILL_QUESTIONS>()
+for (const question of DRILL_QUESTIONS) {
+  const list = QUESTIONS_BY_POINT.get(question.pointId)
+  if (list) list.push(question)
+  else QUESTIONS_BY_POINT.set(question.pointId, [question])
+}
+
 export function learningReport(raw: DrillState) {
   const state = normalizeDrill(raw)
   const latest = new Map<string, DrillAnswer>()
   for (const row of state.log) latest.set(row.questionId, row)
   const points: PointReport[] = DRILL_POINTS.map((point) => {
-    const questions = DRILL_QUESTIONS.filter((item) => item.pointId === point.id)
+    const questions = QUESTIONS_BY_POINT.get(point.id) ?? []
     const answers = questions.map((item) => latest.get(item.id)).filter((item): item is DrillAnswer => Boolean(item))
     const correct = answers.filter((item) => item.correct).length
     return {

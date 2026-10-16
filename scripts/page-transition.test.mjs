@@ -15,11 +15,11 @@ test('home, level list, and sub level are different scenes', () => {
   assert.equal(pageScene('/ai/intro'), 'other')
 })
 
-test('only hops that touch /paths use cinematic transitions', () => {
-  assert.equal(transitionKind('/frontend/fullstack', '/paths'), 'warp')
+test('entering a lesson from the atlas plays; leaving the atlas does not go black', () => {
+  assert.equal(transitionKind('/frontend/fullstack', '/paths'), null)
   assert.equal(transitionKind('/paths', '/frontend/fullstack/http-methods'), 'splice')
-  assert.equal(transitionKind('/frontend/fullstack/http-methods', '/paths'), 'pullback')
-  assert.equal(transitionKind('/paths', '/frontend/fullstack'), 'pullback')
+  assert.equal(transitionKind('/frontend/fullstack/http-methods', '/paths'), null)
+  assert.equal(transitionKind('/paths', '/frontend/fullstack'), 'catalog')
   // 章节课表 ↔ 课文：不播特效
   assert.equal(transitionKind('/frontend/fullstack', '/java/language/jvm'), null)
   assert.equal(transitionKind('/frontend/fullstack/http-methods', '/frontend/fullstack'), null)

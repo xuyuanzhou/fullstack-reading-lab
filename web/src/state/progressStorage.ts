@@ -277,8 +277,13 @@ function mergedLearning(local: ProgressState, remote: ProgressState, base: Progr
   const overlay = { ...local.learning, attempts, evidence, quests }
   const merged = mergeEnvelopes(overlay, remote.learning)
   const pauseChanged = JSON.stringify(local.learning.pause) !== JSON.stringify(base.learning.pause)
+  const checksChanged = JSON.stringify(local.learning.selfChecks) !== JSON.stringify(base.learning.selfChecks)
   return {
-    learning: { ...merged, pause: pauseChanged ? local.learning.pause : remote.learning.pause },
+    learning: {
+      ...merged,
+      pause: pauseChanged ? local.learning.pause : remote.learning.pause,
+      selfChecks: checksChanged ? local.learning.selfChecks : merged.selfChecks,
+    },
     learningReadonly: false,
     learningHeld: null,
   }
