@@ -79,24 +79,34 @@ function DrillLobby() {
   return (
     <div className="drill">
       <DrillMast />
-      <div className="drill-courses">
+      <ol className="drill-roads">
         {DRILL_COURSES.map((course) => {
           const gates = gatesInCourse(course.id)
-          const cleared = gates.filter((gate) => describeGate(drill, gate.id)?.cleared).length
-          const status: SealStatus = cleared === gates.length ? 'cleared' : cleared > 0 ? 'live' : 'open'
+          const plays = gates.map((gate) => describeGate(drill, gate.id))
+          const cleared = plays.filter((play) => play?.cleared).length
+          const here = plays.findIndex((play) => !play?.cleared)
+          const started = here >= 0 && Boolean(plays[here]?.open)
+          const status: SealStatus = cleared === gates.length ? 'cleared' : cleared > 0 || started ? 'live' : 'open'
+          const state = status === 'cleared' ? '已通过' : started ? '进行中' : cleared > 0 ? `第 ${here + 1} 关` : '可以开始'
           return (
-            <Link key={course.id} className={`drill-course is-${status}`} to={`/drill/${course.id}`}>
-              <Seal status={status} />
-              <span className="drill-course-copy">
-                <small>第 {DRILL_COURSES.indexOf(course) + 1} 门</small>
-                <strong>{course.title}</strong>
+            <li key={course.id} className={`is-${status}`}>
+              <Link to={`/drill/${course.id}`}>
+                <span className="drill-road-head">
+                  <strong>{course.title}</strong>
+                  <b className="drill-state">{state}</b>
+                </span>
                 <em>{course.lead}</em>
-                <b>{cleared}/{gates.length} 关已通过</b>
-              </span>
-            </Link>
+                <span className="drill-pebbles" aria-hidden="true">
+                  {gates.map((gate, index) => (
+                    <i key={gate.id} className={plays[index]?.cleared ? 'is-done' : index === here ? 'is-here' : undefined} />
+                  ))}
+                </span>
+                <span className="drill-sr">{cleared}/{gates.length} 关已通过</span>
+              </Link>
+            </li>
           )
         })}
-      </div>
+      </ol>
       <ol className="drill-badges">
         {report.badges.map((badge) => (
           <li key={badge.id} className={badge.earned ? 'is-earned' : 'is-locked'}>
@@ -129,24 +139,34 @@ function DrillCourse({ courseId }: { courseId: string }) {
       <Link className="drill-back" to="/drill">全部课程</Link>
       <header className="drill-mast">
         <div>
-          <p className="drill-kicker">{course.title}</p>
-          <h1>{course.lead}</h1>
+          <p className="drill-kicker">选择题 · {gates.length} 关</p>
+          <h1>{course.title}</h1>
+          <p className="drill-lead">{course.lead}</p>
         </div>
       </header>
       <ol className="drill-path">
         {gates.map((gate, index) => {
           const play = describeGate(drill, gate.id)
           const status: SealStatus = !play?.unlocked ? 'locked' : play.open ? 'live' : play.cleared ? 'cleared' : 'open'
+          const state = status === 'locked'
+            ? '先通过上一关'
+            : status === 'cleared'
+              ? `已通过 ${play?.bestPercent}%`
+              : status === 'live'
+                ? '进行中'
+                : '可以开始'
           const body = (
             <>
-              <Seal status={status} />
-              <span>
-                <small>第 {index + 1} 关 · {gate.questionIds.length} 题 · 至少 {neededCorrect(gate.questionIds.length)} 题正确</small>
-                <strong>{gate.title}</strong>
+              <span className="drill-stone" aria-hidden="true">{index + 1}</span>
+              <span className="drill-gate-copy">
+                <span className="drill-gate-head">
+                  <strong>{gate.title}</strong>
+                  <b className="drill-state">{state}</b>
+                </span>
                 <em>{gate.lead}</em>
-                <b>
-                  {status === 'locked' ? '先通过上一关' : status === 'cleared' ? `已通过 · 最好 ${play?.bestPercent}%` : status === 'live' ? '进行中' : '可以开始'}
-                </b>
+                {status === 'open' || status === 'live' ? (
+                  <small>{gate.questionIds.length} 题 · 至少 {neededCorrect(gate.questionIds.length)} 题正确</small>
+                ) : null}
               </span>
             </>
           )

@@ -42,7 +42,7 @@ export const SKILL_TRUNKS = [
   { id: 'db', title: '数据库', hint: 'SQL 与库' },
   { id: 'devops', title: 'DevOps', hint: '容器、测试、持续集成' },
   { id: 'ops', title: '部署运维', hint: '接入、观测、排查、安全' },
-  { id: 'ai', title: 'AI', hint: '提示词到评测' },
+  { id: 'ai', title: 'AI', hint: '提示词到服务交付' },
   { id: 'arch', title: '架构', hint: '边界、拆分、决策' },
 ] as const
 

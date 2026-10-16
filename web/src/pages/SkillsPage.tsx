@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react'
-import { useLayoutEffect } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { SkillSigil } from '@/components/learning/SkillSigil'
 import { aiNoteById } from '@/data/aiCatalog'
@@ -12,8 +12,11 @@ import {
   SKILL_VIEWS,
   skillBoardState,
   skillFocusId,
+  skillGroupFold,
   skillGroupsInLane,
   skillHasLocalCheck,
+  skillLaneFolds,
+  skillTitleHit,
   skillLessonIds,
   skillOpenIds,
   skillProgress,
@@ -54,6 +57,10 @@ export function SkillsPage() {
   const trunks = trunkFills(glow, practiced)
   const advice = skillPathAdvice(progress.skillScene, glow)
   const adviceTitle = SKILL_SCENES.find((item) => item.id === advice.scene)?.title ?? ''
+  const [query, setQuery] = useState('')
+  const [forced, setForced] = useState<Record<string, boolean>>({})
+  const searching = query.trim().length > 0
+  const hitCount = searching ? SKILL_VIEWS.filter((item) => skillTitleHit(item.title, query)).length : 0
 
   useLayoutEffect(() => {
     if (!focusId) return
@@ -107,7 +114,7 @@ export function SkillsPage() {
     const practicedMark = light === 'lit' && (local || Boolean(card.gateId && cleared.has(card.gateId)))
     const rank = skillRank(light, practicedMark)
     const nextNames = light === 'lit' ? readyChildTitles(card.id, glow) : []
-    const status = glowLine(light, own.read, own.total, parents, nextNames)
+    const status = glowLine(light, own.read, own.total, parents, nextNames, practicedMark)
     const nodeFill = own.total > 0 ? fillPercent(own.read, own.total) : light === 'lit' ? 100 : 0
     const body = (
       <>
@@ -188,6 +195,18 @@ export function SkillsPage() {
         {progress.skillScene === 'all' ? null : (
           <p className="skill-scene-note">这条路只决定正在点亮哪一项。其余印章仍按前置显示。</p>
         )}
+        <input
+          className="skill-find"
+          type="search"
+          value={query}
+          aria-label="按名称找一项"
+          placeholder="按名称找一项"
+          onChange={(event) => setQuery(event.target.value)}
+        />
+        {searching ? (
+          <p className="skill-find-note" aria-live="polite">{hitCount ? `找到 ${hitCount} 项` : '没有这一项'}</p>
+        ) : null}
+        <div className="skill-follow">
         <ol className="skill-crests" aria-label="阶段称号">
           {SKILL_MILESTONES.map((item) => {
             const on = cleared.has(item.gateId)
@@ -220,12 +239,27 @@ export function SkillsPage() {
             改走{adviceTitle}
           </button>
         ) : null}
+        </div>
       </header>
       <div className="skill-board" aria-label="技能赛道，窄屏可左右滑动">
         {SKILL_LANES.map((lane) => {
           const groups = skillGroupsInLane(lane)
           const laneCards = SKILL_VIEWS.filter((item) => item.lane === lane && !item.bridge)
           const laneLit = laneCards.filter((item) => glow[item.id] === 'lit').length
+          const blocks = groups.map((group) => {
+            const cards = SKILL_VIEWS.filter((item) => item.lane === lane && item.group === group && !item.bridge)
+            const fold = skillGroupFold(
+              lane,
+              cards.map((item) => item.id),
+              activeId,
+              focusId,
+              query,
+              forced[`${lane}\0${group}`],
+              cards.map((item) => item.title),
+            )
+            return { group, cards, fold }
+          })
+          if (searching && blocks.every((block) => block.fold === 'hide')) return null
           return (
             <section
               key={lane}
@@ -241,21 +275,36 @@ export function SkillsPage() {
                 </span>
                 <span>{laneLit}/{laneCards.length}</span>
               </p>
-              {groups.length ? (
-                groups.map((group) => {
-                  const cards = SKILL_VIEWS.filter(
-                    (item) => item.lane === lane && item.group === group && !item.bridge,
-                  )
+              {blocks.length ? (
+                blocks.map(({ group, cards, fold }) => {
+                  if (fold === 'hide') return null
+                  const shown = searching ? cards.filter((item) => skillTitleHit(item.title, query)) : cards
+                  const groupLit = cards.filter((item) => glow[item.id] === 'lit').length
+                  const canFold = skillLaneFolds(lane) && !searching
                   return (
-                    <div key={group} className="skill-group">
-                      <h3>{group}</h3>
-                      <ol>
-                        {cards.map((card, index) => {
-                          const prev = cards[index - 1]
-                          const parents = LEARNING_SKILLS.find((item) => item.id === card.id)?.allOf ?? []
-                          return renderCard(card, index, Boolean(prev && parents.includes(prev.id)))
-                        })}
-                      </ol>
+                    <div key={group} className="skill-group" data-shut={fold === 'shut' ? '' : undefined}>
+                      {canFold ? (
+                        <button
+                          type="button"
+                          className="skill-group-toggle"
+                          aria-expanded={fold === 'open'}
+                          onClick={() => setForced((prev) => ({ ...prev, [`${lane}\0${group}`]: fold !== 'open' }))}
+                        >
+                          <span>{group}</span>
+                          <span>{groupLit}/{cards.length}</span>
+                        </button>
+                      ) : (
+                        <h3>{group}</h3>
+                      )}
+                      {fold === 'open' ? (
+                        <ol>
+                          {shown.map((card, index) => {
+                            const prev = cards[cards.indexOf(card) - 1]
+                            const parents = LEARNING_SKILLS.find((item) => item.id === card.id)?.allOf ?? []
+                            return renderCard(card, index, Boolean(prev && shown.includes(prev) && parents.includes(prev.id)))
+                          })}
+                        </ol>
+                      ) : null}
                     </div>
                   )
                 })
@@ -265,7 +314,7 @@ export function SkillsPage() {
             </section>
           )
         })}
-        {bridge ? (
+        {bridge && skillTitleHit(bridge.title, query) ? (
           <section
             className="skill-lane is-bridge"
             aria-label={bridge.title}
@@ -287,15 +336,16 @@ export function SkillsPage() {
   )
 }
 
-function glowLine(light: SkillGlow, read: number, total: number, parents: string[], nextNames: string[]) {
+function glowLine(light: SkillGlow, read: number, total: number, parents: string[], nextNames: string[], practiced: boolean) {
   const names = parents.map((name) => `「${name}」`).join('、')
   const next = nextNames.length
     ? `下一项可以开始：${nextNames.slice(0, 2).map((name) => `「${name}」`).join('、')}。`
     : ''
   if (light === 'lit') {
+    const head = practiced ? '练过。' : '已点亮。'
     return total > 0
-      ? `已点亮。${next}这几篇都读过，不是岗位认证。`
-      : `已点亮。${next}${names}都点亮了，不是岗位认证。`
+      ? `${head}${next}这几篇都读过，不是岗位认证。`
+      : `${head}${next}${names}都点亮了，不是岗位认证。`
   }
   if (light === 'dim') {
     const ahead = total > 0 && read > 0 ? `已读 ${read}/${total}。` : ''

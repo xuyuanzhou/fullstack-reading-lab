@@ -113,6 +113,8 @@ export const LEARNING_SKILLS: readonly SkillNode[] = [
   { id: 'ai-chain', allOf: ['ai-agent'] },
   { id: 'ai-eval', allOf: ['ai-rag'] },
   { id: 'ai-guard', allOf: ['ai-agent'] },
+  { id: 'ai-lora', allOf: ['ai-transformer'] },
+  { id: 'ai-serving', allOf: ['ai-llm'] },
 ]
 
 /** 每项挂课库里已有、且贴岗位技能的核心课。大组只取主干，不把整章一百多篇都挂上。 */
@@ -202,6 +204,8 @@ export const SKILL_LESSONS: Record<string, readonly string[]> = {
   'ai-chain': ['ai:langchain', 'ai:langgraph'],
   'ai-eval': ['ai:eval-set', 'ai:eval-runner', 'ai:hallucination-cite'],
   'ai-guard': ['ai:prompt-injection', 'ai:permissions', 'ai:ai-security'],
+  'ai-lora': ['ai:lora-sft'],
+  'ai-serving': ['ai:ai-serving'],
 }
 
 export type SkillView = {
@@ -309,10 +313,12 @@ export const SKILL_VIEWS: readonly SkillView[] = [
   { id: 'ai-agent', title: '代理', lane: 'AI', group: '应用结构' },
   { id: 'ai-chain', title: 'LangChain', lane: 'AI', group: '应用结构' },
   { id: 'ai-transformer', title: 'Transformer', lane: 'AI', group: '模型机制' },
+  { id: 'ai-lora', title: 'LoRA', lane: 'AI', group: '模型机制' },
   { id: 'ai-embed', title: '嵌入', lane: 'AI', group: '模型机制' },
   { id: 'ai-rag', title: '检索增强', lane: 'AI', group: '模型机制' },
   { id: 'ai-eval', title: '评测', lane: 'AI', group: '交付判断' },
   { id: 'ai-guard', title: '提示注入', lane: 'AI', group: '交付判断' },
+  { id: 'ai-serving', title: '服务交付', lane: 'AI', group: '交付判断' },
   // —— 架构 ——
   { id: 'ddd', title: '聚合边界', lane: '架构', group: '领域与决策' },
   { id: 'split', title: '服务拆分', lane: '架构', group: '领域与决策', gateId: 'g4' },
@@ -342,6 +348,53 @@ export function skillGroupsInLane(lane: string): string[] {
     groups.push(item.group)
   }
   return groups
+}
+
+/** 一组以上的列才收组。只有一个组的列保持展开。列本身不合并。 */
+export function skillLaneFolds(lane: string) {
+  return skillGroupsInLane(lane).length > 1
+}
+
+/** 标题里没有的岗位简称。至少两个字才算命中，避免单字母扫到整列。 */
+const SKILL_FIND_ALIASES: Record<string, readonly string[]> = {
+  JavaScript: ['js'],
+  TypeScript: ['ts'],
+  Kubernetes: ['k8s'],
+  PostgreSQL: ['pg', 'postgres'],
+  Elasticsearch: ['es'],
+  持续集成: ['ci'],
+  消息队列: ['mq'],
+}
+
+export function skillTitleHit(title: string, query: string) {
+  const needle = query.trim().toLowerCase()
+  if (!needle) return true
+  if (needle.length < 2) return false
+  if (title.toLowerCase().includes(needle)) return true
+  return (SKILL_FIND_ALIASES[title] ?? []).some((alias) => alias.startsWith(needle))
+}
+
+export type SkillFold = 'open' | 'shut' | 'hide'
+
+/**
+ * 搜索时只留下名称对上的组。没搜索时，多组的列默认收起，正在点亮或从课返回的那一组展开。
+ * forced 是这一组被点过之后的开合，不能盖过返回定位。
+ */
+export function skillGroupFold(
+  lane: string,
+  cardIds: readonly string[],
+  activeId: string,
+  focusId: string,
+  query: string,
+  forced: boolean | undefined,
+  titles: readonly string[],
+): SkillFold {
+  if (query.trim()) return titles.some((title) => skillTitleHit(title, query)) ? 'open' : 'hide'
+  if (!skillLaneFolds(lane)) return 'open'
+  if (focusId && cardIds.includes(focusId)) return 'open'
+  if (typeof forced === 'boolean') return forced ? 'open' : 'shut'
+  if (activeId && cardIds.includes(activeId)) return 'open'
+  return 'shut'
 }
 
 export type SkillGlow = 'dim' | 'ready' | 'research' | 'lit'
@@ -405,7 +458,7 @@ export const SKILL_SCENES = [
   {
     id: 'ai',
     title: 'AI 应用',
-    steps: [['ai-prompt'], ['ai-llm'], ['ai-rag', 'ai-agent'], ['ai-eval'], ['ai-guard']],
+    steps: [['ai-prompt'], ['ai-llm'], ['ai-rag', 'ai-agent'], ['ai-eval'], ['ai-guard'], ['ai-serving']],
   },
 ] as const
 

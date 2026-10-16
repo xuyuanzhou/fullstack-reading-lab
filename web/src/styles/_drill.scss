@@ -111,13 +111,179 @@
   }
 }
 
-.drill-courses {
+.drill-roads {
+  list-style: none;
+  margin: 0;
+  padding: 6px;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
+  gap: 6px;
+  border-radius: 22px;
+  background:
+    radial-gradient(1.2px 1.2px at 12% 18%, var(--lab-stage-dust), transparent),
+    radial-gradient(1px 1px at 78% 64%, var(--lab-stage-dust), transparent),
+    radial-gradient(1.1px 1.1px at 46% 88%, var(--lab-stage-dust), transparent),
+    var(--lab-stage);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--lab-stage-line) 45%, transparent);
+
+  > li {
+    min-width: 0;
+  }
+
+  a {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 100%;
+    padding: 16px 14px 14px;
+    border-radius: 16px;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .is-live a {
+    background: var(--lab-stage-raise);
+    box-shadow:
+      inset 0 0 0 1px color-mix(in srgb, var(--lab-stage-accent) 55%, transparent),
+      0 10px 22px color-mix(in srgb, var(--lab-stage-shadow-fill) 10%, transparent);
+  }
+
+  .is-cleared a {
+    background: color-mix(in srgb, var(--lab-stage-done) 16%, transparent);
+  }
+
+  em {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin: 0;
+    font-style: normal;
+    color: var(--lab-stage-muted);
+    line-height: 1.6;
+  }
 }
 
-.drill-course,
+.drill-road-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+
+  strong {
+    min-width: 0;
+    font-family: var(--font-serif);
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+}
+
+.drill-roads .drill-state {
+  flex: none;
+  margin-top: 2px;
+  padding: 3px 0;
+  border-radius: 999px;
+  color: var(--lab-stage-muted);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.drill-roads .is-open .drill-state {
+  padding: 3px 9px;
+  color: var(--lab-stage);
+  background: var(--lab-stage-accent);
+}
+
+.drill-roads .is-live .drill-state {
+  padding: 2px 8px;
+  color: var(--lab-stage-bright);
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--lab-stage-accent);
+}
+
+.drill-roads .is-cleared .drill-state {
+  padding: 3px 9px;
+  color: var(--lab-stage-bright);
+  background: color-mix(in srgb, var(--lab-stage-done) 22%, transparent);
+}
+
+.drill-pebbles {
+  display: flex;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 8px;
+
+  i {
+    display: flex;
+    align-items: center;
+    flex: 1 1 0;
+    min-width: 0;
+    height: 14px;
+  }
+
+  i::before {
+    content: '';
+    flex: none;
+    width: 8px;
+    height: 8px;
+    border-radius: 3px 3px 2px 2px;
+    box-shadow: inset 0 0 0 1.5px var(--lab-stage-line);
+  }
+
+  i::after {
+    content: '';
+    flex: 1 1 auto;
+    height: 2px;
+    margin-left: 2px;
+    border-radius: 99px;
+    background: color-mix(in srgb, var(--lab-stage-line) 70%, transparent);
+  }
+
+  i:last-child {
+    flex: none;
+  }
+
+  i:last-child::after {
+    display: none;
+  }
+
+  .is-done::before {
+    background: var(--lab-stage-done);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--lab-stage-done) 50%, transparent);
+  }
+
+  .is-done::after {
+    background: color-mix(in srgb, var(--lab-stage-accent) 72%, transparent);
+  }
+
+  .is-here::before {
+    width: 14px;
+    height: 14px;
+    border-radius: 5px 5px 2px 2px;
+    background: var(--lab-stage-accent);
+    box-shadow:
+      inset 0 -3px 0 var(--lab-stage-bright),
+      0 0 0 3px color-mix(in srgb, var(--lab-stage-accent) 22%, transparent),
+      0 0 12px var(--lab-stage-glow);
+  }
+}
+
+.drill-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .drill-path a,
 .drill-gate-lock {
   display: flex;
@@ -131,82 +297,240 @@
   border: 1px solid var(--lab-stage-line);
 }
 
-.drill-course {
-  min-height: 210px;
-  flex-direction: column;
-}
-
-.drill-course.is-cleared {
-  background: color-mix(in srgb, var(--lab-stage-done) 16%, var(--lab-stage-raise));
-}
-
-.drill-course.is-live {
-  box-shadow: inset 0 0 0 1px var(--lab-stage-accent);
-}
-
-.drill-course-copy,
-.drill-path a span,
-.drill-gate-lock span {
+.drill-gate-copy {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.drill-course small,
 .drill-path small {
   color: var(--lab-stage-muted);
   font-size: var(--lab-text-caption);
 }
 
-.drill-course strong,
 .drill-path strong {
   font-family: var(--font-serif);
-  font-size: 22px;
+  font-size: 1.15rem;
+  line-height: 1.35;
 }
 
-.drill-course em,
 .drill-path em {
   font-style: normal;
   color: var(--lab-stage-muted);
   line-height: 1.6;
 }
 
-.drill-course b,
-.drill-path b {
-  font-weight: 600;
-  color: var(--lab-stage-bright);
-}
-
 .drill-path {
+  position: relative;
   list-style: none;
-  margin: 0;
-  padding: 0;
+  margin: 4px 0 0;
+  padding: 8px 6px;
   display: flex;
   flex-direction: column;
-  gap: 0;
+  border-radius: 22px;
+  background:
+    radial-gradient(90px 28% at 40px 0, var(--lab-stage-glow), transparent 72%),
+    radial-gradient(1.4px 1.4px at 18% 12%, var(--lab-stage-dust), transparent),
+    radial-gradient(1.2px 1.2px at 12% 46%, var(--lab-stage-dust), transparent),
+    radial-gradient(1px 1px at 78% 28%, var(--lab-stage-dust), transparent),
+    radial-gradient(1.3px 1.3px at 64% 70%, var(--lab-stage-dust), transparent),
+    radial-gradient(1.1px 1.1px at 46% 88%, var(--lab-stage-dust), transparent),
+    var(--lab-stage);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--lab-stage-line) 45%, transparent),
+    inset 0 0 80px color-mix(in srgb, var(--lab-stage-glow) 35%, transparent);
 
   li {
     position: relative;
-    padding-bottom: 14px;
   }
 
   li::before {
     content: '';
     position: absolute;
-    left: 32px;
-    top: 48px;
-    bottom: 0;
-    width: 1px;
-    background: var(--lab-stage-line);
+    // 链接左 padding 12px，石台 44px。2px 线对准石台中线。
+    // 上沿是这块石台的下边（12 + 44），下沿接到下一块石台的上边，不伸进石台。
+    left: 33px;
+    top: 56px;
+    bottom: -12px;
+    width: 2px;
+    border-radius: 99px;
+    background: color-mix(in srgb, var(--lab-stage-line) 70%, transparent);
+    z-index: 0;
   }
 
   li:last-child::before {
     display: none;
   }
 
-  .is-locked {
-    opacity: 0.78;
+  .is-cleared::before,
+  .is-open::before,
+  .is-live::before {
+    background: linear-gradient(180deg, var(--lab-stage-bright), var(--lab-stage-accent));
+    box-shadow:
+      0 0 6px 1px var(--lab-stage-glow),
+      0 0 16px var(--lab-stage-glow);
   }
+
+  .is-live::before,
+  .is-open::before {
+    background: linear-gradient(
+      180deg,
+      var(--lab-stage-bright) 0%,
+      var(--lab-stage-accent) 42%,
+      color-mix(in srgb, var(--lab-stage-line) 60%, transparent) 100%
+    );
+    background-size: 100% 220%;
+  }
+}
+
+.drill-path a,
+.drill-gate-lock {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  column-gap: 14px;
+  align-items: start;
+  padding: 12px 14px 12px 12px;
+  border: 0;
+  border-radius: 16px;
+  background: transparent;
+  box-shadow: none;
+}
+
+.drill-path .is-open .drill-gate-copy,
+.drill-path .is-live .drill-gate-copy,
+.drill-path .is-cleared .drill-gate-copy {
+  margin: -2px 0;
+  padding: 8px 12px 10px;
+  border-radius: 14px;
+}
+
+.drill-path .is-open .drill-gate-copy,
+.drill-path .is-live .drill-gate-copy {
+  background: var(--lab-stage-raise);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--lab-stage-accent) 55%, transparent),
+    0 10px 22px color-mix(in srgb, var(--lab-stage-shadow-fill) 10%, transparent);
+}
+
+.drill-path .is-cleared .drill-gate-copy {
+  background: color-mix(in srgb, var(--lab-stage-done) 16%, var(--lab-stage-raise));
+}
+
+.drill-stone {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 16px 16px 8px 8px;
+  background: transparent;
+  color: var(--lab-stage-muted);
+  font-family: var(--font-serif);
+  font-size: 17px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  box-shadow: inset 0 0 0 1.5px var(--lab-stage-line);
+}
+
+.drill-path .is-open .drill-stone,
+.drill-path .is-live .drill-stone {
+  background: radial-gradient(circle at 50% 28%, var(--lab-stage-bright), var(--lab-stage-accent) 72%);
+  color: var(--lab-stage);
+  box-shadow:
+    inset 0 -8px 0 var(--lab-stage-bright),
+    0 0 0 4px color-mix(in srgb, var(--lab-stage-accent) 34%, transparent),
+    0 0 22px 4px var(--lab-stage-glow);
+}
+
+.drill-path .is-live .drill-stone {
+  box-shadow:
+    inset 0 -8px 0 var(--lab-stage-bright),
+    0 0 0 5px color-mix(in srgb, var(--lab-stage-bright) 40%, transparent),
+    0 0 28px 6px var(--lab-stage-glow);
+}
+
+.drill-path .is-cleared .drill-stone {
+  background: var(--lab-stage-done);
+  color: var(--lab-stage-on-done);
+  box-shadow:
+    inset 0 -7px 0 var(--lab-stage-plinth-done-r),
+    0 0 14px color-mix(in srgb, var(--lab-stage-done) 42%, transparent);
+}
+
+.drill-gate-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  padding-top: 1px;
+}
+
+.drill-gate-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+
+  strong {
+    min-width: 0;
+    font-size: 18px;
+    line-height: 1.35;
+  }
+}
+
+.drill-path .is-locked .drill-gate-copy em {
+  color: color-mix(in srgb, var(--lab-stage-muted) 78%, transparent);
+}
+
+.drill-path .is-locked ~ .is-locked .drill-state {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.drill-path em {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.drill-state {
+  flex: none;
+  margin-top: 2px;
+  padding: 3px 0;
+  border-radius: 999px;
+  color: var(--lab-stage-muted);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.drill-path .is-open .drill-state {
+  padding: 3px 9px;
+  color: var(--lab-stage);
+  background: var(--lab-stage-accent);
+}
+
+.drill-path .is-live .drill-state {
+  padding: 2px 8px;
+  color: var(--lab-stage-bright);
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--lab-stage-accent);
+}
+
+.drill-path .is-cleared .drill-state {
+  padding: 3px 9px;
+  color: var(--lab-stage-bright);
+  background: color-mix(in srgb, var(--lab-stage-done) 22%, transparent);
 }
 
 .drill-sheet {
@@ -529,7 +853,7 @@
 @media (max-width: 800px) {
   .drill-mast,
   .drill-badges,
-  .drill-courses,
+  .drill-roads,
   .drill-report-courses {
     display: grid;
     grid-template-columns: 1fr;
@@ -539,9 +863,39 @@
     justify-content: space-between;
   }
 
-  .drill-course {
-    min-height: 0;
-    flex-direction: row;
+  .drill-gate-head strong {
+    font-size: 17px;
+  }
+}
+
+@keyframes drill-stone-burn {
+  50% {
+    box-shadow:
+      inset 0 -8px 0 var(--lab-stage-bright),
+      0 0 0 8px color-mix(in srgb, var(--lab-stage-bright) 42%, transparent),
+      0 0 36px 8px var(--lab-stage-glow);
+  }
+}
+
+@keyframes drill-line-flow {
+  50% {
+    background-position: 0 100%;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .drill-path a:hover .drill-stone {
+    transform: translateY(-2px);
+  }
+
+  .drill-path .is-live .drill-stone,
+  .drill-path .is-open .drill-stone {
+    animation: drill-stone-burn 2.8s ease-in-out infinite;
+  }
+
+  .drill-path .is-live::before,
+  .drill-path .is-open::before {
+    animation: drill-line-flow 2.6s ease-in-out infinite;
   }
 }
 
@@ -549,7 +903,12 @@
   .drill-meter-value,
   .drill-seal,
   .drill-option,
-  .drill-go {
+  .drill-go,
+  .drill-path .is-live .drill-stone,
+  .drill-path .is-open .drill-stone,
+  .drill-path .is-live::before,
+  .drill-path .is-open::before {
     transition: none;
+    animation: none;
   }
 }

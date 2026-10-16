@@ -292,6 +292,22 @@ export function AppLayout() {
     return 'home'
   })()
 
+  useEffect(() => {
+    const nav = document.querySelector('.top-nav')
+    if (!(nav instanceof HTMLElement)) return
+    const reveal = () => {
+      const active = nav.querySelector('.top-nav-btn.is-active')
+      if (!(active instanceof HTMLElement)) return
+      const navBox = nav.getBoundingClientRect()
+      const itemBox = active.getBoundingClientRect()
+      if (itemBox.left < navBox.left - 1) nav.scrollLeft -= navBox.left - itemBox.left
+      else if (itemBox.right > navBox.right + 1) nav.scrollLeft += itemBox.right - navBox.right
+    }
+    reveal()
+    window.addEventListener('resize', reveal)
+    return () => window.removeEventListener('resize', reveal)
+  }, [location.pathname])
+
   const siderBody = (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <div className="sider-head">

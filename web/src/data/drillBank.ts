@@ -1,8 +1,17 @@
 /** 系统设计、SQL 优化、服务性能排查的选择题。正确项对齐课文结论。 */
 import type { MoreAsk } from './drillMoreDesign.ts'
+import { DESIGN_FURTHER, DESIGN_FURTHER_POINTS } from './drillFurtherDesign.ts'
+import { DESIGN_LATER, DESIGN_LATER_POINTS } from './drillLaterDesign.ts'
 import { DESIGN_MORE, DESIGN_POINTS } from './drillMoreDesign.ts'
+import { DESIGN_NEXT, DESIGN_NEXT_POINTS } from './drillNextDesign.ts'
+import { PERF_FURTHER, PERF_FURTHER_POINTS } from './drillFurtherPerf.ts'
+import { PERF_LATER, PERF_LATER_POINTS } from './drillLaterPerf.ts'
 import { PERF_MORE, PERF_POINTS } from './drillMorePerf.ts'
+import { PERF_NEXT, PERF_NEXT_POINTS } from './drillNextPerf.ts'
+import { SQL_FURTHER, SQL_FURTHER_POINTS } from './drillFurtherSql.ts'
+import { SQL_LATER, SQL_LATER_POINTS } from './drillLaterSql.ts'
 import { SQL_MORE, SQL_POINTS } from './drillMoreSql.ts'
+import { SQL_NEXT, SQL_NEXT_POINTS } from './drillNextSql.ts'
 
 export type DrillCourseId = 'design' | 'sql' | 'perf'
 export type OptionId = 'a' | 'b' | 'c' | 'd'
@@ -111,6 +120,15 @@ export const DRILL_POINTS: DrillPoint[] = [
   ...DESIGN_POINTS,
   ...SQL_POINTS,
   ...PERF_POINTS,
+  ...DESIGN_NEXT_POINTS,
+  ...SQL_NEXT_POINTS,
+  ...PERF_NEXT_POINTS,
+  ...DESIGN_FURTHER_POINTS,
+  ...SQL_FURTHER_POINTS,
+  ...PERF_FURTHER_POINTS,
+  ...DESIGN_LATER_POINTS,
+  ...SQL_LATER_POINTS,
+  ...PERF_LATER_POINTS,
 ]
 
 const OPT = ['a', 'b', 'c', 'd'] as const
@@ -995,7 +1013,10 @@ function fromMore(item: MoreAsk): DrillQuestion {
   return ask(item.id, item.pointId, item.stem, item.texts, item.answer, item.explain, item.whyWrong)
 }
 
-const moreSpread = spread([...DESIGN_MORE, ...SQL_MORE, ...PERF_MORE].map(fromMore), 3)
+const moreSpread = spread(
+  [...DESIGN_MORE, ...SQL_MORE, ...PERF_MORE, ...DESIGN_NEXT, ...SQL_NEXT, ...PERF_NEXT, ...DESIGN_FURTHER, ...SQL_FURTHER, ...PERF_FURTHER, ...DESIGN_LATER, ...SQL_LATER, ...PERF_LATER].map(fromMore),
+  3,
+)
 
 function moreFor(gateId: string) {
   return moreSpread.filter((item) => item.id.startsWith(`${gateId}-`))
@@ -1018,17 +1039,40 @@ export const DRILL_GATES: DrillGate[] = [
   buildGate('d3', 'design', 3, '故障时仍成立', '慢下游、重复调用和没信号的演进，都不能冲掉已经写清的不变量。', [...designSpread.slice(10, 15), ...moreFor('d3')]),
   buildGate('d4', 'design', 4, '拆开之前', '边界、业务能力、下单分工和这一次取舍，都要写在拆进程之前。', moreFor('d4')),
   buildGate('d5', 'design', 5, '跨进程仍是同一件事', '分区、待发事件、读自己的写、补偿和业务键，都要能对上同一次事实。', moreFor('d5')),
+  buildGate('d6', 'design', 6, '表、读写与拆分', '一行表示一件事实。读写分离、分库和拆服务，都先回答这次瓶颈在哪。', moreFor('d6')),
+  buildGate('d7', 'design', 7, '锁、库存与顺序', '租约、条件更新和补偿各管一件事。限流和队列代替不了库存不变量。', moreFor('d7')),
+  buildGate('d8', 'design', 8, '时间、编号与热点', '墙上时钟会偏。编号、分片和幂等键要能在回拨和重试之后仍然对上同一次事实。', moreFor('d8')),
+  buildGate('d9', 'design', 9, '决议、顺序与复制', '准备成功还不是提交。顺序、复制和编号都要先写清这次能丢什么、要保哪一个键。', moreFor('d9')),
+  buildGate('d10', 'design', 10, '租约、入口与公平', '可重入、定时清表和全局阈值都代替不了租约、过半和分开的两道限额。', moreFor('d10')),
+  buildGate('d11', 'design', 11, '先写清再选入口', '六句话没填上就先不加组件。当场要结果、持有者令牌和摘流，都要先写清这一跳。', moreFor('d11')),
+  buildGate('d12', 'design', 12, '消息留在哪一套', '已有集群先留下。位点、绑定、复制和刷盘，决定这条消息还会不会再来。', moreFor('d12')),
   buildGate('s1', 'sql', 1, '语句在说什么', '先分清库的职责、星号、OR 和 JOIN，再用估计和实测核对。', [...sqlSpread.slice(0, 5), ...moreFor('s1')]),
   buildGate('s2', 'sql', 2, '索引的列与成本', '左列、区分度、写维护、函数和类型转换，都会改掉优化器的选择。', [...sqlSpread.slice(5, 10), ...moreFor('s2')]),
   buildGate('s3', 'sql', 3, '锁、深页与真实引擎', '堵住、深分页、N+1 和死锁，都要回到引擎实际做的那一步。', [...sqlSpread.slice(10, 15), ...moreFor('s3')]),
   buildGate('s4', 'sql', 4, '条件写在哪一层', 'NULL、外连接、分组、窗口和 UNION，差一个位置，行数就变了。', moreFor('s4')),
   buildGate('s5', 'sql', 5, '类型、大列与容量', '字符集、金额、大列和行数，都不要用一口诀代替这一次的计划。', moreFor('s5')),
+  buildGate('s6', 'sql', 6, '索引是访问路径', '覆盖、哈希、唯一和直方图，先分清它改变的是查找路径还是估计。', moreFor('s6')),
+  buildGate('s7', 'sql', 7, '慢查询与版本、缓冲、快照', '先按累计耗时定位，再对照缓冲池、隔离级别和这次读视图实际看见的行。', moreFor('s7')),
+  buildGate('s8', 'sql', 8, '事务、复制与日志', 'redo、undo 和 binlog 各记一件事。复制落后、预处理和自增，都要按这一次的引擎行为核对。', moreFor('s8')),
+  buildGate('s9', 'sql', 9, '约束不是口诀', '未知、外键、主键和浮点，先看这次约束要保住什么，再决定默认值和类型。', moreFor('s9')),
+  buildGate('s10', 'sql', 10, '例程、个数与备份', '过程、触发器、索引个数和克隆，都不是自动事务、硬上限或可回档备份。', moreFor('s10')),
+  buildGate('s11', 'sql', 11, '数字上限与引擎边界', '列数、表数、冷热比和表空间，先查这次的访问和页大小，不背一个固定数字。', moreFor('s11')),
+  buildGate('s12', 'sql', 12, '权威、计数与会话', '权威写入、冗余计数和持久化上下文，都要分清这次谁提交、谁看见。', moreFor('s12')),
   buildGate('p1', 'perf', 1, '先定位', '先分开资源、最慢的一跳、追踪和「还在等连接」。', [...perfSpread.slice(0, 5), ...moreFor('p1')]),
   buildGate('p2', 'perf', 2, '超时不是同一种失败', '建连、网关、代理、提供方线程和规则拦截，失败点不在同一层。', [...perfSpread.slice(5, 10), ...moreFor('p2')]),
   buildGate('p3', 'perf', 3, '缓存与消息把库打满', '雪崩、积压和共用的池，要先看出是哪一种压力。', [...perfSpread.slice(10, 15), ...moreFor('p3')]),
   buildGate('p4', 'perf', 4, '入口这一跳', '转到哪、选哪一台、这个接口让不让过，超时和重试不要并成一句。', moreFor('p4')),
   buildGate('p5', 'perf', 5, '消息到了几次', '确认、位点、分区和重投，决定副作用会留下几次。', moreFor('p5')),
   buildGate('p6', 'perf', 6, '停顿、内存与停机', '先读报错名字和暂停时间，再决定动堆、换收集器，还是排空进程。', moreFor('p6')),
+  buildGate('p7', 'perf', 7, '缓存命令与失效', '大命令、热键、穿透和击穿先分开。流水线和脚本只管这一台 Redis 上的往返和插入。', moreFor('p7')),
+  buildGate('p8', 'perf', 8, '熔断、再平衡与摘除', '半开、位点、同步副本和被动摘除，各看一种失败，不要并成一个超时。', moreFor('p8')),
+  buildGate('p9', 'perf', 9, '回收范围与持久', '先读回收范围和报错名字。复制确认、AOF 和快照命令，也不是同一件持久。', moreFor('p9')),
+  buildGate('p10', 'perf', 10, '线程池不是加速倍数', '先写明队列、拒绝和下游容量。核数倍数和虚拟线程都不提高数据库能承受的并发。', moreFor('p10')),
+  buildGate('p11', 'perf', 11, '热键、注册与默认负载', '大键和热键分开记。名单延迟、抄走的配置，以及默认的加权随机，都还会打到旧地址。', moreFor('p11')),
+  buildGate('p12', 'perf', 12, '重试、全局锁与缓冲', '写接口、短信和等待支付各在事务外面。缓冲、Host 和没有提供者，先看失败落在哪一跳。', moreFor('p12')),
+  buildGate('p13', 'perf', 13, '复制、槽与过期', '全量是快照，增量是写命令。槽是拓扑，过期通知不是可靠任务。', moreFor('p13')),
+  buildGate('p14', 'perf', 14, '结构、可见性与名单', '列表实现、解锁可见和本地提供者名单，都要按现行行为核对，不按旧口诀。', moreFor('p14')),
+  buildGate('p15', 'perf', 15, '窗口、预取与公共池', '心跳窗口、预取和公共池，都会把请求或任务留在不该留的地方。', moreFor('p15')),
 ]
 
 export const DRILL_QUESTIONS: DrillQuestion[] = [...designSpread, ...sqlSpread, ...perfSpread, ...moreSpread]

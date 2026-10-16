@@ -503,6 +503,20 @@ const GLYPHS: Record<string, ReactNode> = {
       <path d="M24 14l8 3v7c0 5-3 8-8 10-5-2-8-5-8-10v-7z" />
     </g>
   ),
+  'ai-lora': (
+    <g className="skill-glyph">
+      <path d="M16 30h16" />
+      <path d="M18 22h12" />
+      <path d="M22 16h4" />
+    </g>
+  ),
+  'ai-serving': (
+    <g className="skill-glyph">
+      <rect x="15" y="16" width="18" height="14" rx="2" />
+      <path d="M19 23h10" />
+      <path d="M24 16V13" />
+    </g>
+  ),
 }
 
 export function SkillSigil({ id }: { id: string }) {

@@ -33,8 +33,8 @@ test('each gate has four choices, one answer, and a lesson', () => {
   const nav = JSON.parse(readFileSync(new URL('../web/src/data/curriculum-nav.json', import.meta.url), 'utf8'))
   const lessons = new Set(nav.lessons.map((lesson) => lesson.id))
   assert.equal(DRILL_COURSES.length, 3)
-  assert.equal(DRILL_GATES.length, 16)
-  assert.equal(DRILL_QUESTIONS.length, 160)
+  assert.equal(DRILL_GATES.length, 39)
+  assert.equal(DRILL_QUESTIONS.length, 390)
   assert.equal(neededCorrect(5), 4)
   assert.equal(neededCorrect(10), 8)
   const answers = { a: 0, b: 0, c: 0, d: 0 }

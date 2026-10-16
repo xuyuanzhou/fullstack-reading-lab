@@ -5,7 +5,7 @@ import test from 'node:test'
 import { FROZEN_DELIVERABLES, OUTPUT_ORDER_SHA256 } from '../web/src/data/deliverableMap.ts'
 import { pathSlots, requiredMet, skillSatisfied, supplementIds, validateLessons, validateSkills } from '../web/src/data/learningGraph.ts'
 import { AI_NOTES } from '../web/src/data/aiCatalog.ts'
-import { LEARNING_SKILLS, SKILL_LANES, SKILL_LESSONS, SKILL_VIEWS, skillBoardState, skillFocusId, skillGlows, skillHasLocalCheck, skillLessonIds, skillOpenIds, skillProgress, skillReturnId, skillReturnState, skillReturnTo } from '../web/src/data/learningSkills.ts'
+import { LEARNING_SKILLS, SKILL_LANES, SKILL_LESSONS, SKILL_VIEWS, skillBoardState, skillFocusId, skillGlows, skillGroupFold, skillHasLocalCheck, skillLaneFolds, skillLessonIds, skillOpenIds, skillProgress, skillReturnId, skillReturnState, skillReturnTo, skillTitleHit } from '../web/src/data/learningSkills.ts'
 import { SKILL_MILESTONES, SKILL_TRUNKS, clearedGateIds, practicedIds, readyChildTitles, skillPathAdvice, skillRank, skillTrunkId, trunkFills } from '../web/src/data/skillCycle.ts'
 import { MASTERY_GATES } from '../web/src/data/masteryGates.ts'
 import {
@@ -118,7 +118,28 @@ test('graph rejects duplicates, empty groups, dangling refs, and cycles', () => 
   assert.ok(skillLessonIds('js').length >= 8)
   assert.ok(skillLessonIds('R01').length >= 8)
   assert.ok(skillLessonIds('spring').length >= 8)
-  assert.equal(SKILL_VIEWS.length, 86)
+  assert.equal(SKILL_VIEWS.length, 88)
+  assert.equal(skillLaneFolds('前端'), true)
+  assert.equal(skillLaneFolds('中间件'), true)
+  assert.equal(skillLaneFolds('Java'), true)
+  assert.equal(skillLaneFolds('AI'), true)
+  assert.equal(skillLaneFolds('架构'), false)
+  assert.equal(skillGroupFold('前端', ['R01', 'query'], 'html', '', '', undefined, ['React', '服务端状态']), 'shut')
+  assert.equal(skillGroupFold('前端', ['html'], 'html', '', '', undefined, ['HTML']), 'open')
+  assert.equal(skillGroupFold('Java', ['spring'], 'html', '', '', undefined, ['Spring']), 'shut')
+  assert.equal(skillGroupFold('Java', ['spring'], 'spring', '', '', undefined, ['Spring']), 'open')
+  assert.equal(skillGroupFold('架构', ['ddd'], 'html', '', '', undefined, ['聚合边界']), 'open')
+  assert.equal(skillGroupFold('前端', ['R01'], 'html', 'R01', '', false, ['React']), 'open')
+  assert.equal(skillGroupFold('前端', ['R01'], 'html', '', '', true, ['React']), 'open')
+  assert.equal(skillGroupFold('前端', ['V01'], 'html', '', 'vue', undefined, ['Vue']), 'open')
+  assert.equal(skillGroupFold('前端', ['R01'], 'html', '', 'vue', undefined, ['React']), 'hide')
+  assert.equal(skillTitleHit('LoRA', 'lora'), true)
+  assert.equal(skillTitleHit('Redis', '  '), true)
+  assert.equal(skillTitleHit('Kubernetes', 'k8s'), true)
+  assert.equal(skillTitleHit('Kubernetes', 'k'), false)
+  assert.equal(skillTitleHit('持续集成', 'ci'), true)
+  assert.equal(skillTitleHit('消息队列', 'mq'), true)
+  assert.equal(skillTitleHit('PostgreSQL', 'pg'), true)
   assert.equal(SKILL_LANES[0], '计算机基础')
   assert.equal(SKILL_LANES.at(-1), '架构')
   assert.equal(SKILL_LANES.at(-2), 'AI')
@@ -191,6 +212,18 @@ test('graph rejects duplicates, empty groups, dangling refs, and cycles', () => 
   assert.equal(aiScene.activeId, 'ai-agent')
   assert.equal(aiScene.glow['ai-rag'], 'dim')
   assert.equal(aiScene.glow['ai-transformer'], 'ready')
+  assert.equal(aiScene.glow['ai-lora'], 'dim')
+  assert.equal(aiScene.glow['ai-serving'], 'ready')
+  assert.deepEqual(LEARNING_SKILLS.find((item) => item.id === 'ai-lora')?.allOf, ['ai-transformer'])
+  assert.deepEqual(LEARNING_SKILLS.find((item) => item.id === 'ai-serving')?.allOf, ['ai-llm'])
+  const served = skillBoardState(new Set([
+    ...skillLessonIds('ai-prompt'),
+    ...skillLessonIds('ai-llm'),
+    ...skillLessonIds('ai-agent'),
+    ...skillLessonIds('ai-guard'),
+  ]), present, 'ai')
+  assert.equal(served.activeId, 'ai-serving')
+  assert.equal(served.glow['ai-lora'], 'dim')
   assert.equal(skillBoardState(none, present, 'all').activeId, 'tcp')
   assert.equal(skillReturnTo('redis'), '/skills?skill=redis')
   assert.equal(skillReturnId({ skillReturn: 'redis' }), 'redis')
