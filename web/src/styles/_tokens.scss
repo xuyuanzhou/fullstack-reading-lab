@@ -90,18 +90,18 @@ html[data-theme='dark'] {
   --lab-code-type: #8fb5a0;
   --lab-code-meta: #d4c0e4;
   --lab-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
-  /* 夜间舞台：松绿夜色。 */
+  /* 夜间舞台：松绿夜色。石面要比底色亮一档，描边要能看出来，和技能印章、选择题石径同一套。 */
   --lab-stage: #1a2420;
-  --lab-stage-raise: #24302c;
-  --lab-stage-idle: #1f2b26;
+  --lab-stage-raise: #2e4036;
+  --lab-stage-idle: #26382f;
   --lab-stage-ink: #d0d5d1;
   --lab-stage-muted: #919a94;
-  --lab-stage-line: #3d5248;
+  --lab-stage-line: #6d8b7c;
   --lab-stage-accent: #8fb5a0;
   --lab-stage-bright: #c5ddd0;
   --lab-stage-done: #3f6a58;
-  --lab-stage-plinth-l: #1a2420;
-  --lab-stage-plinth-r: #16201c;
+  --lab-stage-plinth-l: #24362d;
+  --lab-stage-plinth-r: #1a2822;
   --lab-stage-plinth-done-l: #2d4f41;
   --lab-stage-plinth-done-r: #243f34;
   --lab-stage-shadow-fill: #000000;

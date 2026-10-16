@@ -10,6 +10,7 @@ import {
   pointById,
   questionById,
 } from '../web/src/data/drillBank.ts'
+import { DRILL_ROADS, drillRoadFaces } from '../web/src/data/drillOutline.ts'
 import {
   DRILL_REVIVE_START,
   acceptAnswer,
@@ -32,9 +33,9 @@ const groups = () => ['全栈主线']
 test('each gate has four choices, one answer, and a lesson', () => {
   const nav = JSON.parse(readFileSync(new URL('../web/src/data/curriculum-nav.json', import.meta.url), 'utf8'))
   const lessons = new Set(nav.lessons.map((lesson) => lesson.id))
-  assert.equal(DRILL_COURSES.length, 3)
-  assert.equal(DRILL_GATES.length, 39)
-  assert.equal(DRILL_QUESTIONS.length, 390)
+  assert.equal(DRILL_COURSES.length, 4)
+  assert.equal(DRILL_GATES.length, 47)
+  assert.equal(DRILL_QUESTIONS.length, 470)
   assert.equal(neededCorrect(5), 4)
   assert.equal(neededCorrect(10), 8)
   const answers = { a: 0, b: 0, c: 0, d: 0 }
@@ -242,4 +243,47 @@ test('the store records an answer and refuses a newer read-only record', () => {
   })
   assert.equal(blocked.ok, false)
   assert.equal(current.drill.log.length, 1)
+})
+
+function lobbyWord(state, courseId) {
+  const gates = DRILL_GATES.filter((gate) => gate.courseId === courseId)
+  const plays = gates.map((gate) => describeGate(state, gate.id))
+  const cleared = plays.filter((play) => play?.cleared).length
+  const here = plays.findIndex((play) => !play?.cleared)
+  const started = here >= 0 && Boolean(plays[here]?.open)
+  if (cleared === gates.length) return '已通过'
+  if (started) return '进行中'
+  if (cleared > 0) return `第 ${here + 1} 关`
+  return '可以开始'
+}
+
+test('the atlas roads match the lobby and do not carry question stems', () => {
+  assert.deepEqual(
+    DRILL_ROADS.map((course) => ({
+      id: course.id,
+      title: course.title,
+      gates: course.gates.map((gate) => [gate.id, ...gate.questionIds]),
+    })),
+    DRILL_COURSES.map((course) => ({
+      id: course.id,
+      title: course.title,
+      gates: DRILL_GATES.filter((gate) => gate.courseId === course.id).map((gate) => [gate.id, ...gate.questionIds]),
+    })),
+  )
+  assert.equal(JSON.stringify(DRILL_ROADS).includes('stem'), false)
+  const samples = [
+    emptyDrill(),
+    acceptAnswer(emptyDrill(), {
+      gateId: 'd1',
+      questionId: gateById('d1').questionIds[0],
+      choice: questionById(gateById('d1').questionIds[0]).answer,
+      mode: 'gate',
+    }, 5).drill,
+    runGate(emptyDrill(), 'd1', Array.from({ length: gateById('d1').questionIds.length - neededCorrect(gateById('d1').questionIds.length) }, (_, index) => index)),
+  ]
+  for (const state of samples) {
+    for (const face of drillRoadFaces(state.log)) {
+      assert.equal(face.state, lobbyWord(state, face.id), face.id)
+    }
+  }
 })

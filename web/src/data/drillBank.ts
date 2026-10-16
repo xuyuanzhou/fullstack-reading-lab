@@ -1,4 +1,4 @@
-/** 系统设计、SQL 优化、服务性能排查的选择题。正确项对齐课文结论。 */
+/** 系统设计、SQL 优化、服务性能排查和全栈主线的选择题。正确项对齐课文结论。 */
 import type { MoreAsk } from './drillMoreDesign.ts'
 import { DESIGN_FURTHER, DESIGN_FURTHER_POINTS } from './drillFurtherDesign.ts'
 import { DESIGN_LATER, DESIGN_LATER_POINTS } from './drillLaterDesign.ts'
@@ -12,8 +12,9 @@ import { SQL_FURTHER, SQL_FURTHER_POINTS } from './drillFurtherSql.ts'
 import { SQL_LATER, SQL_LATER_POINTS } from './drillLaterSql.ts'
 import { SQL_MORE, SQL_POINTS } from './drillMoreSql.ts'
 import { SQL_NEXT, SQL_NEXT_POINTS } from './drillNextSql.ts'
+import { SPINE_ASKS, SPINE_POINTS } from './drillSpine.ts'
 
-export type DrillCourseId = 'design' | 'sql' | 'perf'
+export type DrillCourseId = 'design' | 'sql' | 'perf' | 'spine'
 export type OptionId = 'a' | 'b' | 'c' | 'd'
 
 export type DrillCourse = {
@@ -64,6 +65,11 @@ export const DRILL_COURSES: DrillCourse[] = [
     id: 'perf',
     title: '服务性能排查',
     lead: '先分开是哪一种资源、哪一跳、哪一种超时，再动堆、池和重试。',
+  },
+  {
+    id: 'spine',
+    title: '全栈主线',
+    lead: '先走通一笔写入：页面、契约、用例和持久化各管一件事，再谈授权、测试和发布。',
   },
 ]
 
@@ -129,6 +135,7 @@ export const DRILL_POINTS: DrillPoint[] = [
   ...DESIGN_LATER_POINTS,
   ...SQL_LATER_POINTS,
   ...PERF_LATER_POINTS,
+  ...SPINE_POINTS,
 ]
 
 const OPT = ['a', 'b', 'c', 'd'] as const
@@ -1014,7 +1021,7 @@ function fromMore(item: MoreAsk): DrillQuestion {
 }
 
 const moreSpread = spread(
-  [...DESIGN_MORE, ...SQL_MORE, ...PERF_MORE, ...DESIGN_NEXT, ...SQL_NEXT, ...PERF_NEXT, ...DESIGN_FURTHER, ...SQL_FURTHER, ...PERF_FURTHER, ...DESIGN_LATER, ...SQL_LATER, ...PERF_LATER].map(fromMore),
+  [...DESIGN_MORE, ...SQL_MORE, ...PERF_MORE, ...DESIGN_NEXT, ...SQL_NEXT, ...PERF_NEXT, ...DESIGN_FURTHER, ...SQL_FURTHER, ...PERF_FURTHER, ...DESIGN_LATER, ...SQL_LATER, ...PERF_LATER, ...SPINE_ASKS].map(fromMore),
   3,
 )
 
@@ -1073,6 +1080,14 @@ export const DRILL_GATES: DrillGate[] = [
   buildGate('p13', 'perf', 13, '复制、槽与过期', '全量是快照，增量是写命令。槽是拓扑，过期通知不是可靠任务。', moreFor('p13')),
   buildGate('p14', 'perf', 14, '结构、可见性与名单', '列表实现、解锁可见和本地提供者名单，都要按现行行为核对，不按旧口诀。', moreFor('p14')),
   buildGate('p15', 'perf', 15, '窗口、预取与公共池', '心跳窗口、预取和公共池，都会把请求或任务留在不该留的地方。', moreFor('p15')),
+  buildGate('m1', 'spine', 1, '四件事各管一层', '按钮、失败类型、事务和唯一约束，先分开再谈这一次下单有没有做成。', moreFor('m1')),
+  buildGate('m2', 'spine', 2, '提交之前都不算写成', '同类调用、吞掉的异常、重复的 POST 和先查再插，都还没让不变量提交。', moreFor('m2')),
+  buildGate('m3', 'spine', 3, '这一次读到什么', '取齐、折叠、会话缓存和刚提交的详情，决定这次看见的是不是那一行。', moreFor('m3')),
+  buildGate('m4', 'spine', 4, '谁能改这一行', '登录态放哪、跨站提交和拥有者，都要在进入用例之前决定。', moreFor('m4')),
+  buildGate('m5', 'spine', 5, '一种行为一道锁', '断言看得见的结果。契约锁住失败类型。浏览器只走用户真正走完的一条。', moreFor('m5')),
+  buildGate('m6', 'spine', 6, '先写下看见了什么', '状态码、留下的行和同一次标识先写上。一次只改有记录的那一层。', moreFor('m6')),
+  buildGate('m7', 'spine', 7, '镜像、流水线与停机', '容器共享内核。打包成功不是三道门。停机先拒绝新请求。', moreFor('m7')),
+  buildGate('m8', 'spine', 8, '地址、探活与这个窗口', '调用方连稳定地址。探活分开启动、就绪和存活。这个窗口只做写明的一件事。', moreFor('m8')),
 ]
 
 export const DRILL_QUESTIONS: DrillQuestion[] = [...designSpread, ...sqlSpread, ...perfSpread, ...moreSpread]

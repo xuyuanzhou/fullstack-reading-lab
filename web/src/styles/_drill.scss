@@ -156,7 +156,7 @@
   margin: 0;
   padding: 6px;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 6px;
   border-radius: 22px;
   background:
@@ -234,8 +234,39 @@
 
 .drill-roads .is-open .drill-state {
   padding: 3px 9px;
-  color: var(--lab-stage);
+  color: var(--lab-stage-on-done);
   background: var(--lab-stage-accent);
+}
+
+html[data-theme='dark'] .drill-roads .is-open .drill-state,
+html[data-theme='dark'] .drill-path .is-open .drill-state {
+  color: var(--lab-stage-bright);
+  background: color-mix(in srgb, var(--lab-stage-accent) 16%, var(--lab-stage-raise));
+  box-shadow: inset 0 0 0 1px var(--lab-stage-accent);
+}
+
+html[data-theme='dark'] .drill-path .is-open .drill-stone,
+html[data-theme='dark'] .drill-path .is-live .drill-stone {
+  background: linear-gradient(180deg, var(--lab-stage-raise), var(--lab-stage-idle));
+  color: var(--lab-stage-bright);
+  box-shadow:
+    inset 0 -7px 0 color-mix(in srgb, var(--lab-stage-accent) 50%, #14201c),
+    0 0 0 1.5px var(--lab-stage-accent),
+    0 0 16px var(--lab-stage-glow);
+}
+
+html[data-theme='dark'] .drill-pebbles .is-here::before {
+  background: var(--lab-stage-raise);
+  box-shadow:
+    inset 0 -3px 0 var(--lab-stage-accent),
+    0 0 0 1.5px var(--lab-stage-bright),
+    0 0 10px var(--lab-stage-glow);
+}
+
+html[data-theme='dark'] .drill-go:not(.is-quiet) {
+  background: color-mix(in srgb, var(--lab-stage-accent) 18%, var(--lab-stage-raise));
+  color: var(--lab-stage-bright);
+  box-shadow: inset 0 0 0 1px var(--lab-stage-accent);
 }
 
 .drill-roads .is-live .drill-state {
@@ -842,7 +873,7 @@
 
 .drill-report-courses {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
   margin: 0 0 18px;
   padding: 0;
@@ -920,6 +951,13 @@
 
   .drill-sheet h2 {
     font-size: 18px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .drill-roads,
+  .drill-report-courses {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { CurrentTask } from '@/components/learning/CurrentTask'
 import { RichBlocks } from '@/components/RichBlocks'
 import { aiNoteRef } from '@/data/aiNoteIndex'
@@ -11,6 +11,7 @@ import { bossQuest, questFace, sideQuests } from '@/data/questBoard'
 import CountUp from '@/components/bits/CountUp'
 import { SKILL_VIEWS, skillBoardState, skillLessonIds, skillProgress, skillSceneTitle, type SkillGlow } from '@/data/learningSkills'
 import { SkillReturn } from '@/components/learning/SkillReturn'
+import { drillRoadFaces } from '@/data/drillOutline'
 import { ORDER_SCALE_GATE, ORDER_SCALE_RUBRIC } from '@/data/orderScaleGate'
 import { SIDE_TRACKS } from '@/data/sideTracks'
 import { shortTitle } from '@/data/reading'
@@ -113,6 +114,7 @@ export function PathPage() {
     skipGateVerify: state.skipGateVerify,
     setLearningPause: state.setLearningPause,
     applyQuest: state.applyQuest,
+    drillLog: state.drill.log,
   })))
   const location = useLocation()
   const navigate = useNavigate()
@@ -550,6 +552,26 @@ export function PathPage() {
               boss: false,
             }]}
           />
+        </section>
+        <section className="atlas-panel atlas-drill-panel campaign-night" aria-label="选择题">
+          <div className="atlas-head">
+            <p className="atlas-kicker">选择题</p>
+            <p className="atlas-role">不计入九关 · 答对 80% 过关</p>
+          </div>
+          <ol className="atlas-drill">
+            {drillRoadFaces(progress.drillLog).map((road) => (
+              <li key={road.id} className={`is-${road.status}`}>
+                <Link to={`/drill/${road.id}`} state={{ drillReturn: 'paths' }}>
+                  <span className="atlas-drill-stone" aria-hidden="true" />
+                  <span className="atlas-drill-copy">
+                    <strong>{road.title}</strong>
+                    <b className="drill-state">{road.state}</b>
+                  </span>
+                  <span className="drill-sr">{road.cleared}/{road.total} 关已通过</span>
+                </Link>
+              </li>
+            ))}
+          </ol>
         </section>
       </div>
     )

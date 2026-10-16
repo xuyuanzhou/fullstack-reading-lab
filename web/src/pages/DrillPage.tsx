@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useMatch, useParams } from 'react-router-dom'
+import { Link, useLocation, useMatch, useParams } from 'react-router-dom'
 import {
   courseById,
   DRILL_COURSES,
@@ -22,6 +22,10 @@ import { shortTitle } from '@/data/reading'
 import { useLearningSlice } from '@/state/progress'
 
 type SealStatus = 'locked' | 'open' | 'live' | 'cleared'
+
+function fromAtlas(state: unknown) {
+  return Boolean(state && typeof state === 'object' && 'drillReturn' in state && state.drillReturn === 'paths')
+}
 
 function Seal({ status }: { status: SealStatus }) {
   return (
@@ -58,7 +62,7 @@ function DrillMast() {
     <header className="drill-mast">
       <div>
         <p className="drill-kicker">选择题闯关</p>
-        <h1>系统设计、SQL、性能排查</h1>
+        <h1>系统设计、SQL、性能与主线</h1>
         <p className="drill-lead">
           每关答完所有题，正确率达到 80% 才通关。通过上一关，才打开下一关。
         </p>
@@ -123,18 +127,20 @@ function DrillLobby() {
 function DrillCourse({ courseId }: { courseId: string }) {
   const course = courseById(courseId)
   const drill = useLearningSlice((state) => state.drill)
+  const location = useLocation()
+  const home = fromAtlas(location.state)
   if (!course) {
     return (
       <div className="drill">
         <p className="drill-lead">没有这一门。</p>
-        <Link className="drill-back" to="/drill">返回选择题</Link>
+        <Link className="drill-back" to={home ? '/paths' : '/drill'}>{home ? '回总图' : '返回选择题'}</Link>
       </div>
     )
   }
   const gates = gatesInCourse(course.id)
   return (
     <div className="drill">
-      <Link className="drill-back" to="/drill">全部课程</Link>
+      <Link className="drill-back" to={home ? '/paths' : '/drill'}>{home ? '回总图' : '全部课程'}</Link>
       <header className="drill-mast">
         <div>
           <p className="drill-kicker">选择题 · {gates.length} 关</p>
@@ -171,7 +177,7 @@ function DrillCourse({ courseId }: { courseId: string }) {
           return (
             <li key={gate.id} className={`is-${status}`}>
               {play?.unlocked ? (
-                <Link to={`/drill/${course.id}/${gate.id}`}>{body}</Link>
+                <Link to={`/drill/${course.id}/${gate.id}`} state={location.state}>{body}</Link>
               ) : (
                 <div className="drill-gate-lock">{body}</div>
               )}
@@ -187,6 +193,8 @@ function DrillStage({ courseId, gateId }: { courseId: string; gateId: string }) 
   const course = courseById(courseId)
   const gate = gateById(gateId)
   const drill = useLearningSlice((state) => state.drill)
+  const location = useLocation()
+  const home = fromAtlas(location.state)
   const answerDrill = useLearningSlice((state) => state.answerDrill)
   const play = course && gate && gate.courseId === course.id ? describeGate(drill, gate.id) : null
   const [holdingId, setHoldingId] = useState<string | null>(null)
@@ -199,7 +207,7 @@ function DrillStage({ courseId, gateId }: { courseId: string; gateId: string }) 
     return (
       <div className="drill">
         <p className="drill-lead">没有这一关。</p>
-        <Link className="drill-back" to="/drill">返回选择题</Link>
+        <Link className="drill-back" to={home ? '/paths' : '/drill'}>{home ? '回总图' : '返回选择题'}</Link>
       </div>
     )
   }
@@ -236,7 +244,7 @@ function DrillStage({ courseId, gateId }: { courseId: string; gateId: string }) 
 
   return (
     <div className="drill">
-      <Link className="drill-back" to={`/drill/${course.id}`}>{course.title}</Link>
+      <Link className="drill-back" to={`/drill/${course.id}`} state={location.state}>{course.title}</Link>
       <header className="drill-mast">
         <div>
           <p className="drill-kicker">第 {gateIndex + 1} 关</p>
@@ -364,9 +372,9 @@ function DrillStage({ courseId, gateId }: { courseId: string; gateId: string }) 
               <p className="drill-issue">复活次数用完了。把这一轮错题全部练对，可以补回 1 次。</p>
             ) : null}
             {play.cleared && nextGate ? (
-              <Link className="drill-go" to={`/drill/${course.id}/${nextGate.id}`}>下一关</Link>
+              <Link className="drill-go" to={`/drill/${course.id}/${nextGate.id}`} state={location.state}>下一关</Link>
             ) : null}
-            {play.cleared && !nextGate ? <Link className="drill-go" to="/drill/report">查看学习报告</Link> : null}
+            {play.cleared && !nextGate ? <Link className="drill-go" to="/drill/report" state={location.state}>查看学习报告</Link> : null}
           </div>
         </section>
       ) : null}
@@ -394,9 +402,11 @@ function Meter({ percent, passed }: { percent: number; passed: boolean }) {
 function DrillReport() {
   const drill = useLearningSlice((state) => state.drill)
   const report = learningReport(drill)
+  const location = useLocation()
+  const home = fromAtlas(location.state)
   return (
     <div className="drill">
-      <Link className="drill-back" to="/drill">返回选择题</Link>
+      <Link className="drill-back" to={home ? '/paths' : '/drill'}>{home ? '回总图' : '返回选择题'}</Link>
       <header className="drill-mast">
         <div>
           <p className="drill-kicker">学习报告</p>
@@ -410,7 +420,7 @@ function DrillReport() {
       <ol className="drill-report-courses">
         {report.courses.map((course) => (
           <li key={course.id}>
-            <Link to={`/drill/${course.id}`}>
+            <Link to={`/drill/${course.id}`} state={location.state}>
               <strong>{course.title}</strong>
               <span>{course.cleared}/{course.total} 关通过</span>
               <b>{course.answered ? `${course.percent}%` : '未作答'}</b>
