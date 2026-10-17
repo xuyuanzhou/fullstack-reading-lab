@@ -45,7 +45,7 @@ node --test scripts/drill.test.mjs scripts/learning-platform.test.mjs
 
 - [ ] 不要把 OpenFeign 写回订单的 `@Transactional`
 - [ ] 不要把这课并进九关 Boss，也不要重跑 `scripts/build-drill-multi.mjs`
-- [ ] TCC 仍单独画 Try、Confirm、Cancel。支付等待不进全局事务
+- [x] TCC 仍单独画 Try、Confirm、Cancel。支付等待不进全局事务。见 [画图补上 TCC 的短框和空回滚](2026-10-17-draw-tx-tcc.md)
 - [ ] 不要把 `coverage-java-128.js` 改成画图课
 
 ## 给下一模型

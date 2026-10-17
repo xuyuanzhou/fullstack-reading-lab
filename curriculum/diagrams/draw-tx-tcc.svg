@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" role="img" aria-labelledby="title desc">
+  <title id="title">TCC：尝试在短框里，支付在框外</title>
+  <desc id="desc">Try 写预留后短事务结束。Confirm 和 Cancel 在框外。取消先到时空成功，后到的尝试被拒绝。用户支付不在框里。</desc>
+  <rect width="960" height="560" rx="18" fill="#f6f7f4"/>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <text x="32" y="36" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">TCC</text>
+    <text x="32" y="64" font-size="20" font-weight="600" fill="#2e3330">短框只留 Try，支付和两阶段都在框外</text>
+
+    <rect x="32" y="92" width="430" height="150" rx="16" fill="none" stroke="#3f6a58" stroke-width="1.6" stroke-dasharray="7 5"/>
+    <text x="52" y="120" font-size="14" font-weight="600" fill="#3f6a58">短全局事务 · reserveOnly</text>
+    <rect x="56" y="140" width="380" height="72" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="246" y="170" text-anchor="middle" font-size="16" font-weight="600" fill="#2e3330">Try · 预留 +n</text>
+    <text x="246" y="194" text-anchor="middle" font-size="13" fill="#3f6a58">返回后这一轮结束</text>
+
+    <rect x="500" y="92" width="428" height="72" rx="12" fill="#eef2f8" stroke="#4a6280"/>
+    <text x="714" y="122" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">Confirm · 预留转扣减</text>
+    <text x="714" y="146" text-anchor="middle" font-size="13" fill="#4a6280">按 XID 只生效一次</text>
+    <rect x="500" y="176" width="428" height="72" rx="12" fill="#eef2f8" stroke="#4a6280"/>
+    <text x="714" y="206" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">Cancel · 有预留则还回去</text>
+    <text x="714" y="230" text-anchor="middle" font-size="13" fill="#4a6280">没有预留则空成功</text>
+
+    <path d="M462 160 H500" fill="none" stroke="#4a6280" stroke-width="1.6" marker-end="url(#tcc)"/>
+    <path d="M462 210 H500" fill="none" stroke="#4a6280" stroke-width="1.6" marker-end="url(#tcc)"/>
+
+    <rect x="32" y="268" width="896" height="72" rx="12" fill="#f6ecea" stroke="#a05048"/>
+    <text x="480" y="298" text-anchor="middle" font-size="15" font-weight="600" fill="#6e3530">用户支付在框外</text>
+    <text x="480" y="322" text-anchor="middle" font-size="13" fill="#6e3530">超时是另一次调用 Cancel，不写进 reserveOnly</text>
+
+    <rect x="32" y="364" width="896" height="156" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="52" y="396" font-size="14" font-weight="600" fill="#2e3330">乱序</text>
+    <text x="52" y="428" font-size="14" fill="#2e3330">取消先到：预留数量不变，fence 记为已取消，Cancel 返回成功。</text>
+    <text x="52" y="456" font-size="14" fill="#2e3330">尝试后到：看见已取消就拒绝，预留数量仍不变。</text>
+    <text x="52" y="484" font-size="14" fill="#6e3530">远程接口不加 @LocalTCC。注解在库存进程的参与者上。</text>
+  </g>
+  <defs>
+    <marker id="tcc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a6280"/>
+    </marker>
+  </defs>
+</svg>

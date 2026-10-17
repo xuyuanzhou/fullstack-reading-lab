@@ -269,7 +269,6 @@ function DrillStage({ courseId, gateId }: { courseId: string; gateId: string }) 
     setIssue('')
     setHeldMode(mode)
     setHoldingId(saved.questionId)
-    setPicks([])
     setArmed(null)
   }
 
@@ -302,12 +301,13 @@ function DrillStage({ courseId, gateId }: { courseId: string; gateId: string }) 
           <h2>{held.stem}</h2>
           <ol className={`drill-options ${isMultiQuestion(held) ? 'is-multi' : ''}`}>
             {held.options.map((option) => {
-              const picked = heldAnswer.choice.includes(option.id)
+              const chosen = picks.length > 0 ? picks : [...heldAnswer.choice]
+              const picked = chosen.includes(option.id)
               const right = correctChoices(held).includes(option.id)
-              const mark = right ? 'is-right' : picked ? 'is-wrong' : ''
+              const mark = [picked ? 'is-picked' : '', right ? 'is-right' : '', picked && !right ? 'is-wrong' : ''].filter(Boolean).join(' ')
               return (
                 <li key={option.id}>
-                  <button type="button" className={`drill-option ${mark}`} disabled>
+                  <button type="button" className={`drill-option ${mark}`} aria-pressed={picked} disabled>
                     <i>{option.id.toUpperCase()}</i>
                     <span>{option.text}</span>
                   </button>

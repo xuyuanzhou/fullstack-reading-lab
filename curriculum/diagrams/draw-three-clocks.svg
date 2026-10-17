@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" role="img" aria-labelledby="title desc">
+  <title id="title">三处超时分开画</title>
+  <desc id="desc">网关读取超时、OpenFeign 读取超时、借连接超时各管一段。熔断打开后不再向库存发起调用。重试仍用原来的幂等键。</desc>
+  <rect width="960" height="560" rx="18" fill="#f6f7f4"/>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <text x="32" y="36" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">超时</text>
+    <text x="32" y="64" font-size="20" font-weight="600" fill="#2e3330">三处超时各管一段，熔断不是再试一次</text>
+
+    <rect x="48" y="100" width="160" height="64" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="128" y="138" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">网关</text>
+    <line x1="208" y1="132" x2="268" y2="132" stroke="#2e3330" stroke-width="1.6" marker-end="url(#ck)"/>
+    <text x="238" y="92" text-anchor="middle" font-size="12" fill="#5e6661">读取 2s</text>
+
+    <rect x="268" y="100" width="170" height="64" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="353" y="138" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">订单服务</text>
+    <line x1="438" y1="132" x2="508" y2="132" stroke="#4a6280" stroke-width="1.6" marker-end="url(#ckBlue)"/>
+    <text x="473" y="92" text-anchor="middle" font-size="12" fill="#4a6280">读取 800ms</text>
+
+    <rect x="508" y="100" width="170" height="64" rx="12" fill="#eef2f8" stroke="#4a6280"/>
+    <text x="593" y="138" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">库存服务</text>
+    <line x1="678" y1="132" x2="748" y2="132" stroke="#a05048" stroke-width="1.6" marker-end="url(#ckRed)"/>
+    <text x="713" y="92" text-anchor="middle" font-size="12" fill="#6e3530">借连接 200ms</text>
+
+    <rect x="748" y="100" width="164" height="64" rx="12" fill="#f6ecea" stroke="#a05048"/>
+    <text x="830" y="128" text-anchor="middle" font-size="15" font-weight="600" fill="#6e3530">连接池</text>
+    <text x="830" y="150" text-anchor="middle" font-size="12" fill="#6e3530">语句另计</text>
+
+    <rect x="32" y="200" width="896" height="132" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="52" y="232" font-size="14" fill="#2e3330">网关 504：两次读取订单服务之间的等待到了，不是 SQL 已超过 800 毫秒。</text>
+    <text x="52" y="264" font-size="14" fill="#2e3330">订单服务读取超时：库存接受连接后没有写完响应。建连超时只用于新连接。</text>
+    <text x="52" y="296" font-size="14" fill="#2e3330">借连接超时：SQL 还没开始。调大它不会取消已经借出的慢查询。</text>
+
+    <rect x="32" y="356" width="430" height="160" rx="14" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="52" y="390" font-size="15" font-weight="600" fill="#2e3330">重试</text>
+    <text x="52" y="422" font-size="14" fill="#2e3330">只再调用一次预留。</text>
+    <text x="52" y="454" font-size="14" fill="#2e3330">幂等键与第一次相同。</text>
+    <text x="52" y="486" font-size="14" fill="#3f6a58">箭头仍是订单服务到库存服务。</text>
+
+    <rect x="498" y="356" width="430" height="160" rx="14" fill="#f6ecea" stroke="#a05048"/>
+    <text x="518" y="390" font-size="15" font-weight="600" fill="#6e3530">熔断打开</text>
+    <text x="518" y="422" font-size="14" fill="#6e3530">不再向库存服务发起调用。</text>
+    <text x="518" y="454" font-size="14" fill="#6e3530">直接返回拒绝。</text>
+    <text x="518" y="486" font-size="14" fill="#6e3530">不要把这一格画成再试一次。</text>
+  </g>
+  <defs>
+    <marker id="ck" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2e3330"/>
+    </marker>
+    <marker id="ckBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a6280"/>
+    </marker>
+    <marker id="ckRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#a05048"/>
+    </marker>
+  </defs>
+</svg>

@@ -249,6 +249,12 @@ const GLYPHS: Record<string, ReactNode> = {
       <path d="M24 18v6l4 3" />
     </g>
   ),
+  sms: (
+    <g className="skill-glyph">
+      <path d="M15 18h18v12H15z" />
+      <path d="M15 18l9 7 9-7" />
+    </g>
+  ),
   sql: (
     <g className="skill-glyph">
       <path d="M16 18h16M16 24h16M16 30h10" />

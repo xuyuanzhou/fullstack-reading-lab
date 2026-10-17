@@ -633,7 +633,7 @@ export const DRILL_ROADS = [
     gates: [
       {
         id: 'xevo',
-        questionIds: ['xevo-1', 'xevo-2', 'xevo-3', 'xevo-4', 'xevo-5', 'xevo-6', 'xevo-7', 'xevo-13', 'xevo-14', 'xevo-15', 'xevo-16', 'xevo-8', 'xevo-9', 'xevo-10', 'xevo-11', 'xevo-12'],
+        questionIds: ['xevo-1', 'xevo-2', 'xevo-3', 'xevo-4', 'xevo-5', 'xevo-6', 'xevo-7', 'xevo-13', 'xevo-14', 'xevo-15', 'xevo-16', 'xevo-17', 'xevo-18', 'xevo-8', 'xevo-9', 'xevo-10', 'xevo-11', 'xevo-12'],
       },
     ],
   },

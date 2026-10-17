@@ -44,7 +44,7 @@ test('each gate has four choices, one answer, and a lesson', () => {
   const lessons = new Set(nav.lessons.map((lesson) => lesson.id))
   assert.equal(DRILL_COURSES.length, 26)
   assert.equal(DRILL_GATES.length, 135)
-  assert.equal(DRILL_QUESTIONS.length, 1403)
+  assert.equal(DRILL_QUESTIONS.length, 1405)
   assert.equal(neededCorrect(5), 4)
   assert.equal(neededCorrect(10), 8)
   const answers = { a: 0, b: 0, c: 0, d: 0 }

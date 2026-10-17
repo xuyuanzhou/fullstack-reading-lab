@@ -596,6 +596,7 @@ export function PathPage() {
                   liveIndex={liveIndex}
                   resting={!planted}
                   row
+                  walkCleared
                   onPick={(index) => {
                     const road = block.faces[index]
                     if (!road) return
@@ -872,6 +873,7 @@ function CampaignMap({
   liveIndex,
   resting = false,
   row = false,
+  walkCleared = false,
   onPick,
 }: {
   mapId: string
@@ -883,6 +885,8 @@ function CampaignMap({
   resting?: boolean
   /** 每一行都从左往右。排满换到下一行的最左边，不倒过来，也不横滑出屏幕。 */
   row?: boolean
+  /** 绿路只画到最后一座已通过的石台。还没通过的路保持淡线。 */
+  walkCleared?: boolean
   onPick: (index: number) => void
 }) {
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -897,7 +901,10 @@ function CampaignMap({
     return () => observer.disconnect()
   }, [])
   const layout = useMemo(() => buildLayout(nodes.length, boardWidth || MIN_SLOT + PAD_X * 2, row), [boardWidth, nodes.length, row])
-  const walkIndex = liveIndex >= 0 ? liveIndex : resting ? -1 : Math.max(0, nodes.length - 1)
+  const lastDone = nodes.reduce((found, node, index) => (node.done ? index : found), -1)
+  const walkIndex = walkCleared
+    ? lastDone
+    : liveIndex >= 0 ? liveIndex : resting ? -1 : Math.max(0, nodes.length - 1)
   const stand = hereIndex >= 0 ? hereIndex : resting ? -1 : walkIndex
   const showLive = !resting || hereIndex >= 0
   const arrow = showLive && liveIndex >= 0 ? layout.arrows[liveIndex] ?? null : null
@@ -908,7 +915,7 @@ function CampaignMap({
         className={layout.rows === 1 ? 'path-map is-single' : 'path-map'}
         style={{ width: layout.width, height: layout.height, ['--slot' as string]: `${layout.slot}px` }}
       >
-        <svg className="campaign" viewBox={`0 0 ${layout.width} ${layout.height}`} aria-hidden="true">
+        <svg className={walkCleared ? 'campaign is-quiet-road' : 'campaign'} viewBox={`0 0 ${layout.width} ${layout.height}`} aria-hidden="true">
           <defs>
             <mask id={maskId} maskUnits="userSpaceOnUse">
               <path d={layout.d} pathLength="1" fill="none" stroke="#fff" strokeWidth="16" strokeDasharray={`${layout.fractions[walkIndex] ?? 0} 1`} />

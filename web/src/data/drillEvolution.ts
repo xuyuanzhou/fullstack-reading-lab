@@ -1,4 +1,4 @@
-/** 演进全流程 16 课各一题。正确项是课文结论，错项是这一问的误解。 */
+/** 演进全流程 18 课各一题。正确项是课文结论，错项是这一问的误解。 */
 
 export const EVO_POINTS = [
   { id: 'xevo-stages', courseId: 'evo' as const, title: '有信号才进入下一站', lessonId: 'evo-order-through-stages', summary: '容量线和服务化线分开。没有量到的瓶颈就停在当前站，分布式事务要等数据已经分库。' },
@@ -12,6 +12,8 @@ export const EVO_POINTS = [
   { id: 'xevo-fulfill', courseId: 'evo' as const, title: '支付到签收分次提交', lessonId: 'evo-order-pay-ship-done', summary: '支付行和待发记录一次提交。已支付、扣减、已发货是后来各自的本地事务。签收只把订单改成已完成。' },
   { id: 'xevo-state', courseId: 'evo' as const, title: '没有箭头就不能转', lessonId: 'evo-order-state-table', summary: '状态图的箭头写事件。订单行只存当前状态，更新必须带原来的状态。退款完成、退货入库、顾客退回各有自己的起点。' },
   { id: 'xevo-chain', courseId: 'evo' as const, title: '远程调用在提交返回之后', lessonId: 'evo-order-chain', summary: 'OpenFeign 在订单事务返回后带同一把幂等键预留。支付行和待发记录一次提交。校验时分别查询每个库，重复消息影响 0 行。' },
+  { id: 'xevo-race', courseId: 'evo' as const, title: '先提交的箭头生效', lessonId: 'evo-order-event-race', summary: '签收和退货入库都从已发货出发。先提交成功的留下，后到的影响 0 行。签收之后的退货改用顾客退回。' },
+  { id: 'xevo-lock', courseId: 'evo' as const, title: '预留行走向扣减或释放', lessonId: 'evo-lock-state-table', summary: '确认和释放都从已预留出发，先成功的留下。退货上架只增加可售。签收和出库不改锁定数量。' },
   { id: 'xevo-choose', courseId: 'evo' as const, title: '先看不变量在哪个库', lessonId: 'evo-tx-choose', summary: '同一库用本地事务。可靠通知用本地消息表。长流程用 Saga。短预留要空回滚时才用 TCC。' },
   { id: 'xevo-outbox', courseId: 'evo' as const, title: '支付行和待发记录一次提交', lessonId: 'evo-tx-outbox', summary: '同一次本地提交写下支付结果和待发记录。消费按支付单号只生效一次。' },
   { id: 'xevo-saga', courseId: 'evo' as const, title: '补偿是新的一笔', lessonId: 'evo-tx-saga', summary: '预留已经提交之后，释放和取消是新写入，不是把原事务倒回去。' },
@@ -226,6 +228,42 @@ export const EVO_ASKS: EvoAsk[] = [
       b: '锁定库可能已经提交。订单事务再回滚，盖不住那次预留。',
       c: '创建返回前只有订单库和锁定库各一次提交。支付还没有发生。校验看每个库的行，不看一个全局事务编号。',
       d: '发送不在数据库提交里。中继先发送，失败则待发行仍是 NEW，恢复后重发。',
+    },
+  },
+  {
+    id: 'xevo-17',
+    pointId: 'xevo-race',
+    stem: '订单已经是已发货。签收和退货入库几乎同时到达，哪一句成立？',
+    texts: [
+      '两条都合法，就先改成已完成，再按退货入库改成已退货。',
+      '两条都要求当前是已发货。先提交成功的那条留下，后到的更新影响 0 行。订单状态只由订单服务写。',
+      '支付服务直接把订单改成已完成，订单服务不用再看起点。',
+      '签收先成功后，退货入库改用退款完成，从已完成退到已退款。',
+    ],
+    answer: 'b',
+    explain: '签收和退货入库的起点都是已发货。订单行只有一列当前状态，先提交成功的 UPDATE 把起点改掉，后到的条件不再成立，影响 0 行。签收已经成功、货才退回时，事件是顾客退回，起点改为已完成。支付服务、履约和物流不执行订单表的更新。签收不改锁定数量。',
+    whyWrong: {
+      a: '退货入库不能从已完成出发。第二条若仍按已发货去更新，影响行数是 0。',
+      c: '订单状态只由订单服务按迁移表更新。支付服务写的是支付库。',
+      d: '退款完成的起点是已支付。签收之后的退货是顾客退回，终点是已退货。',
+    },
+  },
+  {
+    id: 'xevo-18',
+    pointId: 'xevo-lock',
+    stem: '锁定数量和订单状态各有一张表。下面哪一句成立？',
+    texts: [
+      '签收时把已扣减改回已预留，和订单变成已完成写在同一次提交里。',
+      '已释放之后仍可以确认，把数量再扣一次。',
+      '确认和释放都从已预留出发，先提交成功的留下。退货上架只增加可售。签收不改锁定数量。',
+      '出库时再减一次可售，和发货单放进同一次提交。',
+    ],
+    answer: 'c',
+    explain: '预留行在锁定库，状态是已预留、已扣减、已释放。确认和释放都要求当前是已预留，先成功的把起点改掉，后到的影响 0 行，数量列不再动。退货上架按退货单号增加可售，不把已扣减改回已预留。出库和签收不出现在这张图上。',
+    whyWrong: {
+      a: '签收只改订单行。已扣减没有回到已预留的箭头，也不能和订单库收成一次提交。',
+      b: '已释放没有向外的箭头。确认的起点只是已预留。',
+      d: '数量在支付成功的确认里已经从预留变成已扣减。出库不再改可售。',
     },
   },
   {

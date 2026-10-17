@@ -1266,6 +1266,10 @@
   stroke-dasharray: 1.5 8;
 }
 
+.campaign.is-quiet-road .campaign-road {
+  stroke: color-mix(in srgb, var(--lab-stage-line) 75%, transparent);
+}
+
 .campaign-walk {
   stroke: var(--lab-stage-accent);
   stroke-width: 11;

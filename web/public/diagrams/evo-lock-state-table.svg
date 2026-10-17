@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 380" role="img" aria-labelledby="title desc">
+  <title id="title">预留行走向扣减或释放</title>
+  <desc id="desc">确认和释放都从已预留出发。入库只增加可售，不改预留行。签收和出库不在这张图上。</desc>
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#3f6a58"/></marker>
+  </defs>
+  <rect width="960" height="380" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="34" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="18" font-weight="600" fill="#2e3330">预留行：已预留走向扣减或释放</text>
+  <text x="32" y="56" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#5e6661">只在锁定库提交。先成功的留下，后到的影响 0 行</text>
+
+  <circle cx="48" cy="130" r="7" fill="#2e3330"/>
+  <line x1="55" y1="130" x2="88" y2="130" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+  <text x="60" y="118" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="12" fill="#3f6a58">预留</text>
+
+  <rect x="88" y="104" width="150" height="52" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+  <text x="128" y="136" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="15" fill="#2e3330">已预留</text>
+
+  <line x1="238" y1="118" x2="340" y2="100" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+  <text x="250" y="96" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="12" fill="#3f6a58">确认</text>
+  <rect x="340" y="76" width="160" height="52" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+  <text x="380" y="108" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="15" fill="#2e3330">已扣减</text>
+
+  <line x1="238" y1="148" x2="340" y2="188" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+  <text x="250" y="186" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="12" fill="#3f6a58">释放</text>
+  <rect x="340" y="168" width="160" height="52" rx="12" fill="#f6ecea" stroke="#a05048"/>
+  <text x="380" y="200" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="15" fill="#6e3530">已释放</text>
+
+  <rect x="560" y="76" width="360" height="144" rx="12" fill="#eef3f6" stroke="#3d5c73"/>
+  <text x="576" y="106" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="600" fill="#2e3330">入库不接在已扣减上</text>
+  <text x="576" y="134" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#2e3330">退货单号记下一次，可售增加</text>
+  <text x="576" y="156" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#2e3330">预留行保持已扣减</text>
+  <text x="576" y="186" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#2e3330">同一退货单号再来，可售不再加</text>
+
+  <text x="32" y="280" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#5e6661">已扣减、已释放没有向外的箭头。确认和释放不能互换后再做第二次。</text>
+  <text x="32" y="308" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#5e6661">签收和出库不改锁定数量，也不出现在这张图上。</text>
+  <text x="32" y="344" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#3f6a58">预留：可售减少、预留增加。确认：预留减少、已扣减增加。释放：预留减少、可售加回。</text>
+</svg>

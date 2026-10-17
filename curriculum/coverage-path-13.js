@@ -373,9 +373,70 @@ const COVERAGE_PATH_13 = [
     points:['远程预留发生在订单本地事务返回之后，请求带超时和同一把幂等键','支付行和待发记录在支付库一次提交，中继在这次提交之外先发送再改状态','校验分别查询订单库、锁定库和支付库，重复消息的更新影响行数为 0'],
     deep:[
       {title:'怎样校验',body:'创建返回查三个库：订单待支付，锁定库有预留和幂等键，支付库计数为 0。支付方法返回只要求支付行和待发行同时在。中继与消费完成后再看订单已支付、预留已扣减。签收后再查，支付行和扣减数量应与签收前相同。'},
-      {title:'相关课',body:'创建时谁提交见 `evo-order-create-consistency`。支付到签收的分次提交见 `evo-order-pay-ship-done`。待发记录见 `evo-tx-outbox`。支付失败的释放见 `evo-tx-saga`。状态更新条件见 `evo-order-state-table`。'},
+      {title:'相关课',body:'创建时谁提交见 `evo-order-create-consistency`。支付到签收的分次提交见 `evo-order-pay-ship-done`。待发记录见 `evo-tx-outbox`。支付失败的释放见 `evo-tx-saga`。状态更新条件见 `evo-order-state-table`。同一起点的两条箭头见 `evo-order-event-race`。'},
     ],
     refs:[['Spring Cloud OpenFeign','https://docs.spring.io/spring-cloud-openfeign/reference/'],['microservices.io：事务性发件箱','https://microservices.io/patterns/data/transactional-outbox.html'],['microservices.io：Saga','https://microservices.io/patterns/data/saga.html']]
+  },
+  {
+    track:'java', group:'系统设计', id:'evo-order-event-race',
+    title:'同一起点的两条箭头，先提交成功的那条生效',
+    prompt:'已发货可以签收，也可以退货入库。两条几乎同时到达时，订单状态由谁写、哪一条生效？',
+    promptAnswer:'订单状态只由订单服务按迁移表更新。两条都要求当前是已发货，先提交成功的那条生效，后到的影响 0 行。后到的不能改写成另一条事件。签收不改锁定数量。',
+    core:'迁移表里从已发货出发有两条箭头：签收到已完成，退货入库到已退货。两条都合法，但不能对同一行连续做完。订单行只有一列当前状态。先提交成功的那次 `UPDATE` 把状态改掉，后到的那次因为起点已经不是已发货，影响行数是 0。影响 0 行就停住，不要再无条件改成自己的终点。\n\n订单状态只由订单服务写。支付服务、履约、物流各自提交自己的事实，经消息到达后，由订单服务按事件查迁移表。支付成功和取消的起点是待支付。出库和退款完成的起点是已支付。签收和退货入库的起点是已发货。顾客退回的起点是已完成。支付服务不执行订单表的 `UPDATE`。\n\n签收先成功、货稍后才回到仓库时，下一事件是顾客退回，起点是已完成，终点仍是已退货。这时再执行退货入库，起点对不上，影响 0 行。退货入库先成功时，签收同样停住，订单留在已退货。\n\n锁定数量是另一份状态，不写进订单的 `status`。创建把可售改成已预留，支付成功把已预留改成已扣减，取消把已预留改成已释放。签收、出库、退货入库都不改锁定数量。已扣减和已释放没有回到已预留的箭头。',
+    why:'两条消息都处理成功，订单会先变成已完成，又被退货入库改走，图上却没有从已完成出发的退货入库。区分信号是：后到的更新影响 0 行，订单停留在先成功的那个状态；事件记录里只有先成功的那条事件。',
+    example:'订单服务按事件查表，条件里带起点：\n\n```java\n@Transactional\npublic boolean apply(String orderId, String event) {\n  Transition t = table.get(event);\n  int updated = orders.updateStatus(orderId, t.from(), t.to());\n  if (updated == 1) events.insertOnce(orderId, event);\n  return updated == 1;\n}\n```\n\n```sql\nUPDATE orders SET status = \'COMPLETED\'\n WHERE id = ? AND status = \'SHIPPED\';\nUPDATE orders SET status = \'RETURNED\'\n WHERE id = ? AND status = \'SHIPPED\';\n```\n\n签收先提交后，第二条的 `status = SHIPPED` 已经不成立。若货在签收之后退回，改用：\n\n```sql\nUPDATE orders SET status = \'RETURNED\'\n WHERE id = ? AND status = \'COMPLETED\';\n```\n\n这一条的事件是顾客退回，不是把退货入库再执行一遍。',
+    task:'写出签收和退货入库的起点。说明两条同时到达时哪一条留下，后到的影响几行。再写签收已经成功、货才退回时该用哪一个事件。标明谁执行订单状态的更新。',
+    answer:[
+      '签收：已发货 → 已完成。',
+      '退货入库：已发货 → 已退货。',
+      '',
+      '两条同时到达：先提交成功的那条留下。后到的 UPDATE 影响 0 行，状态保持先成功的终点。',
+      '',
+      '签收已经成功、货才退回：事件改为顾客退回，起点是已完成，终点是已退货。',
+      '',
+      '订单状态只由订单服务按迁移表更新。支付服务、履约和物流不改订单行。签收不改锁定数量。',
+    ].join('\n'),
+    keywords:'状态迁移 签收 退货入库 顾客退回 影响行数',
+    diagram:'diagrams/evo-order-event-race.svg',
+    points:['同一起点的两条合法箭头里，先提交成功的那条生效，后到的更新影响行数为 0','订单状态只由订单服务按迁移表写入，支付服务和履约不改订单行','签收已经成功之后的退货使用顾客退回，退货入库仍只从已发货出发'],
+    deep:[
+      {title:'图怎么读',body:'已发货分出签收和退货入库。先到达并提交的箭头画实线，后到的箭头停在影响 0 行。底部从已完成出发的只有顾客退回。锁定数量的三态画在框外，签收没有箭头指过去。'},
+      {title:'相关课',body:'迁移表见 `evo-order-state-table`。调用放在哪次提交外见 `evo-order-chain`。预留行的状态见 `evo-lock-state-table`。顾客退回见 `draw-uml-state-done`。退货入库见 `draw-uml-state-return`。'},
+    ],
+    refs:[['OMG：UML 2.5.1','https://www.omg.org/spec/UML/2.5.1/About-UML'],['UML：State machine diagrams','https://www.uml-diagrams.org/state-machine-diagrams.html']]
+  },
+  {
+    track:'java', group:'系统设计', id:'evo-lock-state-table',
+    title:'预留行从已预留走向扣减或释放',
+    prompt:'锁定数量的状态图和状态表怎样设计，它和订单状态哪些能一起变？',
+    promptAnswer:'预留行只有已预留、已扣减、已释放。确认和释放都从已预留出发，先提交成功的留下。退货上架是增加可售的新写入。签收和出库不改锁定数量。',
+    core:'锁定数量不写在订单的 `status` 上。〔预留行｜某一笔订单占住多少数量的那一行，数据在锁定库〕自己有三个状态：已预留、已扣减、已释放。实心圆经预留进入已预留：可售减少，预留增加。已预留经确认到已扣减：预留减少，已扣减增加。已预留经释放到已释放：预留减少，可售加回。已扣减和已释放没有向外的箭头。\n\n确认和释放是同一起点的两条箭头，规则与订单上的签收、退货入库相同。先提交成功的那次把预留行改掉，后到的因为起点已经不是已预留，影响 0 行，数量列也不再动。已释放不能再确认。已扣减不能再释放，也不能改回已预留。\n\n这两次更新都在锁定库的一次本地事务里：先按起点改预留行，行数是 1 才改数量列。订单服务不执行这两条 `UPDATE`。支付成功的消息到达后，锁定服务做确认。取消或支付失败的消息到达后，锁定服务做释放。\n\n出库和签收不进入这张图。货退回仓库后若要重新可售，另写一笔〔入库｜按退货单号把可售加回去的新写入〕。入库增加可售，并记下退货单号，同一单号只加一次。它不把预留行从已扣减改回已预留。订单那边仍按自己的迁移表走退货入库或顾客退回。',
+    why:'签收时把已扣减改回已预留，数量会在货已离开后又变成可售。区分信号是：预留行停在已扣减或已释放；退货上架只多出一行入库记录和可售的增加，预留行的状态不变。',
+    example:'确认和释放都要求当前是已预留。入库不改预留行：\n\n```java\n@Transactional\npublic boolean confirm(String orderId) {\n  Reservation row = reservations.get(orderId);\n  int updated = reservations.mark(orderId, "RESERVED", "DEDUCTED");\n  if (updated != 1) return false;\n  stock.moveReservedToDeducted(row.skuId(), row.qty());\n  return true;\n}\n\n@Transactional\npublic boolean release(String orderId) {\n  Reservation row = reservations.get(orderId);\n  int updated = reservations.mark(orderId, "RESERVED", "RELEASED");\n  if (updated != 1) return false;\n  stock.moveReservedToAvailable(row.skuId(), row.qty());\n  return true;\n}\n\n@Transactional\npublic boolean restock(String returnId, String skuId, int qty) {\n  if (inbounds.seen(returnId)) return true;\n  stock.addAvailable(skuId, qty);\n  inbounds.insert(returnId, skuId, qty);\n  return true;\n}\n```\n\n```sql\nUPDATE reservation SET status = \'DEDUCTED\'\n WHERE order_id = ? AND status = \'RESERVED\';\nUPDATE reservation SET status = \'RELEASED\'\n WHERE order_id = ? AND status = \'RESERVED\';\n```\n\n两条里先成功的把 `RESERVED` 改掉。后一条影响 0 行，数量方法不会被调用。`restock` 只增加可售。',
+    task:'画出预留行的三个状态和允许的箭头。写出确认、释放的起点。说明退货上架改哪一列，签收改不改锁定数量。',
+    answer:[
+      '图：',
+      '',
+      '```text',
+      '[*] --> 已预留 : 预留（可售减少，预留增加）',
+      '已预留 --> 已扣减 : 确认',
+      '已预留 --> 已释放 : 释放',
+      '```',
+      '',
+      '已扣减、已释放没有向外的箭头。确认和释放的起点都是已预留。先成功的留下，后到的影响 0 行。',
+      '',
+      '退货上架：可售增加，并记下退货单号。预留行保持已扣减。',
+      '',
+      '签收和出库不改锁定数量，也不改预留行。',
+    ].join('\n'),
+    keywords:'预留行 已扣减 已释放 入库 锁定数量',
+    diagram:'diagrams/evo-lock-state-table.svg',
+    points:['预留行只有已预留、已扣减、已释放，确认和释放都从已预留出发','先提交成功的那条生效，后到的更新影响行数为 0，数量列不再改','退货上架只增加可售，签收和出库不改锁定数量'],
+    deep:[
+      {title:'图怎么读',body:'已预留分出确认和释放，终点没有向外的箭头。入库画在框外，只指向可售增加，不连到已扣减。签收和出库不出现在这张图上。'},
+      {title:'相关课',body:'订单状态见 `evo-order-state-table`。同一起点谁先生效见 `evo-order-event-race`。支付失败的释放见 `evo-tx-saga`。空回滚见 `evo-tx-tcc`。'},
+    ],
+    refs:[['microservices.io：Saga','https://microservices.io/patterns/data/saga.html'],['Seata：TCC 模式','https://seata.apache.org/docs/user/mode/tcc/']]
   },
   {
     track:'java', group:'系统设计', id:'evo-tx-choose',
@@ -465,7 +526,7 @@ const COVERAGE_PATH_13 = [
     points:['Saga 的反向步骤是新的写入，不是回滚已提交的事务','支付等待期间预留状态对别人可见','补偿按订单号只生效一次，停住时要对账'],
     deep:[
       {title:'图怎么读',body:'上排三步都已提交，支付失败停在右边。下排箭头回到库存和订单，标注是新写入。中间的流程表只在编排方案里存在。'},
-      {title:'和 TCC 怎么分',body:'能接受已预留被看见、用一次释放纠正，就停在 Saga。画法见 `draw-tx-saga`：下排是新写入，不是回滚。必须把占住资源做成尝试、确认、取消三套接口，并处理空回滚，才进入 `evo-tx-tcc`。'},
+      {title:'和 TCC 怎么分',body:'能接受已预留被看见、用一次释放纠正，就停在 Saga。画法见 `draw-tx-saga`：下排是新写入，不是回滚。必须把占住资源做成尝试、确认、取消三套接口，并处理空回滚，才进入 `evo-tx-tcc`。画法见 `draw-tx-tcc`。'},
     ],
     refs:[['microservices.io：Saga','https://microservices.io/patterns/data/saga.html'],['Microsoft：Saga','https://learn.microsoft.com/en-us/azure/architecture/patterns/saga']]
   },
@@ -499,7 +560,7 @@ const COVERAGE_PATH_13 = [
     points:['Try 预留，Confirm 扣减，Cancel 释放，三步都要幂等','取消先到必须空成功，后到的尝试必须拒绝','全局事务不覆盖用户支付等待'],
     deep:[
       {title:'图怎么读',body:'短括号只框住 Try 到确认或取消。人形支付画在括号外，由超时任务指向 Cancel。旁边的乱序框：取消先到，尝试被拒绝。'},
-      {title:'相关课',body:'空回滚和悬挂见 `sca-seata-tcc-empty`。选型见 `evo-tx-choose`。补偿见 `evo-tx-saga`。'},
+      {title:'相关课',body:'空回滚和悬挂见 `sca-seata-tcc-empty`。选型见 `evo-tx-choose`。补偿见 `evo-tx-saga`。画法见 `draw-tx-tcc`：短框只留 Try，支付在框外。'},
     ],
     refs:[['Seata：TCC 模式','https://seata.apache.org/docs/user/mode/tcc/'],['Seata：什么是 Seata','https://seata.apache.org/docs/overview/what-is-seata/']]
   },
@@ -528,7 +589,7 @@ const COVERAGE_PATH_13 = [
     points:['性能、容灾、治理是订单链路上的配套，不是下一种架构','RPO 看能丢多久的已确认写入，RTO 看恢复要多久','重试预留必须带幂等键，熔断不是重试'],
     deep:[
       {title:'图怎么读',body:'中间是订单请求穿过网关、订单、库存、支付。左侧性能只标详情和短事务。右侧容灾标复制和备份两条不同的箭头。下方治理是超时、幂等键、限流和 trace id。'},
-      {title:'相关课',body:'错误预算见 `arch-slo-budget`。三只超时见 `java-http-timeout`、`nginx-proxy-timeout`、`hikari-pool-timeout`。熔断与重试见 `circuit-breaker-not-retry`。追踪见 `request-trace-one-hop`。'},
+      {title:'相关课',body:'错误预算见 `arch-slo-budget`。三处超时的画法见 `draw-three-clocks`。建连与读取见 `java-http-timeout`。网关见 `nginx-proxy-timeout`。借连接见 `hikari-pool-timeout`。熔断与重试见 `circuit-breaker-not-retry`。追踪见 `request-trace-one-hop`。'},
     ],
     refs:[['Microsoft：灾难恢复','https://learn.microsoft.com/en-us/azure/well-architected/reliability/disaster-recovery'],['Google SRE：处理过载','https://sre.google/sre-book/handling-overload/']]
   },
