@@ -22,7 +22,7 @@ import { useShallow } from 'zustand/react/shallow'
 import { RouteSkeleton } from '@/components/RouteSkeleton'
 import { ProgressAside } from '@/components/ProgressAside'
 import { ReadingBoundary } from '@/components/ReadingBoundary'
-import { RouteTransition, TransitionAudioButton } from '@/transition/RouteTransition'
+import { RouteTransition } from '@/transition/RouteTransition'
 
 const { Sider, Content } = Layout
 
@@ -463,7 +463,6 @@ export function AppLayout() {
             <span className="header-count">
               {onDrill ? `积分 ${drillPoints ?? '…'}` : onAi ? `${aiNav?.noteCount ?? '…'} 篇` : `${doneCount}/${trackLessons.length}`}
             </span>
-            <TransitionAudioButton />
             <Button
               type="text"
               icon={progress.theme === 'dark' ? <SunOutlined /> : <MoonOutlined />}

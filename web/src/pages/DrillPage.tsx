@@ -1,30 +1,38 @@
 import { useState } from 'react'
 import { Link, useLocation, useMatch, useParams } from 'react-router-dom'
 import {
+  correctChoices,
   courseById,
   DRILL_COURSES,
-  DRILL_GATES,
   gateById,
   gatesInCourse,
+  isMultiQuestion,
   pointById,
   questionById,
   type OptionId,
 } from '@/data/drillBank'
 import {
   describeGate,
+  examOutOfReach,
   learningReport,
   neededCorrect,
   type DrillMode,
 } from '@/data/drillRules'
 import { findLesson } from '@/data/curriculum'
+import { DRILL_BLOCKS } from '@/data/drillOutline'
 import { lessonPath } from '@/data/routes'
 import { shortTitle } from '@/data/reading'
 import { useLearningSlice } from '@/state/progress'
 
 type SealStatus = 'locked' | 'open' | 'live' | 'cleared'
 
-function fromAtlas(state: unknown) {
-  return Boolean(state && typeof state === 'object' && 'drillReturn' in state && state.drillReturn === 'paths')
+function returnTrip(state: unknown): { to: string; label: string } | null {
+  if (!state || typeof state !== 'object' || !('drillReturn' in state)) return null
+  if (state.drillReturn === 'paths') return { to: '/paths', label: '回总图' }
+  if (state.drillReturn === 'gate' && 'gateId' in state && typeof state.gateId === 'string' && /^[a-z0-9-]+$/.test(state.gateId)) {
+    return { to: `/paths?gate=${state.gateId}`, label: '回这一关' }
+  }
+  return null
 }
 
 function Seal({ status }: { status: SealStatus }) {
@@ -62,9 +70,9 @@ function DrillMast() {
     <header className="drill-mast">
       <div>
         <p className="drill-kicker">选择题闯关</p>
-        <h1>系统设计、SQL、性能与主线</h1>
+        <h1>按课表分块：全栈主线、前端、Java</h1>
         <p className="drill-lead">
-          每关答完所有题，正确率达到 80% 才通关。通过上一关，才打开下一关。
+          同一块里按课表排，上一门后面才是下一门。同一章里接到一起。单选只选一项，多选要选全。每关答完这一关的全部题，正确率达到 80% 才通关。通过上一关，才打开下一关。
         </p>
       </div>
       <div className="drill-meters" aria-label="积分与复活">
@@ -83,34 +91,42 @@ function DrillLobby() {
   return (
     <div className="drill">
       <DrillMast />
-      <ol className="drill-roads">
-        {DRILL_COURSES.map((course) => {
-          const gates = gatesInCourse(course.id)
-          const plays = gates.map((gate) => describeGate(drill, gate.id))
-          const cleared = plays.filter((play) => play?.cleared).length
-          const here = plays.findIndex((play) => !play?.cleared)
-          const started = here >= 0 && Boolean(plays[here]?.open)
-          const status: SealStatus = cleared === gates.length ? 'cleared' : cleared > 0 || started ? 'live' : 'open'
-          const state = status === 'cleared' ? '已通过' : started ? '进行中' : cleared > 0 ? `第 ${here + 1} 关` : '可以开始'
-          return (
-            <li key={course.id} className={`is-${status}`}>
-              <Link to={`/drill/${course.id}`}>
-                <span className="drill-road-head">
-                  <strong>{course.title}</strong>
-                  <b className="drill-state">{state}</b>
-                </span>
-                <em>{course.lead}</em>
-                <span className="drill-pebbles" aria-hidden="true">
-                  {gates.map((gate, index) => (
-                    <i key={gate.id} className={plays[index]?.cleared ? 'is-done' : index === here ? 'is-here' : undefined} />
-                  ))}
-                </span>
-                <span className="drill-sr">{cleared}/{gates.length} 关已通过</span>
-              </Link>
-            </li>
-          )
-        })}
-      </ol>
+      {DRILL_BLOCKS.map((block) => (
+        <section key={block.id} className="drill-block" aria-label={block.title}>
+          <h2>{block.title}</h2>
+          <ol className="drill-roads">
+            {block.courseIds.map((courseId, index) => {
+              const course = DRILL_COURSES.find((item) => item.id === courseId)
+              if (!course) return null
+              const gates = gatesInCourse(course.id)
+              const plays = gates.map((gate) => describeGate(drill, gate.id))
+              const cleared = plays.filter((play) => play?.cleared).length
+              const here = plays.findIndex((play) => !play?.cleared)
+              const started = here >= 0 && Boolean(plays[here]?.open)
+              const status: SealStatus = cleared === gates.length ? 'cleared' : cleared > 0 || started ? 'live' : 'open'
+              const state = status === 'cleared' ? '已通过' : started ? '进行中' : cleared > 0 ? `第 ${here + 1} 关` : '可以开始'
+              return (
+                <li key={course.id} className={`is-${status}`}>
+                  <Link to={`/drill/${course.id}`}>
+                    <span className="drill-road-index">{String(index + 1).padStart(2, '0')}</span>
+                    <span className="drill-road-head">
+                      <strong>{course.title}</strong>
+                      <b className="drill-state">{state}</b>
+                    </span>
+                    <em>{course.lead}</em>
+                    <span className="drill-pebbles" aria-hidden="true">
+                      {gates.map((gate, index) => (
+                        <i key={gate.id} className={plays[index]?.cleared ? 'is-done' : index === here ? 'is-here' : undefined} />
+                      ))}
+                    </span>
+                    <span className="drill-sr">{cleared}/{gates.length} 关已通过</span>
+                  </Link>
+                </li>
+              )
+            })}
+          </ol>
+        </section>
+      ))}
       <ol className="drill-badges">
         {report.badges.map((badge) => (
           <li key={badge.id} className={badge.earned ? 'is-earned' : 'is-locked'}>
@@ -128,19 +144,19 @@ function DrillCourse({ courseId }: { courseId: string }) {
   const course = courseById(courseId)
   const drill = useLearningSlice((state) => state.drill)
   const location = useLocation()
-  const home = fromAtlas(location.state)
+  const home = returnTrip(location.state)
   if (!course) {
     return (
       <div className="drill">
         <p className="drill-lead">没有这一门。</p>
-        <Link className="drill-back" to={home ? '/paths' : '/drill'}>{home ? '回总图' : '返回选择题'}</Link>
+        <Link className="drill-back" to={home?.to ?? '/drill'}>{home?.label ?? '返回选择题'}</Link>
       </div>
     )
   }
   const gates = gatesInCourse(course.id)
   return (
     <div className="drill">
-      <Link className="drill-back" to={home ? '/paths' : '/drill'}>{home ? '回总图' : '全部课程'}</Link>
+      <Link className="drill-back" to={home?.to ?? '/drill'}>{home?.label ?? '全部课程'}</Link>
       <header className="drill-mast">
         <div>
           <p className="drill-kicker">选择题 · {gates.length} 关</p>
@@ -194,11 +210,12 @@ function DrillStage({ courseId, gateId }: { courseId: string; gateId: string }) 
   const gate = gateById(gateId)
   const drill = useLearningSlice((state) => state.drill)
   const location = useLocation()
-  const home = fromAtlas(location.state)
+  const home = returnTrip(location.state)
   const answerDrill = useLearningSlice((state) => state.answerDrill)
+  const restartBoss = useLearningSlice((state) => state.restartBoss)
   const play = course && gate && gate.courseId === course.id ? describeGate(drill, gate.id) : null
   const [holdingId, setHoldingId] = useState<string | null>(null)
-  const [pick, setPick] = useState<OptionId | null>(null)
+  const [picks, setPicks] = useState<OptionId[]>([])
   const [issue, setIssue] = useState('')
   const [armed, setArmed] = useState<DrillMode | null>(null)
   const [heldMode, setHeldMode] = useState<DrillMode>('gate')
@@ -207,7 +224,7 @@ function DrillStage({ courseId, gateId }: { courseId: string; gateId: string }) 
     return (
       <div className="drill">
         <p className="drill-lead">没有这一关。</p>
-        <Link className="drill-back" to={home ? '/paths' : '/drill'}>{home ? '回总图' : '返回选择题'}</Link>
+        <Link className="drill-back" to={home?.to ?? '/drill'}>{home?.label ?? '返回选择题'}</Link>
       </div>
     )
   }
@@ -215,11 +232,16 @@ function DrillStage({ courseId, gateId }: { courseId: string; gateId: string }) 
 
   const held = holdingId ? questionById(holdingId) : undefined
   const heldAnswer = held ? [...drill.log].reverse().find((row) => row.questionId === held.id) : undefined
+  const exam = course.id === 'boss'
   const mode: DrillMode = play.open?.mode ?? armed ?? 'gate'
+  const lost = Boolean(
+    exam && mode !== 'retry' && play.open && examOutOfReach(play.open.correct, play.open.answered, play.open.total),
+  )
+  const freshExam = exam && play.canStartGate && !play.open && !play.last
   const askingId = held
     ? ''
     : play.open?.nextId
-      ?? (armed === 'gate' ? gate.questionIds[0] : armed === 'retry' ? play.last?.wrongIds[0] : '')
+      ?? (armed === 'gate' || freshExam ? gate.questionIds[0] : armed === 'retry' ? play.last?.wrongIds[0] : '')
   const asking = askingId ? questionById(askingId) : undefined
   const point = pointById((held ?? asking)?.pointId ?? '')
   const answered = play.open?.answered ?? 0
@@ -227,10 +249,19 @@ function DrillStage({ courseId, gateId }: { courseId: string; gateId: string }) 
   const courseGates = gatesInCourse(course.id)
   const gateIndex = courseGates.findIndex((item) => item.id === gate.id)
   const nextGate = courseGates[gateIndex + 1]
+  const back = home ?? (exam ? { to: `/paths?gate=${gate.id.slice(3)}`, label: '回这一关' } : null)
+
+  function choose(id: OptionId, multi: boolean) {
+    setPicks((current) => {
+      if (!multi) return [id]
+      return current.includes(id) ? current.filter((item) => item !== id) : [...current, id].sort()
+    })
+    setIssue('')
+  }
 
   function submit() {
-    if (!asking || !pick) return
-    const saved = answerDrill({ gateId: stageGate.id, questionId: asking.id, choice: pick, mode })
+    if (!asking || picks.length === 0) return
+    const saved = answerDrill({ gateId: stageGate.id, questionId: asking.id, choice: [...picks].sort().join(''), mode })
     if (!saved.ok) {
       setIssue(saved.issue)
       return
@@ -238,16 +269,16 @@ function DrillStage({ courseId, gateId }: { courseId: string; gateId: string }) 
     setIssue('')
     setHeldMode(mode)
     setHoldingId(saved.questionId)
-    setPick(null)
+    setPicks([])
     setArmed(null)
   }
 
   return (
     <div className="drill">
-      <Link className="drill-back" to={`/drill/${course.id}`} state={location.state}>{course.title}</Link>
+      <Link className="drill-back" to={back?.to ?? `/drill/${course.id}`} state={back ? undefined : location.state}>{back?.label ?? course.title}</Link>
       <header className="drill-mast">
         <div>
-          <p className="drill-kicker">第 {gateIndex + 1} 关</p>
+          <p className="drill-kicker">{exam ? 'Boss · 考试' : `第 ${gateIndex + 1} 关`}</p>
           <h1>{gate.title}</h1>
           <p className="drill-lead">{gate.lead}</p>
         </div>
@@ -263,12 +294,16 @@ function DrillStage({ courseId, gateId }: { courseId: string; gateId: string }) 
 
       {play.unlocked && held && heldAnswer && point ? (
         <section className="drill-sheet" aria-live="polite">
-          <p className="drill-progress">{heldMode === 'retry' ? '错题重练' : '本关'} · 已记下这题</p>
+          <p className="drill-progress">
+            {heldMode === 'retry' ? '错题重练' : exam ? '考试' : '本关'}
+            {exam && heldMode !== 'retry' ? ` · 已对 ${play.open?.correct ?? play.last?.correct ?? 0} · 至少 ${neededCorrect(gate.questionIds.length)} 题` : ' · 已记下这题'}
+          </p>
+          <p className="drill-kind">{isMultiQuestion(held) ? '多选，选出所有正确项' : '单选，只选一项'}</p>
           <h2>{held.stem}</h2>
-          <ol className="drill-options">
+          <ol className={`drill-options ${isMultiQuestion(held) ? 'is-multi' : ''}`}>
             {held.options.map((option) => {
-              const picked = option.id === heldAnswer.choice
-              const right = option.id === held.answer
+              const picked = heldAnswer.choice.includes(option.id)
+              const right = correctChoices(held).includes(option.id)
               const mark = right ? 'is-right' : picked ? 'is-wrong' : ''
               return (
                 <li key={option.id}>
@@ -276,7 +311,7 @@ function DrillStage({ courseId, gateId }: { courseId: string; gateId: string }) 
                     <i>{option.id.toUpperCase()}</i>
                     <span>{option.text}</span>
                   </button>
-                  {option.id !== held.answer && held.whyWrong[option.id] ? (
+                  {!right && held.whyWrong[option.id] ? (
                     <p className="drill-why">{held.whyWrong[option.id]}</p>
                   ) : null}
                 </li>
@@ -289,32 +324,36 @@ function DrillStage({ courseId, gateId }: { courseId: string; gateId: string }) 
             <p><strong>{point.title}</strong> {point.summary}</p>
             <LessonLink lessonId={point.lessonId} />
           </div>
-          <button type="button" className="drill-go" onClick={() => { setHoldingId(null); setPick(null) }}>
-            {play.open ? '下一题' : '查看这一关'}
-          </button>
+          {lost ? <p className="drill-issue">剩下的题全对，也到不了 80%。</p> : null}
+          <div className="drill-actions">
+            {lost ? (
+              <button type="button" className="drill-go" onClick={() => { restartBoss(stageGate.id); setHoldingId(null); setPicks([]) }}>再答一遍</button>
+            ) : null}
+            <button type="button" className={lost ? 'drill-go is-quiet' : 'drill-go'} onClick={() => { setHoldingId(null); setPicks([]) }}>
+              {play.open ? '下一题' : '查看这一关'}
+            </button>
+          </div>
         </section>
       ) : null}
 
       {play.unlocked && !held && asking ? (
         <section className="drill-sheet">
           <p className="drill-progress">
-            {mode === 'retry' ? '错题重练' : '本关'} · {answered + 1}/{total}
+            {mode === 'retry' ? '错题重练' : exam ? '考试' : '本关'} · {answered + 1}/{total}
+            {exam && mode !== 'retry' ? ` · 已对 ${play.open?.correct ?? 0} · 至少 ${neededCorrect(total)} 题` : ''}
           </p>
-          <div className="drill-dots" aria-hidden="true">
-            {Array.from({ length: total }, (_, index) => (
-              <i key={index} className={index < answered ? 'is-done' : index === answered ? 'is-now' : ''} />
-            ))}
-          </div>
+          <DrillTrack answered={answered} total={total} />
+          <p className="drill-kind">{isMultiQuestion(asking) ? '多选，选出所有正确项' : '单选，只选一项'}</p>
           <h2>{asking.stem}</h2>
           {point ? <p className="drill-point">知识点：{point.title}</p> : null}
-          <ol className="drill-options">
+          <ol className={`drill-options ${isMultiQuestion(asking) ? 'is-multi' : ''}`}>
             {asking.options.map((option) => (
               <li key={option.id}>
                 <button
                   type="button"
-                  className={`drill-option ${pick === option.id ? 'is-picked' : ''}`}
-                  aria-pressed={pick === option.id}
-                  onClick={() => { setPick(option.id); setIssue('') }}
+                  className={`drill-option ${picks.includes(option.id) ? 'is-picked' : ''}`}
+                  aria-pressed={picks.includes(option.id)}
+                  onClick={() => choose(option.id, isMultiQuestion(asking))}
                 >
                   <i>{option.id.toUpperCase()}</i>
                   <span>{option.text}</span>
@@ -323,17 +362,23 @@ function DrillStage({ courseId, gateId }: { courseId: string; gateId: string }) 
             ))}
           </ol>
           {issue ? <p className="drill-issue">{issue}</p> : null}
-          <button type="button" className="drill-go" disabled={!pick} onClick={submit}>确认这题</button>
+          {lost ? <p className="drill-issue">剩下的题全对，也到不了 80%。</p> : null}
+          <div className="drill-actions">
+            {lost ? (
+              <button type="button" className="drill-go" onClick={() => { restartBoss(stageGate.id); setHoldingId(null); setPicks([]) }}>再答一遍</button>
+            ) : null}
+            <button type="button" className={lost ? 'drill-go is-quiet' : 'drill-go'} disabled={picks.length === 0} onClick={submit}>确认这题</button>
+          </div>
         </section>
       ) : null}
 
       {play.unlocked && !held && !asking && !play.last ? (
         <section className="drill-sheet">
           <Seal status="open" />
-          <h2>开始这一关</h2>
+          <h2>{exam ? '开始考试' : '开始这一关'}</h2>
           <p>
-            共 {gate.questionIds.length} 题，按顺序作答。至少答对 {neededCorrect(gate.questionIds.length)} 题（80%）才通关。
-            答错可以稍后重练；整关没通过时，用复活再答一遍。
+            共 {gate.questionIds.length} 题，按顺序作答。单选只选一项，多选要选全。至少答对 {neededCorrect(gate.questionIds.length)} 题（80%）才通关。
+            {exam ? '没到 80% 可以再答一遍。' : '答错可以稍后重练；整关没通过时，用复活再答一遍。'}
           </p>
           <button type="button" className="drill-go" onClick={() => setArmed('gate')}>开始答题</button>
         </section>
@@ -342,10 +387,10 @@ function DrillStage({ courseId, gateId }: { courseId: string; gateId: string }) 
       {play.unlocked && !held && !asking && play.last ? (
         <section className="drill-sheet">
           <Meter percent={play.last.percent} passed={play.last.passed} />
-          <h2>{play.last.passed ? '这一关通过了' : '还没到 80%'}</h2>
+          <h2>{play.last.passed ? (exam ? '这场考试通过了' : '这一关通过了') : '还没到 80%'}</h2>
           <p>
             这一轮 {play.last.correct}/{play.last.total}，正确率 {play.last.percent}%。
-            最好成绩 {play.bestPercent}%。剩余复活 {play.revives} 次。
+            最好成绩 {play.bestPercent}%。{exam ? '' : `剩余复活 ${play.revives} 次。`}
           </p>
           {play.last.wrongIds.length ? (
             <ul className="drill-misses">
@@ -366,18 +411,38 @@ function DrillStage({ courseId, gateId }: { courseId: string; gateId: string }) 
               <button type="button" className="drill-go is-quiet" onClick={() => setArmed('retry')}>重练错题</button>
             ) : null}
             {!play.cleared && play.canStartGate ? (
-              <button type="button" className="drill-go" onClick={() => setArmed('gate')}>复活，再答这一关</button>
+              <button type="button" className="drill-go" onClick={() => setArmed('gate')}>{exam ? '再答一遍' : '复活，再答这一关'}</button>
             ) : null}
             {!play.cleared && !play.canStartGate ? (
               <p className="drill-issue">复活次数用完了。把这一轮错题全部练对，可以补回 1 次。</p>
             ) : null}
-            {play.cleared && nextGate ? (
+            {play.cleared && exam && back ? (
+              <Link className="drill-go" to={back.to}>{back.label}</Link>
+            ) : null}
+            {play.cleared && !exam && nextGate ? (
               <Link className="drill-go" to={`/drill/${course.id}/${nextGate.id}`} state={location.state}>下一关</Link>
             ) : null}
-            {play.cleared && !nextGate ? <Link className="drill-go" to="/drill/report" state={location.state}>查看学习报告</Link> : null}
+            {play.cleared && !exam && !nextGate ? <Link className="drill-go" to="/drill/report" state={location.state}>查看学习报告</Link> : null}
           </div>
         </section>
       ) : null}
+    </div>
+  )
+}
+
+function DrillTrack({ answered, total }: { answered: number; total: number }) {
+  if (total > 12) {
+    return (
+      <div className="drill-track" aria-hidden="true">
+        <span style={{ width: `${total ? Math.round((answered / total) * 100) : 0}%` }} />
+      </div>
+    )
+  }
+  return (
+    <div className="drill-dots" aria-hidden="true">
+      {Array.from({ length: total }, (_, index) => (
+        <i key={index} className={index < answered ? 'is-done' : index === answered ? 'is-now' : ''} />
+      ))}
     </div>
   )
 }
@@ -403,10 +468,10 @@ function DrillReport() {
   const drill = useLearningSlice((state) => state.drill)
   const report = learningReport(drill)
   const location = useLocation()
-  const home = fromAtlas(location.state)
+  const home = returnTrip(location.state)
   return (
     <div className="drill">
-      <Link className="drill-back" to={home ? '/paths' : '/drill'}>{home ? '回总图' : '返回选择题'}</Link>
+      <Link className="drill-back" to={home?.to ?? '/drill'}>{home?.label ?? '返回选择题'}</Link>
       <header className="drill-mast">
         <div>
           <p className="drill-kicker">学习报告</p>
@@ -452,7 +517,7 @@ export function DrillPage() {
   const report = useMatch('/drill/report')
   const { courseId = '', gateId = '' } = useParams()
   if (report) return <DrillReport />
-  if (gateId && DRILL_GATES.some((gate) => gate.id === gateId)) return <DrillStage key={gateId} courseId={courseId} gateId={gateId} />
+  if (gateId && gateById(gateId)) return <DrillStage key={gateId} courseId={courseId} gateId={gateId} />
   if (courseId) return <DrillCourse courseId={courseId} />
   return <DrillLobby />
 }

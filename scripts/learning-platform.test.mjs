@@ -344,9 +344,9 @@ test('skill cycle rolls trunks up without moving lanes or locking lessons', () =
   const done = g1.lessons.map((item) => item.id)
   const checks = g1.outputs.map((_, index) => `g1:${index}`)
   const cleared = clearedGateIds(done, checks)
-  assert.equal(cleared.has('g1'), true)
+  assert.equal(cleared.has('g1'), false)
   assert.equal(cleared.has('g3'), false)
-  assert.deepEqual(SKILL_MILESTONES.filter((item) => cleared.has(item.gateId)).map((item) => item.id), ['slice'])
+  assert.deepEqual(SKILL_MILESTONES.filter((item) => cleared.has(item.gateId)).map((item) => item.id), [])
   const glow = Object.fromEntries(SKILL_VIEWS.map((item) => [item.id, 'ready']))
   glow.http = 'lit'
   glow.tcp = 'lit'
@@ -874,6 +874,15 @@ test('gate verify progress stays pending for drafts and does not clear the gate'
       gate,
       gate.lessons.map((lesson) => lesson.id),
       gate.outputs.map((_, index) => `${gate.id}:${index}`),
+    ),
+    false,
+  )
+  assert.equal(
+    gateCleared(
+      gate,
+      gate.lessons.map((lesson) => lesson.id),
+      gate.outputs.map((_, index) => `${gate.id}:${index}`),
+      true,
     ),
     true,
   )

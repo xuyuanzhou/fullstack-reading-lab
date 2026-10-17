@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" role="img" aria-labelledby="title desc">
+  <title id="title">UML 时序图：下单</title>
+  <desc id="desc">三条生命线。同步消息是实线实心箭头，返回是虚线。alt 分出库存够和不够。</desc>
+  <rect width="960" height="540" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">UML 时序图</text>
+  <text x="32" y="64" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">生命线向下，实线是调用，虚线是返回</text>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <rect x="70" y="92" width="140" height="40" rx="8" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="140" y="117" text-anchor="middle" font-size="14" font-weight="600" fill="#2e3330">页面</text>
+    <rect x="390" y="92" width="140" height="40" rx="8" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="460" y="117" text-anchor="middle" font-size="14" font-weight="600" fill="#2e3330">订单服务</text>
+    <rect x="710" y="92" width="140" height="40" rx="8" fill="#eef2f8" stroke="#4a6280"/>
+    <text x="780" y="117" text-anchor="middle" font-size="14" font-weight="600" fill="#2e3330">数据库</text>
+    <line x1="140" y1="132" x2="140" y2="500" stroke="#8aa394" stroke-dasharray="3 4"/>
+    <line x1="460" y1="132" x2="460" y2="500" stroke="#8aa394" stroke-dasharray="3 4"/>
+    <line x1="780" y1="132" x2="780" y2="500" stroke="#8aa394" stroke-dasharray="3 4"/>
+    <line x1="140" y1="176" x2="460" y2="176" stroke="#2e3330" stroke-width="1.6" marker-end="url(#seqFill)"/>
+    <text x="168" y="168" font-size="13" fill="#2e3330">1 提交订单</text>
+    <line x1="460" y1="220" x2="780" y2="220" stroke="#2e3330" stroke-width="1.6" marker-end="url(#seqFill)"/>
+    <text x="488" y="212" font-size="13" fill="#2e3330">2 条件更新库存并插入订单</text>
+    <line x1="780" y1="260" x2="460" y2="260" stroke="#4a6280" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#seqOpen)"/>
+    <text x="488" y="252" font-size="13" fill="#4a6280">3 影响行数</text>
+    <rect x="120" y="292" width="700" height="188" rx="12" fill="none" stroke="#a05048"/>
+    <text x="136" y="314" font-size="13" font-weight="600" fill="#6e3530">alt</text>
+    <text x="176" y="314" font-size="13" fill="#6e3530">[影响行数 = 1]</text>
+    <line x1="460" y1="340" x2="140" y2="340" stroke="#4a6280" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#seqOpen)"/>
+    <text x="168" y="332" font-size="13" fill="#4a6280">4 订单号</text>
+    <line x1="140" y1="368" x2="680" y2="368" stroke="#d9ddd8"/>
+    <text x="176" y="390" font-size="13" fill="#6e3530">[影响行数 = 0]</text>
+    <line x1="460" y1="424" x2="140" y2="424" stroke="#4a6280" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#seqOpen)"/>
+    <text x="168" y="416" font-size="13" fill="#4a6280">4 库存不足</text>
+  </g>
+  <defs>
+    <marker id="seqFill" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2e3330"/>
+    </marker>
+    <marker id="seqOpen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9" fill="none" stroke="#4a6280" stroke-width="1.4"/>
+    </marker>
+  </defs>
+</svg>

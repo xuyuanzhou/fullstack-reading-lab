@@ -1,4 +1,9 @@
 /** 总图上的选择题。只有课名、关号和题号，不含题干。 */
+import { COVER_ROADS } from './drillCoverRoads.ts'
+import { MULTI_EXTRA, MULTI_ROADS } from './drillMultiRoads.ts'
+
+const CHAPTER_GATES = new Map(MULTI_EXTRA.map((item) => [item.id, item.gates]))
+
 export const DRILL_ROADS = [
   {
     "id": "design",
@@ -616,8 +621,29 @@ export const DRILL_ROADS = [
       { "id": "m7", "questionIds": ["m7-1", "m7-2", "m7-3", "m7-4", "m7-5", "m7-6", "m7-7", "m7-8", "m7-9", "m7-10"] },
       { "id": "m8", "questionIds": ["m8-1", "m8-2", "m8-3", "m8-4", "m8-5", "m8-6", "m8-7", "m8-8", "m8-9", "m8-10"] }
     ]
-  }
-] as const
+  },
+  ...COVER_ROADS,
+].map((road) => {
+  const extra = CHAPTER_GATES.get(road.id)
+  return extra?.length ? { ...road, gates: [...road.gates, ...extra] } : road
+}).concat(MULTI_ROADS)
+
+/**
+ * 总图和大厅上的大块。块内顺序跟课表：上一门后面才是下一门。
+ * 安全与 Netty、Spring 与数据访问是合并后的一门，放在课表里该主题第一次出现的位置。
+ */
+export const DRILL_BLOCKS: readonly { id: string; title: string; courseIds: readonly string[] }[] = [
+  { id: 'spine', title: '全栈主线', courseIds: ['spine'] },
+  { id: 'front', title: '前端', courseIds: ['lang', 'browser', 'react', 'vue', 'client'] },
+  {
+    id: 'java',
+    title: 'Java',
+    courseIds: ['java', 'pattern', 'jvm', 'conc', 'sql', 'cache', 'spring', 'secure', 'nginx', 'gateway', 'mq', 'sca', 'design', 'dist', 'ship'],
+  },
+  { id: 'work', title: '测试与工程', courseIds: ['test', 'work'] },
+  { id: 'perf', title: '服务性能排查', courseIds: ['perf'] },
+  { id: 'rest', title: '其余', courseIds: ['rest'] },
+]
 
 type RoadRow = { questionId: string; correct: boolean; mode: 'gate' | 'retry'; attempt: number; at: number }
 
@@ -688,4 +714,17 @@ export function drillRoadFaces(log: readonly RoadRow[]): DrillRoadFace[] {
     const state = status === 'cleared' ? '已通过' : started ? '进行中' : cleared > 0 ? `第 ${here + 1} 关` : '可以开始'
     return { id: course.id, title: course.title, status, state, cleared, total: course.gates.length }
   })
+}
+
+/** 大厅和总图用的分块。缺课会被测试拦住，这里只留下对得上的。 */
+export function drillBlockFaces(log: readonly RoadRow[]) {
+  const byId = new Map(drillRoadFaces(log).map((face) => [face.id, face]))
+  return DRILL_BLOCKS.map((block) => ({
+    id: block.id,
+    title: block.title,
+    faces: block.courseIds.flatMap((id) => {
+      const face = byId.get(id)
+      return face ? [face] : []
+    }),
+  }))
 }

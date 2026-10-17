@@ -150,6 +150,19 @@
   transform: rotate(45deg);
 }
 
+.drill-block {
+  margin-top: 22px;
+
+  h2 {
+    margin: 0 0 8px;
+    color: var(--lab-stage-accent);
+    font-size: var(--lab-text-caption);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    line-height: 1.4;
+  }
+}
+
 .drill-roads {
   list-style: none;
   margin: 0;
@@ -202,6 +215,14 @@
     color: var(--lab-stage-muted);
     line-height: 1.6;
   }
+}
+
+.drill-road-index {
+  color: var(--lab-stage-accent);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
 }
 
 .drill-road-head {
@@ -617,10 +638,30 @@ html[data-theme='dark'] .drill-go:not(.is-quiet) {
 }
 
 .drill-progress,
-.drill-point {
+.drill-point,
+.drill-kind {
   margin: 0;
   color: var(--lab-stage-muted);
   font-size: var(--lab-text-small);
+}
+
+.drill-kind {
+  margin-bottom: 8px;
+}
+
+.drill-track {
+  height: 6px;
+  margin: 10px 0 14px;
+  border-radius: 99px;
+  background: var(--lab-stage-idle);
+  overflow: hidden;
+
+  span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--lab-stage-accent);
+  }
 }
 
 .drill-dots {
@@ -684,6 +725,10 @@ html[data-theme='dark'] .drill-go:not(.is-quiet) {
     outline: 2px solid var(--lab-stage-accent);
     outline-offset: 2px;
   }
+}
+
+.drill-options.is-multi .drill-option i {
+  border-radius: 8px;
 }
 
 .drill-option.is-picked {

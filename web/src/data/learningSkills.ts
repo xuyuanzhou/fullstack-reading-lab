@@ -211,7 +211,7 @@ export const SKILL_LESSONS: Record<string, readonly string[]> = {
   split: ['arch-microservice-split', 'arch-scale-before-split', 'arch-split-order-case', 'arch-soa-classic'],
   sync: ['arch-sync-vs-async'],
   evo: ['arch-evolution-stages', 'arch-evolution-roadmap'],
-  adr: ['arch-decision-minutes', 'arch-contract-review', 'arch-chapter-aim', 'arch-design-one-path', 'arch-cost-tradeoff'],
+  adr: ['arch-decision-minutes', 'arch-contract-review', 'arch-chapter-aim', 'arch-design-one-path', 'arch-cost-tradeoff', 'draw-c4-container', 'draw-uml-sequence', 'draw-er-crow', 'draw-uml-state', 'draw-uml-deploy', 'draw-uml-class', 'draw-uml-usecase', 'draw-uml-activity', 'draw-c4-component'],
   css: ['css-what-it-is', 'css-attach-to-document', 'css-not-the-engine', 'css-rule-syntax', 'css-selector-simple', 'css-box-sizing', 'css-position-flow', 'css-containing-block', 'css-cascade', 'css-stacking', 'css-flex', 'css-grid-flex'],
   html: ['html-dialog-modal', 'html-form-semantics', 'html5-constraint-before-submit', 'html5-main-landmark', 'html5-media-play-promise', 'html5-canvas-buffer', 'html5-pushstate-popstate'],
   browser: ['dom-event-flow', 'cors', 'browser-event-loop-frame', 'browser-what-it-is', 'browser-document-enters', 'browser-not-node', 'html-dialog-modal', 'html-form-semantics', 'html5-constraint-before-submit', 'formdata-multipart-upload', 'html5-main-landmark', 'html5-media-play-promise'],

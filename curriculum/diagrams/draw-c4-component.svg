@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" role="img" aria-labelledby="title desc">
+  <title id="title">C4 组件图：订单服务</title>
+  <desc id="desc">控制器、下单应用和两个适配器在订单服务边界内。订单页面、MySQL 和消息在边界外。</desc>
+  <rect width="960" height="500" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">C4 组件图</text>
+  <text x="32" y="64" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">边界里的框随这一份订单服务一起部署</text>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <rect x="200" y="100" width="520" height="300" rx="16" fill="#fbfcfa" stroke="#3f6a58" stroke-width="1.6"/>
+    <text x="220" y="128" font-size="13" font-weight="600" fill="#3f6a58">订单服务 · 一个容器</text>
+
+    <rect x="28" y="164" width="140" height="64" rx="12" fill="#fafaf8" stroke="#2e3330"/>
+    <text x="98" y="192" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">订单页面</text>
+    <text x="98" y="212" text-anchor="middle" font-size="12" fill="#5e6661">边界外</text>
+
+    <rect x="236" y="156" width="180" height="68" rx="10" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="326" y="184" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">下单控制器</text>
+    <text x="326" y="206" text-anchor="middle" font-size="12" fill="#5e6661">组件 · 接收提交</text>
+    <rect x="236" y="268" width="180" height="68" rx="10" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="326" y="296" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">下单应用</text>
+    <text x="326" y="318" text-anchor="middle" font-size="12" fill="#5e6661">组件 · 执行这一笔</text>
+    <rect x="480" y="156" width="180" height="68" rx="10" fill="#eef2f8" stroke="#4a6280"/>
+    <text x="570" y="184" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">MySQL 适配器</text>
+    <text x="570" y="206" text-anchor="middle" font-size="12" fill="#5e6661">组件 · 出边界</text>
+    <rect x="480" y="280" width="180" height="68" rx="10" fill="#eef2f8" stroke="#4a6280"/>
+    <text x="570" y="308" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">消息适配器</text>
+    <text x="570" y="330" text-anchor="middle" font-size="12" fill="#5e6661">组件 · 出边界</text>
+
+    <rect x="760" y="156" width="168" height="68" rx="12" fill="#eef2f8" stroke="#4a6280"/>
+    <text x="844" y="184" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">MySQL</text>
+    <text x="844" y="206" text-anchor="middle" font-size="12" fill="#5e6661">边界外 · 容器</text>
+    <rect x="760" y="280" width="168" height="68" rx="12" fill="#fafaf8" stroke="#4a6280"/>
+    <text x="844" y="308" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">消息</text>
+    <text x="844" y="330" text-anchor="middle" font-size="12" fill="#5e6661">边界外 · 容器</text>
+
+    <line x1="168" y1="196" x2="228" y2="196" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+    <text x="168" y="154" font-size="12" fill="#3f6a58">HTTPS JSON</text>
+    <line x1="326" y1="224" x2="326" y2="260" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+    <text x="334" y="248" font-size="12" fill="#3f6a58">方法调用</text>
+    <line x1="416" y1="292" x2="472" y2="210" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+    <text x="424" y="242" font-size="12" fill="#3f6a58">方法调用</text>
+    <line x1="416" y1="312" x2="472" y2="312" stroke="#4a6280" stroke-width="1.6" marker-end="url(#arrBlue)"/>
+    <text x="418" y="304" font-size="12" fill="#4a6280">方法调用</text>
+    <line x1="660" y1="190" x2="752" y2="190" stroke="#4a6280" stroke-width="1.6" marker-end="url(#arrBlue)"/>
+    <text x="686" y="182" font-size="12" fill="#4a6280">JDBC</text>
+    <line x1="660" y1="314" x2="752" y2="314" stroke="#4a6280" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arrBlue)"/>
+    <text x="686" y="306" font-size="12" fill="#4a6280">异步</text>
+
+    <rect x="32" y="424" width="896" height="56" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="52" y="448" font-size="14" fill="#2e3330">边界内的四个框随订单服务一起部署。</text>
+    <text x="52" y="468" font-size="14" fill="#2e3330">页面、MySQL、消息仍是容器，不画进这一份制品。</text>
+  </g>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3f6a58"/>
+    </marker>
+    <marker id="arrBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a6280"/>
+    </marker>
+  </defs>
+</svg>

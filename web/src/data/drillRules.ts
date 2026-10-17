@@ -11,14 +11,17 @@ import {
   DRILL_GATES,
   DRILL_POINTS,
   DRILL_QUESTIONS,
+  canonicalChoice,
+  choiceMatches,
   courseById,
   gateById,
   gatesInCourse,
+  isMultiQuestion,
   pointById,
   questionById,
   type DrillCourseId,
-  type OptionId,
 } from './drillBank.ts'
+import { bossGateFor } from './bossExam.ts'
 
 export const DRILL_PASS_PERCENT = 80
 export const DRILL_REVIVE_START = 2
@@ -34,7 +37,7 @@ export type DrillMode = 'gate' | 'retry'
 
 export type DrillAnswer = {
   questionId: string
-  choice: OptionId
+  choice: string
   correct: boolean
   mode: DrillMode
   attempt: number
@@ -69,14 +72,18 @@ export type GateSnapshot = {
   canStartRetry: boolean
   nextGateAttempt: number
   nextRetryAttempt: number
-  open: { mode: DrillMode; attempt: number; nextId: string; answered: number; total: number } | null
+  open: { mode: DrillMode; attempt: number; nextId: string; answered: number; total: number; correct: number } | null
   last: { correct: number; total: number; percent: number; passed: boolean; wrongIds: string[] } | null
 }
 
-const OPTIONS = new Set<OptionId>(['a', 'b', 'c', 'd'])
-
 export function emptyDrill(): DrillState {
   return { log: [] }
+}
+
+/** 剩下的题即使全对，也到不了 80%。 */
+export function examOutOfReach(correct: number, answered: number, total: number) {
+  if (answered < 1 || total < 1) return false
+  return correct + (total - answered) < neededCorrect(total)
 }
 
 export function neededCorrect(total: number) {
@@ -92,10 +99,6 @@ export function percentOf(correct: number, total: number) {
 
 export function ratePassed(correct: number, total: number) {
   return total > 0 && correct * 100 >= total * DRILL_PASS_PERCENT
-}
-
-function isOption(value: string): value is OptionId {
-  return OPTIONS.has(value as OptionId)
 }
 
 function isMode(value: unknown): value is DrillMode {
@@ -117,7 +120,9 @@ export function normalizeDrill(value: unknown): DrillState {
     if (!row || typeof row !== 'object') continue
     const item = row as Partial<DrillAnswer>
     const question = typeof item.questionId === 'string' ? questionById(item.questionId) : undefined
-    if (!question || !isMode(item.mode) || typeof item.choice !== 'string' || !isOption(item.choice)) continue
+    const choice = typeof item.choice === 'string' ? canonicalChoice(item.choice) : null
+    if (!question || !choice || !isMode(item.mode)) continue
+    if (!isMultiQuestion(question) && choice.length !== 1) continue
     if (typeof item.attempt !== 'number' || !Number.isInteger(item.attempt) || item.attempt < 1 || item.attempt > 99) continue
     if (typeof item.at !== 'number' || !Number.isFinite(item.at)) continue
     const key = `${item.mode}:${item.attempt}:${question.id}`
@@ -125,8 +130,8 @@ export function normalizeDrill(value: unknown): DrillState {
     seen.add(key)
     kept.push({
       questionId: question.id,
-      choice: item.choice,
-      correct: question.answer === item.choice,
+      choice,
+      correct: choiceMatches(question, choice),
       mode: item.mode,
       attempt: item.attempt,
       at: item.at,
@@ -290,9 +295,16 @@ function isCleared(log: DrillAnswer[], gateId: string) {
   return completedPairs(log, gateId).some(([, rows]) => ratePassed(correctCount(rows, gate.questionIds), gate.questionIds.length))
 }
 
+export function pathExamCleared(pathGateId: string, log: readonly DrillAnswer[]) {
+  const exam = bossGateFor(pathGateId)
+  if (!exam) return true
+  return isCleared(normalizeDrill({ log: [...log] }).log, exam.id)
+}
+
 export function gateUnlocked(state: DrillState, gateId: string) {
   const gate = gateById(gateId)
   if (!gate) return false
+  if (gate.courseId === 'boss') return true
   const list = gatesInCourse(gate.courseId)
   const index = list.findIndex((item) => item.id === gateId)
   if (index < 0) return false
@@ -336,6 +348,7 @@ export function describeGate(raw: DrillState, gateId: string): GateSnapshot | nu
         nextId: gate.questionIds.find((id) => !openGate[1].some((row) => row.questionId === id)) || gate.questionIds[0],
         answered: openGate[1].length,
         total,
+        correct: correctCount(openGate[1], gate.questionIds),
       }
     : openRetry
       ? {
@@ -344,6 +357,7 @@ export function describeGate(raw: DrillState, gateId: string): GateSnapshot | nu
           nextId: last!.wrongIds.find((id) => !openRetry[1].some((row) => row.questionId === id)) || last!.wrongIds[0],
           answered: openRetry[1].length,
           total: last!.wrongIds.length,
+          correct: correctCount(openRetry[1], last!.wrongIds),
         }
       : null
   const revives = revivesLeft(state)
@@ -355,7 +369,7 @@ export function describeGate(raw: DrillState, gateId: string): GateSnapshot | nu
     completedAttempts: completed.length,
     bestPercent: completed.length ? percentOf(bestCorrect, total) : 0,
     revives,
-    canStartGate: unlocked && !cleared && !open && (completed.length === 0 || revives > 0),
+    canStartGate: unlocked && !cleared && !open && (gate.courseId === 'boss' || completed.length === 0 || revives > 0),
     canStartRetry: Boolean(last && last.wrongIds.length && !open),
     nextGateAttempt,
     nextRetryAttempt,
@@ -372,12 +386,26 @@ function uniqueAt(log: DrillAnswer[], at: number) {
   return next
 }
 
+/** 一场还没答完的 Boss 丢掉，才能重新开始。章节闯关不走这里。 */
+export function dropOpenAttempt(raw: DrillState, gateId: string) {
+  const state = normalizeDrill(raw)
+  const gate = gateById(gateId)
+  const play = describeGate(state, gateId)
+  if (!gate || gate.courseId !== 'boss' || play?.open?.mode !== 'gate') return state
+  const ids = new Set(gate.questionIds)
+  const attempt = play.open.attempt
+  return normalizeDrill({
+    log: state.log.filter((row) => !(row.mode === 'gate' && row.attempt === attempt && ids.has(row.questionId))),
+  })
+}
+
 export function acceptAnswer(raw: DrillState, input: DrillAttemptInput, now: number) {
   const state = normalizeDrill(raw)
   const question = questionById(input.questionId)
   const gate = gateById(input.gateId)
-  if (!question || !gate || !gate.questionIds.includes(question.id) || !isOption(input.choice)) {
-    return { ok: false as const, issue: input.choice && isOption(input.choice) ? '题目和这一关对不上。' : '选项无效。', questionId: '' }
+  const choice = canonicalChoice(input.choice)
+  if (!question || !gate || !gate.questionIds.includes(question.id) || !choice || (!isMultiQuestion(question) && choice.length !== 1)) {
+    return { ok: false as const, issue: choice ? '题目和这一关对不上。' : '选项无效。', questionId: '' }
   }
   const play = describeGate(state, gate.id)
   if (!play || !play.unlocked) return { ok: false as const, issue: '这一关还锁着。', questionId: '' }
@@ -415,8 +443,8 @@ export function acceptAnswer(raw: DrillState, input: DrillAttemptInput, now: num
 
   const answer: DrillAnswer = {
     questionId: question.id,
-    choice: input.choice,
-    correct: question.answer === input.choice,
+    choice,
+    correct: choiceMatches(question, choice),
     mode: input.mode,
     attempt,
     at: uniqueAt(state.log, now),
@@ -435,6 +463,29 @@ export function badgesOf(state: DrillState): DrillBadge[] {
     { id: 'sql', title: 'SQL 优化', detail: 'SQL 优化每一关都已通过。', earned: cleared('sql') },
     { id: 'perf', title: '性能排查', detail: '服务性能排查每一关都已通过。', earned: cleared('perf') },
     { id: 'spine', title: '主线', detail: '全栈主线每一关都已通过。', earned: cleared('spine') },
+    { id: 'lang', title: '语言', detail: '语言与类型每一关都已通过。', earned: cleared('lang') },
+    { id: 'browser', title: '浏览器', detail: '浏览器与样式每一关都已通过。', earned: cleared('browser') },
+    { id: 'react', title: 'React', detail: 'React 每一关都已通过。', earned: cleared('react') },
+    { id: 'vue', title: 'Vue', detail: 'Vue 每一关都已通过。', earned: cleared('vue') },
+    { id: 'client', title: '跨端', detail: '跨端与选型每一关都已通过。', earned: cleared('client') },
+    { id: 'java', title: 'Java', detail: 'Java 基础每一关都已通过。', earned: cleared('java') },
+    { id: 'pattern', title: '模式', detail: '模式与算法每一关都已通过。', earned: cleared('pattern') },
+    { id: 'spring', title: 'Spring', detail: 'Spring 与数据访问每一关都已通过。', earned: cleared('spring') },
+    { id: 'secure', title: '安全', detail: '安全与 Netty 每一关都已通过。', earned: cleared('secure') },
+    { id: 'rest', title: '其余', detail: '其余课程每一关都已通过。', earned: cleared('rest') },
+    ...([
+      { id: 'jvm', title: 'JVM', detail: 'JVM 每一关都已通过。' },
+      { id: 'conc', title: '并发', detail: '并发每一关都已通过。' },
+      { id: 'cache', title: '缓存', detail: '缓存每一关都已通过。' },
+      { id: 'nginx', title: 'Nginx', detail: 'Nginx 每一关都已通过。' },
+      { id: 'gateway', title: '网关', detail: '网关每一关都已通过。' },
+      { id: 'mq', title: '消息队列', detail: '消息队列每一关都已通过。' },
+      { id: 'sca', title: 'Spring Cloud Alibaba', detail: 'Spring Cloud Alibaba 每一关都已通过。' },
+      { id: 'dist', title: '分布式', detail: '分布式与高并发每一关都已通过。' },
+      { id: 'ship', title: '交付', detail: '交付与运行每一关都已通过。' },
+      { id: 'test', title: '测试', detail: '测试每一关都已通过。' },
+      { id: 'work', title: '工程', detail: '工程实践每一关都已通过。' },
+    ] as const).filter((badge) => gatesInCourse(badge.id).length > 0).map((badge) => ({ ...badge, earned: cleared(badge.id) })),
     { id: 'all', title: '三卷', detail: '系统设计、SQL 优化和性能排查都已通过。', earned: cleared('design') && cleared('sql') && cleared('perf') },
     { id: 'perfect', title: '全对', detail: '有一关全部答对。', earned: perfect },
     { id: 'refund', title: '错题回补', detail: '一组错题全部练对，补回过复活。', earned: refunded },

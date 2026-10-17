@@ -2,6 +2,8 @@ import { Button, Progress, Typography } from 'antd'
 import { lazy, Suspense } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { findLesson, lessonsFor } from '@/data/curriculum'
+import { bossGateFor } from '@/data/bossExam'
+import { pathExamCleared } from '@/data/drillRules'
 import { PATHS, deliverableKey, gateCleared, gatePath, nextInGate, slotsOf, spineNextId, spinePlace } from '@/data/learningPaths'
 import { skillReturnState } from '@/data/learningSkills'
 import { shortTitle } from '@/data/reading'
@@ -18,6 +20,7 @@ export function ProgressAside({ localReady }: { localReady: boolean }) {
     localCategory: state.localCategory,
     pathChecks: state.pathChecks,
     done: state.done,
+    drillLog: state.drill.log,
     track: state.track,
     recent: state.recent,
     remember: state.remember,
@@ -43,7 +46,7 @@ export function ProgressAside({ localReady }: { localReady: boolean }) {
   }
 
   const checks = progress.pathChecks ?? []
-  const openIndex = PATHS.architect.gates.findIndex((stage) => !gateCleared(stage, progress.done, checks))
+  const openIndex = PATHS.architect.gates.findIndex((stage) => !gateCleared(stage, progress.done, checks, pathExamCleared(stage.id, progress.drillLog)))
   const requested = PATHS.architect.gates.findIndex((stage) => stage.id === params.get('gate'))
   const gateIndex = spine
     ? spine.index
@@ -66,7 +69,9 @@ export function ProgressAside({ localReady }: { localReady: boolean }) {
     ? (gateSteps ? Math.round((100 * (lessonDone + checkDone)) / gateSteps) : 0)
     : total ? Math.round((100 * completed) / total) : 0
   const unreadInGate = focus ? findLesson(nextInGate(focus, progress.done) || '') : undefined
-  const gateDone = Boolean(focus && gateCleared(focus, progress.done, checks))
+  const exam = focus ? bossGateFor(focus.id) : undefined
+  const examCleared = focus ? pathExamCleared(focus.id, progress.drillLog) : false
+  const gateDone = Boolean(focus && gateCleared(focus, progress.done, checks, examCleared))
   const next = spine ? spineNext : focus ? unreadInGate : current.find((lesson) => !progress.done.includes(lesson.id))
   const waitingOnDelivery = Boolean(focus && !unreadInGate && checkDone < checkTotal)
   const recent = progress.recent
@@ -76,6 +81,14 @@ export function ProgressAside({ localReady }: { localReady: boolean }) {
 
   return (
     <div className="aside-stack">
+      {focus && exam && !examCleared && !unreadInGate && checkDone >= checkTotal ? (
+        <div className="aside-block">
+          <h5>下一步</h5>
+          <Link className="text-link" to={`/drill/boss/${exam.id}`} state={{ drillReturn: 'gate', gateId: focus.id }}>
+            去打这一关的 Boss →
+          </Link>
+        </div>
+      ) : null}
       {focus ? null : (
       <>
       <div className="aside-block">

@@ -1,3 +1,4 @@
+import { pathExamCleared, type DrillAnswer } from './drillRules.ts'
 import { gateCleared } from './learningPaths.ts'
 import { MASTERY_GATES } from './masteryGates.ts'
 import {
@@ -101,7 +102,7 @@ export function readyChildTitles(id: string, glow: Record<string, SkillGlow>): s
     .map((item) => titles.get(item.id) ?? item.id)
 }
 
-/** 四枚称号。只读关卡是否交付，不改 gateCleared。 */
+/** 四枚称号。关卡通过含这一关的 Boss 考试。 */
 export const SKILL_MILESTONES = [
   { id: 'slice', gateId: 'g1', mark: '竖切', title: '写路径能讲清' },
   { id: 'ship', gateId: 'g3', mark: '交付', title: '能交付的全栈' },
@@ -109,10 +110,10 @@ export const SKILL_MILESTONES = [
   { id: 'arch', gateId: 'g6', mark: '架构', title: '有架构材料' },
 ] as const
 
-export function clearedGateIds(doneIds: readonly string[], checks: readonly string[]) {
+export function clearedGateIds(doneIds: readonly string[], checks: readonly string[], log: readonly DrillAnswer[] = []) {
   const ids = new Set<string>()
   for (const gate of MASTERY_GATES) {
-    if (gateCleared(gate, doneIds, checks)) ids.add(gate.id)
+    if (gateCleared(gate, doneIds, checks, pathExamCleared(gate.id, log))) ids.add(gate.id)
   }
   return ids
 }

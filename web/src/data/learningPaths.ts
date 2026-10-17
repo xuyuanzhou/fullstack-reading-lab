@@ -17,14 +17,14 @@ export function gatePath(gateId?: string, focus?: 'deliver') {
   return query ? `/paths?${query}` : '/paths'
 }
 
-/** Lessons in the gate are read, and every deliverable line is checked. */
-export function gateCleared(gate: PathGate, doneIds: readonly string[], checks: readonly string[]) {
+/** Lessons are read, every deliverable line is checked, and this gate's Boss exam is passed. */
+export function gateCleared(gate: PathGate, doneIds: readonly string[], checks: readonly string[], examCleared = false) {
   const done = new Set(doneIds)
   const marked = new Set(checks)
   const slots = requiredSlotsOf(gate.lessons)
   const lessonsDone = slots.length === 0 || slots.every((slot) => slot.some((id) => done.has(id)))
   const delivered = gate.outputs.every((_, index) => marked.has(deliverableKey(gate.id, index)))
-  return lessonsDone && delivered
+  return lessonsDone && delivered && examCleared
 }
 
 export function lessonSlots(kind: PathKind): string[][] {

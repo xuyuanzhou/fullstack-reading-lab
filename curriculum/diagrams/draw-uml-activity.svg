@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 580" role="img" aria-labelledby="title desc">
+  <title id="title">UML 活动图：下单</title>
+  <desc id="desc">影响行数为 0 时走到活动终点。影响行数为 1 时分叉，返回订单号和发出消息各自走到流终点。</desc>
+  <rect width="960" height="580" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">UML 活动图</text>
+  <text x="32" y="64" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">判断互斥，分叉之后用流终点</text>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <circle cx="56" cy="148" r="10" fill="#2e3330"/>
+    <line x1="66" y1="148" x2="96" y2="148" stroke="#2e3330" stroke-width="1.6" marker-end="url(#flow)"/>
+    <rect x="96" y="124" width="148" height="48" rx="16" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="170" y="154" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">接收提交</text>
+    <line x1="244" y1="148" x2="288" y2="148" stroke="#2e3330" stroke-width="1.6" marker-end="url(#flow)"/>
+    <polygon points="340,112 392,148 340,184 288,148" fill="#fafaf8" stroke="#2e3330" stroke-width="1.6"/>
+    <text x="340" y="104" text-anchor="middle" font-size="12" fill="#5e6661">判断</text>
+
+    <line x1="392" y1="148" x2="448" y2="148" stroke="#a05048" stroke-width="1.6" marker-end="url(#flowRed)"/>
+    <text x="532" y="116" text-anchor="middle" font-size="12" fill="#6e3530">[影响行数 = 0]</text>
+    <rect x="448" y="124" width="168" height="48" rx="16" fill="#f6ecea" stroke="#a05048"/>
+    <text x="532" y="154" text-anchor="middle" font-size="15" font-weight="600" fill="#6e3530">返回库存不足</text>
+    <line x1="616" y1="148" x2="668" y2="148" stroke="#2e3330" stroke-width="1.6" marker-end="url(#flow)"/>
+    <circle cx="690" cy="148" r="14" fill="none" stroke="#2e3330" stroke-width="1.6"/>
+    <circle cx="690" cy="148" r="7" fill="#2e3330"/>
+    <text x="690" y="184" text-anchor="middle" font-size="12" fill="#5e6661">活动终点</text>
+
+    <line x1="340" y1="184" x2="340" y2="230" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#flowGreen)"/>
+    <text x="188" y="210" font-size="12" fill="#3f6a58">[影响行数 = 1]</text>
+    <rect x="256" y="230" width="168" height="48" rx="16" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="340" y="260" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">写入订单</text>
+    <line x1="340" y1="278" x2="340" y2="320" stroke="#2e3330" stroke-width="1.6"/>
+    <rect x="180" y="320" width="480" height="10" rx="2" fill="#2e3330"/>
+    <text x="180" y="312" font-size="12" fill="#5e6661">分叉</text>
+
+    <line x1="300" y1="330" x2="300" y2="376" stroke="#2e3330" stroke-width="1.6" marker-end="url(#flow)"/>
+    <rect x="210" y="376" width="180" height="48" rx="16" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="300" y="406" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">返回订单号</text>
+    <line x1="300" y1="424" x2="300" y2="462" stroke="#2e3330" stroke-width="1.6" marker-end="url(#flow)"/>
+    <circle cx="300" cy="484" r="14" fill="none" stroke="#2e3330" stroke-width="1.6"/>
+    <path d="M291 475 L309 493 M309 475 L291 493" fill="none" stroke="#2e3330" stroke-width="1.6"/>
+    <text x="300" y="516" text-anchor="middle" font-size="12" fill="#5e6661">流终点</text>
+
+    <line x1="560" y1="330" x2="560" y2="376" stroke="#4a6280" stroke-width="1.6" marker-end="url(#flowBlue)"/>
+    <rect x="450" y="376" width="220" height="48" rx="16" fill="#eef2f8" stroke="#4a6280"/>
+    <text x="560" y="406" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">发出订单已创建</text>
+    <line x1="560" y1="424" x2="560" y2="462" stroke="#4a6280" stroke-width="1.6" marker-end="url(#flowBlue)"/>
+    <circle cx="560" cy="484" r="14" fill="none" stroke="#4a6280" stroke-width="1.6"/>
+    <path d="M551 475 L569 493 M569 475 L551 493" fill="none" stroke="#4a6280" stroke-width="1.6"/>
+    <text x="560" y="516" text-anchor="middle" font-size="12" fill="#5e6661">流终点</text>
+
+    <rect x="32" y="528" width="896" height="40" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="52" y="554" font-size="14" fill="#2e3330">靶心结束整条活动。圆叉只结束这一支。两条守卫不能同时为真。</text>
+  </g>
+  <defs>
+    <marker id="flow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2e3330"/>
+    </marker>
+    <marker id="flowGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3f6a58"/>
+    </marker>
+    <marker id="flowRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#a05048"/>
+    </marker>
+    <marker id="flowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a6280"/>
+    </marker>
+  </defs>
+</svg>

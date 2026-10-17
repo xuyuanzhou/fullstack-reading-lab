@@ -309,27 +309,6 @@
 .route-fx.is-lite .route-fx-scan,
 .route-fx.is-lite .route-fx-gl { display: none; }
 
-.fx-audio {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--lab-muted);
-  cursor: pointer;
-
-  &:hover,
-  &:focus-visible {
-    color: var(--lab-ink);
-    background: var(--lab-line-soft);
-  }
-}
-
-.fx-audio.is-on { color: var(--lab-accent-strong); }
-
 @media (max-width: 1100px) {
   .fx-roster-slot {
     left: calc(var(--lab-sider-w) + 28px);
@@ -345,11 +324,6 @@
 }
 
 @media (max-width: 720px) {
-  .fx-audio {
-    width: 40px;
-    height: 40px;
-  }
-
   .fx-duel-stage {
     left: 16px;
     right: 16px;

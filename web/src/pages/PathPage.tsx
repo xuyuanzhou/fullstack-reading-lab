@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { CurrentTask } from '@/components/learning/CurrentTask'
 import { RichBlocks } from '@/components/RichBlocks'
 import { aiNoteRef } from '@/data/aiNoteIndex'
@@ -11,14 +11,15 @@ import { bossQuest, questFace, sideQuests } from '@/data/questBoard'
 import CountUp from '@/components/bits/CountUp'
 import { SKILL_VIEWS, skillBoardState, skillLessonIds, skillProgress, skillSceneTitle, type SkillGlow } from '@/data/learningSkills'
 import { SkillReturn } from '@/components/learning/SkillReturn'
-import { drillRoadFaces } from '@/data/drillOutline'
+import { bossGateFor } from '@/data/bossExam'
+import { drillBlockFaces } from '@/data/drillOutline'
+import { describeGate, pathExamCleared } from '@/data/drillRules'
 import { ORDER_SCALE_GATE, ORDER_SCALE_RUBRIC } from '@/data/orderScaleGate'
 import { SIDE_TRACKS } from '@/data/sideTracks'
 import { shortTitle } from '@/data/reading'
 import { lessonPath } from '@/data/routes'
 import { useLearningSlice } from '@/state/progress'
 import { useShallow } from 'zustand/react/shallow'
-import { playCampTick } from '@/transition/audio'
 import { markSceneReady } from '@/transition/jumpBudget'
 import type { Lesson } from '@/types/curriculum'
 
@@ -38,6 +39,13 @@ function pickedIndex(raw: string | null, length: number) {
   const index = Number(raw)
   if (!Number.isInteger(index) || index < 0 || index >= length) return -1
   return index
+}
+
+function bossMeter(play: { cleared: boolean; open: { answered: number; total: number } | null; last: { correct: number; total: number } | null }, total: number) {
+  if (play.cleared) return '已通过'
+  if (play.open) return `${play.open.answered}/${total}`
+  if (play.last) return `${play.last.correct}/${play.last.total}`
+  return `0/${total}`
 }
 
 function gateStatus(stage: PathGate, index: number, finished: boolean, sequenceIndex: number, openIndex: number) {
@@ -118,8 +126,14 @@ export function PathPage() {
   })))
   const location = useLocation()
   const navigate = useNavigate()
+  const stageCleared = (stage: PathGate) => gateCleared(
+    stage,
+    progress.done,
+    progress.pathChecks,
+    pathExamCleared(stage.id, progress.drillLog),
+  )
   const [params, setParams] = useSearchParams()
-  const openIndex = stages.findIndex((stage) => !gateCleared(stage, progress.done, progress.pathChecks))
+  const openIndex = stages.findIndex((stage) => !stageCleared(stage))
   const sequenceIndex = openIndex === -1 ? stages.length - 1 : openIndex
   const upcomingId = nextInGate(stages[sequenceIndex], progress.done) || ''
   useEffect(() => {
@@ -201,6 +215,8 @@ export function PathPage() {
 
   const camp = examCamp ? ORDER_SCALE_GATE : (stages[currentIndex] ?? stages[sequenceIndex])
   const campIndex = examCamp ? -1 : stages.indexOf(camp)
+  const exam = examCamp ? undefined : bossGateFor(camp.id)
+  const examPlay = exam ? describeGate({ log: progress.drillLog }, exam.id) : null
   const done = new Set(progress.done)
   const checks = new Set(progress.pathChecks ?? [])
   const slots = requiredSlotsOf(camp.lessons)
@@ -227,6 +243,12 @@ export function PathPage() {
   const bossPage = params.get('boss') === 'core'
   const bossSceneId = bossPage ? params.get('scene') || '' : ''
   const inGate = Boolean(params.get('gate') && (examCamp || stages.some((stage) => stage.id === params.get('gate'))))
+  const drillBlocks = drillBlockFaces(progress.drillLog)
+  const drillPlanted = (() => {
+    const live = drillBlocks.findIndex((block) => block.faces.some((face) => face.status === 'live'))
+    if (live >= 0) return live
+    return drillBlocks.findIndex((block) => block.faces.some((face) => face.status !== 'cleared'))
+  })()
   const sideFaces = sides.map((item) => questFace(item, quests))
   const sideLive = sideFaces.findIndex((face) => face !== 'cleared' && face !== 'starred')
   const bossFace = questFace(boss, quests)
@@ -275,10 +297,10 @@ export function PathPage() {
   const deliverAt = pickedIndex(params.get('deliver'), deliverRows.length)
   const deliverPick = deliverAt >= 0 ? deliverRows[deliverAt] : undefined
   const verifyFill = gateVerifyFill(camp.id, progress.learning.attempts, progress.learning.evidence)
-  const campEdition = gateEdition(gateCleared(camp, progress.done, progress.pathChecks), verifyFill)
+  const campEdition = gateEdition(stageCleared(camp), verifyFill)
   const titles = Object.fromEntries(stages.map((stage) => [stage.id, stage.learnTitle]))
   const satisfied = new Set(stages.flatMap((stage) => {
-    const finished = gateCleared(stage, progress.done, progress.pathChecks)
+    const finished = stageCleared(stage)
     const edition = gateEdition(finished, gateVerifyFill(stage.id, progress.learning.attempts, progress.learning.evidence))
     return finished || edition.mark === '新版已通过' ? [stage.id] : []
   }))
@@ -392,10 +414,7 @@ export function PathPage() {
           <button
             type="button"
             className="skill-ignite"
-            onClick={() => {
-              playCampTick()
-              navigate('/skills')
-            }}
+            onClick={() => navigate('/skills')}
           >
             <svg className="skill-ignite-chart" viewBox="0 0 328 100" aria-hidden="true">
               <defs>
@@ -481,7 +500,7 @@ export function PathPage() {
             liveIndex={openIndex >= 0 ? sequenceIndex : -1}
             onPick={selectGate}
             nodes={stages.map((stage, index) => {
-              const finished = gateCleared(stage, progress.done, progress.pathChecks)
+              const finished = stageCleared(stage)
               const edition = gateEdition(finished, gateVerifyFill(stage.id, progress.learning.attempts, progress.learning.evidence))
               return {
                 id: stage.id,
@@ -558,20 +577,41 @@ export function PathPage() {
             <p className="atlas-kicker">选择题</p>
             <p className="atlas-role">不计入九关 · 答对 80% 过关</p>
           </div>
-          <ol className="atlas-drill">
-            {drillRoadFaces(progress.drillLog).map((road) => (
-              <li key={road.id} className={`is-${road.status}`}>
-                <Link to={`/drill/${road.id}`} state={{ drillReturn: 'paths' }}>
-                  <span className="atlas-drill-stone" aria-hidden="true" />
-                  <span className="atlas-drill-copy">
-                    <strong>{road.title}</strong>
-                    <b className="drill-state">{road.state}</b>
-                  </span>
-                  <span className="drill-sr">{road.cleared}/{road.total} 关已通过</span>
-                </Link>
-              </li>
-            ))}
-          </ol>
+          {drillBlocks.map((block, blockIndex) => {
+            const localLive = block.faces.findIndex((face) => face.status === 'live')
+            const localOpen = block.faces.findIndex((face) => face.status !== 'cleared')
+            const planted = blockIndex === drillPlanted
+            const hereIndex = planted ? (localLive >= 0 ? localLive : localOpen) : -1
+            const liveIndex = planted ? hereIndex : localOpen < 0 ? block.faces.length - 1 : -1
+            return (
+              <div key={block.id} className="atlas-drill-block">
+                <div className="atlas-drill-head">
+                  <p className="atlas-kicker">{block.title}</p>
+                  {block.faces.length > 1 ? <p className="atlas-role">{block.faces.length} 门</p> : null}
+                </div>
+                <CampaignMap
+                  mapId={`drill-${block.id}`}
+                  label={block.title}
+                  hereIndex={hereIndex}
+                  liveIndex={liveIndex}
+                  resting={!planted}
+                  row
+                  onPick={(index) => {
+                    const road = block.faces[index]
+                    if (!road) return
+                    navigate(`/drill/${road.id}`, { state: { drillReturn: 'paths' } })
+                  }}
+                  nodes={block.faces.map((road) => ({
+                    id: road.id,
+                    title: road.title,
+                    status: road.state,
+                    done: road.status === 'cleared',
+                    boss: false,
+                  }))}
+                />
+              </div>
+            )
+          })}
         </section>
       </div>
     )
@@ -661,9 +701,12 @@ export function PathPage() {
             </p>
           ) : null}
           {settle ? <p className="encounter-settle">{settle}</p> : null}
-          <div className="encounter-meters" aria-label="阅读、交付与验证">
+          <div className="encounter-meters" aria-label="阅读、交付、Boss 与验证">
             <Meter name="阅读" value={readSlots} total={slots.length} label={`${readSlots}/${slots.length} 场`} />
             <Meter name="交付" value={delivered} total={camp.outputs.length} label={`${delivered}/${camp.outputs.length} 项`} />
+            {exam && examPlay ? (
+              <Meter name="Boss" value={examPlay.cleared ? exam.questionIds.length : examPlay.open?.answered ?? 0} total={exam.questionIds.length} label={bossMeter(examPlay, exam.questionIds.length)} />
+            ) : null}
             {verifyFill.total ? (
               <Meter name="验证" value={verifyFill.started} total={verifyFill.total} label={`${verifyFill.started}/${verifyFill.total} 项`} />
             ) : null}
@@ -687,6 +730,26 @@ export function PathPage() {
             nodes={deliverRows}
           />
           {stoneFlash && deliverRows.some((row) => row.id === stoneFlash.id) ? <p className="path-note" role="status">{stoneFlash.text}</p> : null}
+          {exam && examPlay ? (
+            <>
+              <p className="atlas-kicker">Boss</p>
+              <p className="path-note">这一关每一课一题。答完这一场，正确率达到 80% 才算通过。当场判分，不是认证。</p>
+              <CampaignMap
+                mapId="gate-boss"
+                label={`${camp.learnTitle}的考试`}
+                hereIndex={0}
+                liveIndex={examPlay.cleared ? -1 : 0}
+                onPick={() => navigate(`/drill/boss/${exam.id}`, { state: { drillReturn: 'gate', gateId: camp.id } })}
+                nodes={[{
+                  id: exam.id,
+                  title: '打 Boss',
+                  status: examPlay.cleared ? '已通过' : examPlay.open ? `${examPlay.open.answered}/${exam.questionIds.length}` : '可以开始',
+                  done: examPlay.cleared,
+                  boss: true,
+                }]}
+              />
+            </>
+          ) : null}
           {verifyRows.length ? (
             <>
               <p className="atlas-kicker">验证</p>
@@ -807,6 +870,8 @@ function CampaignMap({
   nodes,
   hereIndex,
   liveIndex,
+  resting = false,
+  row = false,
   onPick,
 }: {
   mapId: string
@@ -814,6 +879,10 @@ function CampaignMap({
   nodes: MapNode[]
   hereIndex: number
   liveIndex: number
+  /** 这一路现在没人站着。已走完的路仍画满，不抬石台，也不放剑客。 */
+  resting?: boolean
+  /** 每一行都从左往右。排满换到下一行的最左边，不倒过来，也不横滑出屏幕。 */
+  row?: boolean
   onPick: (index: number) => void
 }) {
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -827,10 +896,11 @@ function CampaignMap({
     observer.observe(el)
     return () => observer.disconnect()
   }, [])
-  const layout = useMemo(() => buildLayout(nodes.length, boardWidth || MIN_SLOT + PAD_X * 2), [boardWidth, nodes.length])
-  const walkIndex = liveIndex >= 0 ? liveIndex : Math.max(0, nodes.length - 1)
-  const stand = hereIndex >= 0 ? hereIndex : walkIndex
-  const arrow = liveIndex >= 0 ? layout.arrows[liveIndex] ?? null : null
+  const layout = useMemo(() => buildLayout(nodes.length, boardWidth || MIN_SLOT + PAD_X * 2, row), [boardWidth, nodes.length, row])
+  const walkIndex = liveIndex >= 0 ? liveIndex : resting ? -1 : Math.max(0, nodes.length - 1)
+  const stand = hereIndex >= 0 ? hereIndex : resting ? -1 : walkIndex
+  const showLive = !resting || hereIndex >= 0
+  const arrow = showLive && liveIndex >= 0 ? layout.arrows[liveIndex] ?? null : null
   const maskId = `campaign-walked-${mapId}`
   return (
     <div className="path-map-scroll" id={mapId === 'main' ? 'path-map' : undefined} ref={scrollRef}>
@@ -867,7 +937,7 @@ function CampaignMap({
         <ol className="path-stops" aria-label={label}>
           {nodes.map((node, index) => {
             const stop = layout.stops[index]
-            const live = index === liveIndex
+            const live = showLive && index === liveIndex
             return (
               <li key={node.id}>
                 <button
@@ -999,6 +1069,13 @@ function CampaignTraveler({
     if (!path) return
     const total = path.getTotalLength()
     const end = fractions[index] * total
+    if (!Number.isFinite(total) || !Number.isFinite(end)) {
+      const stop = stops[index]
+      if (!stop) return
+      placed.current = true
+      setPos({ x: stop.x, y: stop.y - 12 })
+      return
+    }
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const plant = (length: number, lift: number, settled: boolean) => {
       const at = path.getPointAtLength(length)
@@ -1071,7 +1148,7 @@ type Point = { x: number; y: number }
 type Stop = Point & { row: number; col: number }
 type Arrow = { x: number; y: number; deg: number }
 
-function buildLayout(count: number, width: number) {
+function buildLayout(count: number, width: number, row = false) {
   const compact = width < 520
   const narrow = width < 380
   const padX = narrow ? 16 : compact ? 24 : PAD_X
@@ -1080,30 +1157,37 @@ function buildLayout(count: number, width: number) {
   const rowGap = narrow ? 100 : compact ? 108 : ROW_GAP
   const labelBelow = narrow ? 78 : compact ? 88 : LABEL_BELOW
   const turnR = narrow ? 14 : compact ? 18 : TURN_R
-  const columns = Math.max(1, Math.min(count, Math.floor((width - padX * 2) / minSlot)))
-  const slot = (width - padX * 2) / columns
+  const fit = Math.max(1, Math.floor((width - padX * 2) / minSlot))
+  const columns = Math.max(1, Math.min(Math.max(count, 1), fit))
   const rows = Math.ceil(count / columns)
   const single = rows === 1 && count > 1
+  const lineGap = row && rows > 1 ? rowGap + (narrow ? 28 : compact ? 16 : 8) : rowGap
+  const slot = (width - padX * 2) / columns
   const stops: Stop[] = Array.from({ length: count }, (_, index) => {
-    const row = Math.floor(index / columns)
+    const line = Math.floor(index / columns)
     const place = index % columns
-    const col = row % 2 === 0 ? place : columns - 1 - place
+    const col = !row && line % 2 === 1 ? columns - 1 - place : place
     const x = padX + slot * col + slot / 2
-    const y = padTop + row * rowGap + (single && index % 2 === 1 ? -WAVE : 0)
-    return { x, y, row, col }
+    const y = padTop + line * lineGap + (single && index % 2 === 1 ? -WAVE : 0)
+    return { x, y, row: line, col }
   })
-  const route = buildRoute(stops, columns, slot, turnR)
+  const route = buildRoute(stops, columns, slot, turnR, row, padX)
   const height = (stops[stops.length - 1]?.y ?? padTop) + (single ? WAVE : 0) + labelBelow
   return { stops, columns, rows, slot, width, height, single, ...route }
 }
 
-function buildRoute(stops: readonly Stop[], columns: number, slot: number, turnR: number) {
+function buildRoute(stops: readonly Stop[], columns: number, slot: number, turnR: number, reading = false, padX = PAD_X) {
   const samples: Point[][] = []
   let d = stops.length ? `M ${n(stops[0].x)} ${n(stops[0].y)}` : ''
+  const room = padX + slot / 2 - 6
   for (let index = 1; index < stops.length; index++) {
     const from = stops[index - 1]
     const to = stops[index]
-    const piece = from.row === to.row ? linkPiece(from, to) : turnPiece(from, to, columns, slot, turnR)
+    const piece = from.row === to.row
+      ? linkPiece(from, to)
+      : reading
+        ? readTurn(from, to, slot, room)
+        : turnPiece(from, to, columns, slot, turnR)
     d += piece.d
     samples.push(piece.samples)
   }
@@ -1115,7 +1199,10 @@ function buildRoute(stops: readonly Stop[], columns: number, slot: number, turnR
     walked += len
     fractions.push(walked / total)
   }
-  const arrows: (Arrow | null)[] = samples.map((points) => arrowOn(points))
+  const arrows: (Arrow | null)[] = samples.map((points, index) => {
+    const wrapped = reading && stops[index].row !== stops[index + 1].row
+    return arrowOn(points, wrapped ? 0.92 : 0.42)
+  })
   return { d, fractions, arrows }
 }
 
@@ -1127,6 +1214,45 @@ function linkPiece(from: Point, to: Point) {
     d: ` C ${n(c1.x)} ${n(c1.y)}, ${n(c2.x)} ${n(c2.y)}, ${n(to.x)} ${n(to.y)}`,
     samples: cubicSamples(from, c1, c2, to),
   }
+}
+
+/** 一行排满后，从这一行末尾弯到下一行开头。竖线躲开课名，横线贴在课名下面。 */
+function readTurn(from: Stop, to: Stop, slot: number, room: number) {
+  const span = Math.max(48, to.y - from.y)
+  const labelHalf = Math.min(132, Math.max(92, slot - 20)) / 2
+  const out = Math.max(22, Math.min(room, labelHalf + 8))
+  const railY = to.y - Math.min(40, span * 0.28)
+  const r = Math.max(8, Math.min(14, out * 0.35, (railY - from.y) / 2 - 1, (to.y - railY) / 2 - 1))
+  const knee = { x: from.x + out - r, y: from.y }
+  const drop = { x: from.x + out, y: from.y + r }
+  const railIn = { x: from.x + out, y: railY - r }
+  const railStart = { x: from.x + out - r, y: railY }
+  const railEnd = { x: to.x - out + r, y: railY }
+  const fall = { x: to.x - out, y: railY + r }
+  const approach = { x: to.x - out, y: to.y - r }
+  const back = { x: to.x - out + r, y: to.y }
+  const samples = [from]
+  appendLine(samples, from, knee)
+  appendQuad(samples, knee, { x: from.x + out, y: from.y }, drop)
+  appendLine(samples, drop, railIn)
+  appendQuad(samples, railIn, { x: from.x + out, y: railY }, railStart)
+  appendLine(samples, railStart, railEnd)
+  appendQuad(samples, railEnd, { x: to.x - out, y: railY }, fall)
+  appendLine(samples, fall, approach)
+  appendQuad(samples, approach, { x: to.x - out, y: to.y }, back)
+  appendLine(samples, back, to)
+  const d = [
+    ` L ${n(knee.x)} ${n(knee.y)}`,
+    ` Q ${n(from.x + out)} ${n(from.y)}, ${n(drop.x)} ${n(drop.y)}`,
+    ` L ${n(railIn.x)} ${n(railIn.y)}`,
+    ` Q ${n(from.x + out)} ${n(railY)}, ${n(railStart.x)} ${n(railStart.y)}`,
+    ` L ${n(railEnd.x)} ${n(railEnd.y)}`,
+    ` Q ${n(to.x - out)} ${n(railY)}, ${n(fall.x)} ${n(fall.y)}`,
+    ` L ${n(approach.x)} ${n(approach.y)}`,
+    ` Q ${n(to.x - out)} ${n(to.y)}, ${n(back.x)} ${n(back.y)}`,
+    ` L ${n(to.x)} ${n(to.y)}`,
+  ].join('')
+  return { d, samples }
 }
 
 function turnPiece(from: Stop, to: Stop, columns: number, slot: number, turnR: number) {
@@ -1155,11 +1281,11 @@ function turnPiece(from: Stop, to: Stop, columns: number, slot: number, turnR: n
   return { d, samples }
 }
 
-function arrowOn(points: readonly Point[]): Arrow | null {
+function arrowOn(points: readonly Point[], atFraction = 0.42): Arrow | null {
   const total = pieceLength(points)
   if (total < 8) return null
-  const at = pointAlong(points, total * 0.42)
-  const ahead = pointAlong(points, Math.min(total, total * 0.42 + 12))
+  const at = pointAlong(points, total * atFraction)
+  const ahead = pointAlong(points, Math.min(total, total * atFraction + 12))
   const deg = Math.atan2(ahead.y - at.y, ahead.x - at.x) * (180 / Math.PI)
   return { x: at.x, y: at.y, deg }
 }

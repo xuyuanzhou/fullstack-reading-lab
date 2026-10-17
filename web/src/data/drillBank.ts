@@ -1,4 +1,4 @@
-/** 系统设计、SQL 优化、服务性能排查和全栈主线的选择题。正确项对齐课文结论。 */
+/** 系统设计、SQL、性能、主线，以及语言、界面、Java 等卷。正确项对齐课文结论。 */
 import type { MoreAsk } from './drillMoreDesign.ts'
 import { DESIGN_FURTHER, DESIGN_FURTHER_POINTS } from './drillFurtherDesign.ts'
 import { DESIGN_LATER, DESIGN_LATER_POINTS } from './drillLaterDesign.ts'
@@ -13,8 +13,11 @@ import { SQL_LATER, SQL_LATER_POINTS } from './drillLaterSql.ts'
 import { SQL_MORE, SQL_POINTS } from './drillMoreSql.ts'
 import { SQL_NEXT, SQL_NEXT_POINTS } from './drillNextSql.ts'
 import { SPINE_ASKS, SPINE_POINTS } from './drillSpine.ts'
+import { COVER_ASKS, COVER_COURSES, COVER_GATES, COVER_POINTS } from './drillCover.ts'
+import { MULTI_COURSES, MULTI_GATES, MULTI_POINTS, MULTI_QUESTIONS } from './drillMulti.ts'
+import { BOSS_COURSE, bossGateById, bossPointById, bossQuestionById, installBossExams } from './bossExam.ts'
 
-export type DrillCourseId = 'design' | 'sql' | 'perf' | 'spine'
+export type DrillCourseId = 'design' | 'sql' | 'perf' | 'spine' | 'lang' | 'browser' | 'react' | 'vue' | 'client' | 'java' | 'pattern' | 'spring' | 'secure' | 'rest' | 'jvm' | 'conc' | 'cache' | 'nginx' | 'gateway' | 'mq' | 'sca' | 'dist' | 'ship' | 'test' | 'work' | 'boss'
 export type OptionId = 'a' | 'b' | 'c' | 'd'
 
 export type DrillCourse = {
@@ -37,8 +40,36 @@ export type DrillQuestion = {
   stem: string
   options: { id: OptionId; text: string }[]
   answer: OptionId
+  /** 两项及以上才是多选。少选、多选都算错。 */
+  answers?: OptionId[]
   explain: string
   whyWrong: Partial<Record<OptionId, string>>
+}
+
+const OPTION_IDS = ['a', 'b', 'c', 'd'] as const
+
+export function correctChoices(question: DrillQuestion): OptionId[] {
+  const many = question.answers?.filter((id): id is OptionId => (OPTION_IDS as readonly string[]).includes(id))
+  const unique = many ? [...new Set(many)].sort() : []
+  if (unique.length > 1) return unique
+  return [question.answer]
+}
+
+export function isMultiQuestion(question: DrillQuestion) {
+  return correctChoices(question).length > 1
+}
+
+export function canonicalChoice(value: string) {
+  if (value.length < 1 || value.length > 4) return null
+  const letters = [...value]
+  if (new Set(letters).size !== letters.length) return null
+  if (!letters.every((letter) => (OPTION_IDS as readonly string[]).includes(letter))) return null
+  const sorted = [...letters].sort().join('')
+  return sorted === value ? sorted : null
+}
+
+export function choiceMatches(question: DrillQuestion, choice: string) {
+  return canonicalChoice(choice) === correctChoices(question).join('')
 }
 
 export type DrillGate = {
@@ -71,6 +102,8 @@ export const DRILL_COURSES: DrillCourse[] = [
     title: '全栈主线',
     lead: '先走通一笔写入：页面、契约、用例和持久化各管一件事，再谈授权、测试和发布。',
   },
+  ...COVER_COURSES,
+  ...MULTI_COURSES.map((course) => ({ id: course.id as DrillCourseId, title: course.title, lead: course.lead })),
 ]
 
 const DRILL_POINT_BASE: DrillPoint[] = [
@@ -136,6 +169,8 @@ export const DRILL_POINTS: DrillPoint[] = [
   ...SQL_LATER_POINTS,
   ...PERF_LATER_POINTS,
   ...SPINE_POINTS,
+  ...MULTI_POINTS.map((point) => ({ ...point, courseId: point.courseId as DrillCourseId })),
+  ...COVER_POINTS.map((point) => ({ ...point, courseId: point.courseId as DrillCourseId })),
 ]
 
 const OPT = ['a', 'b', 'c', 'd'] as const
@@ -1021,12 +1056,16 @@ function fromMore(item: MoreAsk): DrillQuestion {
 }
 
 const moreSpread = spread(
-  [...DESIGN_MORE, ...SQL_MORE, ...PERF_MORE, ...DESIGN_NEXT, ...SQL_NEXT, ...PERF_NEXT, ...DESIGN_FURTHER, ...SQL_FURTHER, ...PERF_FURTHER, ...DESIGN_LATER, ...SQL_LATER, ...PERF_LATER, ...SPINE_ASKS].map(fromMore),
+  [...DESIGN_MORE, ...SQL_MORE, ...PERF_MORE, ...DESIGN_NEXT, ...SQL_NEXT, ...PERF_NEXT, ...DESIGN_FURTHER, ...SQL_FURTHER, ...PERF_FURTHER, ...DESIGN_LATER, ...SQL_LATER, ...PERF_LATER, ...SPINE_ASKS, ...COVER_ASKS].map(fromMore),
   3,
 )
 
 function moreFor(gateId: string) {
   return moreSpread.filter((item) => item.id.startsWith(`${gateId}-`))
+}
+
+function multiFor(gateId: string) {
+  return MULTI_QUESTIONS.filter((item) => item.id.startsWith(`${gateId}-`))
 }
 
 function buildGate(
@@ -1088,24 +1127,28 @@ export const DRILL_GATES: DrillGate[] = [
   buildGate('m6', 'spine', 6, '先写下看见了什么', '状态码、留下的行和同一次标识先写上。一次只改有记录的那一层。', moreFor('m6')),
   buildGate('m7', 'spine', 7, '镜像、流水线与停机', '容器共享内核。打包成功不是三道门。停机先拒绝新请求。', moreFor('m7')),
   buildGate('m8', 'spine', 8, '地址、探活与这个窗口', '调用方连稳定地址。探活分开启动、就绪和存活。这个窗口只做写明的一件事。', moreFor('m8')),
+  ...COVER_GATES.map((gate) => buildGate(gate.id, gate.courseId as DrillCourseId, gate.level, gate.title, gate.lead, moreFor(gate.id))),
+  ...MULTI_GATES.map((gate) => buildGate(gate.id, gate.courseId as DrillCourseId, gate.level, gate.title, gate.lead, multiFor(gate.id))),
 ]
 
-export const DRILL_QUESTIONS: DrillQuestion[] = [...designSpread, ...sqlSpread, ...perfSpread, ...moreSpread]
+export const DRILL_QUESTIONS: DrillQuestion[] = [...designSpread, ...sqlSpread, ...perfSpread, ...moreSpread, ...MULTI_QUESTIONS]
+
+installBossExams(DRILL_POINTS, DRILL_QUESTIONS)
 
 const questionMap = new Map(DRILL_QUESTIONS.map((item) => [item.id, item]))
 const pointMap = new Map(DRILL_POINTS.map((item) => [item.id, item]))
 const gateMap = new Map(DRILL_GATES.map((item) => [item.id, item]))
 
 export function questionById(id: string) {
-  return questionMap.get(id)
+  return questionMap.get(id) ?? bossQuestionById(id)
 }
 
 export function pointById(id: string) {
-  return pointMap.get(id)
+  return pointMap.get(id) ?? bossPointById(id)
 }
 
 export function gateById(id: string) {
-  return gateMap.get(id)
+  return gateMap.get(id) ?? bossGateById(id)
 }
 
 export function gatesInCourse(courseId: DrillCourseId) {
@@ -1113,5 +1156,5 @@ export function gatesInCourse(courseId: DrillCourseId) {
 }
 
 export function courseById(id: string) {
-  return DRILL_COURSES.find((course) => course.id === id)
+  return DRILL_COURSES.find((course) => course.id === id) ?? (id === 'boss' ? BOSS_COURSE : undefined)
 }

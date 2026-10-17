@@ -167,7 +167,7 @@ export function gateVerifyFill(
       : pending > 0
         ? `${pending} 项待复核 · ${passed}/${base.length} 本地检查通过`
         : `0/${base.length} · 还未做验证`
-  const core = '验证不冒充认证。有草稿只算待复核；只有站内可重跑检查通过才算本地检查通过。旧版过关仍只看阅读与交付。'
+  const core = '验证不冒充认证。有草稿只算待复核；只有站内可重跑检查通过才算本地检查通过。这一关通过要阅读、交付和 Boss 考试都齐。'
   const extra = advanced.length
     ? `进阶 ${advancedNoted}/${advanced.length} 已记下，不计入通过，也不是认证。`
     : ''
