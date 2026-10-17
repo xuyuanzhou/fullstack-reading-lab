@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" role="img" aria-labelledby="title desc">
+  <title id="title">主从图：刚写完的读留在主库</title>
+  <desc id="desc">写入和刚写完的读用实线进主库。列表和商品详情用虚线进从库。二进制日志从主库指向从库。从库不是备份。</desc>
+  <rect width="960" height="500" rx="18" fill="#f6f7f4"/>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <text x="32" y="36" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">画图 / 主从</text>
+    <text x="32" y="64" font-size="20" font-weight="600" fill="#2e3330">刚写完的读留在主库</text>
+
+    <rect x="48" y="160" width="180" height="72" rx="12" fill="#fafaf8" stroke="#2e3330"/>
+    <text x="68" y="192" font-size="15" font-weight="600" fill="#2e3330">下单应用</text>
+    <text x="68" y="214" font-size="13" fill="#5e6661">两个数据源</text>
+
+    <line x1="228" y1="180" x2="420" y2="140" stroke="#3f6a58" stroke-width="1.7" marker-end="url(#arr)"/>
+    <text x="250" y="150" font-size="13" fill="#3f6a58">实线 · 写入、刚写完的读</text>
+    <line x1="228" y1="214" x2="420" y2="250" stroke="#5e6661" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#arrGray)"/>
+    <text x="250" y="268" font-size="13" fill="#5e6661">虚线 · 列表、商品详情</text>
+
+    <rect x="430" y="100" width="220" height="72" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="450" y="132" font-size="15" font-weight="600" fill="#2e3330">主库</text>
+    <text x="450" y="154" font-size="13" fill="#5e6661">接受写入</text>
+    <rect x="430" y="220" width="220" height="72" rx="12" fill="#eef2f8" stroke="#4a6280"/>
+    <text x="450" y="252" font-size="15" font-weight="600" fill="#2e3330">从库</text>
+    <text x="450" y="274" font-size="13" fill="#4a6280">只读 · 可能落后</text>
+
+    <line x1="540" y1="172" x2="540" y2="220" stroke="#4a6280" stroke-width="1.6" marker-end="url(#arrBlue)"/>
+    <text x="552" y="202" font-size="13" fill="#4a6280">二进制日志</text>
+
+    <rect x="700" y="120" width="220" height="88" rx="12" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="716" y="150" font-size="14" fill="#2e3330">半同步等到</text>
+    <text x="716" y="174" font-size="14" fill="#2e3330">中继日志刷盘</text>
+    <text x="716" y="198" font-size="13" fill="#5e6661">不是查询已能看见</text>
+
+    <rect x="48" y="360" width="864" height="108" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="68" y="396" font-size="14" fill="#2e3330">延迟期内，主库和从库的状态可以不同。</text>
+    <text x="68" y="424" font-size="14" fill="#6e3530">从库会重放误删除，不能标成备份。</text>
+    <text x="68" y="448" font-size="14" fill="#5e6661">从库不是第三份下单应用。</text>
+  </g>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3f6a58"/>
+    </marker>
+    <marker id="arrBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a6280"/>
+    </marker>
+    <marker id="arrGray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5e6661"/>
+    </marker>
+  </defs>
+</svg>

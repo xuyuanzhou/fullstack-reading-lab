@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 872" role="img" aria-labelledby="title desc">
+  <title id="title">按问题选图</title>
+  <desc id="desc">系统外有谁用系统上下文图。同一程序的副本用集群图。刚写完的读用主从图。静态字节用静态与 CDN 图。分库之后用事务选型图。</desc>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3f6a58"/>
+    </marker>
+  </defs>
+  <rect width="960" height="872" rx="18" fill="#f6f7f4"/>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <text x="32" y="36" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">选图</text>
+    <text x="32" y="64" font-size="20" font-weight="600" fill="#2e3330">先写要回答的问题，再决定画哪一张</text>
+    <rect x="48" y="96" width="400" height="52" rx="12" fill="#fafaf8" stroke="#2e3330"/>
+    <text x="68" y="128" font-size="15" fill="#2e3330">支付渠道在系统外</text>
+    <line x1="448" y1="122" x2="520" y2="122" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+    <rect x="528" y="96" width="380" height="52" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="548" y="128" font-size="15" font-weight="600" fill="#2e3330">系统上下文图</text>
+    <rect x="48" y="164" width="400" height="52" rx="12" fill="#fafaf8" stroke="#2e3330"/>
+    <text x="68" y="196" font-size="15" fill="#2e3330">这一刻 o-1001 有两行</text>
+    <line x1="448" y1="190" x2="520" y2="190" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+    <rect x="528" y="164" width="380" height="52" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="548" y="196" font-size="15" font-weight="600" fill="#2e3330">对象图</text>
+    <rect x="48" y="232" width="400" height="52" rx="12" fill="#fafaf8" stroke="#2e3330"/>
+    <text x="68" y="264" font-size="15" fill="#2e3330">下单应用依赖订单包</text>
+    <line x1="448" y1="258" x2="520" y2="258" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+    <rect x="528" y="232" width="380" height="52" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="548" y="264" font-size="15" font-weight="600" fill="#2e3330">包图</text>
+    <rect x="48" y="300" width="400" height="52" rx="12" fill="#fafaf8" stroke="#2e3330"/>
+    <text x="68" y="332" font-size="15" fill="#2e3330">同一程序要多份副本</text>
+    <line x1="448" y1="326" x2="520" y2="326" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+    <rect x="528" y="300" width="380" height="52" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="548" y="332" font-size="15" font-weight="600" fill="#2e3330">集群图</text>
+    <rect x="48" y="368" width="400" height="52" rx="12" fill="#fafaf8" stroke="#2e3330"/>
+    <text x="68" y="400" font-size="15" fill="#2e3330">多个系统只连总线</text>
+    <line x1="448" y1="394" x2="520" y2="394" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+    <rect x="528" y="368" width="380" height="52" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="548" y="400" font-size="15" font-weight="600" fill="#2e3330">SOA 图</text>
+    <rect x="48" y="436" width="400" height="52" rx="12" fill="#fafaf8" stroke="#2e3330"/>
+    <text x="68" y="468" font-size="15" fill="#2e3330">一个服务一个库</text>
+    <line x1="448" y1="462" x2="520" y2="462" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+    <rect x="528" y="436" width="380" height="52" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="548" y="468" font-size="15" font-weight="600" fill="#2e3330">微服务图</text>
+    <rect x="48" y="504" width="400" height="52" rx="12" fill="#fafaf8" stroke="#2e3330"/>
+    <text x="68" y="536" font-size="15" fill="#2e3330">写和刚写完的读要分开</text>
+    <line x1="448" y1="530" x2="520" y2="530" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+    <rect x="528" y="504" width="380" height="52" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="548" y="536" font-size="15" font-weight="600" fill="#2e3330">主从图</text>
+    <rect x="48" y="572" width="400" height="52" rx="12" fill="#fafaf8" stroke="#2e3330"/>
+    <text x="68" y="604" font-size="15" fill="#2e3330">静态字节和下单要分开</text>
+    <line x1="448" y1="598" x2="520" y2="598" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+    <rect x="528" y="572" width="380" height="52" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="548" y="604" font-size="15" font-weight="600" fill="#2e3330">静态与 CDN 图</text>
+    <rect x="48" y="640" width="400" height="52" rx="12" fill="#fafaf8" stroke="#2e3330"/>
+    <text x="68" y="672" font-size="15" fill="#2e3330">分库之后先问还在不在一个库</text>
+    <line x1="448" y1="666" x2="520" y2="666" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+    <rect x="528" y="640" width="380" height="52" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="548" y="672" font-size="15" font-weight="600" fill="#2e3330">事务选型图</text>
+    <rect x="48" y="712" width="860" height="128" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="68" y="744" font-size="14" fill="#2e3330">这一次先写库再返回：时序图。包图不回答先后。</text>
+    <text x="68" y="768" font-size="14" fill="#2e3330">一个进程一次提交用单体图。三条事务不并成一个框。</text>
+    <text x="68" y="792" font-size="14" fill="#2e3330">已发货后的退货是新事件，不复用退款完成。</text>
+    <text x="68" y="816" font-size="14" fill="#2e3330">CSDN 不画进源站。半同步不表示从库已经能查到这行。</text>
+  </g>
+</svg>

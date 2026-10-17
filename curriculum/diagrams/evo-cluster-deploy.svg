@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 300" role="img" aria-labelledby="title desc">
+  <title id="title">三台相同应用，一台一台换</title>
+  <desc id="desc">负载均衡后面没有第二个业务服务。</desc>
+  <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#3f6a58"/></marker></defs>
+  <rect width="960" height="300" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="18" font-weight="600" fill="#2e3330">三台相同应用，一台一台换</text>
+  
+  <rect x="32" y="70" width="160" height="48" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="48" y="98" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">负载均衡</text>
+  <line x1="192" y1="94" x2="230" y2="94" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+  <rect x="240" y="64" width="140" height="48" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="256" y="92" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">应用 1</text>
+  <rect x="400" y="64" width="140" height="48" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="416" y="92" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">应用 2</text>
+  <rect x="560" y="64" width="140" height="48" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="576" y="92" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">应用 3</text>
+  <line x1="310" y1="112" x2="470" y2="150" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+  <line x1="470" y1="112" x2="470" y2="150" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+  <line x1="630" y1="112" x2="470" y2="150" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+  <rect x="360" y="156" width="220" height="48" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="376" y="184" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">同一个 Redis 会话</text>
+  <rect x="360" y="220" width="220" height="48" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="376" y="248" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">同一个主库</text>
+  <text x="620" y="250" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#5e6661">发布：一台一台换</text>
+
+</svg>

@@ -1,7 +1,8 @@
 /** 每一关一场 Boss。这一关每一课抽一题，有多选就用多选，单独记分。 */
 
+import { BOSS_DISTRACTORS } from './bossDistractors.ts'
 import { MASTERY_GATES } from './masteryGates.ts'
-import type { DrillCourse, DrillGate, DrillPoint, DrillQuestion } from './drillBank.ts'
+import type { DrillCourse, DrillGate, DrillPoint, DrillQuestion, OptionId } from './drillBank.ts'
 
 export const BOSS_COURSE: DrillCourse = {
   id: 'boss',
@@ -183,6 +184,23 @@ function isMulti(question: DrillQuestion) {
   return new Set(question.answers ?? []).size > 1
 }
 
+function withDistractors(question: DrillQuestion, lessonId: string): DrillQuestion {
+  const fix = BOSS_DISTRACTORS[lessonId]
+  if (!fix) return question
+  const right = new Set<string>(question.answers?.length ? question.answers : [question.answer])
+  const options = question.options.map((option) => {
+    const next = fix[option.id]
+    if (!next || right.has(option.id)) return { ...option }
+    return { ...option, text: next.text }
+  })
+  const whyWrong = { ...question.whyWrong }
+  for (const [id, next] of Object.entries(fix) as [OptionId, { text: string; why: string }][]) {
+    if (!next || right.has(id) || !whyWrong[id]) continue
+    whyWrong[id] = next.why
+  }
+  return { ...question, options, whyWrong }
+}
+
 export function installBossExams(points: readonly DrillPoint[], source: readonly DrillQuestion[]) {
   const lessonOf = new Map(points.map((point) => [point.id, point.lessonId]))
   const byLesson = new Map<string, DrillQuestion[]>()
@@ -225,12 +243,14 @@ export function installBossExams(points: readonly DrillPoint[], source: readonly
     const id = `xb-${gate.id}`
     const questionIds = picked.map((_, at) => `${id}-${at + 1}`)
     picked.forEach((question, at) => {
+      const lessonId = lessonOf.get(question.pointId) ?? question.pointId.replace(/^xb-/, '')
+      const shaped = withDistractors(question, lessonId)
       nextQuestions.set(questionIds[at], {
-        ...question,
+        ...shaped,
         id: questionIds[at],
-        options: question.options.map((option) => ({ ...option })),
-        answers: question.answers ? [...question.answers] : undefined,
-        whyWrong: { ...question.whyWrong },
+        options: shaped.options.map((option) => ({ ...option })),
+        answers: shaped.answers ? [...shaped.answers] : undefined,
+        whyWrong: { ...shaped.whyWrong },
       })
     })
     nextGates.push({

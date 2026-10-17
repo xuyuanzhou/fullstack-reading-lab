@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" role="img" aria-labelledby="title desc">
+  <title id="title">UML 状态图：已完成后的退货</title>
+  <desc id="desc">顾客退回从已完成到已退货。退货入库仍只从已发货出发。</desc>
+  <rect width="960" height="540" rx="18" fill="#f6f7f4"/>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <text x="32" y="36" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">UML 状态机图</text>
+    <text x="32" y="64" font-size="20" font-weight="600" fill="#2e3330">顾客退回从已完成出发，不复用退货入库</text>
+    <circle cx="56" cy="140" r="10" fill="#2e3330"/>
+    <line x1="66" y1="140" x2="108" y2="140" stroke="#2e3330" stroke-width="1.6" marker-end="url(#st)"/>
+    <rect x="108" y="108" width="140" height="64" rx="18" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="178" y="146" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">待支付</text>
+    <line x1="248" y1="140" x2="320" y2="140" stroke="#2e3330" stroke-width="1.6" marker-end="url(#st)"/>
+    <text x="252" y="128" font-size="13" fill="#3f6a58">支付成功</text>
+    <rect x="320" y="108" width="150" height="64" rx="18" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="395" y="146" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">已支付</text>
+    <line x1="470" y1="140" x2="548" y2="140" stroke="#2e3330" stroke-width="1.6" marker-end="url(#st)"/>
+    <text x="486" y="128" font-size="13" fill="#3f6a58">出库</text>
+    <rect x="548" y="108" width="150" height="64" rx="18" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="623" y="146" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">已发货</text>
+    <line x1="698" y1="140" x2="770" y2="140" stroke="#2e3330" stroke-width="1.6" marker-end="url(#st)"/>
+    <text x="708" y="128" font-size="13" fill="#3f6a58">签收</text>
+    <rect x="770" y="108" width="150" height="64" rx="18" fill="#eef2f8" stroke="#4a6280"/>
+    <text x="845" y="146" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">已完成</text>
+
+    <line x1="178" y1="172" x2="178" y2="236" stroke="#a05048" stroke-width="1.6" marker-end="url(#stRed)"/>
+    <text x="190" y="212" font-size="13" fill="#6e3530">取消</text>
+    <rect x="108" y="244" width="140" height="52" rx="16" fill="#f6ecea" stroke="#a05048"/>
+    <text x="178" y="276" text-anchor="middle" font-size="15" font-weight="600" fill="#6e3530">已取消</text>
+
+    <line x1="395" y1="172" x2="395" y2="236" stroke="#4a6280" stroke-width="1.6" marker-end="url(#stBlue)"/>
+    <text x="408" y="212" font-size="13" fill="#4a6280">退款完成</text>
+    <rect x="310" y="244" width="170" height="52" rx="16" fill="#eef2f8" stroke="#4a6280"/>
+    <text x="395" y="276" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">已退款</text>
+
+    <line x1="623" y1="172" x2="623" y2="236" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#stGreen)"/>
+    <text x="636" y="212" font-size="13" fill="#3f6a58">退货入库</text>
+    <rect x="538" y="244" width="170" height="52" rx="16" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="623" y="276" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">已退货</text>
+
+    <path d="M845 172 V270 H708" fill="none" stroke="#4a6280" stroke-width="1.6" marker-end="url(#stBlue)"/>
+    <text x="748" y="258" font-size="13" fill="#4a6280">顾客退回</text>
+
+    <rect x="32" y="352" width="896" height="156" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="52" y="388" font-size="14" fill="#2e3330">取消只连接待支付和已取消。退款完成只连接已支付和已退款。</text>
+    <text x="52" y="416" font-size="14" fill="#2e3330">退货入库只连接已发货和已退货。顾客退回只连接已完成和已退货。</text>
+    <text x="52" y="444" font-size="14" fill="#6e3530">退货入库不从已完成出发，也不从已支付出发。</text>
+    <text x="52" y="472" font-size="14" fill="#6e3530">已完成没有指向已退款的箭头。</text>
+  </g>
+  <defs>
+    <marker id="st" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2e3330"/>
+    </marker>
+    <marker id="stRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#a05048"/>
+    </marker>
+    <marker id="stBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a6280"/>
+    </marker>
+    <marker id="stGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3f6a58"/>
+    </marker>
+  </defs>
+</svg>

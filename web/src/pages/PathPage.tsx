@@ -1152,7 +1152,9 @@ function buildLayout(count: number, width: number, row = false) {
   const compact = width < 520
   const narrow = width < 380
   const padX = narrow ? 16 : compact ? 24 : PAD_X
-  const minSlot = narrow ? 118 : compact ? 132 : MIN_SLOT
+  const minSlot = row
+    ? (narrow ? 118 : 112)
+    : (narrow ? 118 : compact ? 132 : MIN_SLOT)
   const padTop = PAD_TOP
   const rowGap = narrow ? 100 : compact ? 108 : ROW_GAP
   const labelBelow = narrow ? 78 : compact ? 88 : LABEL_BELOW

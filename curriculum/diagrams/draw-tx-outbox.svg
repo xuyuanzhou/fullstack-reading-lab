@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" role="img" aria-labelledby="title desc">
+  <title id="title">本地消息表：一次提交里的两行</title>
+  <desc id="desc">支付行和待发行在支付库同一次提交。中继在提交之后。订单库是另一次提交。</desc>
+  <rect width="960" height="520" rx="18" fill="#f6f7f4"/>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <text x="32" y="36" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">本地消息表</text>
+    <text x="32" y="64" font-size="20" font-weight="600" fill="#2e3330">两行一次提交，订单库另一次</text>
+
+    <rect x="36" y="96" width="360" height="248" rx="16" fill="none" stroke="#3f6a58" stroke-width="1.6" stroke-dasharray="7 5"/>
+    <text x="56" y="128" font-size="14" font-weight="600" fill="#3f6a58">支付库 · 同一次 COMMIT</text>
+    <rect x="64" y="152" width="300" height="64" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="214" y="190" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">payment = 已支付</text>
+    <rect x="64" y="236" width="300" height="64" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="214" y="274" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">outbox = NEW</text>
+
+    <line x1="396" y1="220" x2="470" y2="220" stroke="#2e3330" stroke-width="1.6" marker-end="url(#ob)"/>
+    <text x="404" y="204" font-size="13" fill="#5e6661">提交之后</text>
+    <rect x="470" y="188" width="120" height="64" rx="12" fill="#fafaf8" stroke="#2e3330"/>
+    <text x="530" y="226" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">中继</text>
+
+    <line x1="590" y1="220" x2="668" y2="220" stroke="#2e3330" stroke-width="1.6" marker-end="url(#ob)"/>
+    <text x="598" y="204" font-size="13" fill="#5e6661">经消息</text>
+    <rect x="668" y="96" width="260" height="248" rx="16" fill="#eef2f8" stroke="#4a6280"/>
+    <text x="798" y="136" text-anchor="middle" font-size="14" font-weight="600" fill="#4a6280">订单库 · 另一次提交</text>
+    <rect x="692" y="168" width="212" height="64" rx="12" fill="#fafaf8" stroke="#4a6280"/>
+    <text x="798" y="206" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">订单 = 已支付</text>
+    <text x="798" y="268" text-anchor="middle" font-size="13" fill="#5e6661">同一支付单号只改一次</text>
+
+    <rect x="32" y="372" width="896" height="116" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="52" y="408" font-size="14" fill="#2e3330">虚线框只框住支付库的两行。中继在框外。</text>
+    <text x="52" y="436" font-size="14" fill="#6e3530">没有把支付库和订单库连成一次提交的箭头。</text>
+    <text x="52" y="464" font-size="14" fill="#2e3330">重复到达的同一支付单号，不再改第二次订单状态。</text>
+  </g>
+  <defs>
+    <marker id="ob" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2e3330"/>
+    </marker>
+  </defs>
+</svg>

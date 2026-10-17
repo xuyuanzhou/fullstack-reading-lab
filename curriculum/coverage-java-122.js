@@ -175,7 +175,7 @@ const COVERAGE_JAVA_122 = [
     title:'系统设计章先写一条路径，再谈拆分和容量',
     prompt:'这一章是先报中间件名单，还是先写清一条读写路径？',
     promptAnswer:'先写一条路径：用户动作、读写量、权威数据和失败时用户看见什么。中间件在这些句子之后。',
-    core:'这一章回答何时拆、怎样拆、容量怎样估。先写清一条用户可见路径，再谈形态演进，见 `arch-evolution-stages`、`arch-design-one-path`。单体或模块化单体仍可能是对的，见 `arch-monolith-when`。拆分前先看规模，见 `arch-scale-before-split`。经典 SOA 与微服务不要混称，见 `arch-soa-classic`、`arch-microservice-split`。幂等、缓存、消息、限流是通用能力，不是架构图上的装饰；细节分别见本章「通用能力」与缓存专课。拆开之后的单库优先、CAP、Outbox、分布式幂等键在「分布式与高并发」章，只读本章不算把事务与消息收口讲完。',
+    core:'这一章回答何时拆、怎样拆、容量怎样估。先写清一条用户可见路径，再谈形态演进，见 `arch-evolution-stages`、`arch-design-one-path`。单体或模块化单体仍可能是对的，见 `arch-monolith-when`。拆分前先看规模，见 `arch-scale-before-split`。经典 SOA 与微服务不要混称，见 `arch-soa-classic`、`arch-microservice-split`。幂等、缓存、消息、限流是通用能力，不是架构图上的装饰；细节分别见本章「通用能力」与缓存专课。拆开之后的单库优先、CAP、Outbox、分布式幂等键在「分布式与高并发」章，只读本章不算把事务与消息收口讲完。同一笔订单从单体、集群、主从、静态资源走到 SOA 与微服务，以及之后怎么选事务，见 `evo-order-through-stages`。',
     example:'先写六句，再出现方框：\n\n```text\n动作、写多少、读多少、时限、权威数据、一种失败\n```',
     task:'说明这一章先回答什么。中间件名单能不能代替那六句？拆开之后的 Outbox 与 CAP 在哪一章？',
     answer:[
@@ -189,6 +189,7 @@ const COVERAGE_JAVA_122 = [
     deep:[
       {title:'容量是预算不是口号',body:'SLO（服务水平目标）和排队见 `arch-slo-budget`、`arch-queue-wait`。不要把一个固定 QPS 写成架构完成。'},
       {title:'和分布式章',body:'本章把边界与通信说清。网络分区下写成功还是等待、Outbox、跨服务幂等键，到分布式章继续。'},
+      {title:'演进全流程',body:'同一笔订单的容量线、服务化线、对象存储与 CDN、Saga、TCC 和本地消息表，从 `evo-order-through-stages` 按「演进全流程」往下读。'},
       {title:'怎样自己验证',body:'拿一张现有架构图，拿掉中间件方框。仍能说出读写量和失败时用户看见什么，这张图才站得住。'},
     ],
     refs:[['Google SRE：Service Level Objectives','https://sre.google/sre-book/service-level-objectives/'],['Microsoft：Architecture styles','https://learn.microsoft.com/en-us/azure/architecture/guide/architecture-styles/']]

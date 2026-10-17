@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 280" role="img" aria-labelledby="title desc">
+  <title id="title">短括号只包住尝试到确认或取消</title>
+  <desc id="desc">人的支付在括号外，超时才取消。</desc>
+  <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#3f6a58"/></marker></defs>
+  <rect width="960" height="280" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="18" font-weight="600" fill="#2e3330">短括号只包住尝试到确认或取消</text>
+  
+  <rect x="32" y="70" width="520" height="90" rx="14" fill="none" stroke="#3f6a58"/>
+  <text x="48" y="96" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#3f6a58">Try → 确认 或 取消</text>
+  <rect x="48" y="112" width="140" height="32" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="64" y="140" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">Try</text>
+  <rect x="220" y="112" width="140" height="32" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="236" y="140" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">Confirm</text>
+  <rect x="380" y="112" width="140" height="32" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="396" y="140" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">Cancel</text>
+  <rect x="600" y="70" width="320" height="70" rx="12" fill="#f6ecea" stroke="#a05048"/><text x="616" y="98" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#6e3530">支付在括号外</text><text x="616" y="120" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#6e3530">超时任务指向 Cancel</text>
+  <rect x="32" y="190" width="420" height="56" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="48" y="218" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">乱序：取消先到，尝试被拒绝</text>
+
+</svg>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" role="img" aria-labelledby="title desc">
+  <title id="title">静态与 CDN：下单不进长缓存</title>
+  <desc id="desc">脚本和图片经 CDN 回源对象存储。创建订单进入应用集群。CSDN 不在这条路上。</desc>
+    <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3f6a58"/>
+    </marker>
+    <marker id="arrGray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5e6661"/>
+    </marker>
+  </defs>
+  <rect width="960" height="500" rx="18" fill="#f6f7f4"/>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <text x="32" y="36" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">画图 / 静态与 CDN</text>
+    <text x="32" y="64" font-size="20" font-weight="600" fill="#2e3330">脚本走 CDN，下单仍走应用集群</text>
+
+    <rect x="40" y="168" width="140" height="56" rx="12" fill="#fafaf8" stroke="#2e3330"/>
+    <text x="74" y="202" font-size="15" fill="#2e3330">浏览器</text>
+
+    <line x1="180" y1="184" x2="300" y2="128" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+    <text x="196" y="148" font-size="13" fill="#3f6a58">脚本和图片</text>
+    <line x1="180" y1="208" x2="300" y2="248" stroke="#2e3330" stroke-width="1.6" marker-end="url(#arrGray)"/>
+    <text x="196" y="244" font-size="13" fill="#2e3330">创建订单</text>
+
+    <rect x="308" y="96" width="200" height="64" rx="12" fill="#eef2f8" stroke="#4a6280"/>
+    <text x="328" y="124" font-size="15" font-weight="600" fill="#2e3330">CDN</text>
+    <text x="328" y="146" font-size="13" fill="#4a6280">命中就在边缘返回</text>
+    <line x1="508" y1="128" x2="620" y2="128" stroke="#4a6280" stroke-width="1.6" marker-end="url(#arr)"/>
+    <text x="524" y="116" font-size="12" fill="#4a6280">未命中</text>
+    <rect x="628" y="96" width="200" height="64" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="648" y="124" font-size="15" font-weight="600" fill="#2e3330">对象存储</text>
+    <text x="648" y="146" font-size="13" fill="#5e6661">哈希文件的源</text>
+
+    <rect x="308" y="220" width="220" height="64" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="328" y="248" font-size="15" font-weight="600" fill="#2e3330">应用集群</text>
+    <text x="328" y="270" font-size="13" fill="#5e6661">不设成长缓存</text>
+
+    <rect x="628" y="220" width="280" height="88" rx="12" fill="#f6ecea" stroke="#a05048"/>
+    <text x="648" y="252" font-size="15" font-weight="600" fill="#6e3530">CSDN</text>
+    <text x="648" y="276" font-size="13" fill="#6e3530">内容社区，不在这条路上</text>
+    <text x="648" y="296" font-size="13" fill="#6e3530">没有回源箭头</text>
+
+    <rect x="40" y="360" width="868" height="108" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="60" y="396" font-size="14" fill="#2e3330">哈希文件可以长期缓存。HTML 用 no-cache，以便拿到新地址。</text>
+    <text x="60" y="424" font-size="14" fill="#2e3330">先上传新哈希文件并保留旧文件，再改 HTML。</text>
+    <text x="60" y="448" font-size="14" fill="#6e3530">创建订单没有指向 CDN 的箭头。</text>
+  </g>
+</svg>

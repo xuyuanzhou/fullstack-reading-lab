@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" role="img" aria-labelledby="title desc">
+  <title id="title">微服务图：一个服务一个库</title>
+  <desc id="desc">订单、库存、支付各连自己的库。同步预留是实线。支付成功的消息从支付服务指向订单服务。</desc>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3f6a58"/>
+    </marker>
+    <marker id="arrBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a6280"/>
+    </marker>
+    <marker id="arrOpen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 1 1 L 9 5 L 1 9" fill="none" stroke="#5e6661" stroke-width="1.4"/>
+    </marker>
+  </defs>
+  <rect width="960" height="540" rx="18" fill="#f6f7f4"/>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <text x="32" y="36" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">画图 / 微服务</text>
+    <text x="32" y="64" font-size="20" font-weight="600" fill="#2e3330">一个服务只连自己的库</text>
+
+    <rect x="48" y="148" width="180" height="64" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="68" y="176" font-size="15" font-weight="600" fill="#2e3330">订单服务</text>
+    <text x="68" y="198" font-size="13" fill="#5e6661">只写订单库</text>
+
+    <rect x="390" y="148" width="180" height="64" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="410" y="176" font-size="15" font-weight="600" fill="#2e3330">库存服务</text>
+    <text x="410" y="198" font-size="13" fill="#5e6661">只写库存库</text>
+
+    <rect x="732" y="148" width="180" height="64" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="752" y="176" font-size="15" font-weight="600" fill="#2e3330">支付服务</text>
+    <text x="752" y="198" font-size="13" fill="#5e6661">只写支付库</text>
+
+    <line x1="228" y1="180" x2="390" y2="180" stroke="#3f6a58" stroke-width="1.7" marker-end="url(#arr)"/>
+    <text x="268" y="168" font-size="12" fill="#3f6a58">实线 · 同步预留</text>
+
+    <path d="M822 148 V112 H138 V148" fill="none" stroke="#5e6661" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#arr)"/>
+    <text x="360" y="104" font-size="12" fill="#5e6661">虚线 · 支付成功 · 从支付到订单</text>
+
+    <line x1="138" y1="212" x2="138" y2="268" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+    <line x1="480" y1="212" x2="480" y2="268" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+    <line x1="822" y1="212" x2="822" y2="268" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+
+    <rect x="48" y="276" width="180" height="52" rx="12" fill="#fafaf8" stroke="#2e3330"/>
+    <text x="96" y="308" font-size="15" fill="#2e3330">订单库</text>
+    <rect x="390" y="276" width="180" height="52" rx="12" fill="#fafaf8" stroke="#2e3330"/>
+    <text x="438" y="308" font-size="15" fill="#2e3330">库存库</text>
+    <rect x="732" y="276" width="180" height="52" rx="12" fill="#fafaf8" stroke="#2e3330"/>
+    <text x="780" y="308" font-size="15" fill="#2e3330">支付库</text>
+
+    <rect x="732" y="352" width="180" height="56" rx="12" fill="#f6ecea" stroke="#a05048"/>
+    <text x="748" y="376" font-size="14" fill="#6e3530">用户在这里等待</text>
+    <text x="748" y="396" font-size="13" fill="#6e3530">不在库锁里</text>
+
+    <rect x="48" y="436" width="864" height="76" rx="12" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="68" y="468" font-size="14" fill="#6e3530">控制器、服务、数据访问不是这三个框。</text>
+    <text x="68" y="492" font-size="14" fill="#2e3330">网关若画在前面，只转发到订单服务，不编排库存和支付。</text>
+  </g>
+</svg>

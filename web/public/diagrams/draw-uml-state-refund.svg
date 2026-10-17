@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 460" role="img" aria-labelledby="title desc">
+  <title id="title">UML 状态图：已支付后退款</title>
+  <desc id="desc">取消只从待支付到已取消。退款完成从已支付到已退款。已发货没有指向已退款的箭头。</desc>
+  <rect width="960" height="460" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">UML 状态机图</text>
+  <text x="32" y="64" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">退款是新事件，取消不能改到已支付</text>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <circle cx="56" cy="150" r="10" fill="#2e3330"/>
+    <line x1="66" y1="150" x2="108" y2="150" stroke="#2e3330" stroke-width="1.6" marker-end="url(#st)"/>
+    <rect x="108" y="118" width="140" height="64" rx="18" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="178" y="156" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">待支付</text>
+    <line x1="248" y1="150" x2="320" y2="150" stroke="#2e3330" stroke-width="1.6" marker-end="url(#st)"/>
+    <text x="252" y="138" font-size="13" fill="#3f6a58">支付成功</text>
+    <rect x="320" y="118" width="150" height="64" rx="18" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="395" y="156" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">已支付</text>
+    <line x1="470" y1="150" x2="548" y2="150" stroke="#2e3330" stroke-width="1.6" marker-end="url(#st)"/>
+    <text x="486" y="138" font-size="13" fill="#3f6a58">出库</text>
+    <rect x="548" y="118" width="150" height="64" rx="18" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="623" y="156" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">已发货</text>
+    <line x1="698" y1="150" x2="770" y2="150" stroke="#2e3330" stroke-width="1.6" marker-end="url(#st)"/>
+    <text x="708" y="138" font-size="13" fill="#3f6a58">签收</text>
+    <rect x="770" y="118" width="150" height="64" rx="18" fill="#eef2f8" stroke="#4a6280"/>
+    <text x="845" y="156" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">已完成</text>
+
+    <line x1="178" y1="182" x2="178" y2="250" stroke="#a05048" stroke-width="1.6" marker-end="url(#stRed)"/>
+    <text x="190" y="224" font-size="13" fill="#6e3530">取消</text>
+    <rect x="108" y="250" width="140" height="52" rx="16" fill="#f6ecea" stroke="#a05048"/>
+    <text x="178" y="282" text-anchor="middle" font-size="15" font-weight="600" fill="#6e3530">已取消</text>
+
+    <line x1="395" y1="182" x2="395" y2="250" stroke="#4a6280" stroke-width="1.6" marker-end="url(#stBlue)"/>
+    <text x="408" y="224" font-size="13" fill="#4a6280">退款完成</text>
+    <rect x="310" y="250" width="170" height="52" rx="16" fill="#eef2f8" stroke="#4a6280"/>
+    <text x="395" y="282" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">已退款</text>
+
+    <rect x="32" y="340" width="896" height="96" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="52" y="372" font-size="14" fill="#2e3330">取消只连接待支付和已取消。</text>
+    <text x="52" y="396" font-size="14" fill="#2e3330">退款完成只连接已支付和已退款。</text>
+    <text x="52" y="420" font-size="14" fill="#2e3330">已发货没有指向已退款的箭头。</text>
+  </g>
+  <defs>
+    <marker id="st" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2e3330"/>
+    </marker>
+    <marker id="stRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#a05048"/>
+    </marker>
+    <marker id="stBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a6280"/>
+    </marker>
+  </defs>
+</svg>

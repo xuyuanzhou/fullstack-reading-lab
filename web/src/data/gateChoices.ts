@@ -51,7 +51,7 @@ export const GATE_CHOICES: Readonly<Record<string, GateChoiceSet>> = {
     answerId: 'b',
     options: [
       { id: 'a', text: '同类 this 调用仍会套上被调方法的事务。异常被接住就回滚。' },
-      { id: 'b', text: 'this 调用不走代理，事务不生效。异常被接住并正常返回，按提交处理。REQUIRES_NEW 是另一笔事务。' },
+      { id: 'b', text: 'this 调用不走代理，被调方法上的事务不生效。异常在事务方法里被接住并正常返回，按提交处理。REQUIRES_NEW 是另一笔事务。' },
       { id: 'c', text: 'REQUIRES_NEW 是当前事务里的保存点，外层回滚会一起撤掉。' },
       { id: 'd', text: '只要方法上写了事务注解，同类内部调用也会生效。' },
     ],

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 320" role="img" aria-labelledby="title desc">
+  <title id="title">性能、容灾和治理分三列</title>
+  <desc id="desc">中间是请求路径，左右不要混成一件事。</desc>
+  <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#3f6a58"/></marker></defs>
+  <rect width="960" height="320" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="18" font-weight="600" fill="#2e3330">性能、容灾和治理分三列</text>
+  
+  <rect x="300" y="60" width="120" height="40" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="316" y="88" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">网关</text>
+  <line x1="360" y1="100" x2="360" y2="120" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+  <rect x="300" y="124" width="120" height="40" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="316" y="152" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">订单</text>
+  <line x1="360" y1="164" x2="360" y2="184" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+  <rect x="300" y="188" width="120" height="40" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="316" y="216" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">库存</text>
+  <line x1="360" y1="228" x2="360" y2="248" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+  <rect x="300" y="252" width="120" height="40" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="316" y="280" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">支付</text>
+  <rect x="32" y="100" width="220" height="80" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="48" y="128" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">性能</text><text x="48" y="150" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">详情读</text><text x="48" y="172" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">短事务</text>
+  <rect x="700" y="100" width="230" height="90" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="716" y="128" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">容灾</text><text x="716" y="150" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">复制 ≠ 备份</text>
+  <rect x="32" y="250" width="880" height="48" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="48" y="278" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">治理：超时 · 幂等键 · 限流 · trace id</text>
+
+</svg>

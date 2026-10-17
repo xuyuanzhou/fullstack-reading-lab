@@ -708,6 +708,22 @@
         "arch-microservice-split",
         "arch-split-order-case",
         "arch-sync-vs-async",
+        "evo-order-through-stages",
+        "evo-monolith-one-tx",
+        "evo-cluster-deploy",
+        "evo-replica-read-write",
+        "evo-static-cdn",
+        "evo-soa-bus",
+        "evo-microservice-order",
+        "evo-order-create-consistency",
+        "evo-order-pay-ship-done",
+        "evo-order-state-table",
+        "evo-order-chain",
+        "evo-tx-choose",
+        "evo-tx-outbox",
+        "evo-tx-saga",
+        "evo-tx-tcc",
+        "evo-perf-dr-govern",
         "idempotency",
         "cache",
         "message-delivery",
@@ -727,6 +743,24 @@
         "draw-uml-usecase",
         "draw-uml-activity",
         "draw-c4-component",
+        "draw-c4-context",
+        "draw-uml-package",
+        "draw-uml-object",
+        "draw-pick-diagram",
+        "draw-uml-state-refund",
+        "draw-uml-realize",
+        "draw-uml-fragment",
+        "draw-cluster",
+        "draw-soa",
+        "draw-microservice",
+        "draw-replica",
+        "draw-static-cdn",
+        "draw-tx-choose",
+        "draw-uml-state-return",
+        "draw-monolith",
+        "draw-uml-state-done",
+        "draw-tx-outbox",
+        "draw-tx-saga",
         "arch-cost-tradeoff",
         "arch-contract-review",
         "arch-evolution-roadmap",
@@ -926,6 +960,8 @@
         "redis-wait-replicas-not-durability",
         "redis-hello-resp3-not-just-version",
         "redis-big-hot-key",
+        "redis-overload-four",
+        "redis-overload-next",
         "redis-expire",
         "redis-client-no-touch-not-expire-off",
         "redis-eviction-policy-menu",
@@ -2462,6 +2498,8 @@
             "redis-wait-replicas-not-durability",
             "redis-hello-resp3-not-just-version",
             "redis-big-hot-key",
+            "redis-overload-four",
+            "redis-overload-next",
             "redis-expire",
             "redis-client-no-touch-not-expire-off",
             "redis-eviction-policy-menu",
@@ -3120,6 +3158,27 @@
           ]
         },
         {
+          "title": "演进全流程",
+          "ids": [
+            "evo-order-through-stages",
+            "evo-monolith-one-tx",
+            "evo-cluster-deploy",
+            "evo-replica-read-write",
+            "evo-static-cdn",
+            "evo-soa-bus",
+            "evo-microservice-order",
+            "evo-order-create-consistency",
+            "evo-order-pay-ship-done",
+            "evo-order-state-table",
+            "evo-order-chain",
+            "evo-tx-choose",
+            "evo-tx-outbox",
+            "evo-tx-saga",
+            "evo-tx-tcc",
+            "evo-perf-dr-govern"
+          ]
+        },
+        {
           "title": "通用能力",
           "ids": [
             "idempotency",
@@ -3150,7 +3209,25 @@
             "draw-uml-class",
             "draw-uml-usecase",
             "draw-uml-activity",
-            "draw-c4-component"
+            "draw-c4-component",
+            "draw-c4-context",
+            "draw-uml-package",
+            "draw-uml-object",
+            "draw-pick-diagram",
+            "draw-uml-state-refund",
+            "draw-uml-realize",
+            "draw-uml-fragment",
+            "draw-cluster",
+            "draw-soa",
+            "draw-microservice",
+            "draw-replica",
+            "draw-static-cdn",
+            "draw-tx-choose",
+            "draw-uml-state-return",
+            "draw-monolith",
+            "draw-uml-state-done",
+            "draw-tx-outbox",
+            "draw-tx-saga"
           ]
         },
         {
@@ -30548,6 +30625,104 @@
     {
       "track": "java",
       "group": "缓存",
+      "id": "redis-overload-four",
+      "title": "Redis 过载先分清连接、内存、慢命令和过期",
+      "prompt": "Redis 延迟突然升高，或写入开始失败，第一步该看什么？",
+      "promptAnswer": "先看拒绝连接、内存是否到顶、慢命令和过期是否挤在一起。四项的第一动作不同，不要先加节点。",
+      "core": "实例已经过载时，先读计数，再决定动作。`INFO stats` 里的 `rejected_connections`〔rejected_connections｜因客户端数量达到 maxclients 而被拒绝的次数〕升高，是新连接被拒绝；`connected_clients` 一路上涨而命令量没有同比例上涨，是连接没有释放。这时先收紧客户端连接池，查出谁没关闭连接。只调高 `maxclients`〔maxclients｜允许同时连上的客户端数量上限〕会让每个连接上的输出缓冲一起变多。`used_memory` 顶到 `maxmemory`〔maxmemory｜这个实例允许使用的内存上限〕时看 `maxmemory-policy`：`noeviction`〔noeviction｜到上限后不删键，需要更多内存的写入会失败〕让写入失败；会淘汰的策略则让 `evicted_keys` 上涨，键在被删。慢命令看 `SLOWLOG GET`〔SLOWLOG｜记下执行时间超过阈值的命令〕。一条很慢的命令占住执行线程，旁边的小命令也要等，见 `redis-single-thread`。`expired_keys` 在很短的时间里跳升，是一批键同时到期，见 `redis-expire` 和 `cache-penetration-vs-breakdown`。一个分片 CPU 高、值却很小，是热键，见 `redis-big-hot-key`。已经过载的主节点上不要先跑 `KEYS` 或 `--bigkeys`。加节点不会让仍落在同一槽的热键散开，也不会让一条慢命令变短。",
+      "why": "四种现象都表现为延迟升高。连接没释放时加节点，应用仍会把每个实例的连接打满。热键加节点，键还在同一个槽。把 noeviction 改成淘汰，写入恢复了，业务需要的键却被删掉。",
+      "example": "先读这四段，再对上第一动作：\n\n```redis\nINFO clients\nINFO memory\nINFO stats\nSLOWLOG GET 8\n```\n\n```text\nrejected_connections 升高 → 收紧连接池，不要只调高 maxclients\nused_memory 顶到 maxmemory → 先看 policy，再决定是拒绝写入还是正在删键\nSLOWLOG 有一条很长的命令 → 停掉这类命令\nexpired_keys 短时间跳升 → 打散过期时间\n```",
+      "task": "划掉「过载就加节点，或直接 FLUSHALL」。按拒绝连接、内存到顶、慢命令、过期跳升各写第一动作。",
+      "answer": "划掉「过载就加节点，或直接 FLUSHALL」。1. rejected_connections 升高：先限制客户端连接池，查出谁没有释放连接。不要只调高 maxclients。\n2. used_memory 顶到 maxmemory：先看 maxmemory-policy。noeviction 时需要更多内存的写入失败；会淘汰的策略在删键。\n3. SLOWLOG 里有一条耗时很长的命令：停掉这类命令。旁边的小命令也在等。\n4. expired_keys 在短时间跳升：打散过期时间。\n5. 加节点和 FLUSHALL 都不是这四项的第一动作。热键仍落在同一个槽。",
+      "keywords": "Redis INFO rejected_connections maxmemory SLOWLOG expired_keys",
+      "deep": [
+        {
+          "title": "主从切换带不走原因",
+          "body": "慢命令和热键跟着键走。把从节点提升为主节点之后，同一条命令、同一个槽仍在。切换只解决主节点进程本身不可用，不代替上面的四项。持久化 fork 造成的延迟也不在这四项里，延迟诊断文档单独列出。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "在测试实例把 maxmemory 设小、policy 设为 noeviction，继续写入直到失败；再改成 allkeys-lru，看 evicted_keys 是否上涨。另开一条慢命令后执行 SLOWLOG GET，同时用另一个客户端 GET 小键，小键应等到慢命令结束。不要在已经过载的主节点上先跑 KEYS。"
+        }
+      ],
+      "since": "Redis",
+      "points": [
+        "过载先分开拒绝连接、内存到顶、慢命令和过期跳升",
+        "rejected_connections 升高时先收紧客户端连接，不是先加节点",
+        "内存到顶时 noeviction 拒绝写入，会淘汰的策略则在删键",
+        "慢命令看 SLOWLOG；热键是单个键把一个分片打满，两项不是同一处理"
+      ],
+      "references": [
+        [
+          "Redis：延迟诊断",
+          "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/latency/"
+        ],
+        [
+          "Redis：INFO",
+          "https://redis.io/docs/latest/commands/info/"
+        ],
+        [
+          "Redis：SLOWLOG GET",
+          "https://redis.io/docs/latest/commands/slowlog-get/"
+        ],
+        [
+          "Redis：键淘汰",
+          "https://redis.io/docs/latest/develop/reference/eviction/"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "缓存",
+      "id": "redis-overload-next",
+      "title": "认清 Redis 过载之后，先停掉还在灌的那一路",
+      "prompt": "四项里已经认清一项，为什么还不能先重启或加节点？",
+      "promptAnswer": "不能。先停掉还在制造这一问题的客户端或命令。重启和加节点会把同一个键、同一条命令带回来。",
+      "core": "四项怎么认，见 `redis-overload-four`。认清之后，恢复只处理这一项。命令执行主要在一个线程上：已经开始的慢命令会跑完，断开这个客户端停不掉这一次，只能让它不要再发下一次。连接数上涨时用 `CLIENT LIST`〔CLIENT LIST｜列出当前客户端的地址、空闲时间和正在执行的命令〕看出是谁占着连接，然后在应用侧收紧连接池。内存到顶时，到副本上查大键；把 `noeviction` 改成会淘汰的策略，等于允许删键，不是无损恢复。过期挤在一起时，先在入口限流或让非关键读失败，避免未命中全部打到数据库；打散 TTL 是下一次写入时做的，见 `redis-expire`。`latency-monitor-threshold`〔latency-monitor-threshold｜延迟监控的毫秒阈值，0 表示不记录〕为 0 时，`LATENCY LATEST` 是空的，这时仍以 `SLOWLOG` 和 `INFO` 为准。告警看拒绝连接的增量、`used_memory` 相对 `maxmemory` 的比例、慢命令新增条数和 `expired_keys` 的增量。整机 CPU 可以仍然很低。",
+      "why": "重启会打断所有客户端。热键还在同一个槽，慢命令的调用方启动后还会再发。只看整机 CPU 的告警会在单线程已经堵住时仍然安静。",
+      "example": "先认出是谁，再决定停哪一路：\n\n```redis\nCLIENT LIST\nSLOWLOG GET 8\nLATENCY LATEST\n```\n\n```text\n慢命令已在执行 → 等它结束，停掉还会再发的客户端\n连接上涨 → CLIENT LIST 找来源，收紧池\n内存到顶 → 副本上查大键；改淘汰策略 = 允许删键\n过期跳升 → 入口限流，下一次写入再打散 TTL\n```",
+      "task": "划掉「CPU 不高就不用告警」和「重启能清掉热键」。写出：慢命令已经在执行时，断开连接能不能停掉这一次；告警至少看哪四项增量。",
+      "answer": "划掉「CPU 不高就不用告警」和「重启能清掉热键」。\n\n1. 慢命令已经在执行时，断开连接停不掉这一次，只能阻止下一次再发。\n2. 重启和加节点会把同一个键、同一条命令带回来。\n3. 告警看 rejected_connections 的增量、used_memory 相对 maxmemory 的比例、SLOWLOG 新增条数、expired_keys 的增量。\n4. 整机 CPU 低，不表示这四项没有在涨。",
+      "keywords": "Redis CLIENT LIST SLOWLOG LATENCY LATEST 告警",
+      "deep": [
+        {
+          "title": "过期跳升时先护住数据库",
+          "body": "缓存未命中会把读打到数据库。入口限流或让非关键读失败，是这一刻的动作。打散 TTL 改变的是下一次写入的过期时间，见 `cache-penetration-vs-breakdown`。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "只在测试实例把 latency-monitor-threshold 设成 0，执行 LATENCY LATEST，结果应为空。再设成一个小的毫秒数，制造一次超过它的命令后应能看到事件。不要在线上实例执行会堵住服务器的调试命令。"
+        }
+      ],
+      "since": "Redis",
+      "points": [
+        "已经在执行的慢命令会跑完，断开连接只阻止下一次",
+        "重启和加节点会把同一个键和同一条命令带回来",
+        "把 noeviction 改成淘汰是在允许删键，不是无损恢复",
+        "告警看拒绝连接、内存比例、慢命令和过期的增量，不只看整机 CPU"
+      ],
+      "references": [
+        [
+          "Redis：CLIENT LIST",
+          "https://redis.io/docs/latest/commands/client-list/"
+        ],
+        [
+          "Redis：LATENCY LATEST",
+          "https://redis.io/docs/latest/commands/latency-latest/"
+        ],
+        [
+          "Redis：延迟诊断",
+          "https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/latency/"
+        ],
+        [
+          "Redis：SLOWLOG GET",
+          "https://redis.io/docs/latest/commands/slowlog-get/"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "缓存",
       "id": "redis-expire",
       "title": "TTL、缓存穿透与热键",
       "prompt": "给所有缓存键设置相同 TTL 可能造成什么问题？",
@@ -40501,7 +40676,7 @@
       "title": "系统设计章先写一条路径，再谈拆分和容量",
       "prompt": "这一章是先报中间件名单，还是先写清一条读写路径？",
       "promptAnswer": "先写一条路径：用户动作、读写量、权威数据和失败时用户看见什么。中间件在这些句子之后。",
-      "core": "这一章回答何时拆、怎样拆、容量怎样估。先写清一条用户可见路径，再谈形态演进，见 `arch-evolution-stages`、`arch-design-one-path`。单体或模块化单体仍可能是对的，见 `arch-monolith-when`。拆分前先看规模，见 `arch-scale-before-split`。经典 SOA 与微服务不要混称，见 `arch-soa-classic`、`arch-microservice-split`。幂等、缓存、消息、限流是通用能力，不是架构图上的装饰；细节分别见本章「通用能力」与缓存专课。拆开之后的单库优先、CAP、Outbox、分布式幂等键在「分布式与高并发」章，只读本章不算把事务与消息收口讲完。",
+      "core": "这一章回答何时拆、怎样拆、容量怎样估。先写清一条用户可见路径，再谈形态演进，见 `arch-evolution-stages`、`arch-design-one-path`。单体或模块化单体仍可能是对的，见 `arch-monolith-when`。拆分前先看规模，见 `arch-scale-before-split`。经典 SOA 与微服务不要混称，见 `arch-soa-classic`、`arch-microservice-split`。幂等、缓存、消息、限流是通用能力，不是架构图上的装饰；细节分别见本章「通用能力」与缓存专课。拆开之后的单库优先、CAP、Outbox、分布式幂等键在「分布式与高并发」章，只读本章不算把事务与消息收口讲完。同一笔订单从单体、集群、主从、静态资源走到 SOA 与微服务，以及之后怎么选事务，见 `evo-order-through-stages`。",
       "example": "先写六句，再出现方框：\n\n```text\n动作、写多少、读多少、时限、权威数据、一种失败\n```",
       "task": "说明这一章先回答什么。中间件名单能不能代替那六句？拆开之后的 Outbox 与 CAP 在哪一章？",
       "answer": "先写一条路径的读写、权威数据和失败可见结果。\n中间件名单不能代替这六句。\n服务化线含经典 SOA 与微服务，见 `arch-soa-classic`、`arch-microservice-split`。\n拆开之后的 Outbox、CAP、单库优先等在「分布式与高并发」章，不在本章导论里讲完。",
@@ -40514,6 +40689,10 @@
         {
           "title": "和分布式章",
           "body": "本章把边界与通信说清。网络分区下写成功还是等待、Outbox、跨服务幂等键，到分布式章继续。"
+        },
+        {
+          "title": "演进全流程",
+          "body": "同一笔订单的容量线、服务化线、对象存储与 CDN、Saga、TCC 和本地消息表，从 `evo-order-through-stages` 按「演进全流程」往下读。"
         },
         {
           "title": "怎样自己验证",
@@ -40564,7 +40743,7 @@
         },
         {
           "title": "相关课",
-          "body": "经典 SOA 见 `arch-soa-classic`；与微服务分叉见 `microservices-not-just-soa-relabel`。拆分与集群见 `split-vs-cluster-not-interchangeable`。系统设计章导论见 `arch-chapter-aim`。事件驱动见 `arch-sync-vs-async`。"
+          "body": "经典 SOA 见 `arch-soa-classic`；与微服务分叉见 `microservices-not-just-soa-relabel`。拆分与集群见 `split-vs-cluster-not-interchangeable`。系统设计章导论见 `arch-chapter-aim`。事件驱动见 `arch-sync-vs-async`。同一笔订单走完搭建、CDN 和事务选型，见 `evo-order-through-stages`。"
         }
       ],
       "diagram": "diagrams/arch-evolution.svg",
@@ -40925,6 +41104,670 @@
         [
           "microservices.io：Saga",
           "https://microservices.io/patterns/data/saga.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "evo-order-through-stages",
+      "title": "同一笔订单穿过各站，有信号才进入下一站",
+      "prompt": "为什么不能按单体、集群、主从、SOA、微服务的名单默认走完？",
+      "promptAnswer": "每一站只解决已经量到的一类问题。没有发布冲突、应用打满或读库打满，就停在当前站。",
+      "core": "贯穿后面各课的是同一笔电商订单：用户提交商品和数量，系统创建订单、占住库存、等待支付，支付成功后再通知履约。写大约 200 次/秒，商品详情读大约 2000 次/秒。创建订单的接口要在约 300 毫秒内返回；用户支付可以到数分钟，这段等待不能占着数据库锁。\n\n容量线解决「扛得住吗」：单体 → 应用集群 → 主从读写分离。静态资源另走对象存储和〔CDN｜把内容缓存在离用户更近的边缘节点〕，可以叠在集群上，不必等服务拆开。服务化线解决「边界和发布能否分开」：模块化单体 → 〔SOA｜面向服务架构：能力可远程调用，经典形态常有中心总线〕→ 微服务。分布式事务是数据已经分到多个库之后的配套，不是第六种必经架构。\n\n每一站只回答一个已观察到的瓶颈。应用 CPU 打满才上集群。读远多于写、主库读连接打满才上从库。多个系统要复用订单能力、组织仍接受中心治理，才停在经典 SOA。多团队发布绑在一起、写库必须分开，才拆微服务。没有这些数，停在单体是正常结果。两条线的定义见 `arch-evolution-stages`。",
+      "why": "把名单当成升级路线，会在库还空着的时候拆出六个服务，或者在应用已经忙的时候先改名词。区分信号是纸上每一站旁边写着它解决的那一个数：应用 CPU、主库读、发布窗口，或数据归属。",
+      "example": "同一笔订单，站与站不要并成一句：\n\n```text\n容量线  单体 → 集群（应用 CPU）→ 主从（读远多于写）\n        静态图片/脚本 → 对象存储 + CDN（可与集群同时）\n服务化线  模块化单体 → 经典 SOA → 微服务（独立库、独立发版）\n数据分开之后才选  本地消息表 / Saga / TCC\n没有上述信号 → 停在当前站\n```",
+      "task": "把你们的下单画在两条线上，标出现在各停在哪一站。写出催你进入下一站的一个数。没有这个数就写「停止」。",
+      "answer": "图：\n\n```text\n容量线：单体 → 集群 → 主从；静态可同时走 CDN\n服务化线：模块化单体 → 经典 SOA → 微服务\n```\n\n应用 CPU 高、库仍有余量 → 下一站是集群。\n\n主库读连接打满、写本身不慢 → 下一站是主从，刚写完的读仍走主库。\n\n只有远程调用、仍共享写库 → 停在经典 SOA，不是微服务完成。\n\n写不出延迟、发布冲突或库负载 → 停止，不进入下一站。",
+      "keywords": "架构演进 单体 集群 主从 SOA 微服务 订单",
+      "deep": [
+        {
+          "title": "图怎么读",
+          "body": "上排是容量线，下排是服务化线。CDN 从浏览器分出去，不经过订单进程。最右边的事务三选一，要等数据已经不在一个库里才出现。"
+        },
+        {
+          "title": "相关课",
+          "body": "谱系见 `arch-evolution-stages`。一条路径的六个数字见 `arch-design-one-path`。集群与拆分不能互换见 `split-vs-cluster-not-interchangeable`。"
+        }
+      ],
+      "diagram": "diagrams/evo-order-through-stages.svg",
+      "points": [
+        "容量线解决吞吐，服务化线解决边界与发布",
+        "静态资源与 CDN 可以叠在集群上",
+        "没有可量化瓶颈就停在当前站"
+      ],
+      "references": [
+        [
+          "Martin Fowler：Monolith First",
+          "https://martinfowler.com/bliki/MonolithFirst.html"
+        ],
+        [
+          "Microsoft：Architecture styles",
+          "https://learn.microsoft.com/en-us/azure/architecture/guide/architecture-styles/"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "evo-monolith-one-tx",
+      "title": "单体把创建订单和扣库存收进一次本地事务",
+      "prompt": "早期商城为什么先把订单和库存放进同一个进程、同一个库？",
+      "promptAnswer": "超卖这个不变量可以放进一次本地提交。一个进程里失败会一起回滚，排障也只有一条日志。",
+      "core": "单体解决的是交付和一致性还没必要付网络成本的时候。订单模块、库存模块、支付记录都在一个进程里，表在一个数据库。用户提交后，扣库存和插入订单走同一条数据库连接上的〔本地事务｜一个库里的一次提交或回滚〕。任一步失败，两张表都回到提交前。排障看这一条请求的日志即可。\n\n它解决不了三件事：一次发布必须整包上去；只有商品详情热点时也得把下单进程一起扩；两个团队改同一仓库会互相等待。这些痛还没出现时，不要先拆进程。模块之间只走公开方法，不要让订单代码直接改库存表。模块化单体仍是这一站，见 `arch-monolith-when`。\n\n这笔订单在本站的样子：接口返回前，订单行是「待支付」，库存已减去数量。支付页面上的等待发生在事务提交之后。",
+      "why": "一上线就拆服务，库存失败时订单已经在另一个库提交，回滚盖不住两边。区分信号是扣库存和插订单要么都在，要么都不在，并且调用没有离开这个进程。",
+      "example": "两个仓库方法共用一个事务管理器，失败一起回滚：\n\n```java\n@Service\npublic class PlaceOrder {\n  private final OrderRepository orders;\n  private final StockRepository stock;\n\n  @Transactional\n  public String place(String orderId, String skuId, int qty) {\n    stock.decrement(skuId, qty);\n    orders.insert(orderId, skuId, qty, \"PENDING_PAY\");\n    return orderId;\n  }\n}\n```\n\n`orders` 和 `stock` 必须是同一个库上的连接。支付等待放在这个方法返回之后。",
+      "task": "画出单体下单：浏览器、一个进程里的订单与库存、一个库。标出事务从哪一句开始、到方法返回前结束。再写一件它解决不了的事。",
+      "answer": "图：\n\n```text\n浏览器 → 一个进程（订单模块、库存模块）→ 一个库\nBEGIN → 扣库存 → 插入待支付订单 → COMMIT\n```\n\n任一步失败，两张表都回滚。\n\n它解决不了整包发布，也解决不了只扩热点读。\n\n支付等待在提交之后，不占着这次事务。",
+      "keywords": "单体 本地事务 订单 库存 @Transactional",
+      "deep": [
+        {
+          "title": "图怎么读",
+          "body": "虚线框是一次部署。框里两个模块互相调方法，不出进程。下面一个库同时接着两张表。框外的支付页表示事务已经结束。"
+        },
+        {
+          "title": "相关课",
+          "body": "何时留在单体见 `arch-monolith-when`。事务只占这条连接见 `distributed-tx-not-cover-rpc`。画法见 `draw-monolith`。"
+        }
+      ],
+      "diagram": "diagrams/evo-monolith-one-tx.svg",
+      "points": [
+        "同一库上的本地事务保证订单和库存一起提交或一起回滚",
+        "支付等待放在事务提交之后",
+        "发布耦合和整包扩容是这一站的边界"
+      ],
+      "references": [
+        [
+          "Martin Fowler：Monolith First",
+          "https://martinfowler.com/bliki/MonolithFirst.html"
+        ],
+        [
+          "Spring Framework：事务管理",
+          "https://docs.spring.io/spring-framework/reference/data-access/transaction.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "evo-cluster-deploy",
+      "title": "集群复制无状态的下单应用，并一次只换一台",
+      "prompt": "下单接口的 CPU 打满、数据库仍有余量，下一步加机器还是拆服务？",
+      "promptAnswer": "加同质副本，前面放负载均衡。会话不能留在某一台的内存里。库已经忙时不要加副本。",
+      "core": "集群解决的是应用层容量：同一套下单程序多份副本，前面用负载均衡把请求分出去。前提是〔无状态｜这一台不保存必须留在本机的会话或文件〕。登录会话放到 Redis，配置放在进程外面。副本之间可以互换，一台消失，别的台能接新请求。\n\n它不解决数据库行锁、慢查询和写打满。副本越多，打向主库的连接池越多。拐点在库 CPU 或锁等待时，加副本会更差，见 `arch-scale-before-split`。\n\n搭建与部署按这个顺序：\n\n1. 准备至少两台相同的应用，连同一个库、同一个 Redis。每台池大小先写进预算：副本数乘每台池大小，就是打向主库的连接上限。\n2. 会话外置。用 Spring Session 把 HttpSession 放进 Redis，应用内存里不再留登录态。\n3. 负载均衡。开源 Nginx 的 `upstream` 用被动摘除：连接失败或超时达到 `max_fails` 后，在 `fail_timeout` 内不再选这台。主动的 HTTP 探测不是开源 Nginx 的内置能力，要另加探针，或用带主动检查的负载均衡。业务返回 500 默认不等于摘除。\n4. 滚动发布。从名单摘下一台，等已接上的请求结束，再换这一台的版本，健康之后加回，然后才动下一台。五台同时换，中间会没有旧版本可接。\n5. 数据库结构若不能被旧版本读，先做兼容的变更，再换应用。不要在滚动到一半时删掉旧版本还在读的列。\n\n粘滞会话能暂时让有状态的进程扩展，故障时会话跟着那台一起消失。下单集群优先会话外置，见 `nginx-ip-hash-session`。",
+      "why": "五台一起重启时，正在支付回跳的请求没有进程可接。会话若在某一台内存里，负载均衡把下一次请求分到别的台，用户就像掉线。区分信号是摘掉任意一台之后，新的下单仍能在其余台上完成，并且主库连接数仍在预算内。",
+      "example": "会话进 Redis，Nginx 只做被动摘除：\n\n```java\n@Configuration\n@EnableRedisHttpSession\npublic class HttpSessionConfig {\n}\n```\n\n```nginx\nupstream order_app {\n    server 10.0.1.11:8080 max_fails=2 fail_timeout=10s;\n    server 10.0.1.12:8080 max_fails=2 fail_timeout=10s;\n}\nserver {\n    location /api/ {\n        proxy_pass http://order_app;\n        proxy_set_header Host $host;\n        proxy_next_upstream error timeout http_502 http_503 http_504;\n    }\n}\n```\n\n`proxy_next_upstream` 这条没有把 500 列进去。先停 10.0.1.11 的进程，等访问日志不再出现它，再换包、加回，然后才动 10.0.1.12。",
+      "task": "写出集群的五步：副本与连接预算、会话放哪、怎样摘除、滚动时一次动几台、库结构怎样兼容旧版本。再写一种「只加副本无效」的拐点。",
+      "answer": "1. 至少两台相同应用。主库连接上限按副本数乘每台池大小估算。\n\n2. 会话放 Redis，不放某一台的内存。\n\n3. 开源 Nginx 按连接失败和超时被动摘除。500 不会自动摘除。主动探测要另加。\n\n4. 一次只换一台：摘除、排空、换版本、加回，再换下一台。\n\n5. 先做新旧版本都能读的库变更，再滚动应用。\n\n拐点在库 CPU 或行锁时，只加副本无效，连接和锁会更挤。",
+      "keywords": "集群 负载均衡 无状态 滚动发布 Nginx upstream",
+      "deep": [
+        {
+          "title": "图怎么读",
+          "body": "左边负载均衡把请求分到三台相同的应用。三台都读同一个 Redis 会话，都写同一个主库。下方的发布顺序是一台一台换。图里没有第二个业务服务。"
+        },
+        {
+          "title": "相关课",
+          "body": "被动摘除见 `nginx-upstream-passive`。水平扩展的拐点见 `arch-scale-before-split`。画法见 `draw-cluster`。"
+        }
+      ],
+      "diagram": "diagrams/evo-cluster-deploy.svg",
+      "points": [
+        "集群用多份相同应用接流量，会话必须外置",
+        "开源 Nginx 按失败被动摘除，滚动发布一次只换一台",
+        "库是瓶颈时加副本会放大连接和锁争用"
+      ],
+      "references": [
+        [
+          "Nginx：HTTP 负载均衡",
+          "https://nginx.org/en/docs/http/load_balancing.html"
+        ],
+        [
+          "Spring Session：Redis 引导",
+          "https://docs.spring.io/spring-session/reference/guides/boot-redis.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "evo-replica-read-write",
+      "title": "主从把商品详情和订单列表从写库挪开",
+      "prompt": "商品详情把主库读连接打满，下单写本身不慢，该加应用副本还是加从库？",
+      "promptAnswer": "加从库，让可接受延迟的读走从库。刚创建的那笔订单仍读主库。从库不是强一致，也不是备份。",
+      "core": "主从复制解决的是读远多于写、主库的读把连接或 CPU 占满，而插入订单本身不慢。〔主库｜source：接受写入并记下二进制日志〕把变更发给〔从库｜replica：重放日志的只读副本〕。商品详情、订单列表可以读从库。创建订单、扣库存、以及用户刚提交后马上要看见的那一笔，仍读主库。\n\nMySQL 默认是异步复制：主库提交不等从库。〔半同步｜主库等到至少一个从库确认已把事件写入中继日志并刷盘，再完成提交〕提高的是「提交成功时至少还有一处收到了日志」，不是「从库已经能查到这行」。从库应用 SQL 仍可能落后。半同步若在超时内等不到确认，会退回异步，不能把它当成永远的强一致。组复制是另一条拓扑，不要和读写分离并成一件事。\n\n搭建：\n\n1. 主库打开二进制日志，格式用 ROW，并启用 GTID。\n2. 从库用复制账号执行 `CHANGE REPLICATION SOURCE TO ... SOURCE_AUTO_POSITION = 1`，再 `START REPLICA`。从库打开 `read_only` 和 `super_read_only`，避免有人直接写入。\n3. 应用准备两个数据源。写和「读自己的写入」走主库；列表和详情走从库。\n4. 看 `Seconds_Behind_Source`。延迟超过产品能接受的秒数时，列表要降级提示或暂时改读主库，而不是假装已经一致。\n\n从库会把主库上的误删除也重放掉，所以它不是备份。备份是另一份可以按时间点恢复的副本，见 `mysql-clone-not-backup`。读写分离不是强一致，见 `rw-split-not-strong-consistency`。",
+      "why": "支付成功后的详情若读从库，用户会看见仍是待支付，于是再付一次。区分信号是：刚写完的主键读主库；列表可以落后几秒；从库延迟单独有数。",
+      "example": "刚创建的订单读主库，列表才读从库：\n\n```java\npublic Order load(String orderId, boolean ownWrite) {\n  JdbcTemplate db = ownWrite ? primary : replica;\n  return db.queryForObject(\n      \"SELECT status FROM orders WHERE id = ?\",\n      (rs, n) -> rs.getString(\"status\"),\n      orderId);\n}\n```\n\n```sql\nCHANGE REPLICATION SOURCE TO\n  SOURCE_HOST = '10.0.2.21',\n  SOURCE_USER = 'repl',\n  SOURCE_PASSWORD = '来自密钥存储',\n  SOURCE_AUTO_POSITION = 1;\nSTART REPLICA;\n```\n\n用户刚提交成功的那次查询传入 `ownWrite = true`。订单列表传入 false。",
+      "task": "画出写、刚写完的读、列表读分别打到哪一台。再写半同步保证了什么、没有保证什么。",
+      "answer": "图：\n\n```text\n写、刚创建的订单 → 主库\n商品详情、订单列表 → 从库\n主库 --二进制日志--> 从库（应用可能落后）\n```\n\n半同步保证：提交返回时，至少一个从库已经把事件写入中继日志并刷盘。超时会退回异步。\n\n半同步不保证：从库的查询已经能看见这行。刚写完的读仍走主库。\n\n从库会重放误删除，不能代替备份。",
+      "keywords": "主从复制 读写分离 半同步 Seconds_Behind_Source",
+      "deep": [
+        {
+          "title": "图怎么读",
+          "body": "实线写和「刚支付」进主库。虚线的列表和详情进从库。主库到从库的箭头标着二进制日志。角上的提示是：延迟期内两边状态可以不同。"
+        },
+        {
+          "title": "故障切换",
+          "body": "异步复制下，提升从库可能丢掉尚未传到从库的已提交事务，丢掉的时间就是当时的复制延迟。半同步下已提交的事务应已到至少一台从库的中继日志；官方说明故障源不要直接拿回去再当主库。切换前先停写、确认应用进度，再把应用的写数据源指到新主库。"
+        },
+        {
+          "title": "相关课",
+          "body": "复制延迟见 `mysql-replica-lag`。强一致误读见 `rw-split-not-strong-consistency`。画法见 `draw-replica`。半同步等的是中继日志，不是从库已经能查到。"
+        }
+      ],
+      "diagram": "diagrams/evo-replica-read-write.svg",
+      "points": [
+        "写和读自己的写入走主库，可延迟的读走从库",
+        "半同步等的是从库收到日志，不是从库已经能查到",
+        "从库会重放误删除，不能代替备份"
+      ],
+      "references": [
+        [
+          "MySQL 8.4：复制",
+          "https://dev.mysql.com/doc/refman/8.4/en/replication.html"
+        ],
+        [
+          "MySQL 8.4：半同步复制",
+          "https://dev.mysql.com/doc/refman/8.4/en/replication-semisync.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "evo-static-cdn",
+      "title": "静态资源进对象存储和 CDN，下单接口仍走应用集群",
+      "prompt": "商品图和脚本与下单接口挤在同一台机器上，高峰时接口为什么变慢？",
+      "promptAnswer": "静态字节占住了带宽和连接。哈希过的脚本和图片改由对象存储做源、CDN 做边缘缓存。下单接口不进这层长缓存。",
+      "core": "这一站解决的是前端高并发时的静态字节，不是订单事务。商品图、样式和脚本若和 `/api/orders` 共用应用机器或同一条带宽，图片的连接会把下单排队。做法是把两类流量拆开：带内容哈希的文件上传到〔对象存储｜按键存放文件的存储，不是数据库表〕，用独立域名经 CDN 分发；创建订单仍走应用集群，响应不设成长缓存。\n\n缓存要按文件种类拆开。文件名里的哈希变了就是新地址，可以 `Cache-Control: public, max-age=31536000, immutable`。HTML 入口要短缓存或每次向源站再验证，否则用户一直拿旧入口去找已经换掉的脚本。发布顺序是先上传新哈希文件并保留旧文件，再发布引用新哈希的 HTML。只有不带哈希、必须改同一个地址的文件才刷新 CDN。\n\n长期密钥不能放进浏览器。上传凭证由服务端签发，或由构建机器用环境里的密钥上传。私有对象用短期签名地址。\n\n可选的源站按这个差别选，不按广告词：\n\n七牛云 Kodo 是对象存储，国内访问商品图常见。服务端签发上传凭证，浏览器只拿短期凭证；再绑加速域名，未命中时回源到空间。适合国内图片、用户上传和构建产物。\n\n阿里云 OSS、腾讯云 COS 是同一类：桶、地域、绑自家 CDN。已有应用在哪一家云，源站就近放在同一地域，回源少跨网。标准存储放商品主图；很少读取的历史文件再换低频或归档，不把主图放进归档。\n\nAmazon S3 存对象，CloudFront 做分发。源站用 Origin Access Control，避免桶对公网裸开。缓存行为按路径：哈希资源长缓存，HTML 短缓存，`/api/*` 不缓存。国内用户访问远地域之前要先量延迟，不要只因为名字选它。\n\nCSDN 是技术内容社区，不是对象存储，也不是 CDN。它没有桶、上传凭证、回源和刷新 SLA。商品图或脚本不能挂到文章图床上当生产源站。",
+      "why": "把入口 HTML 和带哈希的脚本设成同样的一年缓存，脚本地址变了，普通打开仍是旧 HTML。把下单接口也放进 CDN 长缓存，会把别人的下单结果存下来。区分信号是静态域名和 API 域名分开，响应头里两类缓存时间不同。",
+      "example": "构建产物指向 CDN 域名，接口不走这个 base：\n\n```js\nimport { defineConfig } from 'vite'\n\nexport default defineConfig({\n  base: 'https://static.example.com/shop/',\n})\n```\n\n```http\nHTTP/1.1 200 OK\nCache-Control: public, max-age=31536000, immutable\n\nHTTP/1.1 200 OK\nCache-Control: no-cache\n```\n\n第一份是 `app.8f3a1c.js`。第二份是 `index.html`。`/api/orders` 仍请求 `api.example.com`，不设成 immutable。上传凭证在服务端签发，构建日志里不出现长期密钥。",
+      "task": "列出静态域名、API 域名、哈希文件的缓存头、HTML 的缓存头，以及发布时先上传还是先改 HTML。说明 CSDN 为什么不能当这层源站。",
+      "answer": "静态域名例如 static.example.com，API 域名例如 api.example.com。\n\n哈希文件：`Cache-Control: public, max-age=31536000, immutable`。\n\nHTML：`no-cache` 或很短的缓存，以便拿到新的哈希地址。\n\n先上传新哈希文件并保留旧文件，再发布 HTML。\n\nCSDN 是内容社区，没有桶、上传凭证和回源。生产源站用对象存储加 CDN。\n\n下单接口不进入这层长缓存。",
+      "keywords": "CDN 对象存储 七牛云 OSS COS CloudFront Cache-Control",
+      "deep": [
+        {
+          "title": "图怎么读",
+          "body": "浏览器的脚本和图片打到 CDN。命中就在边缘返回；未命中才回源对象存储。下单箭头单独进应用集群。右下角把 CSDN 放在这条路外面。"
+        },
+        {
+          "title": "四家怎么接",
+          "body": "七牛：建空间、配加速域名和证书、服务端签发上传凭证、CI 上传构建产物。阿里云 OSS、腾讯云 COS：桶与应用同地域，绑 CDN，主图用标准存储。S3：CloudFront 回源，Origin Access Control 限制直接访问桶，按路径分缓存行为。四家都不把长期密钥放进前端包。"
+        },
+        {
+          "title": "相关课",
+          "body": "缓存头见 `nginx-static-cache-headers`。CDN 不是源站反代的别名，见 `cdn-not-just-reverse-proxy-cache`。画法见 `draw-static-cdn`。CSDN 画在这条路外面。"
+        }
+      ],
+      "diagram": "diagrams/evo-static-cdn.svg",
+      "points": [
+        "哈希静态文件走对象存储和 CDN，下单接口仍走应用集群",
+        "HTML 入口短缓存，哈希文件才可以长期缓存",
+        "CSDN 不是对象存储或 CDN，不能当生产源站"
+      ],
+      "references": [
+        [
+          "MDN：Cache-Control",
+          "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cache-Control"
+        ],
+        [
+          "Amazon CloudFront：简介",
+          "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html"
+        ],
+        [
+          "七牛云：对象存储",
+          "https://developer.qiniu.com/kodo"
+        ],
+        [
+          "阿里云：什么是对象存储 OSS",
+          "https://help.aliyun.com/zh/oss/product-overview/what-is-oss"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "evo-soa-bus",
+      "title": "经典 SOA 让多个系统远程调用同一套订单能力",
+      "prompt": "商城、门店和合作方各写一套下单，规则开始分叉，下一步一定是微服务吗？",
+      "promptAnswer": "不一定。经典 SOA 先把订单做成可远程调用的服务，常经企业服务总线，库仍可能共享。共享库不是一次本地事务。",
+      "core": "经典 SOA 解决的是能力复用：商城、门店、合作方都要创建订单，如果各复制一份单体，价格和库存规则会分叉。把订单做成远程服务，经〔ESB｜企业服务总线：中心上的路由、转换和编排〕给多个调用方用。组织仍接受中心治理、服务粒度较粗、数据还没切开时，停在这里是合理的。\n\n它没有完成微服务。独立发布、各自的库、不强制经总线，才是后面那一站，见 `arch-soa-classic` 和 `microservices-not-just-soa-relabel`。\n\n共享一个库也不等于回到单体的本地事务。订单进程和库存进程各拿一条连接，各自提交。订单插入成功、库存更新失败时，没有任何一个进程里的回滚能盖住两边。这一站常用总线重试、对账或人工处理，而不是已经解决了一致性。真要一次提交，要么把写收回到一个进程里的一个库，要么进入后面的事务选型。\n\n这笔订单的路径：调用方不直接连库，只把「创建订单」发给总线；总线转到订单服务。库存若是另一个远程服务，预留结果以那次调用的返回为准，失败要有明确的重试或对账，不能假装还在 `@Transactional` 里。",
+      "why": "看见两个远程服务就报微服务完成，发版却仍要同一窗口，因为两边改的是同一套表。区分信号是：调用已经出了进程，写库仍然共享，编排点在总线。",
+      "example": "远程有了，数据还没切开：\n\n```text\n商城 / 门店 / 合作方\n        ↓\n       ESB\n   ↙         ↘\n订单服务     库存服务\n   ↘         ↙\n    同一个 trade 库\n两条连接，两次提交\n```",
+      "task": "画出调用方、总线、订单服务、库存服务和库。标明是一条连接还是两条。写出这一站解决了什么、没解决什么。",
+      "answer": "图：\n\n```text\n调用方 → ESB → 订单服务、库存服务 → 同一个库\n两条连接，两次提交\n```\n\n解决了：多个系统远程复用订单能力，规则不再各写一份。\n\n没解决：独立发版、独立数据。共享库也不是一次本地事务。\n\n仍靠中心总线编排时，停在经典 SOA。",
+      "keywords": "SOA ESB 共享库 远程服务 订单",
+      "deep": [
+        {
+          "title": "图怎么读",
+          "body": "三个调用方只连总线。订单和库存都连同一个库，箭头是两条。底部文字说明没有一个进程内事务能盖住这两次提交。"
+        },
+        {
+          "title": "相关课",
+          "body": "分叉标准见 `microservices-not-just-soa-relabel`。经典形态见 `arch-soa-classic`。画法见 `draw-soa`。"
+        }
+      ],
+      "diagram": "diagrams/evo-soa-bus.svg",
+      "points": [
+        "经典 SOA 用远程服务复用能力，常经中心总线",
+        "多个进程写同一个库仍是多次提交",
+        "独立数据和独立发布还没有完成"
+      ],
+      "references": [
+        [
+          "Martin Fowler：Microservices",
+          "https://martinfowler.com/articles/microservices.html"
+        ],
+        [
+          "Microsoft：Architecture styles",
+          "https://learn.microsoft.com/en-us/azure/architecture/guide/architecture-styles/"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "evo-microservice-order",
+      "title": "微服务按订单、库存、支付切开库和发布",
+      "prompt": "按控制器、服务、数据访问拆成三个仓库，下单为什么还是一次发布？",
+      "promptAnswer": "那是按技术层切开。微服务按业务能力切开：订单、库存、支付各自的库、各自的发布。",
+      "core": "微服务解决的是边界已经划清之后的发布和数据归属。订单服务只写订单库，库存服务只写库存库，支付服务只写支付库。库存团队可以单独发版，库存写变大时只扩库存服务。按控制器、服务、数据访问分层拆仓库，不是这条边界，见 `arch-microservice-split`。\n\n同一笔订单变成四段，每段的失败都不靠一个本地事务收回：\n\n1. 订单服务在自己的库插入「待支付」。这一段仍是本地事务。\n2. 用户必须当场知道有没有货：同步调用库存预留，带超时和〔幂等键｜同一业务请求重复提交时只生效一次的键〕。超时后订单不能显示成已占住库存。\n3. 支付服务等待第三方。这段可以到数分钟，不包进订单库或库存库的锁。\n4. 支付成功后发消息。订单服务把自己的行改成已支付，履约另作消费。消息会重复，消费按支付单号只生效一次。\n\n预留占住的是库存表里的预留数量，不是把数据库行锁留到用户付完款。支付失败或超时，用后面的补偿或取消把预留放回去。远程调用不要写进订单服务那个 `@Transactional` 方法里，见 `distributed-tx-not-cover-rpc`。",
+      "why": "把 Feign 调库存写进订单的事务方法里，库存已经提交，订单事务再回滚，预留还在。区分信号是每个服务的写只出现在自己的库，跨服务的失败有超时返回和后续释放。",
+      "example": "远程预留不要放进订单的本地事务：\n\n```java\npublic String place(String orderId, String skuId, int qty, String idemKey) {\n  orders.insertPending(orderId, skuId, qty);\n  boolean reserved = stockClient.reserve(orderId, skuId, qty, idemKey);\n  if (!reserved) {\n    orders.markFailed(orderId);\n    return orderId;\n  }\n  return orderId;\n}\n```\n\n`insertPending` 自己的事务在返回前结束。`reserve` 是另一次调用、另一个库。失败时 `markFailed` 是订单库里的新更新，库存侧还要按同一个 `idemKey` 释放或确认没占住。",
+      "task": "画出订单、库存、支付三个服务和三个库。标出哪一段同步、哪一段用消息、哪一段在等用户。写清预留锁住的是什么。",
+      "answer": "图：\n\n```text\n订单服务 → 订单库：插入待支付（本地事务）\n订单服务 --同步--> 库存服务 → 库存库：预留数量\n支付服务 → 支付库：等待第三方（数分钟，不占库锁）\n支付成功 --消息--> 订单服务改成已支付\n```\n\n预留锁住的是库存里的预留数量，不是跨过支付等待的数据库行锁。\n\n三个仓库若仍写同一个库，就还停在上一站。",
+      "keywords": "微服务 订单 库存 支付 数据归属 幂等键",
+      "deep": [
+        {
+          "title": "图怎么读",
+          "body": "三个服务下面各有一个库。实线是用户当场要结果的预留。虚线是支付成功后的消息。人形等待画在支付旁边，不画进任何一个库的锁里。"
+        },
+        {
+          "title": "相关课",
+          "body": "拆分见 `arch-microservice-split`。下单同步和异步见 `arch-split-order-case`。创建时四个服务谁提交见 `evo-order-create-consistency`。事务怎么选见 `evo-tx-choose`。画法见 `draw-microservice`。支付成功的虚线从支付服务指向订单服务。"
+        }
+      ],
+      "diagram": "diagrams/evo-microservice-order.svg",
+      "points": [
+        "边界是订单、库存、支付和各自的库，不是技术分层",
+        "同步预留带超时和幂等键，支付等待不占数据库锁",
+        "远程调用不包进订单服务的本地事务"
+      ],
+      "references": [
+        [
+          "Microsoft：微服务架构风格",
+          "https://learn.microsoft.com/en-us/azure/architecture/guide/architecture-styles/microservices"
+        ],
+        [
+          "Martin Fowler：Microservices",
+          "https://martinfowler.com/articles/microservices.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "evo-order-create-consistency",
+      "title": "创建订单只让订单和资源锁定各提交一次",
+      "prompt": "订单服务、支付服务、消息服务、资源锁定服务都在时，创建订单用哪一种一致性，为什么？",
+      "promptAnswer": "创建这一刻只协调订单和资源锁定：各自一次本地事务，中间用同步调用、超时和幂等键。支付和消息不进这次提交。支付成功才用本地消息表通知。支付失败用新的释放把预留还回去。",
+      "core": "创建订单要保住的事实只有一件：待支付订单出现时，对应数量已经预留，或者两边都没留下。支付还没发生，消息也还没有可投递的事实。所以四个服务不要收成一次提交。\n\n〔资源锁定服务｜把可售数量改成已预留数量的服务，数据在它自己的库〕和订单服务各写各的库。订单服务先用本地事务插入「待支付」，这次提交在返回前结束。随后同步调用锁定服务，带超时和〔幂等键｜同一笔创建重复提交时只生效一次的键〕。锁定服务在自己的数据库里做另一次本地事务：数量够就减少可售、增加预留，并记下这个幂等键。用户还在等有没有货，所以这一跳是同步，不是先发消息。预留占住的是数量列。不要把数据库行锁留到用户付完款，也不要把这次远程调用写进订单服务的 `@Transactional`。\n\n超时或响应丢失时，订单服务不能显示成已锁定。用同一个幂等键再问锁定服务：已经预留就保持待支付，没有预留就把订单标成失败。标失败是订单数据库里的新更新。锁定服务若已提交、订单却失败，还要用同一个键把预留释放掉。这不是两个库的一次回滚。\n\n支付服务在创建时不写自己的库。用户去支付发生在上面两次提交之后，可以到数分钟。〔消息服务｜把已经提交的事实投递出去，不决定库存有没有锁住〕此时也没有可投的事实。支付成功之后，支付服务才把支付行和待发记录放进支付库的同一次提交，这是〔本地消息表｜业务行和待发记录在同一个库的一次提交，提交后再投递〕。消息服务只投递已提交的记录。订单服务消费后在订单库把状态改成已支付，锁定服务再把预留变成扣减，两次仍是各自的本地事务，按支付单号或订单号只生效一次。\n\n支付失败或超时，预留已经提交，不会自己消失。释放预留、把订单标成取消，是〔Saga｜一串已提交的本地事务，失败时用新的写入向前纠正〕。若预留必须做成尝试、确认、取消，并处理取消先到，那一跳可以换成〔TCC｜Try 预留，Confirm 确认，Cancel 取消〕，全局事务在预留提交后就结束，不把用户支付包进去。团队写不出空回滚时，不要用 TCC 替换整条创建，就用上面的同步预留加支付失败后的释放。\n\n不要用一种全局事务把四个服务锁在一起。支付要数分钟，锁会留在热点数量上。消息一旦发出，数据库的回滚日志也撤不回来。",
+      "why": "把四个服务收成一次提交，要么用户还在付款时数量就被占住，要么支付库已成功、订单仍待支付，因为消息在提交之后才发出。区分信号是：创建返回前只有订单库和锁定库各有一次短提交；支付行和消息行要到支付成功才出现。",
+      "example": "订单的本地事务先结束，再同步预留。锁定在自己的事务里改数量：\n\n```java\npublic String place(String orderId, String skuId, int qty, String idemKey) {\n  orders.insertPending(orderId, skuId, qty);\n  LockResult locked = locks.reserve(orderId, skuId, qty, idemKey);\n  if (locked == LockResult.REJECTED) {\n    orders.markFailed(orderId);\n  }\n  return orderId;\n}\n```\n\n```java\n@Transactional\npublic LockResult reserve(String orderId, String skuId, int qty, String idemKey) {\n  if (seen(idemKey)) return LockResult.RESERVED;\n  int updated = stock.reserveIfEnough(skuId, qty);\n  if (updated == 0) return LockResult.REJECTED;\n  remember(idemKey, orderId, qty);\n  return LockResult.RESERVED;\n}\n```\n\n```sql\nUPDATE stock\n   SET available = available - ?,\n       reserved = reserved + ?\n WHERE sku_id = ? AND available >= ?;\n```\n\n`insertPending` 的事务在 `reserve` 之前结束。`reserveIfEnough` 和 `remember` 在锁定库的另一次提交里。`place` 不调用支付服务，也不调用消息服务。",
+      "task": "按时间写出创建成功、锁定超时、支付成功、支付失败各一步：哪个服务写哪个库，用的是本地事务、本地消息表还是新的释放。标明支付和消息为什么不在创建返回前。",
+      "answer": "创建成功：\n\n1. 订单服务 → 订单库，本地事务插入待支付，然后提交结束。\n2. 资源锁定服务 → 锁定库，另一次本地事务：可售减少、预留增加，并记下幂等键。\n\n锁定超时：\n\n3. 用同一个幂等键查询。没有预留，订单服务把订单标成失败。已经预留，就保持待支付，或释放掉多占的数量。这是新的写入。\n\n支付成功：\n\n4. 支付服务在支付库把支付行和待发记录做一次本地事务，这是本地消息表。\n5. 消息服务只投递已提交的记录。订单服务、锁定服务各自再提交一次：订单改成已支付，预留变成扣减。\n\n支付失败：\n\n6. 锁定服务释放预留，订单服务标成取消。两次都是新的写入，不是把创建时的提交倒回去。\n\n支付和消息不在创建返回前：那时还没有支付事实，消息没有可投递的记录。",
+      "keywords": "创建订单 资源锁定 本地事务 幂等键 本地消息表 Saga",
+      "deep": [
+        {
+          "title": "图怎么读",
+          "body": "上排实线只连接订单服务和资源锁定服务，下面各有一个库、各有一次提交。支付服务和消息服务画在虚线框外，标注创建时不写、不投递。底部一行才是支付成功后的本地消息表，以及支付失败后的释放。"
+        },
+        {
+          "title": "相关课",
+          "body": "服务怎么切开见 `evo-microservice-order`。支付成功直到签收见 `evo-order-pay-ship-done`。远程调用和按库校验的代码见 `evo-order-chain`。三种方案的边界见 `evo-tx-choose`。待发记录见 `evo-tx-outbox`。释放见 `evo-tx-saga`。短预留的空回滚见 `evo-tx-tcc`。"
+        }
+      ],
+      "diagram": "diagrams/evo-order-create-consistency.svg",
+      "points": [
+        "创建订单只让订单服务和资源锁定服务各做一次本地事务，中间用同步调用、超时和幂等键",
+        "支付服务和消息服务不参与创建这次提交，支付成功后的通知用本地消息表",
+        "支付失败后的释放是新的写入，远程预留不放进订单服务的本地事务"
+      ],
+      "references": [
+        [
+          "microservices.io：Saga",
+          "https://microservices.io/patterns/data/saga.html"
+        ],
+        [
+          "microservices.io：事务性发件箱",
+          "https://microservices.io/patterns/data/transactional-outbox.html"
+        ],
+        [
+          "Seata：TCC 模式",
+          "https://seata.apache.org/docs/user/mode/tcc/"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "evo-order-pay-ship-done",
+      "title": "支付、出库和签收分次提交，直到订单完成",
+      "prompt": "支付成功之后，发货、用户收货完成，订单、支付、消息、资源锁定怎样保持一致？",
+      "promptAnswer": "每一步只在拥有该事实的库提交一次，再由消息服务投递。支付成功是支付库的本地消息表。订单改成已支付、预留变成扣减、出库改成已发货，都是后来各自的本地事务。签收只把订单从已发货改成已完成。",
+      "core": "支付、出库、签收隔着几分钟到几天。每一步已经成立的事实先提交，后面的步骤是新的写入。消息服务只负责把已经提交的事实送出去。\n\n用户在支付渠道付完。支付服务在支付库把支付行标成已支付，并写入待发记录，这是同一次本地事务，也就是〔本地消息表｜业务行和待发记录在同一个库的一次提交，提交后再投递〕。〔消息服务｜投递已经提交的事实，不代替任何一个库提交〕读到这条记录才发送。发送本身不在这次提交里。\n\n同一条已支付消息有两个消费方，各开自己的本地事务，按支付单号或订单号只生效一次。订单服务把待支付改成已支付。资源锁定服务把预留数量改成已扣减。订单已经是已支付、数量仍是预留时，页面就显示这个中间状态，消费失败则重试。这一步不把支付行改回去。\n\n〔履约｜在数量已经扣减之后出库并发货〕先确认锁定库记下了这笔扣减，再在履约库插入发货单，并写入待发记录「已出库」，又是一次本地消息表。消息到达后，订单服务把已支付改成已发货，按发货单号只生效一次。出库不改支付行。\n\n用户签收到达订单服务。订单服务做一次本地事务：已发货改成已完成，条件是当前仍是已发货。签收不写支付库，也不写锁定库。数量在支付成功后已经扣减。短信和积分放在这次提交之后的消息里。\n\n支付失败或超时是另一支：锁定服务释放预留，订单服务把待支付标成已取消，见 `evo-tx-saga`。已取消不再出库。已支付还没出库时退回钱，事件是退款完成，状态到已退款。已发货未签收的退货是退货入库。已完成之后的退货是顾客退回。这三支都是后来的新写入。",
+      "why": "把签收留在支付那次提交里，出库和收货的几天都会占着支付行和数量。区分信号是：支付库在支付成功时就有已支付行；订单库的已发货和已完成是后来的更新；签收成功时支付行和扣减数量都不再改变。",
+      "example": "支付库先提交，消费方再各写各的库。签收只改订单：\n\n```java\n@Transactional\npublic void markPaid(String paymentId, String orderId) {\n  payment.markPaid(paymentId);\n  outbox.insert(paymentId, \"PaymentPaid\", orderId);\n}\n```\n\n```java\n@Transactional\npublic void onPaid(String paymentId, String orderId) {\n  orders.markPaidIfPending(orderId, paymentId);\n}\n\n@Transactional\npublic void confirm(String orderId) {\n  stock.confirmIfReserved(orderId);\n}\n\n@Transactional\npublic void onShipped(String shipmentId, String orderId) {\n  orders.markShippedIfPaid(orderId, shipmentId);\n}\n\n@Transactional\npublic void onReceived(String orderId) {\n  orders.markCompletedIfShipped(orderId);\n}\n```\n\n```sql\nUPDATE orders SET status = 'PAID'\n WHERE id = ? AND status = 'PENDING';\nUPDATE orders SET status = 'SHIPPED'\n WHERE id = ? AND status = 'PAID';\nUPDATE orders SET status = 'COMPLETED'\n WHERE id = ? AND status = 'SHIPPED';\n```\n\n`markPaid` 不调用订单服务和锁定服务。`onReceived` 不写支付库，也不写锁定库。",
+      "task": "按时间写出支付成功、扣减、出库、签收各写哪个库。标明哪两行是同一个库的一次提交。写明签收还写不写支付库和锁定库，支付失败停在哪。",
+      "answer": "支付成功：\n\n1. 支付服务 → 支付库。支付行和待发记录同一次本地事务，然后提交。\n2. 消息服务只投递这条已提交的记录。\n\n扣减：\n\n3. 订单服务 → 订单库，待支付改成已支付。\n4. 资源锁定服务 → 锁定库，预留改成已扣减。两次都是后来的本地事务，按支付单号或订单号只生效一次。\n\n出库：\n\n5. 履约确认扣减已经记下，再在履约库把发货单和「已出库」待发记录做一次提交。\n6. 消息投递后，订单服务把已支付改成已发货。出库不改支付行。\n\n签收：\n\n7. 订单服务把已发货改成已完成。支付库和锁定库不再为这一步提交。\n\n支付失败停在释放预留和已取消，不再出库。",
+      "keywords": "支付 本地消息表 出库 签收 已完成 幂等",
+      "deep": [
+        {
+          "title": "图怎么读",
+          "body": "从上往下四段：支付库一次提交、两个消费方各提交一次、履约库一次提交后订单改成已发货、签收只改订单库。底部一行是支付失败，停在已取消，不进入已发货。"
+        },
+        {
+          "title": "相关课",
+          "body": "创建时的两次提交见 `evo-order-create-consistency`。完整代码、远程调用和按库校验见 `evo-order-chain`。待发记录见 `evo-tx-outbox`。支付失败的释放见 `evo-tx-saga`。已发货后退货见 `draw-uml-state-return`。已完成之后的退货见 `draw-uml-state-done`。整张状态图和状态表见 `evo-order-state-table`。"
+        }
+      ],
+      "diagram": "diagrams/evo-order-pay-ship-done.svg",
+      "points": [
+        "支付成功把支付行和待发记录放进支付库的一次提交，消息服务只投递已提交的记录",
+        "订单改成已支付、预留变成扣减、出库改成已发货，是各自后来的本地事务",
+        "签收只把订单从已发货改成已完成，支付库和锁定库不再为这一步提交"
+      ],
+      "references": [
+        [
+          "microservices.io：事务性发件箱",
+          "https://microservices.io/patterns/data/transactional-outbox.html"
+        ],
+        [
+          "microservices.io：Saga",
+          "https://microservices.io/patterns/data/saga.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "evo-order-state-table",
+      "title": "状态图只画允许的箭头，状态表按起点更新",
+      "prompt": "订单从待支付到完成，状态图和状态表怎样设计，哪些状态可以互转？",
+      "promptAnswer": "状态图每个状态一个圆角矩形，箭头上写事件，没有箭头就不能转。订单行只存当前状态。更新必须带原来的状态。已取消、已退款、已退货没有离开的箭头。",
+      "core": "状态图回答「允许离开这个状态的事件」。圆角矩形是状态，实心圆只指向待支付。箭头上写事件，不把终点名字再写一遍。没有这条箭头，这次迁移就不存在。两个箭头可以进入同一个状态，但事件不能互换。\n\n这一张一共七个状态：待支付、已支付、已取消、已发货、已退款、已完成、已退货。允许的迁移只有这些：\n\n待支付经支付成功到已支付，经取消到已取消。已支付经出库到已发货，经退款完成到已退款。已发货经签收到已完成，经退货入库到已退货。已完成经顾客退回到已退货。已取消、已退款、已退货没有向外的箭头。\n\n不能转的，就是上面没有的那些对。常见的几条要单独记住：已支付不能改成已取消，取消只从待支付出发。待支付不能直接到已发货、已完成、已退款或已退货。已支付不能跳到已完成，也不能用退货入库。已发货不能用退款完成，也不能回到待支付。已完成不能用退货入库，也不能用退款完成。签收只从已发货到已完成。\n\n〔状态迁移表｜每一行是起点、事件、终点，没有的行就不允许〕和这张图是同一份名单。订单表只留一列当前状态，不为每个状态再造一列。执行迁移时用起点当条件：\n\n```sql\nUPDATE orders SET status = ?\n WHERE id = ? AND status = ?;\n```\n\n影响行数是 0，这次迁移没有发生，不要再无条件写成目标状态。成功的那一次可以追加一条事件记录，同一订单、同一事件只记一次。事件记录是经过的痕迹，当前状态仍以订单行那一列为准。",
+      "why": "接口里把已发货改成已退款，图上却没有这条箭头，货已经出库，钱按未出库的方式退了。区分信号是：每条允许的迁移同时出现在图的箭头和迁移表的一行里；UPDATE 的 WHERE 写的是起点，不是只按订单号改状态。",
+      "example": "迁移表和更新条件是同一份名单：\n\n```text\n待支付 --支付成功--> 已支付\n待支付 --取消--> 已取消\n已支付 --出库--> 已发货\n已支付 --退款完成--> 已退款\n已发货 --签收--> 已完成\n已发货 --退货入库--> 已退货\n已完成 --顾客退回--> 已退货\n```\n\n```java\n@Transactional\npublic boolean transit(String orderId, String from, String event, String to) {\n  int updated = orders.updateStatus(orderId, from, to);\n  if (updated == 1) {\n    events.insertOnce(orderId, from, event, to);\n  }\n  return updated == 1;\n}\n```\n\n```sql\nUPDATE orders\n   SET status = 'COMPLETED'\n WHERE id = ? AND status = 'SHIPPED';\n```\n\n签收时 `from` 必须是已发货。已完成再执行这条语句，影响行数是 0。已支付执行退货入库，同样是 0。",
+      "task": "画出七个状态和全部允许的箭头，箭头上写事件。再写状态迁移表。列出已支付、已发货、已完成各自不能使用的事件。",
+      "answer": "图：\n\n```text\n[*] --> 待支付\n待支付 --> 已支付 : 支付成功\n待支付 --> 已取消 : 取消\n已支付 --> 已发货 : 出库\n已支付 --> 已退款 : 退款完成\n已发货 --> 已完成 : 签收\n已发货 --> 已退货 : 退货入库\n已完成 --> 已退货 : 顾客退回\n```\n\n迁移表与上图逐行相同。订单行只存当前状态。UPDATE 的 WHERE 写起点。\n\n已支付不能使用取消、签收、退货入库、顾客退回。\n已发货不能使用退款完成、取消、顾客退回。\n已完成不能使用退货入库、退款完成、签收。\n\n已取消、已退款、已退货没有离开的事件。",
+      "keywords": "状态图 状态迁移表 订单状态 支付成功 出库 签收",
+      "deep": [
+        {
+          "title": "图怎么读",
+          "body": "上排从待支付到已完成是正向事件。下排三个状态没有向外的箭头。已退货有两条进入的箭头，事件分别是退货入库和顾客退回。"
+        },
+        {
+          "title": "相关课",
+          "body": "主路径见 `evo-order-pay-ship-done`。退款完成见 `draw-uml-state-refund`。退货入库见 `draw-uml-state-return`。顾客退回见 `draw-uml-state-done`。"
+        }
+      ],
+      "diagram": "diagrams/evo-order-state-table.svg",
+      "points": [
+        "状态图以箭头表示允许的迁移，箭头上写事件，没有箭头就不能转",
+        "订单行只存当前状态，更新条件必须带上原来的状态",
+        "退货入库只从已发货出发，顾客退回只从已完成出发，退款完成只从已支付出发"
+      ],
+      "references": [
+        [
+          "OMG：UML 2.5.1",
+          "https://www.omg.org/spec/UML/2.5.1/About-UML"
+        ],
+        [
+          "UML：State machine diagrams",
+          "https://www.uml-diagrams.org/state-machine-diagrams.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "evo-order-chain",
+      "title": "完整链路把远程调用放在提交之外，并按每个库校验",
+      "prompt": "从创建到签收，远程调用写在哪一次提交里，创建返回后要查哪几个库？",
+      "promptAnswer": "远程预留写在订单那次提交返回之后。创建返回后，订单库是待支付，锁定库有预留，支付库还没有这一单。支付成功只先查支付库的支付行和待发行。签收只查订单库从已发货变成已完成。",
+      "core": "从创建到签收是一条链路，不是一次提交。每一跳只写拥有该事实的数据库。远程调用发生在上一次提交已经返回之后。\n\n订单服务的 `insertPending` 带 `@Transactional`，方法返回时订单库已经写下「待支付」。`place` 本身不加这个注解。返回之后才用〔OpenFeign｜把 Java 接口编成一次 HTTP 调用的客户端〕调用资源锁定服务。连接超时和读取超时写在这个客户端上，单位是毫秒。请求头 `Idempotency-Key` 带〔幂等键｜同一笔创建重复提交时只生效一次的键〕。超时后用同一把键再调用一次。不换新键，也不打开没有这把键的自动重试。\n\n锁定服务在自己的 `@Transactional` 里处理这把键：见过就返回上次结果；数量够就减少可售、增加预留，并记下键。返回拒绝时，订单服务把订单标成失败，这是订单库的另一次更新，不是把锁定库和订单库收成一次回滚。\n\n用户去支付发生在这两次提交之后。支付服务把支付行改成已支付，并插入待发行，这是支付库的同一次提交，也就是〔本地消息表｜业务行和待发记录在同一个数据库的一次提交，提交后再投递〕。中继用定时任务扫描状态为 NEW 的行，先发送，再把该行改成已投递。发送不写在 `markPaid` 里面。进程若在发送之后、改状态之前停掉，这行仍是 NEW，恢复后会再发。消费方按支付单号只生效一次。\n\n订单服务把待支付改成已支付，锁定服务把预留改成已扣减，各自带原来的状态。履约先读到锁定库已经扣减，再在履约库提交发货单和一条待发记录。订单改成已发货是消息到达之后的另一次提交。签收只执行：已发货改成已完成。支付失败时，释放预留和把订单标成已取消是新的写入。\n\n校验不看有没有一个全局事务编号，而看每个库此刻的行。创建方法返回：订单是待支付，锁定库有这笔预留和这把幂等键，支付库按这笔订单计数为 0。支付方法返回：支付行是已支付，待发行是 NEW，订单仍可以是待支付。中继和两个消费都跑完：待发行已投递，订单是已支付，预留已变成扣减。同一支付单号再投一次，订单那条更新影响 0 行。签收返回：订单是已完成，支付行和扣减数量与签收前相同。",
+      "why": "把 OpenFeign 写进订单的事务方法里，锁定库可能已经提交，订单再回滚也盖不住预留。区分信号是：创建返回时支付库还没有这一单；支付方法返回时待发行已经和支付行一起在；重复消息不再改第二次订单状态。",
+      "example": "远程调用在订单提交返回之后。超时写在客户端：\n\n```java\n@FeignClient(\"resource-lock\")\npublic interface LockClient {\n  @PostMapping(\"/reservations\")\n  LockResult reserve(@RequestHeader(\"Idempotency-Key\") String idemKey,\n      @RequestBody ReserveRequest body);\n}\n\n@Service\npublic class OrderTx {\n  @Transactional\n  public void insertPending(String orderId, String skuId, int qty) {\n    orders.insert(orderId, skuId, qty, \"PENDING\");\n  }\n\n  @Transactional\n  public void markFailed(String orderId) {\n    orders.updateStatus(orderId, \"PENDING\", \"FAILED\");\n  }\n}\n\n@Service\npublic class PlaceOrder {\n  public String place(String orderId, String skuId, int qty, String idemKey) {\n    orderTx.insertPending(orderId, skuId, qty);\n    try {\n      LockResult locked = locks.reserve(idemKey, new ReserveRequest(orderId, skuId, qty));\n      if (locked == LockResult.REJECTED) orderTx.markFailed(orderId);\n    } catch (feign.FeignException ex) {\n      LockResult again = locks.reserve(idemKey, new ReserveRequest(orderId, skuId, qty));\n      if (again != LockResult.RESERVED) orderTx.markFailed(orderId);\n    }\n    return orderId;\n  }\n}\n```\n\n```yaml\nspring:\n  cloud:\n    openfeign:\n      client:\n        config:\n          resource-lock:\n            connectTimeout: 200\n            readTimeout: 800\n```\n\n客户端名与超时配置的键都是 resource-lock。锁定服务认同一把键，并在自己的库提交：\n\n```java\n@Transactional\npublic LockResult reserve(String idemKey, ReserveRequest req) {\n  LockResult seen = idempotency.find(idemKey);\n  if (seen != null) return seen;\n  int updated = stock.reserveIfEnough(req.skuId(), req.qty());\n  LockResult result = updated == 1 ? LockResult.RESERVED : LockResult.REJECTED;\n  idempotency.save(idemKey, req.orderId(), result);\n  return result;\n}\n```\n\n支付库的两行一次提交。中继在这次提交外面，先发送再改状态：\n\n```java\n@Transactional\npublic void markPaid(String paymentId, String orderId) {\n  int updated = payment.markPaid(paymentId);\n  if (updated == 1) outbox.insert(paymentId, \"PaymentPaid\", orderId, \"NEW\");\n}\n\n@Scheduled(fixedDelay = 1000)\npublic void publish() {\n  for (OutboxRow row : outbox.findNew(50)) {\n    broker.send(row.type(), row.payload());\n    outbox.markSent(row.id());\n  }\n}\n```\n\n消费和签收都带原来的状态。支付失败是新的写入：\n\n```java\n@Transactional\npublic void onPaid(String paymentId, String orderId) {\n  orders.markPaidIfPending(orderId, paymentId);\n}\n\n@Transactional\npublic void onReceived(String orderId) {\n  orders.markCompletedIfShipped(orderId);\n}\n\npublic void onPayFailed(String orderId) {\n  locks.release(orderId);\n  orders.markCancelledIfPending(orderId);\n}\n```\n\n```sql\nUPDATE orders SET status = 'PAID'\n WHERE id = ? AND status = 'PENDING';\nUPDATE orders SET status = 'COMPLETED'\n WHERE id = ? AND status = 'SHIPPED';\n```\n\n创建返回后查三个库。支付方法返回后先只查支付库。同一支付单号再投一次，上面第一条更新影响 0 行：\n\n```sql\nSELECT status FROM orders WHERE id = ?;\nSELECT reserved, idem_key FROM stock_lock WHERE order_id = ?;\nSELECT COUNT(*) FROM payment WHERE order_id = ?;\nSELECT status FROM outbox WHERE id = ?;\n```",
+      "task": "按时间写出 place、reserve、markPaid、中继、onPaid、onReceived 各写哪个库。标明远程调用在哪一次提交的外面。再写出创建返回后、支付方法返回后、重复消息到达后各期望看到什么。",
+      "answer": "1. place 先调用 insertPending。订单库提交待支付，方法返回后这次事务已经结束。\n2. OpenFeign 在这次返回之后调用锁定服务，头里是同一把幂等键。超时再调仍用这把键。\n3. reserve 在锁定库提交：可售减少、预留增加，并记下幂等键。\n4. markPaid 在支付库把支付行和待发行做一次提交。中继不在这个方法里。\n5. 中继先发送，再把待发行改成已投递。\n6. onPaid 在订单库把待支付改成已支付。锁定库另一次提交把预留改成扣减。\n7. onReceived 只把订单从已发货改成已完成。\n\n创建返回：订单是待支付，锁定库有预留和这把幂等键，支付库计数为 0。\n支付方法返回：支付行是已支付，待发行是 NEW。订单仍可以是待支付。\n同一支付单号再投一次：订单更新影响 0 行，状态保持已支付。",
+      "keywords": "OpenFeign 幂等键 本地消息表 中继 按库校验",
+      "deep": [
+        {
+          "title": "怎样校验",
+          "body": "创建返回查三个库：订单待支付，锁定库有预留和幂等键，支付库计数为 0。支付方法返回只要求支付行和待发行同时在。中继与消费完成后再看订单已支付、预留已扣减。签收后再查，支付行和扣减数量应与签收前相同。"
+        },
+        {
+          "title": "相关课",
+          "body": "创建时谁提交见 `evo-order-create-consistency`。支付到签收的分次提交见 `evo-order-pay-ship-done`。待发记录见 `evo-tx-outbox`。支付失败的释放见 `evo-tx-saga`。状态更新条件见 `evo-order-state-table`。"
+        }
+      ],
+      "diagram": "diagrams/evo-order-chain.svg",
+      "points": [
+        "远程预留发生在订单本地事务返回之后，请求带超时和同一把幂等键",
+        "支付行和待发记录在支付库一次提交，中继在这次提交之外先发送再改状态",
+        "校验分别查询订单库、锁定库和支付库，重复消息的更新影响行数为 0"
+      ],
+      "references": [
+        [
+          "Spring Cloud OpenFeign",
+          "https://docs.spring.io/spring-cloud-openfeign/reference/"
+        ],
+        [
+          "microservices.io：事务性发件箱",
+          "https://microservices.io/patterns/data/transactional-outbox.html"
+        ],
+        [
+          "microservices.io：Saga",
+          "https://microservices.io/patterns/data/saga.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "evo-tx-choose",
+      "title": "先看不变量在不在一个库，再选本地消息表、Saga 或 TCC",
+      "prompt": "订单、库存、支付已经分库，是不是应该上一种分布式事务把它们锁成一次提交？",
+      "promptAnswer": "不是。能放回一个库的用本地事务。只通知下游用本地消息表。长流程用 Saga。短预留要空回滚时才用 TCC。",
+      "core": "数据分开之后，没有一种默认事务能代替选型。按不变量落在哪来选：\n\n还在一个库里的规则，用本地事务。不要为了名词把订单和库存拆开再买协调器。能放回一个库就放回，见 `distributed-one-db-first`。\n\n只需要「这一行提交成功后，另一个服务一定会知道」，用〔本地消息表｜业务行和待发消息行在同一个数据库事务里提交，提交后再投递〕。支付单改成已支付，和「PaymentPaid」消息行是同一次提交。订单服务消费时再开自己的本地事务。这不把两个库锁成一次提交。\n\n流程长、每一步都已经提交、失败要做新的业务动作，用〔Saga｜一串已提交的本地事务，失败时用补偿向前纠正〕。释放预留、把订单标成取消，都是新写入，不是把原来的提交倒回去。用户支付这种等待放在这里。\n\n资源要在短时间里先占住，确认才变成最终扣减，取消必须在尝试还没到时也安全，用〔TCC｜Try 预留，Confirm 确认，Cancel 取消〕。库存预留可以做成 Saga 里的普通状态「已预留」，也可以做成 TCC 的 Try。选 TCC 的代价是每个参与者写三个幂等操作，并处理空回滚和悬挂。用户那几分钟的支付不要挂在一个开着的全局事务上。\n\n外部支付和短信不在数据库的 undo 里。AT 只能按它记录过的 SQL 把行改回去，见 `sca-seata-at-boundary`。XA 会在准备之后继续持锁，不拿来等用户付款，见 `distributed-xa`。",
+      "why": "把等待支付套进一个全局事务，热点库存会被锁到超时，别的订单过不去。区分信号是纸上先写不变量在哪个库，再写选中的方案不管哪一类副作用。",
+      "example": "同一笔订单可以同时用到三种，但每种只管自己的不变量：\n\n```text\n订单行 + 待支付状态     → 订单库本地事务\n支付成功 → 通知订单     → 支付库本地消息表\n预留已提交，支付失败     → Saga 补偿：释放预留、取消订单\n预留必须先占住且要空回滚 → TCC，全局事务不覆盖支付等待\n```",
+      "task": "给创建订单、支付成功通知、支付失败释放库存、库存短预留各选一种方案，并各写一句不选另一种的理由。",
+      "answer": "创建订单：订单库本地事务。不变量还在一个库，不用协调器。\n\n支付成功通知：本地消息表。需要的是可靠通知，不是把订单库和支付库锁在一起。\n\n支付失败释放库存：Saga。预留已经提交，释放是新的业务动作。\n\n必须先占住数量、并要处理取消先到：TCC。全局事务只覆盖短预留，不覆盖用户支付。\n\n短信和第三方支付不要交给 AT 的 undo。",
+      "keywords": "分布式事务 本地消息表 Saga TCC 选型",
+      "deep": [
+        {
+          "title": "图怎么读",
+          "body": "从上往下先问还在不在一个库。出了库再分三条：只通知、要补偿、要三阶段预留。支付等待画在 Saga 一侧，不画进 TCC 的全局事务。"
+        },
+        {
+          "title": "相关课",
+          "body": "单库优先见 `distributed-one-db-first`。四个服务在创建时谁提交见 `evo-order-create-consistency`。补偿是新动作见 `distributed-saga-is-new-action`。空回滚见 `sca-seata-tcc-empty`。画法见 `draw-tx-choose`。三条不并成一种默认事务。"
+        }
+      ],
+      "diagram": "diagrams/evo-tx-choose.svg",
+      "points": [
+        "能放进一个库的不变量用本地事务",
+        "可靠通知用本地消息表，长流程补偿用 Saga",
+        "TCC 用于短预留，不把用户支付套进全局事务"
+      ],
+      "references": [
+        [
+          "microservices.io：Saga",
+          "https://microservices.io/patterns/data/saga.html"
+        ],
+        [
+          "microservices.io：事务性发件箱",
+          "https://microservices.io/patterns/data/transactional-outbox.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "evo-tx-outbox",
+      "title": "本地消息表把已支付和待发消息放进同一次提交",
+      "prompt": "支付服务先提交再发消息，进程在中间宕了，订单为什么会一直待支付？",
+      "promptAnswer": "提交和发送之间有窗口。把支付行和消息行放进同一个本地事务，提交后再由中继投递。消费按支付单号只生效一次。",
+      "core": "这一方案解决的是可靠通知，不是两个库的一次提交。支付服务把支付单标成已支付之后，订单服务必须改自己的状态。先提交再发消息，崩溃会丢掉通知。先发消息再提交，会发出尚未成功的支付。\n\n〔本地消息表｜也叫事务性发件箱：业务更新和一条待发记录在同一个库的同一次提交〕把窗口收进一个库。中继只扫描已提交的待发行，发给消息中间件。订单服务消费时，在订单库里把对应订单改成已支付，这是另一个本地事务。投递至少一次，所以同一支付单号重复到达时，订单状态只改变一次。\n\n它不管库存预留还在不在。预留的释放仍是 Saga 或 TCC 的事。中继自己宕了，待发行还在，恢复后继续发。不要在支付事务里直接调用消息中间件，那一次网络发送不在数据库提交里。",
+      "why": "订单停在待支付、支付库已是已支付，对账才发现少了一条消息。区分信号是支付行和发件箱行要么都在，要么都不在；重复的消息不再改第二次。",
+      "example": "同一次提交写下支付结果和待发记录：\n\n```java\n@Transactional\npublic void markPaid(String paymentId, String orderId) {\n  payment.markPaid(paymentId);\n  outbox.insert(paymentId, \"PaymentPaid\", orderId);\n}\n```\n\n```sql\nBEGIN;\nUPDATE payment\n   SET status = 'PAID'\n WHERE id = ? AND status = 'PAYING';\nINSERT INTO outbox(id, type, payload, status)\nVALUES (?, 'PaymentPaid', ?, 'NEW');\nCOMMIT;\n```\n\n中继读到 `NEW` 才发送，发送成功再把这行改成已投递。订单消费方按 `paymentId` 更新，第二次更新影响行数为 0。",
+      "task": "画出支付库里的两行、中继、订单库。标明哪两行同一次提交，订单库的更新是不是同一次。再写重复消息时应怎样。",
+      "answer": "图：\n\n```text\n支付库：payment=PAID 与 outbox=NEW  → 同一次 COMMIT\n中继 → 消息中间件 → 订单服务\n订单库：单独的本地事务把订单改成已支付\n```\n\n两个库不是一次提交。\n\n同一 paymentId 再到一次，订单状态不再改变。",
+      "keywords": "本地消息表 发件箱 支付 至少一次 幂等",
+      "deep": [
+        {
+          "title": "图怎么读",
+          "body": "左框是支付库，两行在一个提交括号里。中继在提交之后。右框订单库单独提交。没有箭头把两个库连成一个事务。"
+        },
+        {
+          "title": "相关课",
+          "body": "发件箱见 `distributed-outbox`。消费幂等见 `distributed-idempotent-key`。画法见 `draw-tx-outbox`。两个库不连成一次提交。"
+        }
+      ],
+      "diagram": "diagrams/evo-tx-outbox.svg",
+      "points": [
+        "业务行和待发消息行在同一个库事务里提交",
+        "另一个服务的更新是它自己的本地事务",
+        "重复投递按业务键只生效一次"
+      ],
+      "references": [
+        [
+          "microservices.io：事务性发件箱",
+          "https://microservices.io/patterns/data/transactional-outbox.html"
+        ],
+        [
+          "Microsoft：补偿事务",
+          "https://learn.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "evo-tx-saga",
+      "title": "Saga 用新的释放动作收回已经提交的预留",
+      "prompt": "库存预留已经提交，用户支付失败，为什么不能等事务自己回滚？",
+      "promptAnswer": "预留那次提交已经结束。释放预留和取消订单是新的写入，失败了要重试或对账。",
+      "core": "Saga 解决的是长流程：订单已插入、库存已预留，两步都提交过了，然后用户支付失败或超时。协调器不能把已经提交的本地事务倒放。反向步骤是新业务：库存把预留数量加回去，订单改成已取消。在补偿完成前，别人可以看见「预留中」。页面和客服要能显示这个中间状态。\n\n谁推动下一步要先写明。编排是订单侧一份流程记录：当前步骤、超时后调用哪一个补偿。协同是库存、订单各自听事件。协同没有一张总表时，支付失败要靠订单号到两侧查，见 `distributed-saga-who-drives`。补偿会重复、会迟到，释放接口按订单号只加回一次。没有反向接口的副作用（已经发出的短信）只能再发说明或进对账，见 `distributed-saga-is-new-action`。\n\n这笔订单选 Saga 的理由：支付等待以分钟计，每一步用普通的本地事务更好理解，团队接受「已预留」这个可见状态。若预留必须在确认前被协调器占住、并要处理取消先于尝试到达，再看 TCC，而不是把 Saga 说成自动回滚。",
+      "why": "支付失败后只把订单改成取消，库存仍占着预留数量，后面的用户买不到。区分信号是正向两步已经提交，补偿是后来的更新，并且第二次补偿不改变数量。",
+      "example": "支付失败后的补偿是两次新的调用：\n\n```java\npublic void onPayFailed(String orderId) {\n  inventory.release(orderId);\n  orders.markCancelled(orderId);\n}\n```\n\n`release` 发现这笔订单的预留已经释放过，就直接返回，库存不再加。`markCancelled` 对已经取消的订单再次执行，状态保持取消。流程表记下当前步骤是「补偿中」，完成后改成「已取消」。",
+      "task": "画出正向两步和反向两步，标明哪些已经提交。写编排时你打开哪一张表决定要不要释放库存。",
+      "answer": "图：\n\n```text\n正向：插入待支付订单（已提交）→ 预留库存（已提交）→ 支付失败\n反向：释放预留（新写入）→ 订单改成已取消（新写入）\n```\n\n编排打开流程表的当前步骤。已预留且支付失败，就调用释放。\n\n释放重复到达时，预留数量只加回一次。\n\n这不是数据库回滚。补偿停住时数量仍是预留值，要重试或对账。",
+      "keywords": "Saga 补偿 预留 编排 订单 支付失败",
+      "deep": [
+        {
+          "title": "图怎么读",
+          "body": "上排三步都已提交，支付失败停在右边。下排箭头回到库存和订单，标注是新写入。中间的流程表只在编排方案里存在。"
+        },
+        {
+          "title": "和 TCC 怎么分",
+          "body": "能接受已预留被看见、用一次释放纠正，就停在 Saga。画法见 `draw-tx-saga`：下排是新写入，不是回滚。必须把占住资源做成尝试、确认、取消三套接口，并处理空回滚，才进入 `evo-tx-tcc`。"
+        }
+      ],
+      "diagram": "diagrams/evo-tx-saga.svg",
+      "points": [
+        "Saga 的反向步骤是新的写入，不是回滚已提交的事务",
+        "支付等待期间预留状态对别人可见",
+        "补偿按订单号只生效一次，停住时要对账"
+      ],
+      "references": [
+        [
+          "microservices.io：Saga",
+          "https://microservices.io/patterns/data/saga.html"
+        ],
+        [
+          "Microsoft：Saga",
+          "https://learn.microsoft.com/en-us/azure/architecture/patterns/saga"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "evo-tx-tcc",
+      "title": "TCC 用尝试、确认、取消占住库存，且不覆盖支付等待",
+      "prompt": "为什么库存预留做成 Try、Confirm、Cancel 之后，仍不能把等用户支付放进同一个全局事务？",
+      "promptAnswer": "TCC 的全局事务只覆盖短的预留协调。支付要数分钟。取消可能先于尝试到达，取消必须能空成功，后到的尝试必须拒绝。",
+      "core": "TCC 解决的是短窗口里的资源占用：确认之前，库存数量要被明确占住；取消必须能把占住的数量还回去。Try 检查并写入预留数量，Confirm 把预留变成实际扣减，Cancel 释放预留。三步都按全局事务号幂等。Seata 里 Try 是标了 `@TwoPhaseBusinessAction` 的方法，Confirm 和 Cancel 由注解指到的方法执行。库存若是远程服务，接口不要加 `@LocalTCC`；只有参与者是本进程里的 bean 时才加。\n\n取消可能比尝试先到，这叫空回滚：Cancel 发现还没有预留，应直接成功，并记下这个全局事务已经取消。后到的 Try 看见这个标记必须拒绝，否则数量会悬挂在预留态，没有人再来确认或取消。见 `sca-seata-tcc-empty`。\n\n不要把用户支付套进这一个 `@GlobalTransactional`。那会把协调和占用拖到数分钟，和 AT 把全局锁留在热点行上是同一类问题。实务是：Try 只提交预留数量并结束这一轮短事务，数据库行锁随之释放；占用靠预留列，不靠未提交的行锁。超时未支付由定时任务发起释放。释放若还要同时改订单，那是下一轮短事务或 Saga，不是把原来的全局事务留开。\n\n相对 Saga：TCC 多了三套接口、协调器和空回滚，换来的是「确认前的占用」有明确协议。团队写不出空回滚和悬挂处理时，用 Saga 的已预留状态，不要只实现快乐路径的 Try。",
+      "why": "只写了尝试成功后的确认，取消先到时去减一行不存在的预留，随后尝试又把数量占住。区分信号是按全局事务号能查出「已取消」，后到的尝试不再增加预留。",
+      "example": "远程库存的三个阶段。支付等待不在 `reserve` 这个全局事务里：\n\n```java\npublic interface StockTcc {\n  @TwoPhaseBusinessAction(name = \"stockTcc\", commitMethod = \"confirm\", rollbackMethod = \"cancel\")\n  boolean tryReserve(BusinessActionContext ctx,\n      @BusinessActionContextParameter(paramName = \"orderId\") String orderId,\n      @BusinessActionContextParameter(paramName = \"qty\") int qty);\n\n  boolean confirm(BusinessActionContext ctx);\n\n  boolean cancel(BusinessActionContext ctx);\n}\n```\n\n```java\n@GlobalTransactional\npublic void reserveOnly(String orderId, int qty) {\n  stockTcc.tryReserve(null, orderId, qty);\n}\n```\n\n`reserveOnly` 返回就结束全局事务。用户去支付。超时后另一次调用走 `cancel`，不把支付页面放进 `reserveOnly`。",
+      "task": "画出 Try、Confirm、Cancel。再画取消先到、尝试后到时预留数量是多少。说明支付等待在不在这个全局事务里。",
+      "answer": "图：\n\n```text\nTry：预留数量 +n，然后全局事务结束\nConfirm：预留转为扣减，只生效一次\nCancel：把预留还回去；若还没有 Try，空成功并记下已取消\n支付等待在这个全局事务外面\n```\n\n取消先到：预留数量不变，记下已取消。\n\n尝试后到：拒绝，预留数量仍不变。\n\n写不出空回滚就不要选 TCC，改用 Saga 的已预留状态。",
+      "keywords": "TCC Try Confirm Cancel 空回滚 库存预留",
+      "deep": [
+        {
+          "title": "图怎么读",
+          "body": "短括号只框住 Try 到确认或取消。人形支付画在括号外，由超时任务指向 Cancel。旁边的乱序框：取消先到，尝试被拒绝。"
+        },
+        {
+          "title": "相关课",
+          "body": "空回滚和悬挂见 `sca-seata-tcc-empty`。选型见 `evo-tx-choose`。补偿见 `evo-tx-saga`。"
+        }
+      ],
+      "diagram": "diagrams/evo-tx-tcc.svg",
+      "points": [
+        "Try 预留，Confirm 扣减，Cancel 释放，三步都要幂等",
+        "取消先到必须空成功，后到的尝试必须拒绝",
+        "全局事务不覆盖用户支付等待"
+      ],
+      "references": [
+        [
+          "Seata：TCC 模式",
+          "https://seata.apache.org/docs/user/mode/tcc/"
+        ],
+        [
+          "Seata：什么是 Seata",
+          "https://seata.apache.org/docs/overview/what-is-seata/"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "evo-perf-dr-govern",
+      "title": "性能、容灾和治理贴在订单链路上",
+      "prompt": "为什么不能把「再拆一批服务」当成性能优化、容灾和服务治理？",
+      "promptAnswer": "三件事各有指标。性能看哪一段时间，容灾看能丢多久和多久恢复，治理看超时、幂等重试、限流和一次请求能否追踪。",
+      "core": "这三件是前面每一站的配套，不是下一种架构。\n\n性能只优化有记录的那一段。商品详情读得多，用旁路缓存和 CDN 上的图片，权威仍是主库或从库，缓存过期不能当成下单成功。创建订单的写保持短事务，热点商品的库存更新靠索引和预留列，不靠把服务再拆一层。连接池按集群副本数预算。短信、积分放在支付成功的消息之后，失败可重试，不挡住接口返回。一次只改一段再复测，见 `fe-tune-one-layer` 在前端的同一原则。\n\n容灾先写两个数。〔RPO｜恢复点目标：能接受丢失多长时间内已确认的写入〕由复制方式决定：异步主从切换可能丢掉尚未传到从库的事务，半同步把已提交事务留在至少一台从库的中继日志里，但仍可能在超时后退回异步。〔RTO｜恢复时间目标：恢复服务要用的时间〕包括摘除坏副本、提升数据库、把应用写地址指到新主库。从库不是备份，误删除会复制过去；备份是可以按时间点恢复的另一份。应用集群去掉的是某一台进程消失，不是整个机房或整库的数据丢失。跨机房要单独量复制延迟，不是把微服务再拆一次。\n\n服务治理让一笔订单在失败时行为可预期。调用方超时、代理超时、向池借连接是三只钟。重试只针对带幂等键的预留和查询，不盲目重试一笔没有键的扣款。限流在入口挡住打向主库的超额下单。熔断是停止继续调用已经失败的下游，不是另一种重试。同一笔订单用一个 trace id 穿过网关、订单、库存和支付。发布时先摘流量、排空，再停进程。",
+      "why": "只加服务个数，详情的缓存命中、主从能丢的数据和预留的幂等键都还是空的。区分信号是三列里各有一个数或一个键：详情的命中与延迟、RPO 与 RTO、预留重试用的幂等键和 trace id。",
+      "example": "三列贴在同一笔订单上：\n\n```text\n性能  详情走缓存和 CDN；下单事务保持短；短信异步\n容灾  写清 RPO/RTO；从库切换 ≠ 备份；集群只去掉单台故障\n治理  超时三只钟；预留重试带幂等键；限流；trace id\n```",
+      "task": "给同一笔订单各写一行：性能上改哪一段、容灾的 RPO 和 RTO 各由什么决定、重试预留时带什么键。",
+      "answer": "性能：商品详情走缓存和 CDN；创建订单保持短事务；短信不挡接口。\n\nRPO 由复制延迟或半同步是否还在生效决定。RTO 包括摘副本、提升库、改写地址。\n\n从库切换不能代替备份。\n\n重试预留带原来的幂等键，并用同一个 trace id 把订单、库存、支付串起来。\n\n熔断不是重试。限流保护的是主库，不是再拆一个服务。",
+      "keywords": "性能 容灾 RPO RTO 限流 熔断 追踪 订单",
+      "deep": [
+        {
+          "title": "图怎么读",
+          "body": "中间是订单请求穿过网关、订单、库存、支付。左侧性能只标详情和短事务。右侧容灾标复制和备份两条不同的箭头。下方治理是超时、幂等键、限流和 trace id。"
+        },
+        {
+          "title": "相关课",
+          "body": "错误预算见 `arch-slo-budget`。三只超时见 `java-http-timeout`、`nginx-proxy-timeout`、`hikari-pool-timeout`。熔断与重试见 `circuit-breaker-not-retry`。追踪见 `request-trace-one-hop`。"
+        }
+      ],
+      "diagram": "diagrams/evo-perf-dr-govern.svg",
+      "points": [
+        "性能、容灾、治理是订单链路上的配套，不是下一种架构",
+        "RPO 看能丢多久的已确认写入，RTO 看恢复要多久",
+        "重试预留必须带幂等键，熔断不是重试"
+      ],
+      "references": [
+        [
+          "Microsoft：灾难恢复",
+          "https://learn.microsoft.com/en-us/azure/well-architected/reliability/disaster-recovery"
+        ],
+        [
+          "Google SRE：处理过载",
+          "https://sre.google/sre-book/handling-overload/"
         ]
       ]
     },
@@ -41450,8 +42293,8 @@
       "id": "draw-uml-state",
       "title": "状态图写出订单允许的迁移",
       "prompt": "「已支付」能直接变成「已取消」吗？",
-      "promptAnswer": "不能。这张图里取消只从待支付出发。已支付之后只允许出库到已发货。",
-      "core": "UML 状态机图里，圆角矩形是状态，实心圆是初始伪状态。迁移画成箭头，线上写触发它的事件。守卫要写就放在方括号里。没有这条箭头，就不存在这次迁移。下单这一张只保留：待支付经支付成功到已支付，待支付经取消到已取消，已支付经出库到已发货，已发货经签收到已完成。",
+      "promptAnswer": "不能。取消只从待支付出发。已支付要退款，须另加状态和事件，不能写成取消。",
+      "core": "UML 状态机图里，圆角矩形是状态，实心圆是初始伪状态。迁移画成箭头，线上写触发它的事件。守卫要写就放在方括号里。没有这条箭头，就不存在这次迁移。下单这一张先保留：待支付经支付成功到已支付，待支付经取消到已取消，已支付经出库到已发货，已发货经签收到已完成。退款不画在这一张，也不能把取消的箭头改到已支付上。",
       "example": "允许的迁移：\n\n```text\n[*] --> 待支付\n待支付 --> 已支付 : 支付成功\n待支付 --> 已取消 : 取消\n已支付 --> 已发货 : 出库\n已发货 --> 已完成 : 签收\n```",
       "task": "画出订单状态机。列出每条迁移的起点、事件和终点。",
       "answer": "```text\n[*] --> 待支付\n待支付 --> 已支付 : 支付成功\n待支付 --> 已取消 : 取消\n已支付 --> 已发货 : 出库\n已发货 --> 已完成 : 签收\n```\n\n已支付没有指向已取消的箭头。没有画出的迁移不能在接口里偷偷做。",
@@ -41683,6 +42526,712 @@
         [
           "C4 model：Notation",
           "https://c4model.com/diagrams/notation"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "draw-c4-context",
+      "title": "上下文图只画订单系统外面有谁",
+      "prompt": "支付渠道该画在订单系统的框内还是框外？",
+      "promptAnswer": "框外。系统上下文图里订单系统只有一个框。支付渠道和仓储系统都是外部软件系统。",
+      "core": "C4 的系统上下文图只回答：这个软件系统外面有谁。要讨论的软件画成中间的一个框。人画在框外。支付渠道、仓储系统是别的软件，也画在框外。箭头上写双方为了什么交换信息。这一张不出现订单页面、订单服务、MySQL 或消息，也不写 JDBC。能单独部署的块用容器图。",
+      "example": "订单系统的外面：\n\n```text\n下单用户 --提交并查看订单--> 订单系统\n订单系统 --发起支付--> 支付渠道\n订单系统 --通知出库--> 仓储系统\n```",
+      "task": "画出订单系统、下单用户、支付渠道和仓储系统。写明谁在框外，箭头上只写交互的目的。",
+      "answer": "```text\n下单用户 --提交并查看订单--> 订单系统\n订单系统 --发起支付--> 支付渠道\n订单系统 --通知出库--> 仓储系统\n```\n\n1. 订单系统只有一个框。\n2. 人、支付渠道、仓储系统都在框外。\n3. 箭头上没有 JDBC，也没有订单服务。",
+      "keywords": "C4 system context diagram",
+      "diagram": "diagrams/draw-c4-context.svg",
+      "deep": [
+        {
+          "title": "容器不要提前出现",
+          "body": "订单页面、订单服务、MySQL 是容器图上的块。画进上下文图之后，这张图就不再回答「外面有谁」。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "数一数代表本系统的框。多于一个，就把多出来的框挪到容器图。箭头上若出现端口或表名，改成这一次要办的事。"
+        }
+      ],
+      "points": [
+        "系统上下文图把要讨论的软件画成一个框",
+        "人和外部软件系统画在这个框外面",
+        "箭头写交互的目的，不写数据库协议"
+      ],
+      "references": [
+        [
+          "C4 model：System context diagram",
+          "https://c4model.com/diagrams/system-context"
+        ],
+        [
+          "C4 model：Notation",
+          "https://c4model.com/diagrams/notation"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "draw-uml-package",
+      "title": "包图写出谁使用订单这个包",
+      "prompt": "下单应用和订单两个包之间，虚线箭头指向哪一边？",
+      "promptAnswer": "指向订单。使用方是下单应用。订单不依赖下单应用，不要把箭头画回去。",
+      "core": "〔包｜把一组类型收进同一个命名空间的单元〕画成带折角的方框，框里写它拥有的类型。包和包之间的依赖是虚线开口箭头，从使用方指向被使用方；要标明导入类型时，在线上写 «import»。下单应用导入订单。订单导入商品和支付：订单行要引用商品，订单要引用支付方式。订单不导入下单应用。包图不表示这一次请求先调用谁，先后用时序图。",
+      "example": "四个包：\n\n```text\npackage 下单应用\npackage 订单\n  订单\n  订单行\npackage 商品\n  商品\npackage 支付\n  支付方式\n\n下单应用 ..> 订单 : «import»\n订单 ..> 商品 : «import»\n订单 ..> 支付 : «import»\n```",
+      "task": "画出下单应用、订单、商品、支付四个包。标出依赖方向，并写出哪一条箭头不能画。",
+      "answer": "```text\n下单应用 ..> 订单 : «import»\n订单 ..> 商品 : «import»\n订单 ..> 支付 : «import»\n```\n\n1. 箭头都从使用方指出。\n2. 订单拥有订单和订单行。商品、支付各自拥有自己的类型。\n3. 没有从订单指向下单应用的箭头。",
+      "keywords": "UML package diagram import dependency",
+      "diagram": "diagrams/draw-uml-package.svg",
+      "deep": [
+        {
+          "title": "方向反了就是循环",
+          "body": "再加一条从订单指向下单应用的虚线，领域类型就要依赖编排它们的应用。包图上应能直接看出这条箭头不该存在。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "从订单包出发，沿虚线走。走到商品和支付可以。走到下单应用，这张图就画反了。"
+        }
+      ],
+      "points": [
+        "包把一组类型收在同一个命名空间里",
+        "依赖的虚线从使用方指向被使用方",
+        "订单包不依赖下单应用"
+      ],
+      "references": [
+        [
+          "OMG：UML 2.5.1",
+          "https://www.omg.org/spec/UML/2.5.1/About-UML"
+        ],
+        [
+          "UML：Package diagrams",
+          "https://www.uml-diagrams.org/package-diagrams-overview.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "draw-uml-object",
+      "title": "对象图记下这一刻的那一笔订单",
+      "prompt": "类图上的 1..*，在对象图里要写成什么？",
+      "promptAnswer": "写成这一刻实际存在的链接。这一笔有两行，就画两个订单行实例，各自只连接这一个订单。",
+      "core": "对象图画某一时刻已经存在的对象，不改类型的一般规则。〔实例｜某个类型在这一刻的一个具体对象〕写成带下划线的 `名字 : 类型`，框里写这一刻的属性值。实例之间的实线是链接，对应类图上的关联或组合。类图规定订单行同时只属于一个订单。这一刻订单 o-1001 处于待支付，并且有两行，就画两个订单行实例，各自只连 o-1001，再各自连自己的商品。不要在对象图上另写一套多重性。",
+      "example": "下单之后、支付之前的这一刻：\n\n```text\nu1 : 用户\n  userId = \"u-9\"\no-1001 : 订单\n  status = 待支付\nline-1 : 订单行\n  qty = 2\nline-2 : 订单行\n  qty = 1\nsku-a : 商品\nsku-b : 商品\n\nu1 —— o-1001\no-1001 —— line-1 —— sku-a\no-1001 —— line-2 —— sku-b\n```",
+      "task": "画出用户 u1、订单 o-1001、两个订单行和两个商品在这一刻的对象图。每个订单行只连接一个订单。",
+      "answer": "```text\nu1 : 用户\no-1001 : 订单\n  status = 待支付\nline-1 : 订单行\n  qty = 2\nline-2 : 订单行\n  qty = 1\nsku-a : 商品\nsku-b : 商品\n\nu1 —— o-1001\no-1001 —— line-1 —— sku-a\no-1001 —— line-2 —— sku-b\n```\n\n1. 名字带类型，表示实例，不是类。\n2. 两个订单行都只连 o-1001。\n3. status = 待支付 是这一刻的值，不是一条新的迁移。",
+      "keywords": "UML object diagram instance link",
+      "diagram": "diagrams/draw-uml-object.svg",
+      "deep": [
+        {
+          "title": "取值不是新规则",
+          "body": "待支付写在 o-1001 的 status 里，表示这一刻它处在那个状态。允许离开待支付的事件仍以状态图为准。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "指着 line-1，只能碰到一个订单。若它同时连着另一个订单，就和类图的组合矛盾。"
+        }
+      ],
+      "points": [
+        "对象图用带下划线的名字表示这一刻的实例",
+        "实例之间的实线是链接",
+        "链接必须符合类图已经规定的多重性"
+      ],
+      "references": [
+        [
+          "OMG：UML 2.5.1",
+          "https://www.omg.org/spec/UML/2.5.1/About-UML"
+        ],
+        [
+          "UML：Object diagram example",
+          "https://www.uml-diagrams.org/online-shopping-user-login-uml-object-diagram-example.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "draw-pick-diagram",
+      "title": "先按要回答的问题选图",
+      "prompt": "要说明这一次提交先写库再返回，该画包图还是时序图？",
+      "promptAnswer": "时序图。包图只表示包之间有依赖，不表示这一次调用的先后。",
+      "core": "先写这张图要回答的问题，再选一种图。系统外有谁，用系统上下文图，本系统只留一个框。能单独部署的块，用容器图；一个容器内部怎么分工，用组件图。一次调用的先后，用时序图。互斥结果和并行的支，用活动图。允许哪些状态变化，用状态图。类型、组合和多重性，用类图。某一时刻有哪些实例，用对象图。表和基数，用 ER 图。进程落在哪台机器，用部署图。每次都做还是可选，用用例图。类型怎么分包，用包图。同一程序要多份副本，用集群图，不另画第二个业务服务。多个系统只经总线复用能力，用 SOA 图。按订单、库存、支付切开库，用微服务图。写和刚写完的读要分开，用主从图。静态字节和下单接口要分开，用静态与 CDN 图。分库之后先问还在不在一个库，用事务选型图，三条不并成一种。一个进程、一次提交用单体图。已发货后的退货在状态图上另加事件，不复用退款完成。已完成之后的退货再用顾客退回，不复用退货入库。可靠通知用本地消息表图，两行一次提交。预留已提交后的释放用 Saga 图，画新写入，不画回滚。〔通信图｜把同一次交互画成方框和连线，顺序靠编号〕不必另画，先后以时序图为准。",
+      "example": "按问题选图：\n\n```text\n支付渠道在系统外 --> 系统上下文图\n这一刻 o-1001 有两行 --> 对象图\n下单应用依赖订单包 --> 包图\n同一程序要多份副本 --> 集群图\n多个系统只连总线 --> SOA 图\n一个服务一个库 --> 微服务图\n一个进程一次提交 --> 单体图\n刚写完的读走主库 --> 主从图\n静态字节和下单要分开 --> 静态与 CDN 图\n分库之后先问还在不在一个库 --> 事务选型图\n已发货后的退货 --> 状态图，事件是退货入库\n已完成之后的退货 --> 状态图，事件是顾客退回\n支付行和待发行同一次提交 --> 本地消息表图\n预留已提交后的释放 --> Saga 图\n这一次先写库再返回 --> 时序图\n```",
+      "task": "下面三句各写一行：该用的图名，以及这一行上必须出现的框或箭头。",
+      "answer": "```text\n支付渠道在系统外 --> 系统上下文图\n  订单系统一个框，支付渠道在框外\n这一刻 o-1001 有两行 --> 对象图\n  o-1001 : 订单 —— line-1、line-2\n下单应用依赖订单包 --> 包图\n  下单应用 ..> 订单\n```\n\n1. 上下文图不拆订单服务。\n2. 对象图画实例，不改多重性。\n3. 先后不写在包图上。",
+      "keywords": "pick C4 UML diagram by question",
+      "diagram": "diagrams/draw-pick-diagram.svg",
+      "deep": [
+        {
+          "title": "一张图只回答一个问题",
+          "body": "把 JDBC、包名和状态迁移画进同一张图，看的人无法判断哪一条线是部署、哪一条是依赖。拆开之后，每张图都能单独核对。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "盖住图名，只读箭头上的字。若读不出这张图要回答的那一个问题，就还没选对，或者箭头上的字写串了。"
+        }
+      ],
+      "points": [
+        "系统外有谁用系统上下文图，这一张不拆可部署的块",
+        "某一时刻的实例用对象图，类型和组合用类图",
+        "包图表示依赖，一次调用的先后用时序图"
+      ],
+      "references": [
+        [
+          "C4 model：System context diagram",
+          "https://c4model.com/diagrams/system-context"
+        ],
+        [
+          "OMG：UML 2.5.1",
+          "https://www.omg.org/spec/UML/2.5.1/About-UML"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "draw-uml-state-refund",
+      "title": "已支付后退款要新状态和新事件",
+      "prompt": "已支付之后的退款，能不能复用「取消」？",
+      "promptAnswer": "不能。取消只从待支付出发。已支付经「退款完成」到新状态「已退款」。",
+      "core": "状态图里没有箭头，就不允许这次迁移。取消的起点仍是待支付，终点仍是已取消。已支付之后若要退款，另加状态「已退款」，事件写「退款完成」，箭头从已支付指向已退款。已发货不接这条箭头：货已经出库，不能用同一个事件离开。出库和签收仍保留。待支付也不能指向已退款，还没支付就没有这笔退款。",
+      "example": "在原来的迁移上追加一条：\n\n```text\n[*] --> 待支付\n待支付 --> 已支付 : 支付成功\n待支付 --> 已取消 : 取消\n已支付 --> 已发货 : 出库\n已支付 --> 已退款 : 退款完成\n已发货 --> 已完成 : 签收\n```",
+      "task": "画出含已退款的订单状态机。写明退款完成的起点和终点，并写出哪两条箭头不能出现。",
+      "answer": "```text\n[*] --> 待支付\n待支付 --> 已支付 : 支付成功\n待支付 --> 已取消 : 取消\n已支付 --> 已发货 : 出库\n已支付 --> 已退款 : 退款完成\n已发货 --> 已完成 : 签收\n```\n\n1. 退款完成从已支付到已退款。\n2. 没有已支付到已取消的箭头。\n3. 没有已发货到已退款的箭头，也没有待支付到已退款的箭头。",
+      "keywords": "UML state refund new transition",
+      "diagram": "diagrams/draw-uml-state-refund.svg",
+      "deep": [
+        {
+          "title": "出库之后是另一件事",
+          "body": "已发货之后的退货见 `draw-uml-state-return`：新状态已退货，事件退货入库。不能把退款完成同时接到已支付和已发货上。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "从已支付出发，数离开它的箭头。应能看见出库和退款完成，看不见取消。从待支付出发，应能看见取消，看不见退款完成。"
+        }
+      ],
+      "points": [
+        "退款使用新状态已退款和新事件退款完成",
+        "取消的起点仍然只是待支付",
+        "已发货不使用退款完成这条迁移"
+      ],
+      "references": [
+        [
+          "OMG：UML 2.5.1",
+          "https://www.omg.org/spec/UML/2.5.1/About-UML"
+        ],
+        [
+          "UML：State machine diagrams",
+          "https://www.uml-diagrams.org/state-machine-diagrams.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "draw-uml-realize",
+      "title": "实现用虚线空心三角指向端口",
+      "prompt": "MySQL 适配器指向库存端口，该用实线空心三角还是虚线空心三角？",
+      "promptAnswer": "虚线空心三角。三角指向库存端口，这是实现。实线空心三角是泛化，用来指向父类。",
+      "core": "〔接口｜一组操作的约定，调用方只依赖这组操作〕用带 «interface» 的框，或单独写在端口上。〔实现｜某个类型答应提供接口里的操作〕是虚线加大空心三角，三角指向接口。MySQL 适配器实现库存端口。下单应用只使用这个端口，所以仍是依赖：虚线开口箭头，从下单应用指向库存端口，没有三角。泛化是实线空心三角，三角指向父类，例如在线支付指向支付方式。不要把实现画成实线。",
+      "example": "端口、适配器和调用方：\n\n```text\n«interface» 库存端口\n  按条件扣减()\nMySQL适配器 ..|> 库存端口\n下单应用 ..> 库存端口\n在线支付 --|> 支付方式\n```\n\n..|> 的三角指向库存端口。--|> 的三角指向支付方式。",
+      "task": "画出库存端口、MySQL 适配器、下单应用和支付方式。标出哪一条是实现，哪一条是依赖，哪一条是泛化。",
+      "answer": "```text\n«interface» 库存端口\nMySQL适配器 ..|> 库存端口\n下单应用 ..> 库存端口\n在线支付 --|> 支付方式\n```\n\n1. 实现是虚线空心三角，指向库存端口。\n2. 下单应用到端口是依赖，没有三角。\n3. 在线支付到支付方式是实线空心三角。",
+      "keywords": "UML interface realization generalization",
+      "diagram": "diagrams/draw-uml-realize.svg",
+      "deep": [
+        {
+          "title": "实现不是部署",
+          "body": "MySQL 适配器实现库存端口，只说明它提供这组操作。它和订单服务是不是同一个可部署单元，看组件图，不看这条虚线。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "三角若是实线，问它是不是父类。库存端口不是 MySQL 适配器的父类，这条线应改成虚线。下单应用若也画成实现，就变成它自己去扣库存。"
+        }
+      ],
+      "points": [
+        "实现是虚线加大空心三角，三角指向接口",
+        "使用端口的一方画依赖，不画实现",
+        "泛化是实线空心三角，三角指向父类"
+      ],
+      "references": [
+        [
+          "OMG：UML 2.5.1",
+          "https://www.omg.org/spec/UML/2.5.1/About-UML"
+        ],
+        [
+          "UML：Realization",
+          "https://www.uml-diagrams.org/realization.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "draw-uml-fragment",
+      "title": "时序图用 opt 和 loop 分开可选与重复",
+      "prompt": "「带了券才核销」该放进 opt 还是 alt？",
+      "promptAnswer": "opt。只有一支，守卫成立才核销，不成立就跳过，提交仍继续。alt 用来分开互斥的两支。",
+      "core": "组合片段圈出一段消息。opt 只有一个操作数，守卫写在方括号里；守卫为真才执行，为假就跳过，后面的消息照常走。alt 至少两支，互斥，至多走一支，库存足够和不足用它。〔loop｜按守卫重复同一段消息的组合片段〕在守卫为真时把框里的消息再做一遍。出库可以按订单行循环：还有未出库的行，就再发一次「出库一行」。不要用 loop 把整次提交订单再插入一遍。",
+      "example": "券是可选，出库按行重复：\n\n```text\n页面 -> 订单服务 : 提交订单\nopt [用户带了券码]\n  订单服务 -> 优惠 : 核销\n  优惠 --> 订单服务 : 已核销\n订单服务 -> 数据库 : 条件更新库存并插入订单\nloop [还有未出库的订单行]\n  订单服务 -> 仓储 : 出库一行\n  仓储 --> 订单服务 : 该行已出库\n```",
+      "task": "画出核销优惠券的 opt，以及按订单行出库的 loop。两个守卫都要写上。",
+      "answer": "```text\nopt [用户带了券码]\n  订单服务 -> 优惠 : 核销\n  优惠 --> 订单服务 : 已核销\nloop [还有未出库的订单行]\n  订单服务 -> 仓储 : 出库一行\n  仓储 --> 订单服务 : 该行已出库\n```\n\n1. 没有券时跳过核销，不另画一支「不核销」。\n2. loop 只重复出库这一段。\n3. 库存足够或不足仍用 alt，不要改成 loop。",
+      "keywords": "UML sequence opt loop combined fragment",
+      "diagram": "diagrams/draw-uml-fragment.svg",
+      "deep": [
+        {
+          "title": "跳过不是另一支",
+          "body": "opt 不要为守卫为假再画一个空分支。那种互斥的两支是 alt。没有券码时，核销的消息不出现，提交订单继续。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "问守卫为假时图上还剩什么。opt 应只少了框里的消息。loop 应能指出重复的是哪几条消息，而不是从「提交订单」重新开始。"
+        }
+      ],
+      "points": [
+        "opt 只有一支，守卫不成立就跳过",
+        "alt 的分支互斥，至多执行一支",
+        "loop 按守卫重复框内的消息，不重复整次提交"
+      ],
+      "references": [
+        [
+          "OMG：UML 2.5.1",
+          "https://www.omg.org/spec/UML/2.5.1/About-UML"
+        ],
+        [
+          "UML：Sequence combined fragments",
+          "https://www.uml-diagrams.org/sequence-diagrams-combined-fragment.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "draw-cluster",
+      "title": "集群图画同一程序的多份副本",
+      "prompt": "下单变慢、主库还有余量时，图上该再画一个库存服务，还是再画几份相同的下单应用？",
+      "promptAnswer": "再画几份相同的下单应用。前面一个负载均衡，会话和主库各只留一个。这张图不出现第二个业务服务。",
+      "core": "集群图回答的是同一套程序有几份副本、请求从哪进来、会话和写入落在哪。〔负载均衡｜把请求分到后面多份相同程序的入口〕只有一个框。后面的框写同一个名字，例如下单应用 1、2、3，表示可以互换。每个副本都指向同一个会话存储，也都指向同一个主库。会话若画在某一份副本里面，这张图就还是有状态的单机。\n\n滚动发布写在图的一角：一次只换一台。不要画成三台同时换成新版本。\n\n容器图里的订单服务仍是一个可部署的块。集群图把这一个块展开成副本，不在这里拆出库存服务。进程落在哪台机器，用部署图。库已经忙时，这张图不是下一步，见 `evo-cluster-deploy`。",
+      "example": "同一程序的三份副本：\n\n```text\n用户 --> 负载均衡\n负载均衡 --> 下单应用 1\n负载均衡 --> 下单应用 2\n负载均衡 --> 下单应用 3\n下单应用 1、2、3 --> 同一个 Redis 会话\n下单应用 1、2、3 --> 同一个主库\n滚动：一次只换一台\n```\n\n三个应用框写的是同一套程序。图上没有库存服务。",
+      "task": "画出负载均衡、三份下单应用、会话和主库。标出滚动时一次动几台。写出这张图上不能出现的框。",
+      "answer": "```text\n用户 --> 负载均衡 --> 下单应用 1、2、3\n三份应用 --> 同一个 Redis 会话\n三份应用 --> 同一个主库\n滚动：一次只换一台\n```\n\n1. 三份是同一套下单程序，可以互换。\n2. 会话不画在某一份副本里面。\n3. 这张图没有库存服务，也没有第二个库。",
+      "keywords": "cluster diagram replicas load balancer",
+      "diagram": "diagrams/draw-cluster.svg",
+      "deep": [
+        {
+          "title": "和微服务图怎么分",
+          "body": "图上若出现库存服务，或第二个库，就不再是集群图。那是 SOA 图或微服务图要回答的问题。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "盖住副本编号，三个框应能互换。若只有一份连着会话存储，会话仍留在那一台里。"
+        }
+      ],
+      "points": [
+        "集群图展开的是同一程序的多份副本，前面只有一个负载均衡",
+        "会话和主库各只有一个，不画进某一份副本里",
+        "这张图不出现第二个业务服务，一次只换一台"
+      ],
+      "references": [
+        [
+          "Nginx：HTTP 负载均衡",
+          "https://nginx.org/en/docs/http/load_balancing.html"
+        ],
+        [
+          "C4 model：Container diagram",
+          "https://c4model.com/diagrams/container"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "draw-soa",
+      "title": "SOA 图画调用方只连总线",
+      "prompt": "商城、门店和合作方都要创建订单，调用方该连库还是只连总线？",
+      "promptAnswer": "只连总线。总线再转到订单服务和库存服务。两个服务可以指向同一个库，那是两条连接、两次提交。",
+      "core": "经典 SOA 图回答的是多个系统怎样复用同一套能力。〔企业服务总线｜中心上的路由、协议转换和编排〕放在调用方和服务之间。商城、门店、合作方只画到总线，不画到库，也不绕过总线直连服务。\n\n订单服务和库存服务可以画到同一个库。箭头是两条，各自一次提交。图上要写明没有一个进程内事务能盖住这两次提交。不要把共享库画成单体里的一次本地事务。\n\n每个服务下面各有一个库，是微服务图，不是这张。调用方若各自写一套下单，这张图还没画出来。见 `evo-soa-bus`。",
+      "example": "调用方只到总线：\n\n```text\n商城 --> 企业服务总线\n门店 --> 企业服务总线\n合作方 --> 企业服务总线\n企业服务总线 --> 订单服务\n企业服务总线 --> 库存服务\n订单服务 --> 同一个库（提交 1）\n库存服务 --> 同一个库（提交 2）\n```\n\n没有从商城直接进库的箭头。",
+      "task": "画出三个调用方、总线、订单服务、库存服务和库。标明是一条连接还是两条。写出调用方不能连到哪里。",
+      "answer": "```text\n商城、门店、合作方 --> 企业服务总线\n企业服务总线 --> 订单服务、库存服务\n订单服务 --> 同一个库（提交 1）\n库存服务 --> 同一个库（提交 2）\n```\n\n1. 调用方不直连库，也不绕过总线直连服务。\n2. 两条连接、两次提交，没有一个进程内事务。\n3. 不要画成订单库和库存库各一个。",
+      "keywords": "SOA ESB shared database diagram",
+      "diagram": "diagrams/draw-soa.svg",
+      "deep": [
+        {
+          "title": "总线不是网关的别名",
+          "body": "〔网关｜集群外进来的统一入口〕可以只做转发。企业服务总线还做路由、转换和编排。只转发、后面又是各自的库，不要标成 SOA。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "从商城出发，下一框只能是总线。从订单服务和库存服务往下数，应碰到同一个库，并且能数出两次提交。"
+        }
+      ],
+      "points": [
+        "调用方只连接企业服务总线，不直连库",
+        "多个服务指向同一个库时仍是多次提交",
+        "一个服务一个库不是这张 SOA 图"
+      ],
+      "references": [
+        [
+          "Martin Fowler：Microservices",
+          "https://martinfowler.com/articles/microservices.html"
+        ],
+        [
+          "OASIS：Reference Model for SOA 1.0",
+          "https://docs.oasis-open.org/soa-rm/v1.0/soa-rm.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "draw-microservice",
+      "title": "微服务图一个服务只连自己的库",
+      "prompt": "按控制器、服务、数据访问拆成三个框，能不能叫微服务图？",
+      "promptAnswer": "不能。微服务图按订单、库存、支付切开。每个服务只连自己的库。预留用实线，支付成功后的通知用虚线。",
+      "core": "微服务图回答的是业务能力是否已经分开：谁写哪一个库、哪一段要当场结果、哪一段用消息。订单服务只连订单库，库存服务只连库存库，支付服务只连支付库。三个框若是控制器、服务、数据访问，它们仍写同一个库，这张图不成立。\n\n实线表示调用方还在等，例如订单服务同步调用库存预留。虚线表示事后通知，从支付服务指向订单服务，事件写支付成功。不要把这条虚线画成库存指向支付。\n\n支付等待画在支付旁边。它不画进任何一个库的锁里。入口若有〔网关｜集群外进来的统一入口，只负责转发〕，网关只转发到订单服务，不在网关上编排库存和支付。编排画在总线上，是 SOA 图。见 `evo-microservice-order`。",
+      "example": "三个服务、三个库：\n\n```text\n订单服务 --> 订单库\n库存服务 --> 库存库\n支付服务 --> 支付库\n订单服务 --实线 同步预留--> 库存服务\n支付服务 --虚线 支付成功--> 订单服务\n用户在支付旁等待\n```\n\n没有控制器、服务、数据访问这三个框。",
+      "task": "画出订单、库存、支付和各自的库。标出哪一条是实线、哪一条是虚线，虚线从谁指向谁。写出不能当成这三个框的分层。",
+      "answer": "```text\n订单服务 --> 订单库\n库存服务 --> 库存库\n支付服务 --> 支付库\n订单服务 --实线 同步预留--> 库存服务\n支付服务 --虚线 支付成功--> 订单服务\n```\n\n1. 每个服务只连自己的库。\n2. 实线是同步预留。虚线从支付服务指向订单服务。\n3. 控制器、服务、数据访问不是这三个框。",
+      "keywords": "microservice diagram database per service",
+      "diagram": "diagrams/draw-microservice.svg",
+      "deep": [
+        {
+          "title": "网关不是总线",
+          "body": "网关可以画在订单服务前面，箭头只写转发。不要在网关和库存、支付之间再画编排。那种中心编排是 SOA 图上的企业服务总线。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "从每个服务往下数，只能碰到一个库。虚线的起点应是支付服务，终点应是订单服务。"
+        }
+      ],
+      "points": [
+        "微服务图按订单、库存、支付切开，每个服务只连自己的库",
+        "同步预留用实线，支付成功的通知用虚线，从支付服务指向订单服务",
+        "控制器、服务、数据访问三个框不是这张图"
+      ],
+      "references": [
+        [
+          "Martin Fowler：Microservices",
+          "https://martinfowler.com/articles/microservices.html"
+        ],
+        [
+          "Microsoft：微服务架构风格",
+          "https://learn.microsoft.com/en-us/azure/architecture/guide/architecture-styles/microservices"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "draw-replica",
+      "title": "主从图把刚写完的读留在主库",
+      "prompt": "商品详情把主库读满了。图上能不能把刚创建的订单也指到从库？",
+      "promptAnswer": "不能。写和刚写完的读进主库。列表和详情可以进从库。半同步只表示从库收到了日志，不是已经能查到这行。",
+      "core": "主从图回答的是读和写分别打到哪一台。〔主库｜source：接受写入并记下二进制日志〕接创建订单、扣库存，以及用户刚提交后马上要看见的那一笔。〔从库｜replica：重放日志的只读副本〕接商品详情和订单列表。两条读不要并成一个箭头。\n\n〔半同步｜主库等到至少一个从库把事件写入中继日志并刷盘，再完成提交〕写在主库到从库的箭头旁边。它不表示从库的查询已经能看见这行。超时会退回异步，不要把这条箭头写成永远强一致。\n\n从库会把主库上的误删除也重放掉，所以不要标成备份。备份是可以按时间点恢复的另一份，不画在这张读写箭头上。见 `evo-replica-read-write`。",
+      "example": "写和刚写完的读分开：\n\n```text\n写、刚创建的订单 --> 主库\n商品详情、订单列表 --> 从库\n主库 --二进制日志--> 从库\n半同步：至少一个从库写入中继日志并刷盘\n超时退回异步；从库不是备份\n```\n\n刚支付成功的那次查询不指向从库。",
+      "task": "画出写、刚写完的读、列表读分别打到哪一台。再写半同步保证了什么、没有保证什么。",
+      "answer": "```text\n写、刚创建的订单 --> 主库\n商品详情、订单列表 --> 从库\n主库 --二进制日志--> 从库\n```\n\n1. 半同步保证提交返回时，至少一个从库已经把事件写入中继日志并刷盘。\n2. 它不保证从库的查询已经能看见这行。刚写完的读仍走主库。\n3. 从库会重放误删除，不能标成备份。",
+      "keywords": "primary replica diagram semisynchronous replication",
+      "diagram": "diagrams/draw-replica.svg",
+      "deep": [
+        {
+          "title": "和集群图怎么分",
+          "body": "集群图展开的是同一套下单程序的多份副本，主库仍只有一个。主从图才把读分到从库。两张图不要画成加了应用副本就等于读写分离。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "从「刚创建的订单」出发，下一框只能是主库。从库那一侧只应接到详情或列表。箭头上若写着「从库已能查到」，这张图就画错了。"
+        }
+      ],
+      "points": [
+        "写和刚写完的读进主库，可延迟的列表和详情进从库",
+        "半同步等的是从库写入中继日志，不是从库已经能查到这行",
+        "从库会重放误删除，不能标成备份"
+      ],
+      "references": [
+        [
+          "MySQL 8.4：复制",
+          "https://dev.mysql.com/doc/refman/8.4/en/replication.html"
+        ],
+        [
+          "MySQL 8.4：半同步复制",
+          "https://dev.mysql.com/doc/refman/8.4/en/replication-semisync.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "draw-static-cdn",
+      "title": "静态图把脚本和图片分出下单接口",
+      "prompt": "商品图和下单接口挤在同一台机器上。图上该把接口也送进 CDN 的长缓存吗？",
+      "promptAnswer": "不送。哈希过的脚本和图片走对象存储和 CDN。创建订单仍走应用集群，不设成长缓存。",
+      "core": "这张图回答的是静态字节和下单接口是不是同一条路。〔对象存储｜按键存放文件的存储，不是数据库表〕放商品图和带内容哈希的脚本。〔CDN｜把内容缓存在离用户更近的边缘节点〕用独立域名接这些文件。命中就在边缘返回，未命中才回源到对象存储。\n\n创建订单的箭头单独进应用集群，响应不设成一年缓存。HTML 入口要能拿到新的哈希地址，所以用短缓存或每次向源站再验证。角上写发布顺序：先上传新哈希文件并保留旧文件，再改 HTML。\n\nCSDN 是技术内容社区，画在这条路外面。它没有桶、上传凭证和回源。不要把它画成源站。见 `evo-static-cdn`。",
+      "example": "两类流量分开：\n\n```text\n浏览器 --脚本和图片--> CDN --未命中--> 对象存储\n浏览器 --创建订单--> 应用集群\n哈希文件：长期缓存\nHTML：no-cache\n先上传新哈希文件，再改 HTML\nCSDN 在这条路外面\n```\n\n没有从创建订单指向 CDN 的箭头。",
+      "task": "画出静态域名上的文件、下单接口、哈希文件和 HTML 的缓存，以及发布时先做哪一步。说明 CSDN 画在哪里。",
+      "answer": "```text\n脚本和图片 --> CDN --> 对象存储\n创建订单 --> 应用集群\n哈希文件长期缓存；HTML 用 no-cache\n先上传新哈希文件，再改 HTML\n```\n\n1. 下单接口不进这层长缓存。\n2. CSDN 画在路外，它不是对象存储，也不是 CDN。\n3. 先改 HTML 再上传，图上的顺序就反了。",
+      "keywords": "CDN object storage cache control diagram",
+      "diagram": "diagrams/draw-static-cdn.svg",
+      "deep": [
+        {
+          "title": "和集群图怎么分",
+          "body": "集群图回答的是下单程序有几份副本。静态图把图片和脚本从那些副本上拿开。不要把 CDN 画成订单服务的第二个副本。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "从创建订单出发，下一框应是应用集群，不应是 CDN。CSDN 若连着回源箭头，这张图就把内容社区当成了源站。"
+        }
+      ],
+      "points": [
+        "哈希静态文件走对象存储和 CDN，下单接口仍走应用集群",
+        "HTML 短缓存，哈希文件才长期缓存，并且先上传再改入口",
+        "CSDN 不是对象存储或 CDN，不画进这条源站"
+      ],
+      "references": [
+        [
+          "MDN：Cache-Control",
+          "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cache-Control"
+        ],
+        [
+          "Amazon CloudFront：简介",
+          "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html"
+        ],
+        [
+          "七牛云：对象存储",
+          "https://developer.qiniu.com/kodo"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "draw-tx-choose",
+      "title": "事务选型图先问还在不在一个库",
+      "prompt": "订单、库存、支付已经分库。能不能画一个全局事务把支付等待也框进去？",
+      "promptAnswer": "不能。先问不变量还在不在一个库。出了库再分三条：只通知、要补偿、要短预留。用户支付不进 TCC 的全局事务。",
+      "core": "这张图回答的是这一次不变量用哪一种提交，不是再画一种架构。还在同一个数据库的规则，箭头停在本地事务，不先画协调器。\n\n出了库分三条，不要并成一个框。〔本地消息表｜业务行和待发消息行在同一个数据库事务里提交，提交后再投递〕只管可靠通知。支付行和待发记录在支付库的同一次提交里，订单库是消费时的另一次提交。〔Saga｜一串已提交的本地事务，失败时用补偿向前纠正〕用于已经提交的长流程。释放预留是新写入，不要画成把原事务倒回去。用户支付的等待放在这一侧。〔TCC｜Try 预留，Confirm 确认，Cancel 取消〕只框住短的预留。〔空回滚｜取消先到、还没有预留时，取消仍要成功并记下已取消〕写在取消那一支。支付等待画在这个框外面。\n\n短信和外部支付不画进数据库的 undo。见 `evo-tx-choose`。",
+      "example": "先分库，再分三条：\n\n```text\n不变量还在一个库 --> 本地事务\n只通知下游 --> 本地消息表（支付库一次提交，订单库另一次）\n预留已提交、支付失败 --> Saga（释放是新写入）\n短预留、要空回滚 --> TCC（框外是用户支付）\n```\n\n没有一个框同时写着这三种名字。",
+      "task": "给创建订单、支付成功通知、支付失败释放库存、库存短预留各画一条，并写出用户支付落在哪一条的外面。",
+      "answer": "```text\n创建订单 --> 订单库本地事务\n支付成功通知 --> 支付库本地消息表\n支付失败释放库存 --> Saga，释放是新写入\n库存短预留 --> TCC，框外是用户支付\n```\n\n1. 三条不并成一种默认事务。\n2. 本地消息表不把支付库和订单库收成一次提交。\n3. 空回滚写在 TCC 的取消支，不写在 Saga 上。",
+      "keywords": "transaction choice outbox saga tcc diagram",
+      "diagram": "diagrams/draw-tx-choose.svg",
+      "deep": [
+        {
+          "title": "和微服务图怎么分",
+          "body": "微服务图回答谁写哪一个库、哪一段同步。事务选型图回答分库之后这一次提交用哪一种。不要在微服务图上再套一个盖住支付等待的全局事务框。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "数框。本地消息表、Saga、TCC 应是三个框。用户支付若画在 TCC 框内，这张图就把数分钟的等待留在了短预留里。"
+        }
+      ],
+      "points": [
+        "还在一个库的不变量画本地事务，不先画协调器",
+        "可靠通知、长流程补偿、短预留分三条，不并成一种默认事务",
+        "用户支付画在 TCC 的全局事务外面"
+      ],
+      "references": [
+        [
+          "microservices.io：Saga",
+          "https://microservices.io/patterns/data/saga.html"
+        ],
+        [
+          "microservices.io：事务性发件箱",
+          "https://microservices.io/patterns/data/transactional-outbox.html"
+        ],
+        [
+          "Seata：TCC 模式",
+          "https://seata.apache.org/docs/user/mode/tcc/"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "draw-uml-state-return",
+      "title": "已发货后退货要新状态和新事件",
+      "prompt": "已发货之后的退货，能不能复用「退款完成」？",
+      "promptAnswer": "不能。退款完成只从已支付到已退款。已发货经「退货入库」到新状态「已退货」。",
+      "core": "货已经离开仓库，就不能再用退款完成离开已发货。另加状态「已退货」，事件写「退货入库」，箭头从已发货指向已退货。退款完成仍只连接已支付和已退款：还没出库，没有货可入库。已支付也不使用退货入库。取消仍只从待支付到已取消。签收仍从已发货到已完成。待支付不能指向已退货。",
+      "example": "在退款那张图上再追加一条：\n\n```text\n[*] --> 待支付\n待支付 --> 已支付 : 支付成功\n待支付 --> 已取消 : 取消\n已支付 --> 已发货 : 出库\n已支付 --> 已退款 : 退款完成\n已发货 --> 已完成 : 签收\n已发货 --> 已退货 : 退货入库\n```",
+      "task": "画出含已退货的订单状态机。写明退货入库的起点和终点，并写出哪两条箭头不能出现。",
+      "answer": "```text\n[*] --> 待支付\n待支付 --> 已支付 : 支付成功\n待支付 --> 已取消 : 取消\n已支付 --> 已发货 : 出库\n已支付 --> 已退款 : 退款完成\n已发货 --> 已完成 : 签收\n已发货 --> 已退货 : 退货入库\n```\n\n1. 退货入库从已发货到已退货。\n2. 没有已发货到已退款的箭头。\n3. 没有已支付到已退货的箭头，也没有待支付到已退货的箭头。",
+      "keywords": "UML state return after shipment",
+      "diagram": "diagrams/draw-uml-state-return.svg",
+      "deep": [
+        {
+          "title": "签收之后是另一条",
+          "body": "已完成之后的退货见 `draw-uml-state-done`：事件是顾客退回，终点仍是已退货。不要把退货入库接到已完成或已支付上。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "从已发货出发，应能看见签收和退货入库，看不见退款完成。从已支付出发，应能看见退款完成，看不见退货入库。"
+        }
+      ],
+      "points": [
+        "已发货之后的退货使用新状态已退货和新事件退货入库",
+        "退款完成仍然只从已支付到已退款",
+        "已发货不使用退款完成，已支付不使用退货入库"
+      ],
+      "references": [
+        [
+          "OMG：UML 2.5.1",
+          "https://www.omg.org/spec/UML/2.5.1/About-UML"
+        ],
+        [
+          "UML：State machine diagrams",
+          "https://www.uml-diagrams.org/state-machine-diagrams.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "draw-monolith",
+      "title": "单体图画一个进程和一次提交",
+      "prompt": "订单和库存在同一个进程里，图上该画几个数据库、几次提交？",
+      "promptAnswer": "一个数据库、一次提交。订单模块和库存模块在同一个虚线框里互相调方法。支付等待画在这次提交的外面。",
+      "core": "单体图回答的是这次下单还在不在一次〔本地事务｜同一个数据库上的一次提交或回滚〕里。虚线框表示一次部署、一个进程。框里是订单模块和库存模块，箭头写方法调用，不出进程。框下只有一个数据库，一条连接，括号写从扣库存到插入待支付、到方法返回前结束。任一步失败，两张表都回到提交前。\n\n支付页画在框外。用户还在付款时，这次事务已经结束。不要把支付等待画进括号里。\n\n出现负载均衡和三份相同应用，是集群图。出现两个数据库，是 SOA 图或微服务图。见 `evo-monolith-one-tx`。",
+      "example": "一个进程、一次提交：\n\n```text\n浏览器 --> 一个进程\n  订单模块 --方法调用--> 库存模块\n  BEGIN --> 扣库存 --> 插入待支付 --> COMMIT\n一个进程 --> 一个数据库\n支付页在框外\n```",
+      "task": "画出浏览器、一个进程里的订单与库存、一个数据库。标出事务从哪一步开始、到方法返回前结束。写出这张图上不能出现的框。",
+      "answer": "```text\n浏览器 --> 一个进程（订单模块、库存模块）\nBEGIN --> 扣库存 --> 插入待支付 --> COMMIT\n一个进程 --> 一个数据库\n支付页在框外\n```\n\n1. 只有一个数据库、一次提交。\n2. 支付等待不在这次提交里面。\n3. 没有负载均衡，也没有第二个数据库。",
+      "keywords": "monolith diagram one local transaction",
+      "diagram": "diagrams/draw-monolith.svg",
+      "deep": [
+        {
+          "title": "和集群图怎么分",
+          "body": "虚线框里若变成三份相同的下单应用，前面再加负载均衡，就换成集群图。模块仍在一个进程里时，不要画成三个服务。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "数数据库框，应只有一个。数提交括号，应只有一对。支付页若画在括号里面，就把等待算进了这次事务。"
+        }
+      ],
+      "points": [
+        "单体图画一个进程和一次本地事务，订单与库存一起提交或一起回滚",
+        "支付等待画在这次提交的外面",
+        "三份副本或两个数据库不是这张图"
+      ],
+      "references": [
+        [
+          "Martin Fowler：Monolith First",
+          "https://martinfowler.com/bliki/MonolithFirst.html"
+        ],
+        [
+          "Spring Framework：事务管理",
+          "https://docs.spring.io/spring-framework/reference/data-access/transaction.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "draw-uml-state-done",
+      "title": "已完成后退货要另一条事件",
+      "prompt": "已完成之后的退货，能不能复用「退货入库」？",
+      "promptAnswer": "不能。退货入库只从已发货到已退货。已完成经「顾客退回」到已退货。",
+      "core": "签收之后货在顾客手里。离开已完成要用新事件「顾客退回」，箭头指向已退货。退货入库仍只连接已发货和已退货，表示货还没签收就回到仓库。不要把退货入库再接到已完成上，也不要接到已支付上。退款完成仍只从已支付到已退款。取消仍只从待支付到已取消。签收仍从已发货到已完成。",
+      "example": "在退货那张图上再追加一条：\n\n```text\n已发货 --> 已退货 : 退货入库\n已发货 --> 已完成 : 签收\n已完成 --> 已退货 : 顾客退回\n已支付 --> 已退款 : 退款完成\n```",
+      "task": "画出已完成后的退货。写明顾客退回的起点和终点，并写出退货入库不能从哪两个状态出发。",
+      "answer": "```text\n已发货 --> 已退货 : 退货入库\n已发货 --> 已完成 : 签收\n已完成 --> 已退货 : 顾客退回\n已支付 --> 已退款 : 退款完成\n待支付 --> 已取消 : 取消\n```\n\n1. 顾客退回从已完成到已退货。\n2. 退货入库不从已完成出发，也不从已支付出发。\n3. 没有已完成到已退款的箭头。",
+      "keywords": "UML state return after completion",
+      "diagram": "diagrams/draw-uml-state-done.svg",
+      "deep": [
+        {
+          "title": "两条事件可以进同一个状态",
+          "body": "已发货和已完成都可以到达已退货，但事件不同。盖住事件名之后，两条箭头不应能互换。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "从已完成出发，应只看见顾客退回，看不见退货入库。从已发货出发，应能看见退货入库和签收，看不见顾客退回。"
+        }
+      ],
+      "points": [
+        "已完成之后的退货使用事件顾客退回，终点仍是已退货",
+        "退货入库仍然只从已发货出发",
+        "已支付不使用退货入库，已完成不使用退款完成"
+      ],
+      "references": [
+        [
+          "OMG：UML 2.5.1",
+          "https://www.omg.org/spec/UML/2.5.1/About-UML"
+        ],
+        [
+          "UML：State machine diagrams",
+          "https://www.uml-diagrams.org/state-machine-diagrams.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "draw-tx-outbox",
+      "title": "本地消息表图画同一次提交里的两行",
+      "prompt": "支付库和订单库，能不能画成同一次提交？",
+      "promptAnswer": "不能。支付行和待发行在支付库同一次提交。订单库是消费时的另一次提交。",
+      "core": "这张图回答的是可靠通知，不是两个库的一次提交。〔本地消息表｜业务更新和一条待发记录在同一个数据库的同一次提交〕画在支付库里面：支付行改成已支付，待发行写成 NEW，外面一对提交括号。〔中继｜提交之后才扫描待发行并投递的进程〕画在括号外面，经消息到达订单库。\n\n订单库单独一个框、单独一次提交，把订单改成已支付。不要画一条线把支付库和订单库收成一个事务。同一支付单号再次到达时，订单状态不再改变。见 `evo-tx-outbox`。",
+      "example": "两行在左，另一次提交在右：\n\n```text\n支付库 BEGIN\n  payment = 已支付\n  outbox = NEW\nCOMMIT\n中继 --> 消息 --> 订单服务\n订单库：另一次提交，订单 = 已支付\n```",
+      "task": "画出支付库中的两行、中继和订单库。标明哪两行同一次提交。写出两个库之间不能出现的箭头。",
+      "answer": "```text\n支付库：payment = 已支付 与 outbox = NEW，同一次 COMMIT\n中继 --> 消息 --> 订单服务\n订单库：另一次提交，订单 = 已支付\n```\n\n1. 括号只框住支付库的两行。\n2. 没有把支付库和订单库连成一次提交的箭头。\n3. 同一支付单号再到一次，订单状态不再改变。",
+      "keywords": "outbox diagram one local commit",
+      "diagram": "diagrams/draw-tx-outbox.svg",
+      "deep": [
+        {
+          "title": "和 Saga 图怎么分",
+          "body": "这张图只保证通知能发出。预留已经提交之后的释放，画在 Saga 图上，不画进这个提交括号。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "数提交括号，应有两个，而且分属两个库。中继若画在支付库的括号里面，发送就被算进了数据库提交。"
+        }
+      ],
+      "points": [
+        "支付行和待发行在支付库的同一次提交里",
+        "订单库的更新是另一次提交，两个库不连成一个事务",
+        "同一支付单号再次到达时，订单状态只改变一次"
+      ],
+      "references": [
+        [
+          "microservices.io：事务性发件箱",
+          "https://microservices.io/patterns/data/transactional-outbox.html"
+        ]
+      ]
+    },
+    {
+      "track": "java",
+      "group": "系统设计",
+      "id": "draw-tx-saga",
+      "title": "Saga 图画新的写入，不画回滚",
+      "prompt": "预留已经提交，支付失败，能不能画一条回滚箭头？",
+      "promptAnswer": "不能。回滚盖不住已经提交的预留。释放预留和把订单改成已取消，都是新的写入。",
+      "core": "〔Saga｜一串已经提交的本地事务，失败时用新的业务动作向前纠正〕的图分成上下两排。上排是已经提交的正向步骤：插入待支付订单，预留库存，然后支付失败停住。下排箭头写释放预留、订单改成已取消，旁边标「新写入」。不要把下排画成数据库回滚，也不要画成把上排的提交倒回去。\n\n补偿按订单号只生效一次。第二次释放不再改变预留数量。用户支付的等待画在上排的末端，不画进一个还开着的全局事务。短预留要三套接口和空回滚时，换成 TCC，见 `evo-tx-tcc`。本图见 `evo-tx-saga`。",
+      "example": "正向已提交，反向是新动作：\n\n```text\n插入待支付（已提交） --> 预留库存（已提交） --> 支付失败\n支付失败 --> 释放预留（新写入）\n支付失败 --> 订单改成已取消（新写入）\n```",
+      "task": "画出正向两步和反向两步。标明哪些已经提交，哪些是新写入。写出这张图上不能出现的箭头。",
+      "answer": "```text\n正向：插入待支付（已提交） --> 预留库存（已提交） --> 支付失败\n反向：释放预留（新写入）\n反向：订单改成已取消（新写入）\n```\n\n1. 没有从支付失败指回「回滚预留」的箭头。\n2. 释放重复到达时，预留数量只加回一次。\n3. 支付等待不在一个还开着的全局事务里。",
+      "keywords": "saga diagram compensating write",
+      "diagram": "diagrams/draw-tx-saga.svg",
+      "deep": [
+        {
+          "title": "和 TCC 图怎么分",
+          "body": "能接受「已预留」被看见，并用一次释放纠正，就停在这张图。必须画 Try、Confirm、Cancel，并画出取消先到时的空成功，才另开 TCC。"
+        },
+        {
+          "title": "怎样自己验证",
+          "body": "上排每一步都应标着已提交。下排若写成 rollback 或 undo，就还是在倒放已经结束的事务。"
+        }
+      ],
+      "points": [
+        "正向的订单和预留都已经提交，支付失败不能画成回滚",
+        "释放预留和取消订单是新的写入",
+        "补偿按订单号只生效一次"
+      ],
+      "references": [
+        [
+          "microservices.io：Saga",
+          "https://microservices.io/patterns/data/saga.html"
+        ],
+        [
+          "Microsoft：Saga",
+          "https://learn.microsoft.com/en-us/azure/architecture/patterns/saga"
         ]
       ]
     },

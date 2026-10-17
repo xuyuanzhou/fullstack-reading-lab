@@ -14,10 +14,11 @@ import { SQL_MORE, SQL_POINTS } from './drillMoreSql.ts'
 import { SQL_NEXT, SQL_NEXT_POINTS } from './drillNextSql.ts'
 import { SPINE_ASKS, SPINE_POINTS } from './drillSpine.ts'
 import { COVER_ASKS, COVER_COURSES, COVER_GATES, COVER_POINTS } from './drillCover.ts'
+import { EVO_ASKS, EVO_POINTS } from './drillEvolution.ts'
 import { MULTI_COURSES, MULTI_GATES, MULTI_POINTS, MULTI_QUESTIONS } from './drillMulti.ts'
 import { BOSS_COURSE, bossGateById, bossPointById, bossQuestionById, installBossExams } from './bossExam.ts'
 
-export type DrillCourseId = 'design' | 'sql' | 'perf' | 'spine' | 'lang' | 'browser' | 'react' | 'vue' | 'client' | 'java' | 'pattern' | 'spring' | 'secure' | 'rest' | 'jvm' | 'conc' | 'cache' | 'nginx' | 'gateway' | 'mq' | 'sca' | 'dist' | 'ship' | 'test' | 'work' | 'boss'
+export type DrillCourseId = 'design' | 'sql' | 'perf' | 'spine' | 'lang' | 'browser' | 'react' | 'vue' | 'client' | 'java' | 'pattern' | 'spring' | 'secure' | 'rest' | 'jvm' | 'conc' | 'cache' | 'nginx' | 'gateway' | 'mq' | 'sca' | 'dist' | 'ship' | 'test' | 'work' | 'evo' | 'boss'
 export type OptionId = 'a' | 'b' | 'c' | 'd'
 
 export type DrillCourse = {
@@ -104,6 +105,11 @@ export const DRILL_COURSES: DrillCourse[] = [
   },
   ...COVER_COURSES,
   ...MULTI_COURSES.map((course) => ({ id: course.id as DrillCourseId, title: course.title, lead: course.lead })),
+  {
+    id: 'evo',
+    title: '演进全流程',
+    lead: '同一笔订单从单体走到事务选型。没有量到的瓶颈就停在当前站。',
+  },
 ]
 
 const DRILL_POINT_BASE: DrillPoint[] = [
@@ -171,6 +177,7 @@ export const DRILL_POINTS: DrillPoint[] = [
   ...SPINE_POINTS,
   ...MULTI_POINTS.map((point) => ({ ...point, courseId: point.courseId as DrillCourseId })),
   ...COVER_POINTS.map((point) => ({ ...point, courseId: point.courseId as DrillCourseId })),
+  ...EVO_POINTS,
 ]
 
 const OPT = ['a', 'b', 'c', 'd'] as const
@@ -1068,6 +1075,8 @@ function multiFor(gateId: string) {
   return MULTI_QUESTIONS.filter((item) => item.id.startsWith(`${gateId}-`))
 }
 
+const evoQuestions = EVO_ASKS.map((item) => ask(item.id, item.pointId, item.stem, item.texts, item.answer, item.explain, item.whyWrong))
+
 function buildGate(
   id: string,
   courseId: DrillCourseId,
@@ -1129,9 +1138,10 @@ export const DRILL_GATES: DrillGate[] = [
   buildGate('m8', 'spine', 8, '地址、探活与这个窗口', '调用方连稳定地址。探活分开启动、就绪和存活。这个窗口只做写明的一件事。', moreFor('m8')),
   ...COVER_GATES.map((gate) => buildGate(gate.id, gate.courseId as DrillCourseId, gate.level, gate.title, gate.lead, moreFor(gate.id))),
   ...MULTI_GATES.map((gate) => buildGate(gate.id, gate.courseId as DrillCourseId, gate.level, gate.title, gate.lead, multiFor(gate.id))),
+  buildGate('xevo', 'evo', 1, '同一笔订单', '有量到的瓶颈才进入下一站。事务按不变量选，不合成一种默认方案。', evoQuestions),
 ]
 
-export const DRILL_QUESTIONS: DrillQuestion[] = [...designSpread, ...sqlSpread, ...perfSpread, ...moreSpread, ...MULTI_QUESTIONS]
+export const DRILL_QUESTIONS: DrillQuestion[] = [...designSpread, ...sqlSpread, ...perfSpread, ...moreSpread, ...MULTI_QUESTIONS, ...evoQuestions]
 
 installBossExams(DRILL_POINTS, DRILL_QUESTIONS)
 

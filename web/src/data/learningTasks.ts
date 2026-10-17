@@ -45,7 +45,7 @@ export const LEARNING_TASKS: readonly LearningTask[] = [
     hint: '先写按钮能不能点，再写失败 type，最后写事务和唯一约束。',
     answer: [
       '页面管这次交互：请求还在路上时按钮不可再点。',
-      '接口契约管双方字段和失败类型：库存不足对应约定的 type。',
+      '接口契约管双方字段和失败类型：库存不足是 409。课上示例的 type 是 inventory-exhausted，本机样板是 sold-out。',
       '用例管这次业务和事务：库存够不够在事务里判断。',
       '持久化管落盘的行和约束：同一个幂等键只能有一行。',
       '',
@@ -55,7 +55,8 @@ export const LEARNING_TASKS: readonly LearningTask[] = [
       'submit.disabled = pending',
       '',
       'POST /orders',
-      '409 { "type": "inventory-exhausted" }',
+      '本机样板：409 { "type": "sold-out" }',
+      '课上示例：409 { "type": "inventory-exhausted" }',
       '',
       'UNIQUE (idempotency_key)',
       '```',
@@ -134,18 +135,19 @@ export const LEARNING_TASKS: readonly LearningTask[] = [
       'POST /orders',
       'Idempotency-Key: 8f3c',
       '',
-      '201 { "id": "ord-1", "replay": false }',
+      '201 { "orderId": 41, "replay": false }',
       '',
       'POST /orders',
       'Idempotency-Key: 8f3c',
       '',
-      '200 { "id": "ord-1", "replay": true }',
+      '200 { "orderId": 41, "replay": true }',
       '```',
       '',
       '同一个键重试 20 次，只留下 1 笔订单，库存为 0。',
       '同一个键换成另一个商品：请求摘要和第一次不一致，返回 409，type 是 idempotency-conflict。库存不再变化。',
+      '这是本机样板的状态码。草案对同一键、不同载荷写的是 422。草案里的 409 留给还在进行的再试。样板没有单独表示还在进行。',
       '',
-      '冲突之后要读回第一次的订单，而不是再插入。方法名本身不够，要靠唯一约束和这次请求的摘要。',
+      '同一键、同一商品的重试，读回第一次的订单并返回它。同一键、不同商品时，库里能找到第一次的那一行，但摘要不同：响应仍是 409，不要再插入，也不要把第一次的订单当成这次成功返回。方法名本身不够，要靠唯一约束和这次请求的摘要。',
     ].join('\n'),
     lab: {
       command: ORDER_LAB_COMMAND,
@@ -153,7 +155,7 @@ export const LEARNING_TASKS: readonly LearningTask[] = [
         {
           id: 'twentyRetriesOfOneKeyLeaveOneOrder',
           behavior: '同一个幂等键重试 20 次，只留下 1 笔订单',
-          next: '核对冲突之后是否读回第一次的订单，而不是再插入。',
+          next: '核对响应是 409、type 为 idempotency-conflict，并且没有第二次插入。',
         },
         {
           id: 'sameKeyWithAnotherSkuConflictsAndDoesNotChangeStock',
@@ -322,7 +324,7 @@ export const G2_WRITTEN_PROPAGATION: WrittenExam = {
   basis: 'Spring 声明式事务：代理只拦外部调用；默认 RuntimeException 与 Error 回滚。REQUIRES_NEW 使用独立物理事务并另取连接，NESTED 才是保存点。',
   question: 'this 调用、捕获异常、REQUIRES_NEW 各如何影响 Spring 事务？',
   parts: [
-    { label: '结论', points: 3, lookFor: 'this 调用不经过代理，被调方法上的事务不会生效。异常被接住并正常返回时，事务按提交处理。REQUIRES_NEW 是另一笔物理事务，可以单独提交，不是保存点。' },
+    { label: '结论', points: 3, lookFor: 'this 调用不经过代理，被调方法上的事务不会生效。外层若已经在事务里，这次调用仍留在外层事务中。异常在事务方法里被接住并正常返回时，按提交处理。REQUIRES_NEW 是另一笔物理事务，可以单独提交，不是保存点。' },
     { label: '机制', points: 4, lookFor: '默认只有从代理外面进来的调用才会被拦。默认 RuntimeException 和 Error 回滚，受检异常不回滚。REQUIRES_NEW 挂起外层事务，自己再取一条数据库连接。' },
     { label: '边界', points: 3, lookFor: '保存点是 NESTED，仍是同一笔物理事务。外层占着连接、内层再要一条时，连接池可能不够。' },
   ],
@@ -336,19 +338,19 @@ export const G2_WRITTEN_PROPAGATION: WrittenExam = {
 
 export const G2_WRITTEN_EXAMS: readonly WrittenExam[] = [G2_WRITTEN_OVERSELL, G2_WRITTEN_PROPAGATION]
 
-/** 依据 Idempotency-Key 草案：同一键不得配不同载荷；重复且已完成的请求返回上一次的结果。不同载荷草案给 422，进行中再试给 409。 */
+/** 依据 Idempotency-Key 草案：同一键不得配不同载荷；重复且已完成的请求返回上一次的结果。草案对不同载荷给 422，对还在进行的再试给 409。本机样板对不同商品给 409。 */
 export const G2_WRITTEN_RETRY: WrittenExam = {
   id: 'g2.written-idempotency',
   version: 1,
   gateId: 'g2',
   code: 'G2-W3',
   skillIds: ['idem'],
-  basis: 'Idempotency-Key 草案：同一键不得配不同载荷；重复且已完成的请求返回上一次的结果。不同载荷草案给 422，进行中再试给 409。',
+  basis: 'Idempotency-Key 草案：同一键不得配不同载荷；重复且已完成的请求返回上一次的结果。草案对同一键、不同载荷给 422，对还在进行的再试给 409。本机样板对同一键、不同商品返回 409，type 是 idempotency-conflict。',
   question: '同幂等键但不同请求体应该返回什么？响应丢失后怎样重试？',
   parts: [
     { label: '结论', points: 3, lookFor: '同一键配上不同请求体，应当拒绝，不要当成新的一笔去执行。响应丢失后用原来的键再请求，读回第一次已经完成的结果，不要新生成一个键。' },
     { label: '机制', points: 4, lookFor: '服务器用请求摘要判断这次是不是同一笔。键的唯一约束和业务效果放在同一事务里。摘要相同且第一次已经完成，就返回那次的结果。' },
-    { label: '边界', points: 3, lookFor: '草案对同一键、不同载荷给的是 422。请求还在处理时再试，给的是 409。换一个新键会变成另一笔订单。' },
+    { label: '边界', points: 3, lookFor: '草案对同一键、不同载荷给的是 422。还在进行时再试，草案给的是 409。本机样板对同一键、不同商品返回 409，type 是 idempotency-conflict，没有单独表示还在进行。换一个新键会变成另一笔订单。' },
   ],
   hints: [
     { level: 1, text: '先分开两件事：键相同，和这次请求体是否与第一次相同。' },

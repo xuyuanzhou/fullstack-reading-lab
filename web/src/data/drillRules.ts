@@ -482,6 +482,7 @@ export function badgesOf(state: DrillState): DrillBadge[] {
       { id: 'mq', title: '消息队列', detail: '消息队列每一关都已通过。' },
       { id: 'sca', title: 'Spring Cloud Alibaba', detail: 'Spring Cloud Alibaba 每一关都已通过。' },
       { id: 'dist', title: '分布式', detail: '分布式与高并发每一关都已通过。' },
+      { id: 'evo', title: '演进', detail: '演进全流程这一关已通过。' },
       { id: 'ship', title: '交付', detail: '交付与运行每一关都已通过。' },
       { id: 'test', title: '测试', detail: '测试每一关都已通过。' },
       { id: 'work', title: '工程', detail: '工程实践每一关都已通过。' },

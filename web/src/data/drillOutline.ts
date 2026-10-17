@@ -626,7 +626,18 @@ export const DRILL_ROADS = [
 ].map((road) => {
   const extra = CHAPTER_GATES.get(road.id)
   return extra?.length ? { ...road, gates: [...road.gates, ...extra] } : road
-}).concat(MULTI_ROADS)
+}).concat(MULTI_ROADS, [
+  {
+    id: 'evo',
+    title: '演进全流程',
+    gates: [
+      {
+        id: 'xevo',
+        questionIds: ['xevo-1', 'xevo-2', 'xevo-3', 'xevo-4', 'xevo-5', 'xevo-6', 'xevo-7', 'xevo-13', 'xevo-14', 'xevo-15', 'xevo-16', 'xevo-8', 'xevo-9', 'xevo-10', 'xevo-11', 'xevo-12'],
+      },
+    ],
+  },
+])
 
 /**
  * 总图和大厅上的大块。块内顺序跟课表：上一门后面才是下一门。
@@ -638,7 +649,7 @@ export const DRILL_BLOCKS: readonly { id: string; title: string; courseIds: read
   {
     id: 'java',
     title: 'Java',
-    courseIds: ['java', 'pattern', 'jvm', 'conc', 'sql', 'cache', 'spring', 'secure', 'nginx', 'gateway', 'mq', 'sca', 'design', 'dist', 'ship'],
+    courseIds: ['java', 'pattern', 'jvm', 'conc', 'sql', 'cache', 'spring', 'secure', 'nginx', 'gateway', 'mq', 'sca', 'design', 'evo', 'dist', 'ship'],
   },
   { id: 'work', title: '测试与工程', courseIds: ['test', 'work'] },
   { id: 'perf', title: '服务性能排查', courseIds: ['perf'] },

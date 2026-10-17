@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 280" role="img" aria-labelledby="title desc">
+  <title id="title">同一笔订单的两条线</title>
+  <desc id="desc">容量线与服务化线分开，没有信号就停在当前站。</desc>
+  <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#3f6a58"/></marker></defs>
+  <rect width="960" height="280" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="18" font-weight="600" fill="#2e3330">同一笔订单的两条线</text>
+  
+  <rect x="32" y="64" width="880" height="28" rx="12" fill="#fafaf8" stroke="#d9ddd8"/><text x="48" y="92" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">容量线</text>
+  <rect x="32" y="104" width="160" height="56" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="48" y="132" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">单体</text>
+  <line x1="192" y1="132" x2="214" y2="132" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+  <rect x="220" y="104" width="180" height="56" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="236" y="132" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">集群 · 应用 CPU</text>
+  <line x1="400" y1="132" x2="422" y2="132" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+  <rect x="428" y="104" width="200" height="56" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="444" y="132" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">主从 · 读远多于写</text>
+  <rect x="660" y="104" width="250" height="56" rx="12" fill="#fafaf8" stroke="#d9ddd8"/><text x="676" y="132" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">CDN</text><text x="676" y="154" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">不经过订单进程</text>
+  <rect x="32" y="184" width="880" height="28" rx="12" fill="#fafaf8" stroke="#d9ddd8"/><text x="48" y="212" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">服务化线</text>
+  <rect x="32" y="224" width="200" height="40" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="48" y="252" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">模块化单体</text>
+  <line x1="232" y1="244" x2="254" y2="244" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+  <rect x="260" y="224" width="180" height="40" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="276" y="252" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">经典 SOA</text>
+  <line x1="440" y1="244" x2="462" y2="244" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+  <rect x="468" y="224" width="200" height="40" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="484" y="252" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">微服务</text>
+  <rect x="690" y="224" width="220" height="40" rx="12" fill="#f6ecea" stroke="#a05048"/><text x="706" y="252" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#6e3530">事务三选一</text><text x="706" y="274" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#6e3530">数据分库之后</text>
+
+</svg>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" role="img" aria-labelledby="title desc">
+  <title id="title">集群图：同一程序的三份副本</title>
+  <desc id="desc">负载均衡后面是三份相同的下单应用。会话和主库各只有一个。一次只换一台。图上没有库存服务。</desc>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3f6a58"/>
+    </marker>
+    <marker id="arrBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a6280"/>
+    </marker>
+    <marker id="arrOpen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 1 1 L 9 5 L 1 9" fill="none" stroke="#5e6661" stroke-width="1.4"/>
+    </marker>
+  </defs>
+  <rect width="960" height="520" rx="18" fill="#f6f7f4"/>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <text x="32" y="36" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">画图 / 集群</text>
+    <text x="32" y="64" font-size="20" font-weight="600" fill="#2e3330">同一程序的三份副本，一次只换一台</text>
+
+    <rect x="48" y="96" width="120" height="48" rx="12" fill="#fafaf8" stroke="#2e3330"/>
+    <text x="78" y="126" font-size="15" fill="#2e3330">用户</text>
+    <line x1="168" y1="120" x2="248" y2="120" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+    <text x="186" y="110" font-size="12" fill="#3f6a58">请求</text>
+
+    <rect x="256" y="92" width="160" height="56" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="276" y="126" font-size="15" font-weight="600" fill="#2e3330">负载均衡</text>
+
+    <line x1="336" y1="148" x2="148" y2="196" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+    <line x1="336" y1="148" x2="480" y2="196" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+    <line x1="336" y1="148" x2="812" y2="196" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+
+    <rect x="48" y="204" width="200" height="72" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="68" y="234" font-size="15" font-weight="600" fill="#2e3330">下单应用 1</text>
+    <text x="68" y="258" font-size="13" fill="#5e6661">同一套程序</text>
+
+    <rect x="380" y="204" width="200" height="72" rx="12" fill="#f6ecea" stroke="#a05048"/>
+    <text x="400" y="234" font-size="15" font-weight="600" fill="#2e3330">下单应用 2</text>
+    <text x="400" y="258" font-size="13" fill="#6e3530">正在更换这一台</text>
+
+    <rect x="712" y="204" width="200" height="72" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="732" y="234" font-size="15" font-weight="600" fill="#2e3330">下单应用 3</text>
+    <text x="732" y="258" font-size="13" fill="#5e6661">同一套程序</text>
+
+    <path d="M148 276 V312 H812 V276" fill="none" stroke="#5e6661" stroke-width="1.4"/>
+    <path d="M480 276 V312" fill="none" stroke="#5e6661" stroke-width="1.4"/>
+    <line x1="360" y1="312" x2="340" y2="348" stroke="#4a6280" stroke-width="1.6" marker-end="url(#arrBlue)"/>
+    <line x1="600" y1="312" x2="660" y2="348" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+
+    <rect x="200" y="348" width="280" height="56" rx="12" fill="#eef2f8" stroke="#4a6280"/>
+    <text x="220" y="382" font-size="15" font-weight="600" fill="#2e3330">同一个 Redis 会话</text>
+    <rect x="520" y="348" width="280" height="56" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="540" y="382" font-size="15" font-weight="600" fill="#2e3330">同一个主库</text>
+
+    <rect x="48" y="428" width="864" height="68" rx="12" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="68" y="456" font-size="14" fill="#4a6280">蓝线是会话，三份都指向同一个 Redis。</text>
+    <text x="68" y="478" font-size="14" fill="#2e3330">绿线是写入。一次只换一台。这张图没有库存服务。</text>
+  </g>
+</svg>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" role="img" aria-labelledby="title desc">
+  <title id="title">C4 系统上下文图：订单系统</title>
+  <desc id="desc">订单系统只有一个框。下单用户、支付渠道和仓储系统都在框外。箭头写交互的目的。</desc>
+  <rect width="960" height="500" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">C4 系统上下文图</text>
+  <text x="32" y="64" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">本系统只有一个框，外面的人和系统不要画进来</text>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <line x1="118" y1="230" x2="300" y2="230" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+    <text x="132" y="214" font-size="13" fill="#3f6a58">提交并查看订单</text>
+    <line x1="620" y1="200" x2="700" y2="168" stroke="#4a6280" stroke-width="1.6" marker-end="url(#arrBlue)"/>
+    <text x="624" y="176" font-size="13" fill="#4a6280">发起支付</text>
+    <line x1="620" y1="270" x2="700" y2="312" stroke="#4a6280" stroke-width="1.6" marker-end="url(#arrBlue)"/>
+    <text x="624" y="308" font-size="13" fill="#4a6280">通知出库</text>
+
+    <circle cx="78" cy="196" r="16" fill="none" stroke="#2e3330" stroke-width="1.6"/>
+    <line x1="78" y1="212" x2="78" y2="254" stroke="#2e3330" stroke-width="1.6"/>
+    <line x1="54" y1="230" x2="102" y2="230" stroke="#2e3330" stroke-width="1.6"/>
+    <line x1="78" y1="254" x2="58" y2="288" stroke="#2e3330" stroke-width="1.6"/>
+    <line x1="78" y1="254" x2="98" y2="288" stroke="#2e3330" stroke-width="1.6"/>
+    <text x="78" y="314" text-anchor="middle" font-size="14" fill="#2e3330">下单用户</text>
+
+    <rect x="300" y="160" width="320" height="140" rx="16" fill="#e6efe9" stroke="#3f6a58" stroke-width="1.8"/>
+    <text x="460" y="214" text-anchor="middle" font-size="18" font-weight="600" fill="#2e3330">订单系统</text>
+    <text x="460" y="242" text-anchor="middle" font-size="13" fill="#5e6661">本系统 · 只有这一个框</text>
+
+    <rect x="700" y="120" width="200" height="72" rx="12" fill="#fafaf8" stroke="#4a6280"/>
+    <text x="800" y="150" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">支付渠道</text>
+    <text x="800" y="172" text-anchor="middle" font-size="12" fill="#5e6661">外部软件系统</text>
+    <rect x="700" y="292" width="200" height="72" rx="12" fill="#fafaf8" stroke="#4a6280"/>
+    <text x="800" y="322" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">仓储系统</text>
+    <text x="800" y="344" text-anchor="middle" font-size="12" fill="#5e6661">外部软件系统</text>
+
+    <rect x="32" y="424" width="896" height="56" rx="14" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="52" y="448" font-size="14" fill="#2e3330">箭头写要办的事，不写 JDBC。</text>
+    <text x="52" y="468" font-size="14" fill="#2e3330">订单页面、订单服务、MySQL 属于容器图，不画进这一张。</text>
+  </g>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3f6a58"/>
+    </marker>
+    <marker id="arrBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a6280"/>
+    </marker>
+  </defs>
+</svg>

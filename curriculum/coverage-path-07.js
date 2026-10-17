@@ -174,7 +174,7 @@ const COVERAGE_PATH_07 = [
       {title:'图怎么读',body:'上半两条线是谱系；下半是容量线「水平扩展站」的常见拓扑：负载均衡、应用集群、本地与分布式缓存、文件服务、主从读写分离。仍是同一套应用，不是微服务。更细的拓扑见 `arch-scale-before-split`。'},
       {title:'为什么要两条线',body:'只讲单体到微服务，会漏掉集群与经典 SOA，也会把“加机器”和“拆领域”混成一步。容量线回答扛流量；服务化线回答边界与自治。'},
       {title:'垂直扩展放哪',body:'换更大机器能救急，但有上限且单点风险仍在。本课重点仍是：无状态后的水平扩展，以及库瓶颈不能靠加应用副本解决。'},
-      {title:'相关课',body:'经典 SOA 见 `arch-soa-classic`；与微服务分叉见 `microservices-not-just-soa-relabel`。拆分与集群见 `split-vs-cluster-not-interchangeable`。系统设计章导论见 `arch-chapter-aim`。事件驱动见 `arch-sync-vs-async`。'},
+      {title:'相关课',body:'经典 SOA 见 `arch-soa-classic`；与微服务分叉见 `microservices-not-just-soa-relabel`。拆分与集群见 `split-vs-cluster-not-interchangeable`。系统设计章导论见 `arch-chapter-aim`。事件驱动见 `arch-sync-vs-async`。同一笔订单走完搭建、CDN 和事务选型，见 `evo-order-through-stages`。'},
     ],
     refs:[['Microsoft：Architecture styles','https://learn.microsoft.com/en-us/azure/architecture/guide/architecture-styles/'],['Martin Fowler：Monolith First','https://martinfowler.com/bliki/MonolithFirst.html'],['Martin Fowler：Microservices（含与 SOA）','https://martinfowler.com/articles/microservices.html']]
   },

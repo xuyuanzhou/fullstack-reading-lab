@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 460" role="img" aria-labelledby="title desc">
+  <title id="title">创建订单只提交两次</title>
+  <desc id="desc">创建时订单服务和资源锁定服务各做一次本地事务。支付服务和消息服务不在这次提交里。</desc>
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#3f6a58"/></marker>
+    <marker id="arr2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#5e6661"/></marker>
+  </defs>
+  <rect width="960" height="460" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="18" font-weight="600" fill="#2e3330">创建这一刻：两次本地事务</text>
+  <text x="32" y="58" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#5e6661">支付和消息要等支付成功才出现</text>
+
+  <rect x="36" y="84" width="200" height="52" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+  <text x="52" y="116" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="15" fill="#2e3330">订单服务</text>
+  <rect x="360" y="84" width="220" height="52" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+  <text x="376" y="116" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="15" fill="#2e3330">资源锁定服务</text>
+  <line x1="236" y1="110" x2="360" y2="110" stroke="#3f6a58" stroke-width="1.8" marker-end="url(#arr)"/>
+  <text x="248" y="100" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="12" fill="#3f6a58">同步 · 超时 · 幂等键</text>
+
+  <rect x="36" y="168" width="200" height="56" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+  <text x="52" y="192" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">订单库</text>
+  <text x="52" y="210" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="12" fill="#3f6a58">本地事务 · 待支付</text>
+  <rect x="360" y="168" width="220" height="56" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+  <text x="376" y="192" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">锁定库</text>
+  <text x="376" y="210" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="12" fill="#3f6a58">本地事务 · 预留数量</text>
+  <line x1="136" y1="136" x2="136" y2="168" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+  <line x1="470" y1="136" x2="470" y2="168" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+
+  <rect x="640" y="84" width="284" height="140" rx="14" fill="none" stroke="#8a928c" stroke-dasharray="6 4"/>
+  <text x="656" y="110" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#5e6661">创建返回前不参与</text>
+  <rect x="656" y="124" width="120" height="40" rx="10" fill="#f3f1ea" stroke="#8a928c"/>
+  <text x="672" y="149" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#5e6661">支付服务</text>
+  <rect x="788" y="124" width="120" height="40" rx="10" fill="#f3f1ea" stroke="#8a928c"/>
+  <text x="804" y="149" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#5e6661">消息服务</text>
+  <text x="656" y="190" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="12" fill="#5e6661">此时还没有支付事实</text>
+  <text x="656" y="208" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="12" fill="#5e6661">消息也没有可投的记录</text>
+
+  <rect x="36" y="260" width="888" height="78" rx="12" fill="#eef3f6" stroke="#3d5c73"/>
+  <text x="52" y="286" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="600" fill="#2e3330">支付成功之后</text>
+  <text x="52" y="310" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#2e3330">支付库：支付行和待发记录同一次提交（本地消息表）</text>
+  <text x="52" y="328" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#2e3330">消息服务只投递已提交的记录 → 订单改已支付，预留变成扣减</text>
+
+  <rect x="36" y="354" width="888" height="78" rx="12" fill="#f6ecea" stroke="#a05048"/>
+  <text x="52" y="380" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" font-weight="600" fill="#6e3530">支付失败或超时</text>
+  <text x="52" y="404" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#6e3530">新的写入：释放预留，订单标成取消。不是把上面两次提交倒回去。</text>
+  <text x="52" y="422" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#6e3530">只有短预留必须处理取消先到时，才把那一跳换成 TCC，仍不包住用户支付。</text>
+</svg>

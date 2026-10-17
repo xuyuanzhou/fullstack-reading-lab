@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 640" role="img" aria-labelledby="title desc">
+  <title id="title">一笔订单的远程调用和按库校验</title>
+  <desc id="desc">订单提交返回后才远程预留。支付行和待发行一次提交。中继在提交之外。校验按每个库查询。</desc>
+  <rect width="960" height="640" rx="18" fill="#f6f7f4"/>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <text x="32" y="36" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">完整链路</text>
+    <text x="32" y="64" font-size="20" font-weight="600" fill="#2e3330">远程调用在提交返回之后，校验按每个库查询</text>
+
+    <rect x="32" y="92" width="430" height="64" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="52" y="118" font-size="14" font-weight="600" fill="#2e3330">1. 订单库提交「待支付」后方法返回</text>
+    <text x="52" y="140" font-size="13" fill="#5e6661">place 上没有 @Transactional</text>
+    <rect x="478" y="92" width="450" height="64" rx="12" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="498" y="130" font-size="14" fill="#2e3330">查：订单=待支付，支付库计数=0</text>
+
+    <rect x="32" y="172" width="430" height="64" rx="12" fill="#eef2f8" stroke="#4a6280"/>
+    <text x="52" y="198" font-size="14" font-weight="600" fill="#2e3330">2. OpenFeign 带同一把幂等键</text>
+    <text x="52" y="220" font-size="13" fill="#5e6661">超时 200 / 800 毫秒，再调仍用这把键</text>
+    <rect x="478" y="172" width="450" height="64" rx="12" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="498" y="210" font-size="14" fill="#2e3330">查：锁定库有预留，并记下这把键</text>
+
+    <rect x="32" y="252" width="430" height="64" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="52" y="278" font-size="14" font-weight="600" fill="#2e3330">3. 支付库：支付行 + 待发行，一次提交</text>
+    <text x="52" y="300" font-size="13" fill="#5e6661">此时订单仍可以是待支付</text>
+    <rect x="478" y="252" width="450" height="64" rx="12" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="498" y="290" font-size="14" fill="#2e3330">查：payment=已支付，outbox=NEW</text>
+
+    <rect x="32" y="332" width="430" height="64" rx="12" fill="#f6ecea" stroke="#a05048"/>
+    <text x="52" y="358" font-size="14" font-weight="600" fill="#6e3530">4. 中继在这次提交外面</text>
+    <text x="52" y="380" font-size="13" fill="#6e3530">先发送，再把待发行改成已投递</text>
+    <rect x="478" y="332" width="450" height="64" rx="12" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="498" y="370" font-size="14" fill="#2e3330">再投一次：订单更新影响 0 行</text>
+
+    <rect x="32" y="412" width="430" height="64" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="52" y="438" font-size="14" font-weight="600" fill="#2e3330">5. 消费后：已支付，预留改成扣减</text>
+    <text x="52" y="460" font-size="13" fill="#5e6661">出库另一次提交，再把订单改成已发货</text>
+    <rect x="478" y="412" width="450" height="64" rx="12" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="498" y="450" font-size="14" fill="#2e3330">查：订单=已发货，支付行不再改</text>
+
+    <rect x="32" y="492" width="430" height="64" rx="12" fill="#eef2f8" stroke="#4a6280"/>
+    <text x="52" y="518" font-size="14" font-weight="600" fill="#2e3330">6. 签收只改订单：已发货到已完成</text>
+    <text x="52" y="540" font-size="13" fill="#5e6661">支付失败则释放预留，订单改成已取消</text>
+    <rect x="478" y="492" width="450" height="64" rx="12" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="498" y="530" font-size="14" fill="#2e3330">查：支付行和扣减数量与签收前相同</text>
+
+    <text x="32" y="596" font-size="14" fill="#5e6661">左列是谁提交。右列是当时要查的行。没有一条箭头把这些库收成一次提交。</text>
+  </g>
+</svg>

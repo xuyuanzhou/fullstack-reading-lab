@@ -42,9 +42,9 @@ const groups = () => ['全栈主线']
 test('each gate has four choices, one answer, and a lesson', () => {
   const nav = JSON.parse(readFileSync(new URL('../web/src/data/curriculum-nav.json', import.meta.url), 'utf8'))
   const lessons = new Set(nav.lessons.map((lesson) => lesson.id))
-  assert.equal(DRILL_COURSES.length, 25)
-  assert.equal(DRILL_GATES.length, 134)
-  assert.equal(DRILL_QUESTIONS.length, 1387)
+  assert.equal(DRILL_COURSES.length, 26)
+  assert.equal(DRILL_GATES.length, 135)
+  assert.equal(DRILL_QUESTIONS.length, 1403)
   assert.equal(neededCorrect(5), 4)
   assert.equal(neededCorrect(10), 8)
   const answers = { a: 0, b: 0, c: 0, d: 0 }
@@ -304,7 +304,7 @@ test('choice courses stay in curriculum blocks so neighbors continue', () => {
   const java = DRILL_BLOCKS.find((block) => block.id === 'java')
   assert.deepEqual(
     java?.courseIds,
-    ['java', 'pattern', 'jvm', 'conc', 'sql', 'cache', 'spring', 'secure', 'nginx', 'gateway', 'mq', 'sca', 'design', 'dist', 'ship'],
+    ['java', 'pattern', 'jvm', 'conc', 'sql', 'cache', 'spring', 'secure', 'nginx', 'gateway', 'mq', 'sca', 'design', 'evo', 'dist', 'ship'],
   )
   const front = DRILL_BLOCKS.find((block) => block.id === 'front')
   assert.deepEqual(front?.courseIds, ['lang', 'browser', 'react', 'vue', 'client'])
@@ -433,4 +433,29 @@ test('a boss exam can restart once the remaining questions cannot reach 80%', ()
   assert.equal(describeGate(dropped, exam.id).open, null)
   assert.equal(describeGate(dropped, exam.id).canStartGate, true)
   assert.equal(dropOpenAttempt(state, 'd1').log.length, state.log.length)
+})
+
+test('boss multi choices do not reuse another lesson’s true sentence', () => {
+  for (const gate of bossGates()) {
+    for (const id of gate.questionIds) {
+      const question = questionById(id)
+      for (const text of Object.values(question.whyWrong)) {
+        assert.equal(String(text).includes('这一句是「'), false, id)
+      }
+      if (question.pointId.startsWith('xb-')) continue
+      const source = DRILL_QUESTIONS.find((item) => item.pointId === question.pointId && isMultiQuestion(item))
+      if (!source) continue
+      const right = new Set(correctChoices(question))
+      for (const id of right) {
+        const bossText = question.options.find((option) => option.id === id)?.text
+        const sourceText = source.options.find((option) => option.id === id)?.text
+        assert.equal(bossText, sourceText, question.id)
+      }
+      for (const option of question.options) {
+        if (right.has(option.id)) continue
+        const sourceText = source.options.find((item) => item.id === option.id)?.text
+        assert.notEqual(option.text, sourceText, question.id)
+      }
+    }
+  }
 })

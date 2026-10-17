@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" role="img" aria-labelledby="title desc">
+  <title id="title">UML 实现：库存端口</title>
+  <desc id="desc">MySQL 适配器用虚线空心三角指向库存端口。下单应用用没有三角的虚线依赖该端口。在线支付用实线空心三角指向支付方式。</desc>
+  <rect width="960" height="480" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">UML 类图</text>
+  <text x="32" y="64" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">虚线三角是实现，实线三角是泛化</text>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <rect x="48" y="112" width="200" height="80" rx="10" fill="#eef2f8" stroke="#4a6280"/>
+    <text x="148" y="148" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">下单应用</text>
+    <text x="148" y="172" text-anchor="middle" font-size="12" fill="#5e6661">只使用端口</text>
+
+    <rect x="400" y="104" width="220" height="96" fill="#fafaf8" stroke="#2e3330"/>
+    <text x="510" y="132" text-anchor="middle" font-size="12" fill="#5e6661">«interface»</text>
+    <text x="510" y="158" text-anchor="middle" font-size="16" font-weight="600" fill="#2e3330">库存端口</text>
+    <text x="510" y="182" text-anchor="middle" font-size="13" fill="#5e6661">按条件扣减()</text>
+
+    <rect x="400" y="268" width="220" height="72" rx="10" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="510" y="300" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">MySQL 适配器</text>
+    <text x="510" y="322" text-anchor="middle" font-size="12" fill="#5e6661">提供端口上的操作</text>
+
+    <rect x="48" y="360" width="180" height="56" fill="#fafaf8" stroke="#2e3330"/>
+    <text x="138" y="394" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">在线支付</text>
+    <rect x="360" y="360" width="180" height="56" fill="#fafaf8" stroke="#2e3330"/>
+    <text x="450" y="394" text-anchor="middle" font-size="15" font-weight="600" fill="#2e3330">支付方式</text>
+
+    <line x1="248" y1="152" x2="392" y2="152" stroke="#4a6280" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#open)"/>
+    <text x="278" y="140" font-size="13" fill="#4a6280">依赖</text>
+    <line x1="510" y1="268" x2="510" y2="208" stroke="#3f6a58" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#hollow)"/>
+    <text x="522" y="246" font-size="13" fill="#3f6a58">实现</text>
+    <line x1="228" y1="388" x2="352" y2="388" stroke="#2e3330" stroke-width="1.6" marker-end="url(#hollowInk)"/>
+    <text x="258" y="376" font-size="13" fill="#2e3330">泛化</text>
+  </g>
+  <defs>
+    <marker id="open" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 1 1 L 9 5 L 1 9" fill="none" stroke="#4a6280" stroke-width="1.4"/>
+    </marker>
+    <marker id="hollow" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 0 L 12 6 L 0 12 z" fill="#f6f7f4" stroke="#3f6a58" stroke-width="1"/>
+    </marker>
+    <marker id="hollowInk" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="12" markerHeight="12" orient="auto">
+      <path d="M 0 0 L 12 6 L 0 12 z" fill="#fafaf8" stroke="#2e3330" stroke-width="1"/>
+    </marker>
+  </defs>
+</svg>

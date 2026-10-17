@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 320" role="img" aria-labelledby="title desc">
+  <title id="title">先问还在不在一个库</title>
+  <desc id="desc">出了库再分只通知、要补偿、要三阶段预留。</desc>
+  <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#3f6a58"/></marker></defs>
+  <rect width="960" height="320" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="18" font-weight="600" fill="#2e3330">先问还在不在一个库</text>
+  
+  <rect x="330" y="60" width="280" height="48" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="346" y="88" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">还在同一个库？</text>
+  <line x1="470" y1="108" x2="200" y2="160" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+  <rect x="40" y="160" width="280" height="56" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="56" y="188" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">还在</text><text x="56" y="210" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">一次本地事务</text>
+  <line x1="470" y1="108" x2="760" y2="160" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+  <rect x="640" y="160" width="280" height="56" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="656" y="188" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">已经分到多个库</text>
+  <rect x="40" y="250" width="200" height="48" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="56" y="278" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">只通知</text>
+  <rect x="280" y="250" width="200" height="48" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="296" y="278" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">要补偿 · Saga</text>
+  <rect x="520" y="250" width="200" height="48" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="536" y="278" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">三阶段预留 · TCC</text>
+  <text x="280" y="318" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#6e3530">支付等待画在 Saga 一侧，不画进 TCC</text>
+
+</svg>

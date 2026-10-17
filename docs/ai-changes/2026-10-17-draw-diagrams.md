@@ -40,7 +40,7 @@ node scripts/verify_content.mjs
 ## 后续
 
 - [x] 类图、用例图另开一课，见 `2026-10-17-draw-diagrams-more.md`。不要塞进这五张的图例
-- [ ] 已支付之后的退款要另加状态和事件，不要复用「取消」
+- [x] 已支付之后的退款另加状态和事件，见 `2026-10-17-draw-state-fragment.md`
 
 ## 给下一模型
 

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" role="img" aria-labelledby="title desc">
+  <title id="title">SOA 图：调用方只连总线</title>
+  <desc id="desc">商城、门店、合作方只连接企业服务总线。订单服务和库存服务指向同一个库，两次提交。</desc>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3f6a58"/>
+    </marker>
+    <marker id="arrBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a6280"/>
+    </marker>
+    <marker id="arrOpen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 1 1 L 9 5 L 1 9" fill="none" stroke="#5e6661" stroke-width="1.4"/>
+    </marker>
+  </defs>
+  <rect width="960" height="520" rx="18" fill="#f6f7f4"/>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <text x="32" y="36" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">画图 / SOA</text>
+    <text x="32" y="64" font-size="20" font-weight="600" fill="#2e3330">调用方只连总线，两个服务仍共一个库</text>
+
+    <rect x="40" y="100" width="150" height="44" rx="12" fill="#fafaf8" stroke="#2e3330"/>
+    <text x="86" y="128" font-size="15" fill="#2e3330">商城</text>
+    <rect x="40" y="160" width="150" height="44" rx="12" fill="#fafaf8" stroke="#2e3330"/>
+    <text x="86" y="188" font-size="15" fill="#2e3330">门店</text>
+    <rect x="40" y="220" width="150" height="44" rx="12" fill="#fafaf8" stroke="#2e3330"/>
+    <text x="78" y="248" font-size="15" fill="#2e3330">合作方</text>
+
+    <line x1="190" y1="122" x2="300" y2="168" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+    <line x1="190" y1="182" x2="300" y2="182" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+    <line x1="190" y1="242" x2="300" y2="196" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+
+    <rect x="308" y="132" width="200" height="100" rx="14" fill="#eef2f8" stroke="#4a6280"/>
+    <text x="328" y="172" font-size="15" font-weight="600" fill="#2e3330">企业服务总线</text>
+    <text x="328" y="198" font-size="13" fill="#5e6661">路由 · 转换 · 编排</text>
+
+    <line x1="508" y1="164" x2="600" y2="128" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+    <line x1="508" y1="200" x2="600" y2="236" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+
+    <rect x="608" y="96" width="160" height="56" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="628" y="130" font-size="15" font-weight="600" fill="#2e3330">订单服务</text>
+    <rect x="608" y="208" width="160" height="56" rx="12" fill="#e6efe9" stroke="#3f6a58"/>
+    <text x="628" y="242" font-size="15" font-weight="600" fill="#2e3330">库存服务</text>
+
+    <line x1="688" y1="152" x2="760" y2="300" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+    <text x="772" y="248" font-size="12" fill="#3f6a58">提交 1</text>
+    <line x1="688" y1="264" x2="760" y2="320" stroke="#4a6280" stroke-width="1.6" marker-end="url(#arrBlue)"/>
+    <text x="620" y="300" font-size="12" fill="#4a6280">提交 2</text>
+
+    <rect x="760" y="280" width="160" height="64" rx="12" fill="#f6ecea" stroke="#a05048"/>
+    <text x="780" y="308" font-size="15" font-weight="600" fill="#6e3530">同一个库</text>
+    <text x="780" y="330" font-size="13" fill="#6e3530">两次提交</text>
+
+    <rect x="40" y="380" width="880" height="108" rx="12" fill="#fafaf8" stroke="#d9ddd8"/>
+    <text x="60" y="412" font-size="14" fill="#2e3330">商城、门店、合作方没有直连库，也没有绕过总线。</text>
+    <text x="60" y="438" font-size="14" fill="#6e3530">没有一个进程内事务能盖住这两次提交。</text>
+    <text x="60" y="464" font-size="14" fill="#5e6661">若订单库和库存库分成两个框，就换成微服务图。</text>
+  </g>
+</svg>

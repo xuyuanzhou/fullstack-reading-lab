@@ -1,0 +1,43 @@
+/* 缓存：Redis 已经过载时，先按计数分清原因，再决定第一动作。 */
+const COVERAGE_JAVA_127 = [
+  {
+    track:'java', group:'缓存', id:'redis-overload-four',
+    title:'Redis 过载先分清连接、内存、慢命令和过期',
+    prompt:'Redis 延迟突然升高，或写入开始失败，第一步该看什么？',
+    promptAnswer:'先看拒绝连接、内存是否到顶、慢命令和过期是否挤在一起。四项的第一动作不同，不要先加节点。',
+    core:'实例已经过载时，先读计数，再决定动作。`INFO stats` 里的 `rejected_connections`〔rejected_connections｜因客户端数量达到 maxclients 而被拒绝的次数〕升高，是新连接被拒绝；`connected_clients` 一路上涨而命令量没有同比例上涨，是连接没有释放。这时先收紧客户端连接池，查出谁没关闭连接。只调高 `maxclients`〔maxclients｜允许同时连上的客户端数量上限〕会让每个连接上的输出缓冲一起变多。`used_memory` 顶到 `maxmemory`〔maxmemory｜这个实例允许使用的内存上限〕时看 `maxmemory-policy`：`noeviction`〔noeviction｜到上限后不删键，需要更多内存的写入会失败〕让写入失败；会淘汰的策略则让 `evicted_keys` 上涨，键在被删。慢命令看 `SLOWLOG GET`〔SLOWLOG｜记下执行时间超过阈值的命令〕。一条很慢的命令占住执行线程，旁边的小命令也要等，见 `redis-single-thread`。`expired_keys` 在很短的时间里跳升，是一批键同时到期，见 `redis-expire` 和 `cache-penetration-vs-breakdown`。一个分片 CPU 高、值却很小，是热键，见 `redis-big-hot-key`。已经过载的主节点上不要先跑 `KEYS` 或 `--bigkeys`。加节点不会让仍落在同一槽的热键散开，也不会让一条慢命令变短。',
+    why:'四种现象都表现为延迟升高。连接没释放时加节点，应用仍会把每个实例的连接打满。热键加节点，键还在同一个槽。把 noeviction 改成淘汰，写入恢复了，业务需要的键却被删掉。',
+    example:'先读这四段，再对上第一动作：\n\n```redis\nINFO clients\nINFO memory\nINFO stats\nSLOWLOG GET 8\n```\n\n```text\nrejected_connections 升高 → 收紧连接池，不要只调高 maxclients\nused_memory 顶到 maxmemory → 先看 policy，再决定是拒绝写入还是正在删键\nSLOWLOG 有一条很长的命令 → 停掉这类命令\nexpired_keys 短时间跳升 → 打散过期时间\n```',
+    task:'划掉「过载就加节点，或直接 FLUSHALL」。按拒绝连接、内存到顶、慢命令、过期跳升各写第一动作。',
+    answer:[
+      '1. rejected_connections 升高：先限制客户端连接池，查出谁没有释放连接。不要只调高 maxclients。',
+      '2. used_memory 顶到 maxmemory：先看 maxmemory-policy。noeviction 时需要更多内存的写入失败；会淘汰的策略在删键。',
+      '3. SLOWLOG 里有一条耗时很长的命令：停掉这类命令。旁边的小命令也在等。',
+      '4. expired_keys 在短时间跳升：打散过期时间。',
+      '5. 加节点和 FLUSHALL 都不是这四项的第一动作。热键仍落在同一个槽。',
+    ].join('\n'),
+    keywords:'Redis INFO rejected_connections maxmemory SLOWLOG expired_keys',
+    points:[
+      '过载先分开拒绝连接、内存到顶、慢命令和过期跳升',
+      'rejected_connections 升高时先收紧客户端连接，不是先加节点',
+      '内存到顶时 noeviction 拒绝写入，会淘汰的策略则在删键',
+      '慢命令看 SLOWLOG；热键是单个键把一个分片打满，两项不是同一处理',
+    ],
+    deep:[
+      {title:'主从切换带不走原因',body:'慢命令和热键跟着键走。把从节点提升为主节点之后，同一条命令、同一个槽仍在。切换只解决主节点进程本身不可用，不代替上面的四项。持久化 fork 造成的延迟也不在这四项里，延迟诊断文档单独列出。'},
+      {title:'怎样自己验证',body:'在测试实例把 maxmemory 设小、policy 设为 noeviction，继续写入直到失败；再改成 allkeys-lru，看 evicted_keys 是否上涨。另开一条慢命令后执行 SLOWLOG GET，同时用另一个客户端 GET 小键，小键应等到慢命令结束。不要在已经过载的主节点上先跑 KEYS。'},
+    ],
+    refs:[
+      ['Redis：延迟诊断','https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/latency/'],
+      ['Redis：INFO','https://redis.io/docs/latest/commands/info/'],
+      ['Redis：SLOWLOG GET','https://redis.io/docs/latest/commands/slowlog-get/'],
+      ['Redis：键淘汰','https://redis.io/docs/latest/develop/reference/eviction/'],
+    ],
+  },
+];
+
+for (const {points, refs, ...lesson} of COVERAGE_JAVA_127) {
+  window.LESSONS.push(lesson);
+  window.KNOWLEDGE_POINTS[lesson.id] = points;
+  window.LESSON_REFERENCES[lesson.id] = refs;
+}

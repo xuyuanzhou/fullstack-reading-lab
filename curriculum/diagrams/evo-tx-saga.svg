@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 280" role="img" aria-labelledby="title desc">
+  <title id="title">失败后用新写入往回补</title>
+  <desc id="desc">上排已提交，下排是补偿，不是把原事务滚掉。</desc>
+  <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#3f6a58"/></marker></defs>
+  <rect width="960" height="280" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="18" font-weight="600" fill="#2e3330">失败后用新写入往回补</text>
+  
+  <rect x="32" y="64" width="180" height="48" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="48" y="92" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">订单已提交</text>
+  <line x1="212" y1="88" x2="250" y2="88" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+  <rect x="256" y="64" width="180" height="48" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="272" y="92" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">库存已提交</text>
+  <line x1="436" y1="88" x2="474" y2="88" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+  <rect x="480" y="64" width="200" height="48" rx="12" fill="#f6ecea" stroke="#a05048"/><text x="496" y="92" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#6e3530">支付失败</text>
+  <line x1="580" y1="112" x2="360" y2="180" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+  <line x1="360" y1="112" x2="140" y2="180" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+  <rect x="40" y="180" width="220" height="48" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="56" y="208" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">库存 · 新写入</text>
+  <rect x="300" y="180" width="220" height="48" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="316" y="208" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">订单 · 新写入</text>
+  <rect x="620" y="180" width="300" height="48" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="636" y="208" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">流程表只在编排方案里</text>
+
+</svg>

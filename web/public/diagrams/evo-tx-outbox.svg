@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 260" role="img" aria-labelledby="title desc">
+  <title id="title">同一库里两行一次提交</title>
+  <desc id="desc">中继在提交之后，订单库单独提交。</desc>
+  <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#3f6a58"/></marker></defs>
+  <rect width="960" height="260" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="18" font-weight="600" fill="#2e3330">同一库里两行一次提交</text>
+  
+  <rect x="32" y="70" width="280" height="140" rx="14" fill="#e6efe9" stroke="#3f6a58"/>
+  <text x="48" y="98" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">支付库 · 一次提交</text>
+  <text x="48" y="128" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#3f6a58">支付行</text>
+  <text x="48" y="156" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#3f6a58">待发事件行</text>
+  <line x1="312" y1="140" x2="400" y2="140" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+  <rect x="410" y="112" width="140" height="56" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="426" y="140" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">中继</text>
+  <line x1="550" y1="140" x2="640" y2="140" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#arr)"/>
+  <rect x="650" y="100" width="270" height="80" rx="12" fill="#e6efe9" stroke="#3f6a58"/><text x="666" y="128" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">订单库</text><text x="666" y="150" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#2e3330">另一次提交</text>
+
+</svg>

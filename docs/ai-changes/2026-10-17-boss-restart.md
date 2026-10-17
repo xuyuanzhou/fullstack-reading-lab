@@ -38,7 +38,7 @@ cd web && ./node_modules/.bin/tsc --noEmit -p tsconfig.app.json
 
 ## 后续
 
-- [ ] 多选干扰项仍是别的课的正确结论，要按关手改，不要整卷重生成
+- [x] 多选干扰项仍是别的课的正确结论。Boss 副本已按关改写，见 [Boss 干扰项改成这一问的误解](2026-10-17-boss-distractors.md)。章节题库未改。
 
 ## 给下一模型
 

@@ -1,0 +1,44 @@
+/* 缓存：认清 Redis 过载的一项之后，先停掉还在制造它的那一路。 */
+const COVERAGE_JAVA_128 = [
+  {
+    track:'java', group:'缓存', id:'redis-overload-next',
+    title:'认清 Redis 过载之后，先停掉还在灌的那一路',
+    prompt:'四项里已经认清一项，为什么还不能先重启或加节点？',
+    promptAnswer:'不能。先停掉还在制造这一问题的客户端或命令。重启和加节点会把同一个键、同一条命令带回来。',
+    core:'四项怎么认，见 `redis-overload-four`。认清之后，恢复只处理这一项。命令执行主要在一个线程上：已经开始的慢命令会跑完，断开这个客户端停不掉这一次，只能让它不要再发下一次。连接数上涨时用 `CLIENT LIST`〔CLIENT LIST｜列出当前客户端的地址、空闲时间和正在执行的命令〕看出是谁占着连接，然后在应用侧收紧连接池。内存到顶时，到副本上查大键；把 `noeviction` 改成会淘汰的策略，等于允许删键，不是无损恢复。过期挤在一起时，先在入口限流或让非关键读失败，避免未命中全部打到数据库；打散 TTL 是下一次写入时做的，见 `redis-expire`。`latency-monitor-threshold`〔latency-monitor-threshold｜延迟监控的毫秒阈值，0 表示不记录〕为 0 时，`LATENCY LATEST` 是空的，这时仍以 `SLOWLOG` 和 `INFO` 为准。告警看拒绝连接的增量、`used_memory` 相对 `maxmemory` 的比例、慢命令新增条数和 `expired_keys` 的增量。整机 CPU 可以仍然很低。',
+    why:'重启会打断所有客户端。热键还在同一个槽，慢命令的调用方启动后还会再发。只看整机 CPU 的告警会在单线程已经堵住时仍然安静。',
+    example:'先认出是谁，再决定停哪一路：\n\n```redis\nCLIENT LIST\nSLOWLOG GET 8\nLATENCY LATEST\n```\n\n```text\n慢命令已在执行 → 等它结束，停掉还会再发的客户端\n连接上涨 → CLIENT LIST 找来源，收紧池\n内存到顶 → 副本上查大键；改淘汰策略 = 允许删键\n过期跳升 → 入口限流，下一次写入再打散 TTL\n```',
+    task:'划掉「CPU 不高就不用告警」和「重启能清掉热键」。写出：慢命令已经在执行时，断开连接能不能停掉这一次；告警至少看哪四项增量。',
+    answer:[
+      '划掉「CPU 不高就不用告警」和「重启能清掉热键」。',
+      '',
+      '1. 慢命令已经在执行时，断开连接停不掉这一次，只能阻止下一次再发。',
+      '2. 重启和加节点会把同一个键、同一条命令带回来。',
+      '3. 告警看 rejected_connections 的增量、used_memory 相对 maxmemory 的比例、SLOWLOG 新增条数、expired_keys 的增量。',
+      '4. 整机 CPU 低，不表示这四项没有在涨。',
+    ].join('\n'),
+    keywords:'Redis CLIENT LIST SLOWLOG LATENCY LATEST 告警',
+    points:[
+      '已经在执行的慢命令会跑完，断开连接只阻止下一次',
+      '重启和加节点会把同一个键和同一条命令带回来',
+      '把 noeviction 改成淘汰是在允许删键，不是无损恢复',
+      '告警看拒绝连接、内存比例、慢命令和过期的增量，不只看整机 CPU',
+    ],
+    deep:[
+      {title:'过期跳升时先护住数据库',body:'缓存未命中会把读打到数据库。入口限流或让非关键读失败，是这一刻的动作。打散 TTL 改变的是下一次写入的过期时间，见 `cache-penetration-vs-breakdown`。'},
+      {title:'怎样自己验证',body:'只在测试实例把 latency-monitor-threshold 设成 0，执行 LATENCY LATEST，结果应为空。再设成一个小的毫秒数，制造一次超过它的命令后应能看到事件。不要在线上实例执行会堵住服务器的调试命令。'},
+    ],
+    refs:[
+      ['Redis：CLIENT LIST','https://redis.io/docs/latest/commands/client-list/'],
+      ['Redis：LATENCY LATEST','https://redis.io/docs/latest/commands/latency-latest/'],
+      ['Redis：延迟诊断','https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/latency/'],
+      ['Redis：SLOWLOG GET','https://redis.io/docs/latest/commands/slowlog-get/'],
+    ],
+  },
+];
+
+for (const {points, refs, ...lesson} of COVERAGE_JAVA_128) {
+  window.LESSONS.push(lesson);
+  window.KNOWLEDGE_POINTS[lesson.id] = points;
+  window.LESSON_REFERENCES[lesson.id] = refs;
+}

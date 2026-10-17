@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" role="img" aria-labelledby="title desc">
+  <title id="title">UML 时序图：opt 与 loop</title>
+  <desc id="desc">opt 只在用户带了券码时核销。loop 在还有未出库的订单行时重复出库一行。</desc>
+  <rect width="960" height="560" rx="18" fill="#f6f7f4"/>
+  <text x="32" y="36" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="11" font-weight="600" letter-spacing="1.6" fill="#3f6a58">UML 时序图</text>
+  <text x="32" y="64" font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif" font-size="20" font-weight="600" fill="#2e3330">opt 可跳过，loop 只重复框里的消息</text>
+  <g font-family="'IBM Plex Sans','Noto Sans SC','PingFang SC',sans-serif">
+    <text x="120" y="108" text-anchor="middle" font-size="14" font-weight="600" fill="#2e3330">页面</text>
+    <text x="360" y="108" text-anchor="middle" font-size="14" font-weight="600" fill="#2e3330">订单服务</text>
+    <text x="620" y="108" text-anchor="middle" font-size="14" font-weight="600" fill="#2e3330">优惠</text>
+    <line x1="120" y1="118" x2="120" y2="300" stroke="#5e6661" stroke-width="1.2" stroke-dasharray="3 4"/>
+    <line x1="360" y1="118" x2="360" y2="300" stroke="#5e6661" stroke-width="1.2" stroke-dasharray="3 4"/>
+    <line x1="620" y1="118" x2="620" y2="300" stroke="#5e6661" stroke-width="1.2" stroke-dasharray="3 4"/>
+    <line x1="128" y1="150" x2="352" y2="150" stroke="#2e3330" stroke-width="1.6" marker-end="url(#fill)"/>
+    <text x="168" y="142" font-size="13" fill="#2e3330">提交订单</text>
+    <rect x="150" y="176" width="520" height="100" fill="none" stroke="#4a6280" stroke-width="1.4"/>
+    <text x="162" y="196" font-size="13" font-weight="600" fill="#4a6280">opt [用户带了券码]</text>
+    <line x1="368" y1="220" x2="612" y2="220" stroke="#4a6280" stroke-width="1.6" marker-end="url(#fillBlue)"/>
+    <text x="400" y="212" font-size="13" fill="#4a6280">核销</text>
+    <line x1="612" y1="248" x2="368" y2="248" stroke="#4a6280" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#openBlue)"/>
+    <text x="430" y="242" font-size="13" fill="#4a6280">已核销</text>
+
+    <text x="200" y="340" text-anchor="middle" font-size="14" font-weight="600" fill="#2e3330">订单服务</text>
+    <text x="560" y="340" text-anchor="middle" font-size="14" font-weight="600" fill="#2e3330">仓储</text>
+    <line x1="200" y1="350" x2="200" y2="500" stroke="#5e6661" stroke-width="1.2" stroke-dasharray="3 4"/>
+    <line x1="560" y1="350" x2="560" y2="500" stroke="#5e6661" stroke-width="1.2" stroke-dasharray="3 4"/>
+    <rect x="120" y="368" width="520" height="120" fill="none" stroke="#3f6a58" stroke-width="1.4"/>
+    <text x="132" y="390" font-size="13" font-weight="600" fill="#3f6a58">loop [还有未出库的订单行]</text>
+    <line x1="208" y1="420" x2="552" y2="420" stroke="#3f6a58" stroke-width="1.6" marker-end="url(#fillGreen)"/>
+    <text x="280" y="412" font-size="13" fill="#3f6a58">出库一行</text>
+    <line x1="552" y1="456" x2="208" y2="456" stroke="#3f6a58" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#openGreen)"/>
+    <text x="300" y="448" font-size="13" fill="#3f6a58">该行已出库</text>
+  </g>
+  <defs>
+    <marker id="fill" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2e3330"/>
+    </marker>
+    <marker id="fillBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a6280"/>
+    </marker>
+    <marker id="fillGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3f6a58"/>
+    </marker>
+    <marker id="openBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 1 1 L 9 5 L 1 9" fill="none" stroke="#4a6280" stroke-width="1.4"/>
+    </marker>
+    <marker id="openGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 1 1 L 9 5 L 1 9" fill="none" stroke="#3f6a58" stroke-width="1.4"/>
+    </marker>
+  </defs>
+</svg>
